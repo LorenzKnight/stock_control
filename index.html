@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+<!--<![endif]-->
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Marcus Music</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="./styles/main.css">
+  <script src="https://kit.fontawesome.com/5e05ee9535.js" crossorigin="anonymous"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <section class="main">
+    <div class="main-player">
+      <div class="artist-list-container">
+
+        <div class="logo-container">
+          <img src="./img/logo5.svg" alt="logotype" />
+        </div>
+        <div class="arrow-right"></div>
+        <ul class="artist-list" id="artist-list">
+          <li>
+            <h3>Your Artists</h3>
+          </li>
+        </ul>
+        <div class="search-container">
+          <input type="text" name="searchField" id="search-field" class="search-field" placeholder="search..">
+        </div>
+      </div>
+      <div class="library">
+        <header>
+
+          <nav>
+            <ul>
+              <li><i class="fas fa-bars fa-2x"></i></li>
+            </ul>
+          </nav>
+        </header>
+        <h2 id="artist-list-artist-heading"></h2>
+        <ul class="song-list" id="song-list">
+          <li>
+          </li>
+
+        </ul>
+        <div class="music-player-btns">
+          <ul class="player-btns" id="player-btns">
+            <li>
+              <div class="test" data-btn="pause"><i class="fas fa-pause" data-btn="pause"></i></div>
+            </li>
+            <li>
+              <div class="test" data-btn="play"><i class="fas fa-play" data-btn="play"></i></div>
+            </li>
+            <li data-btn="stop">
+              <div class="test" data-btn="stop"><i class="fas fa-stop" data-btn="stop"></i></div>
+            </li>
+          </ul>
+          <div class="slidecontainer">
+            <input type="range" min="0" max="100" value="50" class="volumeSlider" id="volume-slider">
+            <span id="volume-value">50</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="playing-now">
+    <h2 class="playing-now-text" id="playing-now">Ingen musik spelas!
+    </h2>
+  </div>
+
+  <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+  <script src="./script/main.js" async defer></script>
+</body>
+
+</html>
