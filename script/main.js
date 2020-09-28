@@ -6,6 +6,12 @@ const volumeValue = document.getElementById('volume-value');
 const searchField = document.getElementById('search-field');
 const realSongList = document.getElementById('song-list');
 const artistHeading = document.getElementById('artist-list-artist-heading')
+const equalizer = document.getElementById('equalizer');
+const footerBtn = document.getElementById('footer-btn');
+const heroBtn = document.getElementById('hero-content-btn');
+
+heroBtn.addEventListener('click', closeHero)
+footerBtn.addEventListener('click', toggleFooter)
 searchField.addEventListener('input', handleSearchInput);
 playerBtns.addEventListener('click', playerFunc);
 let soundPlaying = false;
@@ -13,6 +19,10 @@ let songPlayingNow = ''
 let lastPlayed = ''
 let fetchedData;
 let volumeNumber = 0.5;
+let songQueue = [];
+let activeSongQueueIndex;
+let isFooterToggled = false;
+let isHeaderNavToggled = false;
 
 function fetchData() {
   fetch("../api/api.JSON")
@@ -36,14 +46,23 @@ function fetchData() {
 
 
 function renderSongList(e, arrToRender) {
+  songQueue = []
   if (arrToRender) {
     for (let i = 0; i < arrToRender.length; i++) {
+      const { songName, fileName } = arrToRender[i];
+      song = { songName, fileName, queueIndex: i }
+
+      songQueue.push(song)
+      console.log(songQueue)
       const listElement = document.createElement("li");
       const titleElement = document.createElement("h3");
-      titleElement.innerText = arrToRender[i].songName;
-      titleElement.dataset.fileName = arrToRender[i].fileName;
+      // addToPlayListElement.classList.add('fa-plus-circle');
+
+      titleElement.innerText = song.songName;
+      titleElement.dataset.fileName = song.fileName;
+      titleElement.dataset.queueIndex = i;
       listElement.appendChild(titleElement)
-      arrToRender[i].fileName ? listElement.addEventListener('click', changeSong) : null;
+      song.fileName ? listElement.addEventListener('click', changeSong) : null;
       realSongList.appendChild(listElement);
     }
   } else if (!arrToRender) {
@@ -54,10 +73,19 @@ function renderSongList(e, arrToRender) {
     realSongList.innerHTML = '';
 
     for (let i = 0; i < fetchedData[artistId].songs.length; i++) {
+      const { songName, fileName } = fetchedData[artistId].songs[i];
+      song = { songName, fileName, queueIndex: i }
+      songQueue.push(song)
+
       const listElement = document.createElement("li");
       const titleElement = document.createElement("h3");
       titleElement.innerText = fetchedData[artistId].songs[i].songName;
       titleElement.dataset.fileName = fetchedData[artistId].songs[i].fileName;
+      titleElement.dataset.queueIndex = i;
+      console.log('here' + i)
+      console.log(e)
+
+      titleElement.dataset.queueIndex = i;
       listElement.appendChild(titleElement)
       listElement.addEventListener('click', changeSong)
       realSongList.appendChild(listElement);
@@ -68,10 +96,24 @@ function renderSongList(e, arrToRender) {
 }
 
 
-function changeSong(e) {
-  songPlayingNow = e.target.innerText;
-  if (!soundPlaying) {
+function changeSong(e, songToPlay, queueIndex) {
+  equalizer.classList.remove('hidden')
+  if (songToPlay) {
+    console.log(songToPlay.songName)
+    sound.pause();
+    sound.currentTime = 0;
+    sound = new Audio(`../audio/${songToPlay.fileName}`);
+    activeSongQueueIndex = queueIndex;
+    sound.volume = volumeNumber;
+    sound.play();
+    soundPlaying = true;
+    playingNow.innerText = `Spelar nu: ${songToPlay.songName}`
+  }
+
+  else if (!soundPlaying) {
+    songPlayingNow = e.target.innerText;
     sound = new Audio(`../audio/${e.target.dataset.fileName}`);
+    activeSongQueueIndex = e.target.dataset.queueIndex;
     sound.volume = volumeNumber;
     sound.play();
     soundPlaying = true;
@@ -80,6 +122,7 @@ function changeSong(e) {
     sound.pause();
     sound.currentTime = 0;
     sound = new Audio(`../audio/${e.target.dataset.fileName}`);
+    activeSongQueueIndex = e.target.dataset.queueIndex;
     sound.volume = volumeNumber;
     sound.play();
     soundPlaying = true;
@@ -88,21 +131,42 @@ function changeSong(e) {
 }
 
 function playerFunc(e) {
+  console.log(realSongList)
   console.log(e.target.dataset.btn)
   if (soundPlaying) {
     switch (e.target.dataset.btn) {
       case "play":
         sound.play();
         playingNow.innerText = `Spelar nu: ${songPlayingNow}`
+        equalizer.classList.remove('hidden')
         break;
       case "pause":
         sound.pause();
         playingNow.innerText = `Pausad: ${songPlayingNow}`
+        equalizer.classList.add('hidden')
         break;
       case "stop":
         sound.pause();
         playingNow.innerText = `Stoppad: ${songPlayingNow}`
         sound.currentTime = 0;
+        equalizer.classList.add('hidden')
+        break;
+      case "backward":
+        if (activeSongQueueIndex > 0) {
+          activeSongQueueIndex--;
+          changeSong(e, songQueue[activeSongQueueIndex], activeSongQueueIndex)
+        } else {
+          return
+        }
+        break;
+      case "forward":
+        if (activeSongQueueIndex < songQueue.length - 1) {
+          activeSongQueueIndex++;
+          changeSong(e, songQueue[activeSongQueueIndex], activeSongQueueIndex)
+        } else {
+          return
+        }
+        break;
     }
   } else {
     return
@@ -115,7 +179,7 @@ function handleSearchInput(e) {
   artistHeading.innerText = 'Sökresultat:';
   if (e.target.value.length < 1) {
     realSongList.innerHTML = '';
-    renderSongList(e, [{ songName: 'Nothing here! Try searching or exploring your artists! :)', fileName: false }])
+    renderSongList(e, [{ songName: 'Ingenting här! Prova att söka eller bläddra bland dina artister!', fileName: false }])
     return
   } else {
     let searchResults = [];
@@ -123,6 +187,26 @@ function handleSearchInput(e) {
       searchResults = searchResults.concat(fetchedData[i].songs.filter(obj => Object.keys(obj).some(key => obj[key].toLowerCase().includes(e.target.value))))
     }
     renderSongList(e, searchResults)
+    if (searchResults < 1) {
+      renderSongList(e, [{ songName: 'Hittade inga resultat, prova med ett annat sökord!', fileName: false }])
+    }
+  }
+}
+
+
+function closeHero() {
+  const hero = document.getElementById('hero');
+  hero.classList.add('hidden');
+}
+function toggleFooter() {
+  console.log(isFooterToggled)
+  const footer = document.getElementById('footer');
+  if (isFooterToggled) {
+    footer.classList.add('open-footer')
+    isFooterToggled = !isFooterToggled
+  } else {
+    footer.classList.remove('open-footer')
+    isFooterToggled = !isFooterToggled
   }
 }
 searchField.onblur = () => searchField.value = '';

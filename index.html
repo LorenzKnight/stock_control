@@ -3,7 +3,7 @@
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!-->
-<html class="no-js">
+<html class="no-js" lang="sw">
 <!--<![endif]-->
 
 <head>
@@ -15,22 +15,29 @@
   <link rel="stylesheet" href="./styles/main.css">
   <script src="https://kit.fontawesome.com/5e05ee9535.js" crossorigin="anonymous"></script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
-
 </head>
 
 <body>
-
+  <!-- Hero Banner -->
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <h1 class="hero-content-heading">Marcus Nyman's Music</h1>
+      <h2>“Rock ‘n’ roll will never die. There’ll always be some arrogant little brat who wants to make music with a
+        guitar.”</h2>
+      <span class="hero-content-btn" id="hero-content-btn">LETS GO</span>
+    </div>
+  </section>
+  <!-- Main Section -->
   <section class="main">
     <div class="main-player">
       <div class="artist-list-container">
-
         <div class="logo-container">
           <img src="./img/logo5.svg" alt="logotype" />
         </div>
         <div class="arrow-right"></div>
         <ul class="artist-list" id="artist-list">
           <li>
-            <h3>Your Artists</h3>
+            <h3>Din musik</h3>
           </li>
         </ul>
         <div class="search-container">
@@ -39,21 +46,81 @@
       </div>
       <div class="library">
         <header>
-
-          <nav>
+          <!-- Navigation drop-down menu -->
+          <nav id="header-nav">
             <ul>
               <li><i class="fas fa-bars fa-2x"></i></li>
+              <ul class="menu-1">
+                <li>About us
+                  <ul class="submenu-1">
+                    <li>Contact
+                      <ul class="submenu-2">
+                        <li>Info</li>
+                        <li>Address</li>
+                      </ul>
+                    </li>
+                    <li>Advertise
+                      <ul class="submenu-2">
+                        <li>Banners</li>
+                        <li>Stickers</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+                <li>Merch
+                  <ul class="submenu-1">
+                    <li>Store
+                      <ul class="submenu-2">
+                        <li>Buy</li>
+                        <li>Sell</li>
+                      </ul>
+                    </li>
+                    <li>Freebies
+                      <ul class="submenu-2">
+                        <li>Fresh</li>
+                        <li>Stuff</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+                <li>Developer
+                  <ul class="submenu-1">
+                    <li>Our API
+                      <ul class="submenu-2">
+                        <li>Songs</li>
+                        <li>Artists</li>
+                      </ul>
+                    </li>
+                    <li>Palettes
+                      <ul class="submenu-2">
+                        <li>Hex</li>
+                        <li>RGB</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
             </ul>
           </nav>
         </header>
-        <h2 id="artist-list-artist-heading"></h2>
+        <h2 id="artist-list-artist-heading"> </h2>
         <ul class="song-list" id="song-list">
-          <li>
-          </li>
-
         </ul>
+        <!-- Equalizer animation -->
+        <div class="equalizer-container hidden" id="equalizer">
+          <div class="bar1"></div>
+          <div class="bar2"></div>
+          <div class="bar3"></div>
+          <div class="bar4"></div>
+          <div class="bar5"></div>
+        </div>
+        <!-- Music player controls -->
         <div class="music-player-btns">
           <ul class="player-btns" id="player-btns">
+            <li data-btn="stop">
+              <div class="test" data-btn="backward"><i class="fas fa-step-backward" data-btn="backward"></i>
+              </div>
+            </li>
             <li>
               <div class="test" data-btn="pause"><i class="fas fa-pause" data-btn="pause"></i></div>
             </li>
@@ -62,6 +129,10 @@
             </li>
             <li data-btn="stop">
               <div class="test" data-btn="stop"><i class="fas fa-stop" data-btn="stop"></i></div>
+            </li>
+            <li data-btn="stop">
+              <div class="test" data-btn="forward"><i class="fas fa-step-forward" data-btn="forward"></i>
+              </div>
             </li>
           </ul>
           <div class="slidecontainer">
@@ -72,15 +143,44 @@
       </div>
     </div>
   </section>
+  <!-- Playing now section -->
   <div class="playing-now">
-    <h2 class="playing-now-text" id="playing-now">Ingen musik spelas!
-    </h2>
+    <span class="playing-now-text" id="playing-now">Ingen musik spelas!</span>
   </div>
-
-  <!--[if lt IE 7]>
-      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
-
+  <!-- Footer -->
+  <footer class="footer" id="footer">
+    <span class="footer-btn" id="footer-btn">
+    </span>
+    <ul>
+      <li class="footer-heading">Företaget</li>
+      <li>Om</li>
+      <li>Jobb</li>
+      <li>For The Record</li>
+    </ul>
+    <ul>
+      <li class="footer-heading">Communities</li>
+      <li>För artister</li>
+      <li>Utvecklare</li>
+      <li>Annonsering</li>
+      <li>Investerare</li>
+      <li>Försäljare</li>
+    </ul>
+    <ul>
+      <li class="footer-heading">Användbara länkar</li>
+      <li>Hjälp</li>
+      <li>Webbspelaren</li>
+      <li>Gratis mobilapp</li>
+    </ul>
+    <ul class="social-media-icons">
+      <li><i class="fab fa-facebook-square fa-2x"></i></li>
+      <li><i class="fab fa-github-square fa-2x"></i></li>
+      <li><i class="fab fa-twitter-square fa-2x"></i></li>
+      <li><i class="fab fa-youtube-square fa-2x"></i></li>
+    </ul>
+    <div class="footer-logo-container">
+      <img src="./img/logo5.svg" alt="logotype" />
+    </div>
+  </footer>
   <script src="./script/main.js" async defer></script>
 </body>
 
