@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  composer:
+    image: composer
+    command: composer install
+    environment:
+      - COMPOSER_CACHE_DIR=/app/var/cache/composer
+    volumes:
+      - .:/app
+
+  php:
+    container_name: php-pg
+    build: .conf/php/
+    restart: always
+    volumes:
+      - .:/app
+      - .conf/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      - .conf/php/conf.d/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
+      - .conf/php/conf.d/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+    working_dir: /app
+    networks:
+      - network_mynet
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - 8888:80
+    volumes:
+      - .:/app
+      - ./var/log/nginx:/var/log/nginx
+      - .conf/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - network_mynet
+
+  postgres-db:
+    container_name: music_pgdb
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=Admin456
+      - POSTGRES_DB=music_player_db
+      - TZ=Europe/Stockholm
+    volumes:
+      - db:/var/lib/postgresql/data
+    ports:
+      - '5433:5432'
+
+    networks:
+      - network_mynet
+
+volumes:
+  db:
+    driver: local
+  
+networks:
+  network_mynet:
