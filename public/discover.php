@@ -1,3 +1,4 @@
+<?php require_once('logic/discover_be.php');?>
 <!DOCTYPE html>
 <html class="no-js" lang="sw">
 
