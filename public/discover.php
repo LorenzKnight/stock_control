@@ -9,48 +9,72 @@
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/components.css">
   <script src="https://kit.fontawesome.com/5e05ee9535.js" crossorigin="anonymous"></script>
   <!-- <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet"> -->
   <script defer src="js/discover.js"></script>
+  <script defer src="js/actions.js"></script>
 </head>
 
 <body>
+  <?php // var_dump($my_lists[0]); ?>
   <header>
     <div class="container">
       <nav>
         <ul class="menu">
           <li>
             <div class="logo">
-              <h1>Music Player</h1>
+              <h3>Music Player</h3>
             </div>
           </li>
           <li><a href="#">Home</a></li>
           <li><a href="#">Explore</a></li>
           <li><a href="#">Library</a></li>
-          <li><input class="search-field" type="text" name="" id=""></li>
+          <li>
+            <input class="search-field" type="text" name="" id="">
+          </li>
           <li><a href="#">Upload</a></li>
           <li><a href="#">Settings</a></li>
+          <?php if($_SESSION['mp_UserId'] != '') { ?>
           <li>
             <div class="profile">
-              <img src="images/profile/perfil.png" alt="">
+              <img src="images/profile/<?php ?>perfil.png" alt="">
             </div>
           </li>
+          <?php } else { ?>
+          <li><a href="#" onclick="login()">Log in</a></li>
+          <?php } ?>
         </ul>
       </nav>
     </div>
   </header>
 
   <div class="container">
-    <div class="wrapper">
+    <?php if(!isset($_GET['list'])) { ?>
+    <div class="wrapper-home">
       <div class="sidebar">
-        
       </div>
-      <div class="main-content">
-        
+      <div class="main-content" id="main-content">
+        <?php 
+        foreach($my_lists as $list)
+        {
+        ?>
+        <div class="list">
+          <div class="list-cover"></div>
+          <div class="list-info">
+            <div class="list-name" data-list="<?= $list['listingsId']; ?>"><?= $list['listName']; ?></div>
+            <?= $current_user['name'].' '.$current_user['surname']; ?>
+          </div>
+        </div>
+        <?php } ?>
       </div>
     </div>
+    <?php } else { ?>
+    <div class="wrapper-list" id="wrapper-list">
+      <h2>List</h2>
+    </div>
+    <?php } ?>
   </div>
-
   <footer>
     <div class="container">
       <div class="music-player">
@@ -96,6 +120,8 @@
       </div>
     </div>
   </footer>
+  
+  <?php include("components/popup_bg.php"); ?>
 </body>
 
 </html>

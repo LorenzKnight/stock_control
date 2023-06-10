@@ -131,6 +131,138 @@ function dbUsersColumnNames()
 	);
 }
 
+function listings($columns = "*", $requestData = array(), array $options = []) : array
+{
+  if(empty($columns))
+	{
+		$columns = "*";
+	}
+
+	if($columns != "*" && !is_array($columns))
+	{
+		$columns = "*";
+	}
+
+	$queryColumnNames = "*";
+	if(is_array($columns))
+	{
+		$queryColumnNames = "";
+		$validColumns = dbListingsColumnNames();
+
+		foreach ($columns as $column) 
+		{
+			if(in_array($column, $validColumns))
+			{
+				$queryColumnNames .= $column.",";
+			}
+		}
+
+		if(empty($queryColumnNames))
+		{
+			return [];
+		}
+		
+		$queryColumnNames = substr($queryColumnNames, 0, -1);
+	}
+
+  $query = "select $queryColumnNames ";
+
+  if(isset($options['count_query']) && $options['count_query'])
+	{
+		$query = "select count(*) ";
+	}
+
+	$query .= "from listings ";
+
+  //check other conditions
+	$conditions = "";
+
+  if(isset($requestData['lid']) && !empty($requestData['lid']))
+	{
+		$conditions .= " and lid = " . $requestData['lid']. ' ';
+	}
+
+  if(isset($requestData['user_id']) && !empty($requestData['user_id']))
+	{
+		$conditions .= " and user_id = " . $requestData['user_id']. ' ';
+	}
+
+  if(!empty($conditions))
+	{
+		$query .= " where " . substr($conditions, 5);
+	}
+
+  //set order
+  if(!isset($options['count_query']))
+  {
+    $query .= "order by ";
+    if(isset($options['order']))
+    {
+      $query .= $options['order'];
+    } 
+    else
+    {
+      $query .= "lid asc";
+    }
+  }
+
+  //set limit
+  if(isset($options['limit']) && !empty($options['limit']))
+  {
+    $query .= " limit " . intval($options['limit']);
+  }
+
+  if(isset($options['echo_query']) && $options['echo_query'])
+  {
+    echo "Q: ".$query."<br>\t\n";
+  }
+
+  $sql = pg_query($query);
+  $total_listings = pg_num_rows($sql);
+
+  $res = [];
+
+  if(isset($options['count_query'])) {
+    $postRatecount = pg_fetch_assoc($sql);
+
+    foreach($postRatecount as $columnName => $columnValue) {
+      $res[$columnName] = $columnValue;
+    }
+
+    return $res;
+  }
+
+  if(!empty($total_listings))
+  {
+    $row_listings = pg_fetch_all($sql);
+
+    foreach($row_listings as $item)
+    {
+      $res [] = [
+        'listingsId'  => $item['lid'],
+        'userId'      => $item['user_id'],
+        'public'      => $item['public'],
+        'listName'    => $item['list_name'],
+        'listDate'    => $item['list_date']
+      ];
+    }
+  }
+
+  return $res;
+}
+
+function dbListingsColumnNames()
+{
+	return array(
+		"lid", "user_id", "list_name", "public", "list_date"
+	);
+}
+
+
+
+
+
+
 function get_followers_and_following($userId) : array
 {
   $query_followers = "SELECT count(is_following) FROM followers WHERE is_following = $userId AND accepted = 1";
@@ -486,135 +618,6 @@ function post_wall_profile($userId = null) : array
   return $res;
 }
 
-function rate_in_post($columns = "*", $requestData = array(), array $options = []) : array
-{
-  if(empty($columns))
-	{
-		$columns = "*";
-	}
-
-	if($columns != "*" && !is_array($columns))
-	{
-		$columns = "*";
-	}
-
-	$queryColumnNames = "*";
-	if(is_array($columns))
-	{
-		$queryColumnNames = "";
-		$validColumns = dbRatesColumnNames();
-
-		foreach ($columns as $column) 
-		{
-			if(in_array($column, $validColumns))
-			{
-				$queryColumnNames .= $column.",";
-			}
-		}
-
-		if(empty($queryColumnNames))
-		{
-			return [];
-		}
-		
-		$queryColumnNames = substr($queryColumnNames, 0, -1);
-	}
-
-  $query = "select $queryColumnNames ";
-
-  if(isset($options['count_query']) && $options['count_query'])
-	{
-		$query = "select count(*) ";
-	}
-
-	$query .= "from rates ";
-
-  //check other conditions
-	$conditions = "";
-
-  if(isset($requestData['user_id']) && !empty($requestData['user_id']))
-	{
-		$conditions .= " and user_id = " . $requestData['user_id']. ' ';
-	}
-
-  if(isset($requestData['post_id']) && !empty($requestData['post_id']))
-	{
-		$conditions .= " and post_id = " . $requestData['post_id']. ' ';
-	}
-
-  if(!empty($conditions))
-	{
-		$query .= " where " . substr($conditions, 5);
-	}
-
-  //set order
-  if(!isset($options['count_query']))
-  {
-    $query .= "order by ";
-    if(isset($options['order']))
-    {
-      $query .= $options['order'];
-    } 
-    else
-    {
-      $query .= "rate_id asc";
-    }
-  }
-
-  //set limit
-  if(isset($options['limit']) && !empty($options['limit']))
-  {
-    $query .= " limit " . intval($options['limit']);
-  }
-
-  if(isset($options['echo_query']) && $options['echo_query'])
-  {
-    echo "Q: ".$query."<br>\t\n";
-  }
-
-  $sql = pg_query($query);
-  $totalPost_rates_list = pg_num_rows($sql);
-
-  $res = [];
-
-  if(isset($options['count_query'])) {
-    $postRatecount = pg_fetch_assoc($sql);
-
-    foreach($postRatecount as $columnName => $columnValue) {
-      $res[$columnName] = $columnValue;
-    }
-
-    return $res;
-  }
-
-  if(!empty($totalPost_rates_list))
-  {
-    $row_postRates_list = pg_fetch_all($sql);
-
-    foreach($row_postRates_list as $item)
-    {
-      $res [] = [
-        'rateId'      => $item['rate_id'],
-        'stars'       => $item['stars'],
-        'rateBonus'   => $item['rate_bonus'],
-        'userId'      => $item['user_id'],
-        'postId'      => $item['post_id'],
-        'commentId'   => $item['comment_id'],
-        'rateDate'    => $item['rate_date']
-      ];
-    }
-  }
-
-  return $res;
-}
-
-function dbRatesColumnNames()
-{
-	return array(
-		"rate_id", "stars", "rate_bonus", "user_id", "to_user_id", "post_id", "comment_id", "rate_date"
-	);
-}
-
 function add_comments($userId, $postId, $comment, $comment_date)
 {
   $query = "INSERT INTO comments (user_id, post_id, comment, comment_date) values ($userId, $postId, '$comment', '$comment_date')";
@@ -841,7 +844,8 @@ function rate_update($requestData = array(), $rateData = array(), $rateData2 = a
 		return false;
 	}
 	
-	$validColumns = dbRatesColumnNames();
+	// $validColumns = dbRatesColumnNames();
+  $validColumns = [];
 	unset($validColumns['rate_id']);
 	
 	//validate requestData

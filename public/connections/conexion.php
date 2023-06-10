@@ -3,8 +3,8 @@ if (!isset($_SESSION)) {
   session_start();
 }
 
-$conn_host    = ' host=music_pgdb'; //container's name instead for "localhost" 
-$conn_port    = ' port=5434';
+$conn_host    = 'host=music_pgdb'; //container's name instead for "localhost" 
+$conn_port    = ' port=5432';
 $conn_dbname  = ' dbname=music_player_db';
 $conn_user    = ' user=admin';
 $conn_pass    = ' password=Admin456';
@@ -24,5 +24,5 @@ else
 
 $dominio = "localhost:8888";
 // $dominio = "http://www.loopsdancestudio.se";
-$pageName = "Rate";
+$pageName = "Music Player";
 ?>
