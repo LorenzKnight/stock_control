@@ -6,34 +6,45 @@ CREATE TABLE IF NOT EXISTS users (
 	username varchar(255) NULL,
 	password varchar(255) NULL,
 	image varchar(255) NULL,
-	verified INTEGER null,
+	verified INTEGER NULL,
 	birthday TIMESTAMP NULL,
 	signup_date TIMESTAMP NULL,
-	rank INTEGER null,
+	rank INTEGER NULL,
 	status INTEGER NULL,
 	status_by_admin INTEGER NULL
 );
 
--- INSERT INTO users (name, surname, email, username, password, image, rate, job, verified, signup_date, birthday, status)
--- VALUES ('Lorenz', 'Knight', 'lorenz.knight@gmail.com', 'lorenz_knight', 123456, 'profile_pic.jpg', 0, null, 0, '2022-10-18 00:00:00', '1984-09-03 00:00:00', 1, 0),
---        ('Joel', 'Knight', 'joel.knight@gmail.com', 'joel_knight', 123456, null, 0, null, 0, '2022-10-18 00:00:00', '1984-09-03 00:00:00', 1, 0),
---        ('Shael', 'Knight', 'shael.knight@gmail.com', 'shael_knight', 123456, 'shael_pic.png', 0, null, 0, '2022-10-18 00:00:00', '1984-09-03 00:00:00', 1, 0),
--- 	   ('John', 'Doe', 'john.doe@gmail.com', 'john_doe', 123456, null, 0, null, 0, '2022-10-18 00:00:00', '1984-09-03 00:00:00', 1, 0);
+INSERT INTO users (name, surname, email, username, password, image, verified, birthday, signup_date, status)
+VALUES ('Lorenz', 'Knight', 'lorenz.knight@gmail.com', 'lorenz_knight', 123456, 'profile_pic.jpg', 0, '1984-09-03 00:00:00', '2022-10-18 00:00:00', 1),
+       ('Joel', 'Knight', 'joel.knight@gmail.com', 'joel_knight', 123456, null, 0, '1984-09-03 00:00:00', '2022-10-18 00:00:00', 1),
+       ('Shael', 'Knight', 'shael.knight@gmail.com', 'shael_knight', 123456, 'shael_pic.png', 0, '1984-09-03 00:00:00', '2022-10-18 00:00:00', 1),
+	   ('John', 'Doe', 'john.doe@gmail.com', 'john_doe', 123456, null, 0, '1984-09-03 00:00:00', '2022-10-18 00:00:00', 1);
 
 -- select * from users;
+
+CREATE TABLE IF NOT EXISTS listings (
+	lid SERIAL PRIMARY KEY,
+    user_id INTEGER NULL,
+    list_name varchar(255) NULL,
+    public INTEGER NULL,
+	list_date TIMESTAMP NULL
+);
+
+CREATE TABLE IF NOT EXISTS song (
+	sid SERIAL PRIMARY KEY,
+	user_id INTEGER NULL,
+	list_id INTEGER NULL,
+	artist varchar(255) NULL,
+	song_name varchar(255) NULL,
+	report INTEGER NULL,
+	public INTEGER NULL,
+	song_date TIMESTAMP NULL
+);
 
 -- ALTER TABLE users  
 -- ADD COLUMN image varchar(255) NULL;
 
 -- update users set name = 'Lorenz', image = 'profile_pic.jpg' where user_id = 1
-     
--- CREATE TABLE IF NOT EXISTS river (
--- 	r_id SERIAL PRIMARY KEY,
---     user_id INTEGER NULL,
---     content varchar(255) null,
---     status INTEGER NULL,
--- 	post_date TIMESTAMP NULL
--- );
 
 -- INSERT INTO river (user_id, content, status, post_date)
 -- VALUES (1, 'post 1', 1, '2022-10-18 00:00:00'),
@@ -42,13 +53,16 @@ CREATE TABLE IF NOT EXISTS users (
        
 -- select * from river;
 
--- CREATE TABLE IF NOT EXISTS rates (
--- 	rate_id SERIAL PRIMARY KEY,
+-- CREATE TABLE IF NOT EXISTS report (
+-- );
+
+-- CREATE TABLE IF NOT EXISTS likes (
+-- 	like_id SERIAL PRIMARY KEY,
 -- 	stars INTEGER null,
 -- 	rate_bonus FLOAT NULL,
 -- 	user_id INTEGER NULL,
 -- 	to_user_id INTEGER NULL,
--- 	post_id INTEGER NULL,
+-- 	object_id INTEGER NULL,
 -- 	comment_id INTEGER null,
 -- 	rate_date TIMESTAMP NULL
 -- );
@@ -59,13 +73,13 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- select * from rates;
 
--- CREATE TABLE IF NOT EXISTS comments (
--- 	comment_id SERIAL PRIMARY KEY,
--- 	user_id INTEGER null,
--- 	post_id INTEGER null,
--- 	comment varchar(255) null,
--- 	comment_date TIMESTAMP NULL
--- );
+CREATE TABLE IF NOT EXISTS comments (
+	comment_id SERIAL PRIMARY KEY,
+	user_id INTEGER NULL,
+	song_id INTEGER NULL,
+	comment varchar(255) NULL,
+	comment_date TIMESTAMP NULL
+);
 
 -- CREATE TABLE IF NOT EXISTS followers (
 -- 	follow_id SERIAL PRIMARY KEY,
@@ -74,16 +88,6 @@ CREATE TABLE IF NOT EXISTS users (
 -- 	accepted INTEGER null,
 -- 	condition varchar(255) null, --if it is limited or not
 -- 	follow_date TIMESTAMP null
--- );
-
--- CREATE TABLE IF NOT EXISTS media (
--- 	media_id SERIAL PRIMARY KEY,
--- 	user_id INTEGER null,
--- 	post_id INTEGER null,
--- 	name varchar(255) null,
--- 	format varchar(255) null,
--- 	is_changed INTEGER null,
--- 	media_date TIMESTAMP null
 -- );
 
 -- CREATE TABLE IF NOT EXISTS log (
