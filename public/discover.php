@@ -56,8 +56,7 @@
       </div>
       <div class="main-content" id="main-content">
         <?php 
-        foreach($my_lists as $list)
-        {
+        foreach($my_lists as $list) {
         ?>
         <div class="list">
           <div class="list-cover"></div>
@@ -71,7 +70,24 @@
     </div>
     <?php } else { ?>
     <div class="wrapper-list" id="wrapper-list">
-      <h2>List</h2>
+      <div class="list-content">
+        <h2><?= $my_lists[0]['listName']; ?></h2>
+        <table class="music-list" cellspacing="0">
+        <?php 
+        foreach($song_list as $song) {
+        ?>
+          <tr>
+            <td>
+              <div class="songs-cover">
+                <img src="images/profile/<?php ?>perfil.png" alt="">
+              </div>
+            </td>
+            <td class="song-list" data-id="<?= $song['songId']; ?>" data-song="<?= $song['songName']; ?>" data-file="<?= $song['fileName'];?>"><?= $song['artist'].' - '.$song['songName']; ?></td>
+            <td>action</td>
+          </tr>
+        <?php } ?>
+        </table>
+      </div>
     </div>
     <?php } ?>
   </div>
