@@ -43,8 +43,16 @@
     // End to the login logic //
 
 
-    $requestUserData['user_id'] = $_SESSION['mp_UserId'];
-    $current_user = u_all_info('*', $requestUserData);
+    $requestData['user_id'] = $_SESSION['mp_UserId'];
+    isset($_GET['list']) ? $requestData['lid'] = $_GET['list'] : !isset($requestData['lid']);
 
-    $my_lists = listings('*', $requestUserData);
+    $current_user = u_all_info('*', $requestData);
+
+    $my_lists = listings('*', $requestData);
+
+    $song_list = song_list('*', $requestData);
+
+    // $my_list = json_encode($song_list);
+    
+    // var_dump($my_list);
 ?>

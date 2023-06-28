@@ -32,21 +32,20 @@ let isHeaderNavToggled = false;
 //functions
 function fetchData() {
   fetch("api/api.JSON")
-    .then(res => res.json())
-    .then(data => {
-      fetchedData = data;
-      for (let i = 0; i < fetchedData.length; i++) {
-        console.log(fetchedData[i].artist)
-        let listElement = document.createElement("li");
-        let titleElement = document.createElement("h3");
-        titleElement.innerText = fetchedData[i].artist;
-        titleElement.dataset.artistID = i;
-        listElement.appendChild(titleElement)
-        artistList.appendChild(listElement);
-      }
-      artistList.addEventListener('click', renderSongList)
+  .then(res => res.json())
+  .then(data => {
+    fetchedData = data;
+    for (let i = 0; i < fetchedData.length; i++) {
+      console.log(fetchedData[i].artist)
+      let listElement = document.createElement("li");
+      let titleElement = document.createElement("h3");
+      titleElement.innerText = fetchedData[i].artist;
+      titleElement.dataset.artistID = i;
+      listElement.appendChild(titleElement)
+      artistList.appendChild(listElement);
     }
-    )
+    artistList.addEventListener('click', renderSongList)
+  });
 }
 
 function renderSongList(e, arrToRender) {
@@ -105,7 +104,7 @@ function changeSong(e, songToPlay, queueIndex) {
     console.log(songToPlay.songName)
     sound.pause();
     sound.currentTime = 0;
-    sound = new Audio(`../audio/${songToPlay.fileName}`);
+    sound = new Audio(`audio/${songToPlay.fileName}`);
     activeSongQueueIndex = queueIndex;
     sound.volume = volumeNumber;
     sound.play();
@@ -115,7 +114,7 @@ function changeSong(e, songToPlay, queueIndex) {
 
   else if (!soundPlaying) {
     songPlayingNow = e.target.innerText;
-    sound = new Audio(`../audio/${e.target.dataset.fileName}`);
+    sound = new Audio(`audio/${e.target.dataset.fileName}`);
     activeSongQueueIndex = e.target.dataset.queueIndex;
     sound.volume = volumeNumber;
     sound.play();
@@ -124,7 +123,7 @@ function changeSong(e, songToPlay, queueIndex) {
   } else if (soundPlaying) {
     sound.pause();
     sound.currentTime = 0;
-    sound = new Audio(`../audio/${e.target.dataset.fileName}`);
+    sound = new Audio(`audio/${e.target.dataset.fileName}`);
     activeSongQueueIndex = e.target.dataset.queueIndex;
     sound.volume = volumeNumber;
     sound.play();
