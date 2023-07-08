@@ -46,6 +46,21 @@ CREATE TABLE IF NOT EXISTS song (
 -- VALUES (1, 1, '', 'Sergio Vargas', 'La Ventanita', 'Sergio Vargas - La ventanita.mp3', 'merengue', 0, 1, '2023-04-05 00:00:00'),
 -- 	   (1, 2, '', 'Dermot Kennedy', 'After Rain', 'Dermot Kennedy - After Rain.mp3', 'pop', 0, 1, '2023-04-05 00:00:00');
 
+CREATE TABLE IF NOT exists listings_relation (
+	lrid SERIAL PRIMARY KEY,
+    user_id INTEGER NULL,
+    list_id INTEGER NULL,
+    song_id INTEGER NULL,
+	list_date TIMESTAMP NULL
+);
+
+-- INSERT INTO listings_relation (user_id, list_id, song_id, list_date)
+-- VALUES (1, 1, 1, '2023-04-05 00:00:00'),
+-- 	   (1, 2, 2, '2023-05-05 00:00:00'),
+-- 	   (1, 2, 3, '2023-05-05 00:00:00');
+
+
+
 -- ALTER TABLE users  
 -- ADD COLUMN image varchar(255) NULL;
 

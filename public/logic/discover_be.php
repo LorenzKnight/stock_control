@@ -47,12 +47,10 @@
     isset($_GET['list']) ? $requestData['lid'] = $_GET['list'] : !isset($requestData['lid']);
 
     $current_user = u_all_info('*', $requestData);
-
     $my_lists = listings('*', $requestData);
+    $my_songs = list_details('*', $requestData);
+    // var_dump($my_songs);
 
-    $song_list = song_list('*', $requestData);
-
-    // $my_list = json_encode($song_list);
-    
-    // var_dump($my_list);
+    // $requestSongData = $my_songs['songId'];
+    // $song_list = song_list('*', $requestSongData);
 ?>

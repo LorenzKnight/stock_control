@@ -31,7 +31,7 @@
           <li><a href="#">Explore</a></li>
           <li><a href="#">Library</a></li>
           <li>
-            <input class="search-field" type="text" name="" id="">
+            <input type="text" name="searchField" id="search-field" class="search-field">
           </li>
           <li><a href="#">Upload</a></li>
           <li><a href="#">Settings</a></li>
@@ -74,7 +74,9 @@
         <h2><?= $my_lists[0]['listName']; ?></h2>
         <table class="music-list" cellspacing="0">
         <?php 
-        foreach($song_list as $song) {
+        $queueIndex = 0;
+        foreach($my_songs as $song_data) {
+          $song = song_list($song_data['songId']);
         ?>
           <tr>
             <td>
@@ -82,15 +84,28 @@
                 <img src="images/profile/<?php ?>perfil.png" alt="">
               </div>
             </td>
-            <td class="song-list" data-id="<?= $song['songId']; ?>" data-song="<?= $song['songName']; ?>" data-file="<?= $song['fileName'];?>"><?= $song['artist'].' - '.$song['songName']; ?></td>
-            <td>action</td>
+            <td class="song-list" data-queue-index="<?= $queueIndex; ?>" data-id="<?= $song['songId']; ?>" data-song="<?= $song['songName']; ?>" data-file="<?= $song['fileName'];?>"><?= $song['artist'].' - '.$song['songName']; ?></td>
+            <td width="5%">
+              <button class="actions-btn" id="actions-btn" data-menu="<?= $song['songId']; ?>">o o o</button>
+              <div class="song-actions" id="song-actions">
+                <ul>
+                  <li>Action 1</li>
+                  <li>Action 2</li>
+                  <li>Action 3</li>
+                </ul>
+              </div>
+            </td>
           </tr>
-        <?php } ?>
+        <?php 
+        $queueIndex++;
+        } 
+        ?>
         </table>
       </div>
     </div>
     <?php } ?>
   </div>
+
   <footer>
     <div class="container">
       <div class="music-player">
@@ -138,6 +153,7 @@
   </footer>
   
   <?php include("components/popup_bg.php"); ?>
+
 </body>
 
 </html>
