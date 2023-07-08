@@ -27,20 +27,46 @@ let musicList = document.querySelectorAll('.song-list');
 
 musicList.forEach((element)=>{
     element.addEventListener('click', getSongId);
+    var song = {
+        songId: element.getAttribute('data-id'),
+        songName: element.getAttribute('data-song'),
+        fileName: element.getAttribute('data-file'),
+        songIndex: element.getAttribute('data-queue-index')
+    };
+    songQueue.push(song);
 });
+
+var activeSongIndex = 0;
 
 function getSongId(event) {
     var song = {
         songId: event.target.getAttribute('data-id'),
         songName: event.target.getAttribute('data-song'),
-        fileName: event.target.getAttribute('data-file')
+        fileName: event.target.getAttribute('data-file'),
+        songIndex: event.target.getAttribute('data-queue-index')
     };
     console.log(song);
-    changeSong(event, song, null);
+    changeSong(event, song, song.songIndex);
 };
 
 function changeSong(e, songToPlay, queueIndex) {
     equalizer.classList.remove('hidden')
+    if(queueIndex == 0) {
+        // console.log(document.querySelector('.fa-step-forward'));
+        document.querySelector('.fa-step-forward').setAttribute('disabled', true);
+    } else {
+        // console.log(document.querySelector('.fa-step-forward'));
+        document.querySelector('.fa-step-forward').setAttribute('disabled', false);
+    }
+
+    if(queueIndex == songQueue.length - 1) {
+        // console.log(document.querySelector('.fa-step-forward'));
+        document.querySelector('.fa-step-forward').setAttribute('disabled', true);
+    } else {
+        // console.log(document.querySelector('.fa-step-forward'));
+        document.querySelector('.fa-step-forward').setAttribute('disabled', false);
+    }
+
     if (songToPlay) {
         console.log(songToPlay.songName)
         if (sound) {
@@ -48,7 +74,7 @@ function changeSong(e, songToPlay, queueIndex) {
             sound.currentTime = 0;
         }      
         sound = new Audio(`audio/${songToPlay.fileName}`);
-        activeSongQueueIndex = queueIndex;
+        activeSongIndex = queueIndex;
         sound.volume = volumeNumber;
         sound.play();
         soundPlaying = true;
@@ -56,7 +82,7 @@ function changeSong(e, songToPlay, queueIndex) {
     } else if (!soundPlaying) {
         songPlayingNow = e.target.innerText;
         sound = new Audio(`audio/${e.target.dataset.fileName}`);
-        activeSongQueueIndex = e.target.dataset.queueIndex;
+        activeSongIndex = e.target.dataset.queueIndex;
         sound.volume = volumeNumber;
         sound.play();
         soundPlaying = true;
@@ -65,7 +91,7 @@ function changeSong(e, songToPlay, queueIndex) {
         sound.pause();
         sound.currentTime = 0;
         sound = new Audio(`audio/${e.target.dataset.fileName}`);
-        activeSongQueueIndex = e.target.dataset.queueIndex;
+        activeSongIndex = e.target.dataset.queueIndex;
         sound.volume = volumeNumber;
         sound.play();
         soundPlaying = true;
@@ -74,8 +100,6 @@ function changeSong(e, songToPlay, queueIndex) {
 }
   
 function playerFunc(e) {
-    console.log(songList)
-    console.log(e.target.dataset.btn)
     if (soundPlaying) {
         switch (e.target.dataset.btn) {
         case "play":
@@ -95,19 +119,19 @@ function playerFunc(e) {
             equalizer.classList.add('hidden')
             break;
         case "backward":
-            if (activeSongQueueIndex > 0) {
-            activeSongQueueIndex--;
-            changeSong(e, songQueue[activeSongQueueIndex], activeSongQueueIndex)
+            if (activeSongIndex > 0) {
+                activeSongIndex--;
+                changeSong(e, songQueue[activeSongIndex], activeSongIndex)
             } else {
-            return
+                return
             }
             break;
         case "forward":
-            if (activeSongQueueIndex < songQueue.length - 1) {
-            activeSongQueueIndex++;
-            changeSong(e, songQueue[activeSongQueueIndex], activeSongQueueIndex)
+            if (activeSongIndex < songQueue.length - 1) {
+                activeSongIndex++;
+                changeSong(e, songQueue[activeSongIndex], activeSongIndex)
             } else {
-            return
+                return
             }
             break;
         }

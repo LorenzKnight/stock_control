@@ -258,7 +258,187 @@ function dbListingsColumnNames()
 	);
 }
 
-function song_list($columns = "*", $requestData = array(), array $options = []) : array
+// function song_list($columns = "*", $requestData = array(), array $options = []) : array
+// {
+//   if(empty($columns))
+// 	{
+// 		$columns = "*";
+// 	}
+
+// 	if($columns != "*" && !is_array($columns))
+// 	{
+// 		$columns = "*";
+// 	}
+
+// 	$queryColumnNames = "*";
+// 	if(is_array($columns))
+// 	{
+// 		$queryColumnNames = "";
+// 		$validColumns = dbMusicListColumnNames();
+
+// 		foreach ($columns as $column) 
+// 		{
+// 			if(in_array($column, $validColumns))
+// 			{
+// 				$queryColumnNames .= $column.",";
+// 			}
+// 		}
+
+// 		if(empty($queryColumnNames))
+// 		{
+// 			return [];
+// 		}
+		
+// 		$queryColumnNames = substr($queryColumnNames, 0, -1);
+// 	}
+
+//   $query = "select $queryColumnNames ";
+
+//   if(isset($options['count_query']) && $options['count_query'])
+// 	{
+// 		$query = "select count(*) ";
+// 	}
+
+// 	$query .= "from song ";
+
+//   // check other conditions
+// 	$conditions = "";
+
+
+
+//   if(isset($requestData['user_id']) && !empty($requestData['user_id']))
+// 	{
+// 		$conditions .= " and user_id = " . $requestData['user_id']. ' ';
+// 	}
+
+//   if(isset($requestData['lid']) && !empty($requestData['lid']))
+// 	{
+// 		$conditions .= " and list_id = " . $requestData['lid']. ' ';
+// 	}
+
+//   if(!empty($conditions))
+// 	{
+// 		$query .= " where " . substr($conditions, 5);
+// 	}
+
+//   // set order
+//   // Ex: read_log('*', $requestData, ['order' => 'log_id desc']);
+//   if(!isset($options['count_query']))
+//   {
+//     $query .= "order by ";
+//     if(isset($options['order']))
+//     {
+//       $query .= $options['order'];
+//     } 
+//     else
+//     {
+//       $query .= "sid asc";
+//     }
+//   }
+
+//   // set limit
+//   if(isset($options['limit']) && !empty($options['limit']))
+//   {
+//     $query .= " limit " . intval($options['limit']);
+//   }
+
+//   // ex. $suggestions = followers('*', $requestMyList, ['echo_query' => true]);
+//   if(isset($options['echo_query']) && $options['echo_query'])
+//   {
+//     echo "Q: ".$query."<br>\t\n";
+//   }
+
+//   $sql = pg_query($query);
+//   $totalRow_request = pg_num_rows($sql);
+  
+//   $res = [];
+
+//   if(isset($options['count_query'])) {
+//     $logcount = pg_fetch_assoc($sql);
+
+//     foreach($logcount as $columnName => $columnValue) {
+//       $res[$columnName] = $columnValue;
+//     }
+
+//     return $res;
+//   }
+
+//   if(!empty($totalRow_request))
+//   {
+//     $row_request = pg_fetch_all($sql);
+    
+//     foreach($row_request as $columnData)
+//     {  
+//       $res [] = [
+//         'songId'        => $columnData['sid'],
+//         'userId'        => $columnData['user_id'],
+//         'listId'        => $columnData['list_id'],
+//         'cover'         => $columnData['cover'],
+//         'artist'        => $columnData['artist'],
+//         'songName'      => $columnData['song_name'],
+//         'fileName'      => $columnData['file_name'],
+//         'gender'        => $columnData['gender'],
+//         'report'        => $columnData['report'],
+//         'public'        => $columnData['public'],
+//         'songDate'      => $columnData['song_date']
+//       ];
+//     }
+//   }
+
+//   return $res;
+// }
+
+// function dbMusicListColumnNames()
+// {
+// 	return array(
+// 		"sid", "user_id", "list_id", "cover", "artist", "song_name", "gender", "report", "public", "song_date"
+// 	);
+// }
+
+function song_list(int $songId) : array
+{
+  $query_songData = "SELECT * FROM song WHERE sid = $songId";
+  $sql = pg_query($query_songData);
+  $totalRow_request = pg_num_rows($sql);
+
+  $res = [
+    'postId'        => false,
+    'songId'        => false,
+    'userId'        => false,
+    'listId'        => false,
+    'cover'         => false,
+    'artist'        => false,
+    'songName'      => false,
+    'fileName'      => false,
+    'gender'        => false,
+    'report'        => false,
+    'public'        => false,
+    'songDate'      => false
+  ];
+
+  if(!empty($totalRow_request))
+  {
+    $columnData = pg_fetch_assoc($sql);
+
+    $res = [
+      'songId'        => $columnData['sid'],
+      'userId'        => $columnData['user_id'],
+      'listId'        => $columnData['list_id'],
+      'cover'         => $columnData['cover'],
+      'artist'        => $columnData['artist'],
+      'songName'      => $columnData['song_name'],
+      'fileName'      => $columnData['file_name'],
+      'gender'        => $columnData['gender'],
+      'report'        => $columnData['report'],
+      'public'        => $columnData['public'],
+      'songDate'      => $columnData['song_date']
+    ];
+  }
+
+  return $res;
+}
+
+function list_details($columns = "*", $requestData = array(), array $options = []) : array
 {
   if(empty($columns))
 	{
@@ -274,7 +454,7 @@ function song_list($columns = "*", $requestData = array(), array $options = []) 
 	if(is_array($columns))
 	{
 		$queryColumnNames = "";
-		$validColumns = dbMusicListColumnNames();
+		$validColumns = dbListDetailsColumnNames();
 
 		foreach ($columns as $column) 
 		{
@@ -299,11 +479,10 @@ function song_list($columns = "*", $requestData = array(), array $options = []) 
 		$query = "select count(*) ";
 	}
 
-	$query .= "from song ";
+	$query .= "from listings_relation ";
 
   // check other conditions
 	$conditions = "";
-
 
 
   if(isset($requestData['user_id']) && !empty($requestData['user_id']))
@@ -332,7 +511,7 @@ function song_list($columns = "*", $requestData = array(), array $options = []) 
     } 
     else
     {
-      $query .= "sid asc";
+      $query .= "lrid asc";
     }
   }
 
@@ -370,17 +549,11 @@ function song_list($columns = "*", $requestData = array(), array $options = []) 
     foreach($row_request as $columnData)
     {  
       $res [] = [
-        'songId'        => $columnData['sid'],
+        'lrId'          => $columnData['lrid'],
         'userId'        => $columnData['user_id'],
         'listId'        => $columnData['list_id'],
-        'cover'         => $columnData['cover'],
-        'artist'        => $columnData['artist'],
-        'songName'      => $columnData['song_name'],
-        'fileName'      => $columnData['file_name'],
-        'gender'        => $columnData['gender'],
-        'report'        => $columnData['report'],
-        'public'        => $columnData['public'],
-        'songDate'      => $columnData['song_date']
+        'songId'        => $columnData['song_id'],
+        'listDate'      => $columnData['list_date']
       ];
     }
   }
@@ -388,10 +561,10 @@ function song_list($columns = "*", $requestData = array(), array $options = []) 
   return $res;
 }
 
-function dbMusicListColumnNames()
+function dbListDetailsColumnNames()
 {
 	return array(
-		"sid", "user_id", "list_id", "cover", "artist", "song_name", "gender", "report", "public", "song_date"
+		"lrid", "user_id", "list_id", "song_id", "list_date"
 	);
 }
 

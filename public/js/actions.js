@@ -1,4 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const searchField = document.getElementById('search-field');
+
+    searchField.addEventListener('keyup', function() {
+        var res = searchField.value;
+        console.log(res);
+    });
 
     
 });
@@ -102,3 +108,25 @@ function getListId(event) {
     window.location.href = newUrl + (newUrl.includes("?") ? "&" : "?") + "list=" + list;
 
 };
+
+
+let menuBtn = document.querySelectorAll('.actions-btn');
+let menuList = document.querySelectorAll('.song-actions');
+
+menuBtn.forEach((element)=>{
+    element.addEventListener('click', pullDownMenu);
+});
+
+function pullDownMenu(event) {
+    // var menuList = event.target.getAttribute('data-menu');
+    // console.log(menuList);
+    menuList.style.display = 'block';
+};
+
+// menuBtn.addEventListener('click', function() {
+//   if (menuList.style.display === 'none') {
+//     menuList.style.display = 'block'; 
+//   } else {
+//     menuList.style.display = 'none';
+//   }
+// });
