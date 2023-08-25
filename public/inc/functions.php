@@ -258,142 +258,155 @@ function dbListingsColumnNames()
 	);
 }
 
-// function song_list($columns = "*", $requestData = array(), array $options = []) : array
-// {
-//   if(empty($columns))
-// 	{
-// 		$columns = "*";
-// 	}
+function song_data($columns = "*", $requestData = array(), array $options = []) : array
+{
+  if(empty($columns))
+	{
+		$columns = "*";
+	}
 
-// 	if($columns != "*" && !is_array($columns))
-// 	{
-// 		$columns = "*";
-// 	}
+	if($columns != "*" && !is_array($columns))
+	{
+		$columns = "*";
+	}
 
-// 	$queryColumnNames = "*";
-// 	if(is_array($columns))
-// 	{
-// 		$queryColumnNames = "";
-// 		$validColumns = dbMusicListColumnNames();
+	$queryColumnNames = "*";
+	if(is_array($columns))
+	{
+		$queryColumnNames = "";
+		$validColumns = dbMusicListColumnNames();
 
-// 		foreach ($columns as $column) 
-// 		{
-// 			if(in_array($column, $validColumns))
-// 			{
-// 				$queryColumnNames .= $column.",";
-// 			}
-// 		}
+		foreach ($columns as $column) 
+		{
+			if(in_array($column, $validColumns))
+			{
+				$queryColumnNames .= $column.",";
+			}
+		}
 
-// 		if(empty($queryColumnNames))
-// 		{
-// 			return [];
-// 		}
+		if(empty($queryColumnNames))
+		{
+			return [];
+		}
 		
-// 		$queryColumnNames = substr($queryColumnNames, 0, -1);
-// 	}
+		$queryColumnNames = substr($queryColumnNames, 0, -1);
+	}
 
-//   $query = "select $queryColumnNames ";
+  $query = "select $queryColumnNames ";
 
-//   if(isset($options['count_query']) && $options['count_query'])
-// 	{
-// 		$query = "select count(*) ";
-// 	}
+  if(isset($options['count_query']) && $options['count_query'])
+	{
+		$query = "select count(*) ";
+	}
 
-// 	$query .= "from song ";
+	$query .= "from song ";
 
-//   // check other conditions
-// 	$conditions = "";
+  // check other conditions
+	$conditions = "";
 
+  if(isset($requestData['sid']) && !empty($requestData['sid']))
+	{
+		$conditions .= " and sid in (" . $requestData['sid']. ") ";
+	}
 
+  if(isset($requestData['artist']) && !empty($requestData['artist']))
+	{
+		$conditions .= " and artist like '%" . $requestData['artist']. "%' ";
+	}
 
-//   if(isset($requestData['user_id']) && !empty($requestData['user_id']))
-// 	{
-// 		$conditions .= " and user_id = " . $requestData['user_id']. ' ';
-// 	}
+  if(isset($requestData['song_name']) && !empty($requestData['song_name']))
+	{
+		$conditions .= " and song_name like '%" . $requestData['song_name']. "%' ";
+	}
 
-//   if(isset($requestData['lid']) && !empty($requestData['lid']))
-// 	{
-// 		$conditions .= " and list_id = " . $requestData['lid']. ' ';
-// 	}
+  if(isset($requestData['user_id']) && !empty($requestData['user_id']))
+	{
+		$conditions .= " and user_id = " . $requestData['user_id']. ' ';
+	}
 
-//   if(!empty($conditions))
-// 	{
-// 		$query .= " where " . substr($conditions, 5);
-// 	}
+  if(isset($requestData['lid']) && !empty($requestData['lid']))
+	{
+		$conditions .= " and list_id = " . $requestData['lid']. ' ';
+	}
 
-//   // set order
-//   // Ex: read_log('*', $requestData, ['order' => 'log_id desc']);
-//   if(!isset($options['count_query']))
-//   {
-//     $query .= "order by ";
-//     if(isset($options['order']))
-//     {
-//       $query .= $options['order'];
-//     } 
-//     else
-//     {
-//       $query .= "sid asc";
-//     }
-//   }
+  if(!empty($conditions))
+	{
+		$query .= " where " . substr($conditions, 5);
+	}
 
-//   // set limit
-//   if(isset($options['limit']) && !empty($options['limit']))
-//   {
-//     $query .= " limit " . intval($options['limit']);
-//   }
+  // set order
+  // Ex: read_log('*', $requestData, ['order' => 'log_id desc']);
+  if(!isset($options['count_query']))
+  {
+    $query .= "order by ";
+    if(isset($options['order']))
+    {
+      $query .= $options['order'];
+    } 
+    else
+    {
+      $query .= "sid asc";
+    }
+  }
 
-//   // ex. $suggestions = followers('*', $requestMyList, ['echo_query' => true]);
-//   if(isset($options['echo_query']) && $options['echo_query'])
-//   {
-//     echo "Q: ".$query."<br>\t\n";
-//   }
+  // set limit
+  if(isset($options['limit']) && !empty($options['limit']))
+  {
+    $query .= " limit " . intval($options['limit']);
+  }
 
-//   $sql = pg_query($query);
-//   $totalRow_request = pg_num_rows($sql);
+  // ex. $suggestions = followers('*', $requestMyList, ['echo_query' => true]);
+  if(isset($options['echo_query']) && $options['echo_query'])
+  {
+    echo "Q: ".$query."<br>\t\n";
+  }
+
+  $sql = pg_query($query);
+  $totalRow_request = pg_num_rows($sql);
   
-//   $res = [];
+  $res = [];
 
-//   if(isset($options['count_query'])) {
-//     $logcount = pg_fetch_assoc($sql);
+  if(isset($options['count_query'])) {
+    $logcount = pg_fetch_assoc($sql);
 
-//     foreach($logcount as $columnName => $columnValue) {
-//       $res[$columnName] = $columnValue;
-//     }
+    foreach($logcount as $columnName => $columnValue) {
+      $res[$columnName] = $columnValue;
+    }
 
-//     return $res;
-//   }
+    return $res;
+  }
 
-//   if(!empty($totalRow_request))
-//   {
-//     $row_request = pg_fetch_all($sql);
+  if(!empty($totalRow_request))
+  {
+    $row_request = pg_fetch_all($sql);
     
-//     foreach($row_request as $columnData)
-//     {  
-//       $res [] = [
-//         'songId'        => $columnData['sid'],
-//         'userId'        => $columnData['user_id'],
-//         'listId'        => $columnData['list_id'],
-//         'cover'         => $columnData['cover'],
-//         'artist'        => $columnData['artist'],
-//         'songName'      => $columnData['song_name'],
-//         'fileName'      => $columnData['file_name'],
-//         'gender'        => $columnData['gender'],
-//         'report'        => $columnData['report'],
-//         'public'        => $columnData['public'],
-//         'songDate'      => $columnData['song_date']
-//       ];
-//     }
-//   }
+    foreach($row_request as $columnData)
+    {  
+      $res [] = [
+        'songId'        => $columnData['sid'],
+        'userId'        => $columnData['user_id'],
+        'listId'        => $columnData['list_id'],
+        'cover'         => $columnData['cover'],
+        'artist'        => $columnData['artist'],
+        'songName'      => $columnData['song_name'],
+        'fileName'      => $columnData['file_name'],
+        'gender'        => $columnData['gender'],
+        'report'        => $columnData['report'],
+        'public'        => $columnData['public'],
+        'songDate'      => $columnData['song_date']
+      ];
+    }
+  }
 
-//   return $res;
-// }
+  return $res;
+}
 
-// function dbMusicListColumnNames()
-// {
-// 	return array(
-// 		"sid", "user_id", "list_id", "cover", "artist", "song_name", "gender", "report", "public", "song_date"
-// 	);
-// }
+function dbMusicListColumnNames()
+{
+	return array(
+		"sid", "user_id", "list_id", "cover", "artist", "song_name", "gender", "report", "public", "song_date"
+	);
+}
 
 function song_list(int $songId) : array
 {

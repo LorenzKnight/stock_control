@@ -1,12 +1,100 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const searchField = document.getElementById('search-field');
+    let searchField = document.getElementById('search-field');
+    searchField.addEventListener('keyup', search);
 
-    searchField.addEventListener('keyup', function() {
-        var res = searchField.value;
-        console.log(res);
-    });
-
+    function search(event) {
+        var searching = event.target.value;
     
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var response = this.responseText;
+                response = JSON.parse(response);
+
+                console.log(response);
+
+                if (Array.isArray(response)) {
+                    // Generar la tabla HTML con los resultados
+                    var table = document.createElement('table');
+                    table.className = 'music-list';
+        
+                    response.forEach(function(song) {
+                        var row = document.createElement('tr');
+
+                        var songCoverCell = document.createElement('td');
+                            var songCoverDiv = document.createElement('div');
+                            songCoverDiv.className = 'songs-cover';
+
+                            var songCoverImg = document.createElement('img');
+                            songCoverImg.src = 'images/profile/' + song.cover + 'perfil.png';
+                            songCoverImg.alt = '';
+
+                            songCoverDiv.appendChild(songCoverImg);
+                            songCoverCell.appendChild(songCoverDiv);
+        
+
+                        var artistCell = document.createElement('td');
+                        artistCell.textContent = song.artist+' - '+song.songName;
+        
+                        var songNameCell = document.createElement('td');
+                            songNameCell.setAttribute('width', '5%');
+                            
+                            var actionsBtn = document.createElement('button');
+                            actionsBtn.className = 'actions-btn';
+                            actionsBtn.setAttribute('data-menu', song.songId);
+                            actionsBtn.textContent = 'o o o';
+                            songNameCell.appendChild(actionsBtn);
+
+                            var songActionsDiv = document.createElement('div');
+                            songActionsDiv.className = 'song-actions';
+                            songActionsDiv.setAttribute('id', 'song-actions');
+
+                            var ul = document.createElement('ul');
+                            var li1 = document.createElement('li');
+                            li1.textContent = 'Action 1';
+                            var li2 = document.createElement('li');
+                            li2.textContent = 'Action 2';
+                            var li3 = document.createElement('li');
+                            li3.textContent = 'Action 3';
+
+                            ul.appendChild(li1);
+                            ul.appendChild(li2);
+                            ul.appendChild(li3);
+                            songActionsDiv.appendChild(ul);
+
+                            songNameCell.appendChild(songActionsDiv);
+
+        
+                        row.appendChild(songCoverCell);
+                        row.appendChild(artistCell);
+                        row.appendChild(songNameCell);
+
+                        table.appendChild(row);
+                    });
+        
+                    // Agregar la tabla al elemento contenedor deseado
+                    var resultContainer = document.getElementById('list-content');
+                    resultContainer.innerHTML = '';
+                    resultContainer.appendChild(table);
+
+                    let menuBtn = document.querySelectorAll('.actions-btn');
+                    // let menuList = document.querySelectorAll('.song-actions');
+
+                    menuBtn.forEach((element)=>{
+                        element.addEventListener('click', pullDownMenu);
+                    });
+                } else {
+                    console.log('The response is not a valid array:', response);
+                }
+            }
+        };
+        var formData = new FormData(); 
+        formData.append('MM_insert', 'formsearch');
+        formData.append('searching', searching);
+    
+        xmlhttp.open("POST", "logic/discover_be.php", true);
+        xmlhttp.send(formData);
+    }
 });
 
 function login() {
@@ -27,32 +115,6 @@ function login() {
     let formular_front = document.getElementById('formular_front');
     formular_front.style.display = 'block';
 }
-
-// function createpost() {
-//     var picNames = document.querySelector('.post_foto_prev').getAttribute('data-pic-names');
-//     var postContent = document.getElementById('post_content').value;
-    
-//     var xmlhttp = new XMLHttpRequest();
-//     xmlhttp.onreadystatechange = function() {
-//         if (this.readyState == 4 && this.status == 200) {
-//             document.getElementById('content').innerHTML = this.responseText;
-//             initButtons();
-//             initSlides();
-            
-//             let bg_popup = document.getElementById('bg_popup');
-//             bg_popup.style.display = 'none';
-
-//             updatePostCount();
-//         }
-//     };
-//     var formData = new FormData(); 
-//     formData.append('MM_insert', 'formnewpost');
-//     formData.append('pic_name', picNames);
-//     formData.append('post_content', postContent);
-
-//     xmlhttp.open("POST", "logic/start_be.php", true);
-//     xmlhttp.send(formData);
-// }
 
 //Close popups
 document.addEventListener('mouseup', function(e) {
@@ -92,6 +154,37 @@ function close_popup() {
     // cameraModule.classList.remove('show_modal');
 }
 
+// function close_popup() {
+//     var elementsToClose = [
+//         document.getElementById('bg_popup'),
+//         document.getElementById('formular_front'),
+//         // Agrega aquí los demás elementos que deseas cerrar
+//         // document.getElementById('comment_fotos_popup'),
+//         // document.getElementById('post_form'),
+//         // ...
+//     ];
+
+//     var clickedInsideElement = false;
+
+//     document.addEventListener('click', function(event) {
+//         for (var i = 0; i < elementsToClose.length; i++) {
+//             if (elementsToClose[i].contains(event.target)) {
+//                 clickedInsideElement = true;
+//                 break;
+//             }
+//         }
+
+//         if (!clickedInsideElement) {
+//             for (var i = 0; i < elementsToClose.length; i++) {
+//                 elementsToClose[i].style.display = 'none';
+//             }
+//         }
+
+//         clickedInsideElement = false;
+//     });
+// }
+
+
 let listName = document.querySelectorAll('.list-name');
 
 listName.forEach((element)=>{
@@ -118,15 +211,17 @@ menuBtn.forEach((element)=>{
 });
 
 function pullDownMenu(event) {
-    // var menuList = event.target.getAttribute('data-menu');
-    // console.log(menuList);
-    menuList.style.display = 'block';
-};
+    let menuList = event.currentTarget.nextElementSibling;
+    
+    if (menuList.style.display === 'block') {
+        menuList.style.display = 'none';
+    } else {
+        let otherMenuList = document.querySelectorAll('.song-actions');
 
-// menuBtn.addEventListener('click', function() {
-//   if (menuList.style.display === 'none') {
-//     menuList.style.display = 'block'; 
-//   } else {
-//     menuList.style.display = 'none';
-//   }
-// });
+        otherMenuList.forEach((element)=>{
+            element.style.display = 'none';
+        });
+
+        menuList.style.display = 'block';
+    }
+};
