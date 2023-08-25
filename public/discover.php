@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="css/components.css">
   <script src="https://kit.fontawesome.com/5e05ee9535.js" crossorigin="anonymous"></script>
   <!-- <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet"> -->
-  <script defer src="js/discover.js"></script>
+  <script defer src="js/music_player.js"></script>
   <script defer src="js/actions.js"></script>
 </head>
 
@@ -49,7 +49,7 @@
     </div>
   </header>
 
-  <div class="container">
+  <div class="container" id="result-container">
     <?php if(!isset($_GET['list'])) { ?>
     <div class="wrapper-home">
       <div class="sidebar">
@@ -70,7 +70,7 @@
     </div>
     <?php } else { ?>
     <div class="wrapper-list" id="wrapper-list">
-      <div class="list-content">
+      <div class="list-content" id="list-content">
         <h2><?= $my_lists[0]['listName']; ?></h2>
         <table class="music-list" cellspacing="0">
         <?php 
