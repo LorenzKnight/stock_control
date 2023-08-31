@@ -120,6 +120,15 @@ nav ul.menu li a {
     margin-left: 10px;
 }
 
+.list-mini-cover img {
+    background-color: orangered;
+    width: 35px;
+    height: 35px;
+    border-radius: 2px;
+    object-fit: cover;
+    margin-left: 10px;
+}
+
 /* Estilos del footer */
 footer {
     width: 100%;

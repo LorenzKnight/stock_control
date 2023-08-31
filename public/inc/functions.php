@@ -581,6 +581,41 @@ function dbListDetailsColumnNames()
 	);
 }
 
+function insert_into($tableName, array $queryColumnNames = [], array $queryColumnValues = [], array $options = []) : bool
+{
+    if (count($queryColumnNames) !== count($queryColumnValues) || empty($queryColumnNames)) {
+      return false; 
+    }
+    $columnNames = implode(', ', $queryColumnNames);
+
+    $columnValues = [];
+    foreach ($queryColumnValues as $value) {
+        if (is_numeric($value)) {
+            $columnValues[] = $value;
+        } else {
+            $columnValues[] = "'" . pg_escape_string($value) . "'";
+        }
+    }
+    
+    $columnValues = implode(', ', $columnValues);
+
+    $query = "INSERT INTO $tableName ($columnNames) VALUES ($columnValues);";
+
+    if (isset($options['echo_query']) && $options['echo_query']) {
+      echo "Q: $query<br>\n";
+    }
+
+    $sql = pg_query($query);
+
+    return $sql !== false;
+}
+
+
+
+
+
+
+
 
 
 
@@ -988,22 +1023,6 @@ function dbCommentsColumnNames()
 	);
 }
 
-function add_rate(int $userId, int $stars, $postId = null)
-{
-  $requestUserData['user_id'] = $userId;
-
-  $rate      = u_all_info('*', $requestUserData);
-  $rateBonus = rate_bonus($stars, $rate['rate']);
-  $rateDate  = date("Y-m-d H:i:s");
-
-  $query = "INSERT INTO rates (user_id, stars, rate_bonus, post_id, rate_date) VALUES ($userId, $stars, $rateBonus, $postId, '$rateDate') RETURNING rate_bonus";
-	$sql = pg_query($query);
-
-  $ultimo = pg_fetch_row($sql);
-		
-	return $ultimo;
-}
-
 //update exemple
 function rate_update($requestData = array(), $rateData = array(), $rateData2 = array())
 {
@@ -1391,115 +1410,4 @@ function dbLogColumnNames()
 	);
 }
 
-// function remove_from_log(string $action, int $userId, int $myId)
-// {
-//   $query_removeLog = "DELETE FROM log WHERE action = $action AND from_userid = $userId AND to_userid = $myId";
-//   $sql = pg_query($query_removeLog);
-
-//   return $sql;
-// }
-
-function brind_post_preview($post_id) : array
-{
-  $query_postPreview = "SELECT * FROM media WHERE post_id = $post_id ORDER BY media_id DESC";
-  $sql = pg_query($query_postPreview);
-  $totalRow_postPreview = pg_num_rows($sql);
-
-  $res = [
-    'preview'    => false
-  ];
-
-  if (empty($totalRow_postPreview)) {
-    return $res;
-  }
-
-  $preview = pg_fetch_assoc($sql);
-  
-  $res = [
-    'preview'   => $preview['name']
-  ];
-
-  return $res;
-}
-
-function insert_log(int $fromUserid, string $action, int $objId, int $toUserid, $commentary = null, int $checked)
-{
-  // rate-post
-  // rate-comment
-  // comment
-  // answer-comment
-  // follow-request
-  // follow
-  
-  $log_date = date("Y-m-d H:i:s");
-
-  $query = "INSERT INTO log (from_userid, action, obj_id, to_userid, commentary, checked, log_date) VALUES ($fromUserid, '$action', $objId, $toUserid, '$commentary', $checked, '$log_date')";
-	$sql = pg_query($query);
-		
-	return $sql;
-}
-
-function cipherSimplifyer($my_followers) {
-  // $my_followers = $my_followers.toString();
-      
-  if(strlen($my_followers) >= 5 && strlen($my_followers) < 6)
-  {
-      return substr($my_followers, 0, 2).''._simplifierAfterPoint(substr($my_followers, 2, 5)).'K';
-  }
-  else if(strlen($my_followers) >= 6 && strlen($my_followers) < 7)
-  {
-      return substr($my_followers, 0, 3).''._simplifierAfterPoint(substr($my_followers, 3, 6)).'K';
-  }
-  else if(strlen($my_followers) >= 7 && strlen($my_followers) < 8)
-  {
-      return substr($my_followers, 0, 1).''._simplifierAfterPoint(substr($my_followers, 1, 7)).'M';
-  }
-  else if(strlen($my_followers) >= 8 && strlen($my_followers) < 9)
-  {
-      return substr($my_followers, 0, 2).''._simplifierAfterPoint(substr($my_followers, 1, 8)).'M';
-  }
-  else if(strlen($my_followers) >= 9 && strlen($my_followers) < 10)
-  {
-      return substr($my_followers, 0, 3).''._simplifierAfterPoint(substr($my_followers, 1, 9)).'M';
-  }
-  else
-  {
-      return $my_followers;
-  }
-}
-
-function _simplifierAfterPoint($my_followers) {
-
-  if(($my_followers > 99 && $my_followers < 200) || ($my_followers > 99999 && $my_followers < 200000)){
-      return '.'+1;
-  }
-  else if(($my_followers > 199 && $my_followers < 300) || ($my_followers > 199999 && $my_followers < 300000)){
-      return '.'+2;
-  }
-  else if(($my_followers > 299 && $my_followers < 400) || ($my_followers > 299999 && $my_followers < 400000)){
-      return '.'+3;
-  }
-  else if(($my_followers > 399 && $my_followers < 500) || ($my_followers > 399999 && $my_followers < 500000)){
-      return '.'+4;
-  }
-  else if(($my_followers > 499 && $my_followers < 600) || ($my_followers > 499999 && $my_followers < 600000)){
-      return '.'+5;
-  }
-  else if(($my_followers > 599 && $my_followers < 700) || ($my_followers > 599999 && $my_followers < 700000)){
-      return '.'+6;
-  }
-  else if(($my_followers > 699 && $my_followers < 800) || ($my_followers > 699999 && $my_followers < 800000)){
-      return '.'+7;
-  }
-  else if(($my_followers > 799 && $my_followers < 900) || ($my_followers > 799999 && $my_followers < 900000)){
-      return '.'+8;
-  }
-  else if(($my_followers > 899 && $my_followers < 1000) || ($my_followers > 899999 && $my_followers < 1000000)){
-      return '.'+9;
-  }
-  else
-  {
-      return '';
-  }
-}
 ?>

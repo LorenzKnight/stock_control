@@ -89,7 +89,7 @@
               <button class="actions-btn" id="actions-btn" data-menu="<?= $song['songId']; ?>">o o o</button>
               <div class="song-actions" id="song-actions">
                 <ul>
-                  <li>Action 1</li>
+                  <li class="addPlaylist" data-songId="<?= $song['songId']; ?>">Add playlist</li>
                   <li>Action 2</li>
                   <li>Action 3</li>
                 </ul>
@@ -153,6 +153,9 @@
   </footer>
   
   <?php include("components/popup_bg.php"); ?>
+  <div class="bg-overlayer" style="display: none;">
+
+  </div>
 
 </body>
 

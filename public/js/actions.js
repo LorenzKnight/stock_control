@@ -1,4 +1,42 @@
 document.addEventListener("DOMContentLoaded", () => {
+    let bgOverlayer = document.querySelector('.bg-overlayer');
+    bgOverlayer.addEventListener('click', function(){
+        closeMiniMenu()
+    });
+
+    let addPlaylist = document.querySelectorAll('.addPlaylist');
+    addPlaylist.forEach(function(element){
+        element.addEventListener('click', function(){
+            let songId = element.getAttribute('data-songId');
+            add_to_list(songId);
+        });
+    });
+
+    let playlistContainer = document.querySelectorAll('.playlistContainer');
+    playlistContainer.forEach(function(element){
+        element.addEventListener('click', function(){
+            let listId = element.getAttribute('data-playlistid');
+            let formular_songs_list = document.getElementById('formular_songs_list');
+            let songId = formular_songs_list.getAttribute('data-songId');
+            console.log(listId+', '+songId);
+
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var response = this.responseText;
+
+                }
+            }
+            var formData = new FormData(); 
+            formData.append('MM_insert', 'addToList');
+            formData.append('songId', songId);
+            formData.append('listId', listId);
+        
+            xmlhttp.open("POST", "logic/discover_be.php", true);
+            xmlhttp.send(formData);
+        });
+    })
+
     let searchField = document.getElementById('search-field');
     searchField.addEventListener('keyup', search);
 
@@ -34,7 +72,12 @@ document.addEventListener("DOMContentLoaded", () => {
         
 
                         var artistCell = document.createElement('td');
+                            artistCell.className = 'artist-container';
                         artistCell.textContent = song.artist+' - '+song.songName;
+                            artistCell.setAttribute('data-queue-index', 0);
+                            artistCell.setAttribute('data-id', song.songId);
+                            artistCell.setAttribute('data-song', song.songName);
+                            artistCell.setAttribute('data-file', song.fileName);
         
                         var songNameCell = document.createElement('td');
                             songNameCell.setAttribute('width', '5%');
@@ -71,6 +114,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         table.appendChild(row);
                     });
+
+                    let artistContainer = table.querySelectorAll('.artist-container');
+
+                    artistContainer.forEach((element)=>{
+                        element.addEventListener('click', getSongId);
+                    });
         
                     // Agregar la tabla al elemento contenedor deseado
                     var resultContainer = document.getElementById('list-content');
@@ -97,6 +146,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+function closeMiniMenu() {
+    let bgOverlayer = document.querySelector('.bg-overlayer');
+    let menuList = document.querySelectorAll('.song-actions');
+        
+    menuList.forEach((element)=>{
+        if(element.style.display === 'block') {
+            element.style.display = 'none';
+            bgOverlayer.style.display = 'none';
+        }
+    });
+}
+
 function login() {
     console.log('aqui');
 
@@ -116,6 +177,28 @@ function login() {
     formular_front.style.display = 'block';
 }
 
+function add_to_list(song) {
+    console.log('list '+song);
+
+    let bg_popup = document.getElementById('bg_popup');
+    bg_popup.style.display = 'block';
+
+    var displaySize = {
+        "width": "350px",
+        "height": "458px",
+        "margin": "5vh auto"
+    };
+     
+    var bgContainer = document.getElementById("bg_container");
+    Object.assign(bgContainer.style, displaySize);
+
+    let formular_songs_list = document.getElementById('formular_songs_list');
+    formular_songs_list.setAttribute('data-songId', song);
+    formular_songs_list.style.display = 'block';
+
+    closeMiniMenu()
+}
+
 //Close popups
 document.addEventListener('mouseup', function(e) {
     var bg_container = document.getElementById('bg_container');
@@ -129,61 +212,18 @@ function close_popup() {
     var bg_popup = document.getElementById('bg_popup');
     bg_popup.style.display = 'none';
 
+    var formular_songs_list = document.getElementById('formular_songs_list');
+    formular_songs_list.style.display = 'none';
+
     var formular_front = document.getElementById('formular_front');
     formular_front.style.display = 'none';
 
-    // var comment_fotos_popup = document.getElementById('comment_fotos_popup');
-    // comment_fotos_popup.style.display = 'none';
+    var formular_songs_list = document.getElementById('formular_songs_list');
+    formular_songs_list.style.display = 'none';
 
-    // var post_form = document.getElementById('post_form');
-    // post_form.style.display = 'none';
-
-    // var pending_menu = document.getElementById('pending_menu');
-    // pending_menu.style.display = 'none';
-
-    // var activity_list = document.getElementById('activity_list');
-    // activity_list.style.display = 'none';
-
-    // var followers_list = document.getElementById('followers_list');
-    // followers_list.style.display = 'none';
-
-    // var list_i_follow = document.getElementById('list_i_follow');
-    // list_i_follow.style.display = 'none';
-
-    // uploadFilesModule.classList.remove('show_modal');
-    // cameraModule.classList.remove('show_modal');
+    // let menuList = document.querySelectorAll('.song-actions');
+    // menuList.style.display = 'none';
 }
-
-// function close_popup() {
-//     var elementsToClose = [
-//         document.getElementById('bg_popup'),
-//         document.getElementById('formular_front'),
-//         // Agrega aquí los demás elementos que deseas cerrar
-//         // document.getElementById('comment_fotos_popup'),
-//         // document.getElementById('post_form'),
-//         // ...
-//     ];
-
-//     var clickedInsideElement = false;
-
-//     document.addEventListener('click', function(event) {
-//         for (var i = 0; i < elementsToClose.length; i++) {
-//             if (elementsToClose[i].contains(event.target)) {
-//                 clickedInsideElement = true;
-//                 break;
-//             }
-//         }
-
-//         if (!clickedInsideElement) {
-//             for (var i = 0; i < elementsToClose.length; i++) {
-//                 elementsToClose[i].style.display = 'none';
-//             }
-//         }
-
-//         clickedInsideElement = false;
-//     });
-// }
-
 
 let listName = document.querySelectorAll('.list-name');
 
@@ -212,9 +252,11 @@ menuBtn.forEach((element)=>{
 
 function pullDownMenu(event) {
     let menuList = event.currentTarget.nextElementSibling;
-    
+    let bgOverlayer = document.querySelector('.bg-overlayer');
+
     if (menuList.style.display === 'block') {
         menuList.style.display = 'none';
+        bgOverlayer.style.display = 'none';
     } else {
         let otherMenuList = document.querySelectorAll('.song-actions');
 
@@ -223,5 +265,6 @@ function pullDownMenu(event) {
         });
 
         menuList.style.display = 'block';
+        bgOverlayer.style.display = 'block';
     }
 };
