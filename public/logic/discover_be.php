@@ -63,11 +63,24 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formsearch")) {
             'songId'        => $song['songId'],
             'cover'         => $song['cover'],
             'artist'        => $song['artist'],
-            'songName'      => $song['songName']
+            'songName'      => $song['songName'],
+            'fileName'      => $song['fileName']
         ];
     }
 
     header('Content-Type: application/json');
     echo json_encode($results);
+}
+
+$requestData = [];
+$requestData['user_id'] = $_SESSION['mp_UserId'];
+$all_my_lists = listings('*', $requestData);
+
+if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "addToList")) {
+    $tableName = 'listings_relation';
+    $queryColumnNames = ['user_id', 'list_id', 'song_id', 'list_date'];
+    $queryColumnValues = [$_SESSION['mp_UserId'], $_POST['listId'], $_POST['songId'], date("Y-m-d H:i:s")];
+
+    $inserPlaylist = insert_into($tableName, $queryColumnNames, $queryColumnValues, ['echo_query' => true]);
 }
 ?>

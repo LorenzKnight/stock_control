@@ -39,6 +39,7 @@ musicList.forEach((element)=>{
 var activeSongIndex = 0;
 
 function getSongId(event) {
+    console.log('hej hej hej');
     var song = {
         songId: event.target.getAttribute('data-id'),
         songName: event.target.getAttribute('data-song'),
