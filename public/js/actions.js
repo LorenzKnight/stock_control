@@ -54,7 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (Array.isArray(response)) {
                     // Generar la tabla HTML con los resultados
                     var table = document.createElement('table');
-                    table.className = 'music-list';
+                        table.className = 'music-list';
+                        table.setAttribute('cellspacing', 0);
         
                     response.forEach(function(song) {
                         var row = document.createElement('tr');
@@ -94,7 +95,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                             var ul = document.createElement('ul');
                             var li1 = document.createElement('li');
-                            li1.textContent = 'Action 1';
+                            li1.textContent = 'Add playlist';
+                                li1.className = 'addPlaylist';
+                                li1.setAttribute('data-songId', song.songId);
                             var li2 = document.createElement('li');
                             li2.textContent = 'Action 2';
                             var li3 = document.createElement('li');
@@ -131,6 +134,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     menuBtn.forEach((element)=>{
                         element.addEventListener('click', pullDownMenu);
+                    });
+
+                    let addPlaylist = document.querySelectorAll('.addPlaylist');
+                    addPlaylist.forEach(function(element){
+                        element.addEventListener('click', function(){
+                            let songId = element.getAttribute('data-songId');
+                            add_to_list(songId);
+                        });
                     });
                 } else {
                     console.log('The response is not a valid array:', response);
@@ -178,7 +189,7 @@ function login() {
 }
 
 function add_to_list(song) {
-    console.log('list '+song);
+    console.log('songID '+song);
 
     let bg_popup = document.getElementById('bg_popup');
     bg_popup.style.display = 'block';

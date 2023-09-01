@@ -451,7 +451,7 @@ function song_list(int $songId) : array
   return $res;
 }
 
-function list_details($columns = "*", $requestData = array(), array $options = []) : array
+function playlist_details($columns = "*", $requestData = array(), array $options = []) : array
 {
   if(empty($columns))
 	{
@@ -492,7 +492,7 @@ function list_details($columns = "*", $requestData = array(), array $options = [
 		$query = "select count(*) ";
 	}
 
-	$query .= "from listings_relation ";
+	$query .= "from playlist ";
 
   // check other conditions
 	$conditions = "";
@@ -524,7 +524,7 @@ function list_details($columns = "*", $requestData = array(), array $options = [
     } 
     else
     {
-      $query .= "lrid asc";
+      $query .= "pid asc";
     }
   }
 
@@ -562,7 +562,7 @@ function list_details($columns = "*", $requestData = array(), array $options = [
     foreach($row_request as $columnData)
     {  
       $res [] = [
-        'lrId'          => $columnData['lrid'],
+        'pId'          => $columnData['pid'],
         'userId'        => $columnData['user_id'],
         'listId'        => $columnData['list_id'],
         'songId'        => $columnData['song_id'],
@@ -577,7 +577,7 @@ function list_details($columns = "*", $requestData = array(), array $options = [
 function dbListDetailsColumnNames()
 {
 	return array(
-		"lrid", "user_id", "list_id", "song_id", "list_date"
+		"pid", "user_id", "list_id", "song_id", "list_date"
 	);
 }
 
