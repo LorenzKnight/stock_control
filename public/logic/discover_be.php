@@ -48,7 +48,7 @@ isset($_GET['list']) ? $requestData['lid'] = $_GET['list'] : !isset($requestData
 
 $current_user = u_all_info('*', $requestData);
 $my_lists = listings('*', $requestData);
-$my_songs = list_details('*', $requestData);
+$my_songs = playlist_details('*', $requestData);
 
 
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formsearch")) {
@@ -77,10 +77,10 @@ $requestData['user_id'] = $_SESSION['mp_UserId'];
 $all_my_lists = listings('*', $requestData);
 
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "addToList")) {
-    $tableName = 'listings_relation';
-    $queryColumnNames = ['user_id', 'list_id', 'song_id', 'list_date'];
-    $queryColumnValues = [$_SESSION['mp_UserId'], $_POST['listId'], $_POST['songId'], date("Y-m-d H:i:s")];
+    $tableName          = 'playlist';
+    $queryColumnNames   = ['user_id', 'list_id', 'song_id', 'list_date'];
+    $queryColumnValues  = [$_SESSION['mp_UserId'], $_POST['listId'], $_POST['songId'], date("Y-m-d H:i:s")];
 
-    $inserPlaylist = insert_into($tableName, $queryColumnNames, $queryColumnValues, ['echo_query' => true]);
+    $inserPlaylist = insert_into($tableName, $queryColumnNames, $queryColumnValues);
 }
 ?>
