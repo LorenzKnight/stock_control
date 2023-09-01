@@ -24,7 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
             xmlhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
                     var response = this.responseText;
-
+                    console.log(response);
+                    close_popup()
                 }
             }
             var formData = new FormData(); 
@@ -130,7 +131,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     resultContainer.appendChild(table);
 
                     let menuBtn = document.querySelectorAll('.actions-btn');
-                    // let menuList = document.querySelectorAll('.song-actions');
 
                     menuBtn.forEach((element)=>{
                         element.addEventListener('click', pullDownMenu);
@@ -231,9 +231,6 @@ function close_popup() {
 
     var formular_songs_list = document.getElementById('formular_songs_list');
     formular_songs_list.style.display = 'none';
-
-    // let menuList = document.querySelectorAll('.song-actions');
-    // menuList.style.display = 'none';
 }
 
 let listName = document.querySelectorAll('.list-name');

@@ -109,14 +109,6 @@
   <footer>
     <div class="container">
       <div class="music-player">
-        <!-- Equalizer animation -->
-        <div class="equalizer-container" id="equalizer">
-          <div class="bar1"></div>
-          <div class="bar2"></div>
-          <div class="bar3"></div>
-          <div class="bar4"></div>
-          <div class="bar5"></div>
-        </div>
         <!-- Music player controls -->
         <div class="music-player-btns">
           <ul class="player-btns" id="player-btns">
@@ -147,6 +139,14 @@
           <div class="playing-now">
             <span class="playing-now-text" id="playing-now">No music is played!</span>
           </div>
+        </div>
+        <!-- Equalizer animation -->
+        <div class="equalizer-container hidden" id="equalizer">
+          <div class="bar1"></div>
+          <div class="bar2"></div>
+          <div class="bar3"></div>
+          <div class="bar4"></div>
+          <div class="bar5"></div>
         </div>
       </div>
     </div>
