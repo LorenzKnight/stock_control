@@ -21,7 +21,7 @@ $artist = isset($_POST["artist"]) ? $_POST["artist"] : "Unknown";
 $title = isset($_POST["title"]) ? $_POST["title"] : "No title";
 $gender = 'test';
 $report = 0;
-$public = 1;
+$public = $_POST["public"];
 $date = date("Y-m-d H:i:s");
 
 for ($i = 0; $i < count($files["name"]); $i++) {
