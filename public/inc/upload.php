@@ -77,9 +77,10 @@ for ($i = 0; $i < count($files["name"]); $i++) {
     ];
 
     if (insert_into("song", $queryColumnNames, $queryColumnValues)) {
-        echo "File uploaded successfully: " . $musicName . "<br>";
+        echo json_encode(["success" => true, "message" => "File uploaded successfully: " . $musicName]);
     } else {
-        echo "Failed to upload file: " . $musicName . "<br>";
+        echo json_encode(["success" => false, "message" => "Failed to upload file: " . $musicName]);
     }
+    exit();
 }
 ?>
