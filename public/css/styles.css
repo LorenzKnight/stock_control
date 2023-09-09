@@ -391,9 +391,54 @@ footer {
     }
 }
 
-/* .none {
-    display: none !important;
+.drop-area {
+    width: 100%;
+    border: 1px solid #CCC;
+    border-radius: 4px;
+    color: #999;
+    font-size: 0.8em;
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    padding: 100px 10px;
+}
+
+
+/* .file-input-container input[type="file"] {
+    display: none;
+}
+
+.file-input-container label.custom-file-label {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.file-input-container label.custom-file-label:hover {
+    background-color: #0056b3;
+}
+
+.file-input-container label.custom-file-label:active {
+    background-color: #003d80;
 } */
+
+#status-message {
+    display: none; /* Inicialmente oculto */
+    position: fixed; /* Se fija en la posición sin importar el scroll */
+    top: 10px; /* Distancia desde arriba */
+    left: 50%; /* Centrarlo horizontalmente */
+    transform: translateX(-50%); /* Centrarlo horizontalmente */
+    padding: 15px 20px; /* Espaciado interno */
+    background-color: #72c976; /* Color de fondo oscuro */
+    color: #fff; /* Color de texto blanco */
+    border-radius: 5px; /* Bordes redondeados */
+    z-index: 1000; /* Asegurarse de que aparezca por encima de otros elementos */
+    opacity: 0.9; /* Un poco transparente */
+    transition: opacity 0.4s; /* Efecto de desvanecimiento */
+}
 
 .hidden {
     display: none !important;
