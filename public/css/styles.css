@@ -76,6 +76,7 @@ nav ul.menu li a {
     display: flex;
     justify-content: center;
 }
+
 /* Estilos del cuerpo */
 .sidebar {
     background-color: #fff;
@@ -391,8 +392,18 @@ footer {
     }
 }
 
+.wrapper-home form {
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 100%;
+    width: 50%;
+}
+
 .drop-area {
-    width: 100%;
+    width: 98%;
     border: 1px solid #CCC;
     border-radius: 4px;
     color: #999;
@@ -400,7 +411,7 @@ footer {
     display: flex;
     text-align: center;
     flex-direction: column;
-    padding: 100px 10px;
+    padding: 150px 1%;
 }
 
 
@@ -425,7 +436,7 @@ footer {
     background-color: #003d80;
 } */
 
-#status-message {
+.status-message {
     display: none; /* Inicialmente oculto */
     position: fixed; /* Se fija en la posición sin importar el scroll */
     top: 10px; /* Distancia desde arriba */
@@ -438,6 +449,16 @@ footer {
     z-index: 1000; /* Asegurarse de que aparezca por encima de otros elementos */
     opacity: 0.9; /* Un poco transparente */
     transition: opacity 0.4s; /* Efecto de desvanecimiento */
+}
+
+.table-form {
+    width: 100%;
+    margin: 0 auto;
+    font-size: 0.8em;
+}
+
+.table-form td {
+    padding: 5px;
 }
 
 .hidden {
