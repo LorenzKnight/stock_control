@@ -1,4 +1,5 @@
-<?php require_once('logic/discover_be.php');?>
+<?php require_once('logic/core.php'); ?>
+
 <!DOCTYPE html>
 <html class="no-js" lang="sw">
 
@@ -12,14 +13,14 @@
   <link rel="stylesheet" href="css/components.css">
   <script src="https://kit.fontawesome.com/5e05ee9535.js" crossorigin="anonymous"></script>
   <!-- <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet"> -->
-  <script defer src="js/music_player.js"></script>
-  <script defer src="js/actions.js"></script>
+  <!-- <script defer src="js/actions.js"></script> -->
+  <script defer src="js/loader.js"></script>
 </head>
 
 <body>
   <?php include("components/header.php"); ?>
 
-  <div class="container" id="result-container">
+  <div class="container hidden" id="result-container">
     <?php if(!isset($_GET['list'])) { ?>
     <div class="wrapper-home">
       <div class="sidebar">
@@ -76,6 +77,54 @@
     <?php } ?>
   </div>
 
+  <div class="container hidden" id="uploader-container">
+    <div class="wrapper-home" style="background-color: #fff;">
+      <form action="inc/upload.php" method="post" enctype="multipart/form-data">
+        <br>
+        <div class="drop-area" id="drop-area">
+          <p>Arrastra y suelta tus archivos aquí o haz clic para seleccionarlos.</p>
+          <div><input type="file" name="file_name[]" id="file_name" multiple required></div>
+          <!-- <div class="file-input-container">
+            <label for="fileInput" class="custom-file-label">Seleccionar archivos</label>
+            <input type="file" name="file_name[]" id="fileInput" multiple required>
+          </div> -->
+        </div>
+        <br>
+        <table class="table-form" cellspacing="0">
+          <tr>
+            <td align="right">
+              <label for="artist">Artista:</label><br>
+              <input type="text" name="artist" id="artist" required>
+            </td>
+            <td align="left">
+              <label for="title">Título:</label><br>
+              <input type="text" name="title" id="title" required>
+            </td>
+          </tr>
+          <tr>
+            <td align="right">
+              <input type="radio" id="public" name="public" value="1" checked>
+              <label for="public">Public</label>
+            </td>
+            <td align="left">
+              <input type="radio" id="private" name="public" value="0">
+              <label for="private">Private</label>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" align="center">
+                <input type="submit" value="Subir Archivos">
+            </td>
+          </tr>
+        </table>
+
+          
+      </form>
+    </div>
+  </div>
+
+  <div class="status-message" id="status-message"></div>
+
   <footer>
     <div class="container">
       <div class="music-player">
@@ -127,6 +176,21 @@
 
   </div>
 
+  <script>
+    // Función para mostrar la sección basada en la URL
+    function showSectionBasedOnURL() {
+        let section = 'result-container';
+
+        // Si la URL termina en "/upload", cambia la sección a mostrar
+        if (window.location.pathname.endsWith('/uploader')) {
+            section = 'uploader-container';
+        }
+
+        document.getElementById(section).style.display = 'block';
+    }
+
+    showSectionBasedOnURL();
+  </script>
 </body>
 
 </html>

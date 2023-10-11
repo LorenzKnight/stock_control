@@ -1,7 +1,4 @@
 <?php
-require_once __DIR__ .'/../connections/conexion.php';
-// include(__DIR__ .'/../inc/security.php');
-
 // The login logic //
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formsignin")) {
     if (!isset($_SESSION)) {
