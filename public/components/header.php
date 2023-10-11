@@ -7,13 +7,13 @@
                     <h3>Music Player</h3>
                     </div>
                 </li>
-                <li><a href="#">Home</a></li>
+                <li><a href="discover">Home</a></li>
                 <li><a href="#">Explore</a></li>
                 <li><a href="#">Library</a></li>
                 <li>
                     <input type="text" name="searchField" id="search-field" class="search-field">
                 </li>
-                <li><a href="uploader.php">Upload</a></li>
+                <li><a href="uploader">Upload</a></li>
                 <li><a href="#">Settings</a></li>
                 <?php if($_SESSION['mp_UserId'] != '') { ?>
                 <li>

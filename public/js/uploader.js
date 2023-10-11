@@ -3,7 +3,7 @@ document.querySelector('form').addEventListener('submit', function(e) {
 
     let formData = new FormData(this);
 
-    fetch('inc/upload.php', {
+    fetch('../inc/upload.php', {
         method: 'POST',
         body: formData
     })
