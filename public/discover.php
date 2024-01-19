@@ -105,22 +105,28 @@
                 <table class="table-form" cellspacing="0">
                 <tr>
                     <td align="right">
-                    <label for="artist">Artista:</label><br>
-                    <input type="text" name="artist" id="artist" required>
+                        <label for="artist">Artista:</label><br>
+                        <input type="text" name="artist" id="artist" required>
                     </td>
                     <td align="left">
-                    <label for="title">Título:</label><br>
-                    <input type="text" name="title" id="title" required>
+                        <label for="title">Título:</label><br>
+                        <input type="text" name="title" id="title" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <label for="gender">Gender:</label><br>
+                        <input type="text" name="gender" id="gender" required>
                     </td>
                 </tr>
                 <tr>
                     <td align="right">
-                    <input type="radio" id="public" name="public" value="1" checked>
-                    <label for="public">Public</label>
+                        <input type="radio" id="public" name="public" value="1" checked>
+                        <label for="public">Public</label>
                     </td>
                     <td align="left">
-                    <input type="radio" id="private" name="public" value="0">
-                    <label for="private">Private</label>
+                        <input type="radio" id="private" name="public" value="0">
+                        <label for="private">Private</label>
                     </td>
                 </tr>
                 <tr>
