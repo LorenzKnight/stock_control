@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let searchField = document.getElementById('search-field');
     searchField.addEventListener('keyup', search);
-
+console.log(searchField);
     function search(event) {
         var searching = event.target.value;
     
@@ -233,17 +233,18 @@ function close_popup() {
     formular_songs_list.style.display = 'none';
 }
 
-let listName = document.querySelectorAll('.list-name');
+let listName = document.querySelectorAll('.list');
 
 listName.forEach((element)=>{
     element.addEventListener('click', getListId);
 });
 
 function getListId(event) {
-    var list = event.target.getAttribute('data-list');
+    var list = event.target.closest('.list').getAttribute('data-list');
     console.log(list);
 
     var urlActual = window.location.href;
+    // si hay un # eliminalo de lo contrario no haga nada
     var newUrl = urlActual.replace(/(\?|\&)list=[^&]+/, ""); // Elimina el parámetro existente ?list=...
 
     window.location.href = newUrl + (newUrl.includes("?") ? "&" : "?") + "list=" + list;

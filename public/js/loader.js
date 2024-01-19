@@ -13,7 +13,7 @@ loadScript("js/music_player.js")
         return loadScript("js/actions.js");
     })
     .then(() => {
-    return loadScript("js/uploader.js");
+        return loadScript("js/uploader.js");
     })
     // .then(() => {
     //     return loadScript("js/extra_functions.js");

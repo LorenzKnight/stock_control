@@ -12,7 +12,7 @@ if (!isset($_FILES["file_name"])) {
 
 $files = $_FILES["file_name"];
 $allowedExtensions = ["mp3", "wma", "png"];
-$maxFileSize = 5242880; // 5 MB (este es solo un ejemplo, puedes ajustarlo según tus necesidades)
+$maxFileSize = 90242880; // 90 MB (este es solo un ejemplo, puedes ajustarlo según tus necesidades)
 
 
 $userId = $_SESSION['mp_UserId'];
