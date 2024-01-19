@@ -581,28 +581,24 @@ function dbListDetailsColumnNames()
 	);
 }
 
-function insert_into($tableName, array $queryColumnNames = [], array $queryColumnValues = [], array $options = []) : bool
+function insert_into($tableName, array $queryData = [], array $options = []): bool
 {
-    if (count($queryColumnNames) !== count($queryColumnValues) || empty($queryColumnNames)) {
-      return false; 
+    if (empty($queryData)) {
+        return false;
     }
-    $columnNames = implode(', ', $queryColumnNames);
 
-    $columnValues = [];
-    foreach ($queryColumnValues as $value) {
-        if (is_numeric($value)) {
-            $columnValues[] = $value;
-        } else {
-            $columnValues[] = "'" . pg_escape_string($value) . "'";
-        }
-    }
+    $columnNames = implode(', ', array_keys($queryData));
+    
+    $columnValues = array_map(function($value) {
+        return is_numeric($value) ? $value : "'" . pg_escape_string($value) . "'";
+    }, array_values($queryData));
     
     $columnValues = implode(', ', $columnValues);
 
     $query = "INSERT INTO $tableName ($columnNames) VALUES ($columnValues);";
 
     if (isset($options['echo_query']) && $options['echo_query']) {
-      echo "Q: $query<br>\n";
+        echo "Q: $query<br>\n";
     }
 
     $sql = pg_query($query);

@@ -19,7 +19,7 @@ $userId = $_SESSION['mp_UserId'];
 $listId = null;
 $artist = isset($_POST["artist"]) ? $_POST["artist"] : "Unknown";
 $title = isset($_POST["title"]) ? $_POST["title"] : "No title";
-$gender = 'test';
+$gender = isset($_POST["gender"]) ? $_POST["gender"] : "Unknown";
 $report = 0;
 $public = $_POST["public"];
 $date = date("Y-m-d H:i:s");
@@ -54,29 +54,19 @@ for ($i = 0; $i < count($files["name"]); $i++) {
     $musicName = pg_escape_string($musicName);
     $musicFileName = pg_escape_string($files["name"][$i]);
 
-    $queryColumnNames = [
-        "user_id",
-        "artist",
-        "song_name",
-        "file_name",
-        "gender",
-        "report",
-        "public",
-        "song_date"
+    $queryData = [
+        "user_id"       => $userId,
+        // "list_id"       => $listId,
+        "artist"        => $artist,
+        "song_name"     => $title,
+        "file_name"     => $musicName,
+        "gender"        => $gender,
+        "report"        => $report,
+        "public"        => $public,
+        "song_date"     => $date
     ];
 
-    $queryColumnValues = [
-        $userId,
-        $artist,
-        $title,
-        $musicName,
-        $gender,
-        $report,
-        $public,
-        $date
-    ];
-
-    if (insert_into("song", $queryColumnNames, $queryColumnValues)) {
+    if (insert_into("song", $queryData)) {
         echo json_encode(["success" => true, "message" => "File uploaded successfully: " . $musicName]);
     } else {
         echo json_encode(["success" => false, "message" => "Failed to upload file: " . $musicName]);
