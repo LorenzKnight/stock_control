@@ -244,7 +244,7 @@ function getListId(event) {
     console.log(list);
 
     var urlActual = window.location.href;
-    // si hay un # eliminalo de lo contrario no haga nada
+    urlActual = urlActual.replace(/#(?=\?)/, "");
     var newUrl = urlActual.replace(/(\?|\&)list=[^&]+/, ""); // Elimina el parámetro existente ?list=...
 
     window.location.href = newUrl + (newUrl.includes("?") ? "&" : "?") + "list=" + list;
