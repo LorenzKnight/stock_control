@@ -1,7 +1,8 @@
 <?php
 // phpinfo();
 ?>
-<?php require_once('logic/core.php'); ?>
+<?php require_once('logic/discover_be.php'); ?>
+
 
 <!DOCTYPE html>
 <html class="no-js" lang="sw">
@@ -14,10 +15,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/components.css">
-    <script src="https://kit.fontawesome.com/5e05ee9535.js" crossorigin="anonymous"></script>
-    <!-- <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet"> -->
-    <!-- <script defer src="js/actions.js"></script> -->
-    <script defer src="js/loader.js"></script>
+    <script src="https://kit.fontawesome.com/5e05ee9535.js" crossorigin="anonymous"></script> <!-- iconos del reproductor -->
+    <script defer src="js/music_player.js"></script>
+	<script defer src="js/actions.js"></script>
+	<script defer src="js/uploader.js"></script>
 </head>
 
 <body>
@@ -31,7 +32,7 @@
             <div class="sidebar">
             </div>
             <div class="main-content" id="main-content">
-            <?php 
+            <?php
             foreach ($my_lists as $list) {
             ?>
                 <div class="list" data-list="<?= htmlspecialchars($list['listingsId'], ENT_QUOTES, 'UTF-8'); ?>">

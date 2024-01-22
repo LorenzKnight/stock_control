@@ -127,7 +127,7 @@ function u_all_info($columns = "*", $requestData = array(), array $options = [])
 function dbUsersColumnNames()
 {
 	return array(
-		"user_id", "name", "surname", "email", "username", "password", "image", "rate", "job", "verified", "birthday", "signup_date", "rank", "status", "status_by_admin"
+		"user_id", "name", "surname", "email", "username", "password", "image", "verified", "birthday", "signup_date", "rank", "status", "status_by_admin"
 	);
 }
 
