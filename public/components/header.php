@@ -11,11 +11,12 @@
                 <li><a href="#">Explore</a></li>
                 <li><a href="#">Library</a></li>
                 <li>
-                    <input type="text" name="searchField" id="search-field" class="search-field">
+                    <input type="text" name="searchField" id="searchField" class="search-field">
                 </li>
                 <li><a href="uploader">Upload</a></li>
                 <li><a href="#">Settings</a></li>
-                <?php if($_SESSION['mp_UserId'] != '') { ?>
+                <?php if(isset($_SESSION['mp_UserId']) && $_SESSION['mp_UserId'] != null) { ?>
+                <li><a href="logout.php">Logout</a></li>
                 <li>
                     <div class="profile">
                     <img src="images/profile/<?php ?>perfil.png" alt="">

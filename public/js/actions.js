@@ -38,12 +38,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     })
 
-    let searchField = document.getElementById('search-field');
+    let searchField = document.getElementById('searchField');
     searchField.addEventListener('keyup', search);
-console.log(searchField);
+
     function search(event) {
         var searching = event.target.value;
-    
+        console.log(searching);
+        
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -245,12 +246,11 @@ function getListId(event) {
 
     var urlActual = window.location.href;
     urlActual = urlActual.replace(/#(?=\?)/, "");
-    var newUrl = urlActual.replace(/(\?|\&)list=[^&]+/, ""); // Elimina el parámetro existente ?list=...
+    var newUrl = urlActual.replace(/(\?|\&)list=[^&]+/, "");
 
     window.location.href = newUrl + (newUrl.includes("?") ? "&" : "?") + "list=" + list;
 
 };
-
 
 let menuBtn = document.querySelectorAll('.actions-btn');
 let menuList = document.querySelectorAll('.song-actions');

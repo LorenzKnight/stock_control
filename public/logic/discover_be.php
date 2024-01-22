@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ .'/../connections/conexion.php';
+
 // The login logic //
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formsignin")) {
     if (!isset($_SESSION)) {
@@ -40,7 +42,7 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formsignin")) {
 // End to the login logic //
 
 
-$requestData['user_id'] = $_SESSION['mp_UserId'];
+!isset($_SESSION['mp_UserId']) ? $requestData['user_id'] = null : $requestData['user_id'] = $_SESSION['mp_UserId'];
 isset($_GET['list']) ? $requestData['lid'] = $_GET['list'] : !isset($requestData['lid']);
 
 $current_user = u_all_info('*', $requestData);
@@ -49,10 +51,10 @@ $my_songs = playlist_details('*', $requestData);
 
 
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formsearch")) {
-    $requestSearch['artist'] = $_POST['searching'];
+    $requestSearch['artist'] = pg_escape_string($_POST['searching']);
     
     $my_songs = song_data('*', $requestSearch);
-
+    
     $results = [];
 
     foreach($my_songs as $song) {
@@ -70,7 +72,7 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formsearch")) {
 }
 
 $requestData = [];
-$requestData['user_id'] = $_SESSION['mp_UserId'];
+$requestData['user_id'] = null ? $_SESSION['mp_UserId'] : null;
 $all_my_lists = listings('*', $requestData);
 
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "addToList")) {
