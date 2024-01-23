@@ -29,60 +29,59 @@
         if(!isset($_GET['list'])) {
         ?>
         <div class="wrapper-home">
-            <div class="sidebar">
-            </div>
-            <div class="main-content" id="main-content">
-            <?php
-            foreach ($my_lists as $list) {
-            ?>
-                <div class="list" data-list="<?= htmlspecialchars($list['listingsId'], ENT_QUOTES, 'UTF-8'); ?>">
-                    <div class="list-cover"></div>
-                    <div class="list-info">
-                        <div class="list-name"><?= htmlspecialchars($list['listName'], ENT_QUOTES, 'UTF-8'); ?></div>
-                        <?= htmlspecialchars($current_user['name'].' '.$current_user['surname'], ENT_QUOTES, 'UTF-8'); ?>
-                    </div>
-                </div>
-            <?php
-            }
-            ?>
-            </div>
+				<div class="sidebar" id="sidebar">
+				</div>
+				<div class="main-content" id="main-content">
+				<?php
+				foreach ($my_lists as $list) {
+				?>
+					<div class="list" data-list="<?= htmlspecialchars($list['listingsId'], ENT_QUOTES, 'UTF-8'); ?>">
+						<div class="list-cover"></div>
+						<div class="list-info">
+							<div class="list-name"><?= htmlspecialchars($list['listName'], ENT_QUOTES, 'UTF-8'); ?></div>
+							<?= htmlspecialchars($current_user['name'].' '.$current_user['surname'], ENT_QUOTES, 'UTF-8'); ?>
+						</div>
+					</div>
+				<?php
+				}
+				?>
+				</div>
         </div>
         <?php
         } else {
-            // var_dump($my_lists);
         ?>
         <div class="wrapper-list" id="wrapper-list">
             <div class="list-content" id="list-content">
-            <h2><?= $my_lists[0]['listName']; ?></h2>
-            <table class="music-list" cellspacing="0">
-            <?php 
-            $queueIndex = 0;
-            foreach($my_songs as $song_data) {
-                $song = song_list($song_data['songId']);
-            ?>
-                <tr>
-                <td>
-                    <div class="songs-cover">
-                    <img src="images/profile/<?php ?>perfil.png" alt="">
-                    </div>
-                </td>
-                <td class="song-list" data-queue-index="<?= $queueIndex; ?>" data-id="<?= $song['songId']; ?>" data-song="<?= $song['songName']; ?>" data-file="<?= $song['fileName'];?>"><?= $song['artist'].' - '.$song['songName']; ?></td>
-                <td width="5%">
-                    <button class="actions-btn" id="actions-btn" data-menu="<?= $song['songId']; ?>">o o o</button>
-                    <div class="song-actions" id="song-actions">
-                    <ul>
-                        <li class="addPlaylist" data-songId="<?= $song['songId']; ?>">Add playlist</li>
-                        <li>Action 2</li>
-                        <li>Action 3</li>
-                    </ul>
-                    </div>
-                </td>
-                </tr>
-            <?php 
-            $queueIndex++;
-            } 
-            ?>
-            </table>
+				<h2><?= $my_lists[0]['listName']; ?></h2>
+				<table class="music-list" cellspacing="0">
+				<?php 
+				$queueIndex = 0;
+				foreach($my_songs as $song_data) {
+					$song = song_list($song_data['songId']);
+				?>
+					<tr>
+					<td>
+						<div class="songs-cover">
+						<img src="images/profile/<?php ?>perfil.png" alt="">
+						</div>
+					</td>
+					<td class="song-list" data-queue-index="<?= $queueIndex; ?>" data-id="<?= $song['songId']; ?>" data-song="<?= $song['songName']; ?>" data-file="<?= $song['fileName'];?>"><?= $song['artist'].' - '.$song['songName']; ?></td>
+					<td width="5%">
+						<button class="actions-btn" id="actions-btn" data-menu="<?= $song['songId']; ?>">o o o</button>
+						<div class="song-actions" id="song-actions">
+						<ul>
+							<li class="addPlaylist" data-songId="<?= $song['songId']; ?>">Add playlist</li>
+							<li>Action 2</li>
+							<li>Action 3</li>
+						</ul>
+						</div>
+					</td>
+					</tr>
+				<?php 
+				$queueIndex++;
+				} 
+				?>
+				</table>
             </div>
         </div>
         <?php

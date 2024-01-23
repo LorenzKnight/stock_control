@@ -127,8 +127,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
         
                     // Agregar la tabla al elemento contenedor deseado
-                    var resultContainer = document.getElementById('list-content');
+                    var resultContainer = document.getElementById('main-content');
                     resultContainer.innerHTML = '';
+                    var sidebar = document.getElementById('sidebar');
+                    sidebar.style.display = 'none';
+                    
                     resultContainer.appendChild(table);
 
                     let menuBtn = document.querySelectorAll('.actions-btn');
