@@ -44,6 +44,18 @@ document.addEventListener("DOMContentLoaded", () => {
     function search(event) {
         var searching = event.target.value;
         console.log(searching);
+
+        var resultContainer = document.getElementById('main-content');
+        var wrappers = document.getElementsByClassName('wrapper-home');
+
+        if (searching.trim() === '') {
+            if (wrappers.length > 0) {
+                wrappers[0].style.display = '';
+            }
+            resultContainer.innerHTML = '';
+            resultContainer.style.height = 'auto';
+            return;
+        }
         
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
@@ -127,10 +139,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
         
                     // Agregar la tabla al elemento contenedor deseado
-                    var resultContainer = document.getElementById('main-content');
+                    // var resultContainer = document.getElementById('main-content');
                     resultContainer.innerHTML = '';
-                    var sidebar = document.getElementById('sidebar');
-                    sidebar.style.display = 'none';
+                    resultContainer.style.height = '94.9vh';
+                    // var wrappers = document.getElementsByClassName('wrapper-home');
+                    if (wrappers.length > 0) {
+                        wrappers[0].style.display = 'none';
+                    }
                     
                     resultContainer.appendChild(table);
 

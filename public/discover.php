@@ -25,13 +25,18 @@
     <?php include("components/header.php"); ?>
 
     <div class="container hidden" id="result-container">
+		<div class="wrapper-search">
+			<div class="main-content" id="main-content">
+				
+			</div>
+		</div>
         <?php 
         if(!isset($_GET['list'])) {
         ?>
         <div class="wrapper-home">
-				<div class="sidebar" id="sidebar">
+				<div class="sidebar">
 				</div>
-				<div class="main-content" id="main-content">
+				<div class="main-content">
 				<?php
 				foreach ($my_lists as $list) {
 				?>
@@ -50,7 +55,7 @@
         <?php
         } else {
         ?>
-        <div class="wrapper-list" id="wrapper-list">
+        <div class="wrapper-home">
             <div class="list-content" id="list-content">
 				<h2><?= $my_lists[0]['listName']; ?></h2>
 				<table class="music-list" cellspacing="0">
