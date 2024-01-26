@@ -44,7 +44,6 @@ document.addEventListener("DOMContentLoaded", () => {
     function search(event) {
         var searching = event.target.value;
         console.log(searching);
-
         var resultContainer = document.getElementById('main-content');
         var wrappers = document.getElementsByClassName('wrapper-home');
 
@@ -65,7 +64,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 console.log(response);
 
-                if (Array.isArray(response)) {
+                if (response.length === 0) {
+					if (wrappers.length > 0) {
+                        wrappers[0].style.display = 'none';
+                    }
+					
+                    resultContainer.innerHTML = '<table cellspacing="0" width="100%" height="50px"><tr><td align="center">There are no results to show</td></tr></table>';
+					var resultContainerStyles = {
+						height: '94.9vh',
+						fontSize: '14px',
+						color: 'gray'
+					};
+                      
+ 					Object.keys(resultContainerStyles).forEach(function(key) {
+						resultContainer.style[key] = resultContainerStyles[key];
+					});
+                } else if (Array.isArray(response)) {
                     // Generar la tabla HTML con los resultados
                     var table = document.createElement('table');
                         table.className = 'music-list';
@@ -174,6 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
         xmlhttp.open("POST", "logic/discover_be.php", true);
         xmlhttp.send(formData);
     }
+
 });
 
 function closeMiniMenu() {
