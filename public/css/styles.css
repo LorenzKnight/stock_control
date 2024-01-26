@@ -77,6 +77,11 @@ nav ul.menu li a {
     justify-content: center;
 }
 
+.wrapper-search {
+    display: flex;
+    justify-content: center;
+}
+
 /* Estilos del cuerpo */
 .sidebar {
     background-color: #fff;
