@@ -17,9 +17,9 @@ $maxFileSize = 90242880; // 90 MB (este es solo un ejemplo, puedes ajustarlo seg
 
 $userId = $_SESSION['mp_UserId'];
 $listId = null;
-$artist = isset($_POST["artist"]) ? $_POST["artist"] : "Unknown";
-$title = isset($_POST["title"]) ? $_POST["title"] : "No title";
-$gender = isset($_POST["gender"]) ? $_POST["gender"] : "Unknown";
+$artist = isset($_POST["artist"]) ? strtolower($_POST["artist"]) : "Unknown";
+$title = isset($_POST["title"]) ? strtolower($_POST["title"]) : "No title";
+$gender = isset($_POST["gender"]) ? strtolower($_POST["gender"]) : "Unknown";
 $report = 0;
 $public = $_POST["public"];
 $date = date("Y-m-d H:i:s");
@@ -66,7 +66,7 @@ for ($i = 0; $i < count($files["name"]); $i++) {
         "song_date"     => $date
     ];
 
-    if (insert_into("song", $queryData)) {
+    if (insert_into("song", $queryData, ['echo_query'])) {
         echo json_encode(["success" => true, "message" => "File uploaded successfully: " . $musicName]);
     } else {
         echo json_encode(["success" => false, "message" => "Failed to upload file: " . $musicName]);
