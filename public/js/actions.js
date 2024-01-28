@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
     searchField.addEventListener('keyup', search);
 
     function search(event) {
-        var searching = event.target.value;
+        var searching = event.target.value.toLowerCase();
         console.log(searching);
         var resultContainer = document.getElementById('main-content');
         var wrappers = document.getElementsByClassName('wrapper-home');
@@ -68,8 +68,9 @@ document.addEventListener("DOMContentLoaded", () => {
 					if (wrappers.length > 0) {
                         wrappers[0].style.display = 'none';
                     }
-					
-                    resultContainer.innerHTML = '<table cellspacing="0" width="100%" height="50px"><tr><td align="center">There are no results to show</td></tr></table>';
+
+                    resultContainer.innerHTML = `<table cellspacing="0" width="100%" height="50px"><tr><td align="center">There are no results to show</td></tr></table>
+												<table cellspacing="0" width="100%" height="50px"><tr><td align="center"><button>upload here</button></td></tr></table>`;
 					var resultContainerStyles = {
 						height: '94.9vh',
 						fontSize: '14px',
@@ -102,7 +103,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         var artistCell = document.createElement('td');
                             artistCell.className = 'artist-container';
-                        artistCell.textContent = song.artist+' - '+song.songName;
+                        	artistCell.textContent = song.artist+' - '+song.songName
+							.split(' ')
+							.map(word => word[0].toUpperCase() + word.substring(1).toLowerCase())
+							.join(' ');
                             artistCell.setAttribute('data-queue-index', 0);
                             artistCell.setAttribute('data-id', song.songId);
                             artistCell.setAttribute('data-song', song.songName);

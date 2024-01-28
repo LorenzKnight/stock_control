@@ -71,9 +71,9 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formsearch")) {
     echo json_encode($results);
 }
 
-// $requestData = [];
-// $requestData['user_id'] = null ? $_SESSION['mp_UserId'] : null;
-// $all_my_lists = listings('*', $requestData);
+$requestData = [];
+$requestData['user_id'] = null ? $_SESSION['mp_UserId'] : null;
+$all_my_lists = listings('*', $requestData);
 
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "addToList")) {
     $tableName          = 'playlist';
