@@ -1,4 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
+	const urlParams = new URLSearchParams(window.location.search);
+  	const list = urlParams.get('list');
+	const uploader = urlParams.get('uploader');
+
+	const album = document.getElementById('album');
+	const listing = document.getElementById('listing');
+	const uploaderContainer = document.getElementById('uploader-container');
+  
+	if (uploader) {
+		uploaderContainer.classList.remove('hidden');
+	} else if (list) {
+		listing.classList.remove('hidden');
+	} else {
+		album.classList.remove('hidden');
+	}
+
     let bgOverlayer = document.querySelector('.bg-overlayer');
     bgOverlayer.addEventListener('click', function(){
         closeMiniMenu()
@@ -48,8 +64,8 @@ document.addEventListener("DOMContentLoaded", () => {
         var wrappers = document.getElementsByClassName('wrapper-home');
 
         if (searching.trim() === '') {
-            if (wrappers.length > 0) {
-                wrappers[0].style.display = '';
+            for (var i = 0; i < wrappers.length; i++) {
+                wrappers[i].style.display = '';
             }
             resultContainer.innerHTML = '';
             resultContainer.style.height = 'auto';
@@ -65,8 +81,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.log(response);
 
                 if (response.length === 0) {
-					if (wrappers.length > 0) {
-                        wrappers[0].style.display = 'none';
+					for (var i = 0; i < wrappers.length; i++) {
+                        wrappers[i].style.display = 'none';
                     }
 
                     resultContainer.innerHTML = `<table cellspacing="0" width="100%" height="50px"><tr><td align="center">There are no results to show</td></tr></table>
@@ -156,13 +172,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         element.addEventListener('click', getSongId);
                     });
         
-                    // Agregar la tabla al elemento contenedor deseado
-                    // var resultContainer = document.getElementById('main-content');
+                    // Limpia los wrapper para mostrar los resultados la busqueda
                     resultContainer.innerHTML = '';
                     resultContainer.style.height = '94.9vh';
-                    // var wrappers = document.getElementsByClassName('wrapper-home');
-                    if (wrappers.length > 0) {
-                        wrappers[0].style.display = 'none';
+                    for (var i = 0; i < wrappers.length; i++) {
+                        wrappers[i].style.display = 'none';
                     }
                     
                     resultContainer.appendChild(table);
