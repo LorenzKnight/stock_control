@@ -24,39 +24,35 @@
 <body>
     <?php include("components/header.php"); ?>
 
-    <div class="container hidden" id="result-container">
+    <div class="container" id="result-container">
 		<div class="wrapper-search">
 			<div class="main-content" id="main-content">
-				
+			
 			</div>
 		</div>
-        <?php 
-        if(!isset($_GET['list'])) {
-        ?>
-        <div class="wrapper-home">
-				<div class="sidebar">
-				</div>
-				<div class="main-content">
-				<?php
-				foreach ($my_lists as $list) {
-				?>
-					<div class="list" data-list="<?= htmlspecialchars($list['listingsId'], ENT_QUOTES, 'UTF-8'); ?>">
-						<div class="list-cover"></div>
-						<div class="list-info">
-							<div class="list-name"><?= htmlspecialchars($list['listName'], ENT_QUOTES, 'UTF-8'); ?></div>
-							<?= htmlspecialchars($current_user['name'].' '.$current_user['surname'], ENT_QUOTES, 'UTF-8'); ?>
-						</div>
+
+        <div class="wrapper-home hidden" id="album">
+			<div class="sidebar">
+			</div>
+			<div class="main-content">
+			<?php
+			foreach ($my_lists as $list) {
+			?>
+				<div class="list" data-list="<?= htmlspecialchars($list['listingsId'], ENT_QUOTES, 'UTF-8'); ?>">
+					<div class="list-cover"></div>
+					<div class="list-info">
+						<div class="list-name"><?= htmlspecialchars($list['listName'], ENT_QUOTES, 'UTF-8'); ?></div>
+						<?= htmlspecialchars($current_user['name'].' '.$current_user['surname'], ENT_QUOTES, 'UTF-8'); ?>
 					</div>
-				<?php
-				}
-				?>
 				</div>
+			<?php
+			}
+			?>
+			</div>
         </div>
-        <?php
-        } else {
-        ?>
-        <div class="wrapper-home">
-            <div class="list-content" id="list-content">
+        
+        <div class="wrapper-home hidden" id="listing">
+            <div class="list-content">
 				<h2><?= $my_lists[0]['listName']; ?></h2>
 				<table class="music-list" cellspacing="0">
 				<?php 
@@ -89,62 +85,55 @@
 				</table>
             </div>
         </div>
-        <?php
-        }
-        ?>
-    </div>
 
-    <div class="container hidden" id="uploader-container">
-        <div class="wrapper-home" style="background-color: #fff;">
-            <form action="inc/upload.php" method="post" enctype="multipart/form-data">
-                <br>
-                <div class="drop-area" id="drop-area">
-                <p>Arrastra y suelta tus archivos aquí o haz clic para seleccionarlos.</p>
-                <div><input type="file" name="file_name[]" id="file_name" multiple required></div>
-                <!-- <div class="file-input-container">
-                    <label for="fileInput" class="custom-file-label">Seleccionar archivos</label>
-                    <input type="file" name="file_name[]" id="fileInput" multiple required>
-                </div> -->
-                </div>
-                <br>
-                <table class="table-form" cellspacing="0">
-                <tr>
-                    <td align="right">
-                        <label for="artist">Artista:</label><br>
-                        <input type="text" name="artist" id="artist" required>
-                    </td>
-                    <td align="left">
-                        <label for="title">Título:</label><br>
-                        <input type="text" name="title" id="title" required>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2" align="center">
-                        <label for="gender">Gender:</label><br>
-                        <input type="text" name="gender" id="gender" required>
-                    </td>
-                </tr>
-                <tr>
-                    <td align="right">
-                        <input type="radio" id="public" name="public" value="1" checked>
-                        <label for="public">Public</label>
-                    </td>
-                    <td align="left">
-                        <input type="radio" id="private" name="public" value="0">
-                        <label for="private">Private</label>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2" align="center">
-                        <input type="submit" value="Subir Archivos">
-                    </td>
-                </tr>
-                </table>
-
-                
-            </form>
+        <div class="wrapper-home hidden" id="uploader-container" style="background-color: #fff;">
+			<form action="inc/upload.php" method="post" enctype="multipart/form-data">
+				<br>
+				<div class="drop-area" id="drop-area">
+				<p>Arrastra y suelta tus archivos aquí o haz clic para seleccionarlos.</p>
+				<div><input type="file" name="file_name[]" id="file_name" multiple required></div>
+				<!-- <div class="file-input-container">
+					<label for="fileInput" class="custom-file-label">Seleccionar archivos</label>
+					<input type="file" name="file_name[]" id="fileInput" multiple required>
+				</div> -->
+				</div>
+				<br>
+				<table class="table-form" cellspacing="0">
+				<tr>
+					<td align="right">
+						<label for="artist">Artista:</label><br>
+						<input type="text" name="artist" id="artist" required>
+					</td>
+					<td align="left">
+						<label for="title">Título:</label><br>
+						<input type="text" name="title" id="title" required>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="center">
+						<label for="gender">Gender:</label><br>
+						<input type="text" name="gender" id="gender" required>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+						<input type="radio" id="public" name="public" value="1" checked>
+						<label for="public">Public</label>
+					</td>
+					<td align="left">
+						<input type="radio" id="private" name="public" value="0">
+						<label for="private">Private</label>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="center">
+						<input type="submit" value="Subir Archivos">
+					</td>
+				</tr>
+				</table>
+			</form>
         </div>
-    </div>
+	</div>
 
     <div class="status-message" id="status-message"></div>
 
@@ -208,19 +197,19 @@
     </div>
 
     <script>
-        // Función para mostrar la sección basada en la URL
-        function showSectionBasedOnURL() {
-            let section = 'result-container';
+        // // Función para mostrar la sección basada en la URL
+        // function showSectionBasedOnURL() {
+        //     let section = 'result-container';
 
-            // Si la URL termina en "/upload", cambia la sección a mostrar
-            if (window.location.pathname.endsWith('/uploader')) {
-                section = 'uploader-container';
-            }
+        //     // Si la URL termina en "/upload", cambia la sección a mostrar
+        //     if (window.location.pathname.endsWith('/uploader')) {
+        //         section = 'uploader-container';
+        //     }
 
-            document.getElementById(section).style.display = 'block';
-        }
+        //     document.getElementById(section).style.display = 'block';
+        // }
 
-        showSectionBasedOnURL();
+        // showSectionBasedOnURL();
     </script>
 </body>
 
