@@ -13,6 +13,6 @@
     session_start();
     session_destroy();
 
-    header("Location: discover.php");
+    header("Location: discover");
     exit;
 ?>
