@@ -4,7 +4,7 @@
             <ul class="menu">
                 <li>
                     <div class="logo">
-                    <h3>Music Player</h3>
+                    <h3>Music Drive</h3>
                     </div>
                 </li>
                 <li><a href="#">Home</a></li>
@@ -16,10 +16,14 @@
                 <li><a href="discover?uploader=1">Upload</a></li>
                 <li><a href="#">Settings</a></li>
                 <?php if(isset($_SESSION['mp_UserId']) && $_SESSION['mp_UserId'] != null) { ?>
-                <li><a href="logout.php">Logout</a></li>
                 <li>
-                    <div class="profile">
-                    <img src="images/profile/<?php ?>perfil.png" alt="">
+                    <div class="profile" id="profileTrigger">
+                        <img src="images/profile/<?php ?>perfil.png" alt="">
+                    </div>
+                    <div id="profileDropdown" style="display: none;">
+                        <ul>
+                            <li><a href="logout.php">Logout</a></li>
+                        </ul>
                     </div>
                 </li>
                 <?php } else { ?>

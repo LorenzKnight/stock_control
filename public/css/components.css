@@ -16,6 +16,34 @@
     box-shadow: 0 4px 10px 0 rgba(47, 48, 63, 0.193);
 }
 
+#profileDropdown {
+	background-color: white;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	margin-left: -120px;
+	padding: 0 10px;
+	box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
+	position: absolute;
+	top: 44px;
+}
+
+#profileDropdown ul {
+	width: 150px;
+	padding: 0;
+}
+
+#profileDropdown ul li {
+	padding: 5px 0;
+}
+
+#profileDropdown ul li a {
+	color: #999;
+}
+
+#profileDropdown ul li :hover {
+	color: #666;
+}
+
 /* form-modal */
 .formular_front {
     width: 450px;

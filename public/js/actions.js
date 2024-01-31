@@ -1,4 +1,23 @@
 document.addEventListener("DOMContentLoaded", () => {
+    var profileTrigger = document.getElementById('profileTrigger');
+    
+	if (profileTrigger) {
+		profileTrigger.addEventListener('click', function() {
+			var profileDropdown = document.getElementById('profileDropdown');
+			if (profileDropdown) {
+				profileDropdown.style.display = profileDropdown.style.display === 'none' ? 'block' : 'none';
+			}
+		});
+
+		document.addEventListener('click', function(event) {
+			var isClickInsideMenu = profileTrigger.contains(event.target) || profileDropdown.contains(event.target);
+			if (!isClickInsideMenu) {
+				profileDropdown.style.display = 'none';
+			}
+		});
+	}
+
+
 	const urlParams = new URLSearchParams(window.location.search);
   	const list = urlParams.get('list');
 	const uploader = urlParams.get('uploader');
@@ -222,9 +241,7 @@ function closeMiniMenu() {
 }
 
 function login() {
-    console.log('aqui');
-
-    let bg_popup = document.getElementById('bg_popup');
+	let bg_popup = document.getElementById('bg_popup');
     bg_popup.style.display = 'block';
 
     var displaySize = {
