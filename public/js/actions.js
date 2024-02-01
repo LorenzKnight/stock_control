@@ -19,20 +19,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 	const urlParams = new URLSearchParams(window.location.search);
-  	const list = urlParams.get('list');
-	const uploader = urlParams.get('uploader');
+    const params = {
+        list: urlParams.get('list'),
+        uploader: urlParams.get('uploader'),
+        // Puedes agregar más variables aquí
+    };
 
-	const album = document.getElementById('album');
-	const listing = document.getElementById('listing');
-	const uploaderContainer = document.getElementById('uploader-container');
-  
-	if (uploader) {
-		uploaderContainer.classList.remove('hidden');
-	} else if (list) {
-		listing.classList.remove('hidden');
-	} else {
-		album.classList.remove('hidden');
-	}
+    const album = document.getElementById('album');
+    const listing = document.getElementById('listing');
+    const uploaderContainer = document.getElementById('uploader-container');
+
+    let state = 'album'; // Estado por defecto
+    for (let param in params) {
+        if (params[param]) {
+            state = param;
+            break;
+        }
+    }
+
+    switch (state) {
+        case 'uploader':
+            uploaderContainer.classList.remove('hidden');
+            break;
+        case 'list':
+            listing.classList.remove('hidden');
+            break;
+        default:
+            album.classList.remove('hidden');
+            break;
+    }
 
     let bgOverlayer = document.querySelector('.bg-overlayer');
     bgOverlayer.addEventListener('click', function(){

@@ -35,19 +35,19 @@
 			<div class="sidebar">
 			</div>
 			<div class="main-content">
-			<?php
-			foreach ($my_lists as $list) {
-			?>
-				<div class="list" data-list="<?= htmlspecialchars($list['listingsId'], ENT_QUOTES, 'UTF-8'); ?>">
-					<div class="list-cover"></div>
-					<div class="list-info">
-						<div class="list-name"><?= htmlspecialchars($list['listName'], ENT_QUOTES, 'UTF-8'); ?></div>
-						<?= htmlspecialchars($current_user['name'].' '.$current_user['surname'], ENT_QUOTES, 'UTF-8'); ?>
+				<?php
+				foreach ($my_lists as $list) {
+				?>
+					<div class="list" data-list="<?= htmlspecialchars($list['listingsId'], ENT_QUOTES, 'UTF-8'); ?>">
+						<div class="list-cover"></div>
+						<div class="list-info">
+							<div class="list-name"><?= htmlspecialchars($list['listName'], ENT_QUOTES, 'UTF-8'); ?></div>
+							<?= htmlspecialchars($current_user['name'].' '.$current_user['surname'], ENT_QUOTES, 'UTF-8'); ?>
+						</div>
 					</div>
-				</div>
-			<?php
-			}
-			?>
+				<?php
+				}
+				?>
 			</div>
         </div>
         
