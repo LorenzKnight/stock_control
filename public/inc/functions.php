@@ -292,7 +292,7 @@ function song_data($columns = "*", $requestData = array(), array $options = []) 
 		$queryColumnNames = substr($queryColumnNames, 0, -1);
 	}
 
-  $query = "select $queryColumnNames ";
+	$query = "select $queryColumnNames ";
 
   	if(isset($options['count_query']) && $options['count_query'])
 	{
@@ -307,6 +307,11 @@ function song_data($columns = "*", $requestData = array(), array $options = []) 
   	if(isset($requestData['sid']) && !empty($requestData['sid']))
 	{
 		$conditions .= " and sid in (" . $requestData['sid']. ") ";
+	}
+
+	if(isset($requestData['search']) && !empty($requestData['search']))
+	{
+		$conditions .= " and artist like '%" . $requestData['search']. "%' or song_name like '%" . $requestData['search']. "%' ";
 	}
 
   	if(isset($requestData['artist']) && !empty($requestData['artist']))

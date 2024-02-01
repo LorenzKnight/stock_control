@@ -51,15 +51,14 @@ nav ul.menu li a {
     flex: 1;
 }
 
-.searchLi {
+.search-holder {
     width: 603px;
     float: left;
+    flex: 1;
 }
 
 .search-field {
-    /* width: 603px;
-    max-width: 603px; */
-    min-width: 300px;
+    width: 594px;
     border: 0;
     border-radius: 4px;
     padding: 5px;

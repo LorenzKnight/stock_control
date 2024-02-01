@@ -140,10 +140,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         var row = document.createElement('tr');
 
                         var songCoverCell = document.createElement('td');
-                            var songCoverDiv = document.createElement('div');
+                        var songCoverDiv = document.createElement('div');
                             songCoverDiv.className = 'songs-cover';
 
-                            var songCoverImg = document.createElement('img');
+                        var songCoverImg = document.createElement('img');
                             songCoverImg.src = 'images/profile/' + song.cover + 'perfil.png';
                             songCoverImg.alt = '';
 
@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         var artistCell = document.createElement('td');
                             artistCell.className = 'artist-container';
-                        	artistCell.textContent = song.artist+' - '+song.songName
+                        	artistCell.textContent = (song.artist + ' - ' + song.songName)
 							.split(' ')
 							.map(word => word[0].toUpperCase() + word.substring(1).toLowerCase())
 							.join(' ');
@@ -165,24 +165,24 @@ document.addEventListener("DOMContentLoaded", () => {
                         var songNameCell = document.createElement('td');
                             songNameCell.setAttribute('width', '5%');
                             
-                            var actionsBtn = document.createElement('button');
+                        var actionsBtn = document.createElement('button');
                             actionsBtn.className = 'actions-btn';
                             actionsBtn.setAttribute('data-menu', song.songId);
                             actionsBtn.textContent = 'o o o';
                             songNameCell.appendChild(actionsBtn);
 
-                            var songActionsDiv = document.createElement('div');
+                        var songActionsDiv = document.createElement('div');
                             songActionsDiv.className = 'song-actions';
                             songActionsDiv.setAttribute('id', 'song-actions');
 
-                            var ul = document.createElement('ul');
-                            var li1 = document.createElement('li');
+                        var ul = document.createElement('ul');
+                        var li1 = document.createElement('li');
                             li1.textContent = 'Add playlist';
                                 li1.className = 'addPlaylist';
                                 li1.setAttribute('data-songId', song.songId);
-                            var li2 = document.createElement('li');
+                        var li2 = document.createElement('li');
                             li2.textContent = 'Action 2';
-                            var li3 = document.createElement('li');
+                        var li3 = document.createElement('li');
                             li3.textContent = 'Action 3';
 
                             ul.appendChild(li1);
