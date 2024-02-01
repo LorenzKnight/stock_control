@@ -51,7 +51,7 @@ $my_songs = playlist_details('*', $requestData);
 
 
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formsearch")) {
-    $requestSearch['artist'] = pg_escape_string($_POST['searching']);
+    $requestSearch['search'] = pg_escape_string($_POST['searching']);
     
     $my_songs = song_data('*', $requestSearch);
     
