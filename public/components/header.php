@@ -21,7 +21,7 @@
 					</div>
 					<div id="profileDropdown" style="display: none;">
 						<ul>
-							<li><a href="#">Name</a></li>
+							<li><a href="#"><?= $current_user['name'].' '.$current_user['surname']; ?></a></li>
 							<li><a href="#">Settings</a></li>
 							<li><a href="logout.php">Logout</a></li>
 						</ul>

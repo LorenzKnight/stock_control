@@ -53,6 +53,7 @@
         
         <div class="wrapper-home hidden" id="listing">
             <div class="list-content">
+				<a href="discover">< Back</a>
 				<h2><?= $my_lists[0]['listName']; ?></h2>
 				<table class="music-list" cellspacing="0">
 				<?php 
@@ -61,22 +62,23 @@
 					$song = song_list($song_data['songId']);
 				?>
 					<tr>
-					<td>
-						<div class="songs-cover">
-						<img src="images/profile/<?php ?>perfil.png" alt="">
-						</div>
-					</td>
-					<td class="song-list" data-queue-index="<?= $queueIndex; ?>" data-id="<?= $song['songId']; ?>" data-song="<?= $song['songName']; ?>" data-file="<?= $song['fileName'];?>"><?= $song['artist'].' - '.$song['songName']; ?></td>
-					<td width="5%">
-						<button class="actions-btn" id="actions-btn" data-menu="<?= $song['songId']; ?>">o o o</button>
-						<div class="song-actions" id="song-actions">
-						<ul>
-							<li class="addPlaylist" data-songId="<?= $song['songId']; ?>">Add playlist</li>
-							<li>Action 2</li>
-							<li>Action 3</li>
-						</ul>
-						</div>
-					</td>
+						<td>
+							<div class="songs-cover">
+								<img src="<?= empty($song['cover']) ? 'images/profile/'.$current_user['image'] : 'images/cover/'.$song['cover'] ?>" >
+								<?php //var_dump($current_user['image']); ?>
+							</div>
+						</td>
+						<td class="song-list" data-queue-index="<?= $queueIndex; ?>" data-id="<?= $song['songId']; ?>" data-song="<?= $song['songName']; ?>" data-file="<?= $song['fileName'];?>"><?= $song['artist'].' - '.$song['songName']; ?></td>
+						<td width="5%">
+							<button class="actions-btn" id="actions-btn" data-menu="<?= $song['songId']; ?>">o o o</button>
+							<div class="song-actions" id="song-actions">
+								<ul>
+									<li class="addPlaylist" data-songId="<?= $song['songId']; ?>">Add playlist</li>
+									<li>Action 2</li>
+									<li>Action 3</li>
+								</ul>
+							</div>
+						</td>
 					</tr>
 				<?php 
 				$queueIndex++;
