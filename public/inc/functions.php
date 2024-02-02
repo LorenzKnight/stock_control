@@ -420,7 +420,6 @@ function song_list(int $songId) : array
 	$totalRow_request = pg_num_rows($sql);
 
 	$res = [
-		'postId'        => false,
 		'songId'        => false,
 		'userId'        => false,
 		'listId'        => false,
@@ -439,17 +438,17 @@ function song_list(int $songId) : array
 		$columnData = pg_fetch_assoc($sql);
 
 		$res = [
-		'songId'        => $columnData['sid'],
-		'userId'        => $columnData['user_id'],
-		'listId'        => $columnData['list_id'],
-		'cover'         => $columnData['cover'],
-		'artist'        => $columnData['artist'],
-		'songName'      => $columnData['song_name'],
-		'fileName'      => $columnData['file_name'],
-		'gender'        => $columnData['gender'],
-		'report'        => $columnData['report'],
-		'public'        => $columnData['public'],
-		'songDate'      => $columnData['song_date']
+			'songId'        => $columnData['sid'],
+			'userId'        => $columnData['user_id'],
+			'listId'        => $columnData['list_id'],
+			'cover'         => $columnData['cover'],
+			'artist'        => $columnData['artist'],
+			'songName'      => $columnData['song_name'],
+			'fileName'      => $columnData['file_name'],
+			'gender'        => $columnData['gender'],
+			'report'        => $columnData['report'],
+			'public'        => $columnData['public'],
+			'songDate'      => $columnData['song_date']
 		];
 	}
 
