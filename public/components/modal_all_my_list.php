@@ -1,6 +1,6 @@
 <div class="formular_songs_list" id="formular_songs_list">
     <table class="music-list" cellspacing="0">
-    <h4>My lists</h4>
+    <h4></h4>
     <?php
     foreach($all_my_lists as $all_list) {
     ?>
@@ -11,7 +11,7 @@
                 </div>
             </td>
             <td>
-                <?php echo $all_list['listName'] .' - '. $all_list['listingsId'];?>
+                <?= $all_list['listName']; ?>
             </td>
         </tr>
     <?php
