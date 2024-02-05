@@ -83,12 +83,19 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "addToList")) {
 		'list_date' => date("Y-m-d H:i:s")
     ];
 
-	$inserPlaylist = insert_into('playlist', $queryData, ['echo_query']);
+	$fuctionSelect = select_from('playlist', ['song_id'], ['song_id' => $_POST['songId']]);
 
-	if ($inserPlaylist) {
-		echo json_encode(["success" => true, "message" => "The song was added to the list successfully."]);
+	$inserPlaylist = false;
+    $updatePlaylist = false;
+
+	if ($fuctionSelect) {
+		$updatePlaylist = update_table('playlist', $queryData, ['song_id' => $_POST['songId']]);
 	} else {
-		var_dump('fail');
+		$inserPlaylist = insert_into('playlist', $queryData, ['echo_query']);
+	}
+
+	if ($inserPlaylist || $updatePlaylist) {
+		echo json_encode(["success" => true, "message" => "The song was added to the list successfully."]);
 	}
 }
 ?>
