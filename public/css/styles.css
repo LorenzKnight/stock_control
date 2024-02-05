@@ -105,8 +105,6 @@ nav ul.menu li a {
 .list-content {
     background-color: white;
     padding: 8px 20px 0;
-    /* display: flex; */
-    /* text-align: left; */
     flex: 1;
 }
 

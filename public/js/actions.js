@@ -73,9 +73,24 @@ document.addEventListener("DOMContentLoaded", () => {
             var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
-                    var response = this.responseText;
+					var response = JSON.parse(this.responseText);
+                    // var response = this.responseText;
                     console.log(response);
                     close_popup()
+
+					const statusMessageElem = document.getElementById('status-message');
+					if (statusMessageElem) {
+						statusMessageElem.innerText = response.message;
+						statusMessageElem.style.display = 'block';
+
+						setTimeout(() => {
+							statusMessageElem.style.opacity = '0';
+							setTimeout(() => {
+								statusMessageElem.style.display = 'none';
+								statusMessageElem.style.opacity = '0.9';
+							}, 1000);
+						}, 2000);
+					}
                 }
             }
             var formData = new FormData(); 
@@ -86,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
             xmlhttp.open("POST", "logic/discover_be.php", true);
             xmlhttp.send(formData);
         });
-    })
+    });
 
     let searchField = document.getElementById('searchField');
     searchField.addEventListener('keyup', search);
@@ -168,7 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         var actionsBtn = document.createElement('button');
                             actionsBtn.className = 'actions-btn';
                             actionsBtn.setAttribute('data-menu', song.songId);
-                            actionsBtn.textContent = 'o o o';
+                            actionsBtn.textContent = 'ooo';
                             songNameCell.appendChild(actionsBtn);
 
                         var songActionsDiv = document.createElement('div');

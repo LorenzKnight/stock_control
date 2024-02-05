@@ -76,10 +76,19 @@ $requestData['user_id'] = null ? $_SESSION['mp_UserId'] : null;
 $all_my_lists = listings('*', $requestData);
 
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "addToList")) {
-    $tableName          = 'playlist';
-    $queryColumnNames   = ['user_id', 'list_id', 'song_id', 'list_date'];
-    $queryColumnValues  = [$_SESSION['mp_UserId'], $_POST['listId'], $_POST['songId'], date("Y-m-d H:i:s")];
+    $queryData = [
+		'user_id'   => $_SESSION['mp_UserId'],
+		'list_id'   => $_POST['listId'],
+		'song_id'   => $_POST['songId'],
+		'list_date' => date("Y-m-d H:i:s")
+    ];
 
-    $inserPlaylist = insert_into($tableName, $queryColumnNames, $queryColumnValues);
+	$inserPlaylist = insert_into('playlist', $queryData, ['echo_query']);
+
+	if ($inserPlaylist) {
+		echo json_encode(["success" => true, "message" => "The song was added to the list successfully."]);
+	} else {
+		var_dump('fail');
+	}
 }
 ?>

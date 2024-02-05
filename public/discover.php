@@ -1,6 +1,4 @@
-<?php
-// phpinfo();
-?>
+<?php // phpinfo(); ?>
 <?php require_once('logic/discover_be.php'); ?>
 
 
@@ -68,9 +66,11 @@
 								<?php //var_dump($current_user['image']); ?>
 							</div>
 						</td>
-						<td class="song-list" data-queue-index="<?= $queueIndex; ?>" data-id="<?= $song['songId']; ?>" data-song="<?= $song['songName']; ?>" data-file="<?= $song['fileName'];?>"><?= $song['artist'].' - '.$song['songName']; ?></td>
+						<td class="song-list" data-queue-index="<?= $queueIndex; ?>" data-id="<?= $song['songId']; ?>" data-song="<?= $song['songName']; ?>" data-file="<?= $song['fileName'];?>">
+							<?= ucwords(strtolower($song['artist'])).' - '.ucwords(strtolower($song['songName'])); ?>
+						</td>
 						<td width="5%">
-							<button class="actions-btn" id="actions-btn" data-menu="<?= $song['songId']; ?>">o o o</button>
+							<button class="actions-btn" id="actions-btn" data-menu="<?= $song['songId']; ?>">ooo</button>
 							<div class="song-actions" id="song-actions">
 								<ul>
 									<li class="addPlaylist" data-songId="<?= $song['songId']; ?>">Add playlist</li>
