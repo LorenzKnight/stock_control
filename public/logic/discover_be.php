@@ -76,26 +76,58 @@ $requestData['user_id'] = null ? $_SESSION['mp_UserId'] : null;
 $all_my_lists = listings('*', $requestData);
 
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "addToList")) {
-    $queryData = [
-		'user_id'   => $_SESSION['mp_UserId'],
-		'list_id'   => $_POST['listId'],
-		'song_id'   => $_POST['songId'],
-		'list_date' => date("Y-m-d H:i:s")
+	$queryData = [
+        'user_id'   => $_SESSION['mp_UserId'],
+        'list_id'   => $_POST['listId'],
+        'song_id'   => $_POST['songId'],
+        'list_date' => date("Y-m-d H:i:s")
     ];
 
-	$fuctionSelect = select_from('playlist', ['song_id'], ['song_id' => $_POST['songId']]);
+    $functionSelect = select_from('playlist', ['song_id'], ['song_id' => $_POST['songId']]);
 
-	$inserPlaylist = false;
-    $updatePlaylist = false;
+    if ($functionSelect) {
+        $updatePlaylist = update_table('playlist', $queryData, ['song_id' => $_POST['songId']]);
+		
+        $success = $updatePlaylist !== false;
+        $message = $success ? "The song was updated successfully." : "Error updating the song.";
+		$id = null;
+    } else {
+        $insertResult = insert_into('playlist', $queryData, ['id' => 'pid']);
+        $insertResultArray = json_decode($insertResult, true);
 
-	if ($fuctionSelect) {
-		$updatePlaylist = update_table('playlist', $queryData, ['song_id' => $_POST['songId']]);
-	} else {
-		$inserPlaylist = insert_into('playlist', $queryData, ['echo_query']);
-	}
+        $success = $insertResultArray["success"] ? true : false;
+        $message = $success ? "The song was inserted successfully." : "Error inserted the song.";
+		$id = $insertResultArray["id"];
+    }
 
-	if ($inserPlaylist || $updatePlaylist) {
-		echo json_encode(["success" => true, "message" => "The song was added to the list successfully."]);
-	}
+    echo json_encode(["success" => $success, "id" => $id, "message" => $message]);
+}
+
+if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "createAndAdd")) {
+	$queryDataPlaylist = [
+		'user_id'		=> $_SESSION['mp_UserId'],
+		'list_name'		=> $_POST['inputPlaylist'],
+		'public'		=> 1,
+		'list_date'		=> date("Y-m-d H:i:s")
+    ];
+
+	$newPlaylist = insert_into('listings', $queryDataPlaylist, ['id' => 'lid']);
+	$insertResultArray = json_decode($newPlaylist, true);
+
+	$queryData = [
+		'user_id'		=> $_SESSION['mp_UserId'],
+		'list_id'		=> $insertResultArray['id'],
+		'song_id'		=> $_POST['songId'],
+		'list_date'		=> date("Y-m-d H:i:s")
+	];
+
+	$insertResult = insert_into('playlist', $queryData, ['id' => 'pid']);
+    $insertResultArray = json_decode($insertResult, true);
+
+	$success = $insertResultArray["success"] ? true : false;
+	$message = $success ? 'The song was inserted successfully in ' .$_POST['inputPlaylist']. ' Playlist.' : 'Error inserted the song.';
+	$id = $insertResultArray["id"];
+
+	echo json_encode(["success" => $success, "id" => $id, "message" => $message]);
 }
 ?>

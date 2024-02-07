@@ -617,10 +617,10 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
     return pg_fetch_all($result) ?: [];
 }
 
-function insert_into($tableName, array $queryData = [], array $options = []): bool
+function insert_into($tableName, array $queryData = [], array $options = []): string
 {
     if (empty($queryData)) {
-        return false;
+        return 0;
     }
 
     $columnNames = implode(', ', array_keys($queryData));
@@ -631,21 +631,32 @@ function insert_into($tableName, array $queryData = [], array $options = []): bo
     
     $columnValues = implode(', ', $columnValues);
 
-    $query = "INSERT INTO $tableName ($columnNames) VALUES ($columnValues);";
-
-    if (isset($options['echo_query']) && $options['echo_query']) {
-        echo "Q: $query<br>\n";
+	$returningId = '';
+    if (isset($options['id']) && !empty($options['id'])) {
+        $returningId = " RETURNING " . $options['id'];
     }
 
-    $sql = pg_query($query);
+	$query = "INSERT INTO $tableName ($columnNames) VALUES ($columnValues)$returningId;";
 
-    return $sql !== false;
+    if (isset($options['echo_query']) && $options['echo_query']) {
+        echo "Q: $query<br>\n"; //has to fix
+    }
+
+	$result = pg_query($query);
+
+    if ($result && !empty($returningId)) {
+        $row = pg_fetch_assoc($result);
+        $insertedId = $row[$options['id']];
+        return json_encode(["success" => true, "id" => $insertedId, "message" => "Row inserted successfully"]);
+    } else {
+        return json_encode(["success" => false, "message" => "Error inserting row"]);
+    }
 }
 
-function update_table($tableName, array $queryData = [], array $whereClause = [], array $options = []): bool
+function update_table($tableName, array $queryData = [], array $whereClause = [], array $options = []): string
 {
     if (empty($queryData) || empty($whereClause)) {
-        return false;
+        return json_encode(["success" => false, "message" => "Data or condition for update is missing"]);
     }
 
     $setParts = [];
@@ -664,12 +675,14 @@ function update_table($tableName, array $queryData = [], array $whereClause = []
 
     $query = "UPDATE $tableName SET $setClause WHERE $whereClause;";
 
-    if (isset($options['echo_query']) && $options['echo_query']) {
-        echo "Q: $query<br>\n";
-    }
-
     $sql = pg_query($query);
 
-    return $sql !== false;
+	$response = ["success" => $sql !== false, "message" => $sql ? "Row updated successfully" : "Error updating row"];
+
+	if (isset($options['echo_query']) && $options['echo_query']) {
+        $response["query"] = $query;
+    }
+
+    return json_encode($response);
 }
 ?>
