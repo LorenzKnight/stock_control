@@ -100,6 +100,7 @@ nav ul.menu li a {
 .main-content {
     background-color: #fff;
     flex: 1;
+    overflow: auto;
 }
 
 .list-content {
@@ -111,6 +112,11 @@ nav ul.menu li a {
 .list-content a {
     text-decoration: none;
     color: #999;
+}
+
+.my-playlis-list {
+    height: 392px;
+    overflow: auto;
 }
 
 .music-list {
