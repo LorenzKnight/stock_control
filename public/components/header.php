@@ -8,11 +8,11 @@
 					</div>
 				</li>
 				<li><a href="#">News</a></li>
-				<li><a href="#">Explore</a></li>
+				<li><a href="#">Library</a></li>
 				<li class="search-holder">
 					<input type="text" name="searchField" id="searchField" class="search-field">
 				</li>
-				<li><a href="discover">Library</a></li>
+				<li><a href="discover">Explore</a></li>
 				<li><a href="discover?uploader=1">Upload</a></li>
 				<?php if(isset($_SESSION['mp_UserId']) && $_SESSION['mp_UserId'] != null) { ?>
 				<li>
