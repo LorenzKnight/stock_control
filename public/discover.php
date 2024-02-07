@@ -75,7 +75,7 @@
 								<ul>
 									<li class="addPlaylist" data-songId="<?= $song['songId']; ?>">Add playlist</li>
 									<li>Action 2</li>
-									<li class="removeFromPlaylis" data-songId="<?= $song['songId']; ?>">Remove</li>
+									<li class="removeFromPlaylis" data-removeId="<?= $song['songId']; ?>">Remove</li>
 								</ul>
 							</div>
 						</td>

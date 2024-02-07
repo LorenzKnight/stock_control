@@ -62,6 +62,14 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+	let removeFromPlaylis = document.querySelectorAll('.removeFromPlaylis');
+	removeFromPlaylis.forEach(function(element){
+		element.addEventListener('click', function(){
+            let removeId = element.getAttribute('data-removeId');
+            confirm_remove(removeId);
+        });
+	});
+
     let playlistContainer = document.querySelectorAll('.playlistContainer');
     playlistContainer.forEach(function(element){
         element.addEventListener('click', function(){
@@ -291,7 +299,7 @@ document.addEventListener("DOMContentLoaded", () => {
 						}, 1000);
 					}, 2000);
 				}
-				
+
 				setTimeout(() => {
 					// window.location.reload();
 					window.location.href = 'discover';
@@ -356,6 +364,26 @@ function add_to_list(song) {
     formular_songs_list.style.display = 'block';
 
     closeMiniMenu()
+}
+
+function confirm_remove(song) {
+	let bg_popup = document.getElementById('bg_popup');
+    bg_popup.style.display = 'block';
+
+	var displaySize = {
+        "width": "350px",
+        "height": "150px",
+        "margin": "25vh auto"
+    };
+     
+    var bgContainer = document.getElementById("bg_container");
+    Object.assign(bgContainer.style, displaySize);
+
+	let formular_remove_song = document.getElementById('formular_remove_song');
+    formular_remove_song.setAttribute('data-removeId', song);
+    formular_remove_song.style.display = 'block';
+
+	closeMiniMenu()
 }
 
 //Close popups
