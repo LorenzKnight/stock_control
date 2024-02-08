@@ -585,10 +585,8 @@ function dbListDetailsColumnNames()
 
 function select_from($tableName, array $columns = [], array $whereClause = [], array $options = []): array
 {
-    // Determinar las columnas a seleccionar
     $columnNames = empty($columns) ? '*' : implode(', ', $columns);
 
-    // Construir la cláusula WHERE
     $whereParts = [];
     foreach ($whereClause as $column => $value) {
         $escapedValue = is_numeric($value) ? $value : "'" . pg_escape_string($value) . "'";
@@ -596,22 +594,18 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
     }
     $whereClause = empty($whereParts) ? '' : ' WHERE ' . implode(' AND ', $whereParts);
 
-    // Construir la consulta
     $query = "SELECT $columnNames FROM $tableName$whereClause;";
 
-    // Opción para imprimir la consulta
     if (isset($options['echo_query']) && $options['echo_query']) {
         echo "Q: $query<br>\n";
     }
 
-    // Ejecutar la consulta
     $result = pg_query($query);
 
     if (!$result) {
-        return []; // o manejar el error
+        return [];
     }
 
-    // Obtener y devolver los resultados
     return pg_fetch_all($result) ?: [];
 }
 
