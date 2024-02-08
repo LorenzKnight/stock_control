@@ -47,7 +47,7 @@ isset($_GET['list']) ? $requestData['lid'] = $_GET['list'] : !isset($requestData
 
 $current_user = u_all_info('*', $requestData);
 $my_lists = listings('*', $requestData);
-$my_songs = playlist_details('*', $requestData);
+$my_playlist = playlist_details('*', $requestData);
 
 
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formsearch")) {
@@ -129,5 +129,21 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "createAndAdd")) {
 	$id = $insertResultArray["id"];
 
 	echo json_encode(["success" => $success, "id" => $id, "message" => $message]);
+}
+
+if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "remFromList")) {
+	$queryData = [
+		'user_id'		=> $_SESSION['mp_UserId'],
+		'list_id'		=> $_POST['listId'],
+		'song_id'		=> $_POST['songId']
+	];
+
+	$deleteResult = delete_from('playlist', $queryData);
+	$deleteResultArray = json_decode($deleteResult, true);
+// var_dump($deleteResultArray);
+	$success = $deleteResultArray["success"] ? true : false;
+	$message = $success ? 'The song was removed successfully from Playlist.' : 'Error removed the song.';
+
+	echo json_encode(["success" => $success, "message" => $message]);
 }
 ?>

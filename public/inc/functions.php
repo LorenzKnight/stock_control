@@ -422,7 +422,6 @@ function song_list(int $songId) : array
 	$res = [
 		'songId'        => false,
 		'userId'        => false,
-		'listId'        => false,
 		'cover'         => false,
 		'artist'        => false,
 		'songName'      => false,
@@ -440,7 +439,6 @@ function song_list(int $songId) : array
 		$res = [
 			'songId'        => $columnData['sid'],
 			'userId'        => $columnData['user_id'],
-			'listId'        => $columnData['list_id'],
 			'cover'         => $columnData['cover'],
 			'artist'        => $columnData['artist'],
 			'songName'      => $columnData['song_name'],
@@ -684,5 +682,33 @@ function update_table($tableName, array $queryData = [], array $whereClause = []
     }
 
     return json_encode($response);
+}
+
+function delete_from($tableName, array $whereClause = [], array $options = []): string
+{
+    if (empty($whereClause)) {
+        return json_encode(["success" => false, "message" => "No conditions specified for deletion."]);
+    }
+
+    $whereParts = [];
+    foreach ($whereClause as $column => $value) {
+        $escapedValue = is_numeric($value) ? $value : "'" . pg_escape_string($value) . "'";
+        $whereParts[] = "$column = $escapedValue";
+    }
+    $whereSQL = implode(' AND ', $whereParts);
+
+    $query = "DELETE FROM $tableName WHERE $whereSQL;";
+
+    if (isset($options['echo_query']) && $options['echo_query']) {
+        echo "Q: $query<br>\n"; //has to fix
+    }
+
+    $result = pg_query($query);
+
+    if ($result) {
+        return json_encode(["success" => true, "message" => "Rows deleted successfully."]);
+    } else {
+        return json_encode(["success" => false, "message" => "Error deleting rows."]);
+    }
 }
 ?>
