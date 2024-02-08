@@ -66,7 +66,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	removeFromPlaylis.forEach(function(element){
 		element.addEventListener('click', function(){
             let removeId = element.getAttribute('data-removeId');
-            confirm_remove(removeId);
+			let playlistId = element.getAttribute('data-playlistId');
+            confirm_remove(removeId, playlistId);
         });
 	});
 
@@ -315,6 +316,48 @@ document.addEventListener("DOMContentLoaded", () => {
 		xmlhttp.send(formData);
 	});
 
+	let confirmBtn = document.getElementById('confirm-btn');
+	confirmBtn.addEventListener('click', function(){
+		let formular_remove_song = document.getElementById('formular_remove_song');
+		let songId = formular_remove_song.getAttribute('data-removeId');
+		let listId = formular_remove_song.getAttribute('data-playlistId');
+
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				var response = JSON.parse(this.responseText);
+				console.log(response);
+				close_popup()
+
+				const statusMessageElem = document.getElementById('status-message');
+				if (statusMessageElem) {
+					statusMessageElem.innerText = response.message;
+					statusMessageElem.style.display = 'block';
+
+					setTimeout(() => {
+						statusMessageElem.style.opacity = '0';
+						setTimeout(() => {
+							statusMessageElem.style.display = 'none';
+							statusMessageElem.style.opacity = '0.9';
+						}, 1000);
+					}, 2000);
+				}
+
+				setTimeout(() => {
+					window.location.reload();
+					// window.location.href = 'discover';
+				}, 2100);
+			}
+		}
+		var formData = new FormData(); 
+		formData.append('MM_insert', 'remFromList');
+		formData.append('songId', songId);
+		formData.append('listId', listId);
+	
+		xmlhttp.open("POST", "logic/discover_be.php", true);
+		xmlhttp.send(formData);
+	});
+
 });
 
 function closeMiniMenu() {
@@ -366,7 +409,7 @@ function add_to_list(song) {
     closeMiniMenu()
 }
 
-function confirm_remove(song) {
+function confirm_remove(song, list) {
 	let bg_popup = document.getElementById('bg_popup');
     bg_popup.style.display = 'block';
 
@@ -381,6 +424,7 @@ function confirm_remove(song) {
 
 	let formular_remove_song = document.getElementById('formular_remove_song');
     formular_remove_song.setAttribute('data-removeId', song);
+	formular_remove_song.setAttribute('data-playlistId', list);
     formular_remove_song.style.display = 'block';
 
 	closeMiniMenu()
@@ -393,6 +437,11 @@ document.addEventListener('mouseup', function(e) {
     if (!bg_container.contains(e.target)) {
         close_popup();
     }
+});
+
+let cancelBtn = document.getElementById('cancel-btn');
+cancelBtn.addEventListener('click', function(){
+	close_popup()
 });
 
 function close_popup() {
@@ -410,7 +459,6 @@ function close_popup() {
 }
 
 let listName = document.querySelectorAll('.list');
-
 listName.forEach((element)=>{
     element.addEventListener('click', getListId);
 });

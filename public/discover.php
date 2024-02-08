@@ -56,8 +56,9 @@
 				<table class="music-list" cellspacing="0">
 				<?php 
 				$queueIndex = 0;
-				foreach($my_songs as $song_data) {
+				foreach($my_playlist as $song_data) {
 					$song = song_list($song_data['songId']);
+					// var_dump($song_data);
 				?>
 					<tr>
 						<td>
@@ -73,9 +74,9 @@
 							<button class="actions-btn" id="actions-btn" data-menu="<?= $song['songId']; ?>">ooo</button>
 							<div class="song-actions" id="song-actions">
 								<ul>
-									<li class="addPlaylist" data-songId="<?= $song['songId']; ?>">Add playlist</li>
+									<li class="addPlaylist" data-songId="<?= $song_data['songId']; ?>">Add playlist</li>
 									<li>Action 2</li>
-									<li class="removeFromPlaylis" data-removeId="<?= $song['songId']; ?>">Remove</li>
+									<li class="removeFromPlaylis" data-removeId="<?= $song_data['songId']; ?>" data-playlistId="<?= $song_data['listId']; ?>">Remove</li>
 								</ul>
 							</div>
 						</td>
