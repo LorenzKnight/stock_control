@@ -66,8 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	removeFromPlaylis.forEach(function(element){
 		element.addEventListener('click', function(){
             let removeId = element.getAttribute('data-removeId');
-			let playlistId = element.getAttribute('data-playlistId');
-            confirm_remove(removeId, playlistId);
+            confirm_remove(removeId);
         });
 	});
 
@@ -99,6 +98,10 @@ document.addEventListener("DOMContentLoaded", () => {
 							}, 1000);
 						}, 2000);
 					}
+
+					setTimeout(() => {
+						window.location.reload();
+					}, 2100);
                 }
             }
             var formData = new FormData(); 
@@ -224,7 +227,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
 
                     let artistContainer = table.querySelectorAll('.artist-container');
-
                     artistContainer.forEach((element)=>{
                         element.addEventListener('click', getSongId);
                     });
@@ -302,7 +304,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				}
 
 				setTimeout(() => {
-					// window.location.reload();
 					window.location.href = 'discover';
 				}, 3000);
 			}
@@ -320,7 +321,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	confirmBtn.addEventListener('click', function(){
 		let formular_remove_song = document.getElementById('formular_remove_song');
 		let songId = formular_remove_song.getAttribute('data-removeId');
-		let listId = formular_remove_song.getAttribute('data-playlistId');
+		// let listId = formular_remove_song.getAttribute('data-playlistId');
 
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.onreadystatechange = function() {
@@ -345,14 +346,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				setTimeout(() => {
 					window.location.reload();
-					// window.location.href = 'discover';
 				}, 2100);
 			}
 		}
 		var formData = new FormData(); 
 		formData.append('MM_insert', 'remFromList');
 		formData.append('songId', songId);
-		formData.append('listId', listId);
+		// formData.append('listId', listId);
 	
 		xmlhttp.open("POST", "logic/discover_be.php", true);
 		xmlhttp.send(formData);
@@ -409,7 +409,7 @@ function add_to_list(song) {
     closeMiniMenu()
 }
 
-function confirm_remove(song, list) {
+function confirm_remove(song) {
 	let bg_popup = document.getElementById('bg_popup');
     bg_popup.style.display = 'block';
 
@@ -424,7 +424,6 @@ function confirm_remove(song, list) {
 
 	let formular_remove_song = document.getElementById('formular_remove_song');
     formular_remove_song.setAttribute('data-removeId', song);
-	formular_remove_song.setAttribute('data-playlistId', list);
     formular_remove_song.style.display = 'block';
 
 	closeMiniMenu()
