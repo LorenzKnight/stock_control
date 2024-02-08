@@ -83,10 +83,10 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "addToList")) {
         'list_date' => date("Y-m-d H:i:s")
     ];
 
-    $functionSelect = select_from('playlist', ['song_id'], ['song_id' => $_POST['songId']]);
+    $functionSelect = select_from('playlist', ['song_id', 'list_id'], ['song_id' => $_POST['songId'], 'list_id' => $_POST['listId']]);
 
     if ($functionSelect) {
-        $updatePlaylist = update_table('playlist', $queryData, ['song_id' => $_POST['songId']]);
+        $updatePlaylist = update_table('playlist', $queryData, ['song_id' => $_POST['songId'], 'list_id' => $_POST['listId']]);
 		
         $success = $updatePlaylist !== false;
         $message = $success ? "The song was updated successfully." : "Error updating the song.";
@@ -134,13 +134,12 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "createAndAdd")) {
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "remFromList")) {
 	$queryData = [
 		'user_id'		=> $_SESSION['mp_UserId'],
-		'list_id'		=> $_POST['listId'],
-		'song_id'		=> $_POST['songId']
+		'pid'			=> $_POST['songId']
 	];
 
 	$deleteResult = delete_from('playlist', $queryData);
 	$deleteResultArray = json_decode($deleteResult, true);
-// var_dump($deleteResultArray);
+
 	$success = $deleteResultArray["success"] ? true : false;
 	$message = $success ? 'The song was removed successfully from Playlist.' : 'Error removed the song.';
 
