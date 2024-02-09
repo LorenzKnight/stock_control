@@ -2,7 +2,7 @@
 
 use PhpParser\Node\Expr\Cast\Double;
 
-function checkUniqueEmail($email)
+function checkUniqueEmail($email) // esto se puede hacer con la funcion select_from()
 {
 	$query_ConsultaFuncion = "SELECT email FROM users WHERE email = $email";
 	//echo $query_ConsultaFuncion;
@@ -390,7 +390,6 @@ function song_data($columns = "*", $requestData = array(), array $options = []) 
 		$res [] = [
 			'songId'        => $columnData['sid'],
 			'userId'        => $columnData['user_id'],
-			'listId'        => $columnData['list_id'],
 			'cover'         => $columnData['cover'],
 			'artist'        => $columnData['artist'],
 			'songName'      => $columnData['song_name'],
@@ -409,48 +408,8 @@ function song_data($columns = "*", $requestData = array(), array $options = []) 
 function dbMusicListColumnNames()
 {
 	return array(
-		"sid", "user_id", "list_id", "cover", "artist", "song_name", "gender", "report", "public", "song_date"
+		"sid", "user_id", "cover", "artist", "song_name", "gender", "report", "public", "song_date"
 	);
-}
-
-function song_list(int $songId) : array
-{
-	$query_songData = "SELECT * FROM song WHERE sid = $songId";
-	$sql = pg_query($query_songData);
-	$totalRow_request = pg_num_rows($sql);
-
-	$res = [
-		'songId'        => false,
-		'userId'        => false,
-		'cover'         => false,
-		'artist'        => false,
-		'songName'      => false,
-		'fileName'      => false,
-		'gender'        => false,
-		'report'        => false,
-		'public'        => false,
-		'songDate'      => false
-	];
-
-	if(!empty($totalRow_request))
-	{
-		$columnData = pg_fetch_assoc($sql);
-
-		$res = [
-			'songId'        => $columnData['sid'],
-			'userId'        => $columnData['user_id'],
-			'cover'         => $columnData['cover'],
-			'artist'        => $columnData['artist'],
-			'songName'      => $columnData['song_name'],
-			'fileName'      => $columnData['file_name'],
-			'gender'        => $columnData['gender'],
-			'report'        => $columnData['report'],
-			'public'        => $columnData['public'],
-			'songDate'      => $columnData['song_date']
-		];
-	}
-
-	return $res;
 }
 
 function playlist_details($columns = "*", $requestData = array(), array $options = []) : array

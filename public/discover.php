@@ -57,8 +57,8 @@
 				<?php 
 				$queueIndex = 0;
 				foreach($my_playlist as $song_data) {
-					$song = song_list($song_data['songId']);
-					// var_dump($song_data);
+					$songs = select_from('song', [], ['sid' => $song_data['songId']]);
+					$song = $songs[0];
 				?>
 					<tr>
 						<td>
@@ -68,7 +68,7 @@
 							</div>
 						</td>
 						<td class="song-list" data-queue-index="<?= $queueIndex; ?>" data-id="<?= $song['songId']; ?>" data-song="<?= $song['songName']; ?>" data-file="<?= $song['fileName'];?>">
-							<?= ucwords(strtolower($song['artist'])).' - '.ucwords(strtolower($song['songName'])); ?>
+							<?= ucwords(strtolower($song['artist'])).' - '.ucwords(strtolower($song['song_name'])); ?>
 						</td>
 						<td width="5%">
 							<button class="actions-btn" id="actions-btn" data-menu="<?= $song['songId']; ?>">ooo</button>
