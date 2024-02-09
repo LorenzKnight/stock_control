@@ -60,6 +60,7 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formsearch")) {
     foreach($my_songs as $song) {
         $results[] = [
             'songId'        => $song['songId'],
+			'userData'		=> u_all_info('image', ['user_id' => $song['userId']]), // traer foto de perfil 
             'cover'         => $song['cover'],
             'artist'        => $song['artist'],
             'songName'      => $song['songName'],

@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             songCoverDiv.className = 'songs-cover';
 
                         var songCoverImg = document.createElement('img');
-                            songCoverImg.src = 'images/profile/' + song.cover + 'perfil.png';
+							songCoverImg.src = !song['cover'] || song['cover'] === '' ? 'images/profile/' + song.userData.image : 'images/cover/' + song.cover;
                             songCoverImg.alt = '';
 
                             songCoverDiv.appendChild(songCoverImg);
@@ -284,9 +284,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		xmlhttp.onreadystatechange = function() {
 			if (this.readyState == 4 && this.status == 200) {
 				var response = JSON.parse(this.responseText);
-				console.log(response);
-
-				// document.getElementById('input-playlist').value = '';
+			console.log(response);
 				close_popup()
 
 				const statusMessageElem = document.getElementById('status-message');
@@ -321,7 +319,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	confirmBtn.addEventListener('click', function(){
 		let formular_remove_song = document.getElementById('formular_remove_song');
 		let songId = formular_remove_song.getAttribute('data-removeId');
-		// let listId = formular_remove_song.getAttribute('data-playlistId');
 
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.onreadystatechange = function() {
@@ -352,7 +349,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		var formData = new FormData(); 
 		formData.append('MM_insert', 'remFromList');
 		formData.append('songId', songId);
-		// formData.append('listId', listId);
 	
 		xmlhttp.open("POST", "logic/discover_be.php", true);
 		xmlhttp.send(formData);
