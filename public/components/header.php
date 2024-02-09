@@ -17,7 +17,7 @@
 				<?php if(isset($_SESSION['mp_UserId']) && $_SESSION['mp_UserId'] != null) { ?>
 				<li>
 					<div class="profile" id="profileTrigger">
-						<img src="images/profile/<?php ?>perfil.png" alt="">
+						<img src="images/profile/<?= $current_user['image']; ?>" alt="">
 					</div>
 					<div id="profileDropdown" style="display: none;">
 						<ul>
