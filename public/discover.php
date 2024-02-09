@@ -63,8 +63,7 @@
 					<tr>
 						<td>
 							<div class="songs-cover">
-								<img src="<?= empty($song['cover']) ? 'images/profile/'.$current_user['image'] : 'images/cover/'.$song['cover'] ?>" >
-								<?php //var_dump($current_user['image']); ?>
+								<img src="<?= empty($song['cover']) ? 'images/profile/'.$current_user['image'] : 'images/cover/'.$song['cover']; ?>" >
 							</div>
 						</td>
 						<td class="song-list" data-queue-index="<?= $queueIndex; ?>" data-id="<?= $song['songId']; ?>" data-song="<?= $song['songName']; ?>" data-file="<?= $song['fileName'];?>">
