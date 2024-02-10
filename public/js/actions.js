@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+	// console.log(currentUser);
     var profileTrigger = document.getElementById('profileTrigger');
     
 	if (profileTrigger) {
@@ -176,7 +177,6 @@ document.addEventListener("DOMContentLoaded", () => {
                             songCoverDiv.appendChild(songCoverImg);
                             songCoverCell.appendChild(songCoverDiv);
         
-
                         var artistCell = document.createElement('td');
                             artistCell.className = 'artist-container';
                         	artistCell.textContent = (song.artist + ' - ' + song.songName)
@@ -215,10 +215,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             ul.appendChild(li2);
                             ul.appendChild(li3);
                             songActionsDiv.appendChild(ul);
-
                             songNameCell.appendChild(songActionsDiv);
 
-        
                         row.appendChild(songCoverCell);
                         row.appendChild(artistCell);
                         row.appendChild(songNameCell);
@@ -354,7 +352,16 @@ document.addEventListener("DOMContentLoaded", () => {
 		xmlhttp.send(formData);
 	});
 
+	songs(); // ESTA PARTE ES PARA DESARROLLA O MOSTRAR LO QUE PHP ESTA MANDANDO 
 });
+
+function songs() {
+    fetch("logic/songs.php")
+	.then(res => res.json())
+	.then(data => {
+		console.log(data);
+    });
+}
 
 function closeMiniMenu() {
     let bgOverlayer = document.querySelector('.bg-overlayer');

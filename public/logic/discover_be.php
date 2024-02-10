@@ -45,7 +45,7 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formsignin")) {
 !isset($_SESSION['mp_UserId']) ? $requestData['user_id'] = null : $requestData['user_id'] = $_SESSION['mp_UserId'];
 isset($_GET['list']) ? $requestData['lid'] = $_GET['list'] : !isset($requestData['lid']);
 
-$current_user = u_all_info('*', $requestData);
+$user_data = u_all_info('*', $requestData);
 $my_lists = listings('*', $requestData);
 $my_playlist = playlist_details('*', $requestData);
 

@@ -40,7 +40,7 @@
 						<div class="list-cover"></div>
 						<div class="list-info">
 							<div class="list-name"><?= htmlspecialchars($list['listName'], ENT_QUOTES, 'UTF-8'); ?></div>
-							<?= htmlspecialchars($current_user['name'].' '.$current_user['surname'], ENT_QUOTES, 'UTF-8'); ?>
+							<?= htmlspecialchars($user_data['name'].' '.$user_data['surname'], ENT_QUOTES, 'UTF-8'); ?>
 						</div>
 					</div>
 				<?php
@@ -63,7 +63,7 @@
 					<tr>
 						<td>
 							<div class="songs-cover">
-								<img src="<?= empty($song['cover']) ? 'images/profile/'.$current_user['image'] : 'images/cover/'.$song['cover']; ?>" >
+								<img src="<?= empty($song['cover']) ? 'images/profile/'.$user_data['image'] : 'images/cover/'.$song['cover']; ?>" >
 							</div>
 						</td>
 						<td class="song-list" data-queue-index="<?= $queueIndex; ?>" data-id="<?= $song['songId']; ?>" data-song="<?= $song['songName']; ?>" data-file="<?= $song['fileName'];?>">
@@ -197,19 +197,7 @@
     <div class="bg-overlayer" style="display: none;"></div>
 
     <script>
-        // // Función para mostrar la sección basada en la URL
-        // function showSectionBasedOnURL() {
-        //     let section = 'result-container';
-
-        //     // Si la URL termina en "/upload", cambia la sección a mostrar
-        //     if (window.location.pathname.endsWith('/uploader')) {
-        //         section = 'uploader-container';
-        //     }
-
-        //     document.getElementById(section).style.display = 'block';
-        // }
-
-        // showSectionBasedOnURL();
+		// var currentUser = <?php // echo json_encode($user_data); ?>;
     </script>
 </body>
 
