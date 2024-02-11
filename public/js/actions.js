@@ -117,7 +117,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let searchField = document.getElementById('searchField');
     searchField.addEventListener('keyup', search);
-
     function search(event) {
         var searching = event.target.value.toLowerCase();
         console.log(searching);
@@ -351,6 +350,20 @@ document.addEventListener("DOMContentLoaded", () => {
 		xmlhttp.open("POST", "logic/discover_be.php", true);
 		xmlhttp.send(formData);
 	});
+
+
+	let userId = currentUser.user_id;
+    let menuBtns = document.querySelectorAll('.song-actions');
+    menuBtns.forEach((items) => {
+        let user = items.getAttribute('data-owner');
+        if (user === userId) {
+            // items.style.display = '';
+            document.querySelectorAll(".deleteFile, .otherOption").forEach(function(obtion) {
+                obtion.style.display = '';
+            });
+        }
+    });
+
 });
 
 function closeMiniMenu() {
