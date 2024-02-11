@@ -71,11 +71,11 @@
 						</td>
 						<td width="5%">
 							<button class="actions-btn" id="actions-btn" data-menu="<?= $song['song_id']; ?>">ooo</button>
-							<div class="song-actions" id="song-actions">
+							<div class="song-actions" id="song-actions" data-owner="<?= $song['user_id']; ?>">
 								<ul>
 									<li class="addPlaylist" data-songId="<?= $song_data['song_id']; ?>">Add playlist</li>
-									<li>Action 2</li>
 									<li class="removeFromPlaylis" data-removeId="<?= $song_data['pid']; ?>">Remove</li>
+									<li class="deleteFile" data-deleteId="<?= $song_data['song_id']; ?>" style="display: none;">Delete</li>
 								</ul>
 							</div>
 						</td>
@@ -197,7 +197,7 @@
     <div class="bg-overlayer" style="display: none;"></div>
 
     <script>
-		// var currentUser = <?php // echo json_encode($user_data); ?>;
+		var currentUser = <?= json_encode($user_data); ?>;
     </script>
 </body>
 
