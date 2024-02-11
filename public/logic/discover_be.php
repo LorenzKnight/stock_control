@@ -41,14 +41,20 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formsignin")) {
 }
 // End to the login logic //
 
+if (isset($_GET['list'])) {
+	$_SESSION['list'] = $_GET['list'];
+}
 
-!isset($_SESSION['mp_UserId']) ? $requestData['user_id'] = null : $requestData['user_id'] = $_SESSION['mp_UserId'];
-isset($_GET['list']) ? $requestData['lid'] = $_GET['list'] : !isset($requestData['lid']);
-
+$requestData['user_id'] = !isset($_SESSION['mp_UserId']) ? null : $_SESSION['mp_UserId'];
 $user_data = u_all_info('*', $requestData);
-$my_lists = listings('*', $requestData);
-$my_playlist = playlist_details('*', $requestData);
 
+$requestData = [];
+isset($_GET['list']) ? $requestData['lid'] = $_GET['list'] : !isset($requestData['lid']);
+$my_lists = select_from('listings', [], $requestData);
+
+$requestData = [];
+isset($_GET['list']) ? $requestData['list_id'] = $_GET['list'] : !isset($requestData['list_id']);
+$my_playlist = select_from('playlist', [], $requestData);
 
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formsearch")) {
     $requestSearch['search'] = pg_escape_string($_POST['searching']);
@@ -71,10 +77,6 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formsearch")) {
     header('Content-Type: application/json');
     echo json_encode($results);
 }
-
-$requestData = [];
-$requestData['user_id'] = null ? $_SESSION['mp_UserId'] : null;
-$all_my_lists = listings('*', $requestData);
 
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "addToList")) {
 	$queryData = [

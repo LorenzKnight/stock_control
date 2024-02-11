@@ -179,21 +179,21 @@ document.addEventListener("DOMContentLoaded", () => {
         
                         var artistCell = document.createElement('td');
                             artistCell.className = 'artist-container';
-                        	artistCell.textContent = (song.artist + ' - ' + song.songName)
+                        	artistCell.textContent = (song.artist + ' - ' + song.song_name)
 							.split(' ')
 							.map(word => word[0].toUpperCase() + word.substring(1).toLowerCase())
 							.join(' ');
                             artistCell.setAttribute('data-queue-index', 0);
-                            artistCell.setAttribute('data-id', song.songId);
-                            artistCell.setAttribute('data-song', song.songName);
-                            artistCell.setAttribute('data-file', song.fileName);
+                            artistCell.setAttribute('data-id', song.sid);
+                            artistCell.setAttribute('data-song', song.song_name);
+                            artistCell.setAttribute('data-file', song.file_name);
         
                         var songNameCell = document.createElement('td');
                             songNameCell.setAttribute('width', '5%');
                             
                         var actionsBtn = document.createElement('button');
                             actionsBtn.className = 'actions-btn';
-                            actionsBtn.setAttribute('data-menu', song.songId);
+                            actionsBtn.setAttribute('data-menu', song.sid);
                             actionsBtn.textContent = 'ooo';
                             songNameCell.appendChild(actionsBtn);
 
@@ -205,7 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         var li1 = document.createElement('li');
                             li1.textContent = 'Add playlist';
                                 li1.className = 'addPlaylist';
-                                li1.setAttribute('data-songId', song.songId);
+                                li1.setAttribute('data-songId', song.sid);
                         var li2 = document.createElement('li');
                             li2.textContent = 'Action 2';
                         var li3 = document.createElement('li');
@@ -351,17 +351,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		xmlhttp.open("POST", "logic/discover_be.php", true);
 		xmlhttp.send(formData);
 	});
-
-	songs(); // ESTA PARTE ES PARA DESARROLLA O MOSTRAR LO QUE PHP ESTA MANDANDO 
 });
-
-function songs() {
-    fetch("logic/songs.php")
-	.then(res => res.json())
-	.then(data => {
-		console.log(data);
-    });
-}
 
 function closeMiniMenu() {
     let bgOverlayer = document.querySelector('.bg-overlayer');

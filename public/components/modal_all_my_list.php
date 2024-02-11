@@ -9,16 +9,16 @@
     <div class="my-playlis-list">
         <table class="music-list" id="music-playlists" cellspacing="0">
         <?php
-        foreach($all_my_lists as $all_list) {
+        foreach($my_lists as $all_list) {
         ?>
-            <tr class="playlistContainer" data-playListId="<?= $all_list['listingsId']; ?>">
+            <tr class="playlistContainer" data-playListId="<?= $all_list['lid']; ?>">
                 <td>
                     <div class="list-mini-cover">
                         <img src="images/profile/<?php ?>perfil.png" alt="">
                     </div>
                 </td>
                 <td>
-                    <?= $all_list['listName']; ?>
+                    <?= $all_list['list_name']; ?>
                 </td>
             </tr>
         <?php

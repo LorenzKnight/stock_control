@@ -1,21 +1,19 @@
 <?php
     require_once __DIR__ .'/../connections/conexion.php';
 
-    $requestData['user_id'] = $_SESSION['mp_UserId'];
-    isset($_GET['list']) ? $requestData['lid'] = $_GET['list'] : !isset($requestData['lid']);
-    
-    $song_list = select_from('song', [], $requestData);
+    !isset($_SESSION['mp_UserId']) ? $requestData['user_id'] = null : $requestData['user_id'] = $_SESSION['mp_UserId'];
+    $listings = select_from('listings', [], $requestData);
     
     $results = [];
 
-    foreach($song_list as $song) {
+    foreach($listings as $list) {
         $results[] = [
-            'song_id'        => $song['sid'],
-			'user_data'		=> u_all_info('*', ['user_id' => $song['user_id']]),
-            'cover'         => $song['cover'],
-            'artist'        => $song['artist'],
-            'song_name'      => $song['song_name'],
-            'file_name'      => $song['file_name']
+            'lid'			=> $list['lid'],
+            'user_id'		=> $list['user_id'],
+            'listName'		=> $list['list_name'],
+			'public'		=> $list['public'],
+			'list_date'		=> $list['list_date'],
+			'userData'     => u_all_info('*', ['user_id' => $list['user_id']]),
         ];
     }
     

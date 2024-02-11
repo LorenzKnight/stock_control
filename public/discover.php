@@ -36,10 +36,10 @@
 				<?php
 				foreach ($my_lists as $list) {
 				?>
-					<div class="list" data-list="<?= htmlspecialchars($list['listingsId'], ENT_QUOTES, 'UTF-8'); ?>">
+					<div class="list" data-list="<?= htmlspecialchars($list['lid'], ENT_QUOTES, 'UTF-8'); ?>">
 						<div class="list-cover"></div>
 						<div class="list-info">
-							<div class="list-name"><?= htmlspecialchars($list['listName'], ENT_QUOTES, 'UTF-8'); ?></div>
+							<div class="list-name"><?= htmlspecialchars($list['list_name'], ENT_QUOTES, 'UTF-8'); ?></div>
 							<?= htmlspecialchars($user_data['name'].' '.$user_data['surname'], ENT_QUOTES, 'UTF-8'); ?>
 						</div>
 					</div>
@@ -52,12 +52,12 @@
         <div class="wrapper-home hidden" id="listing">
             <div class="list-content">
 				<a href="discover">< Back</a>
-				<h2><?= $my_lists[0]['listName']; ?></h2>
+				<h2><?= $my_lists[0]['list_name']; ?></h2>
 				<table class="music-list" cellspacing="0">
 				<?php 
 				$queueIndex = 0;
 				foreach($my_playlist as $song_data) {
-					$songs = select_from('song', [], ['sid' => $song_data['songId']]);
+					$songs = select_from('song', [], ['sid' => $song_data['song_id']]);
 					$song = $songs[0];
 				?>
 					<tr>
@@ -66,16 +66,16 @@
 								<img src="<?= empty($song['cover']) ? 'images/profile/'.$user_data['image'] : 'images/cover/'.$song['cover']; ?>" >
 							</div>
 						</td>
-						<td class="song-list" data-queue-index="<?= $queueIndex; ?>" data-id="<?= $song['songId']; ?>" data-song="<?= $song['songName']; ?>" data-file="<?= $song['fileName'];?>">
+						<td class="song-list" data-queue-index="<?= $queueIndex; ?>" data-id="<?= $song['sid']; ?>" data-song="<?= $song['song_name']; ?>" data-file="<?= $song['file_name'];?>">
 							<?= ucwords(strtolower($song['artist'])).' - '.ucwords(strtolower($song['song_name'])); ?>
 						</td>
 						<td width="5%">
-							<button class="actions-btn" id="actions-btn" data-menu="<?= $song['songId']; ?>">ooo</button>
+							<button class="actions-btn" id="actions-btn" data-menu="<?= $song['song_id']; ?>">ooo</button>
 							<div class="song-actions" id="song-actions">
 								<ul>
-									<li class="addPlaylist" data-songId="<?= $song_data['songId']; ?>">Add playlist</li>
+									<li class="addPlaylist" data-songId="<?= $song_data['song_id']; ?>">Add playlist</li>
 									<li>Action 2</li>
-									<li class="removeFromPlaylis" data-removeId="<?= $song_data['pId']; ?>">Remove</li>
+									<li class="removeFromPlaylis" data-removeId="<?= $song_data['pid']; ?>">Remove</li>
 								</ul>
 							</div>
 						</td>
