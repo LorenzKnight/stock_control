@@ -17,11 +17,11 @@
 				<?php if(isset($_SESSION['mp_UserId']) && $_SESSION['mp_UserId'] != null) { ?>
 				<li>
 					<div class="profile" id="profileTrigger">
-						<img src="images/profile/<?= $current_user['image']; ?>" alt="">
+						<img src="images/profile/<?= $user_data['image']; ?>" alt="">
 					</div>
 					<div id="profileDropdown" style="display: none;">
 						<ul>
-							<li><a href="#"><?= $current_user['name'].' '.$current_user['surname']; ?></a></li>
+							<li><a href="#"><?= $user_data['name'].' '.$user_data['surname']; ?></a></li>
 							<li><a href="#">Settings</a></li>
 							<li><a href="logout.php">Logout</a></li>
 						</ul>
