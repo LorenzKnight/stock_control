@@ -296,7 +296,18 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
     }
     $whereClause = empty($whereParts) ? '' : ' WHERE ' . implode(' AND ', $whereParts);
 
-    $query = "SELECT $columnNames FROM $tableName$whereClause;";
+	$limitClause = '';
+	if (isset($options['limit']) && !empty($options['limit']) && is_numeric($options['limit'])) {
+		$limitClause = " LIMIT " . intval($options['limit']);
+	}
+
+	$orderClause = '';
+	if (isset($options['order_by']) && !empty($options['order_by'])) {
+		$orderDirection = isset($options['order_direction']) && strtolower($options['order_direction']) == 'desc' ? 'DESC' : 'ASC';
+		$orderClause = " ORDER BY " . pg_escape_string($options['order_by']) . " $orderDirection";
+	}
+
+    $query = "SELECT $columnNames FROM $tableName$whereClause$orderClause$limitClause;";
 
     if (isset($options['echo_query']) && $options['echo_query']) {
         echo "Q: $query<br>\n";

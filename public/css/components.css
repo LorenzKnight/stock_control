@@ -114,6 +114,19 @@
     height: 198px;
     background-color: orange;
     border: 1px solid #666;
+	position: relative;
+}
+.list-cover img {
+	width: 100%;
+}
+.list-options {
+	width: 94%;
+	padding: 10px 3% ;
+	background-color: red;
+	position: absolute;
+	bottom: 0;
+	text-align: right;
+	color: #fff;
 }
 .list-info {
     padding: 5px 0 0;
