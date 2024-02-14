@@ -35,9 +35,18 @@
 			<div class="main-content">
 				<?php
 				foreach ($my_lists as $list) {
+					$song = select_from('playlist', [], ['list_id' => $list['lid']], ['limit' => 1]);
+					$songData = !empty($song) ? select_from('song', [], ['sid' => $song[0]['song_id']]) : '';
 				?>
 					<div class="list" data-list="<?= htmlspecialchars($list['lid'], ENT_QUOTES, 'UTF-8'); ?>">
-						<div class="list-cover"></div>
+						<div class="list-cover">
+							<?php if (!empty($songData[0]['cover'])) { ?>
+								<img src="images/cover/<?= $songData[0]['cover']; ?>">
+							<?php } ?>
+							<div class="list-options">
+								...
+							</div>
+						</div>
 						<div class="list-info">
 							<div class="list-name"><?= htmlspecialchars($list['list_name'], ENT_QUOTES, 'UTF-8'); ?></div>
 							<?= htmlspecialchars($user_data['name'].' '.$user_data['surname'], ENT_QUOTES, 'UTF-8'); ?>

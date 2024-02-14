@@ -178,14 +178,14 @@ document.addEventListener("DOMContentLoaded", () => {
         
                         var artistCell = document.createElement('td');
                             artistCell.className = 'artist-container';
-                        	artistCell.textContent = (song.artist + ' - ' + song.song_name)
+                        	artistCell.textContent = (song.artist + ' - ' + song.songName)
 							.split(' ')
 							.map(word => word[0].toUpperCase() + word.substring(1).toLowerCase())
 							.join(' ');
                             artistCell.setAttribute('data-queue-index', 0);
                             artistCell.setAttribute('data-id', song.sid);
-                            artistCell.setAttribute('data-song', song.song_name);
-                            artistCell.setAttribute('data-file', song.file_name);
+                            artistCell.setAttribute('data-song', song.songName);
+                            artistCell.setAttribute('data-file', song.fileName);
         
                         var songNameCell = document.createElement('td');
                             songNameCell.setAttribute('width', '5%');
@@ -469,6 +469,10 @@ listName.forEach((element)=>{
 });
 
 function getListId(event) {
+    if (event.target.closest('.list-options')) {
+        return;
+    }
+
     var list = event.target.closest('.list').getAttribute('data-list');
     console.log(list);
 
