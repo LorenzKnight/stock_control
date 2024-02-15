@@ -515,6 +515,18 @@ document.addEventListener('click', (event) => {
         closeAllPlaylistOptions();
     }
 });
+
+
+let listCovers = document.querySelectorAll('.list-cover');
+listCovers.forEach((listCover) => {
+	listCover.addEventListener('mouseleave', function() {
+		let playlistOptions = this.querySelector('.playlist-options');
+
+		if (playlistOptions && playlistOptions.style.display === 'block') {
+			playlistOptions.style.display = 'none';
+		}
+	});
+});
 // #########################################################################
 
 
