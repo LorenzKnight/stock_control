@@ -209,7 +209,7 @@
     </footer>
     
     <?php include("components/popup_bg.php"); ?>
-    <div class="bg-overlayer" style="display: none;"></div>
+    <!-- <div class="bg-overlayer" style="display: none;"></div> -->
 
     <script>
 		var currentUser = <?= json_encode($user_data); ?>;

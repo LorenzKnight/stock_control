@@ -50,10 +50,10 @@ document.addEventListener("DOMContentLoaded", () => {
             break;
     }
 
-    let bgOverlayer = document.querySelector('.bg-overlayer');
-    bgOverlayer.addEventListener('click', function(){
-        closeMiniMenu()
-    });
+    // let bgOverlayer = document.querySelector('.bg-overlayer');
+    // bgOverlayer.addEventListener('click', function(){
+    //     closeMiniMenu()
+    // });
 
     let addPlaylist = document.querySelectorAll('.addPlaylist');
     addPlaylist.forEach(function(element){
@@ -367,13 +367,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function closeMiniMenu() {
-    let bgOverlayer = document.querySelector('.bg-overlayer');
+    // let bgOverlayer = document.querySelector('.bg-overlayer');
     let menuList = document.querySelectorAll('.song-actions');
         
     menuList.forEach((element)=>{
         if(element.style.display === 'block') {
             element.style.display = 'none';
-            bgOverlayer.style.display = 'none';
+            // bgOverlayer.style.display = 'none';
         }
     });
 }
