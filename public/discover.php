@@ -44,7 +44,13 @@
 								<img src="images/cover/<?= $songData[0]['cover']; ?>">
 							<?php } ?>
 							<div class="list-options">
-								...
+								<ul>
+									<li>
+										<a href="#" class="playlist-mini-menu" data-listId="<?= $list['lid']; ?>">...</a>
+										<div class="playlist-options"></div>
+									</li>
+									<!-- <li>option</li> -->
+								</ul>
 							</div>
 						</div>
 						<div class="list-info">
