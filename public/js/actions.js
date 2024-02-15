@@ -484,28 +484,68 @@ function getListId(event) {
 
 };
 
-let menuBtn = document.querySelectorAll('.actions-btn');
-let menuList = document.querySelectorAll('.song-actions');
+// PLAYLIST MENU OPEN AND CLOSE
+let playlistMiniMenu = document.querySelectorAll('.playlist-mini-menu');
+let playlistOptions = document.querySelectorAll('.playlist-options');
 
-menuBtn.forEach((element)=>{
+function closeAllPlaylistOptions() {
+    document.querySelectorAll('.playlist-options').forEach((element) => {
+        element.style.display = 'none';
+    });
+}
+
+function playlistMenu(event) {
+    closeAllPlaylistOptions();
+
+    let playlistOptions = event.currentTarget.nextElementSibling;
+    playlistOptions.style.display = 'block';
+
+    event.stopPropagation();
+}
+
+playlistMiniMenu.forEach((element) => {
+    element.addEventListener('click', playlistMenu);
+});
+
+document.addEventListener('click', (event) => {
+    let insidePlaylistOption = event.target.closest('.playlist-options');
+    let clickOnMiniMenu = event.target.closest('.playlist-mini-menu');
+
+    if (!insidePlaylistOption && !clickOnMiniMenu) {
+        closeAllPlaylistOptions();
+    }
+});
+// #########################################################################
+
+
+// SONGS MENU OPEN AND CLOSE
+let menuBtn = document.querySelectorAll('.actions-btn');
+
+function closeAllMenuList() {
+    document.querySelectorAll('.song-actions').forEach((element) => {
+        element.style.display = 'none';
+    });
+}
+
+function pullDownMenu(event) {
+    closeAllMenuList();
+
+    let menuList = event.currentTarget.nextElementSibling;
+    menuList.style.display = 'block';
+
+    event.stopPropagation();
+}
+
+menuBtn.forEach((element) => {
     element.addEventListener('click', pullDownMenu);
 });
 
-function pullDownMenu(event) {
-    let menuList = event.currentTarget.nextElementSibling;
-    let bgOverlayer = document.querySelector('.bg-overlayer');
+document.addEventListener('click', (event) => {
+    let insideMenuList = event.target.closest('.song-actions');
+    let clickOnMenuBtn = event.target.closest('.actions-btn');
 
-    if (menuList.style.display === 'block') {
-        menuList.style.display = 'none';
-        bgOverlayer.style.display = 'none';
-    } else {
-        let otherMenuList = document.querySelectorAll('.song-actions');
-
-        otherMenuList.forEach((element)=>{
-            element.style.display = 'none';
-        });
-
-        menuList.style.display = 'block';
-        bgOverlayer.style.display = 'block';
+    if (!insideMenuList && !clickOnMenuBtn) {
+        closeAllMenuList();
     }
-};
+});
+// #########################################################################

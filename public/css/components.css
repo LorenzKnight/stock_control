@@ -116,21 +116,87 @@
     border: 1px solid #666;
 	position: relative;
 }
+
 .list-cover img {
 	width: 100%;
 }
+
+.list-cover:hover .list-options {
+    display: block;
+}
+
 .list-options {
-	width: 94%;
-	padding: 10px 3% ;
-	background-color: red;
+	width: 100%;
+	padding: 0;
 	position: absolute;
 	bottom: 0;
-	text-align: right;
 	color: #fff;
+	display: none;
 }
+
+.list-options ul {
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.list-options ul li {
+	width: 16%;
+	float: right;
+	margin: 0 1px;
+	padding: 10px 2%;
+	text-align: center;
+}
+
+.list-options ul li a {
+	color: #fff;
+	text-decoration: none;
+	font-weight: 900;
+}
+
+.list-options ul li :hover {
+	color: #000;
+}
+
+
+.playlist-options {
+	background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+
+	width: 150px;
+	height: 150px;
+	background-color: darkorchid;
+	border-radius: 4px;
+	position: absolute;
+	margin: 10px 0 0 -112px;
+	display: none;
+	z-index: 4;
+}
+
+/* .playlist-options ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    position: relative;
+}
+.playlist-options ul li {
+    width: 100px;
+    font-size: 14px;
+    padding: 10px 0;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+}
+.playlist-options ul li:hover {
+    background-color: #f2f2f2;
+} */
+
 .list-info {
     padding: 5px 0 0;
 }
+
 .list-name {
     font-size: 16px;
     margin-bottom: 4px;
