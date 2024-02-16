@@ -2,10 +2,10 @@
 
 use PhpParser\Node\Expr\Cast\Double;
 
-function checkUniqueEmail($email) // esto se puede hacer con la funcion select_from()
+function checkUniqueEmail(string $email) : bool // esto se puede hacer con la funcion select_from()
 {
 	$query_ConsultaFuncion = "SELECT email FROM users WHERE email = $email";
-	//echo $query_ConsultaFuncion;
+	
 	$ConsultaFuncion = pg_query($query_ConsultaFuncion);
 	$totalRows_ConsultaFuncion = pg_num_rows($ConsultaFuncion);
 	
@@ -285,7 +285,7 @@ function dbMusicListColumnNames()
 	);
 }
 
-function select_from($tableName, array $columns = [], array $whereClause = [], array $options = []): array
+function select_from($tableName, array $columns = [], array $whereClause = [], array $options = []) : array
 {
     $columnNames = empty($columns) ? '*' : implode(', ', $columns);
 
@@ -322,7 +322,7 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
     return pg_fetch_all($result) ?: [];
 }
 
-function insert_into($tableName, array $queryData = [], array $options = []): string
+function insert_into($tableName, array $queryData = [], array $options = []) : string
 {
     if (empty($queryData)) {
         return 0;
@@ -358,7 +358,7 @@ function insert_into($tableName, array $queryData = [], array $options = []): st
     }
 }
 
-function update_table($tableName, array $queryData = [], array $whereClause = [], array $options = []): string
+function update_table($tableName, array $queryData = [], array $whereClause = [], array $options = []) : string
 {
     if (empty($queryData) || empty($whereClause)) {
         return json_encode(["success" => false, "message" => "Data or condition for update is missing"]);
@@ -391,7 +391,7 @@ function update_table($tableName, array $queryData = [], array $whereClause = []
     return json_encode($response);
 }
 
-function delete_from($tableName, array $whereClause = [], array $options = []): string
+function delete_from($tableName, array $whereClause = [], array $options = []) : string
 {
     if (empty($whereClause)) {
         return json_encode(["success" => false, "message" => "No conditions specified for deletion."]);
