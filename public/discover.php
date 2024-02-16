@@ -35,6 +35,7 @@
 			<div class="main-content">
 				<?php
 				foreach ($my_lists as $list) {
+					// cdebug($list);
 					$song = select_from('playlist', [], ['list_id' => $list['lid']], ['limit' => 1]);
 					$songData = !empty($song) ? select_from('song', [], ['sid' => $song[0]['song_id']]) : '';
 				?>
@@ -55,7 +56,7 @@
 						</div>
 						<div class="list-info">
 							<div class="list-name"><?= htmlspecialchars($list['list_name'], ENT_QUOTES, 'UTF-8'); ?></div>
-							<?= htmlspecialchars($user_data['name'].' '.$user_data['surname'], ENT_QUOTES, 'UTF-8'); ?>
+							<div class="list-owner" data-ownerId="<?= $list['user_id']; ?>"><?= htmlspecialchars($user_data['name'].' '.$user_data['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
 						</div>
 					</div>
 				<?php

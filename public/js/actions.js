@@ -366,6 +366,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
+let listOwners = document.querySelectorAll('.list-owner');
+listOwners.forEach((element)=>{
+    element.addEventListener('click', getListOwners);
+});
+
+function getListOwners(event) {
+	var listOwner = event.target.closest('.list-owner').getAttribute('data-ownerId');
+    console.log(listOwner);
+
+	var urlActual = window.location.href;
+    urlActual = urlActual.replace(/#(?=\?)/, "");
+    var newUrl = urlActual.replace(/(\?|\&)list=[^&]+/, "");
+
+    window.location.href = newUrl + (newUrl.includes("?") ? "&" : "?") + "owner=" + listOwner;
+}
+
+
+
 function closeMiniMenu() {
     // let bgOverlayer = document.querySelector('.bg-overlayer');
     let menuList = document.querySelectorAll('.song-actions');
@@ -445,7 +463,7 @@ document.addEventListener('mouseup', function(e) {
 });
 
 let cancelBtn = document.getElementById('cancel-btn');
-cancelBtn.addEventListener('click', function(){
+cancelBtn.addEventListener('click', function() {
 	close_popup()
 });
 
@@ -472,6 +490,10 @@ function getListId(event) {
     if (event.target.closest('.list-options')) {
         return;
     }
+
+	if (event.target.closest('.list-owner')) {
+		return;
+	}
 
     var list = event.target.closest('.list').getAttribute('data-list');
     console.log(list);
