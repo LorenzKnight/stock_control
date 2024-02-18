@@ -160,6 +160,22 @@
 	color: #000;
 }
 
+.list-header {
+	width: 98%;
+	height: 300px;
+	background-color: #ccc;
+	padding: 1%;
+	color: #666;
+}
+
+.list-header a {
+	color: #fff;
+	text-shadow: #999;
+}
+.list-header h2 {
+	color: #000;
+	margin-bottom: 3px;	
+}
 
 .playlist-options {
 	background-color: #fff;
@@ -168,10 +184,10 @@
 
 	width: 150px;
 	height: 150px;
-	background-color: darkorchid;
+	background-color: #fff;
 	border-radius: 4px;
 	position: absolute;
-	margin: 10px 0 0 -112px;
+	margin: 11px 0 0 -113px;
 	display: none;
 	z-index: 4;
 }
@@ -204,6 +220,9 @@
     color: #666;
 }
 
+.list-owner {
+	cursor: pointer;
+}
 
 .formular_remove_song {
 	width: 330px;
@@ -257,15 +276,6 @@
 .song-actions ul li:hover {
     background-color: #f2f2f2;
 }
-
-/* .bg-overlayer {
-    width: 100%;
-    height: 100vh;
-    top: 0;
-    left: 0;
-    position: fixed;
-    z-index: 3;
-} */
 
 .create-list-holder {
 	display: flex;

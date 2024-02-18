@@ -22,7 +22,7 @@
 <body>
     <?php include("components/header.php"); ?>
 
-    <div class="container" id="result-container">
+	<div class="container" id="result-container">
 		<div class="wrapper-search">
 			<div class="main-content" id="main-content">
 			
@@ -67,8 +67,11 @@
         
         <div class="wrapper-home hidden" id="listing">
             <div class="list-content">
-				<a href="discover">< Back</a>
-				<h2><?= $my_lists[0]['list_name']; ?></h2>
+				<div class="list-header">
+					<a href="discover">< Back</a>
+					<h2><?= $my_lists[0]['list_name']; ?></h2>
+					<div class="list-owner" data-ownerId="<?= $list['user_id']; ?>" style="font-size: 12px;"><?= htmlspecialchars($user_data['name'].' '.$user_data['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
+				</div>
 				<table class="music-list" cellspacing="0">
 				<?php 
 				$queueIndex = 0;
@@ -151,6 +154,12 @@
 				</table>
 			</form>
         </div>
+
+		<div class="wrapper-home hidden" id="owner">
+			<div class="list-content">
+				AQUI!
+			</div>
+		</div>
 	</div>
 
     <div class="status-message" id="status-message"></div>

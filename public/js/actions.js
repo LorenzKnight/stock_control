@@ -23,11 +23,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const params = {
         list: urlParams.get('list'),
         uploader: urlParams.get('uploader'),
+		owner: urlParams.get('owner'),
         // Puedes agregar más variables aquí
     };
 
     const album = document.getElementById('album');
     const listing = document.getElementById('listing');
+	const owner = document.getElementById('owner');
     const uploaderContainer = document.getElementById('uploader-container');
 
     let state = 'album'; // Estado por defecto
@@ -38,17 +40,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    switch (state) {
-        case 'uploader':
-            uploaderContainer.classList.remove('hidden');
-            break;
-        case 'list':
-            listing.classList.remove('hidden');
-            break;
-        default:
-            album.classList.remove('hidden');
-            break;
-    }
+	switch (state) {
+		case 'uploader':
+			uploaderContainer.classList.remove('hidden');
+			break;
+		case 'owner':
+			owner.classList.remove('hidden');
+			break;
+		case 'list':
+			listing.classList.remove('hidden');
+			break;
+		default:
+			album.classList.remove('hidden');
+			break;
+	}
 
     // let bgOverlayer = document.querySelector('.bg-overlayer');
     // bgOverlayer.addEventListener('click', function(){
