@@ -49,8 +49,10 @@ $requestData['user_id'] = !isset($_SESSION['mp_UserId']) ? null : $_SESSION['mp_
 $user_data = u_all_info('*', $requestData);
 
 $requestData = [];
-isset($_GET['list']) ? $requestData['lid'] = $_GET['list'] : !isset($requestData['lid']);
-$my_lists = select_from('listings', [], $requestData);
+isset($_SESSION['mp_UserId']) ? $requestData['user_id'] = $_SESSION['mp_UserId'] : !isset($requestData['user_id']);
+// isset($_GET['list']) ? $requestData['lid'] = $_GET['list'] : !isset($requestData['lid']);
+// var_dump($requestData);
+$my_lists = empty($requestData) ? null : select_from('listings', [], $requestData);
 
 $requestData = [];
 isset($_GET['list']) ? $requestData['list_id'] = $_GET['list'] : !isset($requestData['list_id']);

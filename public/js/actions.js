@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-	// console.log(currentUser);
+	console.log(currentUser);
     var profileTrigger = document.getElementById('profileTrigger');
     
 	if (profileTrigger) {
@@ -18,21 +18,28 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	}
 
+	// CONTROLADOR DE DIRECCIONES
+	if (!currentUser.userId) {
+        window.location.href = '/home';
+        return; 
+    }
 
 	const urlParams = new URLSearchParams(window.location.search);
     const params = {
         list: urlParams.get('list'),
         uploader: urlParams.get('uploader'),
 		owner: urlParams.get('owner'),
+		home: urlParams.get('home'),
         // Puedes agregar más variables aquí
     };
 
+	const home = document.getElementById('home-login');
     const album = document.getElementById('album');
     const listing = document.getElementById('listing');
 	const owner = document.getElementById('owner');
     const uploaderContainer = document.getElementById('uploader-container');
 
-    let state = 'album'; // Estado por defecto
+    let state = params.home ? 'home' : 'album'; // Estado por defecto
     for (let param in params) {
         if (params[param]) {
             state = param;
@@ -50,15 +57,15 @@ document.addEventListener("DOMContentLoaded", () => {
 		case 'list':
 			listing.classList.remove('hidden');
 			break;
+		case 'home':
+			home.classList.remove('hidden');
+			break;
 		default:
 			album.classList.remove('hidden');
 			break;
 	}
+	
 
-    // let bgOverlayer = document.querySelector('.bg-overlayer');
-    // bgOverlayer.addEventListener('click', function(){
-    //     closeMiniMenu()
-    // });
 
     let addPlaylist = document.querySelectorAll('.addPlaylist');
     addPlaylist.forEach(function(element){
@@ -356,8 +363,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		xmlhttp.send(formData);
 	});
 
-
-	let userId = currentUser.user_id;
+	// OCULTAR OPCIONES DE LAS CANCIONES
+	let userId = currentUser.userId;
     let menuBtns = document.querySelectorAll('.song-actions');
     menuBtns.forEach((items) => {
         let user = items.getAttribute('data-owner');
@@ -390,13 +397,11 @@ function getListOwners(event) {
 
 
 function closeMiniMenu() {
-    // let bgOverlayer = document.querySelector('.bg-overlayer');
     let menuList = document.querySelectorAll('.song-actions');
         
     menuList.forEach((element)=>{
         if(element.style.display === 'block') {
             element.style.display = 'none';
-            // bgOverlayer.style.display = 'none';
         }
     });
 }
@@ -479,8 +484,8 @@ function close_popup() {
     var formular_songs_list = document.getElementById('formular_songs_list');
     formular_songs_list.style.display = 'none';
 
-    var formular_front = document.getElementById('formular_front');
-    formular_front.style.display = 'none';
+    // var formular_front = document.getElementById('formular_front');
+    // formular_front.style.display = 'none';
 
     var formular_songs_list = document.getElementById('formular_songs_list');
     formular_songs_list.style.display = 'none';
