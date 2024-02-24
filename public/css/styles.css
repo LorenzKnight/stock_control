@@ -420,7 +420,7 @@ footer {
     outline: none;
     background: transparent;
     font-size: 100%;
-    width: 50%;
+    /* width: 50%; */
 }
 
 .drop-area {

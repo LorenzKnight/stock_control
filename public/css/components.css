@@ -47,9 +47,15 @@
 }
 
 /* form-modal */
+.formular-front-frame {
+	width: 100%;
+	background: red;
+	display: flex; 
+}
+
 .formular_front {
     width: 450px;
-    margin: 80px auto;
+    margin: 40px auto 20px;
     padding: 60px 0;
     background: #fff;
     box-shadow: 0 4px 10px 0 rgba(47, 48, 63, 0.193);
@@ -57,7 +63,9 @@
     -webkit-backdrop-filter: blur( 4px );
     border-radius: 4px;
     font-weight: 200;
-    display: none;
+    /* display: none; */
+	align-items: center;
+	align-content: center;
 }
 .text_input_form1 {
     width: 90%;

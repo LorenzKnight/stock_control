@@ -1,4 +1,4 @@
-document.querySelector('form').addEventListener('submit', function(e) {
+document.getElementById('uploadForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
     let formData = new FormData(this);

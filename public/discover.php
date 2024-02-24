@@ -23,143 +23,145 @@
     <?php include("components/header.php"); ?>
 
 	<div class="container" id="result-container">
-		<div class="wrapper-search">
-			<div class="main-content" id="main-content">
+			<div class="wrapper-search">
+				<div class="main-content" id="main-content"></div>
+			</div>
+			<div class="wrapper-home hidden" id="home-login">
+				<div class="main-content">
+					<?php include("components/modal_login_signin.php"); ?>
+					
+				</div>
+			</div>
+			<div class="wrapper-home hidden" id="album">
+				<div class="sidebar">
+				</div>
+				<div class="main-content">
+					<?php
+					if (!empty($my_lists)) {
+						foreach ($my_lists as $list) {
+							$song = select_from('playlist', [], ['list_id' => $list['lid']], ['limit' => 1]);
+							$songData = !empty($song) ? select_from('song', [], ['sid' => $song[0]['song_id']]) : '';
+					?>
+							<div class="list" data-list="<?= htmlspecialchars($list['lid'], ENT_QUOTES, 'UTF-8'); ?>">
+								<div class="list-cover">
+									<?php if (!empty($songData[0]['cover'])) { ?>
+										<img src="images/cover/<?= $songData[0]['cover']; ?>">
+									<?php } ?>
+									<div class="list-options">
+										<ul>
+											<li>
+												<a href="#" class="playlist-mini-menu" data-listId="<?= $list['lid']; ?>">...</a>
+												<div class="playlist-options"></div>
+											</li>
+											<!-- <li>option</li> -->
+										</ul>
+									</div>
+								</div>
+								<div class="list-info">
+									<div class="list-name"><?= htmlspecialchars($list['list_name'], ENT_QUOTES, 'UTF-8'); ?></div>
+									<div class="list-owner" data-ownerId="<?= $list['user_id']; ?>"><?= htmlspecialchars($user_data['name'].' '.$user_data['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
+								</div>
+							</div>
+					<?php
+						}
+					}
+					?>
+				</div>
+			</div>
 			
-			</div>
-		</div>
-
-        <div class="wrapper-home hidden" id="album">
-			<div class="sidebar">
-			</div>
-			<div class="main-content">
-				<?php
-				foreach ($my_lists as $list) {
-					// cdebug($list);
-					$song = select_from('playlist', [], ['list_id' => $list['lid']], ['limit' => 1]);
-					$songData = !empty($song) ? select_from('song', [], ['sid' => $song[0]['song_id']]) : '';
-				?>
-					<div class="list" data-list="<?= htmlspecialchars($list['lid'], ENT_QUOTES, 'UTF-8'); ?>">
-						<div class="list-cover">
-							<?php if (!empty($songData[0]['cover'])) { ?>
-								<img src="images/cover/<?= $songData[0]['cover']; ?>">
-							<?php } ?>
-							<div class="list-options">
-								<ul>
-									<li>
-										<a href="#" class="playlist-mini-menu" data-listId="<?= $list['lid']; ?>">...</a>
-										<div class="playlist-options"></div>
-									</li>
-									<!-- <li>option</li> -->
-								</ul>
-							</div>
-						</div>
-						<div class="list-info">
-							<div class="list-name"><?= htmlspecialchars($list['list_name'], ENT_QUOTES, 'UTF-8'); ?></div>
-							<div class="list-owner" data-ownerId="<?= $list['user_id']; ?>"><?= htmlspecialchars($user_data['name'].' '.$user_data['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
-						</div>
+			<div class="wrapper-home hidden" id="listing">
+				<div class="list-content">
+					<div class="list-header">
+						<a href="discover">< Back</a>
+						<h2><?= $my_lists[0]['list_name']; ?></h2>
+						<div class="list-owner" data-ownerId="<?= $list['user_id']; ?>" style="font-size: 12px;"><?= htmlspecialchars($user_data['name'].' '.$user_data['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
 					</div>
-				<?php
-				}
-				?>
-			</div>
-        </div>
-        
-        <div class="wrapper-home hidden" id="listing">
-            <div class="list-content">
-				<div class="list-header">
-					<a href="discover">< Back</a>
-					<h2><?= $my_lists[0]['list_name']; ?></h2>
-					<div class="list-owner" data-ownerId="<?= $list['user_id']; ?>" style="font-size: 12px;"><?= htmlspecialchars($user_data['name'].' '.$user_data['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
+					<table class="music-list" cellspacing="0">
+					<?php 
+					$queueIndex = 0;
+					foreach($my_playlist as $song_data) {
+						$songs = select_from('song', [], ['sid' => $song_data['song_id']]);
+						$song = $songs[0];
+					?>
+						<tr>
+							<td>
+								<div class="songs-cover">
+									<img src="<?= empty($song['cover']) ? 'images/profile/'.$user_data['image'] : 'images/cover/'.$song['cover']; ?>" >
+								</div>
+							</td>
+							<td class="song-list" data-queue-index="<?= $queueIndex; ?>" data-id="<?= $song['sid']; ?>" data-song="<?= $song['song_name']; ?>" data-file="<?= $song['file_name'];?>">
+								<?= ucwords(strtolower($song['artist'])).' - '.ucwords(strtolower($song['song_name'])); ?>
+							</td>
+							<td width="5%">
+								<button class="actions-btn" id="actions-btn" data-menu="<?= $song['song_id']; ?>">ooo</button>
+								<div class="song-actions" id="song-actions" data-owner="<?= $song['user_id']; ?>">
+									<ul>
+										<li class="addPlaylist" data-songId="<?= $song_data['song_id']; ?>">Add playlist</li>
+										<li class="removeFromPlaylis" data-removeId="<?= $song_data['pid']; ?>">Remove</li>
+										<li class="deleteFile" data-deleteId="<?= $song_data['song_id']; ?>" style="display: none;">Delete</li>
+									</ul>
+								</div>
+							</td>
+						</tr>
+					<?php 
+					$queueIndex++;
+					} 
+					?>
+					</table>
 				</div>
-				<table class="music-list" cellspacing="0">
-				<?php 
-				$queueIndex = 0;
-				foreach($my_playlist as $song_data) {
-					$songs = select_from('song', [], ['sid' => $song_data['song_id']]);
-					$song = $songs[0];
-				?>
-					<tr>
-						<td>
-							<div class="songs-cover">
-								<img src="<?= empty($song['cover']) ? 'images/profile/'.$user_data['image'] : 'images/cover/'.$song['cover']; ?>" >
-							</div>
-						</td>
-						<td class="song-list" data-queue-index="<?= $queueIndex; ?>" data-id="<?= $song['sid']; ?>" data-song="<?= $song['song_name']; ?>" data-file="<?= $song['file_name'];?>">
-							<?= ucwords(strtolower($song['artist'])).' - '.ucwords(strtolower($song['song_name'])); ?>
-						</td>
-						<td width="5%">
-							<button class="actions-btn" id="actions-btn" data-menu="<?= $song['song_id']; ?>">ooo</button>
-							<div class="song-actions" id="song-actions" data-owner="<?= $song['user_id']; ?>">
-								<ul>
-									<li class="addPlaylist" data-songId="<?= $song_data['song_id']; ?>">Add playlist</li>
-									<li class="removeFromPlaylis" data-removeId="<?= $song_data['pid']; ?>">Remove</li>
-									<li class="deleteFile" data-deleteId="<?= $song_data['song_id']; ?>" style="display: none;">Delete</li>
-								</ul>
-							</div>
-						</td>
-					</tr>
-				<?php 
-				$queueIndex++;
-				} 
-				?>
-				</table>
-            </div>
-        </div>
-
-        <div class="wrapper-home hidden" id="uploader-container" style="background-color: #fff;">
-			<form action="inc/upload.php" method="post" enctype="multipart/form-data">
-				<br>
-				<div class="drop-area" id="drop-area">
-				<p>Arrastra y suelta tus archivos aquí o haz clic para seleccionarlos.</p>
-				<div><input type="file" name="file_name[]" id="file_name" multiple required></div>
-				<!-- <div class="file-input-container">
-					<label for="fileInput" class="custom-file-label">Seleccionar archivos</label>
-					<input type="file" name="file_name[]" id="fileInput" multiple required>
-				</div> -->
-				</div>
-				<br>
-				<table class="table-form" cellspacing="0">
-				<tr>
-					<td align="right">
-						<label for="artist">Artista:</label><br>
-						<input type="text" name="artist" id="artist" required>
-					</td>
-					<td align="left">
-						<label for="title">Título:</label><br>
-						<input type="text" name="title" id="title" required>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2" align="center">
-						<label for="gender">Gender:</label><br>
-						<input type="text" name="gender" id="gender" required>
-					</td>
-				</tr>
-				<tr>
-					<td align="right">
-						<input type="radio" id="public" name="public" value="1" checked>
-						<label for="public">Public</label>
-					</td>
-					<td align="left">
-						<input type="radio" id="private" name="public" value="0">
-						<label for="private">Private</label>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2" align="center">
-						<input type="submit" value="Subir Archivos">
-					</td>
-				</tr>
-				</table>
-			</form>
-        </div>
-
-		<div class="wrapper-home hidden" id="owner">
-			<div class="list-content">
-				AQUI!
 			</div>
-		</div>
+
+			<div class="wrapper-home hidden" id="uploader-container" style="background-color: #fff;">
+				<form action="inc/upload.php" method="post" enctype="multipart/form-data" id="uploadForm">
+					<br>
+					<div class="drop-area" id="drop-area">
+						<p>Arrastra y suelta tus archivos aquí o haz clic para seleccionarlos.</p>
+						<div><input type="file" name="file_name[]" id="file_name" multiple required></div>
+					</div>
+					<br>
+					<table class="table-form" cellspacing="0">
+						<tr>
+							<td align="right">
+								<label for="artist">Artista:</label><br>
+								<input type="text" name="artist" id="artist" required>
+							</td>
+							<td align="left">
+								<label for="title">Título:</label><br>
+								<input type="text" name="title" id="title" required>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2" align="center">
+								<label for="gender">Gender:</label><br>
+								<input type="text" name="gender" id="gender" required>
+							</td>
+						</tr>
+						<tr>
+							<td align="right">
+								<input type="radio" id="public" name="public" value="1" checked>
+								<label for="public">Public</label>
+							</td>
+							<td align="left">
+								<input type="radio" id="private" name="public" value="0">
+								<label for="private">Private</label>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2" align="center">
+								<input type="submit" value="Subir Archivos">
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+
+			<div class="wrapper-home hidden" id="owner">
+				<div class="list-content">
+					aqui se imprimiran las canciones y listas del usuario al se a clicado.<br>
+					una parte para informacion como las listas.<br>
+					y otra parte para informacion como las canciones que el usuario a subido.
+				</div>
+			</div>
 	</div>
 
     <div class="status-message" id="status-message"></div>
@@ -219,10 +221,16 @@
     </footer>
     
     <?php include("components/popup_bg.php"); ?>
-    <!-- <div class="bg-overlayer" style="display: none;"></div> -->
 
     <script>
-		var currentUser = <?= json_encode($user_data); ?>;
+		<?php 
+		$userData = json_encode([
+						'userId'	=> !isset($_SESSION['mp_UserId']) ? 'null' : $_SESSION['mp_UserId'],
+						// 'test'		=> 'aqui'
+					]); 
+		?>
+		var currentUser = <?= $userData ?>;
+		
     </script>
 </body>
 
