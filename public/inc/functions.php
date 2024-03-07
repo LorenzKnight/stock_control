@@ -291,6 +291,7 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 
     $whereParts = [];
     foreach ($whereClause as $column => $value) {
+		if ($value === '' || $value === null) continue;
         $escapedValue = is_numeric($value) ? $value : "'" . pg_escape_string($value) . "'";
         $whereParts[] = "$column = $escapedValue";
     }

@@ -42,6 +42,6 @@
     header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Fecha en el pasado
 
     // Redirecciona al usuario después de cerrar la sesión
-    header("Location: discover?home=1");
+    header("Location: discover?login=1");
     exit;
 ?>

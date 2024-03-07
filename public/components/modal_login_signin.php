@@ -10,27 +10,27 @@
                 </tr>
                 <tr valign="baseline" class="form_height">
                     <td colspan="6" align="center" valign="middle">
-                        <input class="text_input_form1" type="email" name="email" id="email" placeholder="Enter your E-Mail..." title="Enter a valid email" required/>
+                        <input class="form-input-style" type="email" name="email" id="email" placeholder="Enter your E-Mail..." title="Enter a valid email" required/>
                     </td>
                 </tr>
                 <tr valign="baseline" class="form_height">
                     <td colspan="6" align="center" valign="middle">
-                        <input class="text_input_form1" type="password" name="password" id="password" placeholder="Enter your Password..." required/>
+                        <input class="form-input-style" type="password" name="password" id="password" placeholder="Enter your Password..." required/>
                     </td>
                 </tr>
                 <tr valign="baseline" class="form_height">
                     <td nowrap="nowrap" align="center" valign="middle">
-                        <input type="submit" class="button_form1" value="Log in" />
+                        <input type="submit" class="button-style-agree" value="Log in" />
                     </td>
                 </tr>
-                <tr valign="baseline" height="40">
+                <tr valign="baseline">
                     <td style="color: #999;" nowrap="nowrap" align="center" valign="middle">
-                        <p>- or -</p>
+                        - or -
                     </td>
                 </tr>
                 <tr valign="baseline" class="form_height">
                     <td nowrap="nowrap" align="center" valign="middle">
-                        <button class="button_form1" onclick="location.href='index.php?signup=1'" type="button">Sign up</button>
+                        <button class="button-style-agree" onclick="location.href='index.php?signup=1'" type="button">Sign up</button>
                     </td>
                 </tr>
             </table>

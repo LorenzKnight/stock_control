@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ .'/../connections/conexion.php';
+// require_once __DIR__ .'/../inc/security.php';
 
 // The login logic //
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formsignin")) {
@@ -50,13 +51,28 @@ $user_data = u_all_info('*', $requestData);
 
 $requestData = [];
 isset($_SESSION['mp_UserId']) ? $requestData['user_id'] = $_SESSION['mp_UserId'] : !isset($requestData['user_id']);
-// isset($_GET['list']) ? $requestData['lid'] = $_GET['list'] : !isset($requestData['lid']);
-// var_dump($requestData);
 $my_lists = empty($requestData) ? null : select_from('listings', [], $requestData);
 
 $requestData = [];
 isset($_GET['list']) ? $requestData['list_id'] = $_GET['list'] : !isset($requestData['list_id']);
 $my_playlist = select_from('playlist', [], $requestData);
+
+$requestData = [];
+isset($_GET['owner']) ? $requestData['user_id'] = $_GET['owner'] : !isset($requestData['user_id']);
+$my_upload_songs = select_from('song', [], $requestData);
+$current_owner = select_from('users', [], $requestData);
+
+$requestData = [];
+$requestData['user_id'] = !isset($_SESSION['mp_UserId']) ? null : $_SESSION['mp_UserId'];
+isset($_GET['owner']) ? $requestData['is_following'] = $_GET['owner'] : !isset($requestData['is_following']);
+$iFollow = select_from('followers', [], $requestData);
+
+if (is_array($iFollow) && count($iFollow) > 0) {
+	$hiddenFollow = ($iFollow[0]['user_id'] == $current_owner[0]['user_id'] && $iFollow[0]['is_following'] == $_GET['owner']) ? false : true;
+} else {
+	$hiddenFollow = true;
+}
+
 
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formsearch")) {
     $requestSearch['search'] = pg_escape_string($_POST['searching']);
@@ -125,7 +141,8 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "createAndAdd")) {
 		'song_id'		=> $_POST['songId'],
 		'list_date'		=> date("Y-m-d H:i:s")
 	];
-
+// var_dump($queryData['song_id']); die();
+// $insertResultArray = [];
 	$insertResult = insert_into('playlist', $queryData, ['id' => 'pid']);
     $insertResultArray = json_decode($insertResult, true);
 
@@ -150,4 +167,37 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "remFromList")) {
 
 	echo json_encode(["success" => $success, "message" => $message]);
 }
+
+if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "follow")) {
+	$queryData = [
+		'user_id'		=> $_SESSION['mp_UserId'],
+		'is_following'	=> $_POST['userIdToFollow'],
+		'follow_date'	=> date("Y-m-d H:i:s")
+	];
+
+	$insertResult = insert_into('followers', $queryData, ['id' => 'fid']);
+    $insertResultArray = json_decode($insertResult, true);
+
+	$success = $insertResultArray["success"] ? true : false;
+	$message = $success ? 'Now you follow this user' : 'Error follow this user.';
+	$id = $insertResultArray["id"];
+
+	echo json_encode(["success" => $success, "id" => $id, "message" => $message]);
+}
+
+if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "unfollow")) {
+	$queryData = [
+		'user_id'		=> $_SESSION['mp_UserId'],
+		'is_following'	=> $_POST['userIdToUnfollow']
+	];
+
+	$deleteResult = delete_from('followers', $queryData);
+	$deleteResultArray = json_decode($deleteResult, true);
+
+	$success = $deleteResultArray["success"] ? true : false;
+	$message = $success ? 'You have stopped following this person.' : 'Error Unfollow this user.';
+
+	echo json_encode(["success" => $success, "message" => $message]);
+}
+
 ?>

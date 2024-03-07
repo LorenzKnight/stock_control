@@ -26,10 +26,12 @@
 			<div class="wrapper-search">
 				<div class="main-content" id="main-content"></div>
 			</div>
-			<div class="wrapper-home hidden" id="home-login">
+			<div class="wrapper-home hidden" id="login">
 				<div class="main-content">
 					<?php include("components/modal_login_signin.php"); ?>
-					
+					<div>
+
+					</div>
 				</div>
 			</div>
 			<div class="wrapper-home hidden" id="album">
@@ -64,8 +66,10 @@
 							</div>
 					<?php
 						}
-					}
+					} else {
 					?>
+					<p class="frame-central">You don't have any list yet</p>
+					<?php } ?>
 				</div>
 			</div>
 			
@@ -123,17 +127,17 @@
 						<tr>
 							<td align="right">
 								<label for="artist">Artista:</label><br>
-								<input type="text" name="artist" id="artist" required>
+								<input class="form-input-style" type="text" name="artist" id="artist" required>
 							</td>
 							<td align="left">
 								<label for="title">Título:</label><br>
-								<input type="text" name="title" id="title" required>
+								<input class="form-input-style" type="text" name="title" id="title" required>
 							</td>
 						</tr>
 						<tr>
 							<td colspan="2" align="center">
 								<label for="gender">Gender:</label><br>
-								<input type="text" name="gender" id="gender" required>
+								<input class="form-input-style" type="text" name="gender" id="gender" required>
 							</td>
 						</tr>
 						<tr>
@@ -148,7 +152,7 @@
 						</tr>
 						<tr>
 							<td colspan="2" align="center">
-								<input type="submit" value="Subir Archivos">
+								<input class="button-style-agree" type="submit" value="Subir Archivos">
 							</td>
 						</tr>
 					</table>
@@ -156,10 +160,54 @@
 			</div>
 
 			<div class="wrapper-home hidden" id="owner">
-				<div class="list-content">
-					aqui se imprimiran las canciones y listas del usuario al se a clicado.<br>
-					una parte para informacion como las listas.<br>
-					y otra parte para informacion como las canciones que el usuario a subido.
+				<div class="list-content scroll">
+					<div class="list-header">
+						<div class="profile-frame">
+							<!-- <a href="discover">< Back</a> -->
+							<div class="big-profile">
+								<img src="images/profile/<?= $current_owner[0]['image']; ?>" alt="">
+							</div>
+							<h1><?= htmlspecialchars($current_owner[0]['name'].' '.$current_owner[0]['surname'], ENT_QUOTES, 'UTF-8'); ?></h1>
+						</div>
+					</div>
+					<div class="user-nav">
+						<ul>
+							<!-- <li>Opcion 1</li> -->
+							<!-- <li>Opcion 2</li> -->
+							<li class="<?= $hiddenFollow ? 'hidden' : '';?>" id="unfollow-user" data-unfollow="<?= $current_owner[0]['user_id']; ?>">Unfollow</li> 
+							<li class="<?= !$hiddenFollow ? 'hidden' : '';?>" id="follow-user" data-follow="<?= $current_owner[0]['user_id']; ?>">Follow</li>
+						</ul>
+					</div>
+					<table class="music-list" cellspacing="0">
+					<?php 
+					$queueIndex = 0;
+					foreach($my_upload_songs as $song_data) {
+					?>
+						<tr>
+							<td>
+								<div class="songs-cover">
+									<img src="<?= empty($song_data['cover']) ? 'images/profile/'.$user_data['image'] : 'images/cover/'.$song_data['cover']; ?>" >
+								</div>
+							</td>
+							<td class="song-list" data-queue-index="<?= $queueIndex; ?>" data-id="<?= $song_data['sid']; ?>" data-song="<?= $song_data['song_name']; ?>" data-file="<?= $song_data['file_name'];?>">
+								<?= ucwords(strtolower($song_data['artist'])).' - '.ucwords(strtolower($song_data['song_name'])); ?>
+							</td>
+							<td width="5%">
+								<button class="actions-btn" id="actions-btn" data-menu="<?= $song_data['sid']; ?>">ooo</button>
+								<div class="song-actions" id="song-actions" data-owner="<?= $song_data['user_id']; ?>">
+									<ul>
+										<li class="addPlaylist" data-songId="<?= $song_data['sid']; ?>">Add playlist</li>
+										<!-- <li class="removeFromPlaylis" data-removeId="<?= $song_data['sid']; ?>">Remove</li> -->
+										<li class="deleteFile" data-deleteId="<?= $song_data['sid']; ?>" style="display: none;">Delete</li>
+									</ul>
+								</div>
+							</td>
+						</tr>
+					<?php 
+					$queueIndex++;
+					} 
+					?>
+					</table>
 				</div>
 			</div>
 	</div>

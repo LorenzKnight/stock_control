@@ -64,8 +64,22 @@ nav ul.menu li a {
     padding: 5px;
 }
 
-.profile img {
+.profile-frame {
+    width: 100%;
+    /* background-color: red; */
+    text-align: center;
+}
+
+.big-profile img {
     background-color: orangered;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile img {
+    background-color: #fff;
     width: 35px;
     height: 35px;
     border-radius: 50%;
@@ -122,6 +136,7 @@ nav ul.menu li a {
 .music-list {
     width: 100%;
     flex: 1;
+    margin-bottom: 80px;
 }
 
 .music-list tr:hover td {
@@ -478,10 +493,21 @@ footer {
     font-size: 0.8em;
 }
 
+
+
 .table-form td {
     padding: 5px;
 }
 
 .hidden {
     display: none;
+}
+
+.scroll {
+    overflow: auto;
+}
+
+.frame-central {
+	text-align: center;
+	padding-bottom: 10px;
 }
