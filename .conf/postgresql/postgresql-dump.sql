@@ -100,14 +100,14 @@ CREATE TABLE IF NOT EXISTS comments (
 	comment_date TIMESTAMP NULL
 );
 
--- CREATE TABLE IF NOT EXISTS followers (
--- 	follow_id SERIAL PRIMARY KEY,
--- 	user_id INTEGER null,
--- 	is_following INTEGER null,
--- 	accepted INTEGER null,
--- 	condition varchar(255) null, --if it is limited or not
--- 	follow_date TIMESTAMP null
--- );
+CREATE TABLE IF NOT EXISTS followers (
+	fid SERIAL PRIMARY KEY,
+	user_id INTEGER null,
+	is_following INTEGER null,
+	accepted INTEGER null,
+	condition varchar(255) null, --if it is limited or not
+	follow_date TIMESTAMP null
+);
 
 -- CREATE TABLE IF NOT EXISTS log (
 -- 	log_id SERIAL PRIMARY KEY,

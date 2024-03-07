@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-	console.log(currentUser);
+	// console.log(currentUser);
     var profileTrigger = document.getElementById('profileTrigger');
     
 	if (profileTrigger) {
@@ -19,27 +19,22 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	// CONTROLADOR DE DIRECCIONES
-	if (!currentUser.userId) {
-        window.location.href = '/home';
-        return; 
-    }
-
 	const urlParams = new URLSearchParams(window.location.search);
     const params = {
         list: urlParams.get('list'),
         uploader: urlParams.get('uploader'),
 		owner: urlParams.get('owner'),
-		home: urlParams.get('home'),
+		login: urlParams.get('login'),
         // Puedes agregar más variables aquí
     };
 
-	const home = document.getElementById('home-login');
+	const login = document.getElementById('login');
     const album = document.getElementById('album');
     const listing = document.getElementById('listing');
 	const owner = document.getElementById('owner');
     const uploaderContainer = document.getElementById('uploader-container');
 
-    let state = params.home ? 'home' : 'album'; // Estado por defecto
+    let state = params.login ? 'login' : 'album'; // Estado por defecto
     for (let param in params) {
         if (params[param]) {
             state = param;
@@ -57,8 +52,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		case 'list':
 			listing.classList.remove('hidden');
 			break;
-		case 'home':
-			home.classList.remove('hidden');
+		case 'login':
+			login.classList.remove('hidden');
 			break;
 		default:
 			album.classList.remove('hidden');
@@ -195,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
 							.map(word => word[0].toUpperCase() + word.substring(1).toLowerCase())
 							.join(' ');
                             artistCell.setAttribute('data-queue-index', 0);
-                            artistCell.setAttribute('data-id', song.sid);
+                            artistCell.setAttribute('data-id', song.songId);
                             artistCell.setAttribute('data-song', song.songName);
                             artistCell.setAttribute('data-file', song.fileName);
         
@@ -204,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             
                         var actionsBtn = document.createElement('button');
                             actionsBtn.className = 'actions-btn';
-                            actionsBtn.setAttribute('data-menu', song.sid);
+                            actionsBtn.setAttribute('data-menu', song.songId);
                             actionsBtn.textContent = 'ooo';
                             songNameCell.appendChild(actionsBtn);
 
@@ -216,7 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         var li1 = document.createElement('li');
                             li1.textContent = 'Add playlist';
                                 li1.className = 'addPlaylist';
-                                li1.setAttribute('data-songId', song.sid);
+                                li1.setAttribute('data-songId', song.songId);
                         var li2 = document.createElement('li');
                             li2.textContent = 'Action 2';
                         var li3 = document.createElement('li');
@@ -286,9 +281,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	let buttonAddCreate = document.getElementById('button-add-create');
 	buttonAddCreate.addEventListener('click', function(){
+		// let formular_songs_list = document.getElementById('formular_songs_list');
 		let songId = formular_songs_list.getAttribute('data-songId');
 		let inputPlaylist = document.getElementById('input-playlist').value;
-
+console.log(songId);
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.onreadystatechange = function() {
 			if (this.readyState == 4 && this.status == 200) {
@@ -376,6 +372,52 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+
+	let followUser = document.getElementById('follow-user');
+	let unfollowUser = document.getElementById('unfollow-user');
+
+	followUser.addEventListener('click', function() {
+		let userIdToFollow = this.getAttribute('data-follow');
+
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				var response = JSON.parse(this.responseText);
+				console.log(response);
+
+				followUser.classList.add('hidden');
+				unfollowUser.classList.remove('hidden');
+			}
+		}
+		var formData = new FormData(); 
+		formData.append('MM_insert', 'follow');
+		formData.append('userIdToFollow', userIdToFollow);
+	
+		xmlhttp.open("POST", "logic/discover_be.php", true);
+		xmlhttp.send(formData);
+	});
+
+	unfollowUser.addEventListener('click', function() {
+		let userIdToUnfollow = this.getAttribute('data-unfollow');
+
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				var response = JSON.parse(this.responseText);
+				console.log(response);
+
+				followUser.classList.remove('hidden');
+				unfollowUser.classList.add('hidden');
+			}
+		}
+		var formData = new FormData(); 
+		formData.append('MM_insert', 'unfollow');
+		formData.append('userIdToUnfollow', userIdToUnfollow);
+	
+		xmlhttp.open("POST", "logic/discover_be.php", true);
+		xmlhttp.send(formData);
+	});
+
 });
 
 let listOwners = document.querySelectorAll('.list-owner');
@@ -406,22 +448,22 @@ function closeMiniMenu() {
     });
 }
 
-function login() {
-	let bg_popup = document.getElementById('bg_popup');
-    bg_popup.style.display = 'block';
+// function login() {
+// 	let bg_popup = document.getElementById('bg_popup');
+//     bg_popup.style.display = 'block';
 
-    var displaySize = {
-        "width": "450px",
-        "height": "458px",
-        "margin": "5vh auto"
-    };
+//     var displaySize = {
+//         "width": "450px",
+//         "height": "458px",
+//         "margin": "5vh auto"
+//     };
      
-    var bgContainer = document.getElementById("bg_container");
-    Object.assign(bgContainer.style, displaySize);
+//     var bgContainer = document.getElementById("bg_container");
+//     Object.assign(bgContainer.style, displaySize);
 
-    let formular_front = document.getElementById('formular_front');
-    formular_front.style.display = 'block';
-}
+//     let formular_front = document.getElementById('formular_front');
+//     formular_front.style.display = 'block';
+// }
 
 function add_to_list(song) {
     let bg_popup = document.getElementById('bg_popup');
@@ -487,8 +529,8 @@ function close_popup() {
     // var formular_front = document.getElementById('formular_front');
     // formular_front.style.display = 'none';
 
-    var formular_songs_list = document.getElementById('formular_songs_list');
-    formular_songs_list.style.display = 'none';
+    // var formular_songs_list = document.getElementById('formular_songs_list');
+    // formular_songs_list.style.display = 'none';
 }
 
 let listName = document.querySelectorAll('.list');
