@@ -67,6 +67,11 @@ $requestData['user_id'] = !isset($_SESSION['mp_UserId']) ? null : $_SESSION['mp_
 isset($_GET['owner']) ? $requestData['is_following'] = $_GET['owner'] : !isset($requestData['is_following']);
 $iFollow = select_from('followers', [], $requestData);
 
+$requestData = [];
+isset($_SESSION['mp_UserId']) ? $requestData['user_id'] = $_SESSION['mp_UserId'] : !isset($requestData['user_id']);
+$favorite_lists = select_from('favorite_lists', [], $requestData);
+// var_dump($favorite_lists);
+
 if (is_array($iFollow) && count($iFollow) > 0) {
 	$hiddenFollow = ($iFollow[0]['user_id'] == $current_owner[0]['user_id'] && $iFollow[0]['is_following'] == $_GET['owner']) ? false : true;
 } else {
@@ -76,15 +81,25 @@ if (is_array($iFollow) && count($iFollow) > 0) {
 
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formsearch")) {
     $requestSearch['search'] = pg_escape_string($_POST['searching']);
-    
+
+	$pick_user = pick_user('*', $requestSearch);
+
+	$userResurt = [];
+	foreach($pick_user as $user) {
+		$userResurt[] = [
+			'user_id'		=> $user['user_id'],
+			'name'			=> $user['name'].' '.$user['surname'],
+			// 'userImage'		=> $user['image']
+		];
+	}
+
     $my_songs = song_data('*', $requestSearch);
     
     $results = [];
-
     foreach($my_songs as $song) {
         $results[] = [
             'songId'        => $song['songId'],
-			'userData'		=> u_all_info('image', ['user_id' => $song['userId']]), // traer foto de perfil 
+			'userPic'		=> u_all_info('image', ['user_id' => $song['userId']]), // traer foto de perfil
             'cover'         => $song['cover'],
             'artist'        => $song['artist'],
             'songName'      => $song['songName'],
@@ -92,8 +107,10 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formsearch")) {
         ];
     }
 
+	$combinedResults = array_merge($userResurt, $results);
+	
     header('Content-Type: application/json');
-    echo json_encode($results);
+    echo json_encode($combinedResults);
 }
 
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "addToList")) {
@@ -141,8 +158,7 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "createAndAdd")) {
 		'song_id'		=> $_POST['songId'],
 		'list_date'		=> date("Y-m-d H:i:s")
 	];
-// var_dump($queryData['song_id']); die();
-// $insertResultArray = [];
+
 	$insertResult = insert_into('playlist', $queryData, ['id' => 'pid']);
     $insertResultArray = json_decode($insertResult, true);
 

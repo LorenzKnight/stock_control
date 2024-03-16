@@ -21,13 +21,14 @@ document.addEventListener("DOMContentLoaded", () => {
 	// CONTROLADOR DE DIRECCIONES
 	const urlParams = new URLSearchParams(window.location.search);
     const params = {
+		library: urlParams.get('library'),
         list: urlParams.get('list'),
         uploader: urlParams.get('uploader'),
 		owner: urlParams.get('owner'),
-		login: urlParams.get('login'),
-        // Puedes agregar más variables aquí
+		login: urlParams.get('login')
     };
 
+	const library = document.getElementById('library');
 	const login = document.getElementById('login');
     const album = document.getElementById('album');
     const listing = document.getElementById('listing');
@@ -54,6 +55,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			break;
 		case 'login':
 			login.classList.remove('hidden');
+			break;
+		case 'library':
+			library.classList.remove('hidden');
 			break;
 		default:
 			album.classList.remove('hidden');
@@ -170,6 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         table.setAttribute('cellspacing', 0);
         
                     response.forEach(function(song) {
+						console.log(song);
                         var row = document.createElement('tr');
 
                         var songCoverCell = document.createElement('td');
@@ -177,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             songCoverDiv.className = 'songs-cover';
 
                         var songCoverImg = document.createElement('img');
-							songCoverImg.src = !song['cover'] || song['cover'] === '' ? 'images/profile/' + song.userData.image : 'images/cover/' + song.cover;
+							songCoverImg.src = !song['cover'] || song['cover'] === '' ? 'images/profile/' + song.userPic : 'images/cover/' + song.cover;
                             songCoverImg.alt = '';
 
                             songCoverDiv.appendChild(songCoverImg);
@@ -185,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
                         var artistCell = document.createElement('td');
                             artistCell.className = 'artist-container';
-                        	artistCell.textContent = (song.artist + ' - ' + song.songName)
+                        	artistCell.textContent = !song.name ? (song.artist + ' - ' + song.songName) : (song.name)
 							.split(' ')
 							.map(word => word[0].toUpperCase() + word.substring(1).toLowerCase())
 							.join(' ');
@@ -284,7 +289,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		// let formular_songs_list = document.getElementById('formular_songs_list');
 		let songId = formular_songs_list.getAttribute('data-songId');
 		let inputPlaylist = document.getElementById('input-playlist').value;
-console.log(songId);
+// console.log(songId);
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.onreadystatechange = function() {
 			if (this.readyState == 4 && this.status == 200) {
