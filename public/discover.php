@@ -137,12 +137,12 @@
 						$song = $songs[0];
 					?>
 						<tr>
-							<td>
+							<td width="5%">
 								<div class="songs-cover">
 									<img src="<?= empty($song['cover']) ? 'images/profile/'.$user_data['image'] : 'images/cover/'.$song['cover']; ?>" >
 								</div>
 							</td>
-							<td class="song-list" data-queue-index="<?= $queueIndex; ?>" data-id="<?= $song['sid']; ?>" data-song="<?= $song['song_name']; ?>" data-file="<?= $song['file_name'];?>">
+							<td width="90%" class="song-list" data-queue-index="<?= $queueIndex; ?>" data-id="<?= $song['sid']; ?>" data-song="<?= $song['song_name']; ?>" data-file="<?= $song['file_name'];?>">
 								<?= ucwords(strtolower($song['artist'])).' - '.ucwords(strtolower($song['song_name'])); ?>
 							</td>
 							<td width="5%">
@@ -233,11 +233,11 @@
 					foreach($my_upload_songs as $song_data) {
 					?>
 						<tr>
-							<td>
+							<td width="5%">
 								<div class="songs-cover">
 									<img src="<?= empty($song_data['cover']) ? 'images/profile/'.$user_data['image'] : 'images/cover/'.$song_data['cover']; ?>" >
 								</div>
-							</td>
+							</td width="90%">
 							<td class="song-list" data-queue-index="<?= $queueIndex; ?>" data-id="<?= $song_data['sid']; ?>" data-song="<?= $song_data['song_name']; ?>" data-file="<?= $song_data['file_name'];?>">
 								<?= ucwords(strtolower($song_data['artist'])).' - '.ucwords(strtolower($song_data['song_name'])); ?>
 							</td>
