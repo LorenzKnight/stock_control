@@ -149,8 +149,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 var response = this.responseText;
                 response = JSON.parse(response);
 
-                console.log(response);
-
                 if (response.length === 0) {
 					for (var i = 0; i < wrappers.length; i++) {
                         wrappers[i].style.display = 'none';
@@ -178,6 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         var row = document.createElement('tr');
 
                         var songCoverCell = document.createElement('td');
+							songCoverCell.setAttribute('width', '5%');
                         var songCoverDiv = document.createElement('div');
                             songCoverDiv.className = 'songs-cover';
 
@@ -189,24 +188,32 @@ document.addEventListener("DOMContentLoaded", () => {
                             songCoverCell.appendChild(songCoverDiv);
         
                         var artistCell = document.createElement('td');
-                            artistCell.className = 'artist-container';
+							artistCell.setAttribute('width', '90%');
                         	artistCell.textContent = !song.name ? (song.artist + ' - ' + song.songName) : (song.name)
 							.split(' ')
 							.map(word => word[0].toUpperCase() + word.substring(1).toLowerCase())
 							.join(' ');
-                            artistCell.setAttribute('data-queue-index', 0);
-                            artistCell.setAttribute('data-id', song.songId);
-                            artistCell.setAttribute('data-song', song.songName);
-                            artistCell.setAttribute('data-file', song.fileName);
+							if (!song.name) {
+								artistCell.className = 'artist-container';
+								artistCell.setAttribute('data-queue-index', 0);
+								artistCell.setAttribute('data-id', song.songId);
+								artistCell.setAttribute('data-song', song.songName);
+								artistCell.setAttribute('data-file', song.fileName);
+							} else {
+								artistCell.className = 'user-container';
+								artistCell.setAttribute('data-id', song.userId);
+							}
         
                         var songNameCell = document.createElement('td');
                             songNameCell.setAttribute('width', '5%');
                             
-                        var actionsBtn = document.createElement('button');
-                            actionsBtn.className = 'actions-btn';
-                            actionsBtn.setAttribute('data-menu', song.songId);
-                            actionsBtn.textContent = 'ooo';
-                            songNameCell.appendChild(actionsBtn);
+						if (!song.name) {
+							var actionsBtn = document.createElement('button');
+								actionsBtn.className = 'actions-btn';
+								actionsBtn.setAttribute('data-menu', song.songId);
+								actionsBtn.textContent = 'ooo';
+								songNameCell.appendChild(actionsBtn);
+						}
 
                         var songActionsDiv = document.createElement('div');
                             songActionsDiv.className = 'song-actions';
@@ -234,6 +241,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         table.appendChild(row);
                     });
+
+					let userContainer = table.querySelectorAll('.user-container');
+					userContainer.forEach((element)=>{
+						element.addEventListener('click', function() {
+							let userId = this.getAttribute('data-id'); 
+							let newUrl = 'discover?owner=' + userId; 
+							window.location.href = newUrl;
+						});
+					});
 
                     let artistContainer = table.querySelectorAll('.artist-container');
                     artistContainer.forEach((element)=>{
