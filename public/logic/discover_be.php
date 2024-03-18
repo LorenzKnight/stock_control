@@ -87,7 +87,7 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formsearch")) {
 	$userResurt = [];
 	foreach($pick_user as $user) {
 		$userResurt[] = [
-			'user_id'		=> $user['user_id'],
+			'userId'		=> $user['user_id'],
 			'name'			=> $user['name'].' '.$user['surname'],
 			// 'userImage'		=> $user['image']
 		];

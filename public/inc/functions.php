@@ -116,8 +116,8 @@ function u_all_info($columns = "*", $requestData = array(), array $options = [])
 	{
 		$row_userinfo = pg_fetch_assoc($sql);
 		foreach($row_userinfo as $column => $columnData) {
-		// var_dump($row_userinfo);
-		$res[$column] = $columnData;
+			// var_dump($row_userinfo);
+			$res[$column] = $columnData;
 		}
 	}
 
