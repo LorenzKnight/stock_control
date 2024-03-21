@@ -347,13 +347,17 @@
 	border: 0;
 	border-radius: 4px;
 }
-
-.user-nav {
+.user-menu {
 	width: 100%;
-	overflow: auto;
-	/* background-color: red; */
 	border-top: 1px solid #ccc;
 	border-bottom: 1px solid #ccc;
+	overflow: auto;
+}
+
+.user-nav {
+	width: 50%;
+	/* background-color: green; */
+	float: left;
 }
 
 .user-nav ul {
@@ -362,6 +366,33 @@
 }
 
 .user-nav ul li {
+	float: left;
+	list-style: none;
+	padding: 10px;
+	color: #000;
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.user-nav ul li:hover {
+	/* background-color: #fac6c6; */
+	color: firebrick;
+}
+
+
+.user-option {
+	width: 50%;
+	overflow: auto;
+	/* background-color: red; */
+	float: right;
+}
+
+.user-option ul {
+	margin: 0;
+	padding: 0;
+}
+
+.user-option ul li {
 	float: right;
 	list-style: none;
 	padding: 10px;
@@ -369,7 +400,7 @@
 	font-size: 12px;
 }
 
-.user-nav ul li:hover {
+.user-option ul li:hover {
 	background-color: #fac6c6;
 	color: #fff;
 }

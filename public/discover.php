@@ -219,44 +219,61 @@
 							<h1><?= htmlspecialchars($current_owner[0]['name'].' '.$current_owner[0]['surname'], ENT_QUOTES, 'UTF-8'); ?></h1>
 						</div>
 					</div>
-					<div class="user-nav">
-						<ul>
-							<!-- <li>Opcion 1</li> -->
-							<!-- <li>Opcion 2</li> -->
-							<li class="<?= $hiddenFollow ? 'hidden' : '';?>" id="unfollow-user" data-unfollow="<?= $current_owner[0]['user_id']; ?>">Unfollow</li> 
-							<li class="<?= !$hiddenFollow ? 'hidden' : '';?>" id="follow-user" data-follow="<?= $current_owner[0]['user_id']; ?>">Follow</li>
-						</ul>
+					<div class="user-menu">
+						<div class="user-nav">
+							<ul>
+								<li><a href="discover?owner=<?= $_GET['owner']; ?>&ownercontent=1">All</a></li>
+								<li><a href="discover?owner=<?= $_GET['owner']; ?>&ownercontent=2">Song</a></li>
+								<li><a href="discover?owner=<?= $_GET['owner']; ?>&ownercontent=3">Playlists</a></li>
+							</ul>
+						</div>
+						<div class="user-option">
+							<ul>
+								<!-- <li>Opcion 1</li> -->
+								<!-- <li>Opcion 2</li> -->
+								<li class="<?= $hiddenFollow ? 'hidden' : '';?>" id="unfollow-user" data-unfollow="<?= $current_owner[0]['user_id']; ?>">Unfollow</li> 
+								<li class="<?= !$hiddenFollow ? 'hidden' : '';?>" id="follow-user" data-follow="<?= $current_owner[0]['user_id']; ?>">Follow</li>
+							</ul>
+						</div>
 					</div>
-					<table class="music-list" cellspacing="0">
-					<?php 
-					$queueIndex = 0;
-					foreach($my_upload_songs as $song_data) {
-					?>
-						<tr>
-							<td width="5%">
-								<div class="songs-cover">
-									<img src="<?= empty($song_data['cover']) ? 'images/profile/'.$user_data['image'] : 'images/cover/'.$song_data['cover']; ?>" >
-								</div>
-							</td width="90%">
-							<td class="song-list" data-queue-index="<?= $queueIndex; ?>" data-id="<?= $song_data['sid']; ?>" data-song="<?= $song_data['song_name']; ?>" data-file="<?= $song_data['file_name'];?>">
-								<?= ucwords(strtolower($song_data['artist'])).' - '.ucwords(strtolower($song_data['song_name'])); ?>
-							</td>
-							<td width="5%">
-								<button class="actions-btn" id="actions-btn" data-menu="<?= $song_data['sid']; ?>">ooo</button>
-								<div class="song-actions" id="song-actions" data-owner="<?= $song_data['user_id']; ?>">
-									<ul>
-										<li class="addPlaylist" data-songId="<?= $song_data['sid']; ?>">Add playlist</li>
-										<!-- <li class="removeFromPlaylis" data-removeId="<?= $song_data['sid']; ?>">Remove</li> -->
-										<li class="deleteFile" data-deleteId="<?= $song_data['sid']; ?>" style="display: none;">Delete</li>
-									</ul>
-								</div>
-							</td>
-						</tr>
-					<?php 
-					$queueIndex++;
-					} 
-					?>
-					</table>
+					<div class="hidden" id="owner-all">
+						<table class="music-list" cellspacing="0">
+						<?php 
+						$queueIndex = 0;
+						foreach($my_upload_songs as $song_data) {
+						?>
+							<tr>
+								<td width="5%">
+									<div class="songs-cover">
+										<img src="<?= empty($song_data['cover']) ? 'images/profile/'.$user_data['image'] : 'images/cover/'.$song_data['cover']; ?>" >
+									</div>
+								</td width="90%">
+								<td class="song-list" data-queue-index="<?= $queueIndex; ?>" data-id="<?= $song_data['sid']; ?>" data-song="<?= $song_data['song_name']; ?>" data-file="<?= $song_data['file_name'];?>">
+									<?= ucwords(strtolower($song_data['artist'])).' - '.ucwords(strtolower($song_data['song_name'])); ?>
+								</td>
+								<td width="5%">
+									<button class="actions-btn" id="actions-btn" data-menu="<?= $song_data['sid']; ?>">ooo</button>
+									<div class="song-actions" id="song-actions" data-owner="<?= $song_data['user_id']; ?>">
+										<ul>
+											<li class="addPlaylist" data-songId="<?= $song_data['sid']; ?>">Add playlist</li>
+											<!-- <li class="removeFromPlaylis" data-removeId="<?= $song_data['sid']; ?>">Remove</li> -->
+											<li class="deleteFile" data-deleteId="<?= $song_data['sid']; ?>" style="display: none;">Delete</li>
+										</ul>
+									</div>
+								</td>
+							</tr>
+						<?php 
+						$queueIndex++;
+						} 
+						?>
+						</table>
+					</div>
+					<div class="hidden" id="owner-library">
+						aqui 1
+					</div>
+					<div class="hidden" id="owner-song">
+						aqui 2
+					</div>
 				</div>
 			</div>
 	</div>
