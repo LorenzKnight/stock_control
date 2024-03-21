@@ -65,6 +65,35 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 	
 
+	// CONTROLADOR DE DIRECCIONES EN OWNERS
+	const ownerUrl = new URLSearchParams(window.location.search);
+    let ownerDiv = '1';
+
+	if (ownerUrl.has('ownercontent')) {
+		ownerDiv = ownerUrl.get('ownercontent');
+	}
+
+	const ownerAll = document.getElementById('owner-all');
+	const ownerLibrary = document.getElementById('owner-library');
+	const ownerSong = document.getElementById('owner-song');
+
+	switch (ownerDiv) {
+		case '1':
+			ownerAll.classList.remove('hidden');
+			break;
+		case '2':
+			ownerLibrary.classList.remove('hidden');
+			break;
+		case '3':
+			ownerSong.classList.remove('hidden');
+			break;
+		default:
+			ownerAll.classList.remove('hidden');
+			break;
+	}
+
+
+
 
     let addPlaylist = document.querySelectorAll('.addPlaylist');
     addPlaylist.forEach(function(element){
