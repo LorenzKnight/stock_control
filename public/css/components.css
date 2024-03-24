@@ -404,3 +404,8 @@
 	background-color: #fac6c6;
 	color: #fff;
 }
+
+.owners-recent-album {
+	overflow: auto;
+	border-bottom: 1px solid #ccc;
+}

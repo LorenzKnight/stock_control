@@ -117,7 +117,7 @@
 						}
 					} else {
 					?>
-					<p class="frame-central">You don't have any list yet</p>
+						<p class="frame-central">You don't have any list yet</p>
 					<?php } ?>
 				</div>
 			</div>
@@ -223,8 +223,8 @@
 						<div class="user-nav">
 							<ul>
 								<li><a href="discover?owner=<?= $_GET['owner']; ?>&ownercontent=1">All</a></li>
-								<li><a href="discover?owner=<?= $_GET['owner']; ?>&ownercontent=2">Song</a></li>
-								<li><a href="discover?owner=<?= $_GET['owner']; ?>&ownercontent=3">Playlists</a></li>
+								<li><a href="discover?owner=<?= $_GET['owner']; ?>&ownercontent=2">Playlists</a></li>
+								<li><a href="discover?owner=<?= $_GET['owner']; ?>&ownercontent=3">Songs</a></li>
 							</ul>
 						</div>
 						<div class="user-option">
@@ -237,10 +237,48 @@
 						</div>
 					</div>
 					<div class="hidden" id="owner-all">
+						<div class="owners-recent-album">
+							<?php
+							if (!empty($recent_lists)) {
+								foreach ($recent_lists as $list) {
+									$song = select_from('playlist', [], ['list_id' => $list['lid']], ['limit' => 1]);
+									$songData = !empty($song) ? select_from('song', [], ['sid' => $song[0]['song_id']]) : '';
+							?>
+									<div class="list" data-list="<?= htmlspecialchars($list['lid'], ENT_QUOTES, 'UTF-8'); ?>">
+										<div class="list-cover">
+											<?php if (!empty($songData[0]['cover'])) { ?>
+												<img src="images/cover/<?= $songData[0]['cover']; ?>">
+											<?php } ?>
+											<div class="list-options">
+												<ul>
+													<li>
+														<a href="#" class="playlist-mini-menu" data-listId="<?= $list['lid']; ?>">...</a>
+														<div class="playlist-options">
+															<ul>
+																<li>Like</li>
+															</ul>
+														</div>
+													</li>
+													<!-- <li>option</li> -->
+												</ul>
+											</div>
+										</div>
+										<div class="list-info">
+											<div class="list-name"><?= htmlspecialchars($list['list_name'], ENT_QUOTES, 'UTF-8'); ?></div>
+											<div class="list-owner" data-ownerId="<?= $list['user_id']; ?>"><?= htmlspecialchars($list_owner[0]['name'].' '.$list_owner[0]['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
+										</div>
+									</div>
+							<?php
+								}
+							} else {
+							?>
+								<p class="frame-central">You don't have any list yet</p>
+							<?php } ?>
+						</div>
 						<table class="music-list" cellspacing="0">
 						<?php 
 						$queueIndex = 0;
-						foreach($my_upload_songs as $song_data) {
+						foreach($owner_upload_songs as $song_data) {
 						?>
 							<tr>
 								<td width="5%">
@@ -272,7 +310,36 @@
 						aqui 1
 					</div>
 					<div class="hidden" id="owner-song">
-						aqui 2
+						<table class="music-list" cellspacing="0">
+						<?php 
+						$queueIndex = 0;
+						foreach($my_upload_songs as $song_data) {
+						?>
+							<tr>
+								<td width="5%">
+									<div class="songs-cover">
+										<img src="<?= empty($song_data['cover']) ? 'images/profile/'.$user_data['image'] : 'images/cover/'.$song_data['cover']; ?>" >
+									</div>
+								</td width="90%">
+								<td class="song-list" data-queue-index="<?= $queueIndex; ?>" data-id="<?= $song_data['sid']; ?>" data-song="<?= $song_data['song_name']; ?>" data-file="<?= $song_data['file_name'];?>">
+									<?= ucwords(strtolower($song_data['artist'])).' - '.ucwords(strtolower($song_data['song_name'])); ?>
+								</td>
+								<td width="5%">
+									<button class="actions-btn" id="actions-btn" data-menu="<?= $song_data['sid']; ?>">ooo</button>
+									<div class="song-actions" id="song-actions" data-owner="<?= $song_data['user_id']; ?>">
+										<ul>
+											<li class="addPlaylist" data-songId="<?= $song_data['sid']; ?>">Add playlist</li>
+											<!-- <li class="removeFromPlaylis" data-removeId="<?= $song_data['sid']; ?>">Remove</li> -->
+											<li class="deleteFile" data-deleteId="<?= $song_data['sid']; ?>" style="display: none;">Delete</li>
+										</ul>
+									</div>
+								</td>
+							</tr>
+						<?php 
+						$queueIndex++;
+						} 
+						?>
+						</table>
 					</div>
 				</div>
 			</div>
