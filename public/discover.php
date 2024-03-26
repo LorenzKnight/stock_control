@@ -265,7 +265,7 @@
 										</div>
 										<div class="list-info">
 											<div class="list-name"><?= htmlspecialchars($list['list_name'], ENT_QUOTES, 'UTF-8'); ?></div>
-											<div class="list-owner" data-ownerId="<?= $list['user_id']; ?>"><?= htmlspecialchars($list_owner[0]['name'].' '.$list_owner[0]['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
+											<div class="list-owner" data-ownerId="<?= $list_owner[0]['user_id']; ?>"><?= htmlspecialchars($list_owner[0]['name'].' '.$list_owner[0]['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
 										</div>
 									</div>
 							<?php
@@ -307,7 +307,42 @@
 						</table>
 					</div>
 					<div class="hidden" id="owner-library">
-						aqui 1
+						<?php
+						if (!empty($owner_lists)) {
+							foreach ($owner_lists as $list) {
+								$song = select_from('playlist', [], ['list_id' => $list['lid']], ['limit' => 1]);
+								$songData = !empty($song) ? select_from('song', [], ['sid' => $song[0]['song_id']]) : '';
+						?>
+								<div class="list" data-list="<?= htmlspecialchars($list['lid'], ENT_QUOTES, 'UTF-8'); ?>">
+									<div class="list-cover">
+										<?php if (!empty($songData[0]['cover'])) { ?>
+											<img src="images/cover/<?= $songData[0]['cover']; ?>">
+										<?php } ?>
+										<div class="list-options">
+											<ul>
+												<li>
+													<a href="#" class="playlist-mini-menu" data-listId="<?= $list['lid']; ?>">...</a>
+													<div class="playlist-options">
+														<ul>
+															<li>Like</li>
+														</ul>
+													</div>
+												</li>
+												<!-- <li>option</li> -->
+											</ul>
+										</div>
+									</div>
+									<div class="list-info">
+										<div class="list-name"><?= htmlspecialchars($list['list_name'], ENT_QUOTES, 'UTF-8'); ?></div>
+										<div class="list-owner" data-ownerId="<?= $list_owner[0]['user_id']; ?>"><?= htmlspecialchars($list_owner[0]['name'].' '.$list_owner[0]['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
+									</div>
+								</div>
+						<?php
+							}
+						} else {
+						?>
+							<p class="frame-central">You don't have any list yet</p>
+						<?php } ?>
 					</div>
 					<div class="hidden" id="owner-song">
 						<table class="music-list" cellspacing="0">

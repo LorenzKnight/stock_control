@@ -62,17 +62,16 @@ isset($_GET['owner']) ? $requestData['user_id'] = $_GET['owner'] : !isset($reque
 $my_upload_songs = select_from('song', [], $requestData);
 $current_owner = select_from('users', [], $requestData);
 
+$recent_lists = select_from('listings', [], $requestData, ['limit' => 5]);
 $owner_upload_songs = select_from('song', [], $requestData, ['limit' => 10]);
+
+$owner_lists = empty($requestData) ? null : select_from('listings', [], $requestData);
+$list_owner = select_from('users', [], $requestData);
 
 $requestData = [];
 $requestData['user_id'] = !isset($_SESSION['mp_UserId']) ? null : $_SESSION['mp_UserId'];
 isset($_GET['owner']) ? $requestData['is_following'] = $_GET['owner'] : !isset($requestData['is_following']);
 $iFollow = select_from('followers', [], $requestData);
-
-$requestData = [];
-isset($_GET['owner']) ? $requestData['user_id'] = $_GET['owner'] : !isset($requestData['user_id']);
-$recent_lists = select_from('listings', [], $requestData, ['limit' => 5]);
-$list_owner = select_from('users', [], $requestData);
 
 $requestData = [];
 isset($_SESSION['mp_UserId']) ? $requestData['user_id'] = $_SESSION['mp_UserId'] : !isset($requestData['user_id']); // revisar
