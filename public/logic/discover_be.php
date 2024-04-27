@@ -74,8 +74,12 @@ isset($_GET['owner']) ? $requestData['is_following'] = $_GET['owner'] : !isset($
 $iFollow = select_from('followers', [], $requestData);
 
 $requestData = [];
-isset($_SESSION['mp_UserId']) ? $requestData['user_id'] = $_SESSION['mp_UserId'] : !isset($requestData['user_id']); // revisar
-$favorite_lists = select_from('favorite_lists', [], $requestData);
+$requestData['user_id'] = !isset($_SESSION['mp_UserId']) ? null : $_SESSION['mp_UserId'];
+$iLike = select_from('favorite_lists', [], $requestData);
+
+// $requestData = [];
+// isset($_SESSION['mp_UserId']) ? $requestData['user_id'] = $_SESSION['mp_UserId'] : !isset($requestData['user_id']); // revisar
+// $favorite_lists = select_from('favorite_lists', [], $requestData);
 // var_dump($favorite_lists);
 
 
@@ -85,6 +89,11 @@ if (is_array($iFollow) && count($iFollow) > 0) {
 	$hiddenFollow = true;
 }
 
+if (is_array($iLike) && count($iLike) > 0) {
+	$hiddenLike = (isset($_SESSION['mp_UserId']) && $iLike[0]['user_id'] == $_SESSION['mp_UserId']) ? false : true;
+} else {
+	$hiddenLike = true;
+}
 
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formsearch")) {
     $requestSearch['search'] = pg_escape_string($_POST['searching']);
@@ -221,6 +230,23 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "unfollow")) {
 	$message = $success ? 'You have stopped following this person.' : 'Error Unfollow this user.';
 
 	echo json_encode(["success" => $success, "message" => $message]);
+}
+
+if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "addToFav")) {
+	$queryData = [
+		'user_id'		=> $_SESSION['mp_UserId'],
+		'list_id'		=> $_POST['albumId'],
+		'list_date'		=> date("Y-m-d H:i:s")
+	];
+
+	$insertResult = insert_into('favorite_lists', $queryData, ['id' => 'flid']);
+    $insertResultArray = json_decode($insertResult, true);
+
+	$success = $insertResultArray["success"] ? true : false;
+	$message = $success ? 'The list is added to your library.' : 'Error adding list.';
+	$id = $insertResultArray["id"];
+
+	echo json_encode(["success" => $success, "id" => $id, "message" => $message]);
 }
 
 ?>

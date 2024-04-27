@@ -45,7 +45,7 @@
 					if (!empty($my_lists)) {
 						foreach ($my_lists as $list) {
 							$song = select_from('favorite_lists', [], ['user_id' => $list['lid']], ['limit' => 1]); // hay que arreglar
-							$songData = !empty($song) ? select_from('song', [], ['sid' => $song[0]['song_id']]) : '';
+							$songData = (!empty($song) && isset($song[0]['song_id'])) ? select_from('song', [], ['sid' => $song[0]['song_id']]) : '';
 					?>
 						<div class="list" data-list="<?= htmlspecialchars($list['lid'], ENT_QUOTES, 'UTF-8'); ?>">
 							<div class="list-cover">
@@ -97,10 +97,10 @@
 									<div class="list-options">
 										<ul>
 											<li>
-												<a href="#" class="playlist-mini-menu" data-listId="<?= $list['lid']; ?>">...</a>
+												<a href="#" class="playlist-mini-menu">...</a>
 												<div class="playlist-options">
 													<ul>
-														<li>Like</li>
+														<li class="album-like" data-albumId="<?= $list['lid']; ?>">Like</li>
 													</ul>
 												</div>
 											</li>
@@ -244,6 +244,7 @@
 									$song = select_from('playlist', [], ['list_id' => $list['lid']], ['limit' => 1]);
 									$songData = !empty($song) ? select_from('song', [], ['sid' => $song[0]['song_id']]) : '';
 							?>
+							<?php // var_dump($hiddenLike); ?>
 									<div class="list" data-list="<?= htmlspecialchars($list['lid'], ENT_QUOTES, 'UTF-8'); ?>">
 										<div class="list-cover">
 											<?php if (!empty($songData[0]['cover'])) { ?>
@@ -252,10 +253,11 @@
 											<div class="list-options">
 												<ul>
 													<li>
-														<a href="#" class="playlist-mini-menu" data-listId="<?= $list['lid']; ?>">...</a>
+														<a href="#" class="playlist-mini-menu">...</a>
 														<div class="playlist-options">
 															<ul>
-																<li>Like</li>
+																<li class="album-like <?= $hiddenLike ? 'hidden' : '';?>" id="album-like" data-albumId="<?= $list['lid']; ?>">Like</li>
+																<li class="album-dislike <?= !$hiddenLike ? 'hidden' : '';?>" id="album-dislike" data-albumId="<?= $list['lid']; ?>">Dislike</li>
 															</ul>
 														</div>
 													</li>
@@ -321,10 +323,10 @@
 										<div class="list-options">
 											<ul>
 												<li>
-													<a href="#" class="playlist-mini-menu" data-listId="<?= $list['lid']; ?>">...</a>
+													<a href="#" class="playlist-mini-menu">...</a>
 													<div class="playlist-options">
 														<ul>
-															<li>Like</li>
+															<li data-albumId="<?= $list['lid']; ?>">Like</li>
 														</ul>
 													</div>
 												</li>
