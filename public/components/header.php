@@ -8,7 +8,7 @@
 					</div>
 				</li>
 				<li><a href="#">News</a></li>
-				<li><a href="discover?library=1">Library</a></li>
+				<li><a href="discover?library=1">My Library</a></li>
 				<li class="search-holder">
 					<input type="text" name="searchField" id="searchField" class="search-field">
 				</li>

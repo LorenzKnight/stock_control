@@ -75,7 +75,7 @@ $iFollow = select_from('followers', [], $requestData);
 
 $requestData = [];
 $requestData['user_id'] = !isset($_SESSION['mp_UserId']) ? null : $_SESSION['mp_UserId'];
-$iLike = select_from('favorite_lists', [], $requestData);
+$favoriteLists = select_from('favorite_lists', [], $requestData);
 
 // $requestData = [];
 // isset($_SESSION['mp_UserId']) ? $requestData['user_id'] = $_SESSION['mp_UserId'] : !isset($requestData['user_id']); // revisar
@@ -89,8 +89,8 @@ if (is_array($iFollow) && count($iFollow) > 0) {
 	$hiddenFollow = true;
 }
 
-if (is_array($iLike) && count($iLike) > 0) {
-	$hiddenLike = (isset($_SESSION['mp_UserId']) && $iLike[0]['user_id'] == $_SESSION['mp_UserId']) ? false : true;
+if (is_array($favoriteLists) && count($favoriteLists) > 0) {
+	$hiddenLike = (isset($_SESSION['mp_UserId']) && $favoriteLists[0]['user_id'] == $_SESSION['mp_UserId']) ? false : true;
 } else {
 	$hiddenLike = true;
 }
@@ -238,6 +238,8 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "addToFav")) {
 		'list_id'		=> $_POST['albumId'],
 		'list_date'		=> date("Y-m-d H:i:s")
 	];
+var_dump($queryData);
+exit;
 
 	$insertResult = insert_into('favorite_lists', $queryData, ['id' => 'flid']);
     $insertResultArray = json_decode($insertResult, true);

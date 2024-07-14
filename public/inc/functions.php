@@ -401,15 +401,15 @@ function dbUserColumnNames()
 
 function select_from($tableName, array $columns = [], array $whereClause = [], array $options = []) : array
 {
-    $columnNames = empty($columns) ? '*' : implode(', ', $columns);
+	$columnNames = empty($columns) ? '*' : implode(', ', $columns);
 
-    $whereParts = [];
-    foreach ($whereClause as $column => $value) {
+	$whereParts = [];
+	foreach ($whereClause as $column => $value) {
 		if ($value === '' || $value === null) continue;
-        $escapedValue = is_numeric($value) ? $value : "'" . pg_escape_string($value) . "'";
-        $whereParts[] = "$column = $escapedValue";
-    }
-    $whereClause = empty($whereParts) ? '' : ' WHERE ' . implode(' AND ', $whereParts);
+		$escapedValue = is_numeric($value) ? $value : "'" . pg_escape_string($value) . "'";
+		$whereParts[] = "$column = $escapedValue";
+	}
+	$whereClause = empty($whereParts) ? '' : ' WHERE ' . implode(' AND ', $whereParts);
 
 	$limitClause = '';
 	if (isset($options['limit']) && !empty($options['limit']) && is_numeric($options['limit'])) {
@@ -422,19 +422,19 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 		$orderClause = " ORDER BY " . pg_escape_string($options['order_by']) . " $orderDirection";
 	}
 
-    $query = "SELECT $columnNames FROM $tableName$whereClause$orderClause$limitClause;";
+	$query = "SELECT $columnNames FROM $tableName$whereClause$orderClause$limitClause;";
 
-    if (isset($options['echo_query']) && $options['echo_query']) {
-        echo "Q: $query<br>\n";
-    }
+	if (isset($options['echo_query']) && $options['echo_query']) {
+		echo "Q: $query<br>\n";
+	}
 
-    $result = pg_query($query);
+	$result = pg_query($query);
 
-    if (!$result) {
-        return [];
-    }
+	if (!$result) {
+		return [];
+	}
 
-    return pg_fetch_all($result) ?: [];
+	return pg_fetch_all($result) ?: [];
 }
 
 function insert_into($tableName, array $queryData = [], array $options = []) : string
