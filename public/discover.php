@@ -42,11 +42,10 @@
 			<div class="wrapper-home hidden" id="library">
 				<div class="list-content scroll">
 					<?php
-					if (!empty($favoriteLists)) { // Continua aqui, para mostrar las lista de playlist favoritos.
+					if (!empty($favoriteLists)) {
 						foreach ($favoriteLists as $playlist) {
 							if (isset($playlist['list_id'])) {
 								$listData = select_from('listings', [], ['lid' => $playlist['list_id']]);
-								
 								foreach ($listData as $listDetail) {
 					?>
 									<div class="list" data-list="<?= htmlspecialchars($listDetail['lid'], ENT_QUOTES, 'UTF-8'); ?>">
