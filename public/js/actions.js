@@ -475,7 +475,7 @@ document.addEventListener("DOMContentLoaded", () => {
     albumLike.forEach(function(element){
         element.addEventListener('click', function(){
             let albumId = element.getAttribute('data-albumId');
-			
+console.log(albumId);
 			var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {

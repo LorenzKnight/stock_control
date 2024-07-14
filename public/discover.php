@@ -42,41 +42,49 @@
 			<div class="wrapper-home hidden" id="library">
 				<div class="list-content scroll">
 					<?php
-					if (!empty($my_lists)) {
-						foreach ($my_lists as $list) {
-							$song = select_from('favorite_lists', [], ['user_id' => $list['lid']], ['limit' => 1]); // hay que arreglar
-							$songData = (!empty($song) && isset($song[0]['song_id'])) ? select_from('song', [], ['sid' => $song[0]['song_id']]) : '';
+					if (!empty($favoriteLists)) { // Continua aqui, para mostrar las lista de playlist favoritos.
+						foreach ($favoriteLists as $playlist) {
+							if (isset($playlist['list_id'])) {
+								$listData = select_from('listings', [], ['lid' => $playlist['list_id']]);
+								
+								foreach ($listData as $listDetail) {
 					?>
-						<div class="list" data-list="<?= htmlspecialchars($list['lid'], ENT_QUOTES, 'UTF-8'); ?>">
-							<div class="list-cover">
-								<?php if (!empty($songData[0]['cover'])) { ?>
-									<img src="images/cover/<?= $songData[0]['cover']; ?>">
-								<?php } ?>
-								<div class="list-options">
-									<ul>
-										<li>
-											<a href="#" class="playlist-mini-menu" data-listId="<?= $list['lid']; ?>">...</a>
-											<div class="playlist-options">
+									<div class="list" data-list="<?= htmlspecialchars($listDetail['lid'], ENT_QUOTES, 'UTF-8'); ?>">
+										<div class="list-cover">
+											<?php if (!empty($songData[0]['cover'])) { ?>
+												<img src="images/cover/<?= $songData[0]['cover']; ?>">
+											<?php } ?>
+											<div class="list-options">
 												<ul>
-													<li>Like</li>
+													<li>
+														<a href="#" class="playlist-mini-menu" data-listId="<?= $listDetail['lid']; ?>">...</a>
+														<div class="playlist-options">
+															<ul>
+																<li>Like</li>
+															</ul>
+														</div>
+													</li>
+													<!-- <li>option</li> -->
 												</ul>
 											</div>
-										</li>
-										<!-- <li>option</li> -->
-									</ul>
-								</div>
-							</div>
-							<div class="list-info">
-								<div class="list-name"><?= htmlspecialchars($list['list_name'], ENT_QUOTES, 'UTF-8'); ?></div>
-								<div class="list-owner" data-ownerId="<?= $list['user_id']; ?>"><?= htmlspecialchars($user_data['name'].' '.$user_data['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
-							</div>
-						</div>
+										</div>
+										<div class="list-info">
+											<div class="list-name"><?= htmlspecialchars($listDetail['list_name'], ENT_QUOTES, 'UTF-8'); ?></div>
+											<div class="list-owner" data-ownerId="<?= $list['user_id']; ?>"><?= htmlspecialchars($user_data['name'].' '.$user_data['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
+										</div>
+									</div>
 					<?php
+								}
+							}
 						}
-					} else {
+					}
+					else
+					{
 					?>
-					<p class="frame-central">You don't have any list yet</p>
-					<?php } ?>
+						<p class="frame-central">You don't have any list yet</p>
+					<?php
+					} 
+					?>
 				</div>
 			</div>
 			<div class="wrapper-home hidden" id="album">
@@ -115,10 +123,14 @@
 							</div>
 					<?php
 						}
-					} else {
+					}
+					else
+					{
 					?>
 						<p class="frame-central">You don't have any list yet</p>
-					<?php } ?>
+					<?php
+					} 
+					?>
 				</div>
 			</div>
 			
