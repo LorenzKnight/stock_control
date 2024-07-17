@@ -77,10 +77,6 @@ $requestData = [];
 $requestData['user_id'] = !isset($_SESSION['mp_UserId']) ? null : $_SESSION['mp_UserId'];
 $favoriteLists = select_from('favorite_lists', [], $requestData);
 
-// $requestData = [];
-// isset($_SESSION['mp_UserId']) ? $requestData['user_id'] = $_SESSION['mp_UserId'] : !isset($requestData['user_id']); // revisar
-// $favorite_lists = select_from('favorite_lists', [], $requestData);
-// var_dump($favorite_lists);
 
 
 if (is_array($iFollow) && count($iFollow) > 0) {
