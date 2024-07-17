@@ -47,11 +47,13 @@
 							if (isset($playlist['list_id'])) {
 								$listData = select_from('listings', [], ['lid' => $playlist['list_id']]);
 								foreach ($listData as $listDetail) {
+									$listOwner = select_from('users', ['user_id', 'name', 'surname'], ['user_id' => $listDetail['user_id']]);
+									$listCover = favorite_list_cover($listDetail['lid']);
 					?>
 									<div class="list" data-list="<?= htmlspecialchars($listDetail['lid'], ENT_QUOTES, 'UTF-8'); ?>">
 										<div class="list-cover">
-											<?php if (!empty($songData[0]['cover'])) { ?>
-												<img src="images/cover/<?= $songData[0]['cover']; ?>">
+											<?php if (!empty($listCover)) { ?>
+												<img src="images/cover/<?= $listCover; ?>">
 											<?php } ?>
 											<div class="list-options">
 												<ul>
@@ -69,7 +71,7 @@
 										</div>
 										<div class="list-info">
 											<div class="list-name"><?= htmlspecialchars($listDetail['list_name'], ENT_QUOTES, 'UTF-8'); ?></div>
-											<div class="list-owner" data-ownerId="<?= $list['user_id']; ?>"><?= htmlspecialchars($user_data['name'].' '.$user_data['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
+											<div class="list-owner" data-ownerId="<?= $listOwner[0]['user_id']; ?>"><?= htmlspecialchars($listOwner[0]['name'].' '.$listOwner[0]['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
 										</div>
 									</div>
 					<?php
