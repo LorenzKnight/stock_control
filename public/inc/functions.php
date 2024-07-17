@@ -533,4 +533,31 @@ function delete_from($tableName, array $whereClause = [], array $options = []) :
         return json_encode(["success" => false, "message" => "Error deleting rows."]);
     }
 }
+
+function favorite_list_cover($favoriteListId) : string
+{
+	$query = "SELECT * FROM playlist WHERE list_id = $favoriteListId";
+	$sql = pg_query($query);
+	
+	$listElement = [];
+	while ($row_playlistId = pg_fetch_assoc($sql)) {
+		$listElement[] = $row_playlistId['song_id'];
+	}
+
+	if (empty($listElement)) {
+		return [];
+	}
+
+	$songIds = implode(',', $listElement);
+
+	$songs = [];
+
+	$query2 = "SELECT cover FROM song WHERE sid IN ($songIds) ORDER BY sid ASC";
+	$sql2 = pg_query($query2);
+	while ($row_song = pg_fetch_assoc($sql2)) {
+		$songs[] = $row_song['cover'];
+	}
+
+	return $songs ? $songs[0] : '';
+}
 ?>
