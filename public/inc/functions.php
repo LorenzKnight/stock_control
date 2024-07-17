@@ -552,7 +552,7 @@ function favorite_list_cover($favoriteListId) : string
 
 	$songs = [];
 
-	$query2 = "SELECT cover FROM song WHERE sid IN ($songIds) ORDER BY sid ASC";
+	$query2 = "SELECT * FROM song WHERE sid IN ($songIds) ORDER BY sid ASC";
 	$sql2 = pg_query($query2);
 	while ($row_song = pg_fetch_assoc($sql2)) {
 		$songs[] = $row_song['cover'];
