@@ -49,8 +49,9 @@
 								foreach ($listData as $listDetail) {
 									$listOwner = select_from('users', ['user_id', 'name', 'surname'], ['user_id' => $listDetail['user_id']]);
 									$listCover = favorite_list_cover($listDetail['lid']);
+									// var_dump($listDetail['lid']);
 					?>
-									<div class="list" data-list="<?= htmlspecialchars($listDetail['lid'], ENT_QUOTES, 'UTF-8'); ?>">
+									<div class="fav-list" data-list="<?= htmlspecialchars($listDetail['lid'], ENT_QUOTES, 'UTF-8'); ?>"> <!-- AQUI -->
 										<div class="list-cover">
 											<?php if (!empty($listCover)) { ?>
 												<img src="images/cover/<?= $listCover; ?>">

@@ -234,8 +234,8 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "addToFav")) {
 		'list_id'		=> $_POST['albumId'],
 		'list_date'		=> date("Y-m-d H:i:s")
 	];
-var_dump($queryData);
-exit;
+// var_dump($queryData); // verificar o resolve aqui
+// exit;
 
 	$insertResult = insert_into('favorite_lists', $queryData, ['id' => 'flid']);
     $insertResultArray = json_decode($insertResult, true);

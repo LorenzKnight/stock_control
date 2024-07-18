@@ -625,29 +625,29 @@ function close_popup() {
     // formular_songs_list.style.display = 'none';
 }
 
+
 let listName = document.querySelectorAll('.list');
 listName.forEach((element)=>{
     element.addEventListener('click', getListId);
 });
 
 function getListId(event) {
-    if (event.target.closest('.list-options')) {
-        return;
-    }
+	if (event.target.closest('.list-options')) {
+		return;
+	}
 
 	if (event.target.closest('.list-owner')) {
 		return;
 	}
 
-    var list = event.target.closest('.list').getAttribute('data-list');
-    console.log(list);
+	var list = event.target.closest('.list').getAttribute('data-list');
+	console.log(list);
 
-    var urlActual = window.location.href;
-    urlActual = urlActual.replace(/#(?=\?)/, "");
-    var newUrl = urlActual.replace(/(\?|\&)list=[^&]+/, "");
+	var urlActual = window.location.href;
+	urlActual = urlActual.replace(/#(?=\?)/, "");
+	var newUrl = urlActual.replace(/(\?|\&)list=[^&]+/, "");
 
-    window.location.href = newUrl + (newUrl.includes("?") ? "&" : "?") + "list=" + list;
-
+	window.location.href = newUrl + (newUrl.includes("?") ? "&" : "?") + "list=" + list;
 };
 
 // PLAYLIST MENU OPEN AND CLOSE
