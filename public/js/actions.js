@@ -472,15 +472,15 @@ document.addEventListener("DOMContentLoaded", () => {
 	// let unfollowUser = document.getElementById('unfollow-user');
 	let albumLike = document.querySelectorAll('.album-like');
 
-    albumLike.forEach(function(element){
-        element.addEventListener('click', function(){
-            let albumId = element.getAttribute('data-albumId');
+	albumLike.forEach(function(element){
+		element.addEventListener('click', function(){
+			let albumId = element.getAttribute('data-albumId');
 console.log(albumId);
 			var xmlhttp = new XMLHttpRequest();
-            xmlhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
+			xmlhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
 					var response = JSON.parse(this.responseText);
-                    console.log(response);
+					console.log(response);
 
 					// followUser.classList.add('hidden');
 					// unfollowUser.classList.remove('hidden');
@@ -502,11 +502,51 @@ console.log(albumId);
 				}
 			}
 			var formData = new FormData(); 
-            formData.append('MM_insert', 'addToFav');
-            formData.append('albumId', albumId);
-        
-            xmlhttp.open("POST", "logic/discover_be.php", true);
-            xmlhttp.send(formData);
+			formData.append('MM_insert', 'addToFav');
+			formData.append('albumId', albumId);
+		
+			xmlhttp.open("POST", "logic/discover_be.php", true);
+			xmlhttp.send(formData);
+		});
+	});
+
+	let albumDislike = document.querySelectorAll('.album-dislike');
+
+	albumDislike.forEach(function(element){
+		element.addEventListener('click', function(){
+			let albumId = element.getAttribute('data-albumId');
+console.log(albumId);
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+					console.log(response);
+
+					// followUser.classList.add('hidden');
+					// unfollowUser.classList.remove('hidden');
+					// AQUI
+
+					const statusMessageElem = document.getElementById('status-message');
+					if (statusMessageElem) {
+						statusMessageElem.innerText = response.message;
+						statusMessageElem.style.display = 'block';
+	
+						setTimeout(() => {
+							statusMessageElem.style.opacity = '0';
+							setTimeout(() => {
+								statusMessageElem.style.display = 'none';
+								statusMessageElem.style.opacity = '0.9';
+							}, 1000);
+						}, 2000);
+					}
+				}
+			}
+			var formData = new FormData(); 
+			formData.append('MM_insert', 'removeFromFav');
+			formData.append('albumId', albumId);
+		
+			xmlhttp.open("POST", "logic/discover_be.php", true);
+			xmlhttp.send(formData);
 		});
 	});
 

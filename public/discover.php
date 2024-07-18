@@ -59,10 +59,10 @@
 											<div class="list-options">
 												<ul>
 													<li>
-														<a href="#" class="playlist-mini-menu" data-listId="<?= $listDetail['lid']; ?>">...</a>
+														<a href="#" class="playlist-mini-menu">...</a>
 														<div class="playlist-options">
 															<ul>
-																<li>Like</li>
+																<li class="album-dislike" data-albumId="<?= $listDetail['lid']; ?>">Like</li>
 															</ul>
 														</div>
 													</li>

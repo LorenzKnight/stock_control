@@ -78,7 +78,6 @@ $requestData['user_id'] = !isset($_SESSION['mp_UserId']) ? null : $_SESSION['mp_
 $favoriteLists = select_from('favorite_lists', [], $requestData);
 
 
-
 if (is_array($iFollow) && count($iFollow) > 0) {
 	$hiddenFollow = ($iFollow[0]['user_id'] == $current_owner[0]['user_id'] && $iFollow[0]['is_following'] == $_GET['owner']) ? false : true;
 } else {
@@ -234,8 +233,6 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "addToFav")) {
 		'list_id'		=> $_POST['albumId'],
 		'list_date'		=> date("Y-m-d H:i:s")
 	];
-// var_dump($queryData); // verificar o resolve aqui
-// exit;
 
 	$insertResult = insert_into('favorite_lists', $queryData, ['id' => 'flid']);
     $insertResultArray = json_decode($insertResult, true);
@@ -245,6 +242,21 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "addToFav")) {
 	$id = $insertResultArray["id"];
 
 	echo json_encode(["success" => $success, "id" => $id, "message" => $message]);
+}
+
+if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "removeFromFav")) {
+	$queryData = [
+		'user_id'		=> $_SESSION['mp_UserId'],
+		'list_id'		=> $_POST['albumId']
+	];
+
+	$deleteResult = delete_from('favorite_lists', $queryData);
+	$deleteResultArray = json_decode($deleteResult, true);
+
+	$success = $deleteResultArray["success"] ? true : false;
+	$message = $success ? 'The list was removed successfully.' : 'Error removing this list.';
+
+	echo json_encode(["success" => $success, "message" => $message]);
 }
 
 ?>
