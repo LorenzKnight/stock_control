@@ -690,7 +690,8 @@ function getListId(event) {
 	window.location.href = newUrl + (newUrl.includes("?") ? "&" : "?") + "list=" + list;
 };
 
-let favListName = document.querySelectorAll('.fav-list'); // AQUI 
+
+let favListName = document.querySelectorAll('.fav-list');
 favListName.forEach((element)=>{
 	element.addEventListener('click', getFavListId);
 });
