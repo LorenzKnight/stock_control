@@ -690,6 +690,28 @@ function getListId(event) {
 	window.location.href = newUrl + (newUrl.includes("?") ? "&" : "?") + "list=" + list;
 };
 
+let favListName = document.querySelectorAll('.fav-list'); // AQUI 
+favListName.forEach((element)=>{
+	element.addEventListener('click', getFavListId);
+});
+
+function getFavListId(event) {
+	console.log('AQUI');
+	if (event.target.closest('.list-options') || event.target.closest('.list-owner')) {
+		return;
+	}
+
+	var favlist = event.target.closest('.fav-list').getAttribute('data-favlist');
+	console.log(favlist);
+
+	var urlActual = window.location.href;
+	var base = urlActual.indexOf('?') !== -1 ? urlActual.substr(0, urlActual.indexOf('?')) : urlActual;
+
+	var newUrl = base + '?list=' + favlist;
+
+	window.location.href = newUrl;
+};
+
 // PLAYLIST MENU OPEN AND CLOSE
 let playlistMiniMenu = document.querySelectorAll('.playlist-mini-menu');
 let playlistOptions = document.querySelectorAll('.playlist-options');

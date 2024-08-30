@@ -51,7 +51,7 @@
 									$listCover = favorite_list_cover($listDetail['lid']);
 									// var_dump($listDetail['lid']);
 					?>
-									<div class="fav-list" data-list="<?= htmlspecialchars($listDetail['lid'], ENT_QUOTES, 'UTF-8'); ?>"> <!-- AQUI -->
+									<div class="fav-list" data-favlist="<?= htmlspecialchars($listDetail['lid'], ENT_QUOTES, 'UTF-8'); ?>"> <!-- AQUI -->
 										<div class="list-cover">
 											<?php if (!empty($listCover)) { ?>
 												<img src="images/cover/<?= $listCover; ?>">
@@ -99,7 +99,7 @@
 							$song = select_from('playlist', [], ['list_id' => $list['lid']], ['limit' => 1]);
 							$songData = !empty($song) ? select_from('song', [], ['sid' => $song[0]['song_id']]) : '';
 					?>
-							<div class="list" data-list="<?= htmlspecialchars($list['lid'], ENT_QUOTES, 'UTF-8'); ?>">
+							<div class="list" data-list="<?= htmlspecialchars($list['lid'], ENT_QUOTES, 'UTF-8'); ?>"> <!-- revisa aqui -->
 								<div class="list-cover">
 									<?php if (!empty($songData[0]['cover'])) { ?>
 										<img src="images/cover/<?= $songData[0]['cover']; ?>">
