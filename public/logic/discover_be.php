@@ -51,6 +51,7 @@ $user_data = u_all_info('*', $requestData);
 
 $requestData = [];
 isset($_SESSION['mp_UserId']) ? $requestData['user_id'] = $_SESSION['mp_UserId'] : !isset($requestData['user_id']);
+isset($_GET['list']) ? $requestData['lid'] = $_GET['list'] : !isset($requestData['lid']);
 $my_lists = empty($requestData) ? null : select_from('listings', [], $requestData);
 
 $requestData = [];
@@ -126,10 +127,10 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formsearch")) {
 
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "addToList")) {
 	$queryData = [
-        'user_id'   => $_SESSION['mp_UserId'],
-        'list_id'   => $_POST['listId'],
-        'song_id'   => $_POST['songId'],
-        'list_date' => date("Y-m-d H:i:s")
+        'user_id'   	=> $_SESSION['mp_UserId'],
+        'list_id'   	=> $_POST['listId'],
+        'song_id'   	=> $_POST['songId'],
+        'list_date'		=> date("Y-m-d H:i:s")
     ];
 
     $functionSelect = select_from('playlist', ['song_id', 'list_id'], ['song_id' => $_POST['songId'], 'list_id' => $_POST['listId']]);
@@ -258,5 +259,4 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "removeFromFav")) {
 
 	echo json_encode(["success" => $success, "message" => $message]);
 }
-
 ?>
