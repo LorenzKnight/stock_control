@@ -672,16 +672,11 @@ listName.forEach((element)=>{
 });
 
 function getListId(event) {
-	if (event.target.closest('.list-options')) {
-		return;
-	}
-
-	if (event.target.closest('.list-owner')) {
+	if (event.target.closest('.list-options') || event.target.closest('.list-owner')) {
 		return;
 	}
 
 	var list = event.target.closest('.list').getAttribute('data-list');
-	console.log(list);
 
 	var urlActual = window.location.href;
 	urlActual = urlActual.replace(/#(?=\?)/, "");
@@ -697,13 +692,11 @@ favListName.forEach((element)=>{
 });
 
 function getFavListId(event) {
-	console.log('AQUI');
 	if (event.target.closest('.list-options') || event.target.closest('.list-owner')) {
 		return;
 	}
 
 	var favlist = event.target.closest('.fav-list').getAttribute('data-favlist');
-	console.log(favlist);
 
 	var urlActual = window.location.href;
 	var base = urlActual.indexOf('?') !== -1 ? urlActual.substr(0, urlActual.indexOf('?')) : urlActual;
