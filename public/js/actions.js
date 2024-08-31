@@ -334,7 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		// let formular_songs_list = document.getElementById('formular_songs_list');
 		let songId = formular_songs_list.getAttribute('data-songId');
 		let inputPlaylist = document.getElementById('input-playlist').value;
-// console.log(songId);
+		
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.onreadystatechange = function() {
 			if (this.readyState == 4 && this.status == 200) {
