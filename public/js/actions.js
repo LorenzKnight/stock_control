@@ -475,7 +475,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	albumLike.forEach(function(element){
 		element.addEventListener('click', function(){
 			let albumId = element.getAttribute('data-albumId');
-console.log(albumId);
+
 			var xmlhttp = new XMLHttpRequest();
 			xmlhttp.onreadystatechange = function() {
 				if (this.readyState == 4 && this.status == 200) {
@@ -660,9 +660,6 @@ function close_popup() {
 
     // var formular_front = document.getElementById('formular_front');
     // formular_front.style.display = 'none';
-
-    // var formular_songs_list = document.getElementById('formular_songs_list');
-    // formular_songs_list.style.display = 'none';
 }
 
 

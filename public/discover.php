@@ -139,7 +139,7 @@
 			<div class="wrapper-home hidden" id="listing">
 				<div class="list-content">
 					<div class="list-header">
-						<a href="discover">< Back</a>
+						<a href="#" onclick="history.back(); return false;">< Back</a>
 						<h2><?= $my_lists[0]['list_name']; ?></h2>
 						<div class="list-owner" data-ownerId="<?= $list['user_id']; ?>" style="font-size: 12px;"><?= htmlspecialchars($user_data['name'].' '.$user_data['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
 					</div>
