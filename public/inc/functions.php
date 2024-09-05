@@ -560,4 +560,53 @@ function favorite_list_cover($favoriteListId) : string
 
 	return $songs ? $songs[0] : '';
 }
+
+
+
+function getUpdatedFavListContent() {
+    $requestData['user_id'] = !isset($_SESSION['mp_UserId']) ? null : $_SESSION['mp_UserId'];
+	$favoriteLists = select_from('favorite_lists', [], $requestData);
+	
+    $output = '';
+	if (!empty($favoriteLists)) {
+		foreach ($favoriteLists as $playlist) {
+			if (isset($playlist['list_id'])) {
+				$listData = select_from('listings', [], ['lid' => $playlist['list_id']]);
+				foreach ($listData as $listDetail) {
+					$listOwner = select_from('users', ['user_id', 'name', 'surname'], ['user_id' => $listDetail['user_id']]);
+					$listCover = favorite_list_cover($listDetail['lid']);
+						// $output .= '<div class="fav-list" data-favlist="' . $playlist['lid'] . '">';
+						$output .= '<div class="fav-list" data-favlist="">';
+							$output .= '<div class="list-cover">';
+								if (!empty($listCover)) {
+									$output .= '<img src="images/cover/' . $listCover . '">';
+								}
+								$output .= '<div class="list-options">';
+									$output .= '<ul>';
+										$output .= '<li>';
+											$output .= '<a href="#" class="playlist-mini-menu">...</a>'; // <-- AQUI
+											$output .= '<div class="playlist-options">';
+												$output .= '<ul>';
+													$output .= '<li class="album-dislike" data-albumId="' . $listDetail['lid'] . '">Like</li>';
+												$output .= '</ul>';
+											$output .= '</div>';
+										$output .= '</li>';
+										// $output .= '<li>option</li>';
+									$output .= '</ul>';
+								$output .= '</div>';
+							$output .= '</div>';
+							$output .= '<div class="list-info">';
+								$output .= '<div class="list-name">' . $listDetail['list_name'] . '</div>';
+								$output .= '<div class="list-owner" data-ownerId="' . $listOwner[0]['user_id'] . '">' . $listOwner[0]['name'].' '.$listOwner[0]['surname'] . '</div>';
+							$output .= '</div>';
+						$output .= '</div>';
+				}
+			}
+		}
+	} else {
+		$output .= "<p class='frame-central'>You don't have any list yet</p>";
+	}
+
+	return $output;
+}
 ?>

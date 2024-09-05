@@ -512,19 +512,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	let albumDislike = document.querySelectorAll('.album-dislike');
 
-	albumDislike.forEach(function(element){
+	albumDislike.forEach(function(element){ // falta crear un refresh 
 		element.addEventListener('click', function(){
 			let albumId = element.getAttribute('data-albumId');
-console.log(albumId);
+
 			var xmlhttp = new XMLHttpRequest();
 			xmlhttp.onreadystatechange = function() {
 				if (this.readyState == 4 && this.status == 200) {
 					var response = JSON.parse(this.responseText);
 					console.log(response);
-
-					// followUser.classList.add('hidden');
-					// unfollowUser.classList.remove('hidden');
-					// AQUI
 
 					const statusMessageElem = document.getElementById('status-message');
 					if (statusMessageElem) {
@@ -538,6 +534,10 @@ console.log(albumId);
 								statusMessageElem.style.opacity = '0.9';
 							}, 1000);
 						}, 2000);
+					}
+
+					if (response.success && response.html) {
+						document.getElementById('list-content').innerHTML = response.html;
 					}
 				}
 			}
@@ -727,6 +727,7 @@ playlistMiniMenu.forEach((element) => {
 });
 
 document.addEventListener('click', (event) => {
+	console.log(event);
     let insidePlaylistOption = event.target.closest('.playlist-options');
     let clickOnMiniMenu = event.target.closest('.playlist-mini-menu');
 

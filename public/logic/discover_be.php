@@ -257,6 +257,13 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "removeFromFav")) {
 	$success = $deleteResultArray["success"] ? true : false;
 	$message = $success ? 'The list was removed successfully.' : 'Error removing this list.';
 
-	echo json_encode(["success" => $success, "message" => $message]);
+	// echo json_encode(["success" => $success, "message" => $message]);
+
+	if ($success) {
+        $updatedContent = getUpdatedFavListContent();
+        echo json_encode(["success" => $success, "message" => $message, "html" => $updatedContent]);
+    } else {
+        echo json_encode(["success" => $success, "message" => $message]);
+    }
 }
 ?>

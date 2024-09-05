@@ -40,7 +40,7 @@
 				</div>
 			</div>
 			<div class="wrapper-home hidden" id="library">
-				<div class="list-content scroll">
+				<div class="list-content scroll" id="list-content">
 					<?php
 					if (!empty($favoriteLists)) {
 						foreach ($favoriteLists as $playlist) {
