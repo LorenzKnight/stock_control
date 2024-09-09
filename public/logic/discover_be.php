@@ -50,9 +50,14 @@ $requestData['user_id'] = !isset($_SESSION['mp_UserId']) ? null : $_SESSION['mp_
 $user_data = u_all_info('*', $requestData);
 
 $requestData = [];
-isset($_SESSION['mp_UserId']) ? $requestData['user_id'] = $_SESSION['mp_UserId'] : !isset($requestData['user_id']);
+// isset($_SESSION['mp_UserId']) ? $requestData['user_id'] = $_SESSION['mp_UserId'] : !isset($requestData['user_id']);
 isset($_GET['list']) ? $requestData['lid'] = $_GET['list'] : !isset($requestData['lid']);
 $my_lists = empty($requestData) ? null : select_from('listings', [], $requestData);
+
+$requestData = [];
+$requestData['user_id'] = $my_lists[0]['user_id'];
+$owner_by_list_id = select_from('users', [], $requestData, ['fetch_first' => true]);
+// var_dump($owner_by_list_id);
 
 $requestData = [];
 isset($_GET['list']) ? $requestData['list_id'] = $_GET['list'] : !isset($requestData['list_id']);
@@ -229,20 +234,31 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "unfollow")) {
 }
 
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "addToFav")) {
-	$queryData = [
+	$requestData = [
 		'user_id'		=> $_SESSION['mp_UserId'],
-		'list_id'		=> $_POST['albumId'],
-		'list_date'		=> date("Y-m-d H:i:s")
+		'list_id'		=> $_POST['albumId']
 	];
 
-	$insertResult = insert_into('favorite_lists', $queryData, ['id' => 'flid']);
-    $insertResultArray = json_decode($insertResult, true);
+	$favoriteLists = select_from('favorite_lists', [], $requestData);
 
-	$success = $insertResultArray["success"] ? true : false;
-	$message = $success ? 'The list is added to your library.' : 'Error adding list.';
-	$id = $insertResultArray["id"];
+	if(is_array($favoriteLists) && count($favoriteLists) > 0) {
+		echo json_encode(["success" => false, "message" => "This album is already in your library."]);
+	} else {
+		$queryData = [
+			'user_id'		=> $_SESSION['mp_UserId'],
+			'list_id'		=> $_POST['albumId'],
+			'list_date'		=> date("Y-m-d H:i:s")
+		];
+// var_dump($queryData);
+		$insertResult = insert_into('favorite_lists', $queryData, ['id' => 'flid']);
+		$insertResultArray = json_decode($insertResult, true);
 
-	echo json_encode(["success" => $success, "id" => $id, "message" => $message]);
+		$success = $insertResultArray["success"] ? true : false;
+		$message = $success ? 'The list is added to your library.' : 'Error adding list.';
+		$id = $insertResultArray["id"];
+
+		echo json_encode(["success" => $success, "id" => $id, "message" => $message]);
+	}
 }
 
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "removeFromFav")) {
@@ -256,8 +272,6 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "removeFromFav")) {
 
 	$success = $deleteResultArray["success"] ? true : false;
 	$message = $success ? 'The list was removed successfully.' : 'Error removing this list.';
-
-	// echo json_encode(["success" => $success, "message" => $message]);
 
 	if ($success) {
         $updatedContent = getUpdatedFavListContent();
