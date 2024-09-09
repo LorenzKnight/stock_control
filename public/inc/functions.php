@@ -434,6 +434,10 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 		return [];
 	}
 
+	if (!empty($options['fetch_first'])) {
+        return pg_fetch_assoc($result) ?: [];
+    }
+
 	return pg_fetch_all($result) ?: [];
 }
 
@@ -558,9 +562,9 @@ function favorite_list_cover($favoriteListId) : string
 		$songs[] = $row_song['cover'];
 	}
 
-	return $songs ? $songs[0] : '';
+	// return !empty($songs) ? $songs[0] : '';
+	return !empty($songs) && isset($songs[0]) ? $songs[0] : '';
 }
-
 
 
 function getUpdatedFavListContent() {

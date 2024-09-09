@@ -49,7 +49,6 @@
 								foreach ($listData as $listDetail) {
 									$listOwner = select_from('users', ['user_id', 'name', 'surname'], ['user_id' => $listDetail['user_id']]);
 									$listCover = favorite_list_cover($listDetail['lid']);
-									// var_dump($listDetail['lid']);
 					?>
 									<div class="fav-list" data-favlist="<?= htmlspecialchars($listDetail['lid'], ENT_QUOTES, 'UTF-8'); ?>"> <!-- AQUI -->
 										<div class="list-cover">
@@ -98,6 +97,7 @@
 						foreach ($my_lists as $list) {
 							$song = select_from('playlist', [], ['list_id' => $list['lid']], ['limit' => 1]);
 							$songData = !empty($song) ? select_from('song', [], ['sid' => $song[0]['song_id']]) : '';
+							// var_dump($list);
 					?>
 							<div class="list" data-list="<?= htmlspecialchars($list['lid'], ENT_QUOTES, 'UTF-8'); ?>"> <!-- revisa aqui -->
 								<div class="list-cover">
@@ -141,7 +141,7 @@
 					<div class="list-header">
 						<a href="#" onclick="history.back(); return false;">< Back</a>
 						<h2><?= $my_lists[0]['list_name']; ?></h2>
-						<div class="list-owner" data-ownerId="<?= $list['user_id']; ?>" style="font-size: 12px;"><?= htmlspecialchars($user_data['name'].' '.$user_data['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
+						<div class="list-owner" data-ownerId="<?= $list['user_id']; ?>" style="font-size: 12px;"><?= htmlspecialchars($owner_by_list_id['name'].' '.$owner_by_list_id['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
 					</div>
 					<table class="music-list" cellspacing="0">
 					<?php 
@@ -257,8 +257,8 @@
 								foreach ($recent_lists as $list) {
 									$song = select_from('playlist', [], ['list_id' => $list['lid']], ['limit' => 1]);
 									$songData = !empty($song) ? select_from('song', [], ['sid' => $song[0]['song_id']]) : '';
+									// var_dump($list);
 							?>
-							<?php // var_dump($hiddenLike); ?>
 									<div class="list" data-list="<?= htmlspecialchars($list['lid'], ENT_QUOTES, 'UTF-8'); ?>">
 										<div class="list-cover">
 											<?php if (!empty($songData[0]['cover'])) { ?>
