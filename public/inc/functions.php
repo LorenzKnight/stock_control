@@ -590,7 +590,7 @@ function getUpdatedFavListContent() {
 											$output .= '<a href="#" class="playlist-mini-menu">...</a>'; // <-- AQUI
 											$output .= '<div class="playlist-options">';
 												$output .= '<ul>';
-													$output .= '<li class="album-dislike" data-albumId="' . $listDetail['lid'] . '">Like</li>';
+													$output .= '<li class="album-dislike" data-albumId="' . $listDetail['lid'] . '">Dislike</li>';
 												$output .= '</ul>';
 											$output .= '</div>';
 										$output .= '</li>';

@@ -61,7 +61,7 @@
 														<a href="#" class="playlist-mini-menu">...</a>
 														<div class="playlist-options">
 															<ul>
-																<li class="album-dislike" data-albumId="<?= $listDetail['lid']; ?>">Like</li>
+																<li class="album-dislike" data-albumId="<?= $listDetail['lid']; ?>">Dislike</li>
 															</ul>
 														</div>
 													</li>

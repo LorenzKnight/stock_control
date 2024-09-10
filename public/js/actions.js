@@ -736,7 +736,6 @@ document.addEventListener('click', (event) => {
     }
 });
 
-
 let listCovers = document.querySelectorAll('.list-cover');
 listCovers.forEach((listCover) => {
 	listCover.addEventListener('mouseleave', function() {
