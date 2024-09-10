@@ -147,8 +147,7 @@
 					<?php 
 					$queueIndex = 0;
 					foreach($my_playlist as $song_data) {
-						$songs = select_from('song', [], ['sid' => $song_data['song_id']]);
-						$song = $songs[0];
+						$song = select_from('song', [], ['sid' => $song_data['song_id']], ['fetch_first' => true]);
 					?>
 						<tr>
 							<td width="5%">
@@ -228,9 +227,9 @@
 						<div class="profile-frame">
 							<!-- <a href="discover">< Back</a> -->
 							<div class="big-profile">
-								<img src="images/profile/<?= $current_owner[0]['image']; ?>" alt="">
+								<img src="images/profile/<?= $current_owner['image']; ?>" alt="">
 							</div>
-							<h1><?= htmlspecialchars($current_owner[0]['name'].' '.$current_owner[0]['surname'], ENT_QUOTES, 'UTF-8'); ?></h1>
+							<h1><?= htmlspecialchars($current_owner['name'].' '.$current_owner['surname'], ENT_QUOTES, 'UTF-8'); ?></h1>
 						</div>
 					</div>
 					<div class="user-menu">
@@ -245,8 +244,8 @@
 							<ul>
 								<!-- <li>Opcion 1</li> -->
 								<!-- <li>Opcion 2</li> -->
-								<li class="<?= $hiddenFollow ? 'hidden' : '';?>" id="unfollow-user" data-unfollow="<?= $current_owner[0]['user_id']; ?>">Unfollow</li> 
-								<li class="<?= !$hiddenFollow ? 'hidden' : '';?>" id="follow-user" data-follow="<?= $current_owner[0]['user_id']; ?>">Follow</li>
+								<li class="<?= $hiddenFollow ? 'hidden' : '';?>" id="unfollow-user" data-unfollow="<?= $current_owner['user_id']; ?>">Unfollow</li> 
+								<li class="<?= !$hiddenFollow ? 'hidden' : '';?>" id="follow-user" data-follow="<?= $current_owner['user_id']; ?>">Follow</li>
 							</ul>
 						</div>
 					</div>
@@ -281,7 +280,7 @@
 										</div>
 										<div class="list-info">
 											<div class="list-name"><?= htmlspecialchars($list['list_name'], ENT_QUOTES, 'UTF-8'); ?></div>
-											<div class="list-owner" data-ownerId="<?= $list_owner[0]['user_id']; ?>"><?= htmlspecialchars($list_owner[0]['name'].' '.$list_owner[0]['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
+											<div class="list-owner" data-ownerId="<?= $list_owner['user_id']; ?>"><?= htmlspecialchars($list_owner['name'].' '.$list_owner['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
 										</div>
 									</div>
 							<?php
@@ -350,7 +349,7 @@
 									</div>
 									<div class="list-info">
 										<div class="list-name"><?= htmlspecialchars($list['list_name'], ENT_QUOTES, 'UTF-8'); ?></div>
-										<div class="list-owner" data-ownerId="<?= $list_owner[0]['user_id']; ?>"><?= htmlspecialchars($list_owner[0]['name'].' '.$list_owner[0]['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
+										<div class="list-owner" data-ownerId="<?= $list_owner['user_id']; ?>"><?= htmlspecialchars($list_owner['name'].' '.$list_owner['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
 									</div>
 								</div>
 						<?php

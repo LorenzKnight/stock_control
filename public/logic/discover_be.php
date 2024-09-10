@@ -50,7 +50,7 @@ $requestData['user_id'] = !isset($_SESSION['mp_UserId']) ? null : $_SESSION['mp_
 $user_data = u_all_info('*', $requestData);
 
 $requestData = [];
-// isset($_SESSION['mp_UserId']) ? $requestData['user_id'] = $_SESSION['mp_UserId'] : !isset($requestData['user_id']);
+isset($_SESSION['mp_UserId']) ? $requestData['user_id'] = $_SESSION['mp_UserId'] : !isset($requestData['user_id']);
 isset($_GET['list']) ? $requestData['lid'] = $_GET['list'] : !isset($requestData['lid']);
 $playlists = empty($requestData) ? null : select_from('listings', [], $requestData);
 
@@ -65,18 +65,18 @@ $my_playlist = select_from('playlist', [], $requestData);
 $requestData = [];
 isset($_GET['owner']) ? $requestData['user_id'] = $_GET['owner'] : !isset($requestData['user_id']);
 $my_upload_songs = select_from('song', [], $requestData);
-$current_owner = select_from('users', [], $requestData);
+$current_owner = select_from('users', [], $requestData, ['fetch_first' => true]);
 
 $recent_lists = select_from('listings', [], $requestData, ['limit' => 5]);
 $owner_upload_songs = select_from('song', [], $requestData, ['limit' => 10]);
 
 $owner_lists = empty($requestData) ? null : select_from('listings', [], $requestData);
-$list_owner = select_from('users', [], $requestData);
+$list_owner = select_from('users', [], $requestData, ['fetch_first' => true]);
 
 $requestData = [];
 $requestData['user_id'] = !isset($_SESSION['mp_UserId']) ? null : $_SESSION['mp_UserId'];
 isset($_GET['owner']) ? $requestData['is_following'] = $_GET['owner'] : !isset($requestData['is_following']);
-$iFollow = select_from('followers', [], $requestData);
+$iFollow = select_from('followers', [], $requestData, ['fetch_first' => true]);
 
 $requestData = [];
 $requestData['user_id'] = !isset($_SESSION['mp_UserId']) ? null : $_SESSION['mp_UserId'];
@@ -84,7 +84,7 @@ $favoriteLists = select_from('favorite_lists', [], $requestData);
 
 
 if (is_array($iFollow) && count($iFollow) > 0) {
-	$hiddenFollow = ($iFollow[0]['user_id'] == $current_owner[0]['user_id'] && $iFollow[0]['is_following'] == $_GET['owner']) ? false : true;
+	$hiddenFollow = ($iFollow['user_id'] == $current_owner['user_id'] && $iFollow['is_following'] == $_GET['owner']) ? false : true;
 } else {
 	$hiddenFollow = true;
 }
@@ -248,7 +248,7 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "addToFav")) {
 			'list_id'		=> $_POST['albumId'],
 			'list_date'		=> date("Y-m-d H:i:s")
 		];
-// var_dump($queryData);
+		
 		$insertResult = insert_into('favorite_lists', $queryData, ['id' => 'flid']);
 		$insertResultArray = json_decode($insertResult, true);
 
