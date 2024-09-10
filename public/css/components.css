@@ -194,12 +194,9 @@
 .playlist-options {
 	background-color: #fff;
     border: 1px solid #ccc;
-    border-radius: 4px;
-
+	border-radius: 4px;
 	width: 150px;
 	/* height: 150px; */
-	background-color: #fff;
-	border-radius: 4px;
 	position: absolute;
 	padding: 2px 0;
 	margin: 11px 0 0 -113px;
@@ -216,9 +213,9 @@
 
 .playlist-options ul li {
     width: 100%;
-    font-size: 14px;
+    font-size: 12px;
 	margin: 0;
-    padding: 10px 0;
+    padding: 8px 0;
     display: flex;
     justify-content: center;
     cursor: pointer;
@@ -408,4 +405,5 @@
 .owners-recent-album {
 	overflow: auto;
 	border-bottom: 1px solid #ccc;
+	padding-bottom: 20px;
 }
