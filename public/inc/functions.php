@@ -562,7 +562,6 @@ function favorite_list_cover($favoriteListId) : string
 		$songs[] = $row_song['cover'];
 	}
 
-	// return !empty($songs) ? $songs[0] : '';
 	return !empty($songs) && isset($songs[0]) ? $songs[0] : '';
 }
 
