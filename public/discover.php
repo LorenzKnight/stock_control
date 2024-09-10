@@ -93,8 +93,8 @@
 				</div>
 				<div class="main-content">
 					<?php
-					if (!empty($my_lists)) {
-						foreach ($my_lists as $list) {
+					if (!empty($playlists)) {
+						foreach ($playlists as $list) {
 							$song = select_from('playlist', [], ['list_id' => $list['lid']], ['limit' => 1]);
 							$songData = !empty($song) ? select_from('song', [], ['sid' => $song[0]['song_id']]) : '';
 							// var_dump($list);
@@ -140,7 +140,7 @@
 				<div class="list-content">
 					<div class="list-header">
 						<a href="#" onclick="history.back(); return false;">< Back</a>
-						<h2><?= $my_lists[0]['list_name']; ?></h2>
+						<h2><?= $playlists[0]['list_name']; ?></h2>
 						<div class="list-owner" data-ownerId="<?= $list['user_id']; ?>" style="font-size: 12px;"><?= htmlspecialchars($owner_by_list_id['name'].' '.$owner_by_list_id['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
 					</div>
 					<table class="music-list" cellspacing="0">
