@@ -557,15 +557,26 @@ listOwners.forEach((element)=>{
     element.addEventListener('click', getListOwners);
 });
 
+// function getListOwners(event) {
+// 	var listOwner = event.target.closest('.list-owner').getAttribute('data-ownerId');
+//     console.log(listOwner);
+
+// 	var urlActual = window.location.href;
+//     urlActual = urlActual.replace(/#(?=\?)/, "");
+//     var newUrl = urlActual.replace(/(\?|\&)list=[^&]+/, "");
+
+//     window.location.href = newUrl + (newUrl.includes("?") ? "&" : "?") + "owner=" + listOwner;
+// }
+
 function getListOwners(event) {
-	var listOwner = event.target.closest('.list-owner').getAttribute('data-ownerId');
-    console.log(listOwner);
+    var listOwner = event.target.closest('.list-owner').getAttribute('data-ownerId');
 
-	var urlActual = window.location.href;
-    urlActual = urlActual.replace(/#(?=\?)/, "");
-    var newUrl = urlActual.replace(/(\?|\&)list=[^&]+/, "");
+    var urlActual = window.location.href;
+    if (urlActual.includes('?')) {
+        urlActual = urlActual.split('?')[0];
+    }
 
-    window.location.href = newUrl + (newUrl.includes("?") ? "&" : "?") + "owner=" + listOwner;
+    window.location.href = urlActual + "?owner=" + listOwner;
 }
 
 
