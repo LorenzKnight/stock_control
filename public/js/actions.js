@@ -20,16 +20,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	// CONTROLADOR DE DIRECCIONES
 	const urlParams = new URLSearchParams(window.location.search);
-    const params = {
+	const params = {
+		login: urlParams.get('login'),
+		news: urlParams.get('news'),
 		library: urlParams.get('library'),
-        list: urlParams.get('list'),
-        uploader: urlParams.get('uploader'),
-		owner: urlParams.get('owner'),
-		login: urlParams.get('login')
-    };
+		list: urlParams.get('list'),
+		uploader: urlParams.get('uploader'),
+		owner: urlParams.get('owner')
+	};
 
-	const library = document.getElementById('library');
 	const login = document.getElementById('login');
+	const news = document.getElementById('news');
+	const library = document.getElementById('library');
     const album = document.getElementById('album');
     const listing = document.getElementById('listing');
 	const owner = document.getElementById('owner');
@@ -55,6 +57,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			break;
 		case 'login':
 			login.classList.remove('hidden');
+			break;
+		case 'news':
+			news.classList.remove('hidden');
 			break;
 		case 'library':
 			library.classList.remove('hidden');

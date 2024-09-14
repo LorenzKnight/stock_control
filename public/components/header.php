@@ -7,7 +7,7 @@
 					<h3>Music Drive</h3>
 					</div>
 				</li>
-				<li><a href="#">News</a></li>
+				<li><a href="discover?news=1">News</a></li>
 				<li><a href="discover?library=1" style="<?= $_GET['library'] == 1 ? 'color: orange;' : '' ?>">My Library</a></li>
 				<li class="search-holder">
 					<input type="text" name="searchField" id="searchField" class="search-field">
