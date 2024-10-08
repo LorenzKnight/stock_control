@@ -35,6 +35,8 @@
 				</div>
 			</div>
 			<div class="wrapper-home hidden" id="news">
+				<div class="sidebar">
+				</div>
 				<div class="list-content scroll">
 					News
 				</div>
@@ -47,7 +49,7 @@
 							if (isset($playlist['list_id'])) {
 								$listData = select_from('listings', [], ['lid' => $playlist['list_id']]);
 								foreach ($listData as $listDetail) {
-									$listOwner = select_from('users', ['user_id', 'name', 'surname'], ['user_id' => $listDetail['user_id']]);
+									$listOwner = select_from('users', ['user_id', 'name', 'surname'], ['user_id' => $listDetail['user_id']], ['fetch_first' => true]);
 									$listCover = favorite_list_cover($listDetail['lid']);
 					?>
 									<div class="fav-list" data-favlist="<?= htmlspecialchars($listDetail['lid'], ENT_QUOTES, 'UTF-8'); ?>"> <!-- AQUI -->
@@ -71,7 +73,7 @@
 										</div>
 										<div class="list-info">
 											<div class="list-name"><?= htmlspecialchars($listDetail['list_name'], ENT_QUOTES, 'UTF-8'); ?></div>
-											<div class="list-owner" data-ownerId="<?= $listOwner[0]['user_id']; ?>"><?= htmlspecialchars($listOwner[0]['name'].' '.$listOwner[0]['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
+											<div class="list-owner" data-ownerId="<?= $listOwner['user_id']; ?>"><?= htmlspecialchars($listOwner['name'].' '.$listOwner['surname'], ENT_QUOTES, 'UTF-8'); ?></div>
 										</div>
 									</div>
 					<?php
@@ -90,6 +92,21 @@
 			</div>
 			<div class="wrapper-home hidden" id="album">
 				<div class="sidebar">
+					<?php
+					if (!empty($follow)) {
+						foreach($follow as $userId) {
+							$userInfo = select_from('users', [], ['user_id' => $userId['is_following']], ['fetch_first' => true]);
+							// var_dump($userName);
+					?>
+						<div>
+							<table>
+								<?= ucwords($userInfo['name'].' '.$userInfo['surname']); ?>
+							</table>
+						</div>
+					<?php
+						}
+					}
+					?>
 				</div>
 				<div class="main-content">
 					<?php

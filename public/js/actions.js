@@ -46,15 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 	switch (state) {
-		case 'uploader':
-			uploaderContainer.classList.remove('hidden');
-			break;
-		case 'owner':
-			owner.classList.remove('hidden');
-			break;
-		case 'list':
-			listing.classList.remove('hidden');
-			break;
 		case 'login':
 			login.classList.remove('hidden');
 			break;
@@ -63,6 +54,15 @@ document.addEventListener("DOMContentLoaded", () => {
 			break;
 		case 'library':
 			library.classList.remove('hidden');
+			break;
+		case 'list':
+			listing.classList.remove('hidden');
+			break;
+		case 'uploader':
+			uploaderContainer.classList.remove('hidden');
+			break;
+		case 'owner':
+			owner.classList.remove('hidden');
 			break;
 		default:
 			album.classList.remove('hidden');
