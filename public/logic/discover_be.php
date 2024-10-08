@@ -76,14 +76,21 @@ $list_owner = select_from('users', [], $requestData, ['fetch_first' => true]);
 $requestData = [];
 $requestData['user_id'] = !isset($_SESSION['mp_UserId']) ? null : $_SESSION['mp_UserId'];
 isset($_GET['owner']) ? $requestData['is_following'] = $_GET['owner'] : !isset($requestData['is_following']);
-$iFollow = select_from('followers', [], $requestData, ['fetch_first' => true]);
+$iFollow = select_from('followers', [], $requestData, ['fetch_first' => true]); // aqui 
+// var_dump($iFollow);
+cdebug($iFollow);
 
 $requestData = [];
 $requestData['user_id'] = !isset($_SESSION['mp_UserId']) ? null : $_SESSION['mp_UserId'];
 $favoriteLists = select_from('favorite_lists', [], $requestData);
 
+$requestData = [];
+$requestData['user_id'] = !isset($_SESSION['mp_UserId']) ? null : $_SESSION['mp_UserId'];
+$follow = select_from('followers', [], $requestData);
+// var_dump($follow);
 
-if (is_array($iFollow) && count($iFollow) > 0) {
+if (!empty($iFollow) && isset($iFollow['user_id'], $iFollow['is_following']) && isset($_GET['owner'])) {
+// if (is_array($iFollow) && count($iFollow) > 0) {
 	$hiddenFollow = ($iFollow['user_id'] == $current_owner['user_id'] && $iFollow['is_following'] == $_GET['owner']) ? false : true;
 } else {
 	$hiddenFollow = true;
@@ -207,14 +214,19 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "follow")) {
 		'follow_date'	=> date("Y-m-d H:i:s")
 	];
 
-	$insertResult = insert_into('followers', $queryData, ['id' => 'fid']);
-    $insertResultArray = json_decode($insertResult, true);
+// si no estoy siguiendo a ese usuario entoces as esto
+	if (true) {
+		$insertResult = insert_into('followers', $queryData, ['id' => 'fid']);
+		$insertResultArray = json_decode($insertResult, true);
+	}
+	// else {
+	// 	echo json_encode(["success" => $success, "message" => $message]);
+	// }
+		$success = $insertResultArray["success"] ? true : false;
+		$message = $success ? 'Now you follow this user' : 'Error follow this user.';
+		$id = $insertResultArray["id"];
 
-	$success = $insertResultArray["success"] ? true : false;
-	$message = $success ? 'Now you follow this user' : 'Error follow this user.';
-	$id = $insertResultArray["id"];
-
-	echo json_encode(["success" => $success, "id" => $id, "message" => $message]);
+		echo json_encode(["success" => $success, "id" => $id, "message" => $message]);
 }
 
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "unfollow")) {
