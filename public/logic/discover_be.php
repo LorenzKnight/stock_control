@@ -77,8 +77,6 @@ $requestData = [];
 $requestData['user_id'] = !isset($_SESSION['mp_UserId']) ? null : $_SESSION['mp_UserId'];
 isset($_GET['owner']) ? $requestData['is_following'] = $_GET['owner'] : !isset($requestData['is_following']);
 $iFollow = select_from('followers', [], $requestData, ['fetch_first' => true]); // aqui 
-// var_dump($iFollow);
-cdebug($iFollow);
 
 $requestData = [];
 $requestData['user_id'] = !isset($_SESSION['mp_UserId']) ? null : $_SESSION['mp_UserId'];
@@ -87,7 +85,6 @@ $favoriteLists = select_from('favorite_lists', [], $requestData);
 $requestData = [];
 $requestData['user_id'] = !isset($_SESSION['mp_UserId']) ? null : $_SESSION['mp_UserId'];
 $follow = select_from('followers', [], $requestData);
-// var_dump($follow);
 
 if (!empty($iFollow) && isset($iFollow['user_id'], $iFollow['is_following']) && isset($_GET['owner'])) {
 // if (is_array($iFollow) && count($iFollow) > 0) {

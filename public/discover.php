@@ -92,21 +92,27 @@
 			</div>
 			<div class="wrapper-home hidden" id="album">
 				<div class="sidebar">
-					<?php
-					if (!empty($follow)) {
-						foreach($follow as $userId) {
-							$userInfo = select_from('users', [], ['user_id' => $userId['is_following']], ['fetch_first' => true]);
-							// var_dump($userName);
-					?>
-						<div>
-							<table>
-								<?= ucwords($userInfo['name'].' '.$userInfo['surname']); ?>
-							</table>
-						</div>
-					<?php
-						}
-					}
-					?>
+					<div class="users_i_follow">
+						<ul>
+							<?php
+							if (!empty($follow)) {
+								foreach($follow as $userId) {
+									$userInfo = select_from('users', [], ['user_id' => $userId['is_following']], ['fetch_first' => true]);
+							?>
+								<li>
+									<div class="profile" id="profileTrigger">
+										<img src="images/profile/<?= isset($user_data['image']) ? 'NonProfilePic.png' : $user_data['image']; ?>" alt="">
+									</div>
+									<div class="user_name">
+										<?= ucwords($userInfo['name'].' '.$userInfo['surname']); ?>
+									</div>
+								</li>
+							<?php
+								}
+							}
+							?>
+						</ul>
+					</div>
 				</div>
 				<div class="main-content">
 					<?php

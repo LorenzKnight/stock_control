@@ -406,4 +406,32 @@
 	overflow: auto;
 	border-bottom: 1px solid #ccc;
 	padding-bottom: 20px;
+	display: flex;
+	justify-content: center;
+}
+
+.users_i_follow {
+	/* margin-top: 10px; */
+}
+
+.users_i_follow ul {
+	margin: 0;
+	padding: 0;
+}
+
+.users_i_follow ul li {
+	list-style: none;
+	display: flex;
+    justify-content: flex-start;
+	margin: 5px 0;
+}
+
+.users_i_follow ul li:hover {
+	background-color: orange;
+	color: rgb(255, 255, 255);
+}
+
+.user_name {
+	/* background-color: red; */
+	padding: 10px 0 10px 20px;
 }

@@ -613,6 +613,7 @@ function getUpdatedFavListContent() {
 	return $output;
 }
 
+//function to display any type of variable
 function cdebug($var, $name = 'var', $die = false)
 {
 	// Start output buffering
