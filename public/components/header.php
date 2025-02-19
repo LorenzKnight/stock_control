@@ -7,8 +7,8 @@
 					<h3>Music Drive</h3>
 					</div>
 				</li>
-				<li><a href="discover?news=1" style="<?= $_GET['news'] == 1 ? 'color: orange;' : '' ?>">News</a></li>
-				<li><a href="discover?library=1" style="<?= $_GET['library'] == 1 ? 'color: orange;' : '' ?>">My Library</a></li>
+				<li><a href="<?= isset($_SESSION['mp_UserId']) ? 'discover?news=1' : 'discover?login=1' ?>" style="<?= $_GET['news'] == 1 ? 'color: orange;' : '' ?>">News</a></li>
+				<li><a href="<?= isset($_SESSION['mp_UserId']) ? 'discover?library=1' : 'discover?login=1' ?>" style="<?= $_GET['library'] == 1 ? 'color: orange;' : '' ?>">My Library</a></li>
 				<li class="search-holder">
 					<input type="text" name="searchField" id="searchField" class="search-field">
 				</li>
