@@ -19,13 +19,13 @@ docker-compose down
 make migrate
 
 ## Main page - localhost
-http://localhost:8888/
+http://localhost:8889/
 
 ## Php info
-http://localhost:8888/php_info.php
+http://localhost:8889/php_info.php
 
 ## Xdebug info
-http://localhost:8888/xdebug_info.php
+http://localhost:8889/xdebug_info.php
 
 ## Running tests
 docker-compose run php vendor/bin/phpunit
@@ -37,7 +37,7 @@ change namespace "Example" in composer.json line 7 for your project name
 1. User: admin
 2. Passwd: Admin456
 3. Port 5433
-4. DB: music_player_db
+4. DB: stock_control_db
 
 ## Using PhpUnit in PhpStorm
 1. PhpUnit By Remote Interpreter
