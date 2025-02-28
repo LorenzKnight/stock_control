@@ -1,0 +1,51 @@
+<div class="formular-front-frame">
+    <div class="formular_front" id="formular_front">
+        <form action="stock.php" method="post" name="formsignin" id="formsignin">
+            <table width="80%" align="center" cellspacing="0">
+                <tr valign="baseline">
+                    <td style="font-size: 12px;" colspan="6" align="center" valign="middle">
+                        
+                    </td>      
+                </tr>
+                <tr valign="baseline" class="form_height">
+                    <td colspan="6" align="center" valign="middle">
+                        <input class="form-input-style" type="text" name="name" id="name" placeholder="Enter your name..." title="Enter a valid name" required/>
+                    </td>
+                </tr>
+                <tr valign="baseline" class="form_height">
+                    <td colspan="6" align="center" valign="middle">
+                        <input class="form-input-style" type="text" name="surname" id="surname" placeholder="Enter your surname..." title="Enter a valid surname" required/>
+                    </td>
+                </tr>
+                <tr valign="baseline" class="form_height">
+                    <td colspan="6" align="center" valign="middle">
+                        <label for="fecha">Birthdate:</label>
+                        <input class="form-input-style" type="date" name="birthday" id="birthday" placeholder="" title="" required/>
+                    </td>
+                </tr>
+                <tr valign="baseline" class="form_height">
+                    <td colspan="6" align="center" valign="middle">
+                        <input class="form-input-style" type="number" name="phone" id="phone" placeholder="Enter your phone number..." title="Enter a valid phone number" required/>
+                    </td>
+                </tr>
+                <tr valign="baseline" class="form_height">
+                    <td colspan="6" align="center" valign="middle">
+                        <input class="form-input-style" type="email" name="email" id="email" placeholder="Enter your E-Mail..." title="Enter a valid email" required/>
+                    </td>
+                </tr>
+                <tr valign="baseline" class="form_height">
+                    <td colspan="6" align="center" valign="middle">
+                        <input class="form-input-style" type="password" name="password" id="password" placeholder="Enter your Password..." required/>
+                    </td>
+                </tr>
+                <tr valign="baseline" class="form_height">
+                    <td nowrap="nowrap" align="center" valign="middle">
+                        <input type="submit" class="button-style-agree" value="Sign up" />
+                    </td>
+                </tr>
+            </table>
+            <input type="hidden" name="status" id="status" value="1"/>
+            <input type="hidden" name="MM_insert" id="MM_insert" value="formsignin" />
+        </form>
+    </div>
+</div>
