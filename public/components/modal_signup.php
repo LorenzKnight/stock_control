@@ -1,5 +1,5 @@
-<div class="formular-front-frame" id="formular-Signup">
-    <div class="formular_front" id="formular_front">
+<div class="formular-front-frame" id="formular-Signup" style="display: none;">
+    <div class="formular_front">
         <form action="stock.php" method="post" name="formsignin" id="formsignin">
             <table width="80%" align="center" cellspacing="0">
                 <tr valign="baseline">
@@ -41,6 +41,11 @@
                 <tr valign="baseline" class="form_height">
                     <td nowrap="nowrap" align="center" valign="middle">
                         <input type="submit" class="button-style-agree" value="Sign up" />
+                    </td>
+                </tr>
+                <tr valign="baseline" class="form_height">
+                    <td nowrap="nowrap" align="center" valign="middle">
+                        <a href="">Cancel</a>
                     </td>
                 </tr>
             </table>

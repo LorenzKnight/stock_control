@@ -143,4 +143,19 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	}
 
+	let toggleLink = document.getElementById("toggle-link");
+    let formLogin = document.getElementById("formular-Login");
+    let formSignup = document.getElementById("formular-Signup");
+
+    if (toggleLink) {
+        toggleLink.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            if (formLogin && formSignup) {
+                formLogin.style.display = "none";
+                formSignup.style.display = "block";
+            }
+        });
+    }
+
 });
