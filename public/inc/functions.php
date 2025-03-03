@@ -1,8 +1,66 @@
 <?php
+function select_from($tableName, array $columns = [], array $whereClause = [], array $options = []) : string
+{
+    if (empty($tableName)) {
+        return json_encode(["success" => false, "message" => "Table name is required"]);
+    }
+
+    $columnNames = empty($columns) ? '*' : implode(', ', $columns);
+
+    $whereParts = [];
+    foreach ($whereClause as $column => $value) {
+        if ($value === '' || $value === null) continue;
+        $escapedValue = "'" . pg_escape_string((string)$value) . "'";
+        $whereParts[] = "$column = $escapedValue";
+    }
+    $whereClauseStr = empty($whereParts) ? '' : ' WHERE ' . implode(' AND ', $whereParts);
+
+    $orderClause = '';
+    if (!empty($options['order_by'])) {
+        $orderDirection = isset($options['order_direction']) && strtolower($options['order_direction']) === 'desc' ? 'DESC' : 'ASC';
+        $orderClause = " ORDER BY " . pg_escape_string($options['order_by']) . " $orderDirection";
+    }
+
+    $limitClause = '';
+    if (!empty($options['limit']) && is_numeric($options['limit'])) {
+        $limitClause = " LIMIT " . intval($options['limit']);
+    }
+
+    $query = "SELECT $columnNames FROM $tableName$whereClauseStr$orderClause$limitClause;";
+
+    if (isset($options['echo_query']) && $options['echo_query']) {
+        echo "Q: $query<br>\n";
+    }
+
+    $result = pg_query($query);
+
+    if (!$result) {
+        return json_encode(["success" => false, "message" => "Error executing query"]);
+    }
+
+ 
+    if (!empty($options['fetch_first'])) {
+        $row = pg_fetch_assoc($result);
+        return json_encode([
+            "success" => !empty($row),
+            "message" => empty($row) ? "No records found" : "Record retrieved successfully",
+            "data" => $row ?: []
+        ]);
+    }
+
+    $data = pg_fetch_all($result) ?: [];
+
+    return json_encode([
+        "success" => !empty($data),
+        "message" => empty($data) ? "No records found" : "Records retrieved successfully",
+        "data" => $data
+    ]);
+}
+
 function insert_into($tableName, array $queryData = [], array $options = []) : string
 {
 	if (empty($queryData)) {
-		return json_encode(["success" => false, "message" => "No hay datos para insertar"]);
+		return json_encode(["success" => false, "message" => "There is no data to insert"]);
 	}
 
 	$columnNames = implode(', ', array_keys($queryData));
@@ -29,9 +87,9 @@ function insert_into($tableName, array $queryData = [], array $options = []) : s
 	if ($result && !empty($returningId)) {
 		$row = pg_fetch_assoc($result);
 		$insertedId = $row[$options['id']];
-		return json_encode(["success" => true, "id" => $insertedId, "message" => "Registro insertado correctamente"]);
+		return json_encode(["success" => true, "id" => $insertedId, "message" => "Record inserted successfully"]);
 	} else {
-		return json_encode(["success" => false, "message" => "Error al insertar el registro"]);
+		return json_encode(["success" => false, "message" => "Error inserting record"]);
 	}
 }
 

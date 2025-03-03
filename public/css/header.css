@@ -1,0 +1,103 @@
+header {
+    background-color: #333;
+    height: 6vh;
+    color: #fff;
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    flex: 1;
+}
+
+.logo h1 {
+    margin: 0;
+}
+
+nav ul.menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+nav ul.menu li {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    padding: 0 20px;
+}
+
+nav ul.menu li a {
+    color: #fff;
+    text-decoration: none;
+    flex: 1;
+}
+
+.search-holder {
+    width: 603px;
+    float: left;
+    flex: 1;
+}
+
+.search-field {
+    width: 574px;
+    border: 0;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+.profile-frame {
+    width: 100%;
+    /* background-color: red; */
+    text-align: center;
+}
+
+.big-profile img {
+    background-color: orangered;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile img {
+    background-color: #fff;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-left: 10px;
+}
+
+
+
+#profileDropdown {
+	background-color: white;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	margin-left: -105px;
+	padding: 0 10px;
+	box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
+	position: absolute;
+	top: 44px;
+	z-index: 1;
+}
+
+#profileDropdown ul {
+	width: 150px;
+	padding: 0;
+}
+
+#profileDropdown ul li {
+	padding: 10px 0;
+	text-align: left;
+}
+
+#profileDropdown ul li a {
+	color: #999;
+}
+
+#profileDropdown ul li :hover {
+	color: #666;
+}

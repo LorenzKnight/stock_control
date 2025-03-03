@@ -15,9 +15,9 @@
 
 <body>
 	<?php include("components/message.php"); ?>
-	<div class="container" id="result-container">
+	<div class="container height-100" id="result-container">
 		<div class="container-login">
-			<?php include("components/modal_signin.php"); ?>
+			<?php include("components/modal_signup.php"); ?>
 		</div>
 		<div class="container-signup">
 			<?php include("components/modal_login.php"); ?>
