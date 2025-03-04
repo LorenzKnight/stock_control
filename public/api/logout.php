@@ -10,7 +10,8 @@
 
 	echo json_encode([
 		"success" => true,
-		"message" => "Sesión cerrada correctamente.",
+		"message" => "Your session is being closed...",
+		"img_gif" => "../images/sys-img/loading1.gif",
 		"redirect_url" => "../stock.php" // Esta URL será manejada por JavaScript en el frontend
 	]);
 	exit;

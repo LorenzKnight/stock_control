@@ -1,6 +1,6 @@
 <div class="formular-front-frame" id="formular-Signup" style="display: none;">
     <div class="formular_front">
-        <form action="stock.php" method="post" name="formsignin" id="formsignin">
+        <form action="stock.php" method="post" name="formsignup" id="formsignup">
             <table width="80%" align="center" cellspacing="0">
                 <tr valign="baseline">
                     <td style="font-size: 12px;" colspan="6" align="center" valign="middle">
@@ -45,12 +45,11 @@
                 </tr>
                 <tr valign="baseline" class="form_height">
                     <td nowrap="nowrap" align="center" valign="middle">
-                        <a href="">Cancel</a>
+                        <a href="" id="close-link">Cancel</a>
                     </td>
                 </tr>
             </table>
             <input type="hidden" name="status" id="status" value="1"/>
         </form>
     </div>
-    <!-- <button onclick="toggleDivs()">Mostrar Div 1</button> -->
 </div>

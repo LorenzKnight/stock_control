@@ -13,7 +13,7 @@
 	<script defer src="js/actions.js"></script>
 </head>
 
-<body>
+<body style="background-color: #022e63;">
 	<?php include("components/message.php"); ?>
 	<div class="container height-100" id="result-container">
 		<div class="container-login">
