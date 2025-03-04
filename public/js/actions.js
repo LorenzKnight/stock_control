@@ -18,10 +18,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 
-	let formsignin = document.getElementById('formsignin');
-    if (formsignin) {
-        formsignin.addEventListener('submit', async function (e) {
-            e.preventDefault();
+	let formsignin = document.getElementById('formsignup');
+	if (formsignin) {
+		formsignin.addEventListener('submit', async function (e) {
+			e.preventDefault();
 
 			let formData = new FormData(this);
 
@@ -35,9 +35,13 @@ document.addEventListener("DOMContentLoaded", () => {
 				let data = await response.json();
 				console.log('Server response:', data);
 
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
 				if (data.success) {
-					let banner = document.getElementById('status-message');
-					banner.innerText = data.message;
+					statusText.innerText = data.message;
+					statusImage.src = data.img_gif;
 					banner.style.display = 'block';
 					banner.style.opacity = '1';
 
@@ -46,18 +50,23 @@ document.addEventListener("DOMContentLoaded", () => {
 						setTimeout(() => {
 							window.location.href = data.redirect_url;
 						}, 1000);
-					}, 4000);
+					}, 3000);
 				} else {
-					document.getElementById('status-message').innerText = "Error: " + data.message;
-					document.getElementById('status-message').style.display = 'block';
+					statusText.innerText = "Error: " + data.message;
+					statusImage.src = data.img_gif; 
+					banner.style.display = 'block';
 				}
 			} catch (error) {
-				console.error('Error en la solicitud:', error);
-				document.getElementById('status-message').innerText = "Error processing request.";
-				document.getElementById('status-message').style.display = 'block';
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				statusText.innerText = "Error procesando la solicitud.";
+				statusImage.src = data.img_gif;
+				banner.style.display = 'block';
 			}
-        });
-    }
+		});
+	}
 
 	let formlogin = document.getElementById('formlogin');
 	if (formlogin) {
@@ -76,9 +85,13 @@ document.addEventListener("DOMContentLoaded", () => {
 				let data = await response.json();
 				console.log('Server response:', data);
 
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
 				if (data.success) {
-					let banner = document.getElementById('status-message');
-					banner.innerText = data.message;
+					statusText.innerText = data.message;
+					statusImage.src = data.img_gif;
 					banner.style.display = 'block';
 					banner.style.opacity = '1';
 
@@ -87,10 +100,11 @@ document.addEventListener("DOMContentLoaded", () => {
 						setTimeout(() => {
 							window.location.href = data.redirect_url;
 						}, 1000);
-					}, 4000);
+					}, 3000);
 				} else {
-					document.getElementById('status-message').innerText = "Error: " + data.message;
-					document.getElementById('status-message').style.display = 'block';
+					statusText.innerText = "Error: " + data.message;
+					statusImage.src = "";
+					banner.style.display = 'block';
 				}
 			} catch (error) {
 				console.error('Error en la solicitud:', error);
@@ -114,25 +128,22 @@ document.addEventListener("DOMContentLoaded", () => {
 				let data = await response.json();
 				console.log('Server response:', data);
 
-				if (data.success) {
-					let banner = document.getElementById('status-message');
-					if (banner) {
-						banner.innerText = "Su sesión está siendo cerrada...";
-						banner.style.display = 'block';
-						banner.style.opacity = '1';
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
 
-						setTimeout(() => {
-							banner.style.opacity = '0';
-							setTimeout(() => {
-								window.location.href = data.redirect_url;
-							}, 1000);
-						}, 4000);
-					} else {
-						// Si no hay banner, usar un alert
+				if (data.success) {
+					statusText.innerText = data.message;
+					statusImage.src = data.img_gif;
+					banner.style.display = 'block';
+					banner.style.opacity = '1';
+
+					setTimeout(() => {
+						banner.style.opacity = '0';
 						setTimeout(() => {
 							window.location.href = data.redirect_url;
-						}, 4000);
-					}
+						}, 1000);
+					}, 3000);
 				} else {
 					alert("Error al cerrar sesión: " + data.message);
 				}
@@ -144,6 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	let toggleLink = document.getElementById("toggle-link");
+	let closeLink = document.getElementById("close-link");
     let formLogin = document.getElementById("formular-Login");
     let formSignup = document.getElementById("formular-Signup");
 
@@ -154,6 +166,16 @@ document.addEventListener("DOMContentLoaded", () => {
             if (formLogin && formSignup) {
                 formLogin.style.display = "none";
                 formSignup.style.display = "block";
+            }
+        });
+    }
+
+	if (closeLink) {
+        closeLink.addEventListener("click", function (e) {
+            e.preventDefault();
+            if (formLogin && formSignup) {
+                formLogin.style.display = "block";
+                formSignup.style.display = "none";
             }
         });
     }

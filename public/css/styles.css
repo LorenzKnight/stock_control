@@ -13,7 +13,6 @@ body {
     display: flex;
     max-width: 1200px;
     margin: 0 auto;
-    background-color: rgb(4, 144, 244);
 }
 
 .container-login,
@@ -27,11 +26,11 @@ body {
 }
 
 .container-login {
-    /* background-color: red; */
+    background-color: rgb(4, 144, 244);
 }
 
 .container-signup {
-    /* background-color: blue; */
+    background-color: rgb(4, 144, 244);
 }
 
 /* form-modal */

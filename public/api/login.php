@@ -7,15 +7,15 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type, Accept");
 
-$response = ["success" => false, "message" => "Solicitud inválida"];
+$response = ["success" => false, "message" => "Invalid request"];
 
 try {
     if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-        throw new Exception("Método no permitido");
+        throw new Exception("Method not allowed");
     }
 
     if (empty($_POST["login_email"]) || empty($_POST["login_password"])) {
-        throw new Exception("Correo y contraseña son obligatorios.");
+        throw new Exception("Email and password are required.");
     }
 
     $email = pg_escape_string(trim($_POST["login_email"]));
@@ -28,7 +28,7 @@ try {
     $userData = json_decode($userResponse, true);
 
     if (!$userData["success"] || empty($userData["data"])) {
-        throw new Exception("Credenciales incorrectas.");
+        throw new Exception("Incorrect credentials.");
     }
 
     $user = $userData["data"];
@@ -39,7 +39,8 @@ try {
 
     $response = [
         "success" => true,
-        "message" => "Inicio de sesión exitoso.",
+        "message" => "Logging in....",
+        "img_gif" => "../images/sys-img/loading1.gif",
         "redirect_url" => "../profile.php"
     ];
 
