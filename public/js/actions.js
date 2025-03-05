@@ -103,13 +103,17 @@ document.addEventListener("DOMContentLoaded", () => {
 					}, 3000);
 				} else {
 					statusText.innerText = "Error: " + data.message;
-					statusImage.src = "";
+					statusImage.src = data.img_gif; 
 					banner.style.display = 'block';
 				}
 			} catch (error) {
-				console.error('Error en la solicitud:', error);
-				document.getElementById('status-message').innerText = "Error processing request.";
-				document.getElementById('status-message').style.display = 'block';
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				statusText.innerText = "Error procesando la solicitud.";
+				statusImage.src = data.img_gif;
+				banner.style.display = 'block';
 			}
 		});
 	}

@@ -15,7 +15,7 @@
 
 <body style="background-color: #022e63;">
 	<?php include("components/message.php"); ?>
-	<div class="container height-100" id="result-container">
+	<div class="container height-100 flex" id="result-container">
 		<div class="container-login">
 			<?php include("components/modal_signup.php"); ?>
 		</div>

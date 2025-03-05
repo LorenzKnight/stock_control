@@ -9,7 +9,7 @@ header("Access-Control-Allow-Headers: Content-Type, Accept");
 $response = [
     "success" => false,
     "message" => "Invalid request",
-    "img_gif" => "../images/sys-img/loading1.gif",
+    "img_gif" => "../images/sys-img/error.gif",
     "redirect_url" => ""
 ];
 
@@ -60,7 +60,7 @@ try {
     $response = [
         "success" => false,
         "message" => $e->getMessage(),
-        "img_gif" => "../images/sys-img/loading1.gif",
+        "img_gif" => "../images/sys-img/error.gif",
         "redirect_url" => ""
     ];
 }

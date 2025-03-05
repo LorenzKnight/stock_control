@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ .'/../connections/conexion.php';
 
-$requestData['user_id'] = !isset($_SESSION['mp_UserId']) ? null : $_SESSION['mp_UserId'];
+$requestData['user_id'] = !isset($_SESSION['sc_UserId']) ? null : $_SESSION['sc_UserId'];
 
 $user_data = select_from("users", ['user_id', 'name', 'surname', 'image'], $requestData, ["fetch_first" => true]);
 

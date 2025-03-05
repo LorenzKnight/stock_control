@@ -4,7 +4,7 @@
             <table width="80%" align="center" cellspacing="0">
                 <tr valign="baseline">
                     <td style="font-size: 12px;" colspan="6" align="center" valign="middle">
-                        
+                        <h2>Registration form</h2>
                     </td>      
                 </tr>
                 <tr valign="baseline" class="form_height">

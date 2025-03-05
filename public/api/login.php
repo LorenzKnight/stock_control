@@ -7,7 +7,12 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type, Accept");
 
-$response = ["success" => false, "message" => "Invalid request"];
+$response = [
+    "success" => false,
+    "message" => "Invalid request",
+    "img_gif" => "../images/sys-img/error.gif",
+    "redirect_url" => ""
+];
 
 try {
     if ($_SERVER["REQUEST_METHOD"] !== "POST") {
@@ -33,19 +38,24 @@ try {
 
     $user = $userData["data"];
 
-    $_SESSION["mp_UserId"] = $user["user_id"];
-    $_SESSION["mp_Mail"] = $user["email"];
-    $_SESSION["mp_Nivel"] = $user["rank"];
+    $_SESSION["sc_UserId"] = $user["user_id"];
+    $_SESSION["sc_Mail"] = $user["email"];
+    $_SESSION["sc_Nivel"] = $user["rank"];
 
     $response = [
         "success" => true,
         "message" => "Logging in....",
         "img_gif" => "../images/sys-img/loading1.gif",
-        "redirect_url" => "../profile.php"
+        "redirect_url" => "../my_profile.php"
     ];
 
 } catch (Exception $e) {
-    $response["message"] = $e->getMessage();
+    $response = [
+        "success" => false,
+        "message" => $e->getMessage(),
+        "img_gif" => "../images/sys-img/error.gif",
+        "redirect_url" => ""
+    ];
 }
 
 // Responder con JSON

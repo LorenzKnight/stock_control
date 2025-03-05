@@ -15,11 +15,17 @@ if ($sql == false) {
   exit();
 }
 
-if (is_file("inc/functions.php")) 
+if (is_file("inc/functions.php")) {
   include("inc/functions.php");
-else
+} else {
   include("../inc/functions.php");
+}
 
+if (is_file("inc/security.php")) {
+  include("inc/security.php");
+} else {
+  include("../inc/security.php");
+}
 
 $dominio = "localhost:8889";
 // $dominio = "http://www.loopsdancestudio.se";
