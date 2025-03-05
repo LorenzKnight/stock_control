@@ -1,4 +1,5 @@
 @import url("header.css");
+@import url("my_profile.css");
 
 body {
     font-family: Arial, sans-serif;
@@ -10,7 +11,6 @@ body {
 }
 
 .container {
-    display: flex;
     max-width: 1200px;
     margin: 0 auto;
 }
@@ -87,6 +87,10 @@ body {
 
 .hidden {
     display: none;
+}
+
+.flex {
+    display: flex;
 }
 
 .height-100 {

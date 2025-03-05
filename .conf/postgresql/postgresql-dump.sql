@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
     name varchar(255) NULL,
 	surname varchar(255) NULL,
 	email varchar(255) NULL,
-	phone varchar(255) NULL,
+	phone varchar(20) NULL,
 	username varchar(255) NULL,
 	password varchar(255) NULL,
 	image varchar(255) NULL,
