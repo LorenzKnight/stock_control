@@ -4,12 +4,13 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 $currentUrl = $_SERVER['REQUEST_URI'];
+$scriptName = $_SERVER['SCRIPT_NAME'];
 
 // Lista de páginas que NO deben redirigir al usuario si no está logeado
-$allowedPages = ["/", "/login.php", "/api/login.php"];
+$allowedPages = ["/", "/login.php", "/api/login.php", "/api/signup.php"];
 
 if (!isset($_SESSION['sc_UserId'])) {
-    if (!in_array($currentUrl, $allowedPages)) {
+    if (!in_array($currentUrl, $allowedPages) && !in_array($scriptName, $allowedPages)) {
         header("Location: /");
         exit();
     }
