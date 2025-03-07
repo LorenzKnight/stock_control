@@ -72,12 +72,24 @@ body {
 
 .button-style-agree {
     width: 95%;
-    /* height: 60px; */
     background: rgb(0, 172, 0);
     color: white;
     font-size: 14px;
     margin: 10px auto;
     padding: 15px 0;
+    border: 0;
+    border-radius: 5px;
+    box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
+    cursor: pointer;
+}
+
+.button-style-neutral {
+    width: 80%;
+    background: rgb(62, 62, 62);
+    color: white;
+    font-size: 14px;
+    margin: 5px 0;
+    padding: 10px 0;
     border: 0;
     border-radius: 5px;
     box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
