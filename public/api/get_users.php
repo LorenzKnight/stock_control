@@ -27,6 +27,7 @@ try {
         "surname",
         "email",
         "phone",
+        "image",
         "signup_date"
     ], ["user_admin" => $userId]);
 

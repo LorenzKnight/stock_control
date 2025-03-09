@@ -199,7 +199,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 		let myData = document.getElementById("my-data");
 		let subsc = document.getElementById("subsc");
 		let totalSpot = document.getElementById("total-spot");
-		let spot = document.getElementById("spot");
 
 		if (data.success && data.users) {
 			let user = data.users;
@@ -207,8 +206,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 			hiUser.innerHTML = `Hi, ${user.name}!`;
 
 			myData.innerHTML =
-				`Phone:` + (user.phone && user.phone.trim() !== "" ? `<p>${user.phone}</p>` : "<p>No Phone Number</p>") +
-    			`Email:` + (user.email && user.email.trim() !== "" ? `<p>${user.email}</p>` : "<p>No Email</p>")
+				`<p><strong>ID:</strong> ` + (user.user_id && user.user_id.trim() !== "" ? `${user.user_id}</p>` : "-</p>") +
+				`<p><strong>Phone:</strong> ` + (user.phone && user.phone.trim() !== "" ? `${user.phone}</p>` : "No Phone Number</p>") +
+    			`<p><strong>Email:</strong> ` + (user.email && user.email.trim() !== "" ? `${user.email}</p>` : "No Email</p>")
 			;
 
 			subsc.innerHTML = user.members && user.members.trim() !== "" ? `<p>${user.members}</p>` : "0";
@@ -233,29 +233,41 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.log('Server response:', data);
 		
 		let spot = document.getElementById("spot");
-        let tableBody = document.getElementById('child-user-table');
+        let userContainer = document.getElementById('child-user-table');
 
 		spot.innerHTML = data.count !== "" ? data.count : "0";
 
         if (data.success && data.count > 0) {
-            tableBody.innerHTML = ''; // Limpia la tabla antes de insertar nuevos datos
+            userContainer.innerHTML = '';
 
             data.users.forEach(user => {
-                let row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${user.user_id}</td>
-                    <td>${user.name}</td>
-                    <td>${user.surname}</td>
-                    <td>${user.email}</td>
-                    <td>${user.phone}</td>
-                    <td>${user.signup_date}</td>
-                `;
-                tableBody.appendChild(row);
+                let card = document.createElement("div");
+				card.classList.add("members-card");
+
+				let profileImage = user.image && user.image.trim() !== "" 
+                ? `images/profile/${user.image}` 
+                : "images/profile/NonProfilePic.png";
+
+				card.innerHTML = `
+					<div class="mini-banner">
+						<div class="mini-profile">
+							<img src="${profileImage}" alt="Profile Picture">
+						</div>
+					</div>
+					<div class="card-info">
+						<h3>${user.name} ${user.surname}</h3>
+						<p><strong>Email:</strong> ${user.email}</p>
+						<p><strong>Phone:</strong> ${user.phone ? user.phone : "No Phone Number"}</p>
+					</div>
+				`;
+
+				userContainer.appendChild(card);
             });
         } else {
-            tableBody.innerHTML = '<tr><td colspan="6">No users found</td></tr>';
+			userContainer.innerHTML = "<p>No members found.</p>";
         }
     } catch (error) {
         console.error('Error fetching data:', error);
+		document.getElementById("child-user-table").innerHTML = `<p>Error loading user data.</p>`;
     }
 });
