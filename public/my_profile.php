@@ -47,26 +47,11 @@
 			
 		</div>
 		<div class="personal-data">
-			<h2>Lista de Usuarios</h2>
-			<table border="1">
-				<thead>
-					<tr>
-						<th>ID</th>
-						<th>Nombre</th>
-						<th>Apellido</th>
-						<th>Email</th>
-						<th>Teléfono</th>
-						<th>Fecha de Registro</th>
-					</tr>
-				</thead>
-				<tbody id="child-user-table">
-					<tr>
-						<td colspan="6">Cargando usuarios...</td>
-					</tr>
-				</tbody>
-			</table>
+			<h2 style="margin-left: 10px;">User List</h2>
+			<div class="flex" id="child-user-table">Cargando usuarios...</div>
 		</div>
 		<div>
+			</br>
 			TO DO</br>
 			ingresar productos</br>
 			registrar clientes (agregar notas)</br>
