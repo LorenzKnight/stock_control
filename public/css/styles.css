@@ -108,3 +108,30 @@ body {
 .height-100 {
     height: 100vh;
 }
+
+.bg-popup {
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.298);
+    position: absolute;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: 3;
+}
+
+.formular-frame {
+    width: 500px;
+    margin: 80px auto;
+    padding: 50px 0;
+    background-color: rgba(255, 255, 255, 0.35);
+    box-shadow: 0 4px 10px 0 rgba(47, 48, 63, 0.193);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.239);
+    font-weight: 200;
+    transform: scale(0.7);
+    opacity: 0;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}

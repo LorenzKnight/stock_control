@@ -270,4 +270,37 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.error('Error fetching data:', error);
 		document.getElementById("child-user-table").innerHTML = `<p>Error loading user data.</p>`;
     }
+
+	let subscButton = document.getElementById('subsc-button');
+	subscButton.addEventListener('click', function (e) {
+		e.preventDefault();
+
+		const subscForm = document.getElementById('subsc-form');
+		const popupContent = subscForm.querySelector('.formular-frame');
+
+		if (subscForm && popupContent) {
+			subscForm.style.display = 'block';
+			subscForm.style.opacity = '0';
+			subscForm.style.transition = 'opacity 0.5s ease';
+			setTimeout(() => {
+				subscForm.style.opacity = '1';
+			}, 10);
+
+			popupContent.style.transform = 'scale(0.7)';
+			popupContent.style.opacity = '0';
+			popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+			setTimeout(() => {
+				popupContent.style.transform = 'scale(1)';
+				popupContent.style.opacity = '1';
+			}, 50);
+		}
+	});
+
+	const popup = document.getElementById("subsc-form");
+    const popupContent = document.querySelector(".formular-frame");
+    popup.addEventListener("click", function (e) {
+        if (!popupContent.contains(e.target)) {
+            popup.style.display = "none";
+        }
+    });
 });
