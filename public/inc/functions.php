@@ -95,6 +95,72 @@ function insert_into($tableName, array $queryData = [], array $options = []) : s
 	}
 }
 
+function update_table($tableName, array $queryData = [], array $whereClause = [], array $options = []) : string
+{
+	if (empty($tableName)) {
+		return json_encode(["success" => false, "message" => "Table name is required", "count" => 0]);
+	}
+
+	if (empty($queryData)) {
+		return json_encode(["success" => false, "message" => "No data to update", "count" => 0]);
+	}
+
+	if (empty($whereClause)) {
+		return json_encode(["success" => false, "message" => "Update condition is missing", "count" => 0]);
+	}
+
+	$setParts = [];
+	foreach ($queryData as $column => $value) {
+		$escapedValue = is_numeric($value) ? $value : "'" . pg_escape_string((string)$value) . "'";
+		$setParts[] = "$column = $escapedValue";
+	}
+	$setClause = implode(', ', $setParts);
+
+	$whereParts = [];
+	foreach ($whereClause as $column => $value) {
+		$escapedValue = is_numeric($value) ? $value : "'" . pg_escape_string((string)$value) . "'";
+		$whereParts[] = "$column = $escapedValue";
+	}
+	$whereClauseStr = ' WHERE ' . implode(' AND ', $whereParts);
+
+	$query = "UPDATE $tableName SET $setClause$whereClauseStr;";
+
+	if (isset($options['echo_query']) && $options['echo_query']) {
+		echo "Q: $query<br>\n";
+	}
+
+	$result = pg_query($query);
+
+	if (!$result) {
+		return json_encode([
+			"success" => false,
+			"message" => "Error executing update query",
+			"count" => 0
+		]);
+	}
+
+	$affectedRows = pg_affected_rows($result);
+
+	return json_encode([
+		"success" => $affectedRows > 0,
+		"message" => $affectedRows > 0 ? "Row(s) updated successfully" : "No rows were updated",
+		"count" => $affectedRows
+	]);
+}
+
+function log_activity($userId, $actionType, $description, $relatedTable = null, $relatedId = null) {
+    $data = [
+        "user_id" => $userId,
+        "action_type" => $actionType,
+        "action_description" => $description,
+        "related_table" => $relatedTable,
+        "related_id" => $relatedId,
+        "created_at" => date("Y-m-d H:i:s")
+    ];
+	
+    return insert_into("activity_history", $data);
+}
+
 
 //function to display any type of variable
 function cdebug($var, $name = 'var', $die = false)
