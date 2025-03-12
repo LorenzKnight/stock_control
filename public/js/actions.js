@@ -271,6 +271,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		document.getElementById("child-user-table").innerHTML = `<p>Error loading user data.</p>`;
     }
 
+	// 📌 script para subscrition popup
 	let subscButton = document.getElementById('subsc-button');
 	subscButton.addEventListener('click', function (e) {
 		e.preventDefault();
@@ -296,6 +297,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	});
 
+	// 📌 cerrar al hacer clic fuera del formulario
 	const popup = document.getElementById("subsc-form");
     const popupContent = document.querySelector(".formular-frame");
     popup.addEventListener("click", function (e) {
@@ -303,4 +305,104 @@ document.addEventListener("DOMContentLoaded", async function () {
             popup.style.display = "none";
         }
     });
+
+	// 📌 Boton para cerrar formulario
+	let cancelSubscBtn = document.getElementById('cancel-subsc-btn');
+	cancelSubscBtn.addEventListener('click', function() {
+		close_popup()
+	});
+
+	function close_popup() {
+		var bg_popup = document.querySelector('.bg-popup');
+		if (bg_popup) {
+			bg_popup.style.display = 'none';
+		}
+	
+		// var formular_songs_list = document.getElementById('formular_songs_list');
+		// formular_songs_list.style.display = 'none';
+	
+		// var formular_front = document.getElementById('formular_front');
+		// formular_front.style.display = 'none';
+	}
+
+	// 📌 recoje el valor del select del formulario subscripcion
+	let selectPack = document.getElementById('packs');
+	let estimated = document.getElementById('estimated');
+	let estimatedInput = document.getElementById('estimated_cost');
+	const pricePerMember = 100;
+
+	function updateEstimatedCost() {
+		if (selectPack && estimated) {
+			let selectedValue = parseInt(selectPack.value);
+			let totalCost = selectedValue > 0 ? selectedValue * pricePerMember : 0;
+			estimated.innerHTML = `Estimated cost: <strong>$ ${totalCost}</strong>`;
+		}
+
+		if (selectPack && estimated && estimatedInput) {
+			let selectedValue = parseInt(selectPack.value);
+			let totalCost = selectedValue > 0 ? selectedValue * pricePerMember : 0;
+			estimated.innerHTML = `Estimated cost: <strong>$ ${totalCost}</strong>`;
+			estimatedInput.value = totalCost;
+		}
+	}
+
+	updateEstimatedCost();
+
+	if (selectPack) {
+		selectPack.addEventListener('change', async function (e) {
+			e.preventDefault();
+			updateEstimatedCost();
+		});
+	}
+
+	// 📌 Manejo del formulario de subscripcion
+	let formSubscription = document.getElementById('formSubscription');
+	if (formSubscription) {
+		formSubscription.addEventListener('submit', async function (e) {
+			e.preventDefault();
+
+			let formData = new FormData(this);
+
+			try {
+				let response = await fetch('api/subscribe.php', {
+					method: 'POST',
+					headers: { 'Accept': 'application/json' },
+					body: formData
+				});
+
+				let data = await response.json();
+				console.log('Server response:', data);
+
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				if (data.success) {
+					statusText.innerText = data.message;
+					statusImage.src = data.img_gif;
+					banner.style.display = 'block';
+					banner.style.opacity = '1';
+
+					setTimeout(() => {
+						banner.style.opacity = '0';
+						setTimeout(() => {
+							window.location.href = data.redirect_url;
+						}, 1000);
+					}, 3000);
+				} else {
+					statusText.innerText = "Error: " + data.message;
+					statusImage.src = data.img_gif;
+					banner.style.display = 'block';
+				}
+			} catch (error) {
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				statusText.innerText = "Error procesando la solicitud.";
+				statusImage.src = "../images/sys-img/error.gif";
+				banner.style.display = 'block';
+			}
+		});
+	}
 });
