@@ -15,9 +15,9 @@ try {
 		throw new Exception("Method not allowed");
 	}
 
-	// if (empty($_POST['packs'])) {
-	// 	throw new Exception("You must select a member package.");
-	// }
+	if (empty($_POST['packs'])) {
+		throw new Exception("You must select a member package.");
+	}
 
 	if (!isset($_POST['estimated_cost']) || !is_numeric($_POST['estimated_cost'])) {
 		throw new Exception("Estimated cost is missing or invalid.");
@@ -98,7 +98,7 @@ try {
 		"success" => true,
 		"message" => "Subscription upgraded successfully!",
 		"img_gif" => "../images/sys-img/loading1.gif",
-		"redirect_url" => "../my_profile.php"
+		"redirect_url" => ""
 	];
 } catch (Exception $e) {
 	$response = [

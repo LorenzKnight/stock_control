@@ -35,7 +35,7 @@
 						<input type="submit" class="button-style-agree" value="Upgrade" />
 					</td>
 					<td width="50%" align="center" valign="middle">
-						<button class="cancel-btn" id="cancel-subsc-btn">Cancel</button>
+						<button type="button" class="cancel-btn" id="cancel-subsc-btn">Cancel</button>
 					</td>
 				</tr>
 			</table>

@@ -271,32 +271,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 		document.getElementById("child-user-table").innerHTML = `<p>Error loading user data.</p>`;
     }
 
-	// 📌 script para subscrition popup
-	let subscButton = document.getElementById('subsc-button');
-	subscButton.addEventListener('click', function (e) {
-		e.preventDefault();
-
-		const subscForm = document.getElementById('subsc-form');
-		const popupContent = subscForm.querySelector('.formular-frame');
-
-		if (subscForm && popupContent) {
-			subscForm.style.display = 'block';
-			subscForm.style.opacity = '0';
-			subscForm.style.transition = 'opacity 0.5s ease';
-			setTimeout(() => {
-				subscForm.style.opacity = '1';
-			}, 10);
-
-			popupContent.style.transform = 'scale(0.7)';
-			popupContent.style.opacity = '0';
-			popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-			setTimeout(() => {
-				popupContent.style.transform = 'scale(1)';
-				popupContent.style.opacity = '1';
-			}, 50);
-		}
-	});
-
 	// 📌 cerrar al hacer clic fuera del formulario
 	const popup = document.getElementById("subsc-form");
     const popupContent = document.querySelector(".formular-frame");
@@ -332,28 +306,61 @@ document.addEventListener("DOMContentLoaded", async function () {
 	const pricePerMember = 100;
 
 	function updateEstimatedCost() {
-		if (selectPack && estimated) {
-			let selectedValue = parseInt(selectPack.value);
-			let totalCost = selectedValue > 0 ? selectedValue * pricePerMember : 0;
-			estimated.innerHTML = `Estimated cost: <strong>$ ${totalCost}</strong>`;
-		}
-
 		if (selectPack && estimated && estimatedInput) {
 			let selectedValue = parseInt(selectPack.value);
 			let totalCost = selectedValue > 0 ? selectedValue * pricePerMember : 0;
 			estimated.innerHTML = `Estimated cost: <strong>$ ${totalCost}</strong>`;
 			estimatedInput.value = totalCost;
+			
 		}
 	}
 
-	updateEstimatedCost();
-
-	if (selectPack) {
-		selectPack.addEventListener('change', async function (e) {
-			e.preventDefault();
-			updateEstimatedCost();
-		});
+	// 📌 script para recojer el paquete actual
+	async function loadCurrentPackage() {
+		try {
+			let response = await fetch('api/get_current_package.php', {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			});
+	
+			let data = await response.json();
+			console.log("Current package data:", data);
+	
+			if (data.success && data.current_pack && selectPack) {
+				selectPack.value = data.current_pack;
+				updateEstimatedCost();
+			}
+		} catch (error) {
+			console.error("Error loading current package:", error);
+		}
 	}
+
+	// 📌 script para subscrition popup
+	let subscButton = document.getElementById('subsc-button');
+	subscButton.addEventListener('click', function (e) {
+		e.preventDefault();
+
+		const subscForm = document.getElementById('subsc-form');
+		const popupContent = subscForm.querySelector('.formular-frame');
+
+		if (subscForm && popupContent) {
+			subscForm.style.display = 'block';
+			subscForm.style.opacity = '0';
+			subscForm.style.transition = 'opacity 0.5s ease';
+			setTimeout(() => {
+				subscForm.style.opacity = '1';
+			}, 10);
+
+			popupContent.style.transform = 'scale(0.7)';
+			popupContent.style.opacity = '0';
+			popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+			setTimeout(() => {
+				popupContent.style.transform = 'scale(1)';
+				popupContent.style.opacity = '1';
+				loadCurrentPackage();
+			}, 50);
+		}
+	});
 
 	// 📌 Manejo del formulario de subscripcion
 	let formSubscription = document.getElementById('formSubscription');
