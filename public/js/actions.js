@@ -327,7 +327,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 			console.log("Current package data:", data);
 	
 			if (data.success && data.current_pack && selectPack) {
-				selectPack.value = data.current_pack;
+				let currentPack = parseInt(data.current_pack);
+				let options = selectPack.querySelectorAll("option");
+				options.forEach(option => {
+					let value = parseInt(option.value);
+					if (!isNaN(value)) {
+						option.style.display = value < currentPack ? 'none' : 'block';
+					}
+				});
+
+				selectPack.value = currentPack;
 				updateEstimatedCost();
 			}
 		} catch (error) {
