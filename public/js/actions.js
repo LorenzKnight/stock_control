@@ -222,6 +222,36 @@ document.addEventListener("DOMContentLoaded", async function () {
         document.getElementById("user-info").innerHTML = `<tr><td colspan="6">Error al cargar los datos del usuario.</td></tr>`;
     }
 
+	// 📌 Manejo de lo datos de Empresa
+    try {
+        let response = await fetch('api/get_company_info.php', {
+            method: 'GET',
+            headers: { Accept: "application/json" }
+        });
+
+        let data = await response.json();
+        console.log("Server response:", data);
+
+		let myCompany = document.getElementById("company-data");
+
+		if (data.success && data.data) {
+			let company = data.data;
+
+			myCompany.innerHTML =
+				`<p><strong>Org No.:</strong> ` + (company.organization_no && company.organization_no.trim() !== "" ? `${company.organization_no}</p>` : "-</p>") +
+				`<p><strong>Name:</strong> ` + (company.company_name && company.company_name.trim() !== "" ? `${company.company_name}</p>` : "-</p>")
+        
+			if (company.company_logo && company.company_logo.trim() !== "") {
+				myCompany.innerHTML += `<p><img src="images/company-logos/${company.company_logo}" alt="Company Logo" style="max-width: 40px; margin: 0 auto; border-radius: 50%; border: 1px solid #000;"></p>`;
+			}
+		} else {
+			myCompany.innerHTML = `<p>No company information available.</p>`;
+		}
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        document.getElementById("company-data").innerHTML = `<tr><td colspan="6">Error al cargar los datos de empresa.</td></tr>`;
+    }
+
 	// 📌 Manejo de lista de usuarios hijos
 	try {
         let response = await fetch('api/get_users.php', {
