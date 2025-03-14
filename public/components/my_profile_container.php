@@ -18,12 +18,12 @@
 		</div>
 		<div class="small-box">
 			<h2 class="box-title">Company data</h2>
-			<button class="button-style-neutral">Edit company</button>
+			<button class="button-style-neutral" id="edit-comp-button">Edit company</button>
 		</div>
 		<div class="small-box">
 			<h2 class="box-title">Spot</h2>
 			<p><span id="spot">0</span> / <span id="total-spot">0</span></p>
-			<button class="button-style-neutral">Add user</button>
+			<button class="button-style-neutral" id="add-user-button">Add user</button>
 		</div>
 	</div>
 	<div class="personal-data">

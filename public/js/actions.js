@@ -271,33 +271,50 @@ document.addEventListener("DOMContentLoaded", async function () {
 		document.getElementById("child-user-table").innerHTML = `<p>Error loading user data.</p>`;
     }
 
+
 	// 📌 cerrar al hacer clic fuera del formulario
-	const popup = document.getElementById("subsc-form");
-    const popupContent = document.querySelector(".formular-frame");
-    popup.addEventListener("click", function (e) {
-        if (!popupContent.contains(e.target)) {
-            popup.style.display = "none";
-        }
-    });
+	function handlePopupClose(popupId, contentSelector, otherPopups = []) {
+		const popup = document.getElementById(popupId);
+		const popupContent = popup.querySelector(contentSelector);
+	
+		if (popup) {
+			popup.addEventListener("click", function (e) {
+				if (!popupContent.contains(e.target)) {
+					popup.style.display = "none";
+	
+					otherPopups.forEach(id => {
+						const other = document.getElementById(id);
+						if (other) other.style.display = "none";
+					});
+				}
+			});
+		}
+	}
+	handlePopupClose("subsc-form", ".formular-frame", ["edit-company-form"]);
+	handlePopupClose("edit-company-form", ".formular-frame", ["subsc-form"]);
+
 
 	// 📌 Boton para cerrar formulario
-	let cancelSubscBtn = document.getElementById('cancel-subsc-btn');
-	cancelSubscBtn.addEventListener('click', function() {
-		close_popup()
-	});
+	// let cancelSubscBtn = document.getElementById('cancel-subsc-btn');
+	// cancelSubscBtn.addEventListener('click', function() {
+	// 	close_popup()
+	// });
 
-	function close_popup() {
-		var bg_popup = document.querySelector('.bg-popup');
-		if (bg_popup) {
-			bg_popup.style.display = 'none';
-		}
-	
-		// var formular_songs_list = document.getElementById('formular_songs_list');
-		// formular_songs_list.style.display = 'none';
-	
-		// var formular_front = document.getElementById('formular_front');
-		// formular_front.style.display = 'none';
-	}
+	// function close_popup() {
+	// 	var bg_popup = document.querySelector('.bg-popup');
+	// 	if (bg_popup) {
+	// 		bg_popup.style.display = 'none';
+	// 	}
+	// }
+	let cancelButtons = document.querySelectorAll('.cancel-btn');
+	cancelButtons.forEach(function (button) {
+		button.addEventListener('click', function () {
+			let popup = button.closest('.bg-popup');
+			if (popup) {
+				popup.style.display = 'none';
+			}
+		});
+	});
 
 	// 📌 recoje el valor del select del formulario subscripcion
 	let selectPack = document.getElementById('packs');
@@ -421,4 +438,101 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		});
 	}
+
+	// 📌 script para update company popup
+	let editCompButton = document.getElementById('edit-comp-button');
+	editCompButton.addEventListener('click', function (e) {
+		e.preventDefault();
+
+		const editCompanyForm = document.getElementById('edit-company-form');
+		const popupContent = editCompanyForm.querySelector('.formular-frame');
+
+		if (editCompanyForm && popupContent) {
+			editCompanyForm.style.display = 'block';
+			editCompanyForm.style.opacity = '0';
+			editCompanyForm.style.transition = 'opacity 0.5s ease';
+			setTimeout(() => {
+				editCompanyForm.style.opacity = '1';
+			}, 10);
+
+			popupContent.style.transform = 'scale(0.7)';
+			popupContent.style.opacity = '0';
+			popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+			setTimeout(() => {
+				popupContent.style.transform = 'scale(1)';
+				popupContent.style.opacity = '1';
+				// loadCurrentPackage();
+			}, 50);
+		}
+	});
+
+	// 📌 Manejo del formulario de update Company
+	let formEditCompany = document.getElementById('formEditCompany');
+
+	if (formEditCompany) {
+		formEditCompany.addEventListener('submit', async function (e) {
+			e.preventDefault();
+
+			let formData = new FormData(this);
+
+			try {
+				let response = await fetch('api/update_company.php', {
+					method: 'POST',
+					headers: { Accept: 'application/json' },
+					body: formData
+				});
+
+				let data = await response.json();
+				console.log('Server response:', data);
+
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				statusText.innerText = data.message;
+				statusImage.src = data.img_gif;
+				banner.style.display = 'block';
+				banner.style.opacity = '1';
+
+				if (data.success) {
+					setTimeout(() => {
+						banner.style.opacity = '0';
+						setTimeout(() => {
+							window.location.href = data.redirect_url;
+						}, 1000);
+					}, 3000);
+				}
+			} catch (error) {
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				statusText.innerText = "Error procesando la solicitud.";
+				statusImage.src = "../images/sys-img/error.gif";
+				banner.style.display = 'block';
+			}
+		});
+	}
+
+	// Drag & Drop + click
+	const dropArea = document.getElementById('drop-area');
+	const fileInput = document.getElementById('company_logo');
+
+	dropArea.addEventListener('click', () => fileInput.click());
+
+	dropArea.addEventListener('dragenter', e => {
+		e.preventDefault();
+		dropArea.classList.add('active');
+	});
+
+	dropArea.addEventListener('dragleave', () => dropArea.classList.remove('active'));
+
+	dropArea.addEventListener('dragover', e => e.preventDefault());
+
+	dropArea.addEventListener('drop', e => {
+		e.preventDefault();
+		dropArea.classList.remove('active');
+		fileInput.files = e.dataTransfer.files;
+	});
+	
 });

@@ -81,3 +81,16 @@
 .card-info {
     margin: 40px 0 0 0;
 }
+
+.drop-area {
+    width: 94%;
+    border: 1px solid #CCC;
+    border-radius: 4px;
+    color: #FFF;
+    font-size: 0.8em;
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    margin: 0 auto;
+    padding: 100px 1%;
+}

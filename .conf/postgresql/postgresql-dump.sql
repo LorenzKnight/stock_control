@@ -1,13 +1,13 @@
 CREATE TABLE IF NOT EXISTS users (
     user_id SERIAL PRIMARY KEY,
 	user_admin INTEGER NULL,
-    name varchar(255) NULL,
-	surname varchar(255) NULL,
-	email varchar(255) NULL,
-	phone varchar(20) NULL,
-	username varchar(255) NULL,
-	password varchar(255) NULL,
-	image varchar(255) NULL,
+    name VARCHAR(255) NULL,
+	surname VARCHAR(255) NULL,
+	email VARCHAR(255) NULL,
+	phone VARCHAR(20) NULL,
+	username VARCHAR(255) NULL,
+	password VARCHAR(255) NULL,
+	image VARCHAR(255) NULL,
 	verified INTEGER NULL,
 	birthday TIMESTAMP NULL,
 	signup_date TIMESTAMP NULL,
@@ -41,4 +41,15 @@ CREATE TABLE IF NOT EXISTS activity_history (
     related_table VARCHAR(50),        -- Opcional: nombre de la tabla relacionada (ej. 'subscriptions', 'users')
     related_id INT,                   -- Opcional: ID del registro afectado
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS companies (
+    company_id SERIAL PRIMARY KEY,
+	user_id INT NOT NULL,
+	company_name VARCHAR(255) NULL,
+	organization_no INTEGER NULL,
+	company_address VARCHAR(255) NULL,
+	company_phone VARCHAR(20) NULL,
+	company_logo VARCHAR(255) NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

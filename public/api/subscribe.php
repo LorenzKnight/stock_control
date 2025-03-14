@@ -78,20 +78,12 @@ try {
 		throw new Exception("User update failed.");
 	}
 
-	$historyData = [
-		"id" => $userId,
-		"actionType" => "subscription_upgrade",
-		"description" => "User upgraded subscription to {$selectedPack} members. Estimated cost: $ {$estimatedCost}",
-		"relatedTable" => "subscriptions",
-		"relatedId" => $userId
-	];
-
 	log_activity(
-		$historyData["id"],
-		$historyData["actionType"],
-		$historyData["description"],
-		$historyData["relatedTable"],
-		$historyData["relatedId"]
+		$userId,
+		"subscription_upgrade",
+		"User upgraded subscription to {$selectedPack} members. Estimated cost: $ {$estimatedCost}",
+		"subscriptions",
+		$userId
 	);
 
 	$response = [
