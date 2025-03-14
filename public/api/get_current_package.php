@@ -10,7 +10,6 @@ $response = [
 ];
 
 try {
-    // session_start();
     $userId = $_SESSION["sc_UserId"] ?? null;
     if (!$userId) {
         throw new Exception("User not logged in");
