@@ -439,6 +439,32 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
+	// 📌 script para recojer los datos de la compania
+	async function loadCompanyData() {
+		try {
+			let response = await fetch('api/get_company_info.php', {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			});
+	
+			let data = await response.json();
+			if (data.success && data.data) {
+				document.getElementById('company_name').value = data.data.company_name || '';
+				document.getElementById('organization_no').value = data.data.organization_no || '';
+				document.getElementById('company_address').value = data.data.company_address || '';
+				document.getElementById('company_phone').value = data.data.company_phone || '';
+
+				if (data.data.company_logo) {
+					let logoPreview = document.getElementById('logo-preview');
+					logoPreview.src = `images/company-logos/${data.data.company_logo}`;
+					logoPreview.style.display = 'block';
+				}
+			}
+		} catch (error) {
+			console.error("Error loading company data:", error);
+		}
+	}
+
 	// 📌 script para update company popup
 	let editCompButton = document.getElementById('edit-comp-button');
 	editCompButton.addEventListener('click', function (e) {
@@ -461,7 +487,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			setTimeout(() => {
 				popupContent.style.transform = 'scale(1)';
 				popupContent.style.opacity = '1';
-				// loadCurrentPackage();
+				loadCompanyData();
 			}, 50);
 		}
 	});
@@ -517,6 +543,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	// Drag & Drop + click
 	const dropArea = document.getElementById('drop-area');
 	const fileInput = document.getElementById('company_logo');
+	const logoPreview = document.getElementById('logo-preview');
 
 	dropArea.addEventListener('click', () => fileInput.click());
 
@@ -526,13 +553,33 @@ document.addEventListener("DOMContentLoaded", async function () {
 	});
 
 	dropArea.addEventListener('dragleave', () => dropArea.classList.remove('active'));
-
 	dropArea.addEventListener('dragover', e => e.preventDefault());
 
 	dropArea.addEventListener('drop', e => {
 		e.preventDefault();
 		dropArea.classList.remove('active');
-		fileInput.files = e.dataTransfer.files;
+		const files = e.dataTransfer.files;
+		fileInput.files = files;
+
+		if (files && files[0]) {
+			const reader = new FileReader();
+			reader.onload = function(e) {
+				logoPreview.src = e.target.result;
+				logoPreview.style.display = 'block';
+			};
+			reader.readAsDataURL(files[0]);
+		}
 	});
-	
+
+	fileInput.addEventListener('change', () => {
+		if (fileInput.files && fileInput.files[0]) {
+			const reader = new FileReader();
+			reader.onload = function(e) {
+				logoPreview.src = e.target.result;
+				logoPreview.style.display = 'block';
+			};
+			reader.readAsDataURL(fileInput.files[0]);
+		}
+	});
+
 });
