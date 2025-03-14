@@ -18,7 +18,8 @@
 		</div>
 		<div class="small-box">
 			<h2 class="box-title">Company data</h2>
-			<button class="button-style-neutral" id="edit-comp-button">Edit company</button>
+			<span id="company-data"></span>
+			<button class="button-style-neutral" id="edit-comp-button">Update company</button>
 		</div>
 		<div class="small-box">
 			<h2 class="box-title">Spot</h2>
