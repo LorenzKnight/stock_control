@@ -61,7 +61,7 @@ try {
     $checkResult = json_decode($checkCompany, true);
 
     if ($checkResult["success"] && !empty($checkResult["data"])) {
-        $updateResponse = update_table("companies", $updateData, ["user_id" => $userId], ["echo_query" => true]);
+        $updateResponse = update_table("companies", $updateData, ["user_id" => $userId]);
         $updateResult = json_decode($updateResponse, true);
 
 	    if (!$updateResult["success"]) throw new Exception("Update failed.");
@@ -94,7 +94,7 @@ try {
 		"success" => true,
 		"message" => "Company info updated successfully!",
 		"img_gif" => "../images/sys-img/loading1.gif",
-		"redirect_url" => "../my_profile.php"
+		"redirect_url" => ""
 	];
 } catch (Exception $e) {
 	$response = [
