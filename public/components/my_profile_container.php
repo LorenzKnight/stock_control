@@ -29,7 +29,7 @@
 	</div>
 	<div class="personal-data">
 		<h2 style="margin-left: 10px;">User List</h2>
-		<div class="" id="child-user-table" style="overflow: auto;">Cargando usuarios...</div>
+		<div class="members-table" id="child-user-table">Cargando usuarios...</div>
 	</div>
 	<!-- <div>
 		</br>

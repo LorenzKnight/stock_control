@@ -31,7 +31,7 @@ try {
     $data["status"] = 1;
     $data["username"] = strtolower($data["name"] . "_" . $data["surname"]);
     $data["verified"] = 0;
-    $data["signup_date"] = "NOW()";
+    $data["signup_date"] = date("Y-m-d H:i:s");
 
     $emailCheckResponse = select_from("users", ["user_id"], ["email" => $data["email"]], ["fetch_first" => true]);
     $emailCheck = json_decode($emailCheckResponse, true);

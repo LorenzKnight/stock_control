@@ -380,10 +380,21 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
+	function scrollToTopIfNeeded() {
+		if (window.scrollY > 0) {
+			window.scrollTo({
+				top: 0,
+				behavior: 'smooth'
+			});
+		}
+	}
+
 	// 📌 script para subscrition popup
 	let subscButton = document.getElementById('subsc-button');
 	subscButton.addEventListener('click', function (e) {
 		e.preventDefault();
+
+		scrollToTopIfNeeded();
 
 		const subscForm = document.getElementById('subsc-form');
 		const popupContent = subscForm.querySelector('.formular-frame');
@@ -488,6 +499,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 	let editCompButton = document.getElementById('edit-comp-button');
 	editCompButton.addEventListener('click', function (e) {
 		e.preventDefault();
+
+		scrollToTopIfNeeded();
 
 		const editCompanyForm = document.getElementById('edit-company-form');
 		const popupContent = editCompanyForm.querySelector('.formular-frame');
@@ -606,6 +619,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 	addMemberButton.addEventListener('click', function (e) {
 		e.preventDefault();
 
+		scrollToTopIfNeeded();
+		
 		const addMembersForm = document.getElementById('add-members-form');
 		const popupContent = addMembersForm.querySelector('.formular-frame');
 
