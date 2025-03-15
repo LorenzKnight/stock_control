@@ -21,12 +21,12 @@ try {
     $requiredFields = ["name", "surname", "birthday", "phone", "email", "password"];
     $data = [];
 
-    foreach ($requiredFields as $field) {
-        if (empty($_POST[$field])) {
-            throw new Exception("The $field field is required.");
-        }
-        $data[$field] = htmlspecialchars(trim($_POST[$field]));
-    }
+	foreach ($requiredFields as $field) {
+		if (empty($_POST[$field])) {
+			throw new Exception("The $field field is required.");
+		}
+		$data[$field] = htmlspecialchars(trim($_POST[$field]));
+	}
 
     $data["status"] = 1;
     $data["username"] = strtolower($data["name"] . "_" . $data["surname"]);

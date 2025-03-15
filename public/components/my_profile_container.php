@@ -9,7 +9,7 @@
 		<div class="small-box">
 			<h2 class="box-title">My info</h2>
 			<span id="my-data"></span>
-			<button class="button-style-neutral">Edit</button>
+			<button class="button-style-neutral" id="edit-my-data">Edit</button>
 		</div>
 		<div class="small-box">
 			<h2 class="box-title">Membership</h2>
@@ -24,7 +24,7 @@
 		<div class="small-box">
 			<h2 class="box-title">Spot</h2>
 			<p><span id="spot">0</span> / <span id="total-spot">0</span></p>
-			<button class="button-style-neutral" id="add-user-button">Add user</button>
+			<button class="button-style-neutral" id="add-members-button">Add Members</button>
 		</div>
 	</div>
 	<div class="personal-data">
