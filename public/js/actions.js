@@ -322,20 +322,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 	handlePopupClose("subsc-form", ".formular-frame", ["edit-company-form"]);
 	handlePopupClose("edit-company-form", ".formular-frame", ["subsc-form"]);
-
+	handlePopupClose("add-members-form", ".formular-frame", ["add-members-form"]);
 
 	// 📌 Boton para cerrar formulario
-	// let cancelSubscBtn = document.getElementById('cancel-subsc-btn');
-	// cancelSubscBtn.addEventListener('click', function() {
-	// 	close_popup()
-	// });
-
-	// function close_popup() {
-	// 	var bg_popup = document.querySelector('.bg-popup');
-	// 	if (bg_popup) {
-	// 		bg_popup.style.display = 'none';
-	// 	}
-	// }
 	let cancelButtons = document.querySelectorAll('.cancel-btn');
 	cancelButtons.forEach(function (button) {
 		button.addEventListener('click', function () {
@@ -611,5 +600,83 @@ document.addEventListener("DOMContentLoaded", async function () {
 			reader.readAsDataURL(fileInput.files[0]);
 		}
 	});
+
+	// 📌 script para update company popup
+	let addMemberButton = document.getElementById('add-members-button');
+	addMemberButton.addEventListener('click', function (e) {
+		e.preventDefault();
+
+		const addMembersForm = document.getElementById('add-members-form');
+		const popupContent = addMembersForm.querySelector('.formular-frame');
+
+		if (addMembersForm && popupContent) {
+			addMembersForm.style.display = 'block';
+			addMembersForm.style.opacity = '0';
+			addMembersForm.style.transition = 'opacity 0.5s ease';
+			setTimeout(() => {
+				addMembersForm.style.opacity = '1';
+			}, 10);
+
+			popupContent.style.transform = 'scale(0.7)';
+			popupContent.style.opacity = '0';
+			popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+			setTimeout(() => {
+				popupContent.style.transform = 'scale(1)';
+				popupContent.style.opacity = '1';
+			}, 50);
+		}
+	});
+
+	// 📌 Manejo del formulario de crear miembros
+	let formMembers = document.getElementById('formMembers');
+	if (formMembers) {
+		formMembers.addEventListener('submit', async function (e) {
+			e.preventDefault();
+
+			let formData = new FormData(this);
+
+			try {
+				let response = await fetch('api/create_members.php', {
+					method: 'POST',
+					headers: { 'Accept': 'application/json' },
+					body: formData
+				});
+
+				let data = await response.json();
+				console.log('Server response:', data);
+
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				if (data.success) {
+					statusText.innerText = data.message;
+					statusImage.src = data.img_gif;
+					banner.style.display = 'block';
+					banner.style.opacity = '1';
+
+					setTimeout(() => {
+						banner.style.opacity = '0';
+						setTimeout(() => {
+							window.location.href = data.redirect_url;
+						}, 1000);
+					}, 3000);
+				} else {
+					statusText.innerText = "Error: " + data.message;
+					statusImage.src = data.img_gif; 
+					banner.style.display = 'block';
+				}
+			} catch (error) {
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				statusText.innerText = "Error procesando la solicitud.";
+				statusImage.src = data.img_gif;
+				banner.style.display = 'block';
+			}
+		});
+	}
+
 
 });

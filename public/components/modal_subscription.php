@@ -8,7 +8,7 @@
 					</td>      
 				</tr>
 				<tr valign="baseline" class="form_height">
-					<td colspan="6" align="center" valign="middle">
+					<td colspan="2" align="center" valign="middle">
 						<label for="packs">Member Package:</label>
 						<select class="form-input-style" name="packs" id="packs">
 							<option value="">Select a pack</option>
@@ -26,7 +26,7 @@
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
-					<td colspan="6" align="center" valign="middle">
+					<td colspan="2" align="center" valign="middle">
 						<div id="estimated"></div>
 					</td>
 				</tr>
