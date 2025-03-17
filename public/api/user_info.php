@@ -1,5 +1,4 @@
 <?php
-// session_start();
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");

@@ -320,8 +320,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 			});
 		}
 	}
-	handlePopupClose("subsc-form", ".formular-frame", ["edit-company-form"]);
-	handlePopupClose("edit-company-form", ".formular-frame", ["subsc-form"]);
+	handlePopupClose("edit-my_info-form", ".formular-frame", ["edit-my_info-form"]);
+	handlePopupClose("subsc-form", ".formular-frame", ["subsc-form"]);
+	handlePopupClose("edit-company-form", ".formular-frame", ["edit-company-form"]);
 	handlePopupClose("add-members-form", ".formular-frame", ["add-members-form"]);
 
 	// 📌 Boton para cerrar formulario
@@ -388,6 +389,133 @@ document.addEventListener("DOMContentLoaded", async function () {
 			});
 		}
 	}
+
+	// Drag & Drop + click
+	function initDragAndDrop(dropAreaId, inputFileId, previewImgId = null) {
+		const dropArea = document.getElementById(dropAreaId);
+		const fileInput = document.getElementById(inputFileId);
+		const previewImage = previewImgId ? document.getElementById(previewImgId) : null;
+	
+		if (!dropArea || !fileInput) return;
+	
+		// Al hacer clic en el área se dispara el input
+		dropArea.addEventListener('click', () => fileInput.click());
+	
+		// Drag events
+		dropArea.addEventListener('dragenter', (e) => {
+			e.preventDefault();
+			dropArea.classList.add('active');
+		});
+		dropArea.addEventListener('dragleave', () => dropArea.classList.remove('active'));
+		dropArea.addEventListener('dragover', (e) => e.preventDefault());
+	
+		// Drop file
+		dropArea.addEventListener('drop', (e) => {
+			e.preventDefault();
+			dropArea.classList.remove('active');
+			const files = e.dataTransfer.files;
+			fileInput.files = files;
+	
+			if (previewImage && files && files[0]) {
+				const reader = new FileReader();
+				reader.onload = function (e) {
+					previewImage.src = e.target.result;
+					previewImage.style.display = 'block';
+				};
+				reader.readAsDataURL(files[0]);
+			}
+		});
+	
+		// Input change
+		fileInput.addEventListener('change', () => {
+			if (previewImage && fileInput.files && fileInput.files[0]) {
+				const reader = new FileReader();
+				reader.onload = function (e) {
+					previewImage.src = e.target.result;
+					previewImage.style.display = 'block';
+				};
+				reader.readAsDataURL(fileInput.files[0]);
+			}
+		});
+	}
+
+	// 📌 script para my info popup
+	let editMyDataButton = document.getElementById('edit-my-data');
+	editMyDataButton.addEventListener('click', function (e) {
+		e.preventDefault();
+
+		scrollToTopIfNeeded();
+		
+		const editMyInfoForm = document.getElementById('edit-my_info-form');
+		const popupContent = editMyInfoForm.querySelector('.formular-frame');
+
+		if (editMyInfoForm && popupContent) {
+			editMyInfoForm.style.display = 'block';
+			editMyInfoForm.style.opacity = '0';
+			editMyInfoForm.style.transition = 'opacity 0.5s ease';
+			setTimeout(() => {
+				editMyInfoForm.style.opacity = '1';
+			}, 10);
+
+			popupContent.style.transform = 'scale(0.7)';
+			popupContent.style.opacity = '0';
+			popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+			setTimeout(() => {
+				popupContent.style.transform = 'scale(1)';
+				popupContent.style.opacity = '1';
+				loadMyInfo();
+			}, 50);
+		}
+	});
+
+	// 📌 Manejo del formulario de edit my info
+	let formEditMyInfo = document.getElementById('formEditMyInfo');
+	if (formEditMyInfo) {
+		formEditMyInfo.addEventListener('submit', async function (e) {
+			e.preventDefault();
+
+			let formData = new FormData(this);
+
+			try {
+				let response = await fetch('api/update_my_info.php', {
+					method: 'POST',
+					headers: { Accept: 'application/json' },
+					body: formData
+				});
+
+				let data = await response.json();
+				console.log('Server response:', data);
+
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				statusText.innerText = data.message;
+				statusImage.src = data.img_gif;
+				banner.style.display = 'block';
+				banner.style.opacity = '1';
+
+				if (data.success) {
+					setTimeout(() => {
+						banner.style.opacity = '0';
+						setTimeout(() => {
+							window.location.href = data.redirect_url;
+						}, 1000);
+					}, 3000);
+				}
+			} catch (error) {
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				statusText.innerText = "Error processing request.";
+				statusImage.src = "../images/sys-img/error.gif";
+				banner.style.display = 'block';
+			}
+		});
+	}
+
+	initDragAndDrop('profile-drop-area', 'image', 'profile-pic-preview');
 
 	// 📌 script para subscrition popup
 	let subscButton = document.getElementById('subsc-button');
@@ -462,13 +590,48 @@ document.addEventListener("DOMContentLoaded", async function () {
 				let statusText = document.getElementById('status-text');
 				let statusImage = document.getElementById('status-image');
 
-				statusText.innerText = "Error procesando la solicitud.";
+				statusText.innerText = "Error processing request.";
 				statusImage.src = "../images/sys-img/error.gif";
 				banner.style.display = 'block';
 			}
 		});
 	}
 
+	// 📌 script para recojer los datos de la compania
+	async function loadMyInfo() {
+		try {
+			let response = await fetch('api/get_my_info.php', {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			});
+	
+			let data = await response.json();
+			console.log("User Info:", data);
+	
+			if (data.success && data.data) {
+				let user = data.data;
+	
+				document.getElementById('name').value = user.name || "";
+				document.getElementById('surname').value = user.surname || "";
+				document.getElementById('birthday').value = user.birthday ? user.birthday.split(' ')[0] : "";
+				document.getElementById('phone').value = user.phone || "";
+				document.getElementById('email').value = user.email || "";
+	
+				const profilePicPreview = document.getElementById('profile-pic-preview');
+
+				if (user.image && user.image.trim() !== "") {
+					profilePicPreview.src = `../images/profile/${user.image}`;
+					profilePicPreview.style.display = 'block';
+				} else {
+					profilePicPreview.src = ""; // Deja la imagen en blanco si no hay una
+					profilePicPreview.style.display = 'none';
+				}
+			}
+		} catch (error) {
+			console.error("Error loading user info:", error);
+		}
+	}
+	
 	// 📌 script para recojer los datos de la compania
 	async function loadCompanyData() {
 		try {
@@ -479,14 +642,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 	
 			let data = await response.json();
 			if (data.success && data.data) {
-				document.getElementById('company_name').value = data.data.company_name || '';
-				document.getElementById('organization_no').value = data.data.organization_no || '';
-				document.getElementById('company_address').value = data.data.company_address || '';
-				document.getElementById('company_phone').value = data.data.company_phone || '';
+				let company = data.data;
 
-				if (data.data.company_logo) {
-					let logoPreview = document.getElementById('logo-preview');
-					logoPreview.src = `images/company-logos/${data.data.company_logo}`;
+				document.getElementById('company_name').value = company.company_name || '';
+				document.getElementById('organization_no').value = company.organization_no || '';
+				document.getElementById('company_address').value = company.company_address || '';
+				document.getElementById('company_phone').value = company.company_phone || '';
+
+				if (company.company_logo) {
+					const logoPreview = document.getElementById('logo-preview');
+					logoPreview.src = `images/company-logos/${company.company_logo}`;
 					logoPreview.style.display = 'block';
 				}
 			}
@@ -526,7 +691,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	// 📌 Manejo del formulario de update Company
 	let formEditCompany = document.getElementById('formEditCompany');
-
 	if (formEditCompany) {
 		formEditCompany.addEventListener('submit', async function (e) {
 			e.preventDefault();
@@ -572,55 +736,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
-	// Drag & Drop + click
-	const dropArea = document.getElementById('drop-area');
-	const fileInput = document.getElementById('company_logo');
-	const logoPreview = document.getElementById('logo-preview');
+	initDragAndDrop('drop-area', 'company_logo', 'logo-preview');
 
-	dropArea.addEventListener('click', () => fileInput.click());
-
-	dropArea.addEventListener('dragenter', e => {
-		e.preventDefault();
-		dropArea.classList.add('active');
-	});
-
-	dropArea.addEventListener('dragleave', () => dropArea.classList.remove('active'));
-	dropArea.addEventListener('dragover', e => e.preventDefault());
-
-	dropArea.addEventListener('drop', e => {
-		e.preventDefault();
-		dropArea.classList.remove('active');
-		const files = e.dataTransfer.files;
-		fileInput.files = files;
-
-		if (files && files[0]) {
-			const reader = new FileReader();
-			reader.onload = function(e) {
-				logoPreview.src = e.target.result;
-				logoPreview.style.display = 'block';
-			};
-			reader.readAsDataURL(files[0]);
-		}
-	});
-
-	fileInput.addEventListener('change', () => {
-		if (fileInput.files && fileInput.files[0]) {
-			const reader = new FileReader();
-			reader.onload = function(e) {
-				logoPreview.src = e.target.result;
-				logoPreview.style.display = 'block';
-			};
-			reader.readAsDataURL(fileInput.files[0]);
-		}
-	});
-
-	// 📌 script para update company popup
+	// 📌 script para add members popup
 	let addMemberButton = document.getElementById('add-members-button');
 	addMemberButton.addEventListener('click', function (e) {
 		e.preventDefault();
 
 		scrollToTopIfNeeded();
-		
+
 		const addMembersForm = document.getElementById('add-members-form');
 		const popupContent = addMembersForm.querySelector('.formular-frame');
 
@@ -692,6 +816,5 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		});
 	}
-
 
 });
