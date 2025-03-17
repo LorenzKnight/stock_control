@@ -14,12 +14,15 @@ try {
     if (!$userId) throw new Exception("User session not found.");
 
     $userDataResponse = select_from("users", [
+        "user_id",
         "name",
         "surname",
         "birthday",
         "phone",
         "email",
-        "image"
+        "image",
+        "signup_date",
+        "members"
     ], ["user_id" => $userId], ["fetch_first" => true]);
 
     $userData = json_decode($userDataResponse, true);

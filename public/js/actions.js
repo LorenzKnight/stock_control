@@ -187,7 +187,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	// 📌 Manejo del datos de usuario
     try {
-        let response = await fetch('api/user_info.php', {
+        let response = await fetch('api/get_my_info.php', {
             method: 'GET',
             headers: { Accept: "application/json" }
         });
@@ -200,26 +200,41 @@ document.addEventListener("DOMContentLoaded", async function () {
 		let subsc = document.getElementById("subsc");
 		let totalSpot = document.getElementById("total-spot");
 
-		if (data.success && data.users) {
-			let user = data.users;
+		if (data.success && data.data) {
+			let user = data.data;
 
-			hiUser.innerHTML = `Hi, ${user.name}!`;
+			if (hiUser) hiUser.innerHTML = `Hi, ${user.name || 'User'}!`;
 
-			myData.innerHTML =
-				`<p><strong>ID:</strong> ` + (user.user_id && user.user_id.trim() !== "" ? `${user.user_id}</p>` : "-</p>") +
-				`<p><strong>Phone:</strong> ` + (user.phone && user.phone.trim() !== "" ? `${user.phone}</p>` : "No Phone Number</p>") +
-    			`<p><strong>Email:</strong> ` + (user.email && user.email.trim() !== "" ? `${user.email}</p>` : "No Email</p>")
-			;
+			if (myData) {
+				myData.innerHTML =
+					`<p><strong>ID:</strong> ${user.user_id?.trim() || "-"}</p>` +
+					`<p><strong>Phone:</strong> ${user.phone?.trim() || "No Phone Number"}</p>` +
+					`<p><strong>Email:</strong> ${user.email?.trim() || "No Email"}</p>`;
+				;
+			}
 
-			subsc.innerHTML = user.members && user.members.trim() !== "" ? `<p>${user.members}</p>` : "0";
+			if (subsc) {
+				subsc.innerHTML = user.members && String(user.members).trim() !== "" ? `<p>${user.members}</p>` : "0";
+			}
+	
+			if (totalSpot) {
+				totalSpot.innerHTML = user.members && String(user.members).trim() !== "" ? user.members : "0";
+			}
 
-			totalSpot.innerHTML = user.members && user.members.trim() !== "" ? user.members : "0";
+			// subsc.innerHTML = user.members && user.members.trim() !== "" ? `<p>${user.members}</p>` : "0";
+
+			// totalSpot.innerHTML = user.members && user.members.trim() !== "" ? user.members : "0";
         } else {
-            // userInfoTable.innerHTML = `<tr><td colspan="6">No se encontró información del usuario.</td></tr>`;
+            if (myData) {
+				myData.innerHTML = `<p>No user data found.</p>`;
+			}
         }
     } catch (error) {
-        console.error("Error fetching data:", error);
-        document.getElementById("user-info").innerHTML = `<tr><td colspan="6">Error al cargar los datos del usuario.</td></tr>`;
+    	console.error("Error fetching data:", error);
+		const myData = document.getElementById("my-data");
+		if (myData) {
+			myData.innerHTML = `<p>Error loading user data.</p>`;
+		}
     }
 
 	// 📌 Manejo de lo datos de Empresa
