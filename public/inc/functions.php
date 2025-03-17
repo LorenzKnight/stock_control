@@ -125,8 +125,9 @@ function update_table($tableName, array $queryData = [], array $whereClause = []
 
 	$query = "UPDATE $tableName SET $setClause$whereClauseStr;";
 
+	$returnQuery = null;
 	if (isset($options['echo_query']) && $options['echo_query']) {
-		echo "Q: $query<br>\n";
+		$returnQuery = $query;
 	}
 
 	$result = pg_query($query);
@@ -135,7 +136,8 @@ function update_table($tableName, array $queryData = [], array $whereClause = []
 		return json_encode([
 			"success" => false,
 			"message" => "Error executing update query",
-			"count" => 0
+			"count" => 0,
+			"query" => $returnQuery
 		]);
 	}
 
@@ -144,7 +146,8 @@ function update_table($tableName, array $queryData = [], array $whereClause = []
 	return json_encode([
 		"success" => $affectedRows > 0,
 		"message" => $affectedRows > 0 ? "Row(s) updated successfully" : "No rows were updated",
-		"count" => $affectedRows
+		"count" => $affectedRows,
+		"query" => $returnQuery
 	]);
 }
 
@@ -157,7 +160,7 @@ function log_activity($userId, $actionType, $description, $relatedTable = null, 
         "related_id" => $relatedId,
         "created_at" => date("Y-m-d H:i:s")
     ];
-	
+
     return insert_into("activity_history", $data);
 }
 

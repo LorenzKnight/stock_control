@@ -10,7 +10,7 @@
 				<tr valign="baseline" class="form_height">
 					<td colspan="2" align="center" valign="middle">
 						<div class="drop-area" id="drop-area">
-							<img class="logo-preview" id="logo-preview" src="" alt="Logo preview">
+							<img class="image-preview" id="logo-preview" src="" alt="Logo preview">
 							<p>Drop logo image here or click to select</p>
 							<input type="file" name="company_logo" id="company_logo" accept="image/*" style="display: none;">
 						</div>
@@ -38,10 +38,10 @@
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td width="50%" align="center" valign="middle">
-						<input type="submit" class="button-style-agree" value="Update" />
+						<button type="button" class="cancel-btn">Cancel</button>
 					</td>
 					<td width="50%" align="center" valign="middle">
-						<button type="button" class="cancel-btn">Cancel</button>
+						<input type="submit" class="button-style-agree" value="Update" />
 					</td>
 				</tr>
 			</table>
