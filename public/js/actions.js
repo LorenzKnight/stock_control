@@ -193,12 +193,14 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
 
         let data = await response.json();
-        console.log("Server response:", data);
+        // console.log("Server response:", data);
 
+		let myName = document.getElementById("my-name");
 		let hiUser = document.getElementById("hi-user");
 		let myData = document.getElementById("my-data");
 		let subsc = document.getElementById("subsc");
 		let totalSpot = document.getElementById("total-spot");
+		const headerProfilePic = document.getElementById("header-profile-pic");
 
 		if (data.success && data.data) {
 			let user = data.data;
@@ -221,9 +223,24 @@ document.addEventListener("DOMContentLoaded", async function () {
 				totalSpot.innerHTML = user.members && String(user.members).trim() !== "" ? user.members : "0";
 			}
 
-			// subsc.innerHTML = user.members && user.members.trim() !== "" ? `<p>${user.members}</p>` : "0";
+			if (myName) {
+				myName.innerHTML = (String(user.name).trim() || "") + " " + (String(user.surname).trim() || "");
+			}
 
-			// totalSpot.innerHTML = user.members && user.members.trim() !== "" ? user.members : "0";
+			if (headerProfilePic) {
+				const hasCustomImage = user.image && user.image.trim() !== "";
+			
+				headerProfilePic.src = hasCustomImage
+					? `../images/profile/${user.image}`
+					: "../images/profile/NonProfilePic.png";
+			
+				headerProfilePic.alt = hasCustomImage
+					? "User profile picture"
+					: "Default profile picture";
+			
+				headerProfilePic.classList.remove("default-profile-pic", "custom-profile-pic");
+				headerProfilePic.classList.add(hasCustomImage ? "custom-profile-pic" : "default-profile-pic");
+			}
         } else {
             if (myData) {
 				myData.innerHTML = `<p>No user data found.</p>`;
@@ -245,7 +262,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
 
         let data = await response.json();
-        console.log("Server response:", data);
+        // console.log("Server response:", data);
 
 		let myCompany = document.getElementById("company-data");
 
@@ -275,7 +292,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
 
         let data = await response.json();
-        console.log('Server response:', data);
+        // console.log('Server response:', data);
 		
 		let spot = document.getElementById("spot");
         let userContainer = document.getElementById('child-user-table');
@@ -626,11 +643,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 			if (data.success && data.data) {
 				let user = data.data;
 	
-				document.getElementById('name').value = user.name || "";
-				document.getElementById('surname').value = user.surname || "";
-				document.getElementById('birthday').value = user.birthday ? user.birthday.split(' ')[0] : "";
-				document.getElementById('phone').value = user.phone || "";
-				document.getElementById('email').value = user.email || "";
+				document.getElementById('user_name').value = user.name || "";
+				document.getElementById('user_surname').value = user.surname || "";
+				document.getElementById('user_birthday').value = user.birthday ? user.birthday.split(' ')[0] : "";
+				document.getElementById('user_phone').value = user.phone || "";
+				document.getElementById('user_email').value = user.email || "";
 	
 				const profilePicPreview = document.getElementById('profile-pic-preview');
 

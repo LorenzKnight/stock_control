@@ -18,11 +18,11 @@ try {
     $userId = $_SESSION["sc_UserId"] ?? null;
     if (!$userId) throw new Exception("User session not found.");
 
-    $name = trim($_POST['name'] ?? '');
-    $surname = trim($_POST['surname'] ?? '');
-    $birthday = trim($_POST['birthday'] ?? '');
-    $phone = trim($_POST['phone'] ?? '');
-    $email = trim($_POST['email'] ?? '');
+    $name = trim($_POST['user_name'] ?? '');
+    $surname = trim($_POST['user_surname'] ?? '');
+    $birthday = trim($_POST['user_birthday'] ?? '');
+    $phone = trim($_POST['user_phone'] ?? '');
+    $email = trim($_POST['user_email'] ?? '');
 
     if ($name === '' || $surname === '' || $email === '') {
         throw new Exception("All fields are required.");
@@ -66,7 +66,7 @@ try {
         $updateData["image"] = $newName;
     }
 
-    $updateResponse = update_table("users", $updateData, ["user_id" => $userId], ["echo_query" => false]);
+    $updateResponse = update_table("users", $updateData, ["user_id" => $userId]);
     $updateResult = json_decode($updateResponse, true);
 
     if (!$updateResult["success"]) {

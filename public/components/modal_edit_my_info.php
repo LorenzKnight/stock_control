@@ -18,28 +18,28 @@
 				</tr>
                 <tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<input class="form-input-style" type="text" name="name" id="name" placeholder="Enter your name..." title="Enter a valid name" required/>
+						<input class="form-input-style" type="text" name="user_name" id="user_name" placeholder="Enter your name..." title="Enter a valid name" required/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<input class="form-input-style" type="text" name="surname" id="surname" placeholder="Enter your surname..." title="Enter a valid surname" required/>
+						<input class="form-input-style" type="text" name="user_surname" id="user_surname" placeholder="Enter your surname..." title="Enter a valid surname" required/>
 					</td>
 				</tr>
                 <tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
 						<label for="fecha">Birthdate:</label>
-						<input class="form-input-style" type="date" name="birthday" id="birthday" placeholder="yyyy-mm-dd" title="Birthdate (yyyy-mm-dd)"/>
+						<input class="form-input-style" type="date" name="user_birthday" id="user_birthday" placeholder="yyyy-mm-dd" title="Birthdate (yyyy-mm-dd)"/>
 					</td>
 				</tr>
                 <tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<input class="form-input-style" type="number" name="phone" id="phone" placeholder="Enter your phone number..." title="Enter a valid phone number"/>
+						<input class="form-input-style" type="number" name="user_phone" id="user_phone" placeholder="Enter your phone number..." title="Enter a valid phone number"/>
 					</td>
 				</tr>
                 <tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<input class="form-input-style" type="email" name="email" id="email" placeholder="Enter your E-Mail..." title="Enter a valid email" required/>
+						<input class="form-input-style" type="email" name="user_email" id="user_email" placeholder="Enter your E-Mail..." title="Enter a valid email" required/>
 					</td>
 				</tr>
                 <tr valign="baseline" class="form_height">
