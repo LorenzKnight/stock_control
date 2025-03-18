@@ -9,7 +9,7 @@
 		<div class="small-box">
 			<h2 class="box-title">My info</h2>
 			<span id="my-data"></span>
-			<button class="button-style-neutral" id="edit-my-data">Edit</button>
+			<button class="button-style-neutral" id="edit-my-data">Update Info</button>
 		</div>
 		<div class="small-box">
 			<h2 class="box-title">Membership</h2>
@@ -19,7 +19,7 @@
 		<div class="small-box">
 			<h2 class="box-title">Company data</h2>
 			<span id="company-data"></span>
-			<button class="button-style-neutral" id="edit-comp-button">Update company</button>
+			<button class="button-style-neutral" id="edit-comp-button">Update Company</button>
 		</div>
 		<div class="small-box">
 			<h2 class="box-title">Spot</h2>
@@ -31,12 +31,12 @@
 		<h2 style="margin-left: 10px;">User List</h2>
 		<div class="members-table" id="child-user-table">Cargando usuarios...</div>
 	</div>
-	<div>
+	<!-- <div>
 		</br>
 		TO DO</br>
 		hacer ventas con planes de pago</br>
 		ingresar productos</br>
 		registrar clientes (agregar notas)</br>
 		pagos del producto</br>
-	</div>
+	</div> -->
 </div>
