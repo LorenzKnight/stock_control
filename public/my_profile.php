@@ -17,6 +17,7 @@
 	<?php include("components/modal_edit_my_info.php"); ?>
 	<?php include("components/modal_subscription.php"); ?>
 	<?php include("components/modal_edit_company.php"); ?>
+	<?php include("components/modal_edit_members.php"); ?>
 	<?php include("components/modal_add_members.php"); ?>
 	<?php include("components/message.php"); ?>
 	<?php include("components/header.php"); ?>

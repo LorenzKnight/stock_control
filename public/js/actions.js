@@ -286,29 +286,29 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	// 📌 Manejo de lista de usuarios hijos
 	try {
-        let response = await fetch('api/get_users.php', {
-            method: 'GET',
-            headers: { 'Accept': 'application/json' }
-        });
+		let response = await fetch('api/get_users.php', {
+			method: 'GET',
+			headers: { 'Accept': 'application/json' }
+		});
 
-        let data = await response.json();
-        // console.log('Server response:', data);
+		let data = await response.json();
+		// console.log('Server response:', data);
 		
 		let spot = document.getElementById("spot");
-        let userContainer = document.getElementById('child-user-table');
+		let userContainer = document.getElementById('child-user-table');
 
 		spot.innerHTML = data.count !== "" ? data.count : "0";
 
-        if (data.success && data.count > 0) {
-            userContainer.innerHTML = '';
+		if (data.success && data.count > 0) {
+			userContainer.innerHTML = '';
 
-            data.users.forEach(user => {
-                let card = document.createElement("div");
+			data.users.forEach(user => {
+				let card = document.createElement("div");
 				card.classList.add("members-card");
 
 				let profileImage = user.image && user.image.trim() !== "" 
-                ? `images/profile/${user.image}` 
-                : "images/profile/NonProfilePic.png";
+				? `images/profile/${user.image}` 
+				: "images/profile/NonProfilePic.png";
 
 				card.innerHTML = `
 					<div class="mini-banner">
@@ -321,18 +321,161 @@ document.addEventListener("DOMContentLoaded", async function () {
 						<p><strong>Email:</strong> ${user.email}</p>
 						<p><strong>Phone:</strong> ${user.phone ? user.phone : "No Phone Number"}</p>
 					</div>
+					<div class="card-menu">
+						<img src="images/sys-img/edit-icon.png" alt="eidt-card">
+					</div>
 				`;
 
 				userContainer.appendChild(card);
-            });
-        } else {
-			userContainer.innerHTML = "<p>No members found.</p>";
-        }
-    } catch (error) {
-        console.error('Error fetching data:', error);
-		document.getElementById("child-user-table").innerHTML = `<p>Error loading user data.</p>`;
-    }
 
+				const cardMenuBtn = card.querySelector('.card-menu');
+				cardMenuBtn.addEventListener('click', () => {
+					openMemberForm(user.user_id);
+				});
+			});
+		} else {
+			userContainer.innerHTML = "<p>No members found.</p>";
+		}
+	} catch (error) {
+		console.error('Error fetching data:', error);
+		document.getElementById("child-user-table").innerHTML = `<p>Error loading user data.</p>`;
+	}
+
+	async function openMemberForm(userId) {
+		scrollToTopIfNeeded();
+	
+		const addMembersForm = document.getElementById('edit-members-form');
+		const popupContent = addMembersForm.querySelector('.formular-frame');
+	
+		if (addMembersForm && popupContent) {
+			formEditMembers.setAttribute('data-user-id', userId);
+			addMembersForm.style.display = 'block';
+			addMembersForm.style.opacity = '0';
+			addMembersForm.style.transition = 'opacity 0.5s ease';
+			setTimeout(() => {
+				addMembersForm.style.opacity = '1';
+			}, 10);
+	
+			popupContent.style.transform = 'scale(0.7)';
+			popupContent.style.opacity = '0';
+			popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+			setTimeout(() => {
+				popupContent.style.transform = 'scale(1)';
+				popupContent.style.opacity = '1';
+			}, 50);
+		}
+
+		try {
+			let response = await fetch(`api/get_user_by_id.php?user_id=${userId}`);
+			let data = await response.json();
+	
+			if (data.success && data.data) {
+				const user = data.data;
+				document.getElementById('edit_name').value = user.name || '';
+				document.getElementById('edit_surname').value = user.surname || '';
+				document.getElementById('edit_birthday').value = user.birthday ? user.birthday.split(" ")[0] : '';
+				document.getElementById('edit_phone').value = user.phone || '';
+				document.getElementById('edit_email').value = user.email || '';
+				document.getElementById('edit_rank').value = user.rank || '';
+				// Opcional: Puedes ocultar el campo de contraseña si estás editando
+				// document.getElementById('edit_password').value = '';
+			}
+		} catch (error) {
+			console.error("Error loading user data:", error);
+		}
+	}
+
+	// 📌 Manejo del formulario de edit usuarios hijos
+	const formEditMembers = document.getElementById('formEditMembers');
+	if (formEditMembers) {
+		formEditMembers.addEventListener('submit', async function (e) {
+			e.preventDefault();
+	
+			const formData = new FormData(this);
+			formData.append('edit_user_id', formEditMembers.getAttribute('data-user-id')); // ID del usuario a editar
+	
+			try {
+				const response = await fetch('api/update_member.php', {
+					method: 'POST',
+					headers: { Accept: 'application/json' },
+					body: formData
+				});
+	
+				const data = await response.json();
+				console.log("Update response:", data);
+	
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+	
+				statusText.innerText = data.message;
+				statusImage.src = data.img_gif;
+				banner.style.display = 'block';
+				banner.style.opacity = '1';
+	
+				if (data.success) {
+					setTimeout(() => {
+						banner.style.opacity = '0';
+						setTimeout(() => {
+							window.location.href = data.redirect_url || window.location.href;
+						}, 1000);
+					}, 3000);
+				}
+			} catch (error) {
+				console.error("Error updating member:", error);
+			}
+		});
+	}
+
+	// 📌 Manejo del formulario edit para borrar usuarios hijos
+	const deleteBtn = document.getElementById('deleteAccountBtn');
+	const formEditMembersToDelete = document.getElementById('formEditMembers');
+	if (deleteBtn && formEditMembersToDelete) {
+		deleteBtn.addEventListener('click', async function () {
+			const userId = formEditMembersToDelete.getAttribute('data-user-id');
+
+			if (!userId) {
+				alert("User ID not found.");
+				return;
+			}
+
+			const confirmed = confirm("Are you sure you want to delete this user?");
+			if (!confirmed) return;
+
+			try {
+				const response = await fetch('api/delete_user.php', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'Accept': 'application/json'
+					},
+					body: JSON.stringify({ user_id: userId })
+				});
+
+				const data = await response.json();
+
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				statusText.innerText = data.message;
+				statusImage.src = data.img_gif;
+				banner.style.display = 'block';
+				banner.style.opacity = '1';
+
+				if (data.success) {
+					setTimeout(() => {
+						banner.style.opacity = '0';
+						setTimeout(() => {
+							window.location.href = data.redirect_url;
+						}, 1000);
+					}, 3000);
+				}
+			} catch (error) {
+				console.error("Error deleting user:", error);
+			}
+		});
+	}
 
 	// 📌 cerrar al hacer clic fuera del formulario
 	function handlePopupClose(popupId, contentSelector, otherPopups = []) {
@@ -356,9 +499,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 	handlePopupClose("subsc-form", ".formular-frame", ["subsc-form"]);
 	handlePopupClose("edit-company-form", ".formular-frame", ["edit-company-form"]);
 	handlePopupClose("add-members-form", ".formular-frame", ["add-members-form"]);
+	handlePopupClose("edit-members-form", ".formular-frame", ["edit-members-form"]);
 
 	// 📌 Boton para cerrar formulario
-	let cancelButtons = document.querySelectorAll('.cancel-btn');
+	let cancelButtons = document.querySelectorAll('.neutral-btn');
 	cancelButtons.forEach(function (button) {
 		button.addEventListener('click', function () {
 			let popup = button.closest('.bg-popup');

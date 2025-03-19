@@ -1,6 +1,15 @@
 @import url("header.css");
 @import url("my_profile.css");
 
+:root {
+    --main-text-color:  rgb(148, 148, 148);
+    --main-bg-color: rgba(255, 255, 255, 0.712);
+    --btn-neutral: #666; 
+    --btn-green: rgb(0, 172, 0);
+    --btn-cancel: rgb(239, 0, 0); 
+    --clr-darkgrey: rgb(144, 144, 144);
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -72,7 +81,7 @@ body {
 
 .button-style-agree {
     width: 95%;
-    background: rgb(0, 172, 0);
+    background: var(--btn-green); 
     color: white;
     font-size: 14px;
     margin: 10px auto;
@@ -83,10 +92,10 @@ body {
     cursor: pointer;
 }
 
-.cancel-btn {
+.neutral-btn {
 	width: 95%;
 	padding: 15px 0;
-	background-color: #666;
+    background: var(--btn-neutral); 
 	color: #fff;
 	border: 0;
 	border-radius: 5px;
@@ -94,9 +103,22 @@ body {
     cursor: pointer;
 }
 
+.cancel-btn {
+    width: 95%;
+    background: var(--btn-cancel); 
+    color: white;
+    font-size: 14px;
+    margin: 10px auto;
+    padding: 15px 0;
+    border: 0;
+    border-radius: 5px;
+    box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
+    cursor: pointer;
+}
+
 .button-style-neutral {
     width: 80%;
-    background: rgb(62, 62, 62);
+    background: #767676;
     color: white;
     font-size: 14px;
     margin: 5px 0;
@@ -104,7 +126,14 @@ body {
     border: 0;
     border-radius: 5px;
     box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
+    transition: all 1.0s ease;
     cursor: pointer;
+}
+
+.button-style-neutral:hover {
+    background: #022e63;
+    color: white;
+    transition: all 1.0s ease;
 }
 /* end to form-modal */
 

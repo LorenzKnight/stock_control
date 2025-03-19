@@ -53,7 +53,7 @@
 				</tr>
                 <tr valign="baseline" class="form_height">
 					<td width="50%" align="center" valign="middle">
-						<button type="button" class="cancel-btn">Cancel</button>
+						<button type="button" class="neutral-btn">Cancel</button>
 					</td>
 					<td width="50%" align="center" valign="middle">
 						<input type="submit" class="button-style-agree" value="Create" />
