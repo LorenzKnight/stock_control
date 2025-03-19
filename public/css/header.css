@@ -92,6 +92,7 @@ nav ul.menu li a {
 #profileDropdown ul li {
 	padding: 10px 0;
 	text-align: left;
+    text-decoration: none;
 }
 
 #profileDropdown ul li a {

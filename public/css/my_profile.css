@@ -60,10 +60,12 @@
 	background-color: #d8cac1; 
 	border-radius: 10px;
 	box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.529);
+    transition: all 1.0s ease;
 }
 
 .members-table::-webkit-scrollbar-thumb:hover {
-	background-color: #c1ab9d; 
+	background-color: #022e63;
+    transition: all 1.0s ease;
 }
 
 
@@ -76,6 +78,7 @@
     font-size: 12px;
     background-color: #f0f0f0;
     float: left;
+    position: relative;
 }
 
 .members-card:hover {
@@ -109,6 +112,76 @@
 .card-info {
     margin: 40px 0 0 0;
 }
+
+.card-menu {
+    width: 44px;
+    height: 44px;
+    /* padding: 5px 7px 6px; */
+    background-color: rgb(221, 216, 212);
+    color: #FFF;
+    font-size: 18px;
+    border-radius: 50%;
+    position: absolute;
+    right: 10px;
+    bottom: 15px;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 1.0s ease;
+}
+
+.card-menu:hover {
+    background-color: #022e63;
+    box-shadow: 0 0 4px 3px rgb(47 48 63 / 19%);
+    transition: all 1.0s ease;
+}
+
+.card-menu img {
+    width: 20px;
+    filter: brightness(0) saturate(100%) invert(100%);
+    opacity: 0.9;
+    transition: filter 0.3s ease;
+}
+
+
+
+.cardDropdown {
+	background-color: white;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	padding: 0 5px;
+	box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
+	position: absolute;
+	top: 25px;
+    right: 10px;
+	z-index: 2;
+}
+
+.cardDropdown ul {
+	width: 100px;
+	padding: 0;
+    list-style: none;
+    /* background-color: red; */
+}
+
+.cardDropdown ul li {
+	padding: 10px 0;
+	text-align: left;
+    
+}
+
+.cardDropdown ul li {
+	color: #999;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.cardDropdown ul li:hover {
+	color: #333;
+}
+
+
 
 .drop-area {
     width: 94%;
