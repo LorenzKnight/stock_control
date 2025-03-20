@@ -1,20 +1,28 @@
 @import url("header.css");
 @import url("my_profile.css");
+@import url("buttons.css");
+@import url("message.css");
 
 :root {
-    --main-text-color:  rgb(148, 148, 148);
-    --main-bg-color: rgba(255, 255, 255, 0.712);
+
+    /* --main-text-color:  rgb(148, 148, 148); */
+
+    --input-border: #999;
+    --frm-bg-transparent-grey: rgba(255, 255, 255, 0.35);
+    --main-bg-pop-up: rgba(0, 0, 0, 0.512);
+    --main-bg-white: #fff;
+    --main-bg-color: #f2f2f2;
+    --main-bg-blue: rgb(4, 144, 244);
     --btn-neutral: #666; 
     --btn-green: rgb(0, 172, 0);
     --btn-cancel: rgb(239, 0, 0); 
-    --clr-darkgrey: rgb(144, 144, 144);
 }
 
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f2f2f2;
+    background-color: var(--main-bg-color);
     font-family: 'Montserrat', sans-serif;
     font-size: 14px;
 }
@@ -35,11 +43,11 @@ body {
 }
 
 .container-login {
-    background-color: rgb(4, 144, 244);
+    background-color: var(--main-bg-blue);
 }
 
 .container-signup {
-    background-color: rgb(4, 144, 244);
+    background-color: var(--main-bg-blue);
 }
 
 /* form-modal */
@@ -53,7 +61,7 @@ body {
     width: 350px;
     margin: 80px auto 20px;
     padding: 30px 0;
-    background: #fff;
+    background: var(--main-bg-white);
     box-shadow: 0 4px 10px 0 rgba(47, 48, 63, 0.193);
     backdrop-filter: blur( 4px );
     -webkit-backdrop-filter: blur( 4px );
@@ -70,7 +78,7 @@ body {
     padding: 10px;
     font-size: 14px;
     border-radius: 5px;
-    border: 1px solid #999;
+    border: 1px solid var(--input-border);
     text-align: center;
     -moz-appearance:inherit; 
     -o-appearance:inherit;
@@ -78,69 +86,12 @@ body {
     appearance:inherit;
     -webkit-appearance:inherit;
 }
-
-.button-style-agree {
-    width: 95%;
-    background: var(--btn-green); 
-    color: white;
-    font-size: 14px;
-    margin: 10px auto;
-    padding: 15px 0;
-    border: 0;
-    border-radius: 5px;
-    box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
-    cursor: pointer;
-}
-
-.neutral-btn {
-	width: 95%;
-	padding: 15px 0;
-    background: var(--btn-neutral); 
-	color: #fff;
-	border: 0;
-	border-radius: 5px;
-    box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
-    cursor: pointer;
-}
-
-.cancel-btn {
-    width: 95%;
-    background: var(--btn-cancel); 
-    color: white;
-    font-size: 14px;
-    margin: 10px auto;
-    padding: 15px 0;
-    border: 0;
-    border-radius: 5px;
-    box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
-    cursor: pointer;
-}
-
-.button-style-neutral {
-    width: 80%;
-    background: #767676;
-    color: white;
-    font-size: 14px;
-    margin: 5px 0;
-    padding: 10px 0;
-    border: 0;
-    border-radius: 5px;
-    box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
-    transition: all 1.0s ease;
-    cursor: pointer;
-}
-
-.button-style-neutral:hover {
-    background: #022e63;
-    color: white;
-    transition: all 1.0s ease;
-}
 /* end to form-modal */
 
 .bg-popup {
     width: 100%;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.512);
+    background-color: var(--main-bg-pop-up);
     position: absolute;
     display: none;
     opacity: 0;
@@ -152,7 +103,7 @@ body {
     width: 400px;
     margin: 100px auto;
     padding: 50px 0;
-    background-color: rgba(255, 255, 255, 0.35);
+    background-color: var(--frm-bg-transparent-grey);
     box-shadow: 0 4px 10px 0 rgba(37, 37, 37, 0.388);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);

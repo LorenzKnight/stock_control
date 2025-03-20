@@ -346,9 +346,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 	
 		const addMembersForm = document.getElementById('edit-members-form');
 		const popupContent = addMembersForm.querySelector('.formular-frame');
+		const formEditMembers = document.getElementById('formEditMembers');
 	
 		if (addMembersForm && popupContent) {
-			formEditMembers.setAttribute('data-user-id', userId);
+			
 			addMembersForm.style.display = 'block';
 			addMembersForm.style.opacity = '0';
 			addMembersForm.style.transition = 'opacity 0.5s ease';
@@ -363,6 +364,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 				popupContent.style.transform = 'scale(1)';
 				popupContent.style.opacity = '1';
 			}, 50);
+
+			formEditMembers.setAttribute('data-user-id', userId);
 		}
 
 		try {
@@ -427,53 +430,53 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
-	// 📌 Manejo del formulario edit para borrar usuarios hijos
+	// 📌 Script para eliminar co-worker
 	const deleteBtn = document.getElementById('deleteAccountBtn');
 	const formEditMembersToDelete = document.getElementById('formEditMembers');
 	if (deleteBtn && formEditMembersToDelete) {
-		deleteBtn.addEventListener('click', async function () {
+		deleteBtn.addEventListener('click', async () => {
 			const userId = formEditMembersToDelete.getAttribute('data-user-id');
 
 			if (!userId) {
 				alert("User ID not found.");
 				return;
 			}
+			
+			showConfirmModal("Delete User", "Are you sure you want to delete this user?", async () => {
+				const formData = new FormData();
+				formData.append("user_id", userId);
 
-			const confirmed = confirm("Are you sure you want to delete this user?");
-			if (!confirmed) return;
+				try {
+					const response = await fetch('api/delete_user.php', {
+						method: 'POST',
+						body: formData
+					});
 
-			try {
-				const response = await fetch('api/delete_user.php', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						'Accept': 'application/json'
-					},
-					body: JSON.stringify({ user_id: userId })
-				});
+					const data = await response.json();
+					console.log('Delete response:', data);
 
-				const data = await response.json();
+					let banner = document.getElementById('status-message');
+					let statusText = document.getElementById('status-text');
+					let statusImage = document.getElementById('status-image');
 
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
+					statusText.innerText = data.message;
+					statusImage.src = data.img_gif;
+					banner.style.display = 'block';
+					banner.style.opacity = '1';
 
-				statusText.innerText = data.message;
-				statusImage.src = data.img_gif;
-				banner.style.display = 'block';
-				banner.style.opacity = '1';
-
-				if (data.success) {
-					setTimeout(() => {
-						banner.style.opacity = '0';
+					if (data.success) {
 						setTimeout(() => {
-							window.location.href = data.redirect_url;
-						}, 1000);
-					}, 3000);
+							banner.style.opacity = '0';
+							setTimeout(() => {
+								window.location.href = data.redirect_url || window.location.href;
+							}, 1000);
+						}, 3000);
+					}
+				} catch (error) {
+					console.error("Error deleting user:", error);
+					alert("Error deleting user. Check console.");
 				}
-			} catch (error) {
-				console.error("Error deleting user:", error);
-			}
+			});
 		});
 	}
 
@@ -991,6 +994,36 @@ document.addEventListener("DOMContentLoaded", async function () {
 				banner.style.display = 'block';
 			}
 		});
+	}
+
+
+	function showConfirmModal(title, message, onConfirm) {
+		const modal = document.getElementById('globalConfirmModal');
+		const modalTitle = document.getElementById('confirm-modal-title');
+		const modalMessage = document.getElementById('confirm-modal-message');
+		const cancelBtn = document.getElementById('modalCancelBtn');
+		const confirmBtn = document.getElementById('modalConfirmBtn');
+
+		if (!modal || !modalTitle || !modalMessage || !cancelBtn || !confirmBtn) return;
+
+		modalTitle.textContent = title || "Confirm Action";
+		modalMessage.textContent = message || "Are you sure you want to proceed?";
+		modal.style.display = 'flex';
+
+		// Reset listeners
+		const newConfirmBtn = confirmBtn.cloneNode(true);
+		confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+		// Confirmación
+		newConfirmBtn.addEventListener('click', () => {
+			modal.style.display = 'none';
+			if (typeof onConfirm === 'function') onConfirm();
+		});
+
+		// Cancelar
+		cancelBtn.onclick = () => {
+			modal.style.display = 'none';
+		};
 	}
 
 });
