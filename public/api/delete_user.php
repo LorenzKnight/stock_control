@@ -1,11 +1,12 @@
 <?php
+ob_start();
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
 
 $response = [
 	"success" => false,
-	"message" => "Invalid request.",
+	"message" => "Invalid request",
 	"img_gif" => "../images/sys-img/error.gif",
 	"redirect_url" => ""
 ];
@@ -15,42 +16,53 @@ try {
 		throw new Exception("Method not allowed.");
 	}
 
-	$input = json_decode(file_get_contents("php://input"), true);
-	$userId = $input["user_id"] ?? null;
+	$sessionUserId = $_SESSION["sc_UserId"] ?? null;
+	if (!$sessionUserId) {
+		throw new Exception("User session not found.");
+	}
 
-	if (!$userId || !is_numeric($userId)) {
+	$targetUserId = $_POST["user_id"] ?? null;
+	if (!$targetUserId || !is_numeric($targetUserId)) {
 		throw new Exception("Invalid user ID.");
 	}
 
-	$deleteQuery = pg_query("DELETE FROM users WHERE user_id = " . intval($userId));
+	$checkUser = select_from("users", ["user_id"], [
+		"user_id" => $targetUserId,
+		"user_admin" => $sessionUserId
+	], ["fetch_first" => true]);
 
-	if (!$deleteQuery) {
-		throw new Exception("Failed to delete user.");
+	$checkResult = json_decode($checkUser, true);
+
+	if (!$checkResult["success"] || empty($checkResult["data"])) {
+		throw new Exception("This user does not belong to you or does not exist.");
+	}
+
+	$deleteResponse = delete_from("users", ["user_id" => $targetUserId]);
+	$deleteResult = json_decode($deleteResponse, true);
+
+	if (!$deleteResult["success"]) {
+		throw new Exception("Deletion failed.");
 	}
 
 	log_activity(
-		$_SESSION["sc_UserId"] ?? null,
+		$sessionUserId,
 		"delete_user",
-		"Deleted user with ID $userId",
+		"User deleted a co-worker (ID: {$targetUserId}).",
 		"users",
-		$userId
+		$targetUserId
 	);
 
 	$response = [
 		"success" => true,
 		"message" => "User deleted successfully.",
 		"img_gif" => "../images/sys-img/loading1.gif",
-		"redirect_url" => "../my_profile.php"
+		"redirect_url" => ""
 	];
 } catch (Exception $e) {
-	$response = [
-        "success" => false,
-        "message" => $e->getMessage(),
-        "img_gif" => "../images/sys-img/error.gif",
-        "redirect_url" => ""
-    ];
+	$response["message"] = $e->getMessage();
 }
 
+ob_end_clean();
 echo json_encode($response);
 exit;
 ?>
