@@ -27,6 +27,7 @@ try {
     $phone    = trim($_POST["edit_phone"] ?? '');
     $email    = trim($_POST["edit_email"] ?? '');
     $rank     = intval($_POST["edit_rank"] ?? 0);
+    $status   = isset($_POST["edit_status"]) ? 1 : 0;
 
     if ($name === '' || $surname === '' || $email === '') {
         throw new Exception("Name, surname and email are required.");
@@ -37,12 +38,13 @@ try {
     }
 
     $updateData = [
-        "name" => $name,
-        "surname" => $surname,
-        "birthday" => $birthday,
-        "phone" => $phone,
-        "email" => $email,
-        "rank" => $rank
+        "name"      => $name,
+        "surname"   => $surname,
+        "birthday"  => $birthday,
+        "phone"     => $phone,
+        "email"     => $email,
+        "rank"      => $rank,
+        "status"    => $status
     ];
 
     $updateResponse = update_table("users", $updateData, ["user_id" => $targetUserId]);
@@ -77,3 +79,4 @@ try {
 
 echo json_encode($response);
 exit;
+?>

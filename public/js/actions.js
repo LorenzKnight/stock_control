@@ -269,13 +269,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (data.success && data.data) {
 			let company = data.data;
 
-			myCompany.innerHTML =
-				`<p><strong>Org No.:</strong> ` + (company.organization_no && company.organization_no.trim() !== "" ? `${company.organization_no}</p>` : "-</p>") +
-				`<p><strong>Name:</strong> ` + (company.company_name && company.company_name.trim() !== "" ? `${company.company_name}</p>` : "-</p>")
-        
+			let logoHTML = "";
 			if (company.company_logo && company.company_logo.trim() !== "") {
-				myCompany.innerHTML += `<p><img src="images/company-logos/${company.company_logo}" alt="Company Logo" style="max-width: 40px; margin: 0 auto; border-radius: 50%; border: 1px solid #000;"></p>`;
+				logoHTML = `<p><img src="images/company-logos/${company.company_logo}" alt="Company Logo" style="max-width: 40px; margin: 0 auto; border-radius: 50%; border: 1px solid #000;"></p>`;
 			}
+
+			myCompany.innerHTML = 
+				logoHTML +
+				`<p><strong>Org No.:</strong> ` + (company.organization_no && company.organization_no.trim() !== "" ? `${company.organization_no}</p>` : "-</p>") +
+				`<p><strong>Name:</strong> ` + (company.company_name && company.company_name.trim() !== "" ? `${company.company_name}</p>` : "-</p>");
 		} else {
 			myCompany.innerHTML = `<p>No company information available.</p>`;
 		}
@@ -283,6 +285,15 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.error("Error fetching data:", error);
         document.getElementById("company-data").innerHTML = `<tr><td colspan="6">Error al cargar los datos de empresa.</td></tr>`;
     }
+
+	// Roles disponibles
+	const ranks = {
+		1: "Administrator (Full Access)",
+		2: "Manager (Manage teams/data)",
+		3: "Supervisor (Oversee operations)",
+		4: "Operator (Limited access)",
+		5: "Viewer (Read-only access)"
+	};
 
 	// 📌 Manejo de lista de usuarios hijos
 	try {
@@ -310,11 +321,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 				? `images/profile/${user.image}` 
 				: "images/profile/NonProfilePic.png";
 
+				let borderColor = Number(user.status) === 1 ? "#8cda8a" : "#fbadad";
+
 				card.innerHTML = `
 					<div class="mini-banner">
-						<div class="mini-profile">
+						<div class="mini-profile" style="border: 2px solid ${borderColor};">
 							<img src="${profileImage}" alt="Profile Picture">
 						</div>
+						<div class="co-worker-position">${ranks[user.rank] || 'Unknown role'}</div>
 					</div>
 					<div class="card-info">
 						<h3>${user.name} ${user.surname}</h3>
@@ -379,9 +393,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 				document.getElementById('edit_birthday').value = user.birthday ? user.birthday.split(" ")[0] : '';
 				document.getElementById('edit_phone').value = user.phone || '';
 				document.getElementById('edit_email').value = user.email || '';
-				document.getElementById('edit_rank').value = user.rank || '';
+
+				populateRankSelect('edit_rank', user.rank);
 				// Opcional: Puedes ocultar el campo de contraseña si estás editando
 				// document.getElementById('edit_password').value = '';
+				document.getElementById("edit_status").checked = user.status === "1" || user.status === 1;
 			}
 		} catch (error) {
 			console.error("Error loading user data:", error);
@@ -441,7 +457,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				alert("User ID not found.");
 				return;
 			}
-			
+
 			showConfirmModal("Delete User", "Are you sure you want to delete this user?", async () => {
 				const formData = new FormData();
 				formData.append("user_id", userId);
@@ -917,6 +933,30 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	initDragAndDrop('drop-area', 'company_logo', 'logo-preview');
 
+
+	// Función para llenar el <select>
+	function populateRankSelect(selectId, selectedValue = '') {
+		const select = document.getElementById(selectId);
+		if (!select) return;
+
+		select.innerHTML = '';
+
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = 'Select user role';
+		select.appendChild(defaultOption);
+
+		for (const [value, label] of Object.entries(ranks)) {
+			const option = document.createElement('option');
+			option.value = value;
+			option.textContent = label;
+			if (String(value) === String(selectedValue)) {
+				option.selected = true;
+			}
+			select.appendChild(option);
+		}
+	}
+
 	// 📌 script para add members popup
 	let addMemberButton = document.getElementById('add-members-button');
 	addMemberButton.addEventListener('click', function (e) {
@@ -942,6 +982,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 				popupContent.style.transform = 'scale(1)';
 				popupContent.style.opacity = '1';
 			}, 50);
+
+			populateRankSelect('rank');
 		}
 	});
 

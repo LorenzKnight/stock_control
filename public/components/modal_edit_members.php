@@ -31,14 +31,7 @@
 				<tr valign="baseline" class="form_height">
 					<td colspan="2" align="center" valign="middle">
 						<label for="rank">User Role / Permissions:</label>
-						<select class="form-input-style" name="edit_rank" id="edit_rank">
-							<option value="">Select user role</option>
-							<option value="1">Administrator (Full Access)</option>
-							<option value="2">Manager (Manage teams & data)</option>
-							<option value="3">Supervisor (Oversee operations)</option>
-							<option value="4">Operator (Limited operational access)</option>
-							<option value="5">Viewer (Read-only access)</option>
-						</select>
+						<select class="form-input-style" name="edit_rank" id="edit_rank"></select>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
@@ -60,7 +53,7 @@
 					<td colspan="6" align="center" valign="middle">
 						<span style="display: block; margin-bottom: 5px;">Status</span>
 						<label class="switch">
-							<input type="checkbox">
+							<input type="checkbox" name="edit_status" id="edit_status" value="1">
 							<span class="slider round"></span>
 						</label>
 					</td>

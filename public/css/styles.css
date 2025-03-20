@@ -4,11 +4,9 @@
 @import url("message.css");
 
 :root {
-
-    /* --main-text-color:  rgb(148, 148, 148); */
-
-    --input-border: #999;
+    --main-bg-dark-blue: #022e63;
     --frm-bg-transparent-grey: rgba(255, 255, 255, 0.35);
+    --main-bg-beige: rgb(221, 216, 212);
     --main-bg-pop-up: rgba(0, 0, 0, 0.512);
     --main-bg-white: #fff;
     --main-bg-color: #f2f2f2;
