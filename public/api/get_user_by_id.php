@@ -27,7 +27,8 @@ try {
         "birthday",
         "phone",
         "email",
-        "rank"
+        "rank",
+		"status"
 	], ["user_id" => $userId], ["fetch_first" => true]);
 
 	$userData = json_decode($userInfo, true);

@@ -25,20 +25,13 @@
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<input class="form-input-style" type="number" name="phone" id="phone" placeholder="Enter a phone number..." title="Enter a valid phone number" required/>
+						<input class="form-input-style" type="number" name="phone" id="phone" placeholder="Enter a phone number..." title="Enter a valid phone number"/>
 					</td>
 				</tr>
                 <tr valign="baseline" class="form_height">
 					<td colspan="2" align="center" valign="middle">
 						<label for="rank">User Role / Permissions:</label>
-						<select class="form-input-style" name="rank" id="rank">
-							<option value="">Select user role</option>
-							<option value="1">Administrator (Full Access)</option>
-							<option value="2">Manager (Manage teams & data)</option>
-							<option value="3">Supervisor (Oversee operations)</option>
-							<option value="4">Operator (Limited operational access)</option>
-							<option value="5">Viewer (Read-only access)</option>
-						</select>
+						<select class="form-input-style" name="rank" id="rank"></select>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">

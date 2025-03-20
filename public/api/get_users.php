@@ -28,8 +28,13 @@ try {
         "email",
         "phone",
         "image",
+        "rank",
+        "status",
         "signup_date"
-    ], ["user_admin" => $userId]);
+    ], ["user_admin" => $userId], [
+        "order_by" => "user_id",
+        "order_direction" => "ASC"
+    ]);
 
     $users = json_decode($userResponse, true);
 

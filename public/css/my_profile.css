@@ -27,7 +27,7 @@
     margin: 5px 10px;
     padding: 10px;
     color: #666;
-    background-color: antiquewhite;
+    background-color: var(--main-bg-beige); /* aqui */
     font-size: 12px;
     display: flex;
     flex-direction: column;
@@ -90,7 +90,7 @@
     height: 40px;
     padding-top: 5px;
     border-radius: 10px;
-    background-color: rgb(221, 216, 212);
+    background-color: var(--main-bg-beige);
 }
 
 .mini-profile {
@@ -99,6 +99,15 @@
     height: 60px;
     border-radius: 50%;
     margin: 0 0 0 10px;
+    position: relative;
+}
+
+.co-worker-position {
+    width: 170px;
+    color: var(--main-bg-beige);
+    position: absolute;
+    top: 58px;
+    right: 12px;
 }
 
 .mini-profile img {
@@ -117,7 +126,7 @@
     width: 44px;
     height: 44px;
     /* padding: 5px 7px 6px; */
-    background-color: rgb(221, 216, 212);
+    background-color: var(--main-bg-beige);
     color: #FFF;
     font-size: 18px;
     border-radius: 50%;
@@ -132,7 +141,7 @@
 }
 
 .card-menu:hover {
-    background-color: #022e63;
+    background-color: var(--main-bg-dark-blue);
     box-shadow: 0 0 4px 3px rgb(47 48 63 / 19%);
     transition: all 1.0s ease;
 }
