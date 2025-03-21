@@ -31,7 +31,7 @@ try {
         "rank",
         "status",
         "signup_date"
-    ], ["user_admin" => $userId], [
+    ], ["parent_user" => $userId], [
         "order_by" => "user_id",
         "order_direction" => "ASC"
     ]);

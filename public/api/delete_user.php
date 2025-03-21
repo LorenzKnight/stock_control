@@ -28,7 +28,7 @@ try {
 
 	$checkUser = select_from("users", ["user_id"], [
 		"user_id" => $targetUserId,
-		"user_admin" => $sessionUserId
+		"parent_user" => $sessionUserId
 	], ["fetch_first" => true]);
 
 	$checkResult = json_decode($checkUser, true);
