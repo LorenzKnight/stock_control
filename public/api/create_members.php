@@ -31,7 +31,7 @@ try {
 		$data[$field] = htmlspecialchars(trim($_POST[$field]));
 	}
 
-    $data["user_admin"] = $userId;
+    $data["parent_user"] = $userId;
     $data["status"] = 1;
     $data["username"] = strtolower($data["name"] . "_" . $data["surname"]);
     $data["verified"] = 0;
