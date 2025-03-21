@@ -547,6 +547,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
+	if (selectPack) {
+		selectPack.addEventListener('change', updateEstimatedCost);
+	}
+
 	// 📌 script para recojer el paquete actual
 	async function loadCurrentPackage() {
 		try {
