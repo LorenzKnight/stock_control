@@ -1,7 +1,7 @@
 .button-style-agree {
 	width: 95%;
 	background: var(--btn-green); 
-	color: white;
+	color: var(--clr-white);
 	font-size: 14px;
 	/* margin: 10px auto; */
 	padding: 15px 0;
@@ -15,7 +15,7 @@
 	width: 95%;
 	padding: 15px 0;
 	background: var(--btn-neutral); 
-	color: #fff;
+	color: var(--clr-white);
 	border: 0;
 	border-radius: 5px;
 	box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
@@ -25,7 +25,7 @@
 .cancel-btn {
 	width: 95%;
 	background: var(--btn-cancel); 
-	color: white;
+	color: var(--clr-white);
 	font-size: 14px;
 	margin: 10px auto;
 	padding: 15px 0;
@@ -38,7 +38,7 @@
 .button-style-neutral {
 	width: 80%;
 	background: #767676;
-	color: white;
+	color: var(--clr-white);
 	font-size: 14px;
 	margin: 5px 0;
 	padding: 10px 0;
@@ -51,8 +51,35 @@
 
 .button-style-neutral:hover {
 	background: #022e63;
-	color: white;
+	color: var(--clr-white);
 	transition: all 1.0s ease;
+}
+
+
+/* Estilos del scroll (WebKit) */
+.product-list::-webkit-scrollbar,
+.members-table::-webkit-scrollbar {
+	width: 15px;
+}
+
+.product-list::-webkit-scrollbar-track,
+.members-table::-webkit-scrollbar-track {
+	background: #e1e1e1; 
+	border-radius: 10px;
+}
+
+.product-list::-webkit-scrollbar-thumb,
+.members-table::-webkit-scrollbar-thumb {
+	background-color: #d8cac1; 
+	border-radius: 10px;
+	box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.529);
+    transition: all 1.0s ease;
+}
+
+.product-list::-webkit-scrollbar-thumb:hover,
+.members-table::-webkit-scrollbar-thumb:hover {
+	background-color: #022e63;
+    transition: all 1.0s ease;
 }
 
 
@@ -93,7 +120,7 @@
 	width: 16px;
 	left: 4px;
 	bottom: 4px;
-	background-color: var(--main-bg-white);
+	background-color: var(--clr-white);
 	-webkit-transition: .4s;
 	transition: .4s;
 }

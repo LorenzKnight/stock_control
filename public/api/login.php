@@ -46,7 +46,7 @@ try {
         "success" => true,
         "message" => "Logging in....",
         "img_gif" => "../images/sys-img/loading1.gif",
-        "redirect_url" => "../my_profile.php"
+        "redirect_url" => "../profile.php"
     ];
 
 } catch (Exception $e) {

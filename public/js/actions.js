@@ -1,4 +1,21 @@
 document.addEventListener("DOMContentLoaded", async function () {
+	// 📌 Redireccionar al hacer clic en Menu
+	document.querySelectorAll('.menu li').forEach(item => {
+		if (!item.classList.contains('no-redirect')) {
+			item.addEventListener('click', function () {
+				const section = this.textContent.trim().toLowerCase();
+				window.location.href = section + ".php";
+			});
+		}
+
+		const currentPage = window.location.pathname.split("/").pop(); // ej: "products.php"
+		const sectionName = item.textContent.trim().toLowerCase() + ".php";
+
+		if (sectionName === currentPage) {
+			item.classList.add('active');
+		}
+	});
+
 	// 📌 Mostrar y ocultar menú de perfil
 	var profileTrigger = document.getElementById('profileTrigger');
 	var profileDropdown = document.getElementById('profileDropdown');
@@ -255,36 +272,37 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
 	// 📌 Manejo de lo datos de Empresa
-    try {
-        let response = await fetch('api/get_company_info.php', {
-            method: 'GET',
-            headers: { Accept: "application/json" }
-        });
+	const myCompany = document.getElementById("company-data");
+	if (myCompany) {
+		try {
+			let response = await fetch('api/get_company_info.php', {
+				method: 'GET',
+				headers: { Accept: "application/json" }
+			});
 
-        let data = await response.json();
-        // console.log("Server response:", data);
+			let data = await response.json();
+			// console.log("Server response:", data);
 
-		let myCompany = document.getElementById("company-data");
+			if (data.success && data.data) {
+				let company = data.data;
 
-		if (data.success && data.data) {
-			let company = data.data;
+				let logoHTML = "";
+				if (company.company_logo && company.company_logo.trim() !== "") {
+					logoHTML = `<p><img src="images/company-logos/${company.company_logo}" alt="Company Logo" style="max-width: 40px; margin: 0 auto; border-radius: 50%; border: 1px solid #000;"></p>`;
+				}
 
-			let logoHTML = "";
-			if (company.company_logo && company.company_logo.trim() !== "") {
-				logoHTML = `<p><img src="images/company-logos/${company.company_logo}" alt="Company Logo" style="max-width: 40px; margin: 0 auto; border-radius: 50%; border: 1px solid #000;"></p>`;
+				myCompany.innerHTML = 
+					logoHTML +
+					`<p><strong>Org No.:</strong> ` + (company.organization_no && company.organization_no.trim() !== "" ? `${company.organization_no}</p>` : "-</p>") +
+					`<p><strong>Name:</strong> ` + (company.company_name && company.company_name.trim() !== "" ? `${company.company_name}</p>` : "-</p>");
+			} else {
+				myCompany.innerHTML = `<p>No company information available.</p>`;
 			}
-
-			myCompany.innerHTML = 
-				logoHTML +
-				`<p><strong>Org No.:</strong> ` + (company.organization_no && company.organization_no.trim() !== "" ? `${company.organization_no}</p>` : "-</p>") +
-				`<p><strong>Name:</strong> ` + (company.company_name && company.company_name.trim() !== "" ? `${company.company_name}</p>` : "-</p>");
-		} else {
-			myCompany.innerHTML = `<p>No company information available.</p>`;
+		} catch (error) {
+			console.error("Error fetching data:", error);
+			document.getElementById("company-data").innerHTML = `<tr><td colspan="6">Error al cargar los datos de empresa.</td></tr>`;
 		}
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        document.getElementById("company-data").innerHTML = `<tr><td colspan="6">Error al cargar los datos de empresa.</td></tr>`;
-    }
+	}
 
 	// Roles disponibles
 	const ranks = {
@@ -296,63 +314,64 @@ document.addEventListener("DOMContentLoaded", async function () {
 	};
 
 	// 📌 Manejo de lista de usuarios hijos
-	try {
-		let response = await fetch('api/get_users.php', {
-			method: 'GET',
-			headers: { 'Accept': 'application/json' }
-		});
-
-		let data = await response.json();
-		// console.log('Server response:', data);
-		
-		let spot = document.getElementById("spot");
-		let userContainer = document.getElementById('child-user-table');
-
-		spot.innerHTML = data.count !== "" ? data.count : "0";
-
-		if (data.success && data.count > 0) {
-			userContainer.innerHTML = '';
-
-			data.users.forEach(user => {
-				let card = document.createElement("div");
-				card.classList.add("members-card");
-
-				let profileImage = user.image && user.image.trim() !== "" 
-				? `images/profile/${user.image}` 
-				: "images/profile/NonProfilePic.png";
-
-				let borderColor = Number(user.status) === 1 ? "#8cda8a" : "#fbadad";
-
-				card.innerHTML = `
-					<div class="mini-banner">
-						<div class="mini-profile" style="border: 2px solid ${borderColor};">
-							<img src="${profileImage}" alt="Profile Picture">
-						</div>
-						<div class="co-worker-position">${ranks[user.rank] || 'Unknown role'}</div>
-					</div>
-					<div class="card-info">
-						<h3>${user.name} ${user.surname}</h3>
-						<p><strong>Email:</strong> ${user.email}</p>
-						<p><strong>Phone:</strong> ${user.phone ? user.phone : "No Phone Number"}</p>
-					</div>
-					<div class="card-menu">
-						<img src="images/sys-img/edit-icon.png" alt="eidt-card">
-					</div>
-				`;
-
-				userContainer.appendChild(card);
-
-				const cardMenuBtn = card.querySelector('.card-menu');
-				cardMenuBtn.addEventListener('click', () => {
-					openMemberForm(user.user_id);
-				});
+	const spot = document.getElementById("spot");
+	const userContainer = document.getElementById('child-user-table');
+	if (spot && userContainer) {
+		try {
+			let response = await fetch('api/get_users.php', {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
 			});
-		} else {
-			userContainer.innerHTML = "<p>No members found.</p>";
+
+			let data = await response.json();
+			// console.log('Server response:', data);
+
+			spot.innerHTML = data.count !== "" ? data.count : "0";
+
+			if (data.success && data.count > 0) {
+				userContainer.innerHTML = '';
+
+				data.users.forEach(user => {
+					let card = document.createElement("div");
+					card.classList.add("members-card");
+
+					let profileImage = user.image && user.image.trim() !== "" 
+					? `images/profile/${user.image}` 
+					: "images/profile/NonProfilePic.png";
+
+					let borderColor = Number(user.status) === 1 ? "#8cda8a" : "#fbadad";
+
+					card.innerHTML = `
+						<div class="mini-banner">
+							<div class="mini-profile" style="border: 2px solid ${borderColor};">
+								<img src="${profileImage}" alt="Profile Picture">
+							</div>
+							<div class="co-worker-position">${ranks[user.rank] || 'Unknown role'}</div>
+						</div>
+						<div class="card-info">
+							<h3>${user.name} ${user.surname}</h3>
+							<p><strong>Email:</strong> ${user.email}</p>
+							<p><strong>Phone:</strong> ${user.phone ? user.phone : "No Phone Number"}</p>
+						</div>
+						<div class="card-menu">
+							<img src="images/sys-img/edit-icon.png" alt="eidt-card">
+						</div>
+					`;
+
+					userContainer.appendChild(card);
+
+					const cardMenuBtn = card.querySelector('.card-menu');
+					cardMenuBtn.addEventListener('click', () => {
+						openMemberForm(user.user_id);
+					});
+				});
+			} else {
+				userContainer.innerHTML = "<p>No members found.</p>";
+			}
+		} catch (error) {
+			console.error('Error fetching data:', error);
+			document.getElementById("child-user-table").innerHTML = `<p>Error loading user data.</p>`;
 		}
-	} catch (error) {
-		console.error('Error fetching data:', error);
-		document.getElementById("child-user-table").innerHTML = `<p>Error loading user data.</p>`;
 	}
 
 	async function openMemberForm(userId) {
@@ -499,9 +518,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 	// 📌 cerrar al hacer clic fuera del formulario
 	function handlePopupClose(popupId, contentSelector, otherPopups = []) {
 		const popup = document.getElementById(popupId);
-		const popupContent = popup.querySelector(contentSelector);
 	
 		if (popup) {
+			const popupContent = popup.querySelector(contentSelector);
+			if (!popupContent) return;
+
 			popup.addEventListener("click", function (e) {
 				if (!popupContent.contains(e.target)) {
 					popup.style.display = "none";
@@ -519,6 +540,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	handlePopupClose("edit-company-form", ".formular-frame", ["edit-company-form"]);
 	handlePopupClose("add-members-form", ".formular-frame", ["add-members-form"]);
 	handlePopupClose("edit-members-form", ".formular-frame", ["edit-members-form"]);
+	handlePopupClose("add-product-form", ".formular-frame", ["add-product-form"]);
 
 	// 📌 Boton para cerrar formulario
 	let cancelButtons = document.querySelectorAll('.neutral-btn');
@@ -640,32 +662,34 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	// 📌 script para my info popup
 	let editMyDataButton = document.getElementById('edit-my-data');
-	editMyDataButton.addEventListener('click', function (e) {
-		e.preventDefault();
+	if (editMyDataButton) {
+		editMyDataButton.addEventListener('click', function (e) {
+			e.preventDefault();
 
-		scrollToTopIfNeeded();
-		
-		const editMyInfoForm = document.getElementById('edit-my_info-form');
-		const popupContent = editMyInfoForm.querySelector('.formular-frame');
+			scrollToTopIfNeeded();
+			
+			const editMyInfoForm = document.getElementById('edit-my_info-form');
+			const popupContent = editMyInfoForm.querySelector('.formular-frame');
 
-		if (editMyInfoForm && popupContent) {
-			editMyInfoForm.style.display = 'block';
-			editMyInfoForm.style.opacity = '0';
-			editMyInfoForm.style.transition = 'opacity 0.5s ease';
-			setTimeout(() => {
-				editMyInfoForm.style.opacity = '1';
-			}, 10);
+			if (editMyInfoForm && popupContent) {
+				editMyInfoForm.style.display = 'block';
+				editMyInfoForm.style.opacity = '0';
+				editMyInfoForm.style.transition = 'opacity 0.5s ease';
+				setTimeout(() => {
+					editMyInfoForm.style.opacity = '1';
+				}, 10);
 
-			popupContent.style.transform = 'scale(0.7)';
-			popupContent.style.opacity = '0';
-			popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-			setTimeout(() => {
-				popupContent.style.transform = 'scale(1)';
-				popupContent.style.opacity = '1';
-				loadMyInfo();
-			}, 50);
-		}
-	});
+				popupContent.style.transform = 'scale(0.7)';
+				popupContent.style.opacity = '0';
+				popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+				setTimeout(() => {
+					popupContent.style.transform = 'scale(1)';
+					popupContent.style.opacity = '1';
+					loadMyInfo();
+				}, 50);
+			}
+		});
+	}
 
 	// 📌 Manejo del formulario de edit my info
 	let formEditMyInfo = document.getElementById('formEditMyInfo');
@@ -718,32 +742,34 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	// 📌 script para subscrition popup
 	let subscButton = document.getElementById('subsc-button');
-	subscButton.addEventListener('click', function (e) {
-		e.preventDefault();
+	if (subscButton) {
+		subscButton.addEventListener('click', function (e) {
+			e.preventDefault();
 
-		scrollToTopIfNeeded();
+			scrollToTopIfNeeded();
 
-		const subscForm = document.getElementById('subsc-form');
-		const popupContent = subscForm.querySelector('.formular-frame');
+			const subscForm = document.getElementById('subsc-form');
+			const popupContent = subscForm.querySelector('.formular-frame');
 
-		if (subscForm && popupContent) {
-			subscForm.style.display = 'block';
-			subscForm.style.opacity = '0';
-			subscForm.style.transition = 'opacity 0.5s ease';
-			setTimeout(() => {
-				subscForm.style.opacity = '1';
-			}, 10);
+			if (subscForm && popupContent) {
+				subscForm.style.display = 'block';
+				subscForm.style.opacity = '0';
+				subscForm.style.transition = 'opacity 0.5s ease';
+				setTimeout(() => {
+					subscForm.style.opacity = '1';
+				}, 10);
 
-			popupContent.style.transform = 'scale(0.7)';
-			popupContent.style.opacity = '0';
-			popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-			setTimeout(() => {
-				popupContent.style.transform = 'scale(1)';
-				popupContent.style.opacity = '1';
-				loadCurrentPackage();
-			}, 50);
-		}
-	});
+				popupContent.style.transform = 'scale(0.7)';
+				popupContent.style.opacity = '0';
+				popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+				setTimeout(() => {
+					popupContent.style.transform = 'scale(1)';
+					popupContent.style.opacity = '1';
+					loadCurrentPackage();
+				}, 50);
+			}
+		});
+	}
 
 	// 📌 Manejo del formulario de subscripcion
 	let formSubscription = document.getElementById('formSubscription');
@@ -861,32 +887,34 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	// 📌 script para update company popup
 	let editCompButton = document.getElementById('edit-comp-button');
-	editCompButton.addEventListener('click', function (e) {
-		e.preventDefault();
+	if (editCompButton) {
+		editCompButton.addEventListener('click', function (e) {
+			e.preventDefault();
 
-		scrollToTopIfNeeded();
+			scrollToTopIfNeeded();
 
-		const editCompanyForm = document.getElementById('edit-company-form');
-		const popupContent = editCompanyForm.querySelector('.formular-frame');
+			const editCompanyForm = document.getElementById('edit-company-form');
+			const popupContent = editCompanyForm.querySelector('.formular-frame');
 
-		if (editCompanyForm && popupContent) {
-			editCompanyForm.style.display = 'block';
-			editCompanyForm.style.opacity = '0';
-			editCompanyForm.style.transition = 'opacity 0.5s ease';
-			setTimeout(() => {
-				editCompanyForm.style.opacity = '1';
-			}, 10);
+			if (editCompanyForm && popupContent) {
+				editCompanyForm.style.display = 'block';
+				editCompanyForm.style.opacity = '0';
+				editCompanyForm.style.transition = 'opacity 0.5s ease';
+				setTimeout(() => {
+					editCompanyForm.style.opacity = '1';
+				}, 10);
 
-			popupContent.style.transform = 'scale(0.7)';
-			popupContent.style.opacity = '0';
-			popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-			setTimeout(() => {
-				popupContent.style.transform = 'scale(1)';
-				popupContent.style.opacity = '1';
-				loadCompanyData();
-			}, 50);
-		}
-	});
+				popupContent.style.transform = 'scale(0.7)';
+				popupContent.style.opacity = '0';
+				popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+				setTimeout(() => {
+					popupContent.style.transform = 'scale(1)';
+					popupContent.style.opacity = '1';
+					loadCompanyData();
+				}, 50);
+			}
+		});
+	}
 
 	// 📌 Manejo del formulario de update Company
 	let formEditCompany = document.getElementById('formEditCompany');
@@ -963,33 +991,35 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	// 📌 script para add members popup
 	let addMemberButton = document.getElementById('add-members-button');
-	addMemberButton.addEventListener('click', function (e) {
-		e.preventDefault();
+	if (addMemberButton) {
+		addMemberButton.addEventListener('click', function (e) {
+			e.preventDefault();
 
-		scrollToTopIfNeeded();
+			scrollToTopIfNeeded();
 
-		const addMembersForm = document.getElementById('add-members-form');
-		const popupContent = addMembersForm.querySelector('.formular-frame');
+			const addMembersForm = document.getElementById('add-members-form');
+			const popupContent = addMembersForm.querySelector('.formular-frame');
 
-		if (addMembersForm && popupContent) {
-			addMembersForm.style.display = 'block';
-			addMembersForm.style.opacity = '0';
-			addMembersForm.style.transition = 'opacity 0.5s ease';
-			setTimeout(() => {
-				addMembersForm.style.opacity = '1';
-			}, 10);
+			if (addMembersForm && popupContent) {
+				addMembersForm.style.display = 'block';
+				addMembersForm.style.opacity = '0';
+				addMembersForm.style.transition = 'opacity 0.5s ease';
+				setTimeout(() => {
+					addMembersForm.style.opacity = '1';
+				}, 10);
 
-			popupContent.style.transform = 'scale(0.7)';
-			popupContent.style.opacity = '0';
-			popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-			setTimeout(() => {
-				popupContent.style.transform = 'scale(1)';
-				popupContent.style.opacity = '1';
-			}, 50);
+				popupContent.style.transform = 'scale(0.7)';
+				popupContent.style.opacity = '0';
+				popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+				setTimeout(() => {
+					popupContent.style.transform = 'scale(1)';
+					popupContent.style.opacity = '1';
+				}, 50);
 
-			populateRankSelect('rank');
-		}
-	});
+				populateRankSelect('rank');
+			}
+		});
+	}
 
 	// 📌 Manejo del formulario de crear miembros
 	let formMembers = document.getElementById('formMembers');
@@ -1038,6 +1068,39 @@ document.addEventListener("DOMContentLoaded", async function () {
 				statusText.innerText = "Error procesando la solicitud.";
 				statusImage.src = data.img_gif;
 				banner.style.display = 'block';
+			}
+		});
+	}
+
+	
+	// 📌 script para add product popup
+	let addProductButton = document.getElementById('add-product-button');
+	if (addProductButton) {
+		addProductButton.addEventListener('click', function (e) {
+			e.preventDefault();
+
+			scrollToTopIfNeeded();
+
+			const addProductForm = document.getElementById('add-product-form');
+			const popupContent = addProductForm.querySelector('.formular-frame');
+
+			if (addProductForm && popupContent) {
+				addProductForm.style.display = 'block';
+				addProductForm.style.opacity = '0';
+				addProductForm.style.transition = 'opacity 0.5s ease';
+				setTimeout(() => {
+					addProductForm.style.opacity = '1';
+				}, 10);
+
+				popupContent.style.transform = 'scale(0.7)';
+				popupContent.style.opacity = '0';
+				popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+				setTimeout(() => {
+					popupContent.style.transform = 'scale(1)';
+					popupContent.style.opacity = '1';
+				}, 50);
+
+				// populateRankSelect('rank');
 			}
 		});
 	}

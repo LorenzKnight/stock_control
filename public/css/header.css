@@ -28,10 +28,12 @@ nav ul.menu li {
     padding: 0 20px;
 }
 
-nav ul.menu li a {
-    color: #fff;
-    text-decoration: none;
-    flex: 1;
+nav ul.menu li:hover {
+    color: var(--main-bg-blue);
+}
+
+.menu li.active {
+	color: #fd802c;
 }
 
 .search-holder {
@@ -92,11 +94,11 @@ nav ul.menu li a {
 #profileDropdown ul li {
 	padding: 10px 0;
 	text-align: left;
-    text-decoration: none;
 }
 
 #profileDropdown ul li a {
 	color: #999;
+    text-decoration: none;
 }
 
 #profileDropdown ul li :hover {
