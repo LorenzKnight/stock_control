@@ -1,58 +1,64 @@
 <div class="bg-popup" id="add-product-form">
 	<div class="formular-frame">
-        <form action="stock.php" method="post" name="formMembers" id="formMembers">
-            <table width="80%" align="center" cellspacing="0">
-                <tr valign="baseline">
-					<td style="font-size: 12px;" colspan="6" align="center" valign="middle">
-						<h2>Add your co-Workers</h2>
+	<form action="stock.php" method="post" name="formAddProduct" id="formAddProduct" enctype="multipart/form-data">
+			<table width="80%" align="center" cellspacing="0">
+				<tr valign="baseline">
+					<td colspan="2" align="center" valign="middle">
+						<h2>Add Product</h2>
 					</td>      
 				</tr>
-                <tr valign="baseline" class="form_height">
-					<td colspan="6" align="center" valign="middle">
-						<input class="form-input-style" type="text" name="name" id="name" placeholder="Enter a name..." title="Enter a valid name" required/>
-					</td>
-				</tr>
 				<tr valign="baseline" class="form_height">
-					<td colspan="6" align="center" valign="middle">
-						<input class="form-input-style" type="text" name="surname" id="surname" placeholder="Enter a surname..." title="Enter a valid surname" required/>
-					</td>
-				</tr>
-                <tr valign="baseline" class="form_height">
-					<td colspan="6" align="center" valign="middle">
-						<label for="fecha">Birthdate:</label>
-						<input class="form-input-style" type="date" name="birthday" id="birthday" placeholder="" title="" required/>
-					</td>
-				</tr>
-				<tr valign="baseline" class="form_height">
-					<td colspan="6" align="center" valign="middle">
-						<input class="form-input-style" type="number" name="phone" id="phone" placeholder="Enter a phone number..." title="Enter a valid phone number"/>
-					</td>
-				</tr>
-                <tr valign="baseline" class="form_height">
 					<td colspan="2" align="center" valign="middle">
-						<label for="rank">User Role / Permissions:</label>
-						<select class="form-input-style" name="rank" id="rank"></select>
+						<div class="drop-area" id="drop-product-area">
+							<img class="image-preview" id="product-image-preview" src="" alt="Product Image Preview">
+							<p>Drop logo image here or click to select</p>
+							<input type="file" name="Product_image" id="Product_image" accept="image/*" style="display: none;">
+						</div>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
-					<td colspan="6" align="center" valign="middle">
-						<input class="form-input-style" type="email" name="email" id="email" placeholder="Enter a E-Mail..." title="Enter a valid email" required/>
+					<td colspan="2" align="center" valign="middle">
+						<input class="form-input-style" type="text" name="product_name" id="product_name" placeholder="Product Name..." title="Product name"/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
-					<td colspan="6" align="center" valign="middle">
-						<input class="form-input-style" type="password" name="password" id="password" placeholder="Enter a Password..." required/>
+					<td style="padding: 0 1%;" width="48%" align="center" valign="middle">
+						<input class="form-input-style" type="text" name="product_type" id="product_type" placeholder="Product Type" title="Product Type"/>
+					</td>
+					<td style="padding: 0 1%;" width="48%" align="center" valign="middle">
+						<input class="form-input-style" type="text" name="product_mark" id="product_mark" placeholder="Product Mark" title="Product Mark"/>
 					</td>
 				</tr>
-                <tr valign="baseline" class="form_height">
-					<td width="50%" align="center" valign="middle">
+				<tr valign="baseline" class="form_height">
+					<td style="padding: 0 1%;" width="48%" align="center" valign="middle">
+						<input class="form-input-style" type="text" name="product_model" id="product_model" placeholder="Product Model" title="Product Model"/>
+					</td>
+					<td style="padding: 0 1%;" width="48%" align="center" valign="middle">
+						<input class="form-input-style" type="text" name="product_sub_model" id="product_sub_model" placeholder="Product Sub-Model" title="Product Sub-Model"/>
+					</td>
+				</tr>
+				<tr valign="baseline" class="form_height">
+					<td style="padding: 0 1%;" width="48%" align="center" valign="middle">
+						<input class="form-input-style" type="text" name="product_year" id="product_year" placeholder="Product Year" title="Product Year"/>
+					</td>
+					<td style="padding: 0 1%;" width="48%" align="center" valign="middle">
+						<input class="form-input-style" type="text" name="prise" id="prise" placeholder="Product Prise" title="Product Prise"/>
+					</td>
+				</tr>
+				<tr valign="baseline" class="form_height">
+					<td colspan="2" align="center" valign="middle">
+						<input class="form-input-style" type="text" name="description" id="description" placeholder="Description" title="Description"/>
+					</td>
+				</tr>
+				<tr valign="baseline" class="form_height">
+					<td colspan="1" align="center" valign="middle">
 						<button type="button" class="neutral-btn">Cancel</button>
 					</td>
-					<td width="50%" align="center" valign="middle">
+					<td colspan="1" align="center" valign="middle">
 						<input type="submit" class="button-style-agree" value="Create" />
 					</td>
 				</tr>
-            </table>
-        </form>
-    </div>
+			</table>
+		</form>
+	</div>
 </div>

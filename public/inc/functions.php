@@ -89,9 +89,16 @@ function insert_into($tableName, array $queryData = [], array $options = []) : s
 	if ($result && !empty($returningId)) {
 		$row = pg_fetch_assoc($result);
 		$insertedId = $row[$options['id']];
-		return json_encode(["success" => true, "id" => $insertedId, "message" => "Record inserted successfully"]);
+		return json_encode([
+			"success" => true, 
+			"id" => $insertedId, 
+			"message" => "Record inserted successfully"
+		]);
 	} else {
-		return json_encode(["success" => false, "message" => "Error inserting record"]);
+		return json_encode([
+			"success" => false, 
+			"message" => "Error inserting record"
+		]);
 	}
 }
 
@@ -197,16 +204,16 @@ function delete_from(string $tableName, array $whereClause = [], array $options 
 }
 
 function log_activity($userId, $actionType, $description, $relatedTable = null, $relatedId = null) {
-    $data = [
-        "user_id" => $userId,
-        "action_type" => $actionType,
-        "action_description" => $description,
-        "related_table" => $relatedTable,
-        "related_id" => $relatedId,
-        "created_at" => date("Y-m-d H:i:s")
-    ];
+	$data = [
+		"user_id" => $userId,
+		"action_type" => $actionType,
+		"action_description" => $description,
+		"related_table" => $relatedTable,
+		"related_id" => $relatedId,
+		"created_at" => date("Y-m-d H:i:s")
+	];
 
-    return insert_into("activity_history", $data);
+	return insert_into("activity_history", $data);
 }
 
 

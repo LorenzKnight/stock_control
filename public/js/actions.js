@@ -1105,6 +1105,55 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
+	// 📌 Manejo del formulario para crear Producto
+	const formAddProduct = document.getElementById('formAddProduct');
+	if (formAddProduct) {
+		formAddProduct.addEventListener('submit', async function (e) {
+			e.preventDefault();
+
+			const formData = new FormData(this);
+
+			try {
+				const response = await fetch('api/create_product.php', {
+					method: 'POST',
+					headers: { Accept: 'application/json' },
+					body: formData
+				});
+
+				const data = await response.json();
+				console.log('Server response:', data);
+
+				const banner = document.getElementById('status-message');
+				const statusText = document.getElementById('status-text');
+				const statusImage = document.getElementById('status-image');
+
+				statusText.innerText = data.message;
+				statusImage.src = data.img_gif;
+				banner.style.display = 'block';
+				banner.style.opacity = '1';
+
+				if (data.success) {
+					setTimeout(() => {
+						banner.style.opacity = '0';
+						setTimeout(() => {
+							window.location.href = data.redirect_url || window.location.href;
+						}, 1000);
+					}, 3000);
+				}
+			} catch (error) {
+				const banner = document.getElementById('status-message');
+				const statusText = document.getElementById('status-text');
+				const statusImage = document.getElementById('status-image');
+
+				statusText.innerText = "Error processing the request.";
+				statusImage.src = "../images/sys-img/error.gif";
+				banner.style.display = 'block';
+			}
+		});
+	}
+
+	initDragAndDrop('drop-product-area', 'Product_image', 'product-image-preview');
+
 
 	function showConfirmModal(title, message, onConfirm) {
 		const modal = document.getElementById('globalConfirmModal');
