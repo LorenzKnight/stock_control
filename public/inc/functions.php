@@ -9,9 +9,12 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 
 	$whereParts = [];
 	foreach ($whereClause as $column => $value) {
-		if ($value === '' || $value === null) continue;
-		$escapedValue = "'" . pg_escape_string((string)$value) . "'";
-		$whereParts[] = "$column = $escapedValue";
+		if ($value === null) {
+			$whereParts[] = "$column IS NULL";
+		} else {
+			$escapedValue = "'" . pg_escape_string((string)$value) . "'";
+			$whereParts[] = "$column = $escapedValue";
+		}
 	}
 	$whereClauseStr = empty($whereParts) ? '' : ' WHERE ' . implode(' AND ', $whereParts);
 

@@ -1,6 +1,6 @@
 <div class="bg-popup" id="add-product-form">
 	<div class="formular-frame">
-	<form action="stock.php" method="post" name="formAddProduct" id="formAddProduct" enctype="multipart/form-data">
+		<form action="stock.php" method="post" name="formAddProduct" id="formAddProduct" enctype="multipart/form-data">
 			<table width="80%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td colspan="2" align="center" valign="middle">
@@ -22,27 +22,43 @@
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
-					<td style="padding: 0 1%;" width="48%" align="center" valign="middle">
-						<input class="form-input-style" type="text" name="product_type" id="product_type" placeholder="Product Type" title="Product Type"/>
+					<td width="50%" align="center" valign="middle">
+						<!-- <input class="form-medium-input-style" type="text" name="product_type" id="product_type" placeholder="Product Type" title="Product Type"/> -->
+						<select class="form-input-style" name="product_type" id="product_type">
+							<option value="">Select a Vehicle</option>
+							<option value="1">Motorcycle</option>
+							<option value="2">Car</option>
+							<option value="3">SUV</option>
+							<option value="4">Pickup Truck</option>
+							<option value="5">Van</option>
+							<option value="6">Minibus</option>
+							<option value="7">Bus</option>
+							<option value="8">Light Truck</option>
+							<option value="9">Medium Truck</option>
+							<option value="10">Heavy Truck</option>
+							<option value="11">Trailer Truck / Articulated Lorry</option>
+							<option value="12">Construction Vehicle</option>
+							<option value="13">Agricultural Vehicle</option>
+						</select>
 					</td>
-					<td style="padding: 0 1%;" width="48%" align="center" valign="middle">
-						<input class="form-input-style" type="text" name="product_mark" id="product_mark" placeholder="Product Mark" title="Product Mark"/>
+					<td width="50%" align="center" valign="middle">
+						<input class="form-medium-input-style" type="text" name="product_mark" id="product_mark" placeholder="Product Mark" title="Product Mark"/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
-					<td style="padding: 0 1%;" width="48%" align="center" valign="middle">
-						<input class="form-input-style" type="text" name="product_model" id="product_model" placeholder="Product Model" title="Product Model"/>
+					<td width="50%" align="center" valign="middle">
+						<input class="form-medium-input-style" type="text" name="product_model" id="product_model" placeholder="Product Model" title="Product Model"/>
 					</td>
-					<td style="padding: 0 1%;" width="48%" align="center" valign="middle">
-						<input class="form-input-style" type="text" name="product_sub_model" id="product_sub_model" placeholder="Product Sub-Model" title="Product Sub-Model"/>
+					<td width="50%" align="center" valign="middle">
+						<input class="form-medium-input-style" type="text" name="product_sub_model" id="product_sub_model" placeholder="Product Sub-Model" title="Product Sub-Model"/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
-					<td style="padding: 0 1%;" width="48%" align="center" valign="middle">
-						<input class="form-input-style" type="text" name="product_year" id="product_year" placeholder="Product Year" title="Product Year"/>
+					<td width="50%" align="center" valign="middle">
+						<input class="form-medium-input-style" type="text" name="product_year" id="product_year" placeholder="Product Year" title="Product Year"/>
 					</td>
-					<td style="padding: 0 1%;" width="48%" align="center" valign="middle">
-						<input class="form-input-style" type="text" name="prise" id="prise" placeholder="Product Prise" title="Product Prise"/>
+					<td width="50%" align="center" valign="middle">
+						<input class="form-medium-input-style" type="text" name="prise" id="prise" placeholder="Product Prise" title="Product Prise"/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
