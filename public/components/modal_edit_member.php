@@ -42,11 +42,6 @@
 				<!-- <tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
 						<input class="form-input-style" type="password" name="edit_password" id="edit_password" placeholder="Enter a Password..."/>
-
-						<label class="switch">
-							<input type="checkbox">
-							<span class="slider round"></span>
-						</label>
 					</td>
 				</tr> -->
 				<tr valign="baseline" class="form_height">

@@ -9,7 +9,12 @@
 				<table width="90%" align="center" cellspacing="0" style="margin-top: 15px;">
 					<tr valign="baseline" class="form_height">
 						<td colspan="6" align="center" valign="middle">
-							<button class="button-style-agree" id="add-product-button">Create Product</button>
+							<button class="button-style-agree" id="add-product-btn">Create Product</button>
+						</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+						<td colspan="6" align="center" valign="middle">
+							<button class="button-style-agree" id="add-category-btn">Create Sub/Category</button>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
@@ -19,20 +24,7 @@
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td colspan="2" align="center" valign="middle">
-							<!-- <label for="packs">Member Package:</label>
-							<select class="form-input-style" name="packs" id="packs">
-								<option value="">Select a pack</option>
-								<option value="5">Mini Pack (5 members)</option>
-								<option value="10">Smart Pack (10 members)</option>
-								<option value="15">Plus Pack (15 members)</option>
-								<option value="20">Growth Pack (20 members)</option>
-								<option value="25">Boost Pack (25 members)</option>
-								<option value="30">Power Pack (30 members)</option>
-								<option value="35">Max Pack (35 members)</option>
-								<option value="40">Super Pack (40 members)</option>
-								<option value="45">Mega Pack (45 members)</option>
-								<option value="50">Ultra Pack (50 members)</option>
-							</select> -->
+							
 						</td>
 					</tr>
 				</table>

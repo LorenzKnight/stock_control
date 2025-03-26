@@ -541,6 +541,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	handlePopupClose("add-members-form", ".formular-frame", ["add-members-form"]);
 	handlePopupClose("edit-members-form", ".formular-frame", ["edit-members-form"]);
 	handlePopupClose("add-product-form", ".formular-frame", ["add-product-form"]);
+	handlePopupClose("add-category-form", ".formular-frame", ["add-category-form"]);
 
 	// 📌 Boton para cerrar formulario
 	let cancelButtons = document.querySelectorAll('.neutral-btn');
@@ -1074,7 +1075,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	
 	// 📌 script para add product popup
-	let addProductButton = document.getElementById('add-product-button');
+	let addProductButton = document.getElementById('add-product-btn');
 	if (addProductButton) {
 		addProductButton.addEventListener('click', function (e) {
 			e.preventDefault();
@@ -1153,6 +1154,201 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	initDragAndDrop('drop-product-area', 'Product_image', 'product-image-preview');
+
+
+	// 📌 script para add category popup
+	let addCategoryButton = document.getElementById('add-category-btn');
+	if (addCategoryButton) {
+		addCategoryButton.addEventListener('click', function (e) {
+			e.preventDefault();
+
+			scrollToTopIfNeeded();
+
+			const addProductForm = document.getElementById('add-category-form');
+			const popupContent = addProductForm.querySelector('.formular-big-frame');
+
+			if (addProductForm && popupContent) {
+				addProductForm.style.display = 'block';
+				addProductForm.style.opacity = '0';
+				addProductForm.style.transition = 'opacity 0.5s ease';
+				setTimeout(() => {
+					addProductForm.style.opacity = '1';
+				}, 10);
+
+				popupContent.style.transform = 'scale(0.7)';
+				popupContent.style.opacity = '0';
+				popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+				setTimeout(() => {
+					popupContent.style.transform = 'scale(1)';
+					popupContent.style.opacity = '1';
+				}, 50);
+
+				// populateRankSelect('rank');
+			}
+		});
+	}
+
+	let addMarkBtn = document.getElementById('add-mark-btn');
+	addMarkBtn.addEventListener('click', function(){
+		let clicCreateMark = document.getElementById('clic-create-mark');
+		let inputMark = document.getElementById('input-mark');
+
+		clicCreateMark.style.display = 'none';
+		inputMark.style.display = 'block';
+	});
+
+	const inputProductMark = document.getElementById('input-product-mark');
+	const markList = document.getElementById('mark-list');
+	const btnCreateMark = document.getElementById('btn-create-mark');
+
+	btnCreateMark.addEventListener('click', function (e) {
+		e.preventDefault();
+		const value = inputProductMark.value.trim();
+
+		if (value !== '') {
+			const existingRadios = document.querySelectorAll('input[name="mark-radio"]');
+			existingRadios.forEach(r => r.checked = false);
+
+			const row = document.createElement('tr');
+			row.className = "categoryContainer";
+			row.innerHTML = `
+				<td width="10%" align="center" valign="middle">
+					<div class="list-icon">
+						<img src="images/sys-img/element-list.png" alt="">
+					</div>
+				</td>
+				<td width="80%" valign="middle" style="padding-left:10px;">${value}</td>
+				<td width="10%" align="center" valign="middle">
+					<label>
+						<input type="radio" name="product_mark" class="category-radio" data-mark="${value}" checked />
+					</label>
+				</td>
+			`;
+			markList.appendChild(row);
+			inputProductMark.value = '';
+		}
+	});
+
+	try {
+		let response = await fetch('api/get_categories.php', {
+			method: 'GET',
+			headers: { 'Accept': 'application/json' }
+		});
+
+		let data = await response.json();
+
+		if (data.success && data.data.length > 0) {
+			data.data.forEach(category => {
+				const row = document.createElement('tr');
+				row.className = "categoryContainer";
+				row.innerHTML = `
+					<td width="10%" align="center" valign="middle">
+						<div class="list-icon">
+							<img src="images/sys-img/element-list.png" alt="">
+						</div>
+					</td>
+					<td width="80%" valign="middle" style="padding-left:10px;">${category.category_name}</td>
+					<td width="10%" align="center" valign="middle">
+						<label>
+							<input type="radio" name="product_mark" class="category-radio" data-mark="${category.category_id}" />
+						</label>
+					</td>
+				`;
+				markList.appendChild(row);
+			});
+		}
+	} catch (error) {
+		console.error("Error loading categories:", error);
+	}
+
+
+	let addModelBtn = document.getElementById('add-model-btn');
+	addModelBtn.addEventListener('click', function(){
+		let clicCreateMark = document.getElementById('clic-create-model');
+		let inputMark = document.getElementById('input-model');
+
+		clicCreateMark.style.display = 'none';
+		inputMark.style.display = 'block';
+	});
+
+	const inputProductModel = document.getElementById('input-product-model');
+	const modelList = document.getElementById('model-list');
+	const btnCreateModel = document.getElementById('btn-create-model');
+
+	// 🔁 CREAR NUEVO MODELO MANUALMENTE
+	btnCreateModel.addEventListener('click', function (e) {
+		e.preventDefault();
+		const value = inputProductModel.value.trim();
+
+		if (value !== '') {
+			const existingRadios = document.querySelectorAll('input[name="product_model"]');
+			existingRadios.forEach(r => r.checked = false);
+
+			const row = document.createElement('tr');
+			row.className = "categoryContainer";
+			row.innerHTML = `
+				<td width="10%" align="center" valign="middle">
+					<div class="list-icon">
+						<img src="images/sys-img/element-list.png" alt="">
+					</div>
+				</td>
+				<td width="80%" valign="middle" style="padding-left:10px;">${value}</td>
+				<td width="10%" align="center" valign="middle">
+					<label>
+						<input type="radio" name="product_model" class="category-radio" data-model="${value}" checked />
+					</label>
+				</td>
+			`;
+			modelList.appendChild(row);
+			inputProductModel.value = '';
+		}
+	});
+
+	// 🔁 CARGAR MODELOS (SUB-CATEGORÍAS) DINÁMICAMENTE CUANDO SE SELECCIONA UNA MARCA
+	document.addEventListener('change', function (e) {
+		if (e.target.matches('input[name="product_mark"]')) {
+			const selectedMarkId = e.target.dataset.mark;
+
+			// Solo si es un ID numérico (marca de la base de datos)
+			if (!isNaN(selectedMarkId)) {
+				modelList.innerHTML = '';
+
+				fetch(`api/get_sub_categories.php?mark_id=${selectedMarkId}`, {
+					method: 'GET',
+					headers: { 'Accept': 'application/json' }
+				})
+				.then(res => res.json())
+				.then(data => {
+					if (data.success && data.data.length > 0) {
+						data.data.forEach(model => {
+							const row = document.createElement('tr');
+							row.className = "categoryContainer";
+							row.innerHTML = `
+								<td width="10%" align="center" valign="middle">
+									<div class="list-icon">
+										<img src="images/sys-img/element-list.png" alt="">
+									</div>
+								</td>
+								<td width="80%" valign="middle" style="padding-left:10px;">${model.category_name}</td>
+								<td width="10%" align="center" valign="middle">
+									<label>
+										<input type="radio" name="product_model" class="category-radio" data-model="${model.category_id}" />
+									</label>
+								</td>
+							`;
+							modelList.appendChild(row);
+						});
+					} else {
+						modelList.innerHTML = `<tr><td colspan="3" style="text-align:center;">No models found for this brand.</td></tr>`;
+					}
+				})
+				.catch(error => {
+					console.error("Error loading subcategories:", error);
+				});
+			}
+		}
+	});
+
 
 
 	function showConfirmModal(title, message, onConfirm) {

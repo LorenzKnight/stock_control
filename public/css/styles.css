@@ -95,6 +95,21 @@ body {
     appearance:inherit;
     -webkit-appearance:inherit;
 }
+
+.form-medium-input-style {
+    width: 80%;
+    margin: 5px 0;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid var(--clr-border);
+    text-align: center;
+    -moz-appearance:inherit; 
+    -o-appearance:inherit;
+    -ms-appearance:inherit;
+    appearance:inherit;
+    -webkit-appearance:inherit;
+}
 /* end to form-modal */
 
 .bg-popup {
@@ -111,7 +126,7 @@ body {
 .formular-frame {
     width: 400px;
     margin: 100px auto;
-    padding: 50px 0;
+    padding: 20px 0 50px;
     background-color: var(--frm-bg-transparent-grey);
     box-shadow: 0 4px 10px 0 rgba(37, 37, 37, 0.388);
     backdrop-filter: blur(5px);
@@ -122,6 +137,46 @@ body {
     transform: scale(0.7);
     opacity: 0;
     transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.formular-big-frame {
+    width: 1100px;
+    margin: 100px auto;
+    padding: 20px 0 50px;
+    background-color: var(--frm-bg-transparent-grey);
+    box-shadow: 0 4px 10px 0 rgba(37, 37, 37, 0.388);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.239);
+    font-weight: 200;
+    transform: scale(0.7);
+    opacity: 0;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.create-list-holder {
+	display: flex;
+	justify-content: center;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #ccc;
+}
+
+.formular-category-list {
+    width: 330px;
+    height: 458px;
+    margin: 0 auto 10px;
+    padding: 10px;
+    background: #fff;
+}
+
+.list-icon img {
+    width: 30px;
+    height: 30px;
+    margin: 5px 0;
+    border-radius: 2px;
+    object-fit: cover;
+    margin-left: 10px;
 }
 
 .hidden {

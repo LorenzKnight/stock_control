@@ -55,8 +55,8 @@ CREATE TABLE IF NOT EXISTS companies (
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO companies (user_id, company_type, company_name, organization_no, company_address, company_phone, company_logo, created_at)
-VALUES (1, null, 'My Company', 1234123, 'Siriusgatan 102', 763199480, 'logo_user_1_1742063586.png', '2025-03-14 15:06:38.783');
+-- INSERT INTO companies (user_id, company_type, company_name, organization_no, company_address, company_phone, company_logo, created_at)
+-- VALUES (1, null, 'My Company', 1234123, 'Siriusgatan 102', 763199480, 'logo_user_1_1742063586.png', '2025-03-14 15:06:38.783');
 
 CREATE TABLE IF NOT EXISTS products (
 	product_id SERIAL PRIMARY KEY,
@@ -72,5 +72,15 @@ CREATE TABLE IF NOT EXISTS products (
 	description TEXT NULL,
 	prise INTEGER NULL,
 	status INTEGER NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS category (
+	category_id SERIAL PRIMARY KEY,
+	company_id INTEGER NULL,
+	create_by INTEGER NULL,
+	category_name VARCHAR(255) NULL,
+	cat_parent_sub INTEGER NULL,
+	sub_parent INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
