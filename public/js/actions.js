@@ -1262,6 +1262,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 
+	// 📌 script para crear categoria
 	let addModelBtn = document.getElementById('add-model-btn');
 	addModelBtn.addEventListener('click', function(){
 		let clicCreateMark = document.getElementById('clic-create-model');
@@ -1274,13 +1275,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 	const inputProductModel = document.getElementById('input-product-model');
 	const modelList = document.getElementById('model-list');
 	const btnCreateModel = document.getElementById('btn-create-model');
-
-	// 🔁 CREAR NUEVO MODELO MANUALMENTE
+	
 	btnCreateModel.addEventListener('click', function (e) {
 		e.preventDefault();
 		const value = inputProductModel.value.trim();
 
 		if (value !== '') {
+			const emptyRow = modelList.querySelector('tr[data-empty-message]');
+			if (emptyRow) {
+				emptyRow.remove();
+			}
+
 			const existingRadios = document.querySelectorAll('input[name="product_model"]');
 			existingRadios.forEach(r => r.checked = false);
 
@@ -1307,6 +1312,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 	// 🔁 CARGAR MODELOS (SUB-CATEGORÍAS) DINÁMICAMENTE CUANDO SE SELECCIONA UNA MARCA
 	document.addEventListener('change', function (e) {
 		if (e.target.matches('input[name="product_mark"]')) {
+			if (e.target.checked) {
+				addModelBtn.disabled = false;
+				addModelBtn.classList.remove('disabled');
+			}
+
 			const selectedMarkId = e.target.dataset.mark;
 
 			if (!isNaN(selectedMarkId)) {
@@ -1338,7 +1348,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							modelList.appendChild(row);
 						});
 					} else {
-						modelList.innerHTML = `<tr><td colspan="3" style="text-align:center;">No models found for this brand.</td></tr>`;
+						modelList.innerHTML = `<tr data-empty-message><td colspan="3" style="text-align: center; padding:15px 0;">No models found for this brand.</td></tr>`;
 					}
 				})
 				.catch(error => {
@@ -1368,6 +1378,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 		const value = inputSubmodel.value.trim();
 
 		if (value !== '') {
+			const emptyRow = submodelList.querySelector('tr[data-empty-message]');
+			if (emptyRow) {
+				emptyRow.remove();
+			}
+
 			const existingRadios = document.querySelectorAll('input[name="product_sub_model"]');
 			existingRadios.forEach(r => r.checked = false);
 
@@ -1394,6 +1409,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 	// ✅ DETECTAR CAMBIO EN MODELO Y CARGAR SUB-MODELOS
 	document.addEventListener('change', function (e) {
 		if (e.target.matches('input.category-radio[name="product_model"]')) {
+			if (e.target.checked) {
+				addSubmodelBtn.disabled = false;
+				addSubmodelBtn.classList.remove('disabled');
+			}
+
 			const selectedModelId = e.target.dataset.model;
 
 			if (!isNaN(selectedModelId)) {
@@ -1425,7 +1445,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							submodelList.appendChild(row);
 						});
 					} else {
-						submodelList.innerHTML = `<tr valign="baseline" class="form_height"><td colspan="3" style="text-align:center;">No submodels found.</td></tr>`;
+						submodelList.innerHTML = `<tr data-empty-message><td colspan="3" style="text-align: center; padding:15px 0;">No submodels found.</td></tr>`;
 					}
 				})
 				.catch(error => {

@@ -31,7 +31,6 @@ try {
 		"category_name"
 	], [
 		"cat_parent_sub" => $markId,
-		"sub_parent" => null,
 		"company_id" => $companyId
 	], [
 		"order_by" => "category_name"

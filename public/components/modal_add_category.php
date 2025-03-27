@@ -35,7 +35,7 @@
 					<td colspan="2" align="center" valign="middle">
 						<div class="formular-category-list">
 							<div class="create-list-holder" id="clic-create-model">
-								<button type="button" class="button-style-agree" id="add-model-btn">New Model</button>
+								<button type="button" class="button-style-agree disabled" id="add-model-btn" disabled>New Model</button>
 							</div>
 							<div class="create-list-holder" id="input-model" style="display: none;">
 								<table width="100%" align="center" cellspacing="0">
@@ -59,7 +59,7 @@
 					<td colspan="2" align="center" valign="middle">
 						<div class="formular-category-list">
 							<div class="create-list-holder" id="clic-create-submodel">
-								<button type="button" class="button-style-agree" id="add-submodel-btn">New Submodel</button>
+								<button type="button" class="button-style-agree disabled" id="add-submodel-btn" disabled>New Submodel</button>
 							</div>
 							<div class="create-list-holder" id="input-submodel" style="display: none;">
 								<table width="100%" align="center" cellspacing="0">
