@@ -8,6 +8,7 @@
     --main-bg-dark-blue: #022e63;
     --clr-border: #999;
     --frm-bg-transparent-grey: rgba(255, 255, 255, 0.35);
+    --frm-border-semi-transparent: rgba(255, 255, 255, 0.239);
     --main-bg-beige: rgb(221, 216, 212);
     --main-bg-pop-up: rgba(0, 0, 0, 0.512);
     --clr-white: #fff;
@@ -132,7 +133,7 @@ body {
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
     border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.239);
+    border: 1px solid var(--frm-border-semi-transparent);
     font-weight: 200;
     transform: scale(0.7);
     opacity: 0;
@@ -148,7 +149,7 @@ body {
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
     border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.239);
+    border: 1px solid var(--frm-border-semi-transparent);
     font-weight: 200;
     transform: scale(0.7);
     opacity: 0;
@@ -159,15 +160,17 @@ body {
 	display: flex;
 	justify-content: center;
 	padding-bottom: 10px;
-	border-bottom: 1px solid #ccc;
+	border-bottom: 1px solid #f0f0f0; /* aqui */
 }
 
 .formular-category-list {
     width: 330px;
     height: 458px;
+    background-color: var(--frm-bg-transparent-grey);
     margin: 0 auto 10px;
     padding: 10px;
-    background: #fff;
+    border: 1px solid var(--frm-border-semi-transparent);
+    border-radius: 8px;
 }
 
 .list-icon img {
@@ -185,6 +188,10 @@ body {
 
 .flex {
     display: flex;
+}
+
+.disabled {
+    background-color: #ccc;
 }
 
 .height-100 {
