@@ -1,11 +1,10 @@
 <?php
 require_once('../logic/stock_be.php');
-
 header("Content-Type: application/json");
 
 $response = [
 	"success" => false,
-	"message" => "No categories found",
+	"message" => "No subcategories found",
 	"data" => []
 ];
 
@@ -22,12 +21,16 @@ try {
 
 	$companyId = intval($userInfo["data"]["company_id"]);
 
+	$modelId = isset($_GET["model_id"]) ? intval($_GET["model_id"]) : null;
+	if (!$modelId || !is_numeric($modelId)) {
+		throw new Exception("Invalid model ID.");
+	}
+
 	$categoriesResponse = select_from("category", [
 		"category_id",
 		"category_name"
 	], [
-		"cat_parent_sub" => null,
-		"sub_parent" => null,
+		"sub_parent" => $modelId,
 		"company_id" => $companyId
 	], [
 		"order_by" => "category_name"
@@ -36,12 +39,12 @@ try {
 	$categories = json_decode($categoriesResponse, true);
 
 	if (!$categories["success"] || empty($categories["data"])) {
-		throw new Exception("No categories available.");
+		throw new Exception("No subcategories available for this mark.");
 	}
 
 	$response = [
 		"success" => true,
-		"message" => "Categories loaded successfully.",
+		"message" => "Subcategories loaded successfully.",
 		"data" => $categories["data"]
 	];
 } catch (Exception $e) {

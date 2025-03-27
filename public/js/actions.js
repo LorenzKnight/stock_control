@@ -1350,6 +1350,94 @@ document.addEventListener("DOMContentLoaded", async function () {
 	});
 
 
+	let addSubmodelBtn = document.getElementById('add-submodel-btn');
+	addSubmodelBtn.addEventListener('click', function(){
+		let clicCreateMark = document.getElementById('clic-create-submodel');
+		let inputMark = document.getElementById('input-submodel');
+
+		clicCreateMark.style.display = 'none';
+		inputMark.style.display = 'block';
+	});
+
+	// ✅ Elementos del DOM
+	const inputSubmodel = document.getElementById('input-product-submodel');
+	const submodelList = document.getElementById('music-playlists');
+	const btnCreateSubmodel = document.getElementById('btn-create-submodel');
+
+	// ✅ CREAR NUEVO SUB-MODELO MANUALMENTE
+	btnCreateSubmodel.addEventListener('click', function (e) {
+		e.preventDefault();
+		const value = inputSubmodel.value.trim();
+
+		if (value !== '') {
+			const existingRadios = document.querySelectorAll('input[name="product_sub_model"]');
+			existingRadios.forEach(r => r.checked = false);
+
+			const row = document.createElement('tr');
+			row.className = "categoryContainer";
+			row.innerHTML = `
+				<td width="10%" align="center" valign="middle">
+					<div class="list-icon">
+						<img src="images/sys-img/element-list.png" alt="">
+					</div>
+				</td>
+				<td width="80%" valign="middle" style="padding-left:10px;">${value}</td>
+				<td width="10%" align="center" valign="middle">
+					<label>
+						<input type="radio" name="product_sub_model" class="category-radio" data-submodel="${value}" checked />
+					</label>
+				</td>
+			`;
+			submodelList.appendChild(row);
+			inputSubmodel.value = '';
+		}
+	});
+
+	// ✅ DETECTAR CAMBIO EN MODELO Y CARGAR SUB-MODELOS
+	document.addEventListener('change', function (e) {
+		if (e.target.matches('input.category-radio[name="product_model"]')) {
+			const selectedModelId = e.target.dataset.model;
+
+			if (!isNaN(selectedModelId)) {
+				submodelList.innerHTML = '';
+
+				fetch(`api/get_sub_models.php?model_id=${selectedModelId}`, {
+					method: 'GET',
+					headers: { 'Accept': 'application/json' }
+				})
+				.then(res => res.json())
+				.then(data => {
+					if (data.success && data.data.length > 0) {
+						data.data.forEach(submodel => {
+							const row = document.createElement('tr');
+							row.className = "categoryContainer";
+							row.innerHTML = `
+								<td width="10%" align="center" valign="middle">
+									<div class="list-icon">
+										<img src="images/sys-img/element-list.png" alt="">
+									</div>
+								</td>
+								<td width="80%" valign="middle" style="padding-left:10px;">${submodel.category_name}</td>
+								<td width="10%" align="center" valign="middle">
+									<label>
+										<input type="radio" name="product_sub_model" class="category-radio" data-submodel="${submodel.category_id}" />
+									</label>
+								</td>
+							`;
+							submodelList.appendChild(row);
+						});
+					} else {
+						submodelList.innerHTML = `<tr valign="baseline" class="form_height"><td colspan="3" style="text-align:center;">No submodels found.</td></tr>`;
+					}
+				})
+				.catch(error => {
+					console.error("Error loading submodels:", error);
+				});
+			}
+		}
+	});
+
+
 
 	function showConfirmModal(title, message, onConfirm) {
 		const modal = document.getElementById('globalConfirmModal');

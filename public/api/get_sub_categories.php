@@ -3,40 +3,53 @@ require_once('../logic/stock_be.php');
 header("Content-Type: application/json");
 
 $response = [
-    "success" => false,
-    "message" => "No subcategories found",
-    "data" => []
+	"success" => false,
+	"message" => "No subcategories found",
+	"data" => []
 ];
 
 try {
-    $markId = $_GET["mark_id"] ?? null;
-    if (!$markId || !is_numeric($markId)) {
-        throw new Exception("Invalid mark ID.");
-    }
+	$userId = $_SESSION["sc_UserId"] ?? null;
+	if (!$userId) throw new Exception("User session not found.");
 
-    $categoriesResponse = select_from("category", [
-        "category_id",
-        "category_name"
-    ], [
-        "cat_parent_sub" => $markId,
-        "sub_parent" => null
-    ], [
-        "order_by" => "category_name"
-    ]);
+	$userInfoResponse = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
+	$userInfo = json_decode($userInfoResponse, true);
 
-    $categories = json_decode($categoriesResponse, true);
+	if (!$userInfo["success"] || empty($userInfo["data"]["company_id"])) {
+		throw new Exception("No company found for user.");
+	}
 
-    if (!$categories["success"] || empty($categories["data"])) {
-        throw new Exception("No subcategories available for this mark.");
-    }
+	$companyId = intval($userInfo["data"]["company_id"]);
 
-    $response = [
-        "success" => true,
-        "message" => "Subcategories loaded successfully.",
-        "data" => $categories["data"]
-    ];
+	$markId = isset($_GET["mark_id"]) ? intval($_GET["mark_id"]) : null;
+	if (!$markId || !is_numeric($markId)) {
+		throw new Exception("Invalid mark ID.");
+	}
+
+	$categoriesResponse = select_from("category", [
+		"category_id",
+		"category_name"
+	], [
+		"cat_parent_sub" => $markId,
+		"sub_parent" => null,
+		"company_id" => $companyId
+	], [
+		"order_by" => "category_name"
+	]);
+
+	$categories = json_decode($categoriesResponse, true);
+
+	if (!$categories["success"] || empty($categories["data"])) {
+		throw new Exception("No subcategories available for this mark.");
+	}
+
+	$response = [
+		"success" => true,
+		"message" => "Subcategories loaded successfully.",
+		"data" => $categories["data"]
+	];
 } catch (Exception $e) {
-    $response["message"] = $e->getMessage();
+	$response["message"] = $e->getMessage();
 }
 
 echo json_encode($response);
