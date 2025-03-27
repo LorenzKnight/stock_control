@@ -1,6 +1,6 @@
 <div class="bg-popup" id="add-category-form">
 	<div class="formular-big-frame">
-		<form action="stock.php" method="post" name="formAddCategory" id="formAddCategory" enctype="multipart/form-data">
+		<form method="post" name="formAddCategory" id="formAddCategory">
 			<table width="80%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
@@ -9,7 +9,7 @@
 				</tr>
 				<tr valign="baseline">
 					<td colspan="2" align="center" valign="middle">
-						<div class="formular-category-list" id="formular_songs_list">
+						<div class="formular-category-list">
 							<div class="create-list-holder" id="clic-create-mark">
 								<button type="button" class="button-style-agree" id="add-mark-btn">New Mark</button>
 							</div>
@@ -33,7 +33,7 @@
 						</div>
 					</td>
 					<td colspan="2" align="center" valign="middle">
-						<div class="formular-category-list" id="formular_songs_list">
+						<div class="formular-category-list">
 							<div class="create-list-holder" id="clic-create-model">
 								<button type="button" class="button-style-agree" id="add-model-btn">New Model</button>
 							</div>
@@ -57,7 +57,7 @@
 						</div>
 					</td>
 					<td colspan="2" align="center" valign="middle">
-						<div class="formular-category-list" id="formular_songs_list">
+						<div class="formular-category-list">
 							<div class="create-list-holder" id="clic-create-submodel">
 								<button type="button" class="button-style-agree" id="add-submodel-btn">New Submodel</button>
 							</div>

@@ -541,7 +541,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	handlePopupClose("add-members-form", ".formular-frame", ["add-members-form"]);
 	handlePopupClose("edit-members-form", ".formular-frame", ["edit-members-form"]);
 	handlePopupClose("add-product-form", ".formular-frame", ["add-product-form"]);
-	handlePopupClose("add-category-form", ".formular-frame", ["add-category-form"]);
+	handlePopupClose("add-category-form", ".formular-big-frame", ["add-category-form"]);
 
 	// 📌 Boton para cerrar formulario
 	let cancelButtons = document.querySelectorAll('.neutral-btn');
@@ -1309,7 +1309,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (e.target.matches('input[name="product_mark"]')) {
 			const selectedMarkId = e.target.dataset.mark;
 
-			// Solo si es un ID numérico (marca de la base de datos)
 			if (!isNaN(selectedMarkId)) {
 				modelList.innerHTML = '';
 
@@ -1359,12 +1358,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 		inputMark.style.display = 'block';
 	});
 
-	// ✅ Elementos del DOM
+	// ✅ CREAR NUEVO SUB-MODELO MANUALMENTE
 	const inputSubmodel = document.getElementById('input-product-submodel');
 	const submodelList = document.getElementById('music-playlists');
 	const btnCreateSubmodel = document.getElementById('btn-create-submodel');
 
-	// ✅ CREAR NUEVO SUB-MODELO MANUALMENTE
 	btnCreateSubmodel.addEventListener('click', function (e) {
 		e.preventDefault();
 		const value = inputSubmodel.value.trim();
@@ -1420,7 +1418,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 								<td width="80%" valign="middle" style="padding-left:10px;">${submodel.category_name}</td>
 								<td width="10%" align="center" valign="middle">
 									<label>
-										<input type="radio" name="product_sub_model" class="category-radio" data-submodel="${submodel.category_id}" />
+										<!-- <input type="radio" name="product_sub_model" class="category-radio" data-submodel="${submodel.category_id}" /> -->
 									</label>
 								</td>
 							`;
@@ -1436,6 +1434,78 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		}
 	});
+
+	// ✅ JavaScript para enviar datos de creación de marca, modelo o submodelo
+	const formAddCategory = document.getElementById("formAddCategory");
+	if (formAddCategory) {
+		formAddCategory.addEventListener("submit", async function (e) {
+			e.preventDefault();
+
+			const selectedMark = document.querySelector('input[name="product_mark"]:checked');
+			const selectedModel = document.querySelector('input[name="product_model"]:checked');
+			const selectedSubmodel = document.querySelector('input[name="product_sub_model"]:checked');
+
+			let name = "";
+			let cat_parent_sub = null;
+			let sub_parent = null;
+
+			if (selectedSubmodel) {
+				// ✅ Ingresar submodelo
+				name = selectedSubmodel.dataset.submodel;
+				cat_parent_sub = selectedMark ? parseInt(selectedMark.dataset.mark) : null;
+				sub_parent = selectedModel ? parseInt(selectedModel.dataset.model) : null;
+
+			} else if (selectedModel) {
+				// ✅ Ingresar modelo
+				name = selectedModel.dataset.model;
+				cat_parent_sub = selectedMark ? parseInt(selectedMark.dataset.mark) : null;
+
+			} else if (selectedMark) {
+				// ✅ Ingresar marca
+				name = selectedMark.dataset.mark;
+
+			} else {
+				alert("You must select a Mark, Model, or Submodel.");
+				return;
+			}
+
+			const formData = new FormData();
+			formData.append("category_name", name);
+			formData.append("cat_parent_sub", cat_parent_sub ?? "");
+			formData.append("sub_parent", sub_parent ?? "");
+
+			try {
+				const response = await fetch("api/create_category.php", {
+					method: "POST",
+					body: formData,
+					headers: { Accept: "application/json" },
+				});
+
+				const data = await response.json();
+				console.log("Server response:", data);
+
+				let banner = document.getElementById("status-message");
+				let statusText = document.getElementById("status-text");
+				let statusImage = document.getElementById("status-image");
+
+				statusText.innerText = data.message;
+				statusImage.src = data.img_gif;
+				banner.style.display = "block";
+				banner.style.opacity = "1";
+
+				if (data.success) {
+					setTimeout(() => {
+						banner.style.opacity = "0";
+						setTimeout(() => {
+							window.location.href = data.redirect_url || window.location.href;
+						}, 1000);
+					}, 3000);
+				}
+			} catch (error) {
+				console.error("Error submitting category:", error);
+			}
+		});
+	}
 
 
 
