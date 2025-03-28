@@ -1190,87 +1190,60 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	// 📌 script para crear Marca / categoria
 	let addMarkBtn = document.getElementById('add-mark-btn');
-	addMarkBtn.addEventListener('click', function(){
-		let clicCreateMark = document.getElementById('clic-create-mark');
-		let inputMark = document.getElementById('input-mark');
+	if (addMarkBtn) {
+		addMarkBtn.addEventListener('click', function(){
+			let clicCreateMark = document.getElementById('clic-create-mark');
+			let inputMark = document.getElementById('input-mark');
 
-		clicCreateMark.style.display = 'none';
-		inputMark.style.display = 'block';
-	});
+			clicCreateMark.style.display = 'none';
+			inputMark.style.display = 'block';
+		});
+	}
 
 	const inputProductMark = document.getElementById('input-product-mark');
 	const markList = document.getElementById('mark-list');
 	const btnCreateMark = document.getElementById('btn-create-mark');
 
-	inputProductMark.addEventListener('input', () => {
-		let words = inputProductMark.value.split(" ");
-		words = words.map(word => {
-			return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-		});
-		inputProductMark.value = words.join(" ");
-	});
-
-	btnCreateMark.addEventListener('click', function (e) {
-		e.preventDefault();
-		const value = inputProductMark.value.trim();
-
-		if (value !== '') {
-			const existingNames = markList.querySelectorAll('tr td:nth-child(2)');
-			let exists = false;
-
-			existingNames.forEach(cell => {
-				if (cell.textContent.trim().toLowerCase() === value.toLowerCase()) {
-					exists = true;
-				}
+	if (inputProductMark) {
+		inputProductMark.addEventListener('input', () => {
+			let words = inputProductMark.value.split(" ");
+			words = words.map(word => {
+				return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 			});
-
-			if (exists) {
-				showConfirmModal(
-					"Mark Already Exists",
-					`The mark "${value}" already exists. Please choose a different name.`,
-					() => {
-						inputProductMark.focus();
-					}
-				);
-				return;
-			}
-
-			const existingRadios = document.querySelectorAll('input[name="product_mark"]');
-			existingRadios.forEach(r => r.checked = false);
-
-			const uniqueId = `mark-${Date.now()}`;
-			const row = document.createElement('tr');
-			row.className = "categoryContainer";
-			row.innerHTML = `
-				<td width="10%" align="center" valign="middle">
-					<div class="list-icon">
-						<img src="images/sys-img/element-list.png" alt="">
-					</div>
-				</td>
-				<td width="80%" valign="middle" style="padding-left:10px;">${value}</td>
-				<td width="10%" align="center" valign="middle">
-					<div class="opcion-radio">
-						<input type="radio" id="${uniqueId}" name="product_mark" class="category-radio" data-mark="${value}" checked />
-						<label for="${uniqueId}"></label>
-					</div>
-				</td>
-			`;
-			markList.appendChild(row);
-			inputProductMark.value = '';
-		}
-	});
-
-	try {
-		let response = await fetch('api/get_categories.php', {
-			method: 'GET',
-			headers: { 'Accept': 'application/json' }
+			inputProductMark.value = words.join(" ");
 		});
+	}
 
-		let data = await response.json();
+	if (btnCreateMark) {
+		btnCreateMark.addEventListener('click', function (e) {
+			e.preventDefault();
+			const value = inputProductMark.value.trim();
 
-		if (data.success && data.data.length > 0) {
-			data.data.forEach(category => {
-				const uniqueId = `mark-db-${category.category_id}`;
+			if (value !== '') {
+				const existingNames = markList.querySelectorAll('tr td:nth-child(2)');
+				let exists = false;
+
+				existingNames.forEach(cell => {
+					if (cell.textContent.trim().toLowerCase() === value.toLowerCase()) {
+						exists = true;
+					}
+				});
+
+				if (exists) {
+					showConfirmModal(
+						"Mark Already Exists",
+						`The mark "${value}" already exists. Please choose a different name.`,
+						() => {
+							inputProductMark.focus();
+						}
+					);
+					return;
+				}
+
+				const existingRadios = document.querySelectorAll('input[name="product_mark"]');
+				existingRadios.forEach(r => r.checked = false);
+
+				const uniqueId = `mark-${Date.now()}`;
 				const row = document.createElement('tr');
 				row.className = "categoryContainer";
 				row.innerHTML = `
@@ -1279,78 +1252,117 @@ document.addEventListener("DOMContentLoaded", async function () {
 							<img src="images/sys-img/element-list.png" alt="">
 						</div>
 					</td>
-					<td width="80%" valign="middle" style="padding-left:10px;">${category.category_name}</td>
+					<td width="80%" valign="middle" style="padding-left:10px;">${value}</td>
 					<td width="10%" align="center" valign="middle">
 						<div class="opcion-radio">
-							<input type="radio" id="${uniqueId}" name="product_mark" class="category-radio" data-mark="${category.category_id}" />
+							<input type="radio" id="${uniqueId}" name="product_mark" class="category-radio" data-mark="${value}" checked />
 							<label for="${uniqueId}"></label>
 						</div>
 					</td>
 				`;
 				markList.appendChild(row);
+				inputProductMark.value = '';
+			}
+		});
+
+		try {
+			let response = await fetch('api/get_categories.php', {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
 			});
+
+			let data = await response.json();
+
+			if (data.success && data.data.length > 0) {
+				data.data.forEach(category => {
+					const uniqueId = `mark-db-${category.category_id}`;
+					const row = document.createElement('tr');
+					row.className = "categoryContainer";
+					row.innerHTML = `
+						<td width="10%" align="center" valign="middle">
+							<div class="list-icon">
+								<img src="images/sys-img/element-list.png" alt="">
+							</div>
+						</td>
+						<td width="80%" valign="middle" style="padding-left:10px;">${category.category_name}</td>
+						<td width="10%" align="center" valign="middle">
+							<div class="opcion-radio">
+								<input type="radio" id="${uniqueId}" name="product_mark" class="category-radio" data-mark="${category.category_id}" />
+								<label for="${uniqueId}"></label>
+							</div>
+						</td>
+					`;
+					markList.appendChild(row);
+				});
+			}
+		} catch (error) {
+			console.error("Error loading categories:", error);
 		}
-	} catch (error) {
-		console.error("Error loading categories:", error);
 	}
 
 
 	// 📌 script para crear sub-categoria / modelo
 	let addModelBtn = document.getElementById('add-model-btn');
-	addModelBtn.addEventListener('click', function(){
-		let clicCreateMark = document.getElementById('clic-create-model');
-		let inputMark = document.getElementById('input-model');
+	if (addModelBtn) {
+		addModelBtn.addEventListener('click', function(){
+			let clicCreateMark = document.getElementById('clic-create-model');
+			let inputMark = document.getElementById('input-model');
 
-		clicCreateMark.style.display = 'none';
-		inputMark.style.display = 'block';
-	});
+			clicCreateMark.style.display = 'none';
+			inputMark.style.display = 'block';
+		});
+	}
 
 	const inputProductModel = document.getElementById('input-product-model');
 	const modelList = document.getElementById('model-list');
 	const btnCreateModel = document.getElementById('btn-create-model');
 	
-	inputProductModel.addEventListener('input', () => {
-		let words = inputProductModel.value.split(" ");
-		words = words.map(word => {
-			return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+	if (inputProductModel) {
+		inputProductModel.addEventListener('input', () => {
+			let words = inputProductModel.value.split(" ");
+			words = words.map(word => {
+				return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+			});
+			inputProductModel.value = words.join(" ");
 		});
-		inputProductModel.value = words.join(" ");
-	});
+	}
 
-	btnCreateModel.addEventListener('click', function (e) {
-		e.preventDefault();
-		const value = inputProductModel.value.trim();
+	if (btnCreateModel) {
+		btnCreateModel.addEventListener('click', function (e) {
+			e.preventDefault();
+			const value = inputProductModel.value.trim();
 
-		if (value !== '') {
-			const emptyRow = modelList.querySelector('tr[data-empty-message]');
-			if (emptyRow) {
-				emptyRow.remove();
+			if (value !== '') {
+				const emptyRow = modelList.querySelector('tr[data-empty-message]');
+				if (emptyRow) {
+					emptyRow.remove();
+				}
+
+				const existingRadios = document.querySelectorAll('input[name="product_model"]');
+				existingRadios.forEach(r => r.checked = false);
+
+				const uniqueId = `model-${Date.now()}`;
+				const row = document.createElement('tr');
+				row.className = "categoryContainer";
+				row.innerHTML = `
+					<td width="10%" align="center" valign="middle">
+						<div class="list-icon">
+							<img src="images/sys-img/element-list.png" alt="">
+						</div>
+					</td>
+					<td width="80%" valign="middle" style="padding-left:10px;">${value}</td>
+					<td width="10%" align="center" valign="middle">
+						<div class="opcion-radio">
+							<input type="radio" id="${uniqueId}" name="product_model" class="category-radio" data-model="${value}" checked />
+							<label for="${uniqueId}"></label>
+						</div>
+					</td>
+				`;
+				modelList.appendChild(row);
+				inputProductModel.value = '';
 			}
-
-			const existingRadios = document.querySelectorAll('input[name="product_model"]');
-			existingRadios.forEach(r => r.checked = false);
-
-			const uniqueId = `model-${Date.now()}`;
-			const row = document.createElement('tr');
-			row.className = "categoryContainer";
-			row.innerHTML = `
-				<td width="10%" align="center" valign="middle">
-					<div class="list-icon">
-						<img src="images/sys-img/element-list.png" alt="">
-					</div>
-				</td>
-				<td width="80%" valign="middle" style="padding-left:10px;">${value}</td>
-				<td width="10%" align="center" valign="middle">
-					<div class="opcion-radio">
-						<input type="radio" id="${uniqueId}" name="product_model" class="category-radio" data-model="${value}" checked />
-						<label for="${uniqueId}"></label>
-					</div>
-				</td>
-			`;
-			modelList.appendChild(row);
-			inputProductModel.value = '';
-		}
-	});
+		});
+	}
 
 	// CARGAR MODELOS (SUB-CATEGORÍAS) DINÁMICAMENTE CUANDO SE SELECCIONA UNA MARCA
 	document.addEventListener('change', function (e) {
@@ -1406,60 +1418,66 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	// 📌 script para crear sub-modelo
 	let addSubmodelBtn = document.getElementById('add-submodel-btn');
-	addSubmodelBtn.addEventListener('click', function(){
-		let clicCreateMark = document.getElementById('clic-create-submodel');
-		let inputMark = document.getElementById('input-submodel');
+	if (addSubmodelBtn) {
+		addSubmodelBtn.addEventListener('click', function(){
+			let clicCreateMark = document.getElementById('clic-create-submodel');
+			let inputMark = document.getElementById('input-submodel');
 
-		clicCreateMark.style.display = 'none';
-		inputMark.style.display = 'block';
-	});
+			clicCreateMark.style.display = 'none';
+			inputMark.style.display = 'block';
+		});
+	}
 
 	const inputSubmodel = document.getElementById('input-product-submodel');
 	const submodelList = document.getElementById('submodel-list');
 	const btnCreateSubmodel = document.getElementById('btn-create-submodel');
 
-	inputSubmodel.addEventListener('input', () => {
-		let words = inputSubmodel.value.split(" ");
-		words = words.map(word => {
-			return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+	if (inputSubmodel) {
+		inputSubmodel.addEventListener('input', () => {
+			let words = inputSubmodel.value.split(" ");
+			words = words.map(word => {
+				return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+			});
+			inputSubmodel.value = words.join(" ");
 		});
-		inputSubmodel.value = words.join(" ");
-	});
+	}
 
-	btnCreateSubmodel.addEventListener('click', function (e) {
-		e.preventDefault();
-		const value = inputSubmodel.value.trim();
+	if (inputSubmodel) {
+		btnCreateSubmodel.addEventListener('click', function (e) {
+			e.preventDefault();
+			const value = inputSubmodel.value.trim();
 
-		if (value !== '') {
-			const emptyRow = submodelList.querySelector('tr[data-empty-message]');
-			if (emptyRow) {
-				emptyRow.remove();
+			if (value !== '') {
+				const emptyRow = submodelList.querySelector('tr[data-empty-message]');
+				if (emptyRow) {
+					emptyRow.remove();
+				}
+
+				const existingRadios = document.querySelectorAll('input[name="product_sub_model"]');
+				existingRadios.forEach(r => r.checked = false);
+
+				const uniqueId = `submodel-${Date.now()}`;
+				const row = document.createElement('tr');
+				row.className = "categoryContainer";
+				row.innerHTML = `
+					<td width="10%" align="center" valign="middle">
+						<div class="list-icon">
+							<img src="images/sys-img/element-list.png" alt="">
+						</div>
+					</td>
+					<td width="80%" valign="middle" style="padding-left:10px;">${value}</td>
+					<td width="10%" align="center" valign="middle">
+						<div class="opcion-radio">
+							<input type="radio" id="${uniqueId}" name="product_sub_model" class="category-radio" data-submodel="${value}" checked />
+							<label for="${uniqueId}"></label>
+						</div>
+					</td>
+				`;
+				submodelList.appendChild(row);
+				inputSubmodel.value = '';
 			}
-
-			const existingRadios = document.querySelectorAll('input[name="product_sub_model"]');
-			existingRadios.forEach(r => r.checked = false);
-
-			const uniqueId = `submodel-${Date.now()}`;
-			const row = document.createElement('tr');
-			row.className = "categoryContainer";
-			row.innerHTML = `
-				<td width="10%" align="center" valign="middle">
-					<div class="list-icon">
-						<img src="images/sys-img/element-list.png" alt="">
-					</div>
-				</td>
-				<td width="80%" valign="middle" style="padding-left:10px;">${value}</td>
-				<td width="10%" align="center" valign="middle">
-					<div class="opcion-radio">
-						<input type="radio" id="${uniqueId}" name="product_sub_model" class="category-radio" data-submodel="${value}" checked />
-						<label for="${uniqueId}"></label>
-					</div>
-				</td>
-			`;
-			submodelList.appendChild(row);
-			inputSubmodel.value = '';
-		}
-	});
+		});
+	}
 
 	// DETECTAR CAMBIO EN MODELO Y CARGAR SUB-MODELOS
 	document.addEventListener('change', function (e) {
