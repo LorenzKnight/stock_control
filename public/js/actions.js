@@ -1188,6 +1188,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
+	// 📌 script para crear Marca / categoria
 	let addMarkBtn = document.getElementById('add-mark-btn');
 	addMarkBtn.addEventListener('click', function(){
 		let clicCreateMark = document.getElementById('clic-create-mark');
@@ -1201,14 +1202,43 @@ document.addEventListener("DOMContentLoaded", async function () {
 	const markList = document.getElementById('mark-list');
 	const btnCreateMark = document.getElementById('btn-create-mark');
 
+	inputProductMark.addEventListener('input', () => {
+		let words = inputProductMark.value.split(" ");
+		words = words.map(word => {
+			return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+		});
+		inputProductMark.value = words.join(" ");
+	});
+
 	btnCreateMark.addEventListener('click', function (e) {
 		e.preventDefault();
 		const value = inputProductMark.value.trim();
 
 		if (value !== '') {
-			const existingRadios = document.querySelectorAll('input[name="mark-radio"]');
+			const existingNames = markList.querySelectorAll('tr td:nth-child(2)');
+			let exists = false;
+
+			existingNames.forEach(cell => {
+				if (cell.textContent.trim().toLowerCase() === value.toLowerCase()) {
+					exists = true;
+				}
+			});
+
+			if (exists) {
+				showConfirmModal(
+					"Mark Already Exists",
+					`The mark "${value}" already exists. Please choose a different name.`,
+					() => {
+						inputProductMark.focus();
+					}
+				);
+				return;
+			}
+
+			const existingRadios = document.querySelectorAll('input[name="product_mark"]');
 			existingRadios.forEach(r => r.checked = false);
 
+			const uniqueId = `mark-${Date.now()}`;
 			const row = document.createElement('tr');
 			row.className = "categoryContainer";
 			row.innerHTML = `
@@ -1219,9 +1249,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 				</td>
 				<td width="80%" valign="middle" style="padding-left:10px;">${value}</td>
 				<td width="10%" align="center" valign="middle">
-					<label>
-						<input type="radio" name="product_mark" class="category-radio" data-mark="${value}" checked />
-					</label>
+					<div class="opcion-radio">
+						<input type="radio" id="${uniqueId}" name="product_mark" class="category-radio" data-mark="${value}" checked />
+						<label for="${uniqueId}"></label>
+					</div>
 				</td>
 			`;
 			markList.appendChild(row);
@@ -1239,6 +1270,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 		if (data.success && data.data.length > 0) {
 			data.data.forEach(category => {
+				const uniqueId = `mark-db-${category.category_id}`;
 				const row = document.createElement('tr');
 				row.className = "categoryContainer";
 				row.innerHTML = `
@@ -1249,9 +1281,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 					</td>
 					<td width="80%" valign="middle" style="padding-left:10px;">${category.category_name}</td>
 					<td width="10%" align="center" valign="middle">
-						<label>
-							<input type="radio" name="product_mark" class="category-radio" data-mark="${category.category_id}" />
-						</label>
+						<div class="opcion-radio">
+							<input type="radio" id="${uniqueId}" name="product_mark" class="category-radio" data-mark="${category.category_id}" />
+							<label for="${uniqueId}"></label>
+						</div>
 					</td>
 				`;
 				markList.appendChild(row);
@@ -1262,7 +1295,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 
-	// 📌 script para crear categoria
+	// 📌 script para crear sub-categoria / modelo
 	let addModelBtn = document.getElementById('add-model-btn');
 	addModelBtn.addEventListener('click', function(){
 		let clicCreateMark = document.getElementById('clic-create-model');
@@ -1276,6 +1309,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 	const modelList = document.getElementById('model-list');
 	const btnCreateModel = document.getElementById('btn-create-model');
 	
+	inputProductModel.addEventListener('input', () => {
+		let words = inputProductModel.value.split(" ");
+		words = words.map(word => {
+			return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+		});
+		inputProductModel.value = words.join(" ");
+	});
+
 	btnCreateModel.addEventListener('click', function (e) {
 		e.preventDefault();
 		const value = inputProductModel.value.trim();
@@ -1289,6 +1330,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const existingRadios = document.querySelectorAll('input[name="product_model"]');
 			existingRadios.forEach(r => r.checked = false);
 
+			const uniqueId = `model-${Date.now()}`;
 			const row = document.createElement('tr');
 			row.className = "categoryContainer";
 			row.innerHTML = `
@@ -1299,9 +1341,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 				</td>
 				<td width="80%" valign="middle" style="padding-left:10px;">${value}</td>
 				<td width="10%" align="center" valign="middle">
-					<label>
-						<input type="radio" name="product_model" class="category-radio" data-model="${value}" checked />
-					</label>
+					<div class="opcion-radio">
+						<input type="radio" id="${uniqueId}" name="product_model" class="category-radio" data-model="${value}" checked />
+						<label for="${uniqueId}"></label>
+					</div>
 				</td>
 			`;
 			modelList.appendChild(row);
@@ -1330,6 +1373,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				.then(data => {
 					if (data.success && data.data.length > 0) {
 						data.data.forEach(model => {
+							const uniqueId = `model-db-${model.category_id}`;
 							const row = document.createElement('tr');
 							row.className = "categoryContainer";
 							row.innerHTML = `
@@ -1340,9 +1384,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 								</td>
 								<td width="80%" valign="middle" style="padding-left:10px;">${model.category_name}</td>
 								<td width="10%" align="center" valign="middle">
-									<label>
-										<input type="radio" name="product_model" class="category-radio" data-model="${model.category_id}" />
-									</label>
+									<div class="opcion-radio">
+										<input type="radio" id="${uniqueId}" name="product_model" class="category-radio" data-model="${model.category_id}" />
+										<label for="${uniqueId}"></label>
+									</div>
 								</td>
 							`;
 							modelList.appendChild(row);
@@ -1359,6 +1404,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	});
 
 
+	// 📌 script para crear sub-modelo
 	let addSubmodelBtn = document.getElementById('add-submodel-btn');
 	addSubmodelBtn.addEventListener('click', function(){
 		let clicCreateMark = document.getElementById('clic-create-submodel');
@@ -1368,10 +1414,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 		inputMark.style.display = 'block';
 	});
 
-	// ✅ CREAR NUEVO SUB-MODELO MANUALMENTE
 	const inputSubmodel = document.getElementById('input-product-submodel');
-	const submodelList = document.getElementById('music-playlists');
+	const submodelList = document.getElementById('submodel-list');
 	const btnCreateSubmodel = document.getElementById('btn-create-submodel');
+
+	inputSubmodel.addEventListener('input', () => {
+		let words = inputSubmodel.value.split(" ");
+		words = words.map(word => {
+			return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+		});
+		inputSubmodel.value = words.join(" ");
+	});
 
 	btnCreateSubmodel.addEventListener('click', function (e) {
 		e.preventDefault();
@@ -1386,6 +1439,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const existingRadios = document.querySelectorAll('input[name="product_sub_model"]');
 			existingRadios.forEach(r => r.checked = false);
 
+			const uniqueId = `submodel-${Date.now()}`;
 			const row = document.createElement('tr');
 			row.className = "categoryContainer";
 			row.innerHTML = `
@@ -1396,9 +1450,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 				</td>
 				<td width="80%" valign="middle" style="padding-left:10px;">${value}</td>
 				<td width="10%" align="center" valign="middle">
-					<label>
-						<input type="radio" name="product_sub_model" class="category-radio" data-submodel="${value}" checked />
-					</label>
+					<div class="opcion-radio">
+						<input type="radio" id="${uniqueId}" name="product_sub_model" class="category-radio" data-submodel="${value}" checked />
+						<label for="${uniqueId}"></label>
+					</div>
 				</td>
 			`;
 			submodelList.appendChild(row);
@@ -1427,6 +1482,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				.then(data => {
 					if (data.success && data.data.length > 0) {
 						data.data.forEach(submodel => {
+							const uniqueId = `submodel-db-${submodel.category_id}`;
 							const row = document.createElement('tr');
 							row.className = "categoryContainer";
 							row.innerHTML = `
@@ -1437,9 +1493,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 								</td>
 								<td width="80%" valign="middle" style="padding-left:10px;">${submodel.category_name}</td>
 								<td width="10%" align="center" valign="middle">
-									<label>
-										<!-- <input type="radio" name="product_sub_model" class="category-radio" data-submodel="${submodel.category_id}" /> -->
-									</label>
+									<div class="opcion-radio" style="display: none;">
+										<input type="radio" id="${uniqueId}" name="product_sub_model" class="category-radio" data-submodel="${submodel.category_id}" />
+										<label for="${uniqueId}"></label>
+									</div>
 								</td>
 							`;
 							submodelList.appendChild(row);

@@ -74,7 +74,7 @@
 								</table>
 							</div>
 							<div class="my-playlis-list">
-								<table class="music-list" id="music-playlists" cellspacing="0">
+								<table class="all-submodel-list" id="submodel-list" cellspacing="0">
 								
 								</table>
 							</div>
