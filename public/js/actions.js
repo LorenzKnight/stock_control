@@ -1352,7 +1352,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	});
 
-	// 🔁 CARGAR MODELOS (SUB-CATEGORÍAS) DINÁMICAMENTE CUANDO SE SELECCIONA UNA MARCA
+	// CARGAR MODELOS (SUB-CATEGORÍAS) DINÁMICAMENTE CUANDO SE SELECCIONA UNA MARCA
 	document.addEventListener('change', function (e) {
 		if (e.target.matches('input[name="product_mark"]')) {
 			if (e.target.checked) {
@@ -1461,7 +1461,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	});
 
-	// ✅ DETECTAR CAMBIO EN MODELO Y CARGAR SUB-MODELOS
+	// DETECTAR CAMBIO EN MODELO Y CARGAR SUB-MODELOS
 	document.addEventListener('change', function (e) {
 		if (e.target.matches('input.category-radio[name="product_model"]')) {
 			if (e.target.checked) {
@@ -1493,7 +1493,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 								</td>
 								<td width="80%" valign="middle" style="padding-left:10px;">${submodel.category_name}</td>
 								<td width="10%" align="center" valign="middle">
-									<div class="opcion-radio" style="display: none;">
+									<div class="opcion-radio" style="display: none;"> <!-- oculto con display none -->
 										<input type="radio" id="${uniqueId}" name="product_sub_model" class="category-radio" data-submodel="${submodel.category_id}" />
 										<label for="${uniqueId}"></label>
 									</div>
@@ -1512,7 +1512,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	});
 
-	// ✅ JavaScript para enviar datos de creación de marca, modelo o submodelo
+	// 📌 JavaScript para enviar datos de creación de marca, modelo o submodelo
 	const formAddCategory = document.getElementById("formAddCategory");
 	if (formAddCategory) {
 		formAddCategory.addEventListener("submit", async function (e) {
@@ -1583,7 +1583,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		});
 	}
-
 
 
 	function showConfirmModal(title, message, onConfirm) {
