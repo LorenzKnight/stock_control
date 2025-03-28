@@ -45,3 +45,11 @@
     /* background-color: blue; */
     border-radius: 0 0 10px 10px;
 }
+
+.all-mark-list tr:hover,
+.all-model-list tr:hover,
+.all-submodel-list tr:hover {
+    background-color: var(--frm-bg-transparent-grey);
+    -webkit-transition: all 500ms ease;
+    transition: all 500ms ease;
+}

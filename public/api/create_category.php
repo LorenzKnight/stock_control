@@ -40,7 +40,7 @@ try {
 		"created_at"    => date("Y-m-d H:i:s")
 	];
 
-	if ($catParentSub !== '') {
+	if ($catParentSub !== '' && $subParent == '') {
 		$data["cat_parent_sub"] = intval($catParentSub);
 	}
 
