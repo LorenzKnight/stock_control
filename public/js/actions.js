@@ -1602,6 +1602,139 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
+	// 📌 JavaScript para recoger datos de los select del formulario de productos
+	const productMarkSelect = document.getElementById("product_mark");
+	let productModelSelect = document.getElementById('product_model');
+	let productSubModelSelect = document.getElementById('product_sub_model');
+
+	if (!productMarkSelect) return;
+
+	try {
+		const response = await fetch("api/get_categories.php", {
+			method: "GET",
+			headers: { "Accept": "application/json" }
+		});
+
+		const data = await response.json();
+
+		if (data.success && data.data.length > 0) {
+
+			productMarkSelect.innerHTML = `<option value="">Select a Mark</option>`;
+
+			data.data.forEach(category => {
+				const option = document.createElement("option");
+				option.value = category.category_id;
+				option.textContent = category.category_name;
+				productMarkSelect.appendChild(option);
+			});
+		} else {
+			productMarkSelect.innerHTML = `<option value="">No marks found</option>`;
+		}
+	} catch (error) {
+		console.error("Error loading product marks:", error);
+		productMarkSelect.innerHTML = `<option value="">Error loading data</option>`;
+	}
+
+	if (productMarkSelect && productModelSelect) {
+		const selectModel = document.createElement('select');
+		selectModel.name = 'product_model';
+		selectModel.id = 'product_model';
+		selectModel.className = 'form-medium-input-style';
+		selectModel.disabled = true;
+	
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = 'Select Model';
+		selectModel.appendChild(defaultOption);
+	
+		productMarkSelect.addEventListener('change', function () {
+			const markId = this.value;
+	
+			selectModel.innerHTML = '';
+			const defaultOpt = document.createElement('option');
+			defaultOpt.value = '';
+			defaultOpt.textContent = 'Select Model';
+			selectModel.appendChild(defaultOpt);
+	
+			if (!markId) {
+				selectModel.disabled = true;
+				return;
+			}
+	
+			selectModel.disabled = false;
+	
+			fetch(`api/get_sub_categories.php?mark_id=${markId}`, {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			})
+			.then(res => res.json())
+			.then(data => {
+				if (data.success && data.data.length > 0) {
+					data.data.forEach(category => {
+						const option = document.createElement('option');
+						option.value = category.category_id;
+						option.textContent = category.category_name;
+						selectModel.appendChild(option);
+					});
+				} else {
+					const noOption = document.createElement('option');
+					noOption.value = '';
+					noOption.textContent = 'No models found';
+					selectModel.appendChild(noOption);
+				}
+			})
+			.catch(error => {
+				console.error("Error loading models:", error);
+			});
+		});
+	
+		productModelSelect.parentNode.replaceChild(selectModel, productModelSelect);
+		productModelSelect = selectModel;
+	}
+	
+	if (productModelSelect && productSubModelSelect) {
+		productSubModelSelect.disabled = true;
+	
+		productSubModelSelect.innerHTML = `<option value="">Select Submodel</option>`;
+	
+		productModelSelect.addEventListener('change', () => {
+			const modelId = productModelSelect.value;
+	
+			productSubModelSelect.innerHTML = `<option value="">Select Submodel</option>`;
+	
+			if (!modelId) {
+				productSubModelSelect.disabled = true;
+				return;
+			}
+	
+			productSubModelSelect.disabled = false;
+	
+			fetch(`api/get_sub_models.php?model_id=${modelId}`, {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			})
+			.then(res => res.json())
+			.then(data => {
+				if (data.success && data.data.length > 0) {
+					data.data.forEach(submodel => {
+						const option = document.createElement('option');
+						option.value = submodel.category_id;
+						option.textContent = submodel.category_name;
+						productSubModelSelect.appendChild(option);
+					});
+				} else {
+					const option = document.createElement('option');
+					option.value = '';
+					option.textContent = 'No submodels found';
+					productSubModelSelect.appendChild(option);
+				}
+			})
+			.catch(error => {
+				console.error('Error loading submodels:', error);
+			});
+		});
+	}
+
 
 	function showConfirmModal(title, message, onConfirm) {
 		const modal = document.getElementById('globalConfirmModal');
@@ -1631,5 +1764,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 			modal.style.display = 'none';
 		};
 	}
+
+	document.querySelectorAll('.input-year-only').forEach(input => {
+		input.addEventListener('input', () => {
+			let year = input.value.replace(/\D/g, ''); // eliminar todo lo que no sea número
+			if (year.length > 4) year = year.slice(0, 4); // limitar a 4 dígitos
+			input.value = year;
+		});
+	});
 
 });

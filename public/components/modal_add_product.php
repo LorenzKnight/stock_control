@@ -23,9 +23,8 @@
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td width="50%" align="center" valign="middle">
-						<!-- <input class="form-medium-input-style" type="text" name="product_type" id="product_type" placeholder="Product Type" title="Product Type"/> -->
 						<select class="form-input-style" name="product_type" id="product_type">
-							<option value="">Select a Vehicle</option>
+							<option value="">Select a Typ</option>
 							<option value="1">Motorcycle</option>
 							<option value="2">Car</option>
 							<option value="3">SUV</option>
@@ -42,28 +41,35 @@
 						</select>
 					</td>
 					<td width="50%" align="center" valign="middle">
-						<input class="form-medium-input-style" type="text" name="product_mark" id="product_mark" placeholder="Product Mark" title="Product Mark"/>
+						<select class="form-input-style" name="product_mark" id="product_mark">
+
+						</select>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td width="50%" align="center" valign="middle">
-						<input class="form-medium-input-style" type="text" name="product_model" id="product_model" placeholder="Product Model" title="Product Model"/>
+						<select class="form-input-style" name="product_model" id="product_model">
+
+						</select>
 					</td>
 					<td width="50%" align="center" valign="middle">
-						<input class="form-medium-input-style" type="text" name="product_sub_model" id="product_sub_model" placeholder="Product Sub-Model" title="Product Sub-Model"/>
+						<select class="form-input-style" name="product_sub_model" id="product_sub_model">
+
+						</select>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td width="50%" align="center" valign="middle">
-						<input class="form-medium-input-style" type="text" name="product_year" id="product_year" placeholder="Product Year" title="Product Year"/>
+						<input class="form-medium-input-style input-year-only" type="number" name="product_year" id="product_year" placeholder="Product Year" title="Product Year"/>
 					</td>
 					<td width="50%" align="center" valign="middle">
-						<input class="form-medium-input-style" type="text" name="prise" id="prise" placeholder="Product Prise" title="Product Prise"/>
+						<input class="form-medium-input-style" type="number" name="prise" id="prise" placeholder="Product Prise" title="Product Prise"/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="2" align="center" valign="middle">
-						<input class="form-input-style" type="text" name="description" id="description" placeholder="Description" title="Description"/>
+						<textarea class="form-input-style" id="description" name="description" rows="5" cols="35">
+						</textarea>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
