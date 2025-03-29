@@ -1206,6 +1206,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	if (inputProductMark) {
 		inputProductMark.addEventListener('input', () => {
+			let currentValue = inputProductMark.value;
+			
+			if (currentValue === currentValue.toUpperCase()) return;
+
 			let words = inputProductMark.value.split(" ");
 			words = words.map(word => {
 				return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
@@ -1319,6 +1323,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 	
 	if (inputProductModel) {
 		inputProductModel.addEventListener('input', () => {
+			let currentValue = inputProductModel.value;
+	
+			if (currentValue === currentValue.toUpperCase()) return;
+
 			let words = inputProductModel.value.split(" ");
 			words = words.map(word => {
 				return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
@@ -1434,6 +1442,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	if (inputSubmodel) {
 		inputSubmodel.addEventListener('input', () => {
+			let currentValue = inputSubmodel.value;
+	
+			if (currentValue === currentValue.toUpperCase()) return;
+
 			let words = inputSubmodel.value.split(" ");
 			words = words.map(word => {
 				return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
@@ -1603,65 +1615,72 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// 📌 JavaScript para recoger datos de los select del formulario de productos
-	const productMarkSelect = document.getElementById("product_mark");
-	let productModelSelect = document.getElementById('product_model');
-	let productSubModelSelect = document.getElementById('product_sub_model');
+	initCategorySelectors('product_mark', 'product_model', 'product_sub_model');
+	
 
-	if (!productMarkSelect) return;
-
-	try {
-		const response = await fetch("api/get_categories.php", {
-			method: "GET",
-			headers: { "Accept": "application/json" }
-		});
-
-		const data = await response.json();
-
-		if (data.success && data.data.length > 0) {
-
-			productMarkSelect.innerHTML = `<option value="">Select a Mark</option>`;
-
-			data.data.forEach(category => {
-				const option = document.createElement("option");
-				option.value = category.category_id;
-				option.textContent = category.category_name;
-				productMarkSelect.appendChild(option);
+	async function initCategorySelectors(markId, modelId, submodelId) {
+		const markSelect = document.getElementById(markId);
+		let modelSelect = document.getElementById(modelId);
+		let submodelSelect = document.getElementById(submodelId);
+	
+		if (!markSelect || !modelSelect || !submodelSelect) return;
+	
+		// 🔹 Cargar marcas
+		try {
+			const response = await fetch("api/get_categories.php", {
+				method: "GET",
+				headers: { "Accept": "application/json" }
 			});
-		} else {
-			productMarkSelect.innerHTML = `<option value="">No marks found</option>`;
-		}
-	} catch (error) {
-		console.error("Error loading product marks:", error);
-		productMarkSelect.innerHTML = `<option value="">Error loading data</option>`;
-	}
-
-	if (productMarkSelect && productModelSelect) {
-		const selectModel = document.createElement('select');
-		selectModel.name = 'product_model';
-		selectModel.id = 'product_model';
-		selectModel.className = 'form-medium-input-style';
-		selectModel.disabled = true;
+			const data = await response.json();
 	
-		const defaultOption = document.createElement('option');
-		defaultOption.value = '';
-		defaultOption.textContent = 'Select Model';
-		selectModel.appendChild(defaultOption);
+			markSelect.innerHTML = `<option value="">Select a Mark</option>`;
 	
-		productMarkSelect.addEventListener('change', function () {
-			const markId = this.value;
-	
-			selectModel.innerHTML = '';
-			const defaultOpt = document.createElement('option');
-			defaultOpt.value = '';
-			defaultOpt.textContent = 'Select Model';
-			selectModel.appendChild(defaultOpt);
-	
-			if (!markId) {
-				selectModel.disabled = true;
-				return;
+			if (data.success && data.data.length > 0) {
+				data.data.forEach(category => {
+					const option = document.createElement("option");
+					option.value = category.category_id;
+					option.textContent = category.category_name;
+					markSelect.appendChild(option);
+				});
+			} else {
+				markSelect.innerHTML += `<option value="">No marks found</option>`;
 			}
+		} catch (error) {
+			console.error("Error loading marks:", error);
+			markSelect.innerHTML = `<option value="">Error loading marks</option>`;
+		}
 	
-			selectModel.disabled = false;
+		// 🔹 Reemplazar modelo (por si venía como input) y configurar
+		const modelSelectCloned = document.createElement('select');
+		modelSelectCloned.name = modelId;
+		modelSelectCloned.id = modelId;
+		modelSelectCloned.className = 'form-medium-input-style';
+		modelSelectCloned.disabled = true;
+		modelSelectCloned.innerHTML = `<option value="">Select Model</option>`;
+		modelSelect.parentNode.replaceChild(modelSelectCloned, modelSelect);
+		modelSelect = modelSelectCloned;
+	
+		// 🔹 Reemplazar submodelo y configurar
+		const submodelSelectCloned = document.createElement('select');
+		submodelSelectCloned.name = submodelId;
+		submodelSelectCloned.id = submodelId;
+		submodelSelectCloned.className = 'form-medium-input-style';
+		submodelSelectCloned.disabled = true;
+		submodelSelectCloned.innerHTML = `<option value="">Select Submodel</option>`;
+		submodelSelect.parentNode.replaceChild(submodelSelectCloned, submodelSelect);
+		submodelSelect = submodelSelectCloned;
+	
+		// 🔹 Evento: Al cambiar Marca → cargar Modelos
+		markSelect.addEventListener('change', () => {
+			const markId = markSelect.value;
+			modelSelect.innerHTML = `<option value="">Select Model</option>`;
+			modelSelect.disabled = !markId;
+	
+			// Reset submodel también
+			submodelSelect.innerHTML = `<option value="">Select Submodel</option>`;
+			submodelSelect.disabled = true;
+	
+			if (!markId) return;
 	
 			fetch(`api/get_sub_categories.php?mark_id=${markId}`, {
 				method: 'GET',
@@ -1671,16 +1690,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 			.then(data => {
 				if (data.success && data.data.length > 0) {
 					data.data.forEach(category => {
-						const option = document.createElement('option');
+						const option = document.createElement("option");
 						option.value = category.category_id;
 						option.textContent = category.category_name;
-						selectModel.appendChild(option);
+						modelSelect.appendChild(option);
 					});
 				} else {
-					const noOption = document.createElement('option');
-					noOption.value = '';
-					noOption.textContent = 'No models found';
-					selectModel.appendChild(noOption);
+					modelSelect.innerHTML += `<option value="">No models found</option>`;
 				}
 			})
 			.catch(error => {
@@ -1688,26 +1704,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 			});
 		});
 	
-		productModelSelect.parentNode.replaceChild(selectModel, productModelSelect);
-		productModelSelect = selectModel;
-	}
+		// 🔹 Evento: Al cambiar Modelo → cargar Submodelos
+		modelSelect.addEventListener('change', () => {
+			const modelId = modelSelect.value;
+			submodelSelect.innerHTML = `<option value="">Select Submodel</option>`;
+			submodelSelect.disabled = !modelId;
 	
-	if (productModelSelect && productSubModelSelect) {
-		productSubModelSelect.disabled = true;
-	
-		productSubModelSelect.innerHTML = `<option value="">Select Submodel</option>`;
-	
-		productModelSelect.addEventListener('change', () => {
-			const modelId = productModelSelect.value;
-	
-			productSubModelSelect.innerHTML = `<option value="">Select Submodel</option>`;
-	
-			if (!modelId) {
-				productSubModelSelect.disabled = true;
-				return;
-			}
-	
-			productSubModelSelect.disabled = false;
+			if (!modelId) return;
 	
 			fetch(`api/get_sub_models.php?model_id=${modelId}`, {
 				method: 'GET',
@@ -1720,17 +1723,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 						const option = document.createElement('option');
 						option.value = submodel.category_id;
 						option.textContent = submodel.category_name;
-						productSubModelSelect.appendChild(option);
+						submodelSelect.appendChild(option);
 					});
 				} else {
-					const option = document.createElement('option');
-					option.value = '';
-					option.textContent = 'No submodels found';
-					productSubModelSelect.appendChild(option);
+					submodelSelect.innerHTML += `<option value="">No submodels found</option>`;
 				}
 			})
 			.catch(error => {
-				console.error('Error loading submodels:', error);
+				console.error("Error loading submodels:", error);
 			});
 		});
 	}
