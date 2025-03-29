@@ -1,6 +1,6 @@
 <div class="bg-popup" id="add-product-form">
 	<div class="formular-frame">
-		<form action="stock.php" method="post" name="formAddProduct" id="formAddProduct" enctype="multipart/form-data">
+		<form method="post" name="formAddProduct" id="formAddProduct" enctype="multipart/form-data">
 			<table width="80%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td colspan="2" align="center" valign="middle">
@@ -41,21 +41,15 @@
 						</select>
 					</td>
 					<td width="50%" align="center" valign="middle">
-						<select class="form-input-style" name="product_mark" id="product_mark">
-
-						</select>
+						<select class="form-input-style" name="product_mark" id="product_mark"></select>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td width="50%" align="center" valign="middle">
-						<select class="form-input-style" name="product_model" id="product_model">
-
-						</select>
+						<select class="form-input-style" name="product_model" id="product_model"></select>
 					</td>
 					<td width="50%" align="center" valign="middle">
-						<select class="form-input-style" name="product_sub_model" id="product_sub_model">
-
-						</select>
+						<select class="form-input-style" name="product_sub_model" id="product_sub_model"></select>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
