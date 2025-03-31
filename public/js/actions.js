@@ -1616,7 +1616,73 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	// 📌 JavaScript para recoger datos de los select del formulario de productos
 	initCategorySelectors('product_mark', 'product_model', 'product_sub_model');
-	
+
+	// 📌 Script para recoger todos los datos de productos
+	const container = document.getElementById('product-list');
+	if (container) {
+		try {
+			const res = await fetch('api/get_products.php', {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			});
+
+			const data = await res.json();
+
+			if (data.success && data.data.length > 0) {
+				data.data.forEach(product => {
+					console.log(product);
+					const card = document.createElement('div');
+					card.className = 'product-card';
+
+					let isDefaultImage = !product.product_image || product.product_image.trim() === "";
+					let productImage = isDefaultImage 
+						? "images/sys-img/wooden-box.png"
+						: `images/products/${product.product_image}`;
+
+					let imageClass = isDefaultImage ? "grayscale-img" : "";
+
+					card.innerHTML = `
+						<div class="product-pic">
+							<img src="${productImage}" alt="${product.product_name}" class="${imageClass}" />
+						</div>
+						<div class="product-desc">
+							<table style="" width="90%" align="center" cellspacing="0">
+								<tr valign="baseline">
+									<td colspan="2">
+										<p>${product.product_name}</p>
+										<h3><strong>${product.mark_name + ' - ' + product.model_name}</strong></h3>
+										<p>${product.submodel_name}</p>
+									</td>
+								</tr>
+								<tr valign="baseline">
+									<td style="width: 50%; border-top: 1px solid #CCC;" align="left" valign="middle">
+										<p>
+										Year<br>
+										<strong>${product.product_year || ''}</strong>
+										</p>
+									</td>
+									<td style="width: 50%; border-top: 1px solid #CCC;" align="left" valign="middle">
+										<p>
+										Prise<br>
+										<strong>${product.prise ? '$' + product.prise : ''}</strong>
+										</p>
+									</td>
+								</tr>
+							</table>
+						</div>
+					`;
+					container.appendChild(card);
+				});
+			} else {
+				container.innerHTML = `<p style="text-align:center;">No products found</p>`;
+			}
+		} catch (error) {
+			console.error("Error loading products:", error);
+			container.innerHTML = `<p style="text-align:center;">Error loading products</p>`;
+		}
+	}
+
+
 
 	async function initCategorySelectors(markId, modelId, submodelId) {
 		const markSelect = document.getElementById(markId);

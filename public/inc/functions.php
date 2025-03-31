@@ -20,8 +20,14 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 
 	$orderClause = '';
 	if (!empty($options['order_by'])) {
-		$orderDirection = isset($options['order_direction']) && strtolower($options['order_direction']) === 'desc' ? 'DESC' : 'ASC';
-		$orderClause = " ORDER BY " . pg_escape_string($options['order_by']) . " $orderDirection";
+		$orderByRaw = $options['order_by'];
+
+		if (preg_match('/\b(ASC|DESC)\b/i', $orderByRaw)) {
+			$orderClause = " ORDER BY " . pg_escape_string($orderByRaw);
+		} else {
+			$orderDirection = isset($options['order_direction']) && strtolower($options['order_direction']) === 'desc' ? 'DESC' : 'ASC';
+			$orderClause = " ORDER BY " . pg_escape_string($orderByRaw) . " $orderDirection";
+		}
 	}
 
 	$limitClause = '';
