@@ -29,13 +29,13 @@
 					</tr>
 				</table>
 			</div>
-			<div class="product-list">
-				<div class="product-card">
+			<div class="product-list" id="product-list">
+				<!-- <div class="product-card">
 					<div class="product-pic">
 						
 					</div>
 					<div class="product-desc">
-						<!-- <table width="100%" align="center" cellspacing="0">
+						<table width="100%" align="center" cellspacing="0">
 							<tr valign="baseline">
 								<td style="width:40%;" align="left" valign="middle">
 									<h2>Mercedes-Benz C-Klass</h2>
@@ -47,45 +47,9 @@
 								<td style="width:15%;" align="left" valign="middle">4</td>
 								<td style="width:15%;" align="left" valign="middle">5</td>
 							</tr>
-						</table> -->
+						</table>
 					</div>
-				</div>
-
-				<div class="product-card">
-					<div class="product-pic">
-						
-					</div>
-					<div class="product-desc">
-						
-					</div>
-				</div>
-
-				<div class="product-card">
-					<div class="product-pic">
-						
-					</div>
-					<div class="product-desc">
-						
-					</div>
-				</div>
-
-				<div class="product-card">
-					<div class="product-pic">
-						
-					</div>
-					<div class="product-desc">
-						
-					</div>
-				</div>
-
-				<div class="product-card">
-					<div class="product-pic">
-						
-					</div>
-					<div class="product-desc">
-						
-					</div>
-				</div>
+				</div> -->
 			</div>
 		</div>
 	</div>
