@@ -36,17 +36,10 @@ nav ul.menu li:hover {
 	color: #fd802c;
 }
 
-.search-holder {
+.header-spacer {
     width: 603px;
     float: left;
     flex: 1;
-}
-
-.search-field {
-    width: 574px;
-    border: 0;
-    border-radius: 4px;
-    padding: 5px;
 }
 
 .profile-frame {

@@ -25,7 +25,7 @@
 									</tr>
 								</table>
 							</div>
-							<div class="my-playlis-list">
+							<div class="cat-all-list">
 								<table class="all-mark-list" id="mark-list" cellspacing="0">
 								
 								</table>
@@ -49,7 +49,7 @@
 									</tr>
 								</table>
 							</div>
-							<div class="my-playlis-list">
+							<div class="cat-all-list">
 								<table class="all-model-list" id="model-list" cellspacing="0">
 								
 								</table>
@@ -73,7 +73,7 @@
 									</tr>
 								</table>
 							</div>
-							<div class="my-playlis-list">
+							<div class="cat-all-list">
 								<table class="all-submodel-list" id="submodel-list" cellspacing="0">
 								
 								</table>
