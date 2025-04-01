@@ -5,29 +5,54 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 		return json_encode(["success" => false, "message" => "Table name is required"]);
 	}
 
-	$columnNames = empty($columns) ? '*' : implode(', ', $columns);
+	$columnNames = empty($columns)
+		? '*'
+		: implode(', ', array_map(fn($col) => "\"$col\"", $columns));
+
+	$tableName = '"' . pg_escape_string($tableName) . '"';
 
 	$whereParts = [];
 	foreach ($whereClause as $column => $value) {
-		if ($value === null) {
-			$whereParts[] = "$column IS NULL";
+		if ($column === 'OR' && is_array($value)) {
+			$orParts = [];
+			foreach ($value as $orKey => $orVal) {
+				$escapedVal = pg_escape_string((string)$orVal);
+				if (stripos($orKey, 'LIKE') !== false || stripos($orKey, 'ILIKE') !== false) {
+					$orParts[] = "$orKey '$escapedVal'";
+				} else {
+					$orParts[] = "$orKey = '$escapedVal'";
+				}
+			}
+			$whereParts[] = '(' . implode(' OR ', $orParts) . ')';
+
+		} elseif ($column === 'OR_IN' && is_array($value)) {
+			$orInParts = [];
+			foreach ($value as $field => $inValues) {
+				$escapedVals = array_map(fn($val) => "'" . pg_escape_string($val) . "'", $inValues);
+				$orInParts[] = "\"$field\" IN (" . implode(',', $escapedVals) . ")";
+			}
+			$whereParts[] = '(' . implode(' OR ', $orInParts) . ')';
+
+		} elseif (stripos($column, 'LIKE') !== false || stripos($column, 'ILIKE') !== false) {
+			$escapedVal = pg_escape_string((string)$value);
+			$whereParts[] = "$column '$escapedVal'";
+
+		} elseif ($value === null) {
+			$whereParts[] = "\"$column\" IS NULL";
+
 		} else {
-			$escapedValue = "'" . pg_escape_string((string)$value) . "'";
-			$whereParts[] = "$column = $escapedValue";
+			$escapedVal = pg_escape_string((string)$value);
+			$whereParts[] = "\"$column\" = '$escapedVal'";
 		}
 	}
+
 	$whereClauseStr = empty($whereParts) ? '' : ' WHERE ' . implode(' AND ', $whereParts);
 
 	$orderClause = '';
 	if (!empty($options['order_by'])) {
 		$orderByRaw = $options['order_by'];
-
-		if (preg_match('/\b(ASC|DESC)\b/i', $orderByRaw)) {
-			$orderClause = " ORDER BY " . pg_escape_string($orderByRaw);
-		} else {
-			$orderDirection = isset($options['order_direction']) && strtolower($options['order_direction']) === 'desc' ? 'DESC' : 'ASC';
-			$orderClause = " ORDER BY " . pg_escape_string($orderByRaw) . " $orderDirection";
-		}
+		$orderDirection = isset($options['order_direction']) && strtolower($options['order_direction']) === 'desc' ? 'DESC' : 'ASC';
+		$orderClause = " ORDER BY \"$orderByRaw\" $orderDirection";
 	}
 
 	$limitClause = '';
@@ -37,34 +62,40 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 
 	$query = "SELECT $columnNames FROM $tableName$whereClauseStr$orderClause$limitClause;";
 
-	if (isset($options['echo_query']) && $options['echo_query']) {
-		echo "Q: $query<br>\n";
+	if (isset($options['echo_query']) && $options['echo_query'] && php_sapi_name() === 'cli') {
+		echo "Q: $query\n";
 	}
 
 	$result = pg_query($query);
 
 	if (!$result) {
-		return json_encode(["success" => false, "message" => "Error executing query", "count" => 0]);
+		return json_encode([
+			"success" => false,
+			"message" => "Error executing query",
+			"query" => (isset($options['echo_query']) && $options['echo_query']) ? $query : null,
+			"count" => 0
+		]);
 	}
-
 
 	if (!empty($options['fetch_first'])) {
 		$row = pg_fetch_assoc($result);
 		return json_encode([
-			"success" => !empty($row),
-			"message" => empty($row) ? "No records found" : "Record retrieved successfully",
-			"count" => !empty($row) ? 1 : 0,
-			"data" => $row ?: []
+			"success"	=> !empty($row),
+			"message"	=> empty($row) ? "No records found" : "Record retrieved successfully",
+			"query"		=> (isset($options['echo_query']) && $options['echo_query']) ? $query : null,
+			"count"		=> !empty($row) ? 1 : 0,
+			"data"		=> $row ?: []
 		]);
 	}
 
 	$data = pg_fetch_all($result) ?: [];
 
 	return json_encode([
-		"success" => !empty($data),
-		"message" => empty($data) ? "No records found" : "Records retrieved successfully",
-		"count" => count($data),
-		"data" => $data
+		"success"	=> !empty($data),
+		"message"	=> empty($data) ? "No records found" : "Records retrieved successfully",
+		"query"		=> (isset($options['echo_query']) && $options['echo_query']) ? $query : null,
+		"count"		=> count($data),
+		"data"		=> $data
 	]);
 }
 

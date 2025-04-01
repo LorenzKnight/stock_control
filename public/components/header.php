@@ -7,7 +7,7 @@
 					    <h3>StockControl</h3>
 					</div>
 				</li>
-                <li class="search-holder">
+                <li class="header-spacer">
 					<!-- <input type="text" name="searchField" id="searchField" class="search-field"> -->
 				</li>
 				<li>Sales</li>

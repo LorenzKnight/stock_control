@@ -29,7 +29,7 @@
 }
 
 .product-card:hover {
-    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.286);
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.286);
 }
 
 .product-pic {
@@ -68,7 +68,7 @@
     transition: all 500ms ease;
 }
 
-.my-playlis-list {
+.cat-all-list {
     height: 400px;
     /* background-color: red; */
     overflow: auto;
