@@ -1,7 +1,7 @@
 <?php
 require_once('../logic/stock_be.php');
 header("Content-Type: application/json");
-$response["debug_GET"] = $_GET;
+
 $response = [
 	"success" => false,
 	"message" => "No products found",
@@ -20,7 +20,6 @@ try {
 	$mark = $_GET["mark"] ?? '';
 	$model = $_GET["model"] ?? '';
 	$submodel = $_GET["submodel"] ?? '';
-	$categories = isset($_GET["categories"]) ? explode(',', $_GET["categories"]) : [];
 
 	$where = [
 		"company_id" => $companyId
@@ -40,15 +39,6 @@ try {
 		$where["OR"] = [
 			"product_name ILIKE" => "%" . $search . "%"
 		];
-
-		// Añadir también si hay categorías relacionadas
-		if (!empty($categories)) {
-			$where["OR_IN"] = [
-				"product_mark" => $categories,
-				"product_model" => $categories,
-				"product_sub_model" => $categories
-			];
-		}
 	}
 
 	$products = select_from("products", [

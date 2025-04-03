@@ -58,6 +58,7 @@
     height: 190px;
     /* background-color: blue; */
     border-radius: 0 0 10px 10px;
+    position: relative;
 }
 
 .all-mark-list tr:hover,
