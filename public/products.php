@@ -14,6 +14,7 @@
 </head>
 
 <body>
+	<?php include("components/modal_product_options.php"); ?>
 	<?php include("components/modal_add_product.php"); ?>
 	<?php include("components/modal_add_category.php"); ?>
 	<?php include("components/message.php"); ?>

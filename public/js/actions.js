@@ -354,7 +354,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							<p><strong>Phone:</strong> ${user.phone ? user.phone : "No Phone Number"}</p>
 						</div>
 						<div class="card-menu">
-							<img src="images/sys-img/edit-icon.png" alt="eidt-card">
+							<img src="images/sys-img/edit-icon.png" alt="edit-card">
 						</div>
 					`;
 
@@ -542,6 +542,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	handlePopupClose("edit-members-form", ".formular-frame", ["edit-members-form"]);
 	handlePopupClose("add-product-form", ".formular-frame", ["add-product-form"]);
 	handlePopupClose("add-category-form", ".formular-big-frame", ["add-category-form"]);
+	handlePopupClose("product-options", ".formular-frame", ["product-options"]);
 
 	// 📌 Boton para cerrar formulario
 	let cancelButtons = document.querySelectorAll('.neutral-btn');
@@ -1628,113 +1629,230 @@ document.addEventListener("DOMContentLoaded", async function () {
 	let submodelSelect = document.getElementById('sarch_product_sub_model');
 
 	async function getCategoryIdsByKeyword(keyword) {
-	if (!keyword || keyword.length < 2) return [];
+		if (!keyword || keyword.length < 2) return [];
 
-	try {
-		const res = await fetch(`api/search_categories.php?keyword=${encodeURIComponent(keyword)}`);
-		const data = await res.json();
-		if (data.success) return data.ids;
-	} catch (err) {
-		console.error('Error fetching category IDs:', err);
-	}
-	return [];
+		try {
+			const res = await fetch(`api/search_categories.php?keyword=${encodeURIComponent(keyword)}`);
+			const data = await res.json();
+			if (data.success) return data.ids;
+		} catch (err) {
+			console.error('Error fetching category IDs:', err);
+		}
+		return [];
 	}
 
 	async function fetchAndRenderProducts() {
-	if (!container) return;
+		if (!container) return;
 
-	markSelect = document.getElementById('sarch_product_mark');
-	modelSelect = document.getElementById('sarch_product_model');
-	submodelSelect = document.getElementById('sarch_product_sub_model');
+		markSelect = document.getElementById('sarch_product_mark');
+		modelSelect = document.getElementById('sarch_product_model');
+		submodelSelect = document.getElementById('sarch_product_sub_model');
 
-	const searchText = searchField?.value.trim() || "";
-	let selectedMark = markSelect?.value || "";
-	let selectedModel = modelSelect?.value || "";
-	let selectedSubmodel = submodelSelect?.value || "";
+		const searchText = searchField?.value.trim() || "";
+		let selectedMark = markSelect?.value || "";
+		let selectedModel = modelSelect?.value || "";
+		let selectedSubmodel = submodelSelect?.value || "";
 
-	let categoryIds = [];
-	if (searchText !== "") {
-		categoryIds = await getCategoryIdsByKeyword(searchText);
-	}
+		const params = new URLSearchParams();
+		if (searchText) params.append('search', searchText);
+		if (selectedMark) params.append('mark', selectedMark);
+		if (selectedModel) params.append('model', selectedModel);
+		if (selectedSubmodel) params.append('submodel', selectedSubmodel);
 
-	const params = new URLSearchParams();
-	if (searchText) params.append('search', searchText);
-	if (selectedMark) params.append('mark', selectedMark);
-	if (selectedModel) params.append('model', selectedModel);
-	if (selectedSubmodel) params.append('submodel', selectedSubmodel);
-	if (categoryIds.length > 0) params.append('categories', categoryIds.join(','));
+		// Log params para depuración
+		// console.log("🔍 Enviando filtros a get_products.php:", params.toString());
 
-	// Log params para depuración
-	console.log("🔍 Enviando filtros a get_products.php:", params.toString());
+		try {
+			const res = await fetch(`api/get_products.php?${params.toString()}`, {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			});
+			const data = await res.json();
+			container.innerHTML = "";
 
-	try {
-		const res = await fetch(`api/get_products.php?${params.toString()}`, {
-		method: 'GET',
-		headers: { 'Accept': 'application/json' }
-		});
-		const data = await res.json();
-		container.innerHTML = "";
+			if (data.success && data.data.length > 0) {
+				data.data.forEach(product => {
+					const card = document.createElement('div');
+					card.className = 'product-card';
 
-		if (data.success && data.data.length > 0) {
-		data.data.forEach(product => {
-			const card = document.createElement('div');
-			card.className = 'product-card';
+					let isDefaultImage = !product.product_image || product.product_image.trim() === "";
+					let productImage = isDefaultImage 
+					? "images/sys-img/wooden-box.png"
+					: `images/products/${product.product_image}`;
 
-			let isDefaultImage = !product.product_image || product.product_image.trim() === "";
-			let productImage = isDefaultImage 
-			? "images/sys-img/wooden-box.png"
-			: `images/products/${product.product_image}`;
+					let imageClass = isDefaultImage ? "grayscale-img" : "";
 
-			let imageClass = isDefaultImage ? "grayscale-img" : "";
+					card.innerHTML = `
+					<div class="product-pic">
+						<img src="${productImage}" alt="${product.product_name}" class="${imageClass}" />
+					</div>
+					<div class="product-desc">
+						<table width="90%" align="center" cellspacing="0">
+						<tr valign="baseline">
+							<td colspan="2">
+							<p>${product.product_name}</p>
+							<h3><strong>${product.mark_name + ' - ' + product.model_name}</strong></h3>
+							<p>${product.submodel_name || ''}</p>
+							</td>
+						</tr>
+						<tr valign="baseline">
+							<td style="width: 50%; border-top: 1px solid #CCC;">
+							<p>Year<br><strong>${product.product_year || ''}</strong></p>
+							</td>
+							<td style="width: 50%; border-top: 1px solid #CCC;">
+							<p>Prise<br><strong>${product.prise ? '$' + product.prise : ''}</strong></p>
+							</td>
+						</tr>
+						</table>
+						<div class="product-menu">
+							<img src="images/sys-img/menu-icon.png" alt="product-menu">
+						</div>
+					</div>
+					`;
+					container.appendChild(card);
 
-			card.innerHTML = `
-			<div class="product-pic">
-				<img src="${productImage}" alt="${product.product_name}" class="${imageClass}" />
-			</div>
-			<div class="product-desc">
-				<table width="90%" align="center" cellspacing="0">
-				<tr valign="baseline">
-					<td colspan="2">
-					<p>${product.product_name}</p>
-					<h3><strong>${product.mark_name + ' - ' + product.model_name}</strong></h3>
-					<p>${product.submodel_name || ''}</p>
-					</td>
-				</tr>
-				<tr valign="baseline">
-					<td style="width: 50%; border-top: 1px solid #CCC;">
-					<p>Year<br><strong>${product.product_year || ''}</strong></p>
-					</td>
-					<td style="width: 50%; border-top: 1px solid #CCC;">
-					<p>Prise<br><strong>${product.prise ? '$' + product.prise : ''}</strong></p>
-					</td>
-				</tr>
-				</table>
-			</div>
-			`;
-			container.appendChild(card);
-		});
-		} else {
-		container.innerHTML = `<p style="text-align:center;">No products found</p>`;
+					const cardMenuBtn = card.querySelector('.product-menu');
+					cardMenuBtn.addEventListener('click', () => {
+						openProductForm(product.product_id);
+					});
+				});
+			} else {
+				container.innerHTML = `<p style="text-align:center;">No products found</p>`;
+			}
+		} catch (error) {
+			console.error("Error loading products:", error);
+			container.innerHTML = `<p style="text-align:center;">Error loading products</p>`;
 		}
-	} catch (error) {
-		console.error("Error loading products:", error);
-		container.innerHTML = `<p style="text-align:center;">Error loading products</p>`;
-	}
 	}
 
 	searchField?.addEventListener('keyup', fetchAndRenderProducts);
 	document.addEventListener('change', (e) => {
-	const id = e.target?.id;
-	if (["sarch_product_mark", "sarch_product_model", "sarch_product_sub_model"].includes(id)) {
-		fetchAndRenderProducts();
-	}
+		const id = e.target?.id;
+		if (["sarch_product_mark", "sarch_product_model", "sarch_product_sub_model"].includes(id)) {
+			fetchAndRenderProducts();
+		}
 	});
 
 	fetchAndRenderProducts();
+
+
+	async function openProductForm(productId) {
+		scrollToTopIfNeeded();
 	
+		const productOptions = document.getElementById('product-options');
+		const popupContent = productOptions.querySelector('.formular-frame');
+		const productName = document.getElementById('product-name');
+		// const formEditProduct = document.getElementById('formEditProduct');
+	
+		if (!productId) return;
 
+		try {
+			const res = await fetch(`api/get_products.php?product_id=${productId}`);
+			const data = await res.json();
 
+			if (data.success && data.data.length > 0) {
+				const product = data.data.find(p => p.product_id == productId);
+				if (product && productName) {
+					productName.textContent = product.mark_name + ' - ' + product.model_name;
+				}
+			}
 
+			if (productOptions && popupContent) {
+				resetProductPopupView();
+
+				productOptions.style.display = 'block';
+				productOptions.style.opacity = '0';
+				productOptions.style.transition = 'opacity 0.5s ease';
+				setTimeout(() => {
+					productOptions.style.opacity = '1';
+				}, 10);
+
+				popupContent.style.transform = 'scale(0.7)';
+				popupContent.style.opacity = '0';
+				popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+				setTimeout(() => {
+					popupContent.style.transform = 'scale(1)';
+					popupContent.style.opacity = '1';
+				}, 50);
+		
+				// Asignar el evento para mostrar el formulario de edicion con animacion
+				const editBtn = document.getElementById('editProductBtn');
+				if (editBtn) {
+					editBtn.onclick = () => {
+						const menuDiv = document.getElementById('product-menu-buttons');
+						const editDiv = document.getElementById('edit-product-modal');
+			
+						fadeOutAndHide(menuDiv, () => {
+							showWithFadeIn(editDiv);
+						});
+					}
+				}
+			}
+		} catch (error) {
+			console.error("Error loading product info:", error);
+		}
+	}
+
+	const backBtn = document.getElementById('backToMenuBtn');
+	if (backBtn) {
+		backBtn.onclick = (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+
+			const menuDiv = document.getElementById('product-menu-buttons');
+			const editDiv = document.getElementById('edit-product-modal');
+
+			fadeOutAndHide(editDiv, () => {
+				showWithFadeIn(menuDiv);
+			});
+
+			document.getElementById('product-options').style.display = 'block';
+		};
+	}
+
+	function fadeOutAndHide(element, callback) {
+		element.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+		element.style.opacity = '1';
+		element.style.transform = 'scale(1)';
+	
+		setTimeout(() => {
+			element.style.opacity = '0';
+			element.style.transform = 'scale(0.8)';
+			setTimeout(() => {
+				element.style.display = 'none';
+				if (callback) callback();
+			}, 400);
+		}, 10);
+	}
+	
+	function showWithFadeIn(element) {
+		element.style.display = 'block';
+		element.style.opacity = '0';
+		element.style.transform = 'scale(0.8)';
+		element.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+	
+		setTimeout(() => {
+			element.style.opacity = '1';
+			element.style.transform = 'scale(1)';
+		}, 50);
+	}
+
+	function resetProductPopupView() {
+		const menuDiv = document.getElementById('product-menu-buttons');
+		const editDiv = document.getElementById('edit-product-modal');
+	
+		menuDiv.style.display = 'block';
+		menuDiv.style.opacity = '1';
+		menuDiv.style.transform = 'scale(1)';
+	
+		editDiv.style.display = 'none';
+		editDiv.style.opacity = '0';
+		editDiv.style.transform = 'scale(0.8)';
+	}
+
+	
+	
 	async function initCategorySelectors(markId, modelId, submodelId) {
 		const markSelect = document.getElementById(markId);
 		let modelSelect = document.getElementById(modelId);
