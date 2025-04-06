@@ -305,13 +305,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// Roles disponibles
-	const ranks = {
-		1: "Administrator (Full Access)",
-		2: "Manager (Manage teams/data)",
-		3: "Supervisor (Oversee operations)",
-		4: "Operator (Limited access)",
-		5: "Viewer (Read-only access)"
-	};
+	// const ranks = {
+	// 	1: "Administrator (Full Access)",
+	// 	2: "Manager (Manage teams/data)",
+	// 	3: "Supervisor (Oversee operations)",
+	// 	4: "Operator (Limited access)",
+	// 	5: "Viewer (Read-only access)"
+	// };
 
 	// 📌 Manejo de lista de usuarios hijos
 	const spot = document.getElementById("spot");
@@ -346,7 +346,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							<div class="mini-profile" style="border: 2px solid ${borderColor};">
 								<img src="${profileImage}" alt="Profile Picture">
 							</div>
-							<div class="co-worker-position">${ranks[user.rank] || 'Unknown role'}</div>
+							<div class="co-worker-position">${user.rank_text || 'Unknown role'}</div>
 						</div>
 						<div class="card-info">
 							<h3>${user.name} ${user.surname}</h3>
@@ -407,13 +407,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 	
 			if (data.success && data.data) {
 				const user = data.data;
+				const ranks = data.ranks;
+
 				document.getElementById('edit_name').value = user.name || '';
 				document.getElementById('edit_surname').value = user.surname || '';
 				document.getElementById('edit_birthday').value = user.birthday ? user.birthday.split(" ")[0] : '';
 				document.getElementById('edit_phone').value = user.phone || '';
 				document.getElementById('edit_email').value = user.email || '';
 
-				populateRankSelect('edit_rank', user.rank);
+				populateRankSelect('edit_rank', user.rank, ranks);
 				// Opcional: Puedes ocultar el campo de contraseña si estás editando
 				// document.getElementById('edit_password').value = '';
 				document.getElementById("edit_status").checked = user.status === "1" || user.status === 1;
@@ -969,17 +971,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
 	// Función para llenar el <select>
-	function populateRankSelect(selectId, selectedValue = '') {
+	function populateRankSelect(selectId, selectedValue = '', ranks = {}) {
 		const select = document.getElementById(selectId);
 		if (!select) return;
-
+	
 		select.innerHTML = '';
-
+	
 		const defaultOption = document.createElement('option');
 		defaultOption.value = '';
 		defaultOption.textContent = 'Select user role';
 		select.appendChild(defaultOption);
-
+	
 		for (const [value, label] of Object.entries(ranks)) {
 			const option = document.createElement('option');
 			option.value = value;
@@ -994,7 +996,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	// 📌 script para add members popup
 	let addMemberButton = document.getElementById('add-members-button');
 	if (addMemberButton) {
-		addMemberButton.addEventListener('click', function (e) {
+		addMemberButton.addEventListener('click', async function (e) {
 			e.preventDefault();
 
 			scrollToTopIfNeeded();
@@ -1018,7 +1020,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 					popupContent.style.opacity = '1';
 				}, 50);
 
-				populateRankSelect('rank');
+				try {
+					const res = await fetch('api/get_global_array.php?key=ranks');
+					const data = await res.json();
+	
+					if (data.success && data.data) {
+						populateRankSelect('rank', '', data.data);
+					} else {
+						console.error("Failed to load ranks:", data.message);
+					}
+				} catch (err) {
+					console.error("Error fetching ranks:", err);
+				}
 			}
 		});
 	}
@@ -1101,8 +1114,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 					popupContent.style.transform = 'scale(1)';
 					popupContent.style.opacity = '1';
 				}, 50);
-
-				// populateRankSelect('rank');
 			}
 		});
 	}
@@ -1183,8 +1194,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 					popupContent.style.transform = 'scale(1)';
 					popupContent.style.opacity = '1';
 				}, 50);
-
-				// populateRankSelect('rank');
 			}
 		});
 	}
@@ -1688,21 +1697,21 @@ document.addEventListener("DOMContentLoaded", async function () {
 					</div>
 					<div class="product-desc">
 						<table width="90%" align="center" cellspacing="0">
-						<tr valign="baseline">
-							<td colspan="2">
-							<p>${product.product_name}</p>
-							<h3><strong>${product.mark_name + ' - ' + product.model_name}</strong></h3>
-							<p>${product.submodel_name || ''}</p>
-							</td>
-						</tr>
-						<tr valign="baseline">
-							<td style="width: 50%; border-top: 1px solid #CCC;">
-							<p>Year<br><strong>${product.product_year || ''}</strong></p>
-							</td>
-							<td style="width: 50%; border-top: 1px solid #CCC;">
-							<p>Prise<br><strong>${product.prise ? '$' + product.prise : ''}</strong></p>
-							</td>
-						</tr>
+							<tr valign="baseline">
+								<td colspan="2">
+									<p>${product.product_name}</p>
+									<h3><strong>${product.mark_name + ' - ' + product.model_name}</strong></h3>
+									<p>${product.submodel_name || ''}</p>
+								</td>
+							</tr>
+							<tr valign="baseline">
+								<td style="width: 50%; border-top: 1px solid #CCC;">
+									<p>Year<br><strong>${product.product_year || ''}</strong></p>
+								</td>
+								<td style="width: 50%; border-top: 1px solid #CCC;">
+									<p>Prise<br><strong>${product.prise ? '$' + product.prise : ''}</strong></p>
+								</td>
+							</tr>
 						</table>
 						<div class="product-menu">
 							<img src="images/sys-img/menu-icon.png" alt="product-menu">
@@ -1736,6 +1745,36 @@ document.addEventListener("DOMContentLoaded", async function () {
 	fetchAndRenderProducts();
 
 
+	function animateHeightChange(container, sectionToShow, callback) {
+		const startHeight = container.offsetHeight + 'px';
+		container.style.height = startHeight;
+	
+		// Ocultar sección destino antes de mostrarla
+		sectionToShow.style.display = 'block';
+		sectionToShow.style.opacity = '0';
+		sectionToShow.style.visibility = 'hidden';
+	
+		// Realizar cambios (esconder lo anterior, mostrar lo nuevo)
+		if (callback) callback();
+	
+		requestAnimationFrame(() => {
+			const desiredHeight = container.scrollHeight;
+			const maxHeight = window.innerHeight * 0.9;
+			const endHeight = Math.min(desiredHeight, maxHeight) + 'px';
+			container.style.height = endHeight;
+	
+			container.addEventListener('transitionend', function handler() {
+				container.style.height = 'auto';
+				// Mostrar suavemente la sección nueva después del estiramiento
+				sectionToShow.style.visibility = 'visible';
+				sectionToShow.style.transition = 'opacity 0.2s ease';
+				sectionToShow.style.opacity = '1';
+	
+				container.removeEventListener('transitionend', handler);
+			});
+		});
+	}
+
 	async function openProductForm(productId) {
 		scrollToTopIfNeeded();
 	
@@ -1767,23 +1806,55 @@ document.addEventListener("DOMContentLoaded", async function () {
 					productOptions.style.opacity = '1';
 				}, 10);
 
-				popupContent.style.transform = 'scale(0.7)';
 				popupContent.style.opacity = '0';
-				popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+				popupContent.style.transform = 'scale(0.7)';
+				popupContent.classList.remove('animate-elastic');
 				setTimeout(() => {
 					popupContent.style.transform = 'scale(1)';
 					popupContent.style.opacity = '1';
 				}, 50);
 		
-				// Asignar el evento para mostrar el formulario de edicion con animacion
+				// Botón: Assign to sale
+				const assignBtn = document.getElementById('assignSaleBtn');
+				if (assignBtn) {
+					assignBtn.onclick = () => {
+						const menuDiv = document.getElementById('product-menu-buttons');
+						const assignDiv = document.getElementById('assign-sale-section');
+				
+						animateHeightChange(popupContent, assignDiv, () => {
+							fadeOutAndHide(menuDiv, () => {
+								showWithFadeIn(assignDiv);
+							});
+						});
+					};
+				}
+
+				// Botón: Receive as initial
+				const receiveBtn = document.getElementById('receiveInitialBtn');
+				if (receiveBtn) {
+					receiveBtn.onclick = () => {
+						const menuDiv = document.getElementById('product-menu-buttons');
+						const receiveDiv = document.getElementById('receive-as-initial'); 
+				
+						animateHeightChange(popupContent, receiveDiv, () => {
+							fadeOutAndHide(menuDiv, () => {
+								showWithFadeIn(receiveDiv);
+							});
+						});
+					};
+				}
+				
+				// Botón: Edit product
 				const editBtn = document.getElementById('editProductBtn');
 				if (editBtn) {
 					editBtn.onclick = () => {
 						const menuDiv = document.getElementById('product-menu-buttons');
 						const editDiv = document.getElementById('edit-product-modal');
 			
-						fadeOutAndHide(menuDiv, () => {
-							showWithFadeIn(editDiv);
+						animateHeightChange(popupContent, editDiv, () => {
+							fadeOutAndHide(menuDiv, () => {
+								showWithFadeIn(editDiv);
+							});
 						});
 					}
 				}
@@ -1793,23 +1864,37 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
-	const backBtn = document.getElementById('backToMenuBtn');
-	if (backBtn) {
-		backBtn.onclick = (e) => {
+	document.querySelectorAll('.back-to-menu-btn').forEach(button => {
+		button.addEventListener('click', (e) => {
 			e.preventDefault();
 			e.stopPropagation();
 			e.stopImmediatePropagation();
 
 			const menuDiv = document.getElementById('product-menu-buttons');
+			const assignDiv = document.getElementById('assign-sale-section');
+			const receiveDiv = document.getElementById('receive-as-initial');
 			const editDiv = document.getElementById('edit-product-modal');
 
-			fadeOutAndHide(editDiv, () => {
+			
+			if (assignDiv.style.display === 'block') {
+				fadeOutAndHide(assignDiv, () => {
+					showWithFadeIn(menuDiv);
+				});
+			} else if (receiveDiv.style.display === 'block') {
+				fadeOutAndHide(receiveDiv, () => {
+					showWithFadeIn(menuDiv);
+				});
+			}else if (editDiv.style.display === 'block') {
+				fadeOutAndHide(editDiv, () => {
+					showWithFadeIn(menuDiv);
+				});
+			} else {
 				showWithFadeIn(menuDiv);
-			});
+			}
 
 			document.getElementById('product-options').style.display = 'block';
-		};
-	}
+		});
+	});
 
 	function fadeOutAndHide(element, callback) {
 		element.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
@@ -1840,19 +1925,28 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	function resetProductPopupView() {
 		const menuDiv = document.getElementById('product-menu-buttons');
-		const editDiv = document.getElementById('edit-product-modal');
-	
+		const sectionsToHide = [
+			document.getElementById('edit-product-modal'),
+			document.getElementById('assign-sale-section'),
+			document.getElementById('assign-sale-section'),
+			// puedes agregar más secciones aquí
+		];
+
 		menuDiv.style.display = 'block';
 		menuDiv.style.opacity = '1';
 		menuDiv.style.transform = 'scale(1)';
-	
-		editDiv.style.display = 'none';
-		editDiv.style.opacity = '0';
-		editDiv.style.transform = 'scale(0.8)';
+
+		sectionsToHide.forEach(section => {
+			if (section) {
+				section.style.display = 'none';
+				section.style.opacity = '0';
+				section.style.transform = 'scale(0.8)';
+			}
+		});
 	}
 
 	
-	
+
 	async function initCategorySelectors(markId, modelId, submodelId) {
 		const markSelect = document.getElementById(markId);
 		let modelSelect = document.getElementById(modelId);

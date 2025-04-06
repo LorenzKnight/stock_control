@@ -34,9 +34,7 @@
 					</tr>
 				</table>
 			</div>
-			<div class="product-list" id="product-list">
-				
-			</div>
+			<div class="product-list" id="product-list"></div>
 		</div>
 	</div>
 </div>
