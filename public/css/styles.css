@@ -149,6 +149,10 @@ body {
     transform: scale(0.7);
     opacity: 0;
     transition: transform 0.5s ease, opacity 0.5s ease;
+    /* position: relative; */
+    transition: height 0.5s ease-out;
+	overflow: hidden;
+    max-height: 75vh;
 }
 
 .formular-big-frame {

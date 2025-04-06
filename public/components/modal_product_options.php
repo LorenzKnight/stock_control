@@ -15,7 +15,7 @@
 				</tr>
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="button-style-agree" id="recaiveInitialBtn">Receive as an initial </button>
+						<button type="button" class="button-style-agree" id="receiveInitialBtn">Receive as an initial </button>
 					</td>
 				</tr>
 				<tr valign="baseline">
@@ -35,9 +35,9 @@
 				</tr>
 			</table>
 		</div>
-		<div id="edit-product-modal">
-			<div style="text-align: center; margin-top: 10px;">
-				<button type="button" class="neutral-btn" id="backToMenuBtn">Back</button>
+		<div id="edit-product-modal" style="display: none;">
+			<div class="back-to-menu-btn">
+				<img src="images/sys-img/backward.png" alt="back">
 			</div>
 			<form method="post" name="formEditProduct" id="formEditProduct">
 				<table width="80%" align="center" cellspacing="0">
@@ -47,60 +47,101 @@
 						</td>      
 					</tr>
 					<tr valign="baseline" class="form_height">
-						<td colspan="6" align="center" valign="middle">
-							<input class="form-input-style" type="text" name="edit_name" id="edit_name" placeholder="Enter a name..." title="Enter a valid name" required/>
-						</td>
-					</tr>
-					<tr valign="baseline" class="form_height">
-						<td colspan="6" align="center" valign="middle">
-							<input class="form-input-style" type="text" name="edit_surname" id="edit_surname" placeholder="Enter a surname..." title="Enter a valid surname" required/>
-						</td>
-					</tr>
-					<tr valign="baseline" class="form_height">
-						<td colspan="6" align="center" valign="middle">
-							<label for="fecha">Birthdate:</label>
-							<input class="form-input-style" type="date" name="edit_birthday" id="edit_birthday" placeholder="" title=""/>
-						</td>
-					</tr>
-					<tr valign="baseline" class="form_height">
-						<td colspan="6" align="center" valign="middle">
-							<input class="form-input-style" type="number" name="edit_phone" id="edit_phone" placeholder="Enter a phone number..." title="Enter a valid phone number"/>
+						<td colspan="2" align="center" valign="middle">
+							<div class="drop-area" id="drop-product-area">
+								<img class="image-preview" id="product-image-preview" src="" alt="Product Image Preview">
+								<p>Drop logo image here or click to select</p>
+								<input type="file" name="Product_image" id="Product_image" accept="image/*" style="display: none;">
+							</div>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td colspan="2" align="center" valign="middle">
-							<label for="rank">User Role / Permissions:</label>
-							<select class="form-input-style" name="edit_rank" id="edit_rank"></select>
-						</td>
-					</tr>
-					<tr valign="baseline" class="form_height">
-						<td colspan="6" align="center" valign="middle">
-							<input class="form-input-style" type="email" name="edit_email" id="edit_email" placeholder="Enter a E-Mail..." title="Enter a valid email" required/>
-						</td>
-					</tr>
-					<tr valign="baseline" class="form_height">
-						<td colspan="6" align="center" valign="middle">
-							<span style="display: block; margin-bottom: 5px;">Status</span>
-							<label class="switch">
-								<input type="checkbox" name="edit_status" id="edit_status" value="1">
-								<span class="slider round"></span>
-							</label>
+							<input class="form-input-style" type="text" name="product_name" id="product_name" placeholder="Product Name..." title="Product name"/>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td width="50%" align="center" valign="middle">
+							<select class="form-input-style" name="product_type" id="product_type">
+								<option value="">Select a Typ</option>
+								<option value="1">Motorcycle</option>
+								<option value="2">Car</option>
+								<option value="3">SUV</option>
+								<option value="4">Pickup Truck</option>
+								<option value="5">Van</option>
+								<option value="6">Minibus</option>
+								<option value="7">Bus</option>
+								<option value="8">Light Truck</option>
+								<option value="9">Medium Truck</option>
+								<option value="10">Heavy Truck</option>
+								<option value="11">Trailer Truck / Articulated Lorry</option>
+								<option value="12">Construction Vehicle</option>
+								<option value="13">Agricultural Vehicle</option>
+							</select>
+						</td>
+						<td width="50%" align="center" valign="middle">
+							<select class="form-input-style" name="product_mark" id="product_mark"></select>
+						</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+						<td width="50%" align="center" valign="middle">
+							<select class="form-input-style" name="product_model" id="product_model"></select>
+						</td>
+						<td width="50%" align="center" valign="middle">
+							<select class="form-input-style" name="product_sub_model" id="product_sub_model"></select>
+						</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+						<td width="50%" align="center" valign="middle">
+							<input class="form-medium-input-style input-year-only" type="number" name="product_year" id="product_year" placeholder="Product Year" title="Product Year"/>
+						</td>
+						<td width="50%" align="center" valign="middle">
+							<input class="form-medium-input-style" type="number" name="prise" id="prise" placeholder="Product Prise" title="Product Prise"/>
+						</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+						<td colspan="2" align="center" valign="middle">
+							<textarea class="form-input-style" id="description" name="description" rows="5" cols="35">
+							</textarea>
+						</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+						<td colspan="1" align="center" valign="middle">
 							<button type="button" class="neutral-btn">Cancel</button>
 						</td>
-						<td width="50%" align="center" valign="middle">
-							<input type="submit" class="button-style-agree" value="Update" />
+						<td colspan="1" align="center" valign="middle">
+							<input type="submit" class="button-style-agree" value="Create" />
 						</td>
 					</tr>
-					<tr valign="baseline" class="form_height">
-						<td colspan="6" align="center" valign="middle">
-							<button type="button" class="cancel-btn" id="deleteAccountBtn">Delete Account</button>
-						</td>
-					</tr> 
 				</table> 
+			</form>
+		</div>
+		<div id="receive-as-initial" style="display: none;">
+			<div class="back-to-menu-btn">
+				<img src="images/sys-img/backward.png" alt="back">
+			</div>
+			<form method="post" name="formEditProduct" id="formEditProduct">
+				<table width="80%" align="center" cellspacing="0">
+					<tr valign="baseline">
+						<td style="font-size: 12px;" colspan="6" align="center" valign="middle">
+							<h2>Receive as an initial</h2>
+						</td>      
+					</tr>
+				</table>
+			</form>
+		</div>
+		<div id="assign-sale-section" style="display: none;">
+			<div class="back-to-menu-btn">
+				<img src="images/sys-img/backward.png" alt="back">
+			</div>
+			<form method="post" name="formEditProduct" id="formEditProduct">
+				<table width="80%" align="center" cellspacing="0">
+					<tr valign="baseline">
+						<td style="font-size: 12px;" colspan="6" align="center" valign="middle">
+							<h2>Assign Product to Sale</h2>
+						</td>      
+					</tr>
+				</table>
 			</form>
 		</div>
 	</div>

@@ -6,7 +6,8 @@ header("Content-Type: application/json");
 $response = [
 	"success" => false,
 	"message" => "Invalid request",
-	"data" => []
+	"data" => [],
+	"ranks" => []
 ];
 
 try {
@@ -34,10 +35,13 @@ try {
 	$userData = json_decode($userInfo, true);
 
 	if ($userData["success"] && !empty($userData["data"])) {
+		$ranks = GlobalArrays::$ranks;
+		
 		$response = [
 			"success" => true,
 			"message" => "User data retrieved successfully",
-			"data" => $userData["data"]
+			"data" => $userData["data"],
+			"ranks" => $ranks
 		];
 	} else {
 		throw new Exception("User not found.");

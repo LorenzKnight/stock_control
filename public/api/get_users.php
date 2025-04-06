@@ -10,7 +10,8 @@ $response = [
     "success" => false,
     "message" => "Error fetching data",
     "count" => 0,
-    "users" => []
+    "users" => [],
+    "ranks" => []
 ];
 
 try {
@@ -37,12 +38,18 @@ try {
     ]);
 
     $users = json_decode($userResponse, true);
+    $ranks = GlobalArrays::$ranks;
 
     if ($users["success"] && !empty($users["data"])) {
+        foreach ($users["data"] as &$user) {
+            $user["rank_text"] = isset($ranks[$user["rank"]]) ? $ranks[$user["rank"]] : "Unknown role";
+        }
+
         $response["success"] = true;
         $response["message"] = "Users retrieved successfully";
         $response["count"] = $users["count"];
         $response["users"] = $users["data"];
+        $response["ranks"] = $ranks;
     } else {
         throw new Exception("No users found.");
     }
