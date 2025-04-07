@@ -49,20 +49,20 @@
 					<tr valign="baseline" class="form_height">
 						<td colspan="2" align="center" valign="middle">
 							<div class="drop-area" id="drop-product-area">
-								<img class="image-preview" id="product-image-preview" src="" alt="Product Image Preview">
+								<img class="image-preview" id="edit-product-image-preview" src="" alt="Product Image Preview">
 								<p>Drop logo image here or click to select</p>
-								<input type="file" name="Product_image" id="Product_image" accept="image/*" style="display: none;">
+								<input type="file" name="edit_Product_image" id="edit_Product_image" accept="image/*" style="display: none;">
 							</div>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td colspan="2" align="center" valign="middle">
-							<input class="form-input-style" type="text" name="product_name" id="product_name" placeholder="Product Name..." title="Product name"/>
+							<input class="form-input-style" type="text" name="edit_product_name" id="edit_product_name" placeholder="Product Name..." title="Product name"/>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td width="50%" align="center" valign="middle">
-							<select class="form-input-style" name="product_type" id="product_type">
+							<select class="form-input-style" name="edit_product_type" id="edit_product_type">
 								<option value="">Select a Typ</option>
 								<option value="1">Motorcycle</option>
 								<option value="2">Car</option>
@@ -80,28 +80,28 @@
 							</select>
 						</td>
 						<td width="50%" align="center" valign="middle">
-							<select class="form-input-style" name="product_mark" id="product_mark"></select>
+							<select class="form-input-style" name="edit_product_mark" id="edit_product_mark"></select>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td width="50%" align="center" valign="middle">
-							<select class="form-input-style" name="product_model" id="product_model"></select>
+							<select class="form-input-style" name="edit_product_model" id="edit_product_model"></select>
 						</td>
 						<td width="50%" align="center" valign="middle">
-							<select class="form-input-style" name="product_sub_model" id="product_sub_model"></select>
+							<select class="form-input-style" name="edit_product_sub_model" id="edit_product_sub_model"></select>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td width="50%" align="center" valign="middle">
-							<input class="form-medium-input-style input-year-only" type="number" name="product_year" id="product_year" placeholder="Product Year" title="Product Year"/>
+							<input class="form-medium-input-style input-year-only" type="number" name="edit_product_year" id="edit_product_year" placeholder="Product Year" title="Product Year"/>
 						</td>
 						<td width="50%" align="center" valign="middle">
-							<input class="form-medium-input-style" type="number" name="prise" id="prise" placeholder="Product Prise" title="Product Prise"/>
+							<input class="form-medium-input-style" type="number" name="edit_prise" id="edit_prise" placeholder="Product Prise" title="Product Prise"/>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td colspan="2" align="center" valign="middle">
-							<textarea class="form-input-style" id="description" name="description" rows="5" cols="35">
+							<textarea class="form-input-style" id="edit_description" name="edit_description" rows="5" cols="35">
 							</textarea>
 						</td>
 					</tr>

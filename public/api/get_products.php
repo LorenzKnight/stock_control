@@ -44,6 +44,7 @@ try {
 	$products = select_from("products", [
 		"product_id",
 		"product_name",
+		"product_image",
 		"product_mark",
 		"product_model",
 		"product_sub_model",
