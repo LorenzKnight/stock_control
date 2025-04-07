@@ -1114,9 +1114,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 					popupContent.style.transform = 'scale(1)';
 					popupContent.style.opacity = '1';
 				}, 50);
+
+				populateVehicleTypes('product_type');
+
+				initCategorySelectors('product_mark', 'product_model', 'product_sub_model');
 			}
 		});
 	}
+
+	
+
 
 	// 📌 Manejo del formulario para crear Producto
 	const formAddProduct = document.getElementById('formAddProduct');
@@ -1167,6 +1174,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	initDragAndDrop('drop-product-area', 'Product_image', 'product-image-preview');
 
+	// AQUI
 
 	// 📌 script para add category popup
 	let addCategoryButton = document.getElementById('add-category-btn');
@@ -1624,31 +1632,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
-	// 📌 JavaScript para recoger datos de los select del formulario de productos
-	initCategorySelectors('product_mark', 'product_model', 'product_sub_model');
-
-
-	// 📌 JavaScript para recoger datos de los select del formulario de busqueda(search)
-	initCategorySelectors('sarch_product_mark', 'sarch_product_model', 'sarch_product_sub_model');
 
 	const container = document.getElementById('product-list');
 	const searchField = document.getElementById('searchField');
 	let markSelect = document.getElementById('sarch_product_mark');
 	let modelSelect = document.getElementById('sarch_product_model');
 	let submodelSelect = document.getElementById('sarch_product_sub_model');
-
-	async function getCategoryIdsByKeyword(keyword) {
-		if (!keyword || keyword.length < 2) return [];
-
-		try {
-			const res = await fetch(`api/search_categories.php?keyword=${encodeURIComponent(keyword)}`);
-			const data = await res.json();
-			if (data.success) return data.ids;
-		} catch (err) {
-			console.error('Error fetching category IDs:', err);
-		}
-		return [];
-	}
 
 	async function fetchAndRenderProducts() {
 		if (!container) return;
@@ -1741,6 +1730,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 			fetchAndRenderProducts();
 		}
 	});
+
+	// 📌 JavaScript para recoger datos de los select del formulario de busqueda(search)
+	initCategorySelectors('sarch_product_mark', 'sarch_product_model', 'sarch_product_sub_model');
 
 	fetchAndRenderProducts();
 
@@ -1845,11 +1837,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}
 				
 				// Botón: Edit product
-				const editBtn = document.getElementById('editProductBtn');
+				const editBtn = document.getElementById('editProductBtn'); // AQUI
 				if (editBtn) {
+
+					editBtn.setAttribute('data-product-id', productId);
+
 					editBtn.onclick = () => {
 						const menuDiv = document.getElementById('product-menu-buttons');
 						const editDiv = document.getElementById('edit-product-modal');
+
+						const productId = editBtn.getAttribute('data-product-id');
+						if (!productId) return;
+
+						openEditProductForm(productId);
 			
 						animateHeightChange(popupContent, editDiv, () => {
 							fadeOutAndHide(menuDiv, () => {
@@ -1861,6 +1861,120 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		} catch (error) {
 			console.error("Error loading product info:", error);
+		}
+	}
+
+	async function openEditProductForm(productId) {
+		const formEditProduct = document.getElementById('formEditProduct');
+		if (!formEditProduct) return;
+	
+		formEditProduct.setAttribute('data-product-id', productId);
+	
+		try {
+			const response = await fetch(`api/get_products.php?product_id=${productId}`);
+			const data = await response.json();
+	
+			if (data.success && data.data.length > 0) {
+				const product = data.data.find(p => p.product_id == productId);
+				if (!product) return;
+				
+				// Llenar campos del formulario
+				document.getElementById('edit_product_name').value = product.product_name || '';
+				document.getElementById('edit_product_year').value = product.product_year || '';
+				document.getElementById('edit_prise').value = product.prise || '';
+				document.getElementById('edit_description').value = product.description || '';
+	
+				const preview = document.getElementById('edit-product-image-preview');
+				if (preview) {
+					if (product.product_image && product.product_image.trim() !== "") {
+						preview.src = `images/products/${product.product_image}`;
+						
+						preview.style.display = 'block';
+						preview.style.opacity = '1';
+					} else {
+						preview.style.display = 'none';
+						preview.src = '';
+					}
+				}
+					
+				// Llenar tipo de vehículo dinámicamente
+				await populateVehicleTypes('edit_product_type', product.product_type);
+	
+				// Cargar marcas, modelos y submodelos
+				await initCategorySelectors('edit_product_mark', 'edit_product_model', 'edit_product_sub_model');
+				
+				document.getElementById('edit_product_mark').value = product.product_mark;
+				await loadModels(product.product_mark, 'edit_product_model', product.product_model);
+				await loadSubModels(product.product_model, 'edit_product_sub_model', product.product_sub_model);
+			}
+		} catch (error) {
+			console.error("Error loading product data:", error);
+		}
+	}
+
+	async function loadModels(markId, modelSelectId, selectedModel = '') {
+		const modelSelect = document.getElementById(modelSelectId);
+		if (!modelSelect || !markId) return;
+	
+		modelSelect.innerHTML = `<option value="">Select Model</option>`;
+		modelSelect.disabled = true;
+	
+		try {
+			const res = await fetch(`api/get_sub_categories.php?mark_id=${markId}`, {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			});
+			const data = await res.json();
+			
+			if (data.success && data.data.length > 0) {
+				data.data.forEach(model => {
+					const option = document.createElement('option');
+					option.value = model.category_id;
+					option.textContent = model.category_name;
+					if (String(option.value) === String(selectedModel)) {
+						option.selected = true;
+					}
+					modelSelect.appendChild(option);
+				});
+				modelSelect.disabled = false;
+			} else {
+				modelSelect.innerHTML += `<option value="">No models found</option>`;
+			}
+		} catch (error) {
+			console.error("Error loading models:", error);
+		}
+	}
+
+	async function loadSubModels(modelId, submodelSelectId, selectedSubmodel = '') {
+		const submodelSelect = document.getElementById(submodelSelectId);
+		if (!submodelSelect || !modelId) return;
+	
+		submodelSelect.innerHTML = `<option value="">Select Submodel</option>`;
+		submodelSelect.disabled = true;
+	
+		try {
+			const res = await fetch(`api/get_sub_models.php?model_id=${modelId}`, {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			});
+			const data = await res.json();
+	
+			if (data.success && data.data.length > 0) {
+				data.data.forEach(submodel => {
+					const option = document.createElement('option');
+					option.value = submodel.category_id;
+					option.textContent = submodel.category_name;
+					if (String(option.value) === String(selectedSubmodel)) {
+						option.selected = true;
+					}
+					submodelSelect.appendChild(option);
+				});
+				submodelSelect.disabled = false;
+			} else {
+				submodelSelect.innerHTML += `<option value="">No submodels found</option>`;
+			}
+		} catch (error) {
+			console.error("Error loading submodels:", error);
 		}
 	}
 
@@ -2062,6 +2176,42 @@ document.addEventListener("DOMContentLoaded", async function () {
 				console.error("Error loading submodels:", error);
 			});
 		});
+	}
+
+	async function populateVehicleTypes(selectId, selectedValue = '') {
+		const select = document.getElementById(selectId);
+		if (!select) return;
+	
+		// 🔹 Limpiar contenido actual del <select>
+		select.innerHTML = '';
+	
+		// 🔹 Agregar opción por defecto
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = 'Select a Type';
+		select.appendChild(defaultOption);
+	
+		try {
+			const res = await fetch('api/get_global_array.php?key=vehicleTypes');
+			const data = await res.json();
+	
+			if (data.success && data.data) {
+				for (const [value, label] of Object.entries(data.data)) {
+					const option = document.createElement('option');
+					option.value = value;
+					option.textContent = label;
+					if (String(value) === String(selectedValue)) {
+						option.selected = true;
+					}
+					select.appendChild(option);
+				}
+			} else {
+				select.innerHTML += `<option value="">No vehicle types found</option>`;
+			}
+		} catch (error) {
+			console.error("Error loading vehicle types:", error);
+			select.innerHTML += `<option value="">Error loading vehicle types</option>`;
+		}
 	}
 
 

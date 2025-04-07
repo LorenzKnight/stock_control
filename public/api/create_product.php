@@ -27,8 +27,12 @@ try {
     $productPrise    = trim($_POST["prise"] ?? '');
     $description     = trim($_POST["description"] ?? '');
 
-    if ($productName === '' || $productType === 0) {
-        throw new Exception("Product name and type are required.");
+    if ($productName === '') {
+        throw new Exception("Product name are required.");
+    }
+
+    if ($productType === 0) {
+        throw new Exception("Product type are required.");
     }
 
 	$companyResult = select_from("companies", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
