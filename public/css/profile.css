@@ -145,9 +145,11 @@
 .image-preview {
     max-width: 150px;
     max-height: 150px;
-    display: none;
     margin: 0 25%;
     border: 1px solid #FFF;
     position: absolute;
     top: 25px;
+    display: block;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }

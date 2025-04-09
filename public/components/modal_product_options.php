@@ -48,7 +48,7 @@
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td colspan="2" align="center" valign="middle">
-							<div class="drop-area" id="drop-product-area">
+							<div class="drop-area" id="edit-drop-product-area">
 								<img class="image-preview" id="edit-product-image-preview" src="" alt="Product Image Preview">
 								<p>Drop logo image here or click to select</p>
 								<input type="file" name="edit_Product_image" id="edit_Product_image" accept="image/*" style="display: none;">
@@ -110,7 +110,7 @@
 							<button type="button" class="neutral-btn">Cancel</button>
 						</td>
 						<td colspan="1" align="center" valign="middle">
-							<input type="submit" class="button-style-agree" value="Create" />
+							<input type="submit" class="button-style-agree" value="Update" />
 						</td>
 					</tr>
 				</table> 
