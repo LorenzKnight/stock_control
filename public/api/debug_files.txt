@@ -1,0 +1,12 @@
+Array
+(
+    [edit_Product_image] => Array
+        (
+            [name] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)

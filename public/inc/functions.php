@@ -158,8 +158,12 @@ function update_table($tableName, array $queryData = [], array $whereClause = []
 
 	$setParts = [];
 	foreach ($queryData as $column => $value) {
-		$escapedValue = is_numeric($value) ? $value : "'" . pg_escape_string((string)$value) . "'";
-		$setParts[] = "$column = $escapedValue";
+		if ($value === "NULL" || is_null($value)) {
+			$setParts[] = "$column = NULL";
+		} else {
+			$escapedValue = is_numeric($value) ? $value : "'" . pg_escape_string((string)$value) . "'";
+			$setParts[] = "$column = $escapedValue";
+		}
 	}
 	$setClause = implode(', ', $setParts);
 

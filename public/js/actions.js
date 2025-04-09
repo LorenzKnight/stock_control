@@ -1773,7 +1773,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 		const productOptions = document.getElementById('product-options');
 		const popupContent = productOptions.querySelector('.formular-frame');
 		const productName = document.getElementById('product-name');
-		// const formEditProduct = document.getElementById('formEditProduct');
 	
 		if (!productId) return;
 
@@ -1837,7 +1836,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}
 				
 				// Botón: Edit product
-				const editBtn = document.getElementById('editProductBtn'); // AQUI
+				const editBtn = document.getElementById('editProductBtn');
 				if (editBtn) {
 
 					editBtn.setAttribute('data-product-id', productId);
@@ -1865,7 +1864,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	async function openEditProductForm(productId) {
-		const formEditProduct = document.getElementById('formEditProduct');
+		const formEditProduct = document.getElementById('formEditProduct'); // aqui
 		if (!formEditProduct) return;
 	
 		formEditProduct.setAttribute('data-product-id', productId);
@@ -1888,12 +1887,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 				if (preview) {
 					if (product.product_image && product.product_image.trim() !== "") {
 						preview.src = `images/products/${product.product_image}`;
-						
 						preview.style.display = 'block';
+						preview.style.visibility = 'visible';
 						preview.style.opacity = '1';
 					} else {
-						preview.style.display = 'none';
 						preview.src = '';
+						preview.style.display = 'none';
 					}
 				}
 					
@@ -1911,6 +1910,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 			console.error("Error loading product data:", error);
 		}
 	}
+
+	initDragAndDrop('edit-drop-product-area', 'edit_Product_image', 'edit-product-image-preview');
+	
 
 	async function loadModels(markId, modelSelectId, selectedModel = '') {
 		const modelSelect = document.getElementById(modelSelectId);
@@ -1977,6 +1979,50 @@ document.addEventListener("DOMContentLoaded", async function () {
 			console.error("Error loading submodels:", error);
 		}
 	}
+
+	const formEditProduct = document.getElementById('formEditProduct');
+	if (formEditProduct) {
+		formEditProduct.addEventListener('submit', async function (e) {
+			e.preventDefault();
+
+			const formData = new FormData(this);
+			formData.append('edit_product_id', formEditProduct.getAttribute('data-product-id'));
+
+			try {
+				const response = await fetch('api/update_product.php', {
+					method: 'POST',
+					headers: { Accept: 'application/json' },
+					body: formData
+				});
+
+				const data = await response.json();
+				console.log("Update response:", data);
+
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				if (banner && statusText && statusImage) {
+					statusText.innerText = data.message || "Unknown response";
+					statusImage.src = data.img_gif || "images/sys-img/loading.gif";
+					banner.style.display = 'block';
+					banner.style.opacity = '1';
+				}
+
+				if (data.success) {
+					setTimeout(() => {
+						banner.style.opacity = '0';
+						setTimeout(() => {
+							window.location.href = data.redirect_url || window.location.href;
+						}, 1000);
+					}, 3000);
+				}
+			} catch (error) {
+				console.error("Error updating product:", error);
+			}
+		});
+	}
+
 
 	document.querySelectorAll('.back-to-menu-btn').forEach(button => {
 		button.addEventListener('click', (e) => {
