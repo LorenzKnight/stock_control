@@ -646,6 +646,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				reader.onload = function (e) {
 					previewImage.src = e.target.result;
 					previewImage.style.display = 'block';
+					previewImage.style.opacity = 1;
 				};
 				reader.readAsDataURL(files[0]);
 			}
@@ -658,6 +659,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				reader.onload = function (e) {
 					previewImage.src = e.target.result;
 					previewImage.style.display = 'block';
+					previewImage.style.opacity = 1;
 				};
 				reader.readAsDataURL(fileInput.files[0]);
 			}
@@ -1174,7 +1176,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	initDragAndDrop('drop-product-area', 'Product_image', 'product-image-preview');
 
-	// AQUI
 
 	// 📌 script para add category popup
 	let addCategoryButton = document.getElementById('add-category-btn');

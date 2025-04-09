@@ -6,7 +6,7 @@ Array
     [edit_product_model] => 17
     [edit_product_sub_model] => 18
     [edit_product_year] => 2010
-    [edit_prise] => 50000
+    [edit_prise] => 55000
     [edit_description] => editado
     [edit_product_id] => 9
 )
