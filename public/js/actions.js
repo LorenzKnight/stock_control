@@ -249,7 +249,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			
 				headerProfilePic.src = hasCustomImage
 					? `../images/profile/${user.image}`
-					: "../images/profile/NonProfilePic.png";
+					: "../images/sys-img/NonProfilePic.png";
 			
 				headerProfilePic.alt = hasCustomImage
 					? "User profile picture"
@@ -337,7 +337,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 					let profileImage = user.image && user.image.trim() !== "" 
 					? `images/profile/${user.image}` 
-					: "images/profile/NonProfilePic.png";
+					: "images/sys-img/NonProfilePic.png";
 
 					let borderColor = Number(user.status) === 1 ? "#8cda8a" : "#fbadad";
 
@@ -480,6 +480,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 
 			showConfirmModal("Delete User", "Are you sure you want to delete this user?", async () => {
+				const frame = document.querySelector('.formular-frame');
+				if (frame) frame.style.display = 'none';
+
 				const formData = new FormData();
 				formData.append("user_id", userId);
 
@@ -1858,6 +1861,59 @@ document.addEventListener("DOMContentLoaded", async function () {
 						});
 					}
 				}
+
+				// Botón: Delete product
+				const deleteBtn = document.getElementById('deleteProductBtn');
+				if (deleteBtn) {
+					deleteBtn.onclick = () => {
+
+						deleteBtn.setAttribute('data-product-id', productId);
+						
+						if (!productId) {
+							alert("Product ID not found.");
+							return;
+						}
+
+						showConfirmModal("Delete Product", "Are you sure you want to delete this product?", async () => {
+							const frame = document.querySelector('.formular-frame');
+							if (frame) frame.style.display = 'none';
+
+							const formData = new FormData();
+							formData.append("product_id", productId);
+				
+							try {
+								const response = await fetch('api/delete_product.php', {
+									method: 'POST',
+									body: formData
+								});
+				
+								const data = await response.json();
+								console.log('Delete response:', data);
+				
+								let banner = document.getElementById('status-message');
+								let statusText = document.getElementById('status-text');
+								let statusImage = document.getElementById('status-image');
+				
+								statusText.innerText = data.message;
+								statusImage.src = data.img_gif;
+								banner.style.display = 'block';
+								banner.style.opacity = '1';
+				
+								if (data.success) {
+									setTimeout(() => {
+										banner.style.opacity = '0';
+										setTimeout(() => {
+											window.location.href = data.redirect_url || window.location.href;
+										}, 1000);
+									}, 3000);
+								}
+							} catch (error) {
+								console.error("Error deleting product:", error);
+								alert("Error deleting product. Check console.");
+							}
+						});
+					};
+				}
 			}
 		} catch (error) {
 			console.error("Error loading product info:", error);
@@ -1995,7 +2051,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				});
 
 				const data = await response.json();
-				console.log("Update response:", data);
 
 				let banner = document.getElementById('status-message');
 				let statusText = document.getElementById('status-text');
