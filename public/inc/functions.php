@@ -260,6 +260,54 @@ function log_activity($userId, $actionType, $description, $relatedTable = null, 
 	return insert_into("activity_history", $data);
 }
 
+function delete_image_from_record(array $params): array {
+	// Esperados: 'table', 'id_column', 'id_value', 'image_column', 'image_folder'
+
+	$table        = $params['table'] ?? null;
+	$idColumn     = $params['id_column'] ?? null;
+	$idValue      = $params['id_value'] ?? null;
+	$imageColumn  = $params['image_column'] ?? null;
+	$imageFolder  = $params['image_folder'] ?? null;
+
+	if (!$table || !$idColumn || !$idValue || !$imageColumn || !$imageFolder) {
+		return [
+			"success" => false,
+			"message" => "Missing required parameters for image deletion."
+		];
+	}
+
+	// 1. Obtener nombre del archivo de imagen
+	$imageQuery = "SELECT {$imageColumn} FROM {$table} WHERE {$idColumn} = $1 LIMIT 1;";
+	$result = pg_query_params($imageQuery, [$idValue]);
+
+	if (!$result || pg_num_rows($result) === 0) {
+		return [
+			"success" => true,
+			"message" => "No image assigned to record. Nothing to delete."
+		];
+	}
+
+	$row = pg_fetch_assoc($result);
+	$imageName = $row[$imageColumn] ?? null;
+
+	// 2. Eliminar imagen (si existe)
+	if ($imageName && trim($imageName) !== "") {
+		$absolutePath = realpath(__DIR__ . "/../{$imageFolder}/" . $imageName);
+		if ($absolutePath && file_exists($absolutePath)) {
+			unlink($absolutePath);
+			return [
+				"success" => true,
+				"message" => "Image deleted successfully."
+			];
+		}
+	}
+
+	return [
+		"success" => true,
+		"message" => "Image not found on disk. Possibly already deleted."
+	];
+}
+
 
 //function to display any type of variable
 function cdebug($var, $name = 'var', $die = false)

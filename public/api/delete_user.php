@@ -37,6 +37,18 @@ try {
 		throw new Exception("This user does not belong to you or does not exist.");
 	}
 
+	$imgDelete = delete_image_from_record([
+		"table"        => "users",
+		"id_column"    => "user_id",
+		"id_value"     => $targetUserId,
+		"image_column" => "image",
+		"image_folder" => "images/profile"
+	]);
+
+	if (!$imgDelete["success"]) {
+		throw new Exception("Image deletion failed: " . $imgDelete["message"]);
+	}
+
 	$deleteResponse = delete_from("users", ["user_id" => $targetUserId]);
 	$deleteResult = json_decode($deleteResponse, true);
 

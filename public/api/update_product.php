@@ -9,20 +9,17 @@ $response = [
 	"img_gif" => "images/sys-img/error.gif",
 	"redirect_url" => null
 ];
-file_put_contents("debug_post.txt", print_r($_POST, true));
-file_put_contents("debug_files.txt", print_r($_FILES, true));
+
 try {
 	if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 		throw new Exception("Method not allowed");
 	}
 
-	// Validar ID del producto
 	if (empty($_POST["edit_product_id"])) {
 		throw new Exception("Missing product ID.");
 	}
 	$productId = intval($_POST["edit_product_id"]);
 
-	// Recoger los demás datos del formulario
 	$productData = [
 		"product_name"       => $_POST["edit_product_name"] ?? "",
         "product_type"       => (int) ($_POST["edit_product_type"] ?? 0),
@@ -34,12 +31,10 @@ try {
         "description"        => $_POST["edit_description"] ?? ""
 	];
 
-	// Validar campos mínimos (puedes añadir más validaciones)
 	if (empty($productData["product_name"])) {
 		throw new Exception("Product name is required.");
 	}
 
-	// Procesar imagen si se envió una nueva
 	if (!empty($_FILES["edit_Product_image"]["name"])) {
 		$imgName = time() . "_" . basename($_FILES["edit_Product_image"]["name"]);
 		$imgPath = "../images/products/" . $imgName;
@@ -51,7 +46,6 @@ try {
 		}
 	}
 
-	// Actualizar en la base de datos
 	$where = ["product_id" => $productId];
 	$updateResult = update_table("products", $productData, $where);
 	$result = json_decode($updateResult, true);
