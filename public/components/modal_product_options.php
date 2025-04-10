@@ -63,7 +63,7 @@
 					<tr valign="baseline" class="form_height">
 						<td width="50%" align="center" valign="middle">
 							<select class="form-input-style" name="edit_product_type" id="edit_product_type">
-								<option value="">Select a Typ</option>
+								<!-- <option value="">Select a Typ</option>
 								<option value="1">Motorcycle</option>
 								<option value="2">Car</option>
 								<option value="3">SUV</option>
@@ -76,7 +76,7 @@
 								<option value="10">Heavy Truck</option>
 								<option value="11">Trailer Truck / Articulated Lorry</option>
 								<option value="12">Construction Vehicle</option>
-								<option value="13">Agricultural Vehicle</option>
+								<option value="13">Agricultural Vehicle</option> -->
 							</select>
 						</td>
 						<td width="50%" align="center" valign="middle">

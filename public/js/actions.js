@@ -1865,7 +1865,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	async function openEditProductForm(productId) {
-		const formEditProduct = document.getElementById('formEditProduct'); // aqui
+		const formEditProduct = document.getElementById('formEditProduct');
 		if (!formEditProduct) return;
 	
 		formEditProduct.setAttribute('data-product-id', productId);
@@ -1897,11 +1897,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 					}
 				}
 					
-				// Llenar tipo de vehículo dinámicamente
 				await populateVehicleTypes('edit_product_type', product.product_type);
 	
-				// Cargar marcas, modelos y submodelos
 				await initCategorySelectors('edit_product_mark', 'edit_product_model', 'edit_product_sub_model');
+
+				initDragAndDrop('edit-drop-product-area', 'edit_Product_image', 'edit-product-image-preview');
 				
 				document.getElementById('edit_product_mark').value = product.product_mark;
 				await loadModels(product.product_mark, 'edit_product_model', product.product_model);
@@ -1911,8 +1911,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			console.error("Error loading product data:", error);
 		}
 	}
-
-	initDragAndDrop('edit-drop-product-area', 'edit_Product_image', 'edit-product-image-preview');
 	
 
 	async function loadModels(markId, modelSelectId, selectedModel = '') {
