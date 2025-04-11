@@ -13,3 +13,13 @@
     </div>
   </div>
 </div>
+
+<div id="globalOkModal" class="delete-modal-overlay" style="display: none;">
+  <div class="delete-modal-box">
+    <h3 id="alert-modal-title">Confirm Action</h3>
+    <p id="alert-modal-message">Are you sure you want to proceed?</p>
+    <div class="confirm-modal-actions">
+      <button id="modalOkBtn" class="button-style-agree">Ok</button>
+    </div>
+  </div>
+</div>
