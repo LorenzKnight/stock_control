@@ -1004,39 +1004,57 @@ document.addEventListener("DOMContentLoaded", async function () {
 		addMemberButton.addEventListener('click', async function (e) {
 			e.preventDefault();
 
-			scrollToTopIfNeeded();
-
-			const addMembersForm = document.getElementById('add-members-form');
-			const popupContent = addMembersForm.querySelector('.formular-frame');
-
-			if (addMembersForm && popupContent) {
-				addMembersForm.style.display = 'block';
-				addMembersForm.style.opacity = '0';
-				addMembersForm.style.transition = 'opacity 0.5s ease';
-				setTimeout(() => {
-					addMembersForm.style.opacity = '1';
-				}, 10);
-
-				popupContent.style.transform = 'scale(0.7)';
-				popupContent.style.opacity = '0';
-				popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-				setTimeout(() => {
-					popupContent.style.transform = 'scale(1)';
-					popupContent.style.opacity = '1';
-				}, 50);
-
-				try {
-					const res = await fetch('api/get_global_array.php?key=ranks');
-					const data = await res.json();
+			try {
+				const usersRes = await fetch('api/get_users.php');
+				const usersData = await usersRes.json();
+				const currentMemberCount = usersData.success ? usersData.count : 0;
 	
-					if (data.success && data.data) {
-						populateRankSelect('rank', '', data.data);
-					} else {
-						console.error("Failed to load ranks:", data.message);
-					}
-				} catch (err) {
-					console.error("Error fetching ranks:", err);
+				const userInfoRes = await fetch('api/get_my_info.php');
+				const userInfo = await userInfoRes.json();
+				const allowedMembers = userInfo.success ? parseInt(userInfo.data.members) : 0;
+	
+				if (currentMemberCount >= allowedMembers) {
+					showAlertModal("Maximum allowed members reached", "If you want to have the ability to add more members, upgrade your membership.");
+					return;
 				}
+
+				scrollToTopIfNeeded();
+
+				const addMembersForm = document.getElementById('add-members-form');
+				const popupContent = addMembersForm.querySelector('.formular-frame');
+
+				if (addMembersForm && popupContent) {
+					addMembersForm.style.display = 'block';
+					addMembersForm.style.opacity = '0';
+					addMembersForm.style.transition = 'opacity 0.5s ease';
+					setTimeout(() => {
+						addMembersForm.style.opacity = '1';
+					}, 10);
+
+					popupContent.style.transform = 'scale(0.7)';
+					popupContent.style.opacity = '0';
+					popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+					setTimeout(() => {
+						popupContent.style.transform = 'scale(1)';
+						popupContent.style.opacity = '1';
+					}, 50);
+
+					try {
+						const res = await fetch('api/get_global_array.php?key=ranks');
+						const data = await res.json();
+		
+						if (data.success && data.data) {
+							populateRankSelect('rank', '', data.data);
+						} else {
+							console.error("Failed to load ranks:", data.message);
+						}
+					} catch (err) {
+						console.error("Error fetching ranks:", err);
+					}
+				}
+			} catch (err) {
+				console.error("Error validating member limit:", err);
+				alert("An error occurred while validating your permission to add members.");
 			}
 		});
 	}
@@ -2340,6 +2358,29 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 		// Cancelar
 		cancelBtn.onclick = () => {
+			modal.style.display = 'none';
+		};
+	}
+
+	function showAlertModal(title, message) {
+		const modal = document.getElementById('globalOkModal');
+		const modalTitle = document.getElementById('alert-modal-title');
+		const modalMessage = document.getElementById('alert-modal-message');
+		const confirmBtn = document.getElementById('modalOkBtn');
+	
+		if (!modal || !modalTitle || !modalMessage || !confirmBtn) return;
+	
+		modalTitle.textContent = title || "Notice";
+		modalMessage.textContent = message || "";
+	
+		modal.style.display = 'flex';
+	
+		// Clonar y reemplazar para quitar listeners previos
+		const newConfirmBtn = confirmBtn.cloneNode(true);
+		confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+	
+		newConfirmBtn.textContent = 'OK';
+		newConfirmBtn.onclick = () => {
 			modal.style.display = 'none';
 		};
 	}
