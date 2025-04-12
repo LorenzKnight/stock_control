@@ -85,3 +85,33 @@ CREATE TABLE IF NOT EXISTS category (
 	sub_parent INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS customers (
+	customer_id SERIAL PRIMARY KEY,
+	customer_name VARCHAR(255) NULL,
+	customer_surname VARCHAR(255) NULL,
+	customer_image VARCHAR(255) NULL,
+	customer_email VARCHAR(255) NULL,
+	customer_phone VARCHAR(20) NULL,
+	customer_address VARCHAR(255) NULL,
+	customer_birthday TIMESTAMP NULL,
+	customer_document_type INTEGER NULL,
+	customer_document_no VARCHAR(20) NULL,
+	marital_status INTEGER NULL,
+	references_1 VARCHAR(255) NULL,
+	references_1_phone VARCHAR(20) NULL,
+	references_2 VARCHAR(255) NULL,
+	references_2_phone VARCHAR(20) NULL,
+	customer_type INTEGER NULL,
+	customer_status INTEGER NULL,
+	create_by INTEGER NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS customers_doc (
+	doc_id SERIAL PRIMARY KEY,
+	customer_id INTEGER NULL,
+	document_img VARCHAR(20) NULL,
+	create_by INTEGER NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

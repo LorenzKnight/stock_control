@@ -3,6 +3,7 @@
 @import url("message.css");
 @import url("profile.css");
 @import url("products.css");
+@import url("customers.css");
 
 :root {
     --main-bg-dark-blue: #022e63;
@@ -122,6 +123,17 @@ body {
     font-size: 14px;
     text-align: center;
 }
+
+.big-search-field {
+    width: 98%;
+    border-radius: 5px;
+    border: 1px solid var(--clr-border);
+    font-size: 12px;
+    text-align: center;
+    margin: 0;
+    padding: 10px 0;
+    
+}
 /* end to form-modal */
 
 .bg-popup {
@@ -221,4 +233,10 @@ body {
 .centralize-top {
     display: flex;
     justify-content: center;
+}
+
+.centralize {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
