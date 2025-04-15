@@ -4,7 +4,7 @@
 			<table width="100%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td width="15%" align="center" valign="middle">
-						<button type="button" class="button-style-agree" id="">Create Customer</button>
+						<button type="button" class="button-style-agree" id="add-customers-button">Create Customer</button>
 					</td>
 					<td width="85%" align="center" valign="middle">
 						<input type="text" name="" id="" class="big-search-field" placeholder="Search Customer..." title="Search Customer">
@@ -45,10 +45,10 @@
 				</div>
 
 				<div class="customer-row">
-					<table width="100%" style="" align="center" cellspacing="0">
+					<table width="100%" align="center" cellspacing="0">
 						<tr valign="baseline" class="form_height">
 							<td width="5%" align="center" valign="middle">
-								<div class="customers-profile" style="">
+								<div class="customers-profile">
 									<img src="../images/sys-img/NonProfilePic.png" alt="profile picture">
 								</div>
 							</td>

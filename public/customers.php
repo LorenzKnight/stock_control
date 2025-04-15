@@ -14,6 +14,7 @@
 </head>
 
 <body>
+	<?php include("components/modal_add_customers.php"); ?>
 	<?php include("components/message.php"); ?>
 	<?php include("components/header.php"); ?>
 	<?php include("components/customers_container.php"); ?>
