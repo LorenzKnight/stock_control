@@ -539,8 +539,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 	handlePopupClose("add-product-form", ".formular-frame", ["add-product-form"]);
 	handlePopupClose("add-category-form", ".formular-big-frame", ["add-category-form"]);
 	handlePopupClose("product-options", ".formular-frame", ["product-options"]);
+	handlePopupClose("add-customers-form", ".formular-frame", ["add-customers-form"]);
 
-	// 📌 Boton para cerrar formulario
+	// 📌 Boton para cerrar formularios
 	let cancelButtons = document.querySelectorAll('.neutral-btn');
 	cancelButtons.forEach(function (button) {
 		button.addEventListener('click', function () {
@@ -1137,8 +1138,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	
-
-
 	// 📌 Manejo del formulario para crear Producto
 	const formAddProduct = document.getElementById('formAddProduct');
 	if (formAddProduct) {
@@ -2164,6 +2163,34 @@ document.addEventListener("DOMContentLoaded", async function () {
 				section.style.display = 'none';
 				section.style.opacity = '0';
 				section.style.transform = 'scale(0.8)';
+			}
+		});
+	}
+
+	// 📌 script para add customers popup
+	let addCustomerButton = document.getElementById('add-customers-button');
+	if (addCustomerButton) {
+		addCustomerButton.addEventListener('click', async function (e) {
+			scrollToTopIfNeeded();
+			
+			const addCustomersForm = document.getElementById('add-customers-form');
+			const popupContent = addCustomersForm.querySelector('.formular-frame');
+
+			if (addCustomersForm && popupContent) {
+			    addCustomersForm.style.display = 'block';
+			    addCustomersForm.style.opacity = '0';
+			    addCustomersForm.style.transition = 'opacity 0.5s ease';
+			    setTimeout(() => {
+			        addCustomersForm.style.opacity = '1';
+			    }, 10);
+
+			    popupContent.style.transform = 'scale(0.7)';
+			    popupContent.style.opacity = '0';
+			    popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+			    setTimeout(() => {
+			        popupContent.style.transform = 'scale(1)';
+			        popupContent.style.opacity = '1';
+			    }, 50);
 			}
 		});
 	}
