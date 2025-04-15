@@ -2167,6 +2167,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
+//################################################################ CUSTOMERS #####################################################################
 	// 📌 script para add customers popup
 	let addCustomerButton = document.getElementById('add-customers-button');
 	if (addCustomerButton) {
@@ -2195,7 +2196,33 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
-	
+	// 📌 script para customers form menu
+	const dataTab = document.getElementById('tab-customer-data');
+	const referenceTab = document.getElementById('tab-customer-reference');
+
+	const dataSection = document.getElementById('customer-data');
+	const referenceSection = document.getElementById('customer-reference');
+
+	function activateTab(activeTab, inactiveTab, showSection, hideSection) {
+		activeTab.classList.add('tab-active');
+		inactiveTab.classList.remove('tab-active');
+
+		showSection.style.display = 'block';
+		hideSection.style.display = 'none';
+	}
+
+	// Mostrar por defecto la sección de "data"
+	activateTab(dataTab, referenceTab, dataSection, referenceSection);
+
+	dataTab.addEventListener('click', () => {
+		activateTab(dataTab, referenceTab, dataSection, referenceSection);
+	});
+
+	referenceTab.addEventListener('click', () => {
+		activateTab(referenceTab, dataTab, referenceSection, dataSection);
+	});
+
+	//################################################################ END CUSTOMERS #####################################################################
 
 	async function initCategorySelectors(markId, modelId, submodelId) {
 		const markSelect = document.getElementById(markId);

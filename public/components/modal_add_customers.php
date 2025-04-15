@@ -1,6 +1,6 @@
 <div class="bg-popup" id="add-customers-form">
 	<div class="formular-frame">
-		<form action="stock.php" method="post" name="formCustomers" id="formCustomers">
+		<form method="post" name="formCustomers" id="formCustomers" enctype="multipart/form-data">
 			<table width="80%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td style="font-size: 12px;" colspan="6" align="center" valign="middle">
@@ -17,7 +17,13 @@
 					</td>
 				</tr>
 			</table>
-			<div class="hidden">
+			<div class="customer-form-menu">
+				<ul>
+					<li id="tab-customer-data">customers data</li>
+					<li id="tab-customer-reference">customers Reference</li>
+				</ul>
+			</div>
+			<div id="customer-data">
 				<table width="80%" align="center" cellspacing="0">
 					<tr valign="baseline" class="form_height">
 						<td width="50%" align="center" valign="middle">
@@ -63,7 +69,7 @@
 					</tr>
 				</table>
 			</div>
-			<div class="">
+			<div class="" id="customer-reference">
 				<table width="80%" align="center" cellspacing="0">
 					<tr valign="baseline" class="form_height">
 						<td colspan="2" align="center" valign="middle">
@@ -89,10 +95,10 @@
 			</div>
 			<table width="80%" align="center" cellspacing="0">
 				<tr valign="baseline" class="form_height">
-					<td width="50%" align="center" valign="middle">
+					<td colspan="1" align="center" valign="middle">
 						<button type="button" class="neutral-btn">Cancel</button>
 					</td>
-					<td width="50%" align="center" valign="middle">
+					<td colspan="1" align="center" valign="middle">
 						<input type="submit" class="button-style-agree" value="Create" />
 					</td>
 				</tr>
