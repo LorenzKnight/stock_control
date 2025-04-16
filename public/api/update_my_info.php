@@ -43,28 +43,21 @@ try {
         $updateData["birthday"] = $birthday;
     }
 
-    if (!empty($_FILES["image"]["name"])) {
-        $uploadDir = "../images/profile/";
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0755, true);
-        }
+    try {
+		$imageName = handle_uploaded_image(
+			"image",
+			__DIR__ . "/../images/profile",
+			["jpg", "jpeg", "png", "webp"],
+			"profile",
+			$userId
+		);
 
-        $ext = pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION);
-        $allowed = ["png", "jpg", "jpeg", "webp"];
-
-        if (!in_array(strtolower($ext), $allowed)) {
-            throw new Exception("Invalid file type for profile image.");
-        }
-
-        $newName = "profile_user_" . $userId . "_" . time() . "." . $ext;
-        $targetFile = $uploadDir . $newName;
-
-        if (!move_uploaded_file($_FILES["image"]["tmp_name"], $targetFile)) {
-            throw new Exception("Failed to upload profile image.");
-        }
-
-        $updateData["image"] = $newName;
-    }
+		if ($imageName) {
+			$updateData["image"] = $imageName;
+		}
+	} catch (Exception $imgEx) {
+		throw new Exception("Profile image upload failed: " . $imgEx->getMessage());
+	}
 
     $updateResponse = update_table("users", $updateData, ["user_id" => $userId]);
     $updateResult = json_decode($updateResponse, true);

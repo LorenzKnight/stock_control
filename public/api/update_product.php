@@ -15,10 +15,13 @@ try {
 		throw new Exception("Method not allowed");
 	}
 
-	if (empty($_POST["edit_product_id"])) {
+	$userId = $_SESSION["sc_UserId"] ?? null;
+	if (!$userId) throw new Exception("User session not found.");
+
+	if (empty($_POST["edit_product_id"]) || !is_numeric($_POST["edit_product_id"])) {
 		throw new Exception("Missing product ID.");
 	}
-	$productId = intval($_POST["edit_product_id"]);
+	$productId = (int) $_POST["edit_product_id"];
 
 	$productData = [
 		"product_name"       => $_POST["edit_product_name"] ?? "",
@@ -31,33 +34,49 @@ try {
         "description"        => $_POST["edit_description"] ?? ""
 	];
 
-	if (empty($productData["product_name"])) {
+	if ($productData["product_name"] === '') {
 		throw new Exception("Product name is required.");
 	}
 
-	if (!empty($_FILES["edit_Product_image"]["name"])) {
-		$imgName = time() . "_" . basename($_FILES["edit_Product_image"]["name"]);
-		$imgPath = "../images/products/" . $imgName;
-
-		if (move_uploaded_file($_FILES["edit_Product_image"]["tmp_name"], $imgPath)) {
-			$productData["product_image"] = $imgName;
-		} else {
-			throw new Exception("Failed to upload product image.");
-		}
+	if ($productData["product_type"] === 0) {
+		throw new Exception("Product type is required.");
 	}
 
-	$where = ["product_id" => $productId];
-	$updateResult = update_table("products", $productData, $where);
-	$result = json_decode($updateResult, true);
+	try {
+		$imageName = handle_uploaded_image(
+			"edit_Product_image",
+			__DIR__ . "/../images/products",
+			["jpg", "jpeg", "png", "webp"],
+			"product",
+			$userId
+		);
 
-	if (!$result["success"]) {
+		if ($imageName) {
+			$productData["product_image"] = $imageName;
+		}
+	} catch (Exception $imgEx) {
+		throw new Exception("Product image upload failed: " . $imgEx->getMessage());
+	}
+
+	$updateResult = json_decode(update_table("products", $productData, ["product_id" => $productId]), true);
+	if (!$updateResult["success"]) {
 		throw new Exception("Database update failed.");
 	}
 
-	$response["success"] = true;
-	$response["message"] = "Product updated successfully.";
-	$response["img_gif"] = "images/sys-img/loading1.gif";
-	$response["redirect_url"] = "";
+	log_activity(
+		$userId,
+		"update_product",
+		"User updated product info (ID: $productId).",
+		"products",
+		$productId
+	);
+
+	$response = [
+		"success" => true,
+		"message" => "Product updated successfully.",
+		"img_gif" => "images/sys-img/loading1.gif",
+		"redirect_url" => ""
+	];
 } catch (Exception $e) {
     $response = [
         "success" => false,

@@ -12,7 +12,7 @@
 						<div class="drop-area" id="drop-product-area">
 							<img class="image-preview" id="product-image-preview" src="" alt="Product Image Preview">
 							<p>Drop logo image here or click to select</p>
-							<input type="file" name="Product_image" id="Product_image" accept="image/*" style="display: none;">
+							<input type="file" name="product_image" id="product_image" accept="image/*" style="display: none;">
 						</div>
 					</td>
 				</tr>

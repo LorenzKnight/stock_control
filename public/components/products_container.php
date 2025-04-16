@@ -11,15 +11,15 @@
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td colspan="4" align="center" valign="middle">
-							<select class="form-input-style" name="sarch_product_mark" id="sarch_product_mark"></select>
+							<select class="form-input-style" name="search_product_mark" id="search_product_mark"></select>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td width="50%" align="center" valign="middle">
-							<select class="form-input-style" name="sarch_product_model" id="sarch_product_model"></select>
+							<select class="form-input-style" name="search_product_model" id="search_product_model"></select>
 						</td>
 						<td width="50%" align="center" valign="middle">
-							<select class="form-input-style" name="sarch_product_sub_model" id="sarch_product_sub_model"></select>
+							<select class="form-input-style" name="search_product_sub_model" id="search_product_sub_model"></select>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">

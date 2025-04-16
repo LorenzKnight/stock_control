@@ -9,7 +9,7 @@
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="2" align="center" valign="middle">
-						<div class="drop-area" id="drop-area">
+						<div class="drop-area" id="company-logo-drop-area">
 							<img class="image-preview" id="logo-preview" src="" alt="Logo preview">
 							<p>Drop logo image here or click to select</p>
 							<input type="file" name="company_logo" id="company_logo" accept="image/*" style="display: none;">

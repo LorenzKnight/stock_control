@@ -260,6 +260,39 @@ function log_activity($userId, $actionType, $description, $relatedTable = null, 
 	return insert_into("activity_history", $data);
 }
 
+function handle_uploaded_image(
+	string $fieldName,
+	string $uploadDir,
+	array $allowedExts = ['jpg', 'jpeg', 'png', 'webp'],
+	string $fileName,
+	?int $userId = null
+): ?string {
+	if (!isset($_FILES[$fieldName]) || empty($_FILES[$fieldName]['name'])) {
+		return null;
+	}
+
+	$uploadedFile = $_FILES[$fieldName];
+
+	$ext = strtolower(pathinfo($uploadedFile['name'], PATHINFO_EXTENSION));
+	if (!in_array($ext, $allowedExts)) {
+		throw new Exception("Invalid file type. Allowed: " . implode(', ', $allowedExts));
+	}
+
+	if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true)) {
+		throw new Exception("Failed to create upload directory.");
+	}
+
+	$prefix = $userId ? "{$fileName}_user_{$userId}" : "uploaded";
+	$imageName = $prefix . '_' . time() . '.' . $ext;
+	$targetPath = rtrim($uploadDir, '/') . '/' . $imageName;
+
+	if (!move_uploaded_file($uploadedFile['tmp_name'], $targetPath)) {
+		throw new Exception("Failed to move uploaded file.");
+	}
+
+	return $imageName;
+}
+
 function delete_image_from_record(array $params): array {
 	// Esperados: 'table', 'id_column', 'id_value', 'image_column', 'image_folder'
 

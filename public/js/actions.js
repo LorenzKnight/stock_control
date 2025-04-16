@@ -875,10 +875,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 				document.getElementById('company_address').value = company.company_address || '';
 				document.getElementById('company_phone').value = company.company_phone || '';
 
-				if (company.company_logo) {
-					const logoPreview = document.getElementById('logo-preview');
-					logoPreview.src = `images/company-logos/${company.company_logo}`;
-					logoPreview.style.display = 'block';
+				const logoPreview = document.getElementById('logo-preview');
+				if (logoPreview) {
+					if (company.company_logo && company.company_logo.trim() !== "") {
+						logoPreview.src = `images/company-logos/${company.company_logo}`;
+						logoPreview.style.display = 'block';
+						logoPreview.style.visibility = 'visible';
+						logoPreview.style.opacity = '1';
+					} else {
+						logoPreview.src = '';
+						logoPreview.style.display = 'none';
+						logoPreview.style.visibility = 'hidden';
+						logoPreview.style.opacity = '0';
+					}
 				}
 			}
 		} catch (error) {
@@ -913,6 +922,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 					popupContent.style.opacity = '1';
 					loadCompanyData();
 				}, 50);
+
+				initDragAndDrop('company-logo-drop-area', 'company_logo', 'logo-preview');
 			}
 		});
 	}
@@ -963,8 +974,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		});
 	}
-
-	initDragAndDrop('drop-area', 'company_logo', 'logo-preview');
 
 
 	// Función para llenar el <select>
@@ -1130,6 +1139,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 					popupContent.style.opacity = '1';
 				}, 50);
 
+				initDragAndDrop('drop-product-area', 'product_image', 'product-image-preview');
+
 				populateVehicleTypes('product_type');
 
 				initCategorySelectors('product_mark', 'product_model', 'product_sub_model');
@@ -1184,9 +1195,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		});
 	}
-
-	initDragAndDrop('drop-product-area', 'Product_image', 'product-image-preview');
-
 
 	// 📌 script para add category popup
 	let addCategoryButton = document.getElementById('add-category-btn');
@@ -1647,16 +1655,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	const container = document.getElementById('product-list');
 	const searchField = document.getElementById('searchField');
-	let markSelect = document.getElementById('sarch_product_mark');
-	let modelSelect = document.getElementById('sarch_product_model');
-	let submodelSelect = document.getElementById('sarch_product_sub_model');
+	let markSelect = document.getElementById('search_product_mark');
+	let modelSelect = document.getElementById('search_product_model');
+	let submodelSelect = document.getElementById('search_product_sub_model');
 
 	async function fetchAndRenderProducts() {
 		if (!container) return;
 
-		markSelect = document.getElementById('sarch_product_mark');
-		modelSelect = document.getElementById('sarch_product_model');
-		submodelSelect = document.getElementById('sarch_product_sub_model');
+		markSelect = document.getElementById('search_product_mark');
+		modelSelect = document.getElementById('search_product_model');
+		submodelSelect = document.getElementById('search_product_sub_model');
 
 		const searchText = searchField?.value.trim() || "";
 		let selectedMark = markSelect?.value || "";
@@ -1738,13 +1746,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 	searchField?.addEventListener('keyup', fetchAndRenderProducts);
 	document.addEventListener('change', (e) => {
 		const id = e.target?.id;
-		if (["sarch_product_mark", "sarch_product_model", "sarch_product_sub_model"].includes(id)) {
+		if (["search_product_mark", "search_product_model", "search_product_sub_model"].includes(id)) {
 			fetchAndRenderProducts();
 		}
 	});
 
 	// 📌 JavaScript para recoger datos de los select del formulario de busqueda(search)
-	initCategorySelectors('sarch_product_mark', 'sarch_product_model', 'sarch_product_sub_model');
+	initCategorySelectors('search_product_mark', 'search_product_model', 'search_product_sub_model');
 
 	fetchAndRenderProducts();
 
@@ -2193,6 +2201,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 			        popupContent.style.opacity = '1';
 			    }, 50);
 			}
+
+			initDragAndDrop('customer-drop-area', 'customer_image', 'customer-pic-preview');
+
+			populateDocumentTypes('customer_document_type');
+
+			populateCustomerTypes('customer_type', 1);
+
+			populateCustomerStatus('customer_status', 1);
 		});
 	}
 
@@ -2222,7 +2238,161 @@ document.addEventListener("DOMContentLoaded", async function () {
 		activateTab(referenceTab, dataTab, referenceSection, dataSection);
 	});
 
-	//################################################################ END CUSTOMERS #####################################################################
+
+
+	async function populateDocumentTypes(selectId, selectedValue = '') {
+		const select = document.getElementById(selectId);
+		if (!select) return;
+	
+		select.innerHTML = '';
+	
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = 'Select a Document Type';
+		select.appendChild(defaultOption);
+	
+		try {
+			const res = await fetch('api/get_global_array.php?key=documentTypes');
+			const data = await res.json();
+	
+			if (data.success && data.data) {
+				for (const [value, label] of Object.entries(data.data)) {
+					const option = document.createElement('option');
+					option.value = value;
+					option.textContent = label;
+					if (String(value) === String(selectedValue)) {
+						option.selected = true;
+					}
+					select.appendChild(option);
+				}
+			} else {
+				select.innerHTML += `<option value="">No document types found</option>`;
+			}
+		} catch (error) {
+			console.error("Error loading document types:", error);
+			select.innerHTML += `<option value="">Error loading document types</option>`;
+		}
+	}
+
+	async function populateCustomerTypes(selectId, selectedValue = '') {
+		const select = document.getElementById(selectId);
+		if (!select) return;
+	
+		select.innerHTML = '';
+	
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = 'Select Customer Type';
+		select.appendChild(defaultOption);
+	
+		try {
+			const res = await fetch('api/get_global_array.php?key=customerTypes');
+			const data = await res.json();
+	
+			if (data.success && data.data) {
+				for (const [value, label] of Object.entries(data.data)) {
+					const option = document.createElement('option');
+					option.value = value;
+					option.textContent = label;
+					if (String(value) === String(selectedValue)) {
+						option.selected = true;
+					}
+					select.appendChild(option);
+				}
+			} else {
+				select.innerHTML += `<option value="">No customer types found</option>`;
+			}
+		} catch (error) {
+			console.error("Error loading customer types:", error);
+			select.innerHTML += `<option value="">Error loading customer types</option>`;
+		}
+	}
+
+	async function populateCustomerStatus(selectId, selectedValue = '') {
+		const select = document.getElementById(selectId);
+		if (!select) return;
+	
+		select.innerHTML = '';
+	
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = 'Select Status';
+		select.appendChild(defaultOption);
+	
+		try {
+			const res = await fetch('api/get_global_array.php?key=customerStatus');
+			const data = await res.json();
+	
+			if (data.success && data.data) {
+				for (const [value, label] of Object.entries(data.data)) {
+					const option = document.createElement('option');
+					option.value = value;
+					option.textContent = label;
+					if (String(value) === String(selectedValue)) {
+						option.selected = true;
+					}
+					select.appendChild(option);
+				}
+			} else {
+				select.innerHTML += `<option value="">No status types found</option>`;
+			}
+		} catch (error) {
+			console.error("Error loading customer status:", error);
+			select.innerHTML += `<option value="">Error loading customer status</option>`;
+		}
+	}
+
+	// 📌 Manejo del formulario para crear Customers
+	const formAddCustomer = document.getElementById('formCustomers');
+	if (formAddCustomer) {
+		formAddCustomer.addEventListener('submit', async function (e) {
+			e.preventDefault();
+	
+			const formData = new FormData(this);
+
+			try {
+				const response = await fetch('api/create_customer.php', {
+					method: 'POST',
+					headers: { Accept: 'application/json' },
+					body: formData
+				});
+	
+				const data = await response.json();
+				console.log('Server response:', data);
+	
+				const banner = document.getElementById('status-message');
+				const statusText = document.getElementById('status-text');
+				const statusImage = document.getElementById('status-image');
+	
+				statusText.innerText = data.message || 'No message';
+				statusImage.src = data.img_gif || '../images/sys-img/info.gif';
+				banner.style.display = 'block';
+				banner.style.opacity = '1';
+	
+				if (data.success) {
+					setTimeout(() => {
+						banner.style.opacity = '0';
+						setTimeout(() => {
+							window.location.href = data.redirect_url || window.location.href;
+						}, 1000);
+					}, 3000);
+				}
+			} catch (error) {
+				console.error("Error submitting customer form:", error);
+	
+				const banner = document.getElementById('status-message');
+				const statusText = document.getElementById('status-text');
+				const statusImage = document.getElementById('status-image');
+	
+				statusText.innerText = "Error processing the request.";
+				statusImage.src = "../images/sys-img/error.gif";
+				banner.style.display = 'block';
+				banner.style.opacity = '1';
+			}
+		});
+	}
+
+	//############################################################# END CUSTOMERS ##################################################################
 
 	async function initCategorySelectors(markId, modelId, submodelId) {
 		const markSelect = document.getElementById(markId);
@@ -2239,7 +2409,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			});
 			const data = await response.json();
 	
-			markSelect.innerHTML = `<option value="">Select a Mark</option>`;
+			markSelect.innerHTML = `<option value="">All Marks</option>`;
 	
 			if (data.success && data.data.length > 0) {
 				data.data.forEach(category => {
