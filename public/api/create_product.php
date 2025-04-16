@@ -45,26 +45,17 @@ try {
 	$companyId = intval($companyData["data"]["company_id"]);
 
     $imageName = null;
-    if (!empty($_FILES["Product_image"]["name"])) {
-        $uploadDir = "../images/products/";
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0755, true);
-        }
-
-        $ext = pathinfo($_FILES["Product_image"]["name"], PATHINFO_EXTENSION);
-        $allowed = ["jpg", "jpeg", "png", "webp"];
-
-        if (!in_array(strtolower($ext), $allowed)) {
-            throw new Exception("Invalid file type for product image.");
-        }
-
-        $imageName = "product_user_{$userId}_" . time() . "." . $ext;
-        $targetFile = $uploadDir . $imageName;
-
-        if (!move_uploaded_file($_FILES["Product_image"]["tmp_name"], $targetFile)) {
-            throw new Exception("Failed to upload product image.");
-        }
-    }
+	try {
+		$imageName = handle_uploaded_image(
+			"product_image",
+			__DIR__ . "/../images/products/",
+			["jpg", "jpeg", "png", "webp"],
+            "product",
+			$userId
+		);
+	} catch (Exception $ex) {
+		throw new Exception("Image upload failed: " . $ex->getMessage());
+	}
 
     $insertData = [
         "create_by"         => $userId,

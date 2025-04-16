@@ -34,27 +34,20 @@ try {
 		"company_phone" => $phone
 	];
 
-	if (!empty($_FILES["company_logo"]["name"])) {
-		$uploadDir = "../images/company-logos/";
-		if (!is_dir($uploadDir)) {
-			mkdir($uploadDir, 0755, true);
+	$imageName = null;
+	try {
+		$imageName = handle_uploaded_image(
+			"company_logo",
+			__DIR__ . "/../images/company-logos",
+			["png", "jpg", "jpeg", "webp"],
+			"logo",
+			$userId
+		);
+		if ($imageName) {
+			$updateData["company_logo"] = $imageName;
 		}
-
-		$ext = pathinfo($_FILES["company_logo"]["name"], PATHINFO_EXTENSION);
-		$allowed = ["png", "jpg", "jpeg", "webp"];
-
-		if (!in_array(strtolower($ext), $allowed)) {
-			throw new Exception("Invalid file type for logo.");
-		}
-
-		$newName = "logo_user_" . $userId . "_" . time() . "." . $ext;
-		$targetFile = $uploadDir . $newName;
-
-		if (!move_uploaded_file($_FILES["company_logo"]["tmp_name"], $targetFile)) {
-			throw new Exception("Failed to upload company logo.");
-		}
-
-		$updateData["company_logo"] = $newName;
+	} catch (Exception $imgEx) {
+		throw new Exception("Logo upload failed: " . $imgEx->getMessage());
 	}
 
     $checkCompany = select_from("companies", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
