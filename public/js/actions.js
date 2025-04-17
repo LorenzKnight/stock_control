@@ -1652,7 +1652,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
-
+//################################################################ PRODUCTS #####################################################################
 	const container = document.getElementById('product-list');
 	const searchField = document.getElementById('searchField');
 	let markSelect = document.getElementById('search_product_mark');
@@ -1983,6 +1983,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 			console.error("Error loading product data:", error);
 		}
 	}
+
+//################################################################ END CUSTOMERS ##################################################################
 	
 
 	async function loadModels(markId, modelSelectId, selectedModel = '') {
@@ -2176,6 +2178,85 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 //################################################################ CUSTOMERS #####################################################################
+	const customerContainer = document.getElementById('customers-list');
+	const searchCustomerField = document.getElementById('customersSearchField');
+
+	async function fetchAndRenderCustomers() {
+		try {
+			const searchTerm = searchCustomerField?.value.trim() || "";
+
+			const params = new URLSearchParams();
+			if (searchTerm) params.append('search', searchTerm);
+
+			const res = await fetch(`api/get_customers.php?${params.toString()}`, {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			});
+			const data = await res.json();
+
+			customerContainer.innerHTML = "";
+
+			if (data.success && data.data.length > 0) {
+				data.data.forEach(customer => {
+					const row = document.createElement('div');
+					row.className = 'customer-row';
+
+					const profileImg = customer.image && customer.image.trim() !== ""
+						? `images/customers/${customer.image}`
+						: `images/sys-img/NonProfilePic.png`;
+
+					row.innerHTML = `
+						<table width="100%" align="center" cellspacing="0">
+							<tr valign="baseline" class="form_height">
+								<td width="5%" align="center" valign="middle">
+									<div class="customers-profile">
+										<img src="${profileImg}" alt="profile picture">
+									</div>
+								</td>
+								<td width="15%" align="left" valign="middle">
+									${customer.document_no}
+								</td>
+								<td width="15%" align="left" valign="middle">
+									${customer.full_name}
+								</td>
+								<td width="50%" align="left" valign="middle">
+									${customer.address}
+								</td>
+								<td width="10%" align="center" valign="middle">
+									${customer.status}
+								</td>
+								<td width="5%" align="center" valign="middle">
+									<div class="customers-menu">
+										<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
+									</div>
+								</td>
+							</tr>
+						</table>
+					`;
+
+					customerContainer.appendChild(row);
+
+					// Opcional: manejar clic en el menú del cliente
+					const menuBtn = row.querySelector('.customers-menu');
+					menuBtn?.addEventListener('click', () => {
+						// Acción personalizada con customer.customer_id
+						console.log("Menu clicked for:", customer.customer_id);
+					});
+				});
+			} else {
+				customerContainer.innerHTML = `<p style="text-align:center;">No customers found.</p>`;
+			}
+		} catch (err) {
+			console.error("Error loading customers:", err);
+			customerContainer.innerHTML = `<p style="text-align:center;">Error loading customers</p>`;
+		}
+	}
+
+	searchCustomerField?.addEventListener('keyup', fetchAndRenderCustomers);
+
+	fetchAndRenderCustomers();
+
+
 	// 📌 script para add customers popup
 	let addCustomerButton = document.getElementById('add-customers-button');
 	if (addCustomerButton) {
