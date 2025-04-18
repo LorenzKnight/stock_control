@@ -2214,10 +2214,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 									</div>
 								</td>
 								<td width="15%" align="left" valign="middle">
-									${customer.document_no}
+									${customer.full_name}
 								</td>
 								<td width="15%" align="left" valign="middle">
-									${customer.full_name}
+									<p class="mini-title">${customer.document_type}:</p>
+									${customer.document_no}
 								</td>
 								<td width="50%" align="left" valign="middle">
 									${customer.address}
