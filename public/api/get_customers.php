@@ -12,16 +12,7 @@ try {
 	$userId = $_SESSION["sc_UserId"] ?? null;
 	if (!$userId) throw new Exception("User session not found.");
 
-	// // Obtener ID de la compañía del usuario
-	// $userInfo = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
-	// $companyId = json_decode($userInfo, true)["data"]["company_id"] ?? null;
-	// if (!$companyId) throw new Exception("Company ID not found for user.");
-
 	$search = $_GET["search"] ?? '';
-	
-	// $where = [
-	// 	"company_id" => $companyId
-	// ];
 
     $where = [];
 
@@ -38,6 +29,7 @@ try {
 		"customer_name",
 		"customer_surname",
         "customer_image",
+        "customer_document_type",
 		"customer_document_no",
 		"customer_address",
 		"customer_status"
@@ -57,6 +49,9 @@ try {
 		$customer["address"] = $customer["customer_address"];
 		$customer["status"] = ($customer["customer_status"] == 1) ? "Active" : "Inactive";
 		$customer["image"] = $customer["customer_image"] ?? "";
+
+        $docType = $customer["customer_document_type"] ?? null;
+	    $customer["document_type"] = GlobalArrays::$documentTypes[$docType] ?? "Unknown";
 	}
 
 	$response["success"] = true;
