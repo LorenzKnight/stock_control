@@ -133,7 +133,7 @@
 							<button type="button" class="neutral-btn">Cancel</button>
 						</td>
 						<td colspan="1" align="center" valign="middle">
-							<input type="submit" class="button-style-agree" value="Create" />
+							<input type="submit" class="button-style-agree" value="Update" />
 						</td>
 					</tr>
 				</table>

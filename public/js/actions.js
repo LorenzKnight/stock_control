@@ -2604,6 +2604,49 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
+	const formEditCustomer = document.getElementById('formEditCustomer');
+	if (formEditCustomer) {
+		formEditCustomer.addEventListener('submit', async function (e) {
+			e.preventDefault();
+
+			const formData = new FormData(this);
+			const customerId = formEditCustomer.getAttribute('data-customer-id');
+			formData.append('edit_customer_id', customerId);
+
+			try {
+				const response = await fetch('api/update_customer.php', {
+					method: 'POST',
+					headers: { Accept: 'application/json' },
+					body: formData
+				});
+
+				const data = await response.json();
+
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				if (banner && statusText && statusImage) {
+					statusText.innerText = data.message || "Unknown response";
+					statusImage.src = data.img_gif || "images/sys-img/loading.gif";
+					banner.style.display = 'block';
+					banner.style.opacity = '1';
+				}
+
+				if (data.success) {
+					setTimeout(() => {
+						banner.style.opacity = '0';
+						setTimeout(() => {
+							window.location.href = data.redirect_url || window.location.href;
+						}, 1000);
+					}, 3000);
+				}
+			} catch (error) {
+				console.error("Error updating customer:", error);
+			}
+		});
+	}
+
 	function resetCustomerPopupView() {
 		const menuDiv = document.getElementById('customers-menu-buttons');
 		const sectionsToHide = [
