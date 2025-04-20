@@ -540,6 +540,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	handlePopupClose("add-category-form", ".formular-big-frame", ["add-category-form"]);
 	handlePopupClose("product-options", ".formular-frame", ["product-options"]);
 	handlePopupClose("add-customers-form", ".formular-frame", ["add-customers-form"]);
+	handlePopupClose("customers-options", ".formular-frame", ["customers-options"]);
 
 	// 📌 Boton para cerrar formularios
 	let cancelButtons = document.querySelectorAll('.neutral-btn');
@@ -1111,7 +1112,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
-	
+//################################################################ PRODUCTS #####################################################################
+
 	// 📌 script para add product popup
 	let addProductButton = document.getElementById('add-product-btn');
 	if (addProductButton) {
@@ -1652,7 +1654,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
-//################################################################ PRODUCTS #####################################################################
 	const container = document.getElementById('product-list');
 	const searchField = document.getElementById('searchField');
 	let markSelect = document.getElementById('search_product_mark');
@@ -1983,8 +1984,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			console.error("Error loading product data:", error);
 		}
 	}
-
-//################################################################ END CUSTOMERS ##################################################################
 	
 
 	async function loadModels(markId, modelSelectId, selectedModel = '') {
@@ -2095,65 +2094,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
-
-	document.querySelectorAll('.back-to-menu-btn').forEach(button => {
-		button.addEventListener('click', (e) => {
-			e.preventDefault();
-			e.stopPropagation();
-			e.stopImmediatePropagation();
-
-			const menuDiv = document.getElementById('product-menu-buttons');
-			const assignDiv = document.getElementById('assign-sale-section');
-			const receiveDiv = document.getElementById('receive-as-initial');
-			const editDiv = document.getElementById('edit-product-modal');
-
-			
-			if (assignDiv.style.display === 'block') {
-				fadeOutAndHide(assignDiv, () => {
-					showWithFadeIn(menuDiv);
-				});
-			} else if (receiveDiv.style.display === 'block') {
-				fadeOutAndHide(receiveDiv, () => {
-					showWithFadeIn(menuDiv);
-				});
-			}else if (editDiv.style.display === 'block') {
-				fadeOutAndHide(editDiv, () => {
-					showWithFadeIn(menuDiv);
-				});
-			} else {
-				showWithFadeIn(menuDiv);
-			}
-
-			document.getElementById('product-options').style.display = 'block';
-		});
-	});
-
-	function fadeOutAndHide(element, callback) {
-		element.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-		element.style.opacity = '1';
-		element.style.transform = 'scale(1)';
-	
-		setTimeout(() => {
-			element.style.opacity = '0';
-			element.style.transform = 'scale(0.8)';
-			setTimeout(() => {
-				element.style.display = 'none';
-				if (callback) callback();
-			}, 400);
-		}, 10);
-	}
-	
-	function showWithFadeIn(element) {
-		element.style.display = 'block';
-		element.style.opacity = '0';
-		element.style.transform = 'scale(0.8)';
-		element.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-	
-		setTimeout(() => {
-			element.style.opacity = '1';
-			element.style.transform = 'scale(1)';
-		}, 50);
-	}
+	setupBackToMenuButton(
+		'.back-to-menu-btn', 
+		['assign-sale-section', 'receive-as-initial', 'edit-product-modal'], 
+		'product-menu-buttons', 
+		'product-options'
+	);
 
 	function resetProductPopupView() {
 		const menuDiv = document.getElementById('product-menu-buttons');
@@ -2177,85 +2123,88 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
+//################################################################ END PRODUCTS ##################################################################
+
 //################################################################ CUSTOMERS #####################################################################
 	const customerContainer = document.getElementById('customers-list');
 	const searchCustomerField = document.getElementById('customersSearchField');
 
-	async function fetchAndRenderCustomers() {
-		try {
-			const searchTerm = searchCustomerField?.value.trim() || "";
+	if (customerContainer || searchCustomerField) {
+		async function fetchAndRenderCustomers() {
+			try {
+				const searchTerm = searchCustomerField?.value.trim() || "";
 
-			const params = new URLSearchParams();
-			if (searchTerm) params.append('search', searchTerm);
+				const params = new URLSearchParams();
+				if (searchTerm) params.append('search', searchTerm);
 
-			const res = await fetch(`api/get_customers.php?${params.toString()}`, {
-				method: 'GET',
-				headers: { 'Accept': 'application/json' }
-			});
-			const data = await res.json();
-
-			customerContainer.innerHTML = "";
-
-			if (data.success && data.data.length > 0) {
-				data.data.forEach(customer => {
-					const row = document.createElement('div');
-					row.className = 'customer-row';
-
-					const profileImg = customer.image && customer.image.trim() !== ""
-						? `images/customers/${customer.image}`
-						: `images/sys-img/NonProfilePic.png`;
-
-					row.innerHTML = `
-						<table width="100%" align="center" cellspacing="0">
-							<tr valign="baseline" class="form_height">
-								<td width="5%" align="center" valign="middle">
-									<div class="customers-profile">
-										<img src="${profileImg}" alt="profile picture">
-									</div>
-								</td>
-								<td width="15%" align="left" valign="middle">
-									${customer.full_name}
-								</td>
-								<td width="15%" align="left" valign="middle">
-									<p class="mini-title">${customer.document_type}:</p>
-									${customer.document_no}
-								</td>
-								<td width="50%" align="left" valign="middle">
-									${customer.address}
-								</td>
-								<td width="10%" align="center" valign="middle">
-									${customer.status}
-								</td>
-								<td width="5%" align="center" valign="middle">
-									<div class="customers-menu">
-										<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
-									</div>
-								</td>
-							</tr>
-						</table>
-					`;
-
-					customerContainer.appendChild(row);
-
-					// Opcional: manejar clic en el menú del cliente
-					const menuBtn = row.querySelector('.customers-menu');
-					menuBtn?.addEventListener('click', () => {
-						// Acción personalizada con customer.customer_id
-						console.log("Menu clicked for:", customer.customer_id);
-					});
+				const res = await fetch(`api/get_customers.php?${params.toString()}`, {
+					method: 'GET',
+					headers: { 'Accept': 'application/json' }
 				});
-			} else {
-				customerContainer.innerHTML = `<p style="text-align:center;">No customers found.</p>`;
+				const data = await res.json();
+
+				customerContainer.innerHTML = "";
+
+				if (data.success && data.data.length > 0) {
+					data.data.forEach(customer => {
+						const row = document.createElement('div');
+						row.className = 'customer-row';
+
+						const profileImg = customer.image && customer.image.trim() !== ""
+							? `images/customers/${customer.image}`
+							: `images/sys-img/NonProfilePic.png`;
+
+						row.innerHTML = `
+							<table width="100%" align="center" cellspacing="0">
+								<tr valign="baseline" class="form_height">
+									<td width="5%" align="center" valign="middle">
+										<div class="customers-profile">
+											<img src="${profileImg}" alt="profile picture">
+										</div>
+									</td>
+									<td width="25%" align="left" valign="middle">
+										${customer.full_name}
+									</td>
+									<td width="15%" align="left" valign="middle">
+										<p class="mini-title">${customer.document_type}:</p>
+										${customer.document_no}
+									</td>
+									<td width="40%" align="left" valign="middle">
+										<p class="mini-title">Address:</p>
+										${customer.address}
+									</td>
+									<td width="10%" align="center" valign="middle">
+										${customer.status}
+									</td>
+									<td width="5%" align="center" valign="middle">
+										<div class="customers-menu">
+											<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
+										</div>
+									</td>
+								</tr>
+							</table>
+						`;
+
+						customerContainer.appendChild(row);
+
+						const customersMenuBtn = row.querySelector('.customers-menu');
+						customersMenuBtn.addEventListener('click', () => {
+							openCusomersForm(customer.customer_id);
+						});
+					});
+				} else {
+					customerContainer.innerHTML = `<p style="text-align:center;">No customers found.</p>`;
+				}
+			} catch (err) {
+				console.error("Error loading customers:", err);
+				customerContainer.innerHTML = `<p style="text-align:center;">Error loading customers</p>`;
 			}
-		} catch (err) {
-			console.error("Error loading customers:", err);
-			customerContainer.innerHTML = `<p style="text-align:center;">Error loading customers</p>`;
 		}
+
+		searchCustomerField?.addEventListener('keyup', fetchAndRenderCustomers);
+
+		fetchAndRenderCustomers();
 	}
-
-	searchCustomerField?.addEventListener('keyup', fetchAndRenderCustomers);
-
-	fetchAndRenderCustomers();
 
 
 	// 📌 script para add customers popup
@@ -2301,24 +2250,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 	const dataSection = document.getElementById('customer-data');
 	const referenceSection = document.getElementById('customer-reference');
 
-	function activateTab(activeTab, inactiveTab, showSection, hideSection) {
-		activeTab.classList.add('tab-active');
-		inactiveTab.classList.remove('tab-active');
-
-		showSection.style.display = 'block';
-		hideSection.style.display = 'none';
-	}
-
 	// Mostrar por defecto la sección de "data"
-	activateTab(dataTab, referenceTab, dataSection, referenceSection);
-
-	dataTab.addEventListener('click', () => {
+	if (dataTab && referenceTab && dataSection && referenceSection) {
 		activateTab(dataTab, referenceTab, dataSection, referenceSection);
-	});
 
-	referenceTab.addEventListener('click', () => {
-		activateTab(referenceTab, dataTab, referenceSection, dataSection);
-	});
+		dataTab.addEventListener('click', () => {
+			activateTab(dataTab, referenceTab, dataSection, referenceSection);
+		});
+
+		referenceTab.addEventListener('click', () => {
+			activateTab(referenceTab, dataTab, referenceSection, dataSection);
+		});
+	}
 
 
 
@@ -2474,7 +2417,191 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
+	async function openCusomersForm(customerId) {
+		scrollToTopIfNeeded();
+	
+		const customersOptions = document.getElementById('customers-options');
+		const popupContent = customersOptions.querySelector('.formular-frame');
+		const customerName = document.getElementById('customers-name');
+	
+		if (!customerId) return;
+
+		try {
+			const res = await fetch(`api/get_customers.php?customer_id=${customerId}`);
+			const data = await res.json();
+
+			if (data.success && data.data.length > 0) {
+				const customers = data.data.find(p => p.customer_id == customerId);
+				if (customers && customerName) {
+					customerName.textContent = customers.customer_name + ' ' + customers.customer_surname;
+				}
+			}
+
+			if (customersOptions && popupContent) {
+				resetCustomerPopupView();
+
+				customersOptions.style.display = 'block';
+				customersOptions.style.opacity = '0';
+				customersOptions.style.transition = 'opacity 0.5s ease';
+				setTimeout(() => {
+					customersOptions.style.opacity = '1';
+				}, 10);
+
+				popupContent.style.opacity = '0';
+				popupContent.style.transform = 'scale(0.7)';
+				popupContent.classList.remove('animate-elastic');
+				setTimeout(() => {
+					popupContent.style.transform = 'scale(1)';
+					popupContent.style.opacity = '1';
+				}, 50);
+		
+				// Botón: Assign to sale
+				const assignBtn = document.getElementById('assignCustomerSaleBtn');
+				if (assignBtn) {
+					assignBtn.onclick = () => {
+						const menuDiv = document.getElementById('product-menu-buttons');
+						const assignDiv = document.getElementById('assign-sale-section');
+				
+						animateHeightChange(popupContent, assignDiv, () => {
+							fadeOutAndHide(menuDiv, () => {
+								showWithFadeIn(assignDiv);
+							});
+						});
+					};
+				}
+				
+				// Botón: Edit Customer
+				const editBtn = document.getElementById('editCustomerBtn');
+				if (editBtn) {
+
+					editBtn.setAttribute('data-customer-id', customerId);
+
+					editBtn.onclick = () => {
+						const menuDiv = document.getElementById('customers-menu-buttons');
+						const editDiv = document.getElementById('edit-customers-modal');
+
+						const customerId = editBtn.getAttribute('data-customer-id');
+						if (!customerId) return;
+
+						openEditProductForm(customerId);
+			
+						animateHeightChange(popupContent, editDiv, () => {
+							fadeOutAndHide(menuDiv, () => {
+								showWithFadeIn(editDiv);
+							});
+						});
+					}
+				}
+
+				// Botón: Delete Customer
+				const deleteBtn = document.getElementById('deleteCustomerBtn');
+				if (deleteBtn) {
+					deleteBtn.onclick = () => {
+
+						deleteBtn.setAttribute('data-customer-id', customerId);
+						
+						if (!customerId) {
+							alert("Customer ID not found.");
+							return;
+						}
+
+						showConfirmModal("Delete Customer", "Are you sure you want to delete this cusomer?", async () => {
+							const frame = document.querySelector('.formular-frame');
+							if (frame) frame.style.display = 'none';
+
+							const formData = new FormData();
+							formData.append("customer_id", customerId);
+				
+							try {
+								const response = await fetch('api/delete_customer.php', {
+									method: 'POST',
+									body: formData
+								});
+				
+								const data = await response.json();
+								console.log('Delete response:', data);
+				
+								let banner = document.getElementById('status-message');
+								let statusText = document.getElementById('status-text');
+								let statusImage = document.getElementById('status-image');
+				
+								statusText.innerText = data.message;
+								statusImage.src = data.img_gif;
+								banner.style.display = 'block';
+								banner.style.opacity = '1';
+				
+								if (data.success) {
+									setTimeout(() => {
+										banner.style.opacity = '0';
+										setTimeout(() => {
+											window.location.href = data.redirect_url || window.location.href;
+										}, 1000);
+									}, 3000);
+								}
+							} catch (error) {
+								console.error("Error deleting product:", error);
+								alert("Error deleting product. Check console.");
+							}
+						});
+					};
+				}
+			}
+		} catch (error) {
+			console.error("Error loading product info:", error);
+		}
+	}
+
+	function resetCustomerPopupView() {
+		const menuDiv = document.getElementById('customers-menu-buttons');
+		const sectionsToHide = [
+			document.getElementById('edit-customers-modal'),
+			document.getElementById('assign-sale-section'),
+			// puedes agregar más secciones aquí
+		];
+
+		menuDiv.style.display = 'block';
+		menuDiv.style.opacity = '1';
+		menuDiv.style.transform = 'scale(1)';
+
+		sectionsToHide.forEach(section => {
+			if (section) {
+				section.style.display = 'none';
+				section.style.opacity = '0';
+				section.style.transform = 'scale(0.8)';
+			}
+		});
+	}
+
+	setupBackToMenuButton(
+		'.edit-back-to-menu-btn',
+		['assign-customers-sale-section', 'edit-customers-modal'],
+		'customers-menu-buttons',
+		'customers-options'
+	);
+
+	// 📌 script para edit customers form menu
+	const editDataTab = document.getElementById('tab-edit-customer-data');
+	const editReferenceTab = document.getElementById('tab-edit-customer-reference');
+
+	const editDataSection = document.getElementById('edit-customer-data');
+	const editReferenceSection = document.getElementById('edit-customer-reference');
+
+	// Mostrar por defecto la sección de "edit data"
+	if (editDataTab && editReferenceTab && editDataSection && editReferenceSection) {
+		activateTab(editDataTab, editReferenceTab, editDataSection, editReferenceSection);
+
+		editDataTab.addEventListener('click', () => {
+			activateTab(editDataTab, editReferenceTab, editDataSection, editReferenceSection);
+		});
+
+		editReferenceTab.addEventListener('click', () => {
+			activateTab(referenceTab, editDataTab, editReferenceSection, editDataSection);
+		});
+	}
+
 	//############################################################# END CUSTOMERS ##################################################################
+
+	//############################################################# FUNCTIONES ##################################################################
 
 	async function initCategorySelectors(markId, modelId, submodelId) {
 		const markSelect = document.getElementById(markId);
@@ -2682,6 +2809,77 @@ document.addEventListener("DOMContentLoaded", async function () {
 		};
 	}
 
+	function setupBackToMenuButton(buttonSelector, divsToHide = [], menuDivId = '', optionsDivId = '') {
+		const buttons = document.querySelectorAll(buttonSelector);
+		if (!buttons.length) return;
+	
+		buttons.forEach(button => {
+			button.addEventListener('click', (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				e.stopImmediatePropagation();
+	
+				const menuDiv = document.getElementById(menuDivId);
+				const optionsDiv = optionsDivId ? document.getElementById(optionsDivId) : null;
+	
+				let anyDivShown = false;
+	
+				divsToHide.forEach(divId => {
+					const div = document.getElementById(divId);
+					if (div && div.style.display === 'block') {
+						anyDivShown = true;
+						fadeOutAndHide(div, () => {
+							if (menuDiv) showWithFadeIn(menuDiv);
+						});
+					}
+				});
+	
+				if (!anyDivShown && menuDiv) {
+					showWithFadeIn(menuDiv);
+				}
+	
+				if (optionsDiv) {
+					optionsDiv.style.display = 'block';
+				}
+			});
+		});
+	}
+
+	function fadeOutAndHide(element, callback) {
+		element.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+		element.style.opacity = '1';
+		element.style.transform = 'scale(1)';
+	
+		setTimeout(() => {
+			element.style.opacity = '0';
+			element.style.transform = 'scale(0.8)';
+			setTimeout(() => {
+				element.style.display = 'none';
+				if (callback) callback();
+			}, 400);
+		}, 10);
+	}
+	
+	function showWithFadeIn(element) {
+		element.style.display = 'block';
+		element.style.opacity = '0';
+		element.style.transform = 'scale(0.8)';
+		element.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+	
+		setTimeout(() => {
+			element.style.opacity = '1';
+			element.style.transform = 'scale(1)';
+		}, 50);
+	}
+
+	function activateTab(activeTab, inactiveTab, showSection, hideSection) {
+		activeTab.classList.add('tab-active');
+		inactiveTab.classList.remove('tab-active');
+
+		showSection.style.display = 'block';
+		hideSection.style.display = 'none';
+	}
+
 	document.querySelectorAll('.input-year-only').forEach(input => {
 		input.addEventListener('input', () => {
 			let year = input.value.replace(/\D/g, ''); // eliminar todo lo que no sea número
@@ -2689,5 +2887,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			input.value = year;
 		});
 	});
+
+//############################################################# END FUNCTIONES ##################################################################
 
 });
