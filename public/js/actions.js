@@ -1984,7 +1984,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			console.error("Error loading product data:", error);
 		}
 	}
-	
 
 	async function loadModels(markId, modelSelectId, selectedModel = '') {
 		const modelSelect = document.getElementById(modelSelectId);
@@ -2483,7 +2482,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 						const customerId = editBtn.getAttribute('data-customer-id');
 						if (!customerId) return;
 
-						openEditProductForm(customerId);
+						openEditCustomerForm(customerId);
 			
 						animateHeightChange(popupContent, editDiv, () => {
 							fadeOutAndHide(menuDiv, () => {
@@ -2548,6 +2547,60 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		} catch (error) {
 			console.error("Error loading product info:", error);
+		}
+	}
+
+	async function openEditCustomerForm(customerId) {
+		const formEditCustomer = document.getElementById('formEditCustomer');
+		if (!formEditCustomer) return;
+	
+		formEditCustomer.setAttribute('data-customer-id', customerId);
+	
+		try {
+			const response = await fetch(`api/get_customers.php?customer_id=${customerId}`);
+			const data = await response.json();
+	
+			if (data.success && data.data.length > 0) {
+				const customer = data.data.find(c => c.customer_id == customerId);
+				if (!customer) return;
+	
+				// Llenar campos del formulario
+				document.getElementById('edit_customer_name').value = customer.customer_name || '';
+				document.getElementById('edit_customer_surname').value = customer.customer_surname || '';
+				document.getElementById('edit_customer_email').value = customer.customer_email || '';
+				document.getElementById('edit_customer_address').value = customer.customer_address || '';
+				document.getElementById('edit_customer_phone').value = customer.customer_phone || '';
+				document.getElementById('edit_customer_birthday').value = customer.customer_birthday ? customer.customer_birthday.split(" ")[0] : '';
+				document.getElementById('edit_customer_document_no').value = customer.customer_document_no || '';
+				document.getElementById('edit_references_1').value = customer.references_1 || '';
+				document.getElementById('edit_references_1_phone').value = customer.references_1_phone || '';
+				document.getElementById('edit_references_2').value = customer.references_2 || '';
+				document.getElementById('edit_references_2_phone').value = customer.references_2_phone || '';
+	
+				// Imagen de perfil
+				const preview = document.getElementById('edit-customer-pic-preview');
+				if (preview) {
+					if (customer.customer_image && customer.customer_image.trim() !== '') {
+						preview.src = `images/customers/${customer.customer_image}`;
+						preview.style.display = 'block';
+						preview.style.visibility = 'visible';
+						preview.style.opacity = '1';
+					} else {
+						preview.src = '';
+						preview.style.display = 'none';
+					}
+				}
+	
+				// Cargar select de tipo de documento, tipo de cliente y estatus
+				await populateDocumentTypes('edit_customer_document_type', customer.customer_document_type);
+				await populateCustomerTypes('edit_customer_type', customer.customer_type);
+				await populateCustomerStatus('edit_customer_status', customer.customer_status);
+	
+				// Inicializar drag and drop
+				initDragAndDrop('edit-customer-drop-area', 'edit_customer_image', 'edit-customer-pic-preview');
+			}
+		} catch (error) {
+			console.error("Error loading customer data:", error);
 		}
 	}
 

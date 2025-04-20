@@ -28,11 +28,19 @@ try {
 		"customer_id",
 		"customer_name",
 		"customer_surname",
+        "customer_email",
+        "customer_phone",
+        "customer_birthday",
+        "customer_type",
         "customer_image",
         "customer_document_type",
 		"customer_document_no",
 		"customer_address",
-		"customer_status"
+		"customer_status",
+        "references_1",
+        "references_1_phone",
+        "references_2",
+        "references_2_phone"
 	], $where, [
 		"order_by" => "created_at",
 		"order_direction" => "DESC"
