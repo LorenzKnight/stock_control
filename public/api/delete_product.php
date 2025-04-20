@@ -39,15 +39,14 @@ try {
 		throw new Exception("Image deletion failed: " . $deleteImgResult["message"]);
 	}
 
-	// Eliminar producto
-	$deleteQuery = "DELETE FROM products WHERE product_id = $productId;";
-	$result = pg_query($deleteQuery);
+	$deleteResponse = delete_from("products", ["product_id" => $productId]);
+	$deleteResult = json_decode($deleteResponse, true);
 
-	if (!$result) {
+	if (!$deleteResult) {
 		throw new Exception("Database error while deleting product.");
 	}
 
-	if (pg_affected_rows($result) === 0) {
+	if (empty($deleteResult["count"])) {
 		throw new Exception("No product found with the provided ID.");
 	}
 
