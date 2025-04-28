@@ -68,13 +68,15 @@ try {
 			$submodelName = json_decode($sub, true)["data"]["category_name"] ?? null;
 		}
 
+		$documentTypes = GlobalArrays::$documentTypes;
+
 		$salesData[] = [
 			"sales_id" => $sale["sales_id"],
 			"price" => $sale["price"],
 			"initial" => $sale["initial"],
-			"delivery_date" => $sale["delivery_date"],
+			"delivery_date" => date("Y-m-d", strtotime($sale["delivery_date"])),
 			"remaining" => $sale["remaining"],
-			"interest" => $sale["interest"],
+			"interest" => ($sale["price"] * $sale["interest"]) / 100 .' ('. $sale["interest"].'%)',
 			"installments_month" => $sale["installments_month"],
 			"no_installments" => $sale["no_installments"],
 			"payment_date" => $sale["payment_date"],
@@ -82,7 +84,7 @@ try {
 
 			"customer" => [
 				"full_name" => trim(($customer["customer_name"] ?? '') . ' ' . ($customer["customer_surname"] ?? '')),
-				"document_type" => $customer["customer_document_type"] ?? '',
+				"document_type" => $documentTypes[$customer["customer_document_type"]] ?? '',
 				"document_no" => $customer["customer_document_no"] ?? '',
 				"phone" => $customer["customer_phone"] ?? '',
 				"image" => $customer["customer_image"] ?? ''
