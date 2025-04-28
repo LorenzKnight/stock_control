@@ -1,0 +1,121 @@
+.sales-list {
+	width: 100%;
+	height: 640px;
+	padding-top: 5px;
+	overflow: auto;
+	justify-content: center;
+}
+
+.sale-row {
+	width: 99%;
+	/* background-color: var(--main-bg-beige); */
+    background-color: var(--main-bg-color);
+	margin: 0 0 10px;
+	padding: 0 0.5% 5px;
+	font-size: 12px;
+	border-radius: 5px;
+}
+
+.sale-row:hover {
+	background-color: var(--btn-neutral);
+	color: var(--clr-white);
+	transition: all 1.0s ease;
+}
+
+.sale-profile img {
+	background-color: #fff;
+	width: 80px;
+	height: 80px;
+	border-radius: 50%;
+	margin: 2px 0 0;
+	object-fit: cover;
+}
+
+.customer-form-menu {
+	width: 80%;
+	height: 30px;
+	margin: 0 auto 10px;
+	font-size: 12px;
+}
+
+.customer-form-menu ul {
+	padding: 0;
+	display: flex;
+}
+
+.customer-form-menu ul li {
+	width: 50%;
+	margin: 0 1px;
+	padding: 10px 10px 5px;
+	color: #f0f0f0;
+	background: linear-gradient(to bottom, rgba(255, 255, 255, 0.279), rgba(255, 255, 255, 0));
+	border-radius: 5px 5px 0 0;
+	list-style: none;
+	text-align: center;
+}
+
+.customer-form-menu ul li a {
+	text-decoration: none;
+}
+
+.customer-form-menu ul li:hover {
+	font-weight: 400;
+	background: linear-gradient(to bottom, rgba(255, 255, 255, 0.641), rgba(255, 255, 255, 0));
+}
+
+.tab-active {
+	font-weight: 400;
+	color: #fff !important;
+	background: linear-gradient(to bottom, rgba(255, 255, 255, 0.641), rgba(255, 255, 255, 0)) !important;
+}
+
+.sale-menu {
+    width: 38px;
+    height: 38px;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.sale-menu img {
+    width: 38px;
+	filter: brightness(0) saturate(0) invert(0);
+    opacity: 1;
+    transition: filter 0.3s ease;
+}
+
+.sale-row:hover .sale-menu img {
+    filter: brightness(0) saturate(100%) invert(100%);
+    transition: all 1.0s ease;
+}
+
+.sale-menu img:hover {
+	filter: brightness(0) saturate(0) invert(55%) !important;
+	transition: all 0.6s ease;
+}
+
+.mini-title {
+	color: #999;
+	font-size: 9px;
+	padding: 0;
+	margin: 0 0 3px;
+}
+
+.sale-row:hover .mini-title {
+	color: #fff;
+	transition: all 2.0s ease !important;
+}
+
+.sale-product-pic {
+	width: 150px;
+	height: 150px;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.sale-product-pic img {
+	width: 120%;
+	height: auto;
+	object-fit: cover;
+}
