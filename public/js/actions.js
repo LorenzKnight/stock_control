@@ -2792,7 +2792,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					  <td align="right">Initial :</td><td style="padding-left: 5px;">${sale.initial}</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
-					  <td align="right">Delivery date :</td><td style="padding-left: 5px;">${sale.delivery_date}</td>
+					  <td align="right">Delivery date :</td><td style="padding-left: 5px;">${sale.delivery_date}</td> <!-- AQUI -->
 					</tr>
 					<tr valign="baseline" class="form_height">
 					  <td align="right">Remaining :</td><td style="padding-left: 5px;">${sale.remaining}</td>
