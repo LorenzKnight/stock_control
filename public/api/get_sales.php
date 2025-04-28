@@ -1,0 +1,111 @@
+<?php
+require_once('../logic/stock_be.php');
+header("Content-Type: application/json");
+
+$response = [
+	"success" => false,
+	"message" => "No sales found",
+	"data" => []
+];
+
+try {
+	$userId = $_SESSION["sc_UserId"] ?? null;
+	if (!$userId) throw new Exception("User session not found.");
+
+	$search = $_GET["search"] ?? '';
+	
+	$where = ["create_by" => $userId];
+
+	if (!empty($search)) {
+		$where["OR"] = [
+			"CAST(sales_id AS TEXT) ILIKE" => "%{$search}%"
+		];
+	}
+
+	$salesResult = select_from("sales", [
+		"sales_id", "customer_id", "product_id", "price", "initial", "delivery_date",
+		"remaining", "interest", "installments_month", "no_installments",
+		"payment_date", "due", "created_at"
+	], $where, [
+		"order_by" => "created_at",
+		"order_direction" => "DESC"
+	]);
+
+	$parsedSales = json_decode($salesResult, true);
+	if (!$parsedSales["success"] || empty($parsedSales["data"])) {
+		throw new Exception("No sales available.");
+	}
+
+	$salesData = [];
+	foreach ($parsedSales["data"] as $sale) {
+		$customerInfo = select_from("customers", [
+			"customer_name", "customer_surname", "customer_phone",
+			"customer_document_type", "customer_document_no", "customer_image"
+		], ["customer_id" => $sale["customer_id"]], ["fetch_first" => true]);
+
+		$productInfo = select_from("products", [
+			"product_image", "product_name", "product_year",
+			"product_mark", "product_model", "product_sub_model"
+		], ["product_id" => $sale["product_id"]], ["fetch_first" => true]);
+
+		$customer = json_decode($customerInfo, true)["data"] ?? [];
+		$product = json_decode($productInfo, true)["data"] ?? [];
+
+		$markName = null;
+		$modelName = null;
+		$submodelName = null;
+
+		if (!empty($product['product_mark'])) {
+			$mark = select_from("category", ["category_name"], ["category_id" => $product['product_mark']], ["fetch_first" => true]);
+			$markName = json_decode($mark, true)["data"]["category_name"] ?? null;
+		}
+		if (!empty($product['product_model'])) {
+			$model = select_from("category", ["category_name"], ["category_id" => $product['product_model']], ["fetch_first" => true]);
+			$modelName = json_decode($model, true)["data"]["category_name"] ?? null;
+		}
+		if (!empty($product['product_sub_model'])) {
+			$sub = select_from("category", ["category_name"], ["category_id" => $product['product_sub_model']], ["fetch_first" => true]);
+			$submodelName = json_decode($sub, true)["data"]["category_name"] ?? null;
+		}
+
+		$salesData[] = [
+			"sales_id" => $sale["sales_id"],
+			"price" => $sale["price"],
+			"initial" => $sale["initial"],
+			"delivery_date" => $sale["delivery_date"],
+			"remaining" => $sale["remaining"],
+			"interest" => $sale["interest"],
+			"installments_month" => $sale["installments_month"],
+			"no_installments" => $sale["no_installments"],
+			"payment_date" => $sale["payment_date"],
+			"due" => $sale["due"],
+
+			"customer" => [
+				"full_name" => trim(($customer["customer_name"] ?? '') . ' ' . ($customer["customer_surname"] ?? '')),
+				"document_type" => $customer["customer_document_type"] ?? '',
+				"document_no" => $customer["customer_document_no"] ?? '',
+				"phone" => $customer["customer_phone"] ?? '',
+				"image" => $customer["customer_image"] ?? ''
+			],
+
+			"product" => [
+				"name" => $product["product_name"] ?? '',
+				"year" => $product["product_year"] ?? '',
+				"image" => $product["product_image"] ?? '',
+				"mark_name" => $markName,
+				"model_name" => $modelName,
+				"submodel_name" => $submodelName
+			]
+		];
+	}
+
+	$response["success"] = true;
+	$response["data"] = $salesData;
+	$response["message"] = "Sales loaded successfully.";
+
+} catch (Exception $e) {
+	$response["message"] = $e->getMessage();
+}
+
+echo json_encode($response);
+exit;

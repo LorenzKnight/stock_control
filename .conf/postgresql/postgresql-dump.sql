@@ -115,3 +115,23 @@ CREATE TABLE IF NOT EXISTS customers_doc (
 	create_by INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS sales (
+	sales_id SERIAL PRIMARY KEY,
+	customer_id INTEGER NULL,
+	product_id INTEGER NULL,
+	price INTEGER NULL,
+	Initial INTEGER NULL,
+	delivery_date TIMESTAMP NULL,
+	remaining INTEGER NULL,
+	interest INTEGER NULL,
+	installments_month INTEGER NULL,
+	no_installments INTEGER NULL,
+	payment_date TIMESTAMP NULL,
+	due INTEGER NULL,
+	create_by INTEGER NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO sales (customer_id, product_id, price, Initial, delivery_date, remaining, interest, installments_month, no_installments, payment_date, due, create_by, created_at)
+VALUES (1, 1, 1000, 200, '2025-03-14 15:06:38.783', 800, 5, 12, 10, '2025-03-14 15:06:38.783', 0, 1, '2025-03-14 15:06:38.783');

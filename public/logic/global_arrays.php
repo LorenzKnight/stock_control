@@ -53,5 +53,46 @@ class GlobalArrays {
 		3 => "Divorced",
 		4 => "Widowed"
 	];
+
+	public static $countryPhoneCodes = [
+		'+54'     => 'Argentina',
+		'+61'     => 'Australia',
+		'+55'     => 'Brazil',
+		'+1'      => 'Canada',
+		'+56'     => 'Chile',
+		'+86'     => 'China',
+		'+57'     => 'Colombia',
+		'+506'    => 'Costa Rica',
+		'+53'     => 'Cuba',
+		'+1'	  => 'Dominican Republic',
+		'+33'     => 'France',
+		'+49'     => 'Germany',
+		'+91'     => 'India',
+		'+62'     => 'Indonesia',
+		'+39'     => 'Italy',
+		'+81'     => 'Japan',
+		'+52'     => 'Mexico',
+		'+31'     => 'Netherlands',
+		'+64'     => 'New Zealand',
+		'+47'     => 'Norway',
+		'+507'    => 'Panama',
+		'+51'     => 'Peru',
+		'+63'     => 'Philippines',
+		'+48'     => 'Poland',
+		'+351'    => 'Portugal',
+		'+1'	  => 'Puerto Rico',
+		'+7'      => 'Russia',
+		'+65'     => 'Singapore',
+		'+27'     => 'South Africa',
+		'+34'     => 'Spain',
+		'+46'     => 'Sweden',
+		'+41'     => 'Switzerland',
+		'+66'     => 'Thailand',
+		'+90'     => 'Turkey',
+		'+44'     => 'United Kingdom',
+		'+1'      => 'United States',
+		'+58'     => 'Venezuela',
+		'+84'     => 'Vietnam'
+	];
 }
 ?>

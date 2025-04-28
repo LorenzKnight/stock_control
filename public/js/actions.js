@@ -2263,7 +2263,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 
-
 	async function populateDocumentTypes(selectId, selectedValue = '') {
 		const select = document.getElementById(selectId);
 		if (!select) return;
@@ -2696,6 +2695,143 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	//############################################################# END CUSTOMERS ##################################################################
+
+	//############################################################# SALES ##################################################################
+
+	const salesContainer = document.getElementById('sales-list');
+	const searchSalesField = document.getElementById('salesSearchField');
+	
+	if (salesContainer || searchSalesField) {
+	  async function fetchAndRenderSales() {
+		try {
+		  const searchTerm = searchSalesField?.value.trim() || "";
+	
+		  const params = new URLSearchParams();
+		  if (searchTerm) params.append('search', searchTerm);
+	
+		  const res = await fetch(`api/get_sales.php?${params.toString()}`, {
+			method: 'GET',
+			headers: { 'Accept': 'application/json' }
+		  });
+	
+		  const data = await res.json();
+		  salesContainer.innerHTML = "";
+		  
+		  if (data.success && data.data.length > 0) {
+			data.data.forEach(sale => {
+			  const row = document.createElement('div');
+			  row.className = 'sale-row';
+	console.log('Sale:', sale);
+			  const customerImg = sale.customer.image?.trim() !== ''
+				? `images/customers/${sale.customer.image}`
+				: 'images/sys-img/NonProfilePic.png';
+	
+			  const productImg = sale.product.image?.trim() !== ''
+				? `images/products/${sale.product.image}`
+				: 'images/sys-img/wooden-box.png';
+	
+			  const paymentDateFormatted = sale.payment_date ? `Every ${new Date(sale.payment_date).getDate()}th` : '-';
+	
+			  row.innerHTML = `
+				<table width="100%" style="border-bottom: 1px solid #999;" align="center" cellspacing="0">
+				  <tr valign="baseline" class="form_height">
+					<td width="10%" align="left" valign="middle">
+					  <p class="mini-title">Ord. No:</p>
+					  ${sale.sales_id}
+					</td>
+					<td width="87%" align="center" valign="middle"></td>
+					<td width="3%" align="center" valign="middle">
+					  <div class="sale-menu">
+						<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
+					  </div>
+					</td>
+				  </tr>
+				</table>
+				<div class="flex" style="width: 100%; margin-top: 5px;">
+				  <table width="30%" align="center" cellspacing="0">
+					<tr valign="baseline" class="form_height">
+					  <td width="30%" align="left" valign="middle">
+						<div class="sale-profile">
+						  <img src="${customerImg}" alt="profile picture">
+						</div>
+					  </td>
+					  <td width="70%" align="left" valign="middle">
+						<h3><strong>${sale.customer.full_name}</strong></h3>
+						<p class="mini-title">${sale.customer.document_type}:</p>
+						${sale.customer.document_no}<br><br>
+						<p class="mini-title">Phone:</p>
+						${sale.customer.phone}
+					  </td>
+					</tr>
+				  </table>
+				  <table width="40%" style="border-left: 1px solid #999;" align="center" cellspacing="0">
+					<tr valign="baseline" class="form_height">
+					  <td width="30%" align="left" valign="middle">
+						<div class="sale-product-pic">
+						  <img src="${productImg}" alt="product picture">
+						</div>
+					  </td>
+					  <td width="80%" align="left" valign="middle">
+						<p class="mini-title">Product No:</p>
+						${sale.product.name}
+						<h3><strong>${sale.product.mark_name} - ${sale.product.model_name}</strong></h3>
+						<p>${sale.product.submodel_name}</p>
+						<p class="mini-title">Year</p>
+						<strong>${sale.product.year}</strong>
+					  </td>
+					</tr>
+				  </table>
+				  <table width="30%" style="border-left: 1px solid #999;" align="center" cellspacing="0">
+					<tr valign="baseline" class="form_height">
+					  <td colspan="2" style="padding-left: 7px;" align="left" valign="middle"><strong>Method of Payment</strong></td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+					  <td width="35%" align="right">Price :</td><td width="65%" style="padding-left: 5px;">${sale.price}</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+					  <td align="right">Initial :</td><td style="padding-left: 5px;">${sale.initial}</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+					  <td align="right">Delivery date :</td><td style="padding-left: 5px;">${sale.delivery_date}</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+					  <td align="right">Remaining :</td><td style="padding-left: 5px;">${sale.remaining}</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+					  <td align="right">Interest :</td><td style="padding-left: 5px;">${sale.interest}</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+					  <td align="right">Installments / month :</td><td style="padding-left: 5px;">${sale.installments_month}</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+					  <td align="right">No. of installments :</td><td style="padding-left: 5px;">${sale.no_installments}</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+					  <td align="right">Payment date :</td><td style="padding-left: 5px;">${paymentDateFormatted}</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+					  <td align="right">Due :</td><td style="padding-left: 5px;">${sale.due}</td>
+					</tr>
+				  </table>
+				</div>
+			  `;
+	
+			  salesContainer.appendChild(row);
+			});
+		  } else {
+			salesContainer.innerHTML = `<p style="text-align:center;">No sales found.</p>`;
+		  }
+		} catch (err) {
+		  console.error("Error loading sales:", err);
+		  salesContainer.innerHTML = `<p style="text-align:center;">Error loading sales</p>`;
+		}
+	  }
+	
+	  searchSalesField?.addEventListener('keyup', fetchAndRenderSales);
+	  fetchAndRenderSales();
+	} // AQUI
+
+	//############################################################# END SALES ##################################################################
 
 	//############################################################# FUNCTIONES ##################################################################
 

@@ -31,12 +31,4 @@
 		<h2 style="margin-left: 10px;">User List</h2>
 		<div class="members-table" id="child-user-table">Cargando usuarios...</div>
 	</div>
-	<!-- <div>
-		</br>
-		TO DO</br>
-		hacer ventas con planes de pago</br>
-		ingresar productos</br>
-		registrar clientes (agregar notas)</br>
-		pagos del producto</br>
-	</div> -->
 </div>

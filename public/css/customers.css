@@ -1,7 +1,6 @@
 .customers-list {
 	width: 100%;
 	height: 640px;
-	/* background-color: orange; */
 	padding-top: 5px;
 	overflow: auto;
 	justify-content: center;
@@ -20,7 +19,7 @@
 }
 
 .customer-row:hover {
-	background-color: var(--btn-neutral); /* AQUI */
+	background-color: var(--btn-neutral);
 	color: var(--clr-white);
 	transition: all 1.0s ease;
 }
