@@ -2902,14 +2902,20 @@ document.addEventListener("DOMContentLoaded", async function () {
 						const uniqueId = `customer-${customer.customer_id}`;
 						const row = document.createElement('tr');
 						row.className = "categoryContainer";
+
+						const profileImg = customer.image && customer.image.trim() !== ""
+							? `images/customers/${customer.image}`
+							: `images/sys-img/NonProfilePic.png`;
+
 						row.innerHTML = `
 							<td width="10%" align="center" valign="middle">
-								<div class="list-icon">
-									<img src="images/sys-img/element-list.png" alt="">
+								<div class="customers-profile">
+									<img src="${profileImg}" alt="">
 								</div>
 							</td>
 							<td width="80%" valign="middle" style="padding-left:10px;">
-								${customer.full_name}<br><small>${customer.document_no}</small>
+								<strong>${customer.full_name}</strong>
+								<p class="mini-title" style="color: #000;">${customer.document_type}: <strong>${customer.document_no}</strong></p>
 							</td>
 							<td width="10%" align="center" valign="middle">
 								<div class="opcion-radio">
@@ -2937,7 +2943,108 @@ document.addEventListener("DOMContentLoaded", async function () {
 			fetchAndRenderCustomers(searchCustomerInput.value);
 		});
 
-		fetchAndRenderCustomers(); // Load initial list
+		fetchAndRenderCustomers();
+	}
+
+	const searchProductInput = document.getElementById('search-product-purchase');
+	const productListTable = document.getElementById('select-product-list');
+	const saleMarkSelect = document.getElementById('search-product-mark');
+
+	if ((searchProductInput || saleMarkSelect) && productListTable) {
+		async function fetchAndRenderProducts(search = "", mark = "") {
+			try {
+				const params = new URLSearchParams();
+				if (search.trim() !== "") {
+					params.append('search', search.trim());
+				}
+				if (mark && mark !== "") {
+					params.append('mark', mark);
+				}
+
+				const response = await fetch(`api/get_products.php?${params.toString()}`, {
+					method: 'GET',
+					headers: { 'Accept': 'application/json' }
+				});
+				const data = await response.json();
+				productListTable.innerHTML = "";
+
+				if (data.success && data.data.length > 0) {
+					data.data.forEach(product => {
+						const uniqueId = `product-${product.product_id}`;
+						const productImg = product.product_image && product.product_image.trim() !== ''
+							? `images/products/${product.product_image}`
+							: `images/sys-img/wooden-box.png`;
+
+						const row = document.createElement('tr');
+						row.className = "productContainer";
+						row.innerHTML = `
+							<td width="10%" align="center" valign="middle">
+								<div class="list-icon">
+									<img src="${productImg}" alt="product image" width="32" height="32">
+								</div>
+							</td>
+							<td width="75%" valign="middle" style="padding-left:10px;">
+								${product.product_name}<br>
+								<small>${product.mark_name || ''} - ${product.model_name || ''} ${product.submodel_name || ''}</small>
+							</td>
+							<td width="15%" align="center" valign="middle">
+								<div class="opcion-checkbox">
+									<input type="checkbox" id="${uniqueId}" name="product_selection[]" value="${product.product_id}" class="product-checkbox" />
+									<label for="${uniqueId}"></label>
+								</div>
+							</td>
+						`;
+						productListTable.appendChild(row);
+					});
+				} else {
+					productListTable.innerHTML = `
+						<tr><td colspan="3" style="text-align:center; padding: 10px;">No products found.</td></tr>
+					`;
+				}
+			} catch (error) {
+				console.error("Error loading products:", error);
+				productListTable.innerHTML = `
+					<tr><td colspan="3" style="text-align:center; padding: 10px;">Error loading products</td></tr>
+				`;
+			}
+		}
+
+		// 🔹 Cargar marcas
+		async function loadMarks() {
+			try {
+				const response = await fetch("api/get_categories.php", {
+					method: "GET",
+					headers: { "Accept": "application/json" }
+				});
+				const data = await response.json();
+
+				saleMarkSelect.innerHTML = `<option value="">All Marks</option>`;
+
+				if (data.success && data.data.length > 0) {
+					data.data.forEach(category => {
+						const option = document.createElement("option");
+						option.value = category.category_id;
+						option.textContent = category.category_name;
+						saleMarkSelect.appendChild(option);
+					});
+				} else {
+					saleMarkSelect.innerHTML += `<option value="">No marks found</option>`;
+				}
+			} catch (error) {
+				console.error("Error loading marks:", error);
+				saleMarkSelect.innerHTML = `<option value="">Error loading marks</option>`;
+			}
+		}
+
+		searchProductInput.addEventListener('input', () => {
+			fetchAndRenderProducts(searchProductInput.value, saleMarkSelect.value);
+		});
+		saleMarkSelect.addEventListener('change', () => {
+			fetchAndRenderProducts(searchProductInput.value, saleMarkSelect.value);
+		});
+
+		await loadMarks();
+		fetchAndRenderProducts(); // Load initial list
 	}
 	// AQUI
 

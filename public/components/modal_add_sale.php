@@ -1,6 +1,6 @@
 <div class="bg-popup" id="add-sale-form">
 	<div class="formular-big-frame">
-        <form method="post" name="formAddCategory" id="formAddCategory">
+        <form method="post" name="formAddSale" id="formAddSale">
             <table width="80%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
@@ -10,37 +10,30 @@
 				<tr valign="baseline">
 					<td colspan="2" align="center" valign="middle">
 						<div class="formular-customers-list">
-							<div class="create-list-holder" id="clic-create-mark">
+							<div class="create-list-holder">
                                 <input class="form-input-style" type="text" name="search-customer" id="search-customer" placeholder="Enter a name or Doc No..." title="Enter a valid name"/>
 							</div>
 							<div class="cat-all-list">
-								<table class="all-mark-list" id="select-customers-list" cellspacing="0">
-								
-								</table>
+								<table id="select-customers-list" cellspacing="0"></table>
 							</div>
 						</div>
 					</td>
 					<td colspan="2" align="center" valign="middle">
 						<div class="formular-customers-list">
-							<div class="create-list-holder" id="clic-create-model">
-								<button type="button" class="button-style-agree disabled" id="add-model-btn" disabled>New Model</button>
-							</div>
-							<div class="create-list-holder" id="input-model" style="display: none;">
+							<div class="create-list-holder">
 								<table width="100%" align="center" cellspacing="0">
 									<tr valign="baseline">
-										<td width="70%" align="center" valign="middle">
-											<input type="text" class="form-medium-input-style" name="input-product-model" id="input-product-model" />
+										<td width="60%" align="center" valign="middle">
+											<input type="text" class="form-medium-input-style" name="search-product-purchase" id="search-product-purchase" placeholder="Enter Product No..." title="Enter a valid Product No."/>
 										</td>
-										<td width="30%" align="center" valign="middle">
-											<button type="button" class="button-style-agree" id="btn-create-model">Create</button>
+										<td width="40%" align="center" valign="middle">
+											<select class="form-input-style" name="search-product-mark" id="search-product-mark"></select>
 										</td>
 									</tr>
 								</table>
 							</div>
 							<div class="cat-all-list">
-								<table class="all-model-list" id="model-list" cellspacing="0">
-								
-								</table>
+								<table id="select-product-list" cellspacing="0"></table>
 							</div>
 						</div>
 					</td>
