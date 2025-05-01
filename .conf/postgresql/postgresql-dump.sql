@@ -118,6 +118,7 @@ CREATE TABLE IF NOT EXISTS customers_doc (
 
 CREATE TABLE IF NOT EXISTS sales (
 	sales_id SERIAL PRIMARY KEY,
+	ord_no INTEGER NULL,
 	customer_id INTEGER NULL,
 	price_sum NUMERIC(10,2) NULL,
 	Initial NUMERIC(10,2) NULL,
@@ -128,12 +129,14 @@ CREATE TABLE IF NOT EXISTS sales (
 	no_installments INTEGER NULL,
 	payment_date TIMESTAMP NULL,
 	due NUMERIC(10,2) NULL,
+	status INTEGER NULL,
 	create_by INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO sales (customer_id, price_sum, Initial, delivery_date, remaining, interest, installments_month, no_installments, payment_date, due, create_by, created_at)
-VALUES (1, 1000, 200, '2025-03-14 15:06:38.783', 800, 5, 12, 10, '2025-03-14 15:06:38.783', 141.66, 1, '2025-03-14 15:06:38.783');
+-- INSERT INTO sales (ord_no, customer_id, price_sum, Initial, delivery_date, remaining, interest, installments_month, no_installments, payment_date, due, status, create_by, created_at)
+-- VALUES (10001, 4, 1000, 200, '2025-03-14 15:06:38.783', 800, 5, 12, 10, '2025-03-14 15:06:38.783', 141.66, 0, 1, '2025-03-14 15:06:38.783'),
+-- 	   (10002, 2, 2000, 400, '2025-03-14 15:06:38.783', 1600, 5, 12, 10, '2025-03-14 15:06:38.783', 282, 0, 1, '2025-03-14 15:06:38.783');
 
 CREATE TABLE IF NOT EXISTS purchased_products (
 	purchase_id SERIAL PRIMARY KEY,
@@ -148,6 +151,6 @@ CREATE TABLE IF NOT EXISTS purchased_products (
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO purchased_products (sales_id, customer_id, product_id, quantity, price, discount, total, create_by, created_at)
-VALUES (1, 4, 6, 1, 3000, 0, 3000, 1, '2025-03-14 15:06:38.783'),
-	   (1, 4, 4, 1, 1000, 0, 1000, 1, '2025-03-14 15:06:38.783');
+-- INSERT INTO purchased_products (sales_id, customer_id, product_id, quantity, price, discount, total, create_by, created_at)
+-- VALUES (1, 4, 6, 1, 3000, 0, 3000, 1, '2025-03-14 15:06:38.783'),
+-- 	   (1, 4, 4, 1, 1000, 0, 1000, 1, '2025-03-14 15:06:38.783');
