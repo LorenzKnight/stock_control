@@ -2879,6 +2879,66 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
+	const searchCustomerInput = document.getElementById('search-customer');
+	const customerListTable = document.getElementById('select-customers-list');
+
+	if (searchCustomerInput && customerListTable) {
+		async function fetchAndRenderCustomers(search = "") {
+			try {
+				const params = new URLSearchParams();
+				if (search.trim() !== "") {
+					params.append('search', search.trim());
+				}
+
+				const response = await fetch(`api/get_customers.php?${params.toString()}`, {
+					method: 'GET',
+					headers: { 'Accept': 'application/json' }
+				});
+				const data = await response.json();
+				customerListTable.innerHTML = "";
+
+				if (data.success && data.data.length > 0) {
+					data.data.forEach(customer => {
+						const uniqueId = `customer-${customer.customer_id}`;
+						const row = document.createElement('tr');
+						row.className = "categoryContainer";
+						row.innerHTML = `
+							<td width="10%" align="center" valign="middle">
+								<div class="list-icon">
+									<img src="images/sys-img/element-list.png" alt="">
+								</div>
+							</td>
+							<td width="80%" valign="middle" style="padding-left:10px;">
+								${customer.full_name}<br><small>${customer.document_no}</small>
+							</td>
+							<td width="10%" align="center" valign="middle">
+								<div class="opcion-radio">
+									<input type="radio" id="${uniqueId}" name="customer_select" class="category-radio" data-id="${customer.customer_id}" />
+									<label for="${uniqueId}"></label>
+								</div>
+							</td>
+						`;
+						customerListTable.appendChild(row);
+					});
+				} else {
+					customerListTable.innerHTML = `
+						<tr><td colspan="3" style="text-align:center; padding: 10px;">No customers found.</td></tr>
+					`;
+				}
+			} catch (error) {
+				console.error("Error loading customers:", error);
+				customerListTable.innerHTML = `
+					<tr><td colspan="3" style="text-align:center; padding: 10px;">Error loading customers</td></tr>
+				`;
+			}
+		}
+
+		searchCustomerInput.addEventListener('input', () => {
+			fetchAndRenderCustomers(searchCustomerInput.value);
+		});
+
+		fetchAndRenderCustomers(); // Load initial list
+	}
 	// AQUI
 
 	//############################################################# END SALES ##################################################################

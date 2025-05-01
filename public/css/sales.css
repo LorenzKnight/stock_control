@@ -135,3 +135,13 @@
 	height: auto;
 	object-fit: cover;
 }
+
+.formular-customers-list {
+    width: 330px;
+    height: 458px;
+    background-color: var(--frm-bg-transparent-grey);
+    margin: 0 auto 10px;
+    padding: 10px;
+    border: 1px solid var(--frm-border-semi-transparent);
+    border-radius: 8px;
+}
