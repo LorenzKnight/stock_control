@@ -28,6 +28,6 @@ if (is_file("inc/security.php")) {
 }
 
 $dominio = "localhost:8889";
-// $dominio = "http://www.loopsdancestudio.se";
+// $dominio = "http://www.stockcontrol.se";
 $pageName = "Stock Control";
 ?>
