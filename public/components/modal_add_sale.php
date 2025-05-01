@@ -9,31 +9,19 @@
 				</tr>
 				<tr valign="baseline">
 					<td colspan="2" align="center" valign="middle">
-						<div class="formular-category-list">
+						<div class="formular-customers-list">
 							<div class="create-list-holder" id="clic-create-mark">
-								<button type="button" class="button-style-agree" id="add-mark-btn">New Mark</button>
-							</div>
-							<div class="create-list-holder flex" id="input-mark" style="display: none;">
-								<table width="100%" align="center" cellspacing="0">
-									<tr valign="baseline">
-										<td width="70%" align="center" valign="middle">
-											<input type="text" class="form-medium-input-style" name="input-product-mark" id="input-product-mark" />
-										</td>
-										<td width="30%" align="center" valign="middle">
-											<button type="button" class="button-style-agree" id="btn-create-mark">Create</button>
-										</td>
-									</tr>
-								</table>
+                                <input class="form-input-style" type="text" name="search-customer" id="search-customer" placeholder="Enter a name or Doc No..." title="Enter a valid name"/>
 							</div>
 							<div class="cat-all-list">
-								<table class="all-mark-list" id="mark-list" cellspacing="0">
+								<table class="all-mark-list" id="select-customers-list" cellspacing="0">
 								
 								</table>
 							</div>
 						</div>
 					</td>
 					<td colspan="2" align="center" valign="middle">
-						<div class="formular-category-list">
+						<div class="formular-customers-list">
 							<div class="create-list-holder" id="clic-create-model">
 								<button type="button" class="button-style-agree disabled" id="add-model-btn" disabled>New Model</button>
 							</div>
@@ -57,7 +45,7 @@
 						</div>
 					</td>
 					<td colspan="2" align="center" valign="middle">
-						<div class="formular-category-list">
+						<div class="formular-customers-list">
 							<div class="create-list-holder" id="clic-create-submodel">
 								<button type="button" class="button-style-agree disabled" id="add-submodel-btn" disabled>New Submodel</button>
 							</div>
