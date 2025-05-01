@@ -2947,8 +2947,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	const searchProductInput = document.getElementById('search-product-purchase');
-	const productListTable = document.getElementById('select-product-list');
 	const saleMarkSelect = document.getElementById('search-product-mark');
+	const productListTable = document.getElementById('select-product-list');
 
 	if ((searchProductInput || saleMarkSelect) && productListTable) {
 		async function fetchAndRenderProducts(search = "", mark = "") {
@@ -3044,7 +3044,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 
 		await loadMarks();
-		fetchAndRenderProducts(); // Load initial list
+		fetchAndRenderProducts();
 	}
 	// AQUI
 

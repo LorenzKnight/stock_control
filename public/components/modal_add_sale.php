@@ -39,24 +39,59 @@
 					</td>
 					<td colspan="2" align="center" valign="middle">
 						<div class="formular-customers-list">
-							<div class="create-list-holder" id="clic-create-submodel">
-								<button type="button" class="button-style-agree disabled" id="add-submodel-btn" disabled>New Submodel</button>
-							</div>
-							<div class="create-list-holder" id="input-submodel" style="display: none;">
-								<table width="100%" align="center" cellspacing="0">
-									<tr valign="baseline">
-										<td width="70%" align="center" valign="middle">
-											<input type="text" class="form-medium-input-style" name="input-product-submodel" id="input-product-submodel" />
-										</td>
-										<td width="30%" align="center" valign="middle">
-											<button type="button" class="button-style-agree" id="btn-create-submodel">Create</button>
-										</td>
-									</tr>
-								</table>
+							<div class="create-list-holder">
+								<button type="button" class="button-style-agree disabled" id="add-submodel-btn" disabled>Method of Payment</button>
 							</div>
 							<div class="cat-all-list">
-								<table class="all-submodel-list" id="submodel-list" cellspacing="0">
-								
+								<table width="100%" align="center" cellspacing="0">
+									<tr valign="baseline" class="form_height">
+										<td colspan="2" align="center" valign="middle">
+											<input class="form-input-style" type="text" name="price_sum" id="price_sum" placeholder="Price sum..." disabled/>
+										</td>
+									</tr>
+									<tr valign="baseline" class="form_height">
+										<td colspan="2" align="center" valign="middle">
+											<input class="form-input-style" type="text" name="initial" id="initial" placeholder="Initial..."/>
+										</td>
+									</tr>
+									<tr valign="baseline" class="form_height">
+										<td colspan="2" align="center" valign="middle">
+											<input class="form-input-style" type="date" name="delivery_date" id="delivery_date" placeholder="Enter a delivery date..."/>
+										</td>
+									</tr>
+									<tr valign="baseline" class="form_height">
+										<td colspan="2" align="center" valign="middle">
+											<input class="form-input-style" type="text" name="remaining" id="remaining" placeholder="Remaining..." disabled/>
+										</td>
+									</tr>
+									<tr valign="baseline" class="form_height">
+										<td width="50%" align="center" valign="middle">
+											<input class="form-medium-input-style" type="text" name="interest" id="interest" placeholder="Enter a percent..."/>
+										</td>
+										<td width="50%" align="center" valign="middle">
+											<input class="form-medium-input-style" type="text" name="total_interest" id="total_interest" placeholder="Total Interest..." disabled/>
+										</td>
+									</tr>
+									<tr valign="baseline" class="form_height">
+										<td width="50%" align="center" valign="middle">
+											<select class="form-input-style" name="installments_month" id="installments_month">
+												<option value="0">Select Installments</option>
+												<option value="12">12 Months</option>
+												<option value="24">24 Months</option>
+												<option value="36">36 Months</option>
+												<option value="48">48 Months</option>
+												<option value="60">60 Months</option>
+											</select>
+										</td>
+										<td width="50%" align="center" valign="middle">
+											<input class="form-medium-input-style" type="date" name="payment_date" id="payment_date" placeholder="Enter a Payment date..."/>
+										</td>
+									</tr>
+									<tr valign="baseline" class="form_height">
+										<td colspan="2" align="center" valign="middle">
+											<input class="form-input-style" type="text" name="due" id="due" placeholder="Due..." disabled/>
+										</td>
+									</tr>
 								</table>
 							</div>
 						</div>
