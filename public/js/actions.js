@@ -511,37 +511,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
-	// 📌 cerrar al hacer clic fuera del formulario
-	function handlePopupClose(popupId, contentSelector, otherPopups = []) {
-		const popup = document.getElementById(popupId);
-	
-		if (popup) {
-			const popupContent = popup.querySelector(contentSelector);
-			if (!popupContent) return;
-
-			popup.addEventListener("click", function (e) {
-				if (!popupContent.contains(e.target)) {
-					popup.style.display = "none";
-	
-					otherPopups.forEach(id => {
-						const other = document.getElementById(id);
-						if (other) other.style.display = "none";
-					});
-				}
-			});
-		}
-	}
-	handlePopupClose("edit-my_info-form", ".formular-frame", ["edit-my_info-form"]);
-	handlePopupClose("subsc-form", ".formular-frame", ["subsc-form"]);
-	handlePopupClose("edit-company-form", ".formular-frame", ["edit-company-form"]);
-	handlePopupClose("add-members-form", ".formular-frame", ["add-members-form"]);
-	handlePopupClose("edit-members-form", ".formular-frame", ["edit-members-form"]);
-	handlePopupClose("add-product-form", ".formular-frame", ["add-product-form"]);
-	handlePopupClose("add-category-form", ".formular-big-frame", ["add-category-form"]);
-	handlePopupClose("product-options", ".formular-frame", ["product-options"]);
-	handlePopupClose("add-customers-form", ".formular-frame", ["add-customers-form"]);
-	handlePopupClose("customers-options", ".formular-frame", ["customers-options"]);
-
 	// 📌 Boton para cerrar formularios
 	let cancelButtons = document.querySelectorAll('.neutral-btn');
 	cancelButtons.forEach(function (button) {
@@ -2698,139 +2667,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	//############################################################# SALES ##################################################################
 
-	// const salesContainer = document.getElementById('sales-list');
-	// const searchSalesField = document.getElementById('salesSearchField');
-	
-	// if (salesContainer || searchSalesField) {
-	// 	async function fetchAndRenderSales() {
-	// 		try {
-	// 		const searchTerm = searchSalesField?.value.trim() || "";
-		
-	// 		const params = new URLSearchParams();
-	// 		if (searchTerm) params.append('search', searchTerm);
-		
-	// 		const res = await fetch(`api/get_sales.php?${params.toString()}`, {
-	// 			method: 'GET',
-	// 			headers: { 'Accept': 'application/json' }
-	// 		});
-		
-	// 		const data = await res.json();
-	// 		salesContainer.innerHTML = "";
-			
-	// 		if (data.success && data.data.length > 0) {
-	// 			data.data.forEach(sale => {
-	// 			const row = document.createElement('div');
-	// 			row.className = 'sale-row';
-	// 				// console.log('Sale:', sale);
-	// 			const customerImg = sale.customer.image?.trim() !== ''
-	// 				? `images/customers/${sale.customer.image}`
-	// 				: 'images/sys-img/NonProfilePic.png';
-		
-	// 			const productImg = sale.product.image?.trim() !== ''
-	// 				? `images/products/${sale.product.image}`
-	// 				: 'images/sys-img/wooden-box.png';
-		
-	// 			const paymentDateFormatted = sale.payment_date ? `Every ${new Date(sale.payment_date).getDate()}th` : '-';
-		
-	// 			row.innerHTML = `
-	// 				<table width="100%" style="border-bottom: 1px solid #999;" align="center" cellspacing="0">
-	// 				<tr valign="baseline" class="form_height">
-	// 					<td width="10%" align="left" valign="middle">
-	// 					<p class="mini-title">Ord. No:</p>
-	// 					${sale.sales_id}
-	// 					</td>
-	// 					<td width="87%" align="center" valign="middle"></td>
-	// 					<td width="3%" align="center" valign="middle">
-	// 					<div class="sale-menu">
-	// 						<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
-	// 					</div>
-	// 					</td>
-	// 				</tr>
-	// 				</table>
-	// 				<div class="flex" style="width: 100%; margin-top: 5px;">
-	// 				<table width="30%" align="center" cellspacing="0">
-	// 					<tr valign="baseline" class="form_height">
-	// 					<td width="30%" align="left" valign="middle">
-	// 						<div class="sale-profile">
-	// 						<img src="${customerImg}" alt="profile picture">
-	// 						</div>
-	// 					</td>
-	// 					<td width="70%" align="left" valign="middle">
-	// 						<h3><strong>${sale.customer.full_name}</strong></h3>
-	// 						<p class="mini-title">${sale.customer.document_type}:</p>
-	// 						${sale.customer.document_no}<br><br>
-	// 						<p class="mini-title">Phone:</p>
-	// 						${sale.customer.phone}
-	// 					</td>
-	// 					</tr>
-	// 				</table>
-	// 				<table width="40%" style="border-left: 1px solid #999;" align="center" cellspacing="0">
-	// 					<tr valign="baseline" class="form_height">
-	// 					<td width="30%" align="left" valign="middle">
-	// 						<div class="sale-product-pic">
-	// 						<img src="${productImg}" alt="product picture">
-	// 						</div>
-	// 					</td>
-	// 					<td width="80%" align="left" valign="middle">
-	// 						<p class="mini-title">Product No:</p>
-	// 						${sale.product.name}
-	// 						<h3><strong>${sale.product.mark_name} - ${sale.product.model_name}</strong></h3>
-	// 						<p>${sale.product.submodel_name}</p>
-	// 						<p class="mini-title">Year</p>
-	// 						<strong>${sale.product.year}</strong>
-	// 					</td>
-	// 					</tr>
-	// 				</table>
-	// 				<table width="30%" style="border-left: 1px solid #999;" align="center" cellspacing="0">
-	// 					<tr valign="baseline" class="form_height">
-	// 					<td colspan="2" style="padding-left: 7px;" align="left" valign="middle"><strong>Method of Payment</strong></td>
-	// 					</tr>
-	// 					<tr valign="baseline" class="form_height">
-	// 					<td width="35%" align="right">Price :</td><td width="65%" style="padding-left: 5px;">${sale.price}</td>
-	// 					</tr>
-	// 					<tr valign="baseline" class="form_height">
-	// 					<td align="right">Initial :</td><td style="padding-left: 5px;">${sale.initial}</td>
-	// 					</tr>
-	// 					<tr valign="baseline" class="form_height">
-	// 					<td align="right">Delivery date :</td><td style="padding-left: 5px;">${sale.delivery_date}</td> <!-- AQUI -->
-	// 					</tr>
-	// 					<tr valign="baseline" class="form_height">
-	// 					<td align="right">Remaining :</td><td style="padding-left: 5px;">${sale.remaining}</td>
-	// 					</tr>
-	// 					<tr valign="baseline" class="form_height">
-	// 					<td align="right">Interest :</td><td style="padding-left: 5px;">${sale.interest}</td>
-	// 					</tr>
-	// 					<tr valign="baseline" class="form_height">
-	// 					<td align="right">Installments / month :</td><td style="padding-left: 5px;">${sale.installments_month}</td>
-	// 					</tr>
-	// 					<tr valign="baseline" class="form_height">
-	// 					<td align="right">No. of installments :</td><td style="padding-left: 5px;">${sale.no_installments}</td>
-	// 					</tr>
-	// 					<tr valign="baseline" class="form_height">
-	// 					<td align="right">Payment date :</td><td style="padding-left: 5px;">${paymentDateFormatted}</td>
-	// 					</tr>
-	// 					<tr valign="baseline" class="form_height">
-	// 					<td align="right">Due :</td><td style="padding-left: 5px;">${sale.due}</td>
-	// 					</tr>
-	// 				</table>
-	// 				</div>
-	// 			`;
-		
-	// 			salesContainer.appendChild(row);
-	// 			});
-	// 		} else {
-	// 			salesContainer.innerHTML = `<p style="text-align:center;">No sales found.</p>`;
-	// 		}
-	// 		} catch (err) {
-	// 			console.error("Error loading sales:", err);
-	// 			salesContainer.innerHTML = `<p style="text-align:center;">Error loading sales</p>`;
-	// 		}
-	// 	}
-		
-	// 	searchSalesField?.addEventListener('keyup', fetchAndRenderSales);
-	// 	fetchAndRenderSales();
-	// }
-
 	const salesContainer = document.getElementById('sales-list');
 	const searchSalesField = document.getElementById('salesSearchField');
 
@@ -2864,35 +2700,77 @@ document.addEventListener("DOMContentLoaded", async function () {
 							: '-';
 
 						let productsHtml = '';
-						sale.products.forEach(product => {
+						if (!sale.products || sale.products.length === 0) {
+							productsHtml = `
+								<tr valign="baseline" class="form_height">
+									<td width="100%" align="center" valign="middle">
+										<p>No products in this sale...</p>
+									</td>
+								</tr>
+							`;
+						} else if (sale.products.length === 1) {
+							const product = sale.products[0];
 							const productImg = product.image?.trim() !== ''
 								? `images/products/${product.image}`
 								: 'images/sys-img/wooden-box.png';
-
-							productsHtml += `
-							<tr valign="baseline" class="form_height">
-								<td width="30%" align="left" valign="middle">
-									<div class="sale-product-pic">
-										<img src="${productImg}" alt="product picture">
-									</div>
-								</td>
-								<td width="80%" align="left" valign="middle">
-									<p class="mini-title">Product No:</p>
-									${product.name}
-									<h3><strong>${product.mark_name} - ${product.model_name}</strong></h3>
-									<p>${product.submodel_name}</p>
-									<p class="mini-title">Year</p>
-									<strong>${product.year}</strong>
-								</td>
-							</tr>`;
-						});
+						
+							productsHtml = `
+								<tr valign="baseline" class="form_height">
+									<td width="30%" align="left" valign="middle">
+										<div class="sale-product-pic">
+											<img src="${productImg}" alt="product picture">
+										</div>
+									</td>
+									<td width="80%" align="left" valign="middle">
+										<p class="mini-title">Product No:</p>
+										${product.name}
+										<h3><strong>${product.mark_name} - ${product.model_name}</strong></h3>
+										<p>${product.submodel_name}</p>
+										<p class="mini-title">Year</p>
+										<strong>${product.year}</strong>
+									</td>
+								</tr>
+							`;
+						} else {
+							sale.products.forEach(product => {
+								const productImg = product.image?.trim() !== ''
+									? `images/products/${product.image}`
+									: 'images/sys-img/wooden-box.png';
+						
+								productsHtml += `
+									<tr valign="baseline" class="form_height">
+										<td width="18%" align="left" valign="middle">
+											<div class="sale-list-product-pic">
+												<img src="${productImg}" alt="product picture">
+											</div>
+										</td>
+										<td width="35%" align="left" valign="middle">
+											<h3 style="margin: 0; padding: 0;"><strong>${product.mark_name} - ${product.model_name}</strong></h3>
+											<p style="margin: 0; padding: 0;">${product.submodel_name}</p>
+										</td>
+										<td width="15%" align="left" valign="middle">
+											<p class="mini-title">Year</p>
+											<strong>${product.year}</strong>
+										</td>
+										<td width="12%" align="left" valign="middle">
+											<p class="mini-title">Price</p>
+											<strong>${product.prise}</strong>
+										</td>
+										<td width="20%" align="left" valign="middle">
+											<p class="mini-title">Product No:</p>
+											${product.name}
+										</td>
+									</tr>
+								`;
+							});
+						}
 
 						row.innerHTML = `
 						<table width="100%" style="border-bottom: 1px solid #999;" align="center" cellspacing="0">
 							<tr valign="baseline" class="form_height">
 								<td width="10%" align="left" valign="middle">
 									<p class="mini-title">Ord. No:</p>
-									${sale.sales_id}
+									${sale.ord_no}
 								</td>
 								<td width="87%" align="center" valign="middle"></td>
 								<td width="3%" align="center" valign="middle">
@@ -2927,7 +2805,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									<td colspan="2" style="padding-left: 7px;" align="left" valign="middle"><strong>Method of Payment</strong></td>
 								</tr>
 								<tr valign="baseline" class="form_height">
-									<td width="35%" align="right">Price :</td><td width="65%" style="padding-left: 5px;">${sale.price}</td>
+									<td width="35%" align="right">Price :</td><td width="65%" style="padding-left: 5px;">${sale.price_sum}</td>
 								</tr>
 								<tr valign="baseline" class="form_height">
 									<td align="right">Initial :</td><td style="padding-left: 5px;">${sale.initial}</td>
@@ -2971,10 +2849,75 @@ document.addEventListener("DOMContentLoaded", async function () {
 		fetchAndRenderSales();
 	}
 
+	// 📌 script para add category popup
+	let addSaleBtn = document.getElementById('add-sale-btn');
+	if (addSaleBtn) {
+		addSaleBtn.addEventListener('click', function (e) {
+			e.preventDefault();
+
+			scrollToTopIfNeeded();
+
+			const addSaleForm = document.getElementById('add-sale-form');
+			const popupContent = addSaleForm.querySelector('.formular-big-frame');
+
+			if (addSaleForm && popupContent) {
+				addSaleForm.style.display = 'block';
+				addSaleForm.style.opacity = '0';
+				addSaleForm.style.transition = 'opacity 0.5s ease';
+				setTimeout(() => {
+					addSaleForm.style.opacity = '1';
+				}, 10);
+
+				popupContent.style.transform = 'scale(0.7)';
+				popupContent.style.opacity = '0';
+				popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+				setTimeout(() => {
+					popupContent.style.transform = 'scale(1)';
+					popupContent.style.opacity = '1';
+				}, 50);
+			}
+		});
+	}
+
+	// AQUI
+
 	//############################################################# END SALES ##################################################################
 
 	//############################################################# FUNCTIONES ##################################################################
 
+	// 📌 cerrar al hacer clic fuera del formulario
+	function handlePopupClose(popupId, contentSelector, otherPopups = []) {
+		const popup = document.getElementById(popupId);
+	
+		if (popup) {
+			const popupContent = popup.querySelector(contentSelector);
+			if (!popupContent) return;
+
+			popup.addEventListener("click", function (e) {
+				if (!popupContent.contains(e.target)) {
+					popup.style.display = "none";
+	
+					otherPopups.forEach(id => {
+						const other = document.getElementById(id);
+						if (other) other.style.display = "none";
+					});
+				}
+			});
+		}
+	}
+	handlePopupClose("edit-my_info-form", ".formular-frame", ["edit-my_info-form"]);
+	handlePopupClose("subsc-form", ".formular-frame", ["subsc-form"]);
+	handlePopupClose("edit-company-form", ".formular-frame", ["edit-company-form"]);
+	handlePopupClose("add-members-form", ".formular-frame", ["add-members-form"]);
+	handlePopupClose("edit-members-form", ".formular-frame", ["edit-members-form"]);
+	handlePopupClose("add-product-form", ".formular-frame", ["add-product-form"]);
+	handlePopupClose("add-category-form", ".formular-big-frame", ["add-category-form"]);
+	handlePopupClose("product-options", ".formular-frame", ["product-options"]);
+	handlePopupClose("add-customers-form", ".formular-frame", ["add-customers-form"]);
+	handlePopupClose("customers-options", ".formular-frame", ["customers-options"]);
+	handlePopupClose("add-sale-form", ".formular-big-frame", ["add-sale-form"]);
+
+	// 📌 script para cargar marcas, modelos y submodelos
 	async function initCategorySelectors(markId, modelId, submodelId) {
 		const markSelect = document.getElementById(markId);
 		let modelSelect = document.getElementById(modelId);
