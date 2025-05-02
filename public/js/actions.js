@@ -2989,12 +2989,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 							</td>
 							<td width="15%" align="center" valign="middle">
 								<div class="opcion-checkbox">
-									<input type="checkbox" id="${uniqueId}" name="product_selection[]" value="${product.product_id}" class="product-checkbox" />
+									<input type="checkbox" id="${uniqueId}" name="product_selection[]" value="${product.product_id}" data-price="${product.prise}" class="product-checkbox" />
 									<label for="${uniqueId}"></label>
 								</div>
 							</td>
 						`;
 						productListTable.appendChild(row);
+						document.getElementById(uniqueId).addEventListener('change', calculatePriceSum);
 					});
 				} else {
 					productListTable.innerHTML = `
@@ -3046,6 +3047,50 @@ document.addEventListener("DOMContentLoaded", async function () {
 		await loadMarks();
 		fetchAndRenderProducts();
 	}
+
+	function calculatePriceSum() {
+		const checkboxes = document.querySelectorAll('.product-checkbox:checked');
+		let total = 0;
+	
+		checkboxes.forEach(cb => {
+			const price = parseFloat(cb.getAttribute('data-price')) || 0;
+			total += price;
+		});
+	
+		document.getElementById('price_sum').value = total.toFixed(2);
+
+		calculateRemaining();
+		calculateInterest();
+	}
+
+	function calculateRemaining() {
+		const priceSum = parseFloat(document.getElementById('price_sum').value.replace(/,/g, '')) || 0;
+		const initial = parseFloat(document.getElementById('initial').value.replace(/,/g, '')) || 0;
+		const remaining = priceSum - initial;
+	
+		document.getElementById('remaining').value = remaining.toFixed(2);
+		calculateDue();
+	}
+
+	function calculateInterest() {
+		const priceSum = parseFloat(document.getElementById('remaining').value.replace(/,/g, '')) || 0;
+		const interestPercent = parseFloat(document.getElementById('interest').value) || 0;
+	
+		const totalInterest = (priceSum * interestPercent) / 100;
+		document.getElementById('total_interest').value = totalInterest.toFixed(2);
+		calculateDue();
+	}
+
+	function calculateDue() {
+		const remaining = parseFloat(document.getElementById('remaining').value.replace(/,/g, '')) || 0;
+		const totalInterest = parseFloat(document.getElementById('total_interest').value.replace(/,/g, '')) || 0;
+		const due = remaining + totalInterest;
+	
+		document.getElementById('due').value = due.toFixed(2);
+	}
+
+	document.getElementById('initial').addEventListener('input', calculateRemaining);
+	document.getElementById('interest').addEventListener('input', calculateInterest);
 	// AQUI
 
 	//############################################################# END SALES ##################################################################
