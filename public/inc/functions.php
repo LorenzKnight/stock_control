@@ -108,7 +108,15 @@ function insert_into($tableName, array $queryData = [], array $options = []) : s
 	$columnNames = implode(', ', array_keys($queryData));
 	
 	$columnValues = array_map(function($value) {
-		return is_numeric($value) ? $value : "'" . pg_escape_string($value) . "'";
+		if (is_null($value)) return 'NULL';
+		if (is_bool($value)) return $value ? 'TRUE' : 'FALSE';
+		if (is_int($value)) return $value;
+		if (is_float($value)) return $value;
+		if (is_numeric($value)) {
+			// Si es entero (sin punto decimal)
+			return (strpos($value, '.') === false) ? (int)$value : (float)$value;
+		}
+		return "'" . pg_escape_string((string)$value) . "'";
 	}, array_values($queryData));
 	
 	$columnValues = implode(', ', $columnValues);
@@ -126,20 +134,28 @@ function insert_into($tableName, array $queryData = [], array $options = []) : s
 
 	$result = pg_query($query);
 
-	if ($result && !empty($returningId)) {
-		$row = pg_fetch_assoc($result);
-		$insertedId = $row[$options['id']];
+	if (!$result) {
 		return json_encode([
-			"success" => true, 
-			"id" => $insertedId, 
-			"message" => "Record inserted successfully"
-		]);
-	} else {
-		return json_encode([
-			"success" => false, 
-			"message" => "Error inserting record"
+			"success" => false,
+			"message" => pg_last_error(), // Mensaje real del error de PostgreSQL
+			"query" => $query
 		]);
 	}
+	
+	if (!empty($returningId)) {
+		$row = pg_fetch_assoc($result);
+		$insertedId = $row[$options['id']] ?? null;
+		return json_encode([
+			"success" => true,
+			"id" => $insertedId,
+			"message" => "Record inserted successfully"
+		]);
+	}
+	
+	return json_encode([
+		"success" => true,
+		"message" => "Record inserted successfully"
+	]);
 }
 
 function update_table($tableName, array $queryData = [], array $whereClause = [], array $options = []) : string

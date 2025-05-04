@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS sales (
 	price_sum NUMERIC(10,2) NULL,
 	Initial NUMERIC(10,2) NULL,
 	delivery_date TIMESTAMP NULL,
-	remaining INTEGER NULL,
+	remaining NUMERIC(10,2) NULL,
 	interest INTEGER NULL,
 	installments_month INTEGER NULL,
 	no_installments INTEGER NULL,
