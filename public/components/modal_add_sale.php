@@ -66,7 +66,7 @@
 									</tr>
 									<tr valign="baseline" class="form_height">
 										<td width="50%" align="center" valign="middle">
-											<input class="form-medium-input-style" type="text" name="interest" id="interest" placeholder="Enter a percent..."/>
+											<input class="form-medium-input-style" type="text" name="interest" id="interest" value="10" placeholder="Enter a percent..."/>
 										</td>
 										<td width="50%" align="center" valign="middle">
 											<input class="form-medium-input-style" type="text" name="total_interest" id="total_interest" placeholder="Total Interest..." disabled/>
