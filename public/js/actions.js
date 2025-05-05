@@ -2724,8 +2724,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 									<td width="80%" align="left" valign="middle">
 										<p class="mini-title">Product No:</p>
 										${product.name}
-										<h3><strong>${product.mark_name} - ${product.model_name}</strong></h3>
-										<p>${product.submodel_name}</p>
+										<h3><strong>${product.mark_name} - ${product.model_name ? product.model_name : ''}</strong></h3>
+										<p>${product.submodel_name ? product.submodel_name : ''}</p>
 										<p class="mini-title">Year</p>
 										<strong>${product.year}</strong>
 									</td>
