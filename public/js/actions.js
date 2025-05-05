@@ -3086,100 +3086,101 @@ document.addEventListener("DOMContentLoaded", async function () {
 		document.getElementById('due').value = due.toFixed(2);
 	}
 
-	document.getElementById('initial').addEventListener('input', calculateRemaining);
-	document.getElementById('interest').addEventListener('input', calculateInterest);
+	const initialInput = document.getElementById('initial');
+	if (initialInput) {
+		initialInput.addEventListener('input', calculateRemaining);
+	}
 
-	document.querySelector('#formAddSale').addEventListener('submit', function (e) {
-		e.preventDefault();
-		(async () => {
-			try {
-				const formatDecimal = val => parseFloat((val || '').toString().replace(',', '').trim()) || 0;
+	const interestInput = document.getElementById('interest');
+	if (interestInput) {
+		interestInput.addEventListener('input', calculateInterest);
+	}
 
-				const customerId = document.querySelector('input[name="customer_select"]:checked')?.dataset.id;
-				const priceSum = formatDecimal(document.getElementById('price_sum').value);
-				const initial = formatDecimal(document.getElementById('initial').value);
-				const deliveryDate = document.getElementById('delivery_date').value;
-				const remaining = formatDecimal(document.getElementById('remaining').value);
-				const interest = parseInt(document.getElementById('interest').value) || 0;
-				const installmentsMonth = parseInt(document.getElementById('installments_month').value) || 0;
-				const noInstallments = installmentsMonth;
-				const paymentDate = document.getElementById('payment_date').value;
-				const due = formatDecimal(document.getElementById('due').value);
-		
-				// Validación mínima
-				if (!customerId) throw new Error("Select a customer");
-		
-				const products = Array.from(document.querySelectorAll('.product-checkbox:checked')).map(cb => {
-					const productId = cb.value;
-					const price = parseFloat(cb.dataset.price) || 0;
-		
-					return {
-						product_id: productId,
-						price: price,
-						quantity: 1,
-						total: price
+	const formAddSale = document.querySelector('#formAddSale');
+	if (formAddSale) {
+		formAddSale.addEventListener('submit', function (e) {
+			e.preventDefault();
+			(async () => {
+				try {
+					const formatDecimal = val => parseFloat((val || '').toString().replace(',', '').trim()) || 0;
+
+					const customerId = document.querySelector('input[name="customer_select"]:checked')?.dataset.id;
+					const priceSum = formatDecimal(document.getElementById('price_sum').value);
+					const initial = formatDecimal(document.getElementById('initial').value);
+					const deliveryDate = document.getElementById('delivery_date').value;
+					const remaining = formatDecimal(document.getElementById('remaining').value);
+					const interest = parseInt(document.getElementById('interest').value) || 0;
+					const installmentsMonth = parseInt(document.getElementById('installments_month').value) || 0;
+					const noInstallments = installmentsMonth;
+					const paymentDate = document.getElementById('payment_date').value;
+					const due = formatDecimal(document.getElementById('due').value);
+			
+					// Validación mínima
+					if (!customerId) throw new Error("Select a customer");
+			
+					const products = Array.from(document.querySelectorAll('.product-checkbox:checked')).map(cb => {
+						const productId = cb.value;
+						const price = parseFloat(cb.dataset.price) || 0;
+			
+						return {
+							product_id: productId,
+							price: price,
+							quantity: 1,
+							total: price
+						};
+					});
+			
+					if (products.length === 0) throw new Error("Select at least one product");
+			
+					const payload = {
+						customer_id: parseInt(customerId),
+						price_sum: priceSum,
+						initial: initial,
+						delivery_date: deliveryDate,
+						remaining: remaining,
+						interest: interest,
+						installments_month: installmentsMonth,
+						no_installments: noInstallments,
+						payment_date: paymentDate,
+						due: due,
+						products: products
 					};
-				});
-		
-				if (products.length === 0) throw new Error("Select at least one product");
-		
-				const payload = {
-					customer_id: parseInt(customerId),
-					price_sum: priceSum,
-					initial: initial,
-					delivery_date: deliveryDate,
-					remaining: remaining,
-					interest: interest,
-					installments_month: installmentsMonth,
-					no_installments: noInstallments,
-					payment_date: paymentDate,
-					due: due,
-					products: products
-				};
-		
-				const res = await fetch('api/create_sale.php', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(payload)
-				});
-		
-				const data = await res.json();
+			
+					const res = await fetch('api/create_sale.php', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify(payload)
+					});
+			
+					const data = await res.json();
 
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
+					let banner = document.getElementById('status-message');
+					let statusText = document.getElementById('status-text');
+					let statusImage = document.getElementById('status-image');
 
-				if (banner && statusText && statusImage) {
-					statusText.innerText = data.message || "Unknown response";
-					statusImage.src = data.img_gif || "images/sys-img/success.gif";
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
-				}
-		
-				if (data.success) {
-					document.getElementById('formAddSale').reset();
-					document.getElementById('price_sum').value = '';
-					document.getElementById('remaining').value = '';
-					document.getElementById('total_interest').value = '';
-					document.getElementById('due').value = '';
-					document.querySelectorAll('.product-checkbox:checked').forEach(cb => cb.checked = false);
-					const selectedCustomer = document.querySelector('input[name="customer_select"]:checked');
-					if (selectedCustomer) selectedCustomer.checked = false;
-
-					setTimeout(() => {
-						banner.style.opacity = '0';
+					if (banner && statusText && statusImage) {
+						statusText.innerText = data.message || "Unknown response";
+						statusImage.src = data.img_gif || "images/sys-img/success.gif";
+						banner.style.display = 'block';
+						banner.style.opacity = '1';
+					}
+			
+					if (data.success) {
 						setTimeout(() => {
-							window.location.href = data.redirect_url || window.location.href;
-						}, 1000);
-					}, 3000);
-				} else {
-					alert("Failed: " + result.message);
+							banner.style.opacity = '0';
+							setTimeout(() => {
+								window.location.href = data.redirect_url || window.location.href;
+							}, 1000);
+						}, 3000);
+					} else {
+						alert("Failed: " + result.message);
+					}
+				} catch (error) {
+					alert("Error: " + error.message);
 				}
-			} catch (error) {
-				alert("Error: " + error.message);
-			}
-		})();
-	});
+			})();
+		});
+	}
 
 	//############################################################# END SALES ##################################################################
 

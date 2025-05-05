@@ -33,20 +33,22 @@ try {
 	$deliveryDate = date('Y-m-d H:i:s', strtotime($input["delivery_date"]));
 	$paymentDate = date('Y-m-d H:i:s', strtotime($input["payment_date"]));
 
+	$newOrdNo = get_next_increment_value("sales", "ord_no", 10000);
+
 	$saleData = [
-		"ord_no" => rand(10000, 99999), // Generación temporal
-		"customer_id" => (int)$input["customer_id"],
-		"price_sum" => $priceSum,
-		"initial" => $initial,
-		"delivery_date" => $deliveryDate,
-		"remaining" => $remaining,
-		"interest" => $interest,
-		"installments_month" => $installmentsMonth,
-		"no_installments" => $noInstallments,
-		"payment_date" => $paymentDate,
-		"due" => $due,
-		"status" => 1,
-		"create_by" => $userId
+		"ord_no"				=> $newOrdNo,
+		"customer_id"			=> (int)$input["customer_id"],
+		"price_sum"				=> $priceSum,
+		"initial"				=> $initial,
+		"delivery_date"			=> $deliveryDate,
+		"remaining"				=> $remaining,
+		"interest"				=> $interest,
+		"installments_month" 	=> $installmentsMonth,
+		"no_installments" 		=> $noInstallments,
+		"payment_date"			=> $paymentDate,
+		"due"					=> $due,
+		"status"				=> 1,
+		"create_by"				=> $userId
 	];
 
 	$saleInsert = json_decode(insert_into("sales", $saleData, ["id" => "sales_id"]), true);
@@ -57,21 +59,22 @@ try {
 
 	foreach ($input["products"] as $product) {
 		$purchased = [
-			"sales_id" => $saleId,
-			"customer_id" => (int)$input["customer_id"],
-			"product_id" => (int)$product["product_id"],
-			"quantity" => (int)($product["quantity"] ?? 1),
-			"price" => number_format((float)($product["price"] ?? 0), 2, '.', ''),
-			"discount" => number_format((float)($product["discount"] ?? 0), 2, '.', ''),
-			"total" => number_format((float)($product["total"] ?? $price), 2, '.', ''),
-			"create_by" => $userId
+			"sales_id"		=> $saleId,
+			"customer_id"	=> (int)$input["customer_id"],
+			"product_id"	=> (int)$product["product_id"],
+			"quantity"		=> (int)($product["quantity"] ?? 1),
+			"price"			=> number_format((float)($product["price"] ?? 0), 2, '.', ''),
+			"discount"		=> number_format((float)($product["discount"] ?? 0), 2, '.', ''),
+			"total"			=> number_format((float)($product["total"] ?? $price), 2, '.', ''),
+			"create_by"		=> $userId
 		];
 
 		$productInsert = json_decode(insert_into("purchased_products", $purchased), true);
-		
 		if (!$productInsert["success"]) {
 			throw new Exception("Error inserting product with ID {$purchased["product_id"]}");
 		}
+
+		update_table("products", ["status" => 0], ["product_id" => $purchased["product_id"]]);
 	}
 
 	log_activity(
