@@ -22,7 +22,8 @@ try {
 	$submodel = $_GET["submodel"] ?? '';
 
 	$where = [
-		"company_id" => $companyId
+		"company_id" => $companyId,
+		"status" => 1
 	];
 
 	if (!empty($mark)) {

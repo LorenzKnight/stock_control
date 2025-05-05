@@ -357,6 +357,20 @@ function delete_image_from_record(array $params): array {
 	];
 }
 
+function get_next_increment_value(string $table, string $field, int $startFrom = 10000): int {
+	$resultJson = select_from($table, [$field], [], [
+		"order_by" => $field,
+		"order_direction" => "DESC",
+		"limit" => 1,
+		"fetch_first" => true
+	]);
+
+	$result = json_decode($resultJson, true);
+	return isset($result["data"]) && isset($result["data"]["$field"])
+		? ((int)$result["data"]["$field"] + 1)
+		: $startFrom;
+}
+
 
 //function to display any type of variable
 function cdebug($var, $name = 'var', $die = false)
