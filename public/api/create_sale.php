@@ -74,7 +74,7 @@ try {
 			throw new Exception("Error inserting product with ID {$purchased["product_id"]}");
 		}
 
-		update_table("products", ["status" => 0], ["product_id" => $purchased["product_id"]]);
+		// update_table("products", ["status" => 0], ["product_id" => $purchased["product_id"]]);
 	}
 
 	log_activity(
