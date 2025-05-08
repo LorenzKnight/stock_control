@@ -2745,8 +2745,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 											</div>
 										</td>
 										<td width="35%" align="left" valign="middle">
-											<h3 style="margin: 0; padding: 0;"><strong>${product.mark_name} - ${product.model_name}</strong></h3>
-											<p style="margin: 0; padding: 0;">${product.submodel_name}</p>
+											<h3 style="margin: 0; padding: 0;"><strong>${product.mark_name} - ${product.model_name ? product.model_name : ''}</strong></h3>
+											<p style="margin: 0; padding: 0;">${product.submodel_name ? product.submodel_name : ''}</p>
 										</td>
 										<td width="15%" align="left" valign="middle">
 											<p class="mini-title">Year</p>
@@ -2832,6 +2832,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 						</div>`;
 
 						salesContainer.appendChild(row);
+
+						const salesMenuBtn = row.querySelector('.sale-menu');
+						salesMenuBtn.addEventListener('click', () => {
+							openSalesForm(sale.sales_id);
+						});
 					});
 				} else {
 					salesContainer.innerHTML = `<p style="text-align:center;">No sales found.</p>`;
@@ -3182,6 +3187,109 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
+	async function openSalesForm(SaleId) {
+		scrollToTopIfNeeded();
+		// console.log("openSalesForm", SaleId);
+	
+		const saleOptions = document.getElementById('sale-options');
+		const popupContent = saleOptions.querySelector('.formular-frame');
+		const ordNo = document.getElementById('ord-no');
+	
+		if (!SaleId) return;
+	
+		try {
+			const res = await fetch(`api/get_sales.php?sale_id=${SaleId}`);
+			const data = await res.json();
+	
+			if (data.success && data.data.length > 0) {
+				const sale = data.data.find(s => s.sales_id == SaleId);
+				if (sale && ordNo) {
+					ordNo.textContent = `Order #${sale.ord_no} - ${sale.customer.full_name}`;
+				}
+			}
+	
+			if (saleOptions && popupContent) {
+				resetCustomerPopupView();
+	
+				saleOptions.style.display = 'block';
+				saleOptions.style.opacity = '0';
+				saleOptions.style.transition = 'opacity 0.5s ease';
+				setTimeout(() => {
+					saleOptions.style.opacity = '1';
+				}, 10);
+	
+				popupContent.style.opacity = '0';
+				popupContent.style.transform = 'scale(0.7)';
+				popupContent.classList.remove('animate-elastic');
+				setTimeout(() => {
+					popupContent.style.transform = 'scale(1)';
+					popupContent.style.opacity = '1';
+				}, 50);
+	
+				const assignBtn = document.getElementById('assignCustomerSaleBtn');
+				if (assignBtn) {
+					assignBtn.onclick = () => {
+						const menuDiv = document.getElementById('product-menu-buttons');
+						const assignDiv = document.getElementById('assign-sale-section');
+	
+						animateHeightChange(popupContent, assignDiv, () => {
+							fadeOutAndHide(menuDiv, () => {
+								showWithFadeIn(assignDiv);
+							});
+						});
+					};
+				}
+	
+				const editBtn = document.getElementById('editCustomerBtn');
+				if (editBtn) {
+					editBtn.setAttribute('data-customer-id', SaleId);
+					editBtn.onclick = () => {
+						const customerId = SaleId;
+						if (!customerId) return;
+						openEditCustomerForm(customerId);
+					};
+				}
+	
+				const deleteBtn = document.getElementById('deleteCustomerBtn');
+				if (deleteBtn) {
+					deleteBtn.setAttribute('data-customer-id', SaleId);
+					deleteBtn.onclick = async () => {
+						const customerId = deleteBtn.getAttribute('data-customer-id');
+						if (!customerId) {
+							alert("Customer ID not found.");
+							return;
+						}
+	
+						showConfirmModal("Delete Customer", "Are you sure you want to delete this customer?", async () => {
+							const formData = new FormData();
+							formData.append("customer_id", customerId);
+	
+							try {
+								const response = await fetch('api/delete_customer.php', {
+									method: 'POST',
+									body: formData
+								});
+	
+								const data = await response.json();
+								if (data.success) {
+									alert("Customer deleted successfully");
+									window.location.reload();
+								} else {
+									alert("Failed to delete customer: " + data.message);
+								}
+							} catch (error) {
+								console.error("Error deleting customer:", error);
+								alert("Error deleting customer. Check console.");
+							}
+						});
+					};
+				}
+			}
+		} catch (error) {
+			console.error("Error loading sale info:", error);
+			alert("Failed to load sale information.");
+		}
+	}
 	//############################################################# END SALES ##################################################################
 
 	//############################################################# FUNCTIONES ##################################################################
@@ -3217,6 +3325,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	handlePopupClose("add-customers-form", ".formular-frame", ["add-customers-form"]);
 	handlePopupClose("customers-options", ".formular-frame", ["customers-options"]);
 	handlePopupClose("add-sale-form", ".formular-big-frame", ["add-sale-form"]);
+	handlePopupClose("sale-options", ".formular-frame", ["sale-options"]);
 
 	// 📌 script para cargar marcas, modelos y submodelos
 	async function initCategorySelectors(markId, modelId, submodelId) {

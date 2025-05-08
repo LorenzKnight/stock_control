@@ -72,6 +72,7 @@ CREATE TABLE IF NOT EXISTS products (
 	product_year INTEGER NULL,
 	description TEXT NULL,
 	prise INTEGER NULL,
+	quantity INTEGER NULL,
 	status INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

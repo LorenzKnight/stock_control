@@ -72,16 +72,16 @@ try {
 			}
 
 			$productsData[] = [
-				"name" => $product["product_name"] ?? '',
-				"year" => $product["product_year"] ?? '',
-				"image" => $product["product_image"] ?? '',
-				"mark_name" => $markName,
-				"model_name" => $modelName,
-				"submodel_name" => $submodelName,
-				"quantity" => $prod["quantity"] ?? 1,
-				"prise" => $product["prise"] ?? 0,
-				"discount" => $prod["discount"] ?? 0,
-				"total" => $prod["total"] ?? 0
+				"name"				=> $product["product_name"] ?? '',
+				"year"				=> $product["product_year"] ?? '',
+				"image"				=> $product["product_image"] ?? '',
+				"mark_name"			=> $markName,
+				"model_name"		=> $modelName,
+				"submodel_name" 	=> $submodelName,
+				"quantity"			=> $prod["quantity"] ?? 1,
+				"prise"				=> $product["prise"] ?? 0,
+				"discount"			=> $prod["discount"] ?? 0,
+				"total"				=> $prod["total"] ?? 0
 			];
 		}
 
@@ -96,26 +96,27 @@ try {
 			strpos(strtolower((string)$sale["ord_no"]), $searchLower) !== false
 		) {
 			$salesData[] = [
-				"ord_no" => $sale["ord_no"],
-				"price_sum" => $sale["price_sum"],
-				"initial" => $sale["initial"],
-				"delivery_date" => date("Y-m-d", strtotime($sale["delivery_date"])),
-				"remaining" => $sale["remaining"],
-				"interest" => ($sale["price_sum"] * $sale["interest"]) / 100 .' ('. $sale["interest"].'%)',
-				"installments_month" => $sale["installments_month"],
-				"no_installments" => $sale["no_installments"],
-				"payment_date" => $sale["payment_date"],
-				"due" => $sale["due"],
+				"sales_id"				=> $sale["sales_id"],
+				"ord_no"				=> $sale["ord_no"],
+				"price_sum"				=> $sale["price_sum"],
+				"initial"				=> $sale["initial"],
+				"delivery_date"			=> date("Y-m-d", strtotime($sale["delivery_date"])),
+				"remaining"				=> $sale["remaining"],
+				"interest"				=> ($sale["price_sum"] * $sale["interest"]) / 100 .' ('. $sale["interest"].'%)',
+				"installments_month"	=> $sale["installments_month"],
+				"no_installments"		=> $sale["no_installments"],
+				"payment_date"			=> $sale["payment_date"],
+				"due"					=> $sale["due"],
 
 				"customer" => [
-					"full_name" => trim(($customer["customer_name"] ?? '') . ' ' . ($customer["customer_surname"] ?? '')),
-					"document_type" => $documentTypes[$customer["customer_document_type"]] ?? '',
-					"document_no" => $customer["customer_document_no"] ?? '',
-					"phone" => $customer["customer_phone"] ?? '',
-					"image" => $customer["customer_image"] ?? ''
+					"full_name"			=> trim(($customer["customer_name"] ?? '') . ' ' . ($customer["customer_surname"] ?? '')),
+					"document_type"		=> $documentTypes[$customer["customer_document_type"]] ?? '',
+					"document_no"		=> $customer["customer_document_no"] ?? '',
+					"phone"				=> $customer["customer_phone"] ?? '',
+					"image"				=> $customer["customer_image"] ?? ''
 				],
 
-				"products" => $productsData
+				"products"				=> $productsData
 			];
 		}
 	}
