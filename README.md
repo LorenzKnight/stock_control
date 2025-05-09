@@ -54,7 +54,7 @@ change namespace "Example" in composer.json line 7 for your project name
 ## How to know the ip of you db in docker
 1. docker inspect name_of_your_db | grep IPAddress
 
-## enable nginx logs
+## Enable nginx logs
 in default.conf uncomment the lines:
 access_log /var/log/nginx/default.log;
 error_log /var/log/nginx/default.log;
