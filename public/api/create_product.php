@@ -25,6 +25,7 @@ try {
     $productSubModel = intval($_POST["product_sub_model"] ?? 0);
     $productYear     = intval($_POST["product_year"] ?? '');
     $productPrise    = trim($_POST["prise"] ?? '');
+    $productQuantity = trim($_POST["quantity"] ?? '');
     $description     = trim($_POST["description"] ?? '');
 
     if ($productName === '') {
@@ -67,6 +68,7 @@ try {
         "product_sub_model" => $productSubModel,
         "product_year"      => $productYear,
         "prise"				=> $productPrise,
+        "quantity"          => $productQuantity,
         "description"       => $description,
         "status"            => 1,
         "created_at"        => date("Y-m-d H:i:s")

@@ -46,8 +46,15 @@
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
+					<td width="50%" align="center" valign="middle">
+						<input class="form-medium-input-style" type="number" name="quantity" id="quantity" placeholder="Quantity" title="Quantity"/>
+					</td>
+					<td width="50%" align="center" valign="middle">
+					</td>
+				</tr>
+				<tr valign="baseline" class="form_height">
 					<td colspan="2" align="center" valign="middle">
-						<textarea class="form-input-style" id="description" name="description" rows="5" cols="35">
+						<textarea class="form-input-style" id="description" name="description" rows="2" cols="35">
 						</textarea>
 					</td>
 				</tr>
