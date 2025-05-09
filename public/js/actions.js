@@ -1678,10 +1678,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 						<table width="90%" align="center" cellspacing="0">
 							<tr valign="baseline">
 								<td style="width: 50%;">
-									<p>${product.product_name}</p>
+									<p style="margin: 10px 0 0;">${product.product_name}</p>
 								</td>
 								<td style="width: 50%;" align="right">
-									<p>Qty: ${product.quantity || ''}</p>
+									<p style="margin: 10px 0 0;">Qty: ${product.quantity || ''}</p>
 								</td>
 							</tr>
 							<tr valign="baseline">
@@ -1931,6 +1931,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				document.getElementById('edit_product_name').value = product.product_name || '';
 				document.getElementById('edit_product_year').value = product.product_year || '';
 				document.getElementById('edit_prise').value = product.prise || '';
+				document.getElementById('edit_quantity').value = product.quantity || '';
 				document.getElementById('edit_description').value = product.description || '';
 	
 				const preview = document.getElementById('edit-product-image-preview');

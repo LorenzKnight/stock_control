@@ -93,11 +93,11 @@ body {
     border-radius: 5px;
     border: 1px solid var(--clr-border);
     text-align: center;
-    -moz-appearance:inherit; 
-    -o-appearance:inherit;
-    -ms-appearance:inherit;
-    appearance:inherit;
-    -webkit-appearance:inherit;
+    -moz-appearance: inherit; 
+    -o-appearance: inherit;
+    -ms-appearance: inherit;
+    appearance: inherit;
+    -webkit-appearance: inherit;
 }
 
 .form-medium-input-style {

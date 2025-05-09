@@ -31,6 +31,7 @@ try {
         "product_sub_model"  => (int) ($_POST["edit_product_sub_model"] ?? 0),
         "product_year"       => (int) ($_POST["edit_product_year"] ?? 0),
         "prise"              => is_numeric($_POST["edit_prise"] ?? null) ? $_POST["edit_prise"] : 0,
+		"quantity"           => is_numeric($_POST["edit_quantity"] ?? null) ? $_POST["edit_quantity"] : 0,
         "description"        => $_POST["edit_description"] ?? ""
 	];
 
