@@ -53,7 +53,8 @@ try {
 		"product_year",
 		"product_image",
 		"product_type",
-		"prise"
+		"prise",
+		"quantity"
 	], $where, [
 		"order_by" => "created_at",
 		"order_direction" => "DESC"

@@ -1677,8 +1677,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 					<div class="product-desc">
 						<table width="90%" align="center" cellspacing="0">
 							<tr valign="baseline">
-								<td colspan="2">
+								<td style="width: 50%;">
 									<p>${product.product_name}</p>
+								</td>
+								<td style="width: 50%;" align="right">
+									<p>Qty: ${product.quantity || ''}</p>
+								</td>
+							</tr>
+							<tr valign="baseline">
+								<td colspan="2">
 									<h3><strong>${product.mark_name + ' - ' + product.model_name}</strong></h3>
 									<p>${product.submodel_name || ''}</p>
 								</td>
