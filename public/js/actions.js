@@ -2997,7 +2997,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 								${product.product_name}<br>
 								<small>${product.mark_name || ''} - ${product.model_name || ''} ${product.submodel_name || ''}</small>
 							</td>
-							<td width="15%" align="center" valign="middle">
+							<td width="5%" align="left" valign="middle">
+								<input type="number" id="qty-${uniqueId}" class="form-mini-input-style" value="1" min="1" disabled />
+							</td>
+							<td width="10%" align="center" valign="middle">
 								<div class="opcion-checkbox">
 									<input type="checkbox" id="${uniqueId}" name="product_selection[]" value="${product.product_id}" data-price="${product.prise}" class="product-checkbox" />
 									<label for="${uniqueId}"></label>
@@ -3005,6 +3008,29 @@ document.addEventListener("DOMContentLoaded", async function () {
 							</td>
 						`;
 						productListTable.appendChild(row);
+
+						const checkbox = document.getElementById(uniqueId);
+						const quantityInput = document.getElementById(`qty-${uniqueId}`);
+
+						checkbox.addEventListener('change', function () {
+							if (this.checked) {
+								quantityInput.disabled = false;
+								quantityInput.focus(); 
+								calculatePriceSum();
+							} else {
+								quantityInput.disabled = true;
+								quantityInput.value = 1;
+								calculatePriceSum();
+							}
+						});
+
+						quantityInput.addEventListener('input', function () {
+							if (parseInt(this.value) <= 0 || isNaN(parseInt(this.value))) {
+								this.value = 1;
+							}
+							calculatePriceSum();
+						});
+
 						document.getElementById(uniqueId).addEventListener('change', calculatePriceSum);
 					});
 				} else {
@@ -3064,7 +3090,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 	
 		checkboxes.forEach(cb => {
 			const price = parseFloat(cb.getAttribute('data-price')) || 0;
-			total += price;
+			const qtyInput = document.getElementById(`qty-${cb.id}`);
+			const quantity = parseInt(qtyInput.value) || 1;
+			total += price * quantity;
 		});
 	
 		document.getElementById('price_sum').value = total.toFixed(2);
