@@ -58,6 +58,35 @@ try {
 	$saleId = $saleInsert["id"];
 
 	foreach ($input["products"] as $product) {
+		$productId = (int)$product["product_id"];
+		$quantity = (int)($product["quantity"] ?? 1);
+
+		$productInfoJson = select_from("products", ["quantity"], ["product_id" => $productId], ["fetch_first" => true]);
+		$productInfo = json_decode($productInfoJson, true);
+
+		if (!$productInfo["success"]) {
+			throw new Exception("Error fetching product stock for ID: $productId");
+		}
+
+		$currentStock = (int)($productInfo["data"]["quantity"] ?? 0);
+
+		if ($currentStock < $quantity) {
+			throw new Exception("Insufficient stock for product ID: $productId. Available: $currentStock, Requested: $quantity");
+		}
+
+		$newStock = $currentStock - $quantity;
+
+		$updateData = ["quantity" => $newStock];
+		if ($newStock === 0) {
+			$updateData["status"] = 0;
+		}
+
+		$updateResult = json_decode(update_table("products", $updateData, ["product_id" => $productId]), true);
+
+		if (!$updateResult["success"]) {
+			throw new Exception("Failed to update stock/status for product ID: $productId");
+		}
+
 		$purchased = [
 			"sales_id"		=> $saleId,
 			"customer_id"	=> (int)$input["customer_id"],
@@ -73,8 +102,6 @@ try {
 		if (!$productInsert["success"]) {
 			throw new Exception("Error inserting product with ID {$purchased["product_id"]}");
 		}
-
-		// update_table("products", ["status" => 0], ["product_id" => $purchased["product_id"]]);
 	}
 
 	log_activity(

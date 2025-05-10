@@ -3163,10 +3163,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 						const productId = cb.value;
 						const price = parseFloat(cb.dataset.price) || 0;
 			
+						const quantityInput = document.getElementById(`qty-product-${productId}`);
+						const quantity = parseInt(quantityInput?.value) || 1;
+
 						return {
 							product_id: productId,
 							price: price,
-							quantity: 1,
+							quantity: quantity,
 							total: price
 						};
 					});
