@@ -2724,7 +2724,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 						
 							productsHtml = `
 								<tr valign="baseline" class="form_height">
-									<td width="30%" align="left" valign="middle">
+									<td width="5%" align="center" valign="top">
+										<p class="mini-title">Qty</p>
+										${product.quantity}
+									</td>
+									<td width="25%" align="left" valign="middle">
 										<div class="sale-product-pic">
 											<img src="${productImg}" alt="product picture">
 										</div>
@@ -2747,16 +2751,20 @@ document.addEventListener("DOMContentLoaded", async function () {
 						
 								productsHtml += `
 									<tr valign="baseline" class="form_height">
-										<td width="18%" align="left" valign="middle">
+										<td width="3%" align="center" valign="middle">
+											<p class="mini-title">Qty</p>
+											${product.quantity}
+										</td>
+										<td width="15%" align="left" valign="middle">
 											<div class="sale-list-product-pic">
 												<img src="${productImg}" alt="product picture">
 											</div>
 										</td>
-										<td width="35%" align="left" valign="middle">
+										<td width="40%" align="left" valign="middle">
 											<h3 style="margin: 0; padding: 0;"><strong>${product.mark_name} - ${product.model_name ? product.model_name : ''}</strong></h3>
 											<p style="margin: 0; padding: 0;">${product.submodel_name ? product.submodel_name : ''}</p>
 										</td>
-										<td width="15%" align="left" valign="middle">
+										<td width="10%" align="left" valign="middle">
 											<p class="mini-title">Year</p>
 											<strong>${product.year}</strong>
 										</td>
