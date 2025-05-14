@@ -54,6 +54,15 @@ class GlobalArrays {
 		4 => "Widowed"
 	];
 
+	public static $paymentTerms = [
+		6 => "6 Months",
+		12 => "12 Months",
+		24 => "24 Months",
+		36 => "36 Months",
+		48 => "48 Months",
+		60 => "60 Months"
+	];
+
 	public static $countryPhoneCodes = [
 		'+54'     => 'Argentina',
 		'+61'     => 'Australia',

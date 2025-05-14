@@ -40,7 +40,7 @@
 					<td colspan="2" align="center" valign="middle">
 						<div class="formular-customers-list">
 							<div class="create-list-holder">
-								<button type="button" class="button-style-agree disabled" id="add-submodel-btn" disabled>Method of Payment</button>
+								<button type="button" class="button-style-agree disabled" id="" disabled>Method of Payment</button>
 							</div>
 							<div class="cat-all-list">
 								<table width="100%" align="center" cellspacing="0">
@@ -74,14 +74,7 @@
 									</tr>
 									<tr valign="baseline" class="form_height">
 										<td width="50%" align="center" valign="middle">
-											<select class="form-input-style" name="installments_month" id="installments_month">
-												<option value="0">Select Installments</option>
-												<option value="12">12 Months</option>
-												<option value="24">24 Months</option>
-												<option value="36">36 Months</option>
-												<option value="48">48 Months</option>
-												<option value="60">60 Months</option>
-											</select>
+											<select class="form-input-style" name="installments_month" id="installments_month"></select>
 										</td>
 										<td width="50%" align="center" valign="middle">
 											<input class="form-medium-input-style" type="date" name="payment_date" id="payment_date" placeholder="Enter a Payment date..."/>
