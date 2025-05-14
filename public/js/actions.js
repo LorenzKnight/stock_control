@@ -2894,6 +2894,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 					popupContent.style.opacity = '1';
 				}, 50);
 			}
+
+			populatePaymentTerms('installments_month');
 		});
 	}
 
@@ -3234,6 +3236,27 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
+	function resetSalePopupView() {
+		const menuDiv = document.getElementById('sale-menu-buttons');
+		const sectionsToHide = [
+			document.getElementById('edit-sale-modal'),
+			document.getElementById('sale-2'),
+			// puedes agregar más secciones aquí
+		];
+
+		menuDiv.style.display = 'block';
+		menuDiv.style.opacity = '1';
+		menuDiv.style.transform = 'scale(1)';
+
+		sectionsToHide.forEach(section => {
+			if (section) {
+				section.style.display = 'none';
+				section.style.opacity = '0';
+				section.style.transform = 'scale(0.8)';
+			}
+		});
+	}
+
 	async function openSalesForm(SaleId) {
 		scrollToTopIfNeeded();
 		// console.log("openSalesForm", SaleId);
@@ -3256,7 +3279,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 	
 			if (saleOptions && popupContent) {
-				resetCustomerPopupView();
+				resetSalePopupView();
 	
 				saleOptions.style.display = 'block';
 				saleOptions.style.opacity = '0';
@@ -3286,15 +3309,31 @@ document.addEventListener("DOMContentLoaded", async function () {
 						});
 					};
 				}
-	
-				const editBtn = document.getElementById('editCustomerBtn');
+
+				// Botón: Edit Customer
+				const editBtn = document.getElementById('editSaleBtn');
 				if (editBtn) {
-					editBtn.setAttribute('data-customer-id', SaleId);
+
+					editBtn.setAttribute('data-sale-id', SaleId);
+
 					editBtn.onclick = () => {
-						const customerId = SaleId;
-						if (!customerId) return;
-						openEditCustomerForm(customerId);
-					};
+						const menuDiv = document.getElementById('sale-menu-buttons');
+						const editDiv = document.getElementById('edit-sales-modal');
+						
+						const saleId = editBtn.getAttribute('data-sale-id');
+						if (!saleId) return;
+
+						const formFrame = document.getElementById('formular-frame');
+						formFrame.className = 'formular-big-frame';
+
+						openEditSaleForm(SaleId);
+
+						animateHeightChange(popupContent, editDiv, () => {
+							fadeOutAndHide(menuDiv, () => {
+								showWithFadeIn(editDiv);
+							});
+						}); //AQUI
+					}
 				}
 	
 				const deleteBtn = document.getElementById('deleteCustomerBtn');
@@ -3337,6 +3376,101 @@ document.addEventListener("DOMContentLoaded", async function () {
 			alert("Failed to load sale information.");
 		}
 	}
+
+	async function populatePaymentTerms(selectId, selectedValue = '') {
+		const select = document.getElementById(selectId);
+		if (!select) return;
+
+		select.innerHTML = '';
+
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = 'Select a Payment Term';
+		select.appendChild(defaultOption);
+
+		try {
+			const res = await fetch('api/get_global_array.php?key=paymentTerms');
+			const data = await res.json();
+
+			if (data.success && data.data) {
+				for (const [value, label] of Object.entries(data.data)) {
+					const option = document.createElement('option');
+					option.value = value;
+					option.textContent = label;
+					if (String(value) === String(selectedValue)) {
+						option.selected = true;
+					}
+					select.appendChild(option);
+				}
+			} else {
+				select.innerHTML += `<option value="">Select Installments</option>`;
+			}
+		} catch (error) {
+			console.error("Error loading payment terms:", error);
+			select.innerHTML += `<option value="">Error loading payment terms</option>`;
+		}
+	}
+
+	async function openEditSaleForm(saleId) {
+		const formEditSale = document.getElementById('formEditCustomer');
+		if (!formEditSale) return;
+
+		formEditSale.setAttribute('data-sale-id', saleId);
+
+		try {
+			const response = await fetch(`api/get_sales.php?sale_id=${saleId}`);
+			const data = await response.json();
+
+			if (data.success && data.data.length > 0) {
+				const sale = data.data.find(s => s.sales_id == saleId);
+				if (!sale) return;
+
+				// Llenar campos del formulario
+				document.getElementById('edit_price_sum').value = sale.price_sum || '';
+				document.getElementById('edit_initial').value = sale.initial || '';
+				document.getElementById('edit_delivery_date').value = sale.delivery_date || '';
+				document.getElementById('edit_remaining').value = sale.remaining || '';
+				document.getElementById('edit_interest').value = sale.interest || '';
+				document.getElementById('edit_total_interest').value = sale.total_interest || '';
+				document.getElementById('edit_due').value = sale.due || '';
+				document.getElementById('edit_payment_date').value = sale.payment_date || '';
+
+				// Cargar el select de cuotas
+				await populatePaymentTerms('edit_installments_month', sale.installments_month);
+
+				// Cargar productos seleccionados
+				const productListTable = document.getElementById('select-product-list-for-edit');
+				productListTable.innerHTML = '';
+				sale.products.forEach(product => {
+					const row = document.createElement('tr');
+					row.innerHTML = `
+						<td>${product.name}</td>
+						<td>${product.quantity}</td>
+						<td>${product.price}</td>
+						<td>${product.total}</td>
+					`;
+					productListTable.appendChild(row);
+				});
+
+				// Inicializar selección de clientes
+				const customerSelect = document.getElementById('search-customer-for-edit');
+				if (customerSelect) {
+					customerSelect.value = sale.customer.full_name || '';
+				}
+
+			}
+		} catch (error) {
+			console.error("Error loading sale data:", error);
+		}
+	}
+
+	setupBackToMenuButton(
+		'.edit-back-to-menu-btn', 
+		['edit-sales-modal', 'sale-2'], 
+		'sale-menu-buttons', 
+		'sale-options'
+	); //AQUI
+
 	//############################################################# END SALES ##################################################################
 
 	//############################################################# FUNCTIONES ##################################################################

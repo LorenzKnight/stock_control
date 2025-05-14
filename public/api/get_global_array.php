@@ -17,7 +17,7 @@ try {
     $key = $_GET['key'];
 
     // 🔒 Seguridad: lista blanca de claves permitidas
-    $allowedKeys = ['ranks', 'vehicleTypes', 'documentTypes', 'customerTypes', 'customerStatus', 'maritalStatus']; // Agrega más si lo necesitas
+    $allowedKeys = ['ranks', 'vehicleTypes', 'documentTypes', 'customerTypes', 'customerStatus', 'maritalStatus', 'paymentTerms']; // Agrega más si lo necesitas
 
     if (!in_array($key, $allowedKeys)) {
         throw new Exception("Requested array is not allowed.");
