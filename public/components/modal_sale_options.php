@@ -31,7 +31,7 @@
 			</table>
 		</div>
 		<div id="edit-sales-modal" style="display: none;">
-			<div class="edit-back-to-menu-btn">
+			<div class="back-to-sale-menu-btn">
 				<img src="images/sys-img/backward.png" alt="back">
 			</div>
 			<form method="post" name="formEditCustomer" id="formEditCustomer">
@@ -140,7 +140,7 @@
 			</form>
 		</div>
 		<div id="sale-2" style="display: none;">
-			<div class="edit-back-to-menu-btn">
+			<div class="back-to-sale-menu-btn">
 				<img src="images/sys-img/backward.png" alt="back">
 			</div>
 			<form method="post" name="" id="">
