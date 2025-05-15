@@ -241,7 +241,7 @@ input:checked + .slider:before {
     transition: filter 0.3s ease;
 }
 
-.back-to-menu-btn, .edit-back-to-menu-btn {
+.back-to-menu-btn, .edit-back-to-menu-btn, .back-to-sale-menu-btn {
     width: 38px;
     height: 38px;
     background-color: var(--main-bg-beige);
@@ -258,13 +258,13 @@ input:checked + .slider:before {
     transition: all 1.0s ease;
 }
 
-.back-to-menu-btn:hover, .edit-back-to-menu-btn:hover {
+.back-to-menu-btn:hover, .edit-back-to-menu-btn:hover, .back-to-sale-menu-btn:hover {
     background-color: var(--main-bg-dark-blue);
     box-shadow: 0 0 4px 3px rgb(47 48 63 / 19%);
     transition: all 1.0s ease;
 }
 
-.back-to-menu-btn img, .edit-back-to-menu-btn img {
+.back-to-menu-btn img, .edit-back-to-menu-btn img, .back-to-sale-menu-btn img {
     width: 22px;
     filter: brightness(0) saturate(100%) invert(100%);
     opacity: 0.9;

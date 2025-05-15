@@ -2413,7 +2413,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 
 			if (customersOptions && popupContent) {
-				resetCustomerPopupView();
+				resetMultiplePopupView();
 
 				customersOptions.style.display = 'block';
 				customersOptions.style.opacity = '0';
@@ -2619,27 +2619,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}
 			} catch (error) {
 				console.error("Error updating customer:", error);
-			}
-		});
-	}
-
-	function resetCustomerPopupView() {
-		const menuDiv = document.getElementById('customers-menu-buttons');
-		const sectionsToHide = [
-			document.getElementById('edit-customers-modal'),
-			document.getElementById('assign-sale-section'),
-			// puedes agregar más secciones aquí
-		];
-
-		menuDiv.style.display = 'block';
-		menuDiv.style.opacity = '1';
-		menuDiv.style.transform = 'scale(1)';
-
-		sectionsToHide.forEach(section => {
-			if (section) {
-				section.style.display = 'none';
-				section.style.opacity = '0';
-				section.style.transform = 'scale(0.8)';
 			}
 		});
 	}
@@ -3236,30 +3215,29 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
-	function resetSalePopupView() {
-		const menuDiv = document.getElementById('sale-menu-buttons');
-		const sectionsToHide = [
-			document.getElementById('edit-sale-modal'),
-			document.getElementById('sale-2'),
-			// puedes agregar más secciones aquí
-		];
+	// function resetSalePopupView() {
+	// 	const menuDiv = document.getElementById('sale-menu-buttons');
+	// 	const sectionsToHide = [
+	// 		document.getElementById('edit-sale-modal'),
+	// 		document.getElementById('sale-2'),
+	// 		// puedes agregar más secciones aquí
+	// 	];
 
-		menuDiv.style.display = 'block';
-		menuDiv.style.opacity = '1';
-		menuDiv.style.transform = 'scale(1)';
+	// 	menuDiv.style.display = 'block';
+	// 	menuDiv.style.opacity = '1';
+	// 	menuDiv.style.transform = 'scale(1)';
 
-		sectionsToHide.forEach(section => {
-			if (section) {
-				section.style.display = 'none';
-				section.style.opacity = '0';
-				section.style.transform = 'scale(0.8)';
-			}
-		});
-	}
+	// 	sectionsToHide.forEach(section => {
+	// 		if (section) {
+	// 			section.style.display = 'none';
+	// 			section.style.opacity = '0';
+	// 			section.style.transform = 'scale(0.8)';
+	// 		}
+	// 	});
+	// }
 
 	async function openSalesForm(SaleId) {
-		scrollToTopIfNeeded();
-		// console.log("openSalesForm", SaleId);
+		scrollToTopIfNeeded(); // AQUI
 	
 		const saleOptions = document.getElementById('sale-options');
 		const popupContent = saleOptions.querySelector('.formular-frame');
@@ -3279,7 +3257,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 	
 			if (saleOptions && popupContent) {
-				resetSalePopupView();
+				resetMultiplePopupView(); //AQUI
 	
 				saleOptions.style.display = 'block';
 				saleOptions.style.opacity = '0';
@@ -3310,21 +3288,26 @@ document.addEventListener("DOMContentLoaded", async function () {
 					};
 				}
 
-				// Botón: Edit Customer
+				// Botón: Edit Sale
 				const editBtn = document.getElementById('editSaleBtn');
 				if (editBtn) {
-
 					editBtn.setAttribute('data-sale-id', SaleId);
 
 					editBtn.onclick = () => {
 						const menuDiv = document.getElementById('sale-menu-buttons');
 						const editDiv = document.getElementById('edit-sales-modal');
 						
+						if (editDiv) {
+							editDiv.style.display = 'none';
+						}
+
 						const saleId = editBtn.getAttribute('data-sale-id');
 						if (!saleId) return;
 
 						const formFrame = document.getElementById('formular-frame');
-						formFrame.className = 'formular-big-frame';
+						if (formFrame) {
+							formFrame.classList.add('expanded');
+						}
 
 						openEditSaleForm(SaleId);
 
@@ -3465,7 +3448,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	setupBackToMenuButton(
-		'.edit-back-to-menu-btn', 
+		'.back-to-sale-menu-btn', 
 		['edit-sales-modal', 'sale-2'], 
 		'sale-menu-buttons', 
 		'sale-options'
@@ -3507,6 +3490,32 @@ document.addEventListener("DOMContentLoaded", async function () {
 	handlePopupClose("customers-options", ".formular-frame", ["customers-options"]);
 	handlePopupClose("add-sale-form", ".formular-big-frame", ["add-sale-form"]);
 	handlePopupClose("sale-options", ".formular-frame", ["sale-options"]);
+
+	// 📌 reset multiple popup view
+	function resetMultiplePopupView() {
+		console.log('Ejecutando reset de múltiples popups');
+
+		const allFrames = document.querySelectorAll('.formular-frame, .formular-big-frame');
+		allFrames.forEach(frame => frame.classList.remove('expanded'));
+
+		const menuButtons = document.querySelectorAll('#customers-menu-buttons, #sale-menu-buttons');
+		menuButtons.forEach(menuDiv => {
+			if (menuDiv) {
+				menuDiv.style.display = 'block';
+				menuDiv.style.opacity = '1';
+				menuDiv.style.transform = 'scale(1)';
+			}
+		});
+
+		const sectionsToHide = document.querySelectorAll('#edit-customers-modal, #assign-sale-section, #edit-sales-modal');
+		sectionsToHide.forEach(section => {
+			if (section) {
+				section.style.display = 'none';
+				section.style.opacity = '0';
+				section.style.transform = 'scale(0.8)';
+			}
+		});
+	}
 
 	// 📌 script para cargar marcas, modelos y submodelos
 	async function initCategorySelectors(markId, modelId, submodelId) {
@@ -3746,6 +3755,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 	
 				if (optionsDiv) {
 					optionsDiv.style.display = 'block';
+				}
+
+				const formFrame = document.getElementById('formular-frame');
+				if (formFrame) {
+					formFrame.classList.remove('expanded');
 				}
 			});
 		});
