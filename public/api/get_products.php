@@ -23,7 +23,7 @@ try {
 
 	$where = [
 		"company_id" => $companyId,
-		"status" => 1
+		// "status" => 1
 	];
 
 	if (!empty($mark)) {

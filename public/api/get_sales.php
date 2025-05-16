@@ -72,6 +72,7 @@ try {
 			}
 
 			$productsData[] = [
+				"product_id"        => $prod["product_id"] ?? '',
 				"name"				=> $product["product_name"] ?? '',
 				"year"				=> $product["product_year"] ?? '',
 				"image"				=> $product["product_image"] ?? '',
@@ -109,6 +110,7 @@ try {
 				"due"					=> $sale["due"],
 
 				"customer" => [
+					"customer_id"		=> $sale["customer_id"],
 					"full_name"			=> trim(($customer["customer_name"] ?? '') . ' ' . ($customer["customer_surname"] ?? '')),
 					"document_type"		=> $documentTypes[$customer["customer_document_type"]] ?? '',
 					"document_no"		=> $customer["customer_document_no"] ?? '',

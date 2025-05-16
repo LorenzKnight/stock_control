@@ -3215,29 +3215,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
-	// function resetSalePopupView() {
-	// 	const menuDiv = document.getElementById('sale-menu-buttons');
-	// 	const sectionsToHide = [
-	// 		document.getElementById('edit-sale-modal'),
-	// 		document.getElementById('sale-2'),
-	// 		// puedes agregar más secciones aquí
-	// 	];
-
-	// 	menuDiv.style.display = 'block';
-	// 	menuDiv.style.opacity = '1';
-	// 	menuDiv.style.transform = 'scale(1)';
-
-	// 	sectionsToHide.forEach(section => {
-	// 		if (section) {
-	// 			section.style.display = 'none';
-	// 			section.style.opacity = '0';
-	// 			section.style.transform = 'scale(0.8)';
-	// 		}
-	// 	});
-	// }
-
 	async function openSalesForm(SaleId) {
-		scrollToTopIfNeeded(); // AQUI
+		scrollToTopIfNeeded();
 	
 		const saleOptions = document.getElementById('sale-options');
 		const popupContent = saleOptions.querySelector('.formular-frame');
@@ -3257,7 +3236,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 	
 			if (saleOptions && popupContent) {
-				resetMultiplePopupView(); //AQUI
+				resetMultiplePopupView();
 	
 				saleOptions.style.display = 'block';
 				saleOptions.style.opacity = '0';
@@ -3407,6 +3386,212 @@ document.addEventListener("DOMContentLoaded", async function () {
 			if (data.success && data.data.length > 0) {
 				const sale = data.data.find(s => s.sales_id == saleId);
 				if (!sale) return;
+// console.log(sale);
+				// Inicializar selección de clientes
+				const searchCustomerInput = document.getElementById('search-customer-for-edit');
+				const customerListTable = document.getElementById('select-customers-list-for-edit');
+
+				if (searchCustomerInput && customerListTable) {
+					async function fetchAndRenderCustomersForEdit(search = '') {
+						try {
+							const params = new URLSearchParams();
+							if (search.trim() !== '') {
+								params.append('search', search.trim());
+							}
+
+							const response = await fetch(`api/get_customers.php?${params.toString()}`, {
+								method: 'GET',
+								headers: { 'Accept': 'application/json' }
+							});
+							const data = await response.json();
+							customerListTable.innerHTML = '';
+
+							if (data.success && data.data.length > 0) {
+								data.data.forEach(customer => {
+									const uniqueId = `edit-customer-${customer.customer_id}`;
+									const profileImg = customer.image && customer.image.trim() !== '' ? `images/customers/${customer.image}` : `images/sys-img/NonProfilePic.png`;
+
+									const row = document.createElement('tr');
+									row.className = 'categoryContainer';
+									row.innerHTML = `
+										<td width='10%' align='center' valign='middle'>
+											<div class='customers-profile'>
+												<img src='${profileImg}' alt=''>
+											</div>
+										</td>
+										<td width='80%' valign='middle' style='padding-left:10px;'>
+											<strong>${customer.full_name}</strong>
+											<p class='mini-title' style='color: #000;'>${customer.document_type}: <strong>${customer.document_no}</strong></p>
+										</td>
+										<td width='10%' align='center' valign='middle'>
+											<div class='opcion-radio'>
+												<input type='radio' id='${uniqueId}' name='customer_select' class='category-radio' data-id='${customer.customer_id}' />
+												<label for='${uniqueId}'></label>
+											</div>
+										</td>
+									`;
+									customerListTable.appendChild(row);
+
+									if (String(customer.customer_id) === String(sale.customer.customer_id)) {
+										const customerRadio = document.getElementById(uniqueId);
+										if (customerRadio) customerRadio.checked = true;
+									}
+								});
+							} else {
+								customerListTable.innerHTML = `
+									<tr><td colspan='3' style='text-align:center; padding: 10px;'>No customers found.</td></tr>
+								`;
+							}
+						} catch (error) {
+							console.error('Error loading customers:', error);
+							customerListTable.innerHTML = `
+								<tr><td colspan='3' style='text-align:center; padding: 10px;'>Error loading customers</td></tr>
+							`;
+						}
+					}
+
+					searchCustomerInput.addEventListener('input', () => {
+						fetchAndRenderCustomersForEdit(searchCustomerInput.value);
+					});
+
+					fetchAndRenderCustomersForEdit();
+				}
+
+				// Cargar productos seleccionados
+				const searchProductInputForEdit = document.getElementById('search-product-purchase-for-edit');
+				const saleMarkSelectForEdit = document.getElementById('search-product-mark-for-edit');
+				const productListTableForEdit = document.getElementById('select-product-list-for-edit');
+
+				if ((searchProductInputForEdit || saleMarkSelectForEdit) && productListTableForEdit) {
+					async function fetchAndRenderProducts(search = "", mark = "") {
+						try {
+							const params = new URLSearchParams();
+							if (search.trim() !== "") {
+								params.append('search', search.trim());
+							}
+							if (mark && mark !== "") {
+								params.append('mark', mark);
+							}
+
+							const response = await fetch(`api/get_products.php?${params.toString()}`, {
+								method: 'GET',
+								headers: { 'Accept': 'application/json' }
+							});
+							const data = await response.json();
+							productListTableForEdit.innerHTML = "";
+
+							if (data.success && data.data.length > 0) {
+								data.data.forEach(product => {
+									const uniqueId = `edit-product-${product.product_id}`;
+									const productImg = product.product_image && product.product_image.trim() !== ''
+										? `images/products/${product.product_image}`
+										: `images/sys-img/wooden-box.png`;
+
+									const row = document.createElement('tr');
+									row.className = "productContainer";
+									row.innerHTML = `
+										<td width="10%" align="center" valign="middle">
+											<div class="list-icon">
+												<img src="${productImg}" alt="product image" width="32" height="32">
+											</div>
+										</td>
+										<td width="75%" valign="middle" style="padding-left:10px;">
+											${product.product_name}<br>
+											<small>${product.mark_name || ''} - ${product.model_name || ''} ${product.submodel_name || ''}</small>
+										</td>
+										<td width="5%" align="left" valign="middle">
+											<input type="number" id="qty-${uniqueId}" class="form-mini-input-style" value="1" min="1" disabled />
+										</td>
+										<td width="10%" align="center" valign="middle">
+											<div class="opcion-checkbox">
+												<input type="checkbox" id="${uniqueId}" name="product_selection[]" value="${product.product_id}" data-price="${product.prise}" class="product-checkbox" />
+												<label for="${uniqueId}"></label>
+											</div>
+										</td>
+									`;
+									productListTableForEdit.appendChild(row);
+
+									const checkbox = document.getElementById(uniqueId);
+									const quantityInput = document.getElementById(`qty-${uniqueId}`);
+									const selectedProduct = sale.products.find(p => p.product_id === product.product_id);
+
+									if (sale.products.some(p => p.product_id === product.product_id)) {
+										checkbox.checked = true;
+										quantityInput.disabled = false;
+										quantityInput.value = selectedProduct.quantity;
+									}
+
+									checkbox.addEventListener('change', function () {
+										if (this.checked) {
+											quantityInput.disabled = false;
+											quantityInput.focus(); 
+											calculatePriceSum();
+										} else {
+											quantityInput.disabled = true;
+											quantityInput.value = 1;
+											calculatePriceSum();
+										}
+									});
+
+									quantityInput.addEventListener('input', function () {
+										if (parseInt(this.value) <= 0 || isNaN(parseInt(this.value))) {
+											this.value = 1;
+										}
+										calculatePriceSum();
+									});
+
+									document.getElementById(uniqueId).addEventListener('change', calculatePriceSum);
+								});
+							} else {
+								productListTableForEdit.innerHTML = `
+									<tr><td colspan="3" style="text-align:center; padding: 10px;">No products found.</td></tr>
+								`;
+							}
+						} catch (error) {
+							console.error("Error loading products:", error);
+							productListTableForEdit.innerHTML = `
+								<tr><td colspan="3" style="text-align:center; padding: 10px;">Error loading products</td></tr>
+							`;
+						}
+					}
+
+					// 🔹 Cargar marcas
+					async function loadMarks() {
+						try {
+							const response = await fetch("api/get_categories.php", {
+								method: "GET",
+								headers: { "Accept": "application/json" }
+							});
+							const data = await response.json();
+
+							saleMarkSelectForEdit.innerHTML = `<option value="">All Marks</option>`;
+
+							if (data.success && data.data.length > 0) {
+								data.data.forEach(category => {
+									const option = document.createElement("option");
+									option.value = category.category_id;
+									option.textContent = category.category_name;
+									saleMarkSelectForEdit.appendChild(option);
+								});
+							} else {
+								saleMarkSelectForEdit.innerHTML += `<option value="">No marks found</option>`;
+							}
+						} catch (error) {
+							console.error("Error loading marks:", error);
+							saleMarkSelectForEdit.innerHTML = `<option value="">Error loading marks</option>`;
+						}
+					}
+
+					searchProductInputForEdit.addEventListener('input', () => {
+						fetchAndRenderProducts(searchProductInputForEdit.value, saleMarkSelectForEdit.value);
+					});
+					saleMarkSelectForEdit.addEventListener('change', () => {
+						fetchAndRenderProducts(searchProductInputForEdit.value, saleMarkSelectForEdit.value);
+					});
+
+					await loadMarks();
+					fetchAndRenderProducts();
+				}
 
 				// Llenar campos del formulario
 				document.getElementById('edit_price_sum').value = sale.price_sum || '';
@@ -3420,27 +3605,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				// Cargar el select de cuotas
 				await populatePaymentTerms('edit_installments_month', sale.installments_month);
-
-				// Cargar productos seleccionados
-				const productListTable = document.getElementById('select-product-list-for-edit');
-				productListTable.innerHTML = '';
-				sale.products.forEach(product => {
-					const row = document.createElement('tr');
-					row.innerHTML = `
-						<td>${product.name}</td>
-						<td>${product.quantity}</td>
-						<td>${product.price}</td>
-						<td>${product.total}</td>
-					`;
-					productListTable.appendChild(row);
-				});
-
-				// Inicializar selección de clientes
-				const customerSelect = document.getElementById('search-customer-for-edit');
-				if (customerSelect) {
-					customerSelect.value = sale.customer.full_name || '';
-				}
-
 			}
 		} catch (error) {
 			console.error("Error loading sale data:", error);
@@ -3452,7 +3616,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		['edit-sales-modal', 'sale-2'], 
 		'sale-menu-buttons', 
 		'sale-options'
-	); //AQUI
+	);
 
 	//############################################################# END SALES ##################################################################
 
@@ -3493,8 +3657,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	// 📌 reset multiple popup view
 	function resetMultiplePopupView() {
-		console.log('Ejecutando reset de múltiples popups');
-
 		const allFrames = document.querySelectorAll('.formular-frame, .formular-big-frame');
 		allFrames.forEach(frame => frame.classList.remove('expanded'));
 
