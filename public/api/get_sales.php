@@ -106,7 +106,7 @@ try {
 				"interest"				=> ($sale["price_sum"] * $sale["interest"]) / 100 .' ('. $sale["interest"].'%)',
 				"installments_month"	=> $sale["installments_month"],
 				"no_installments"		=> $sale["no_installments"],
-				"payment_date"			=> $sale["payment_date"],
+				"payment_date"			=> date("Y-m-d", strtotime($sale["payment_date"])),
 				"due"					=> $sale["due"],
 
 				"customer" => [

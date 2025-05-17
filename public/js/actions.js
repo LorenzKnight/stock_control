@@ -3504,7 +3504,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 										</td>
 										<td width="10%" align="center" valign="middle">
 											<div class="opcion-checkbox">
-												<input type="checkbox" id="${uniqueId}" name="product_selection[]" value="${product.product_id}" data-price="${product.prise}" class="product-checkbox" />
+												<input type="checkbox" id="${uniqueId}" name="product_selection[]" value="${product.product_id}" data-price="${product.prise}" class="edit-product-checkbox" />
 												<label for="${uniqueId}"></label>
 											</div>
 										</td>
@@ -3525,11 +3525,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 										if (this.checked) {
 											quantityInput.disabled = false;
 											quantityInput.focus(); 
-											calculatePriceSum();
+											editCalculatePriceSum();
 										} else {
 											quantityInput.disabled = true;
 											quantityInput.value = 1;
-											calculatePriceSum();
+											editCalculatePriceSum();
 										}
 									});
 
@@ -3537,10 +3537,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 										if (parseInt(this.value) <= 0 || isNaN(parseInt(this.value))) {
 											this.value = 1;
 										}
-										calculatePriceSum();
+										editCalculatePriceSum();
 									});
 
-									document.getElementById(uniqueId).addEventListener('change', calculatePriceSum);
+									document.getElementById(uniqueId).addEventListener('change', editCalculatePriceSum);
 								});
 							} else {
 								productListTableForEdit.innerHTML = `
@@ -3594,12 +3594,66 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}
 
 				// Llenar campos del formulario
+				function editCalculatePriceSum() {
+					const checkboxes = document.querySelectorAll('.edit-product-checkbox:checked');
+					let total = 0;
+				
+					checkboxes.forEach(cb => {
+						const price = parseFloat(cb.getAttribute('data-price')) || 0;
+						const qtyInput = document.getElementById(`qty-${cb.id}`);
+						const quantity = parseInt(qtyInput.value) || 1;
+						total += price * quantity;
+					});
+				
+					document.getElementById('edit_price_sum').value = total.toFixed(2);
+
+					editCalculateRemaining();
+					editCalculateInterest();
+				}
+
+				function editCalculateRemaining() {
+					const priceSum = parseFloat(document.getElementById('edit_price_sum').value.replace(/,/g, '')) || 0;
+					const initial = parseFloat(document.getElementById('edit_initial').value.replace(/,/g, '')) || 0;
+					const remaining = priceSum - initial;
+				
+					document.getElementById('edit_remaining').value = remaining.toFixed(2);
+					editCalculateDue();
+				}
+
+				function editCalculateInterest() {
+					const priceSum = parseFloat(document.getElementById('edit_remaining').value.replace(/,/g, '')) || 0;
+					const interestPercent = parseFloat(document.getElementById('edit_interest').value) || 0;
+				
+					const totalInterest = (priceSum * interestPercent) / 100;
+					document.getElementById('edit_total_interest').value = totalInterest.toFixed(2);
+					editCalculateDue();
+				}
+
+				function editCalculateDue() {
+					const remaining = parseFloat(document.getElementById('edit_remaining').value.replace(/,/g, '')) || 0;
+					const totalInterest = parseFloat(document.getElementById('edit_total_interest').value.replace(/,/g, '')) || 0;
+					const due = remaining + totalInterest;
+				
+					document.getElementById('edit_due').value = due.toFixed(2);
+				}
+
+				const initialInput = document.getElementById('edit_initial');
+				if (initialInput) {
+					initialInput.addEventListener('input', editCalculateRemaining);
+				}
+
+				const interestInput = document.getElementById('edit_interest');
+				if (interestInput) {
+					interestInput.addEventListener('input', editCalculateInterest);
+				}
+				// HASTA AQUI
+
 				document.getElementById('edit_price_sum').value = sale.price_sum || '';
 				document.getElementById('edit_initial').value = sale.initial || '';
 				document.getElementById('edit_delivery_date').value = sale.delivery_date || '';
 				document.getElementById('edit_remaining').value = sale.remaining || '';
 				document.getElementById('edit_interest').value = sale.interest || '';
-				document.getElementById('edit_total_interest').value = sale.total_interest || '';
+				// document.getElementById('edit_total_interest').value = sale.total_interest || '';
 				document.getElementById('edit_due').value = sale.due || '';
 				document.getElementById('edit_payment_date').value = sale.payment_date || '';
 
