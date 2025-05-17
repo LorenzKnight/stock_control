@@ -34,7 +34,7 @@
 			<div class="back-to-sale-menu-btn">
 				<img src="images/sys-img/backward.png" alt="back">
 			</div>
-			<form method="post" name="formEditCustomer" id="formEditCustomer">
+			<form method="post" name="formEditSale" id="formEditSale">
 				<table width="80%" align="center" cellspacing="0">
 					<tr valign="baseline">
 						<td colspan="6" align="center" valign="middle">
