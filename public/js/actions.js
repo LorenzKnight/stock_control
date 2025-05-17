@@ -3386,7 +3386,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			if (data.success && data.data.length > 0) {
 				const sale = data.data.find(s => s.sales_id == saleId);
 				if (!sale) return;
-// console.log(sale);
+console.log(sale);
 				// Inicializar selección de clientes
 				const searchCustomerInput = document.getElementById('search-customer-for-edit');
 				const customerListTable = document.getElementById('select-customers-list-for-edit');
@@ -3653,7 +3653,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				document.getElementById('edit_delivery_date').value = sale.delivery_date || '';
 				document.getElementById('edit_remaining').value = sale.remaining || '';
 				document.getElementById('edit_interest').value = sale.interest || '';
-				// document.getElementById('edit_total_interest').value = sale.total_interest || '';
+				document.getElementById('edit_total_interest').value = sale.total_interest || '';
 				document.getElementById('edit_due').value = sale.due || '';
 				document.getElementById('edit_payment_date').value = sale.payment_date || '';
 
