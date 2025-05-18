@@ -3290,44 +3290,58 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 						openEditSaleForm(SaleId);
 
-						animateHeightChange(popupContent, editDiv, () => {
+						animateHeightChange(popupContent, editDiv, () => { //AQUI
 							fadeOutAndHide(menuDiv, () => {
 								showWithFadeIn(editDiv);
 							});
-						}); //AQUI
+						});
 					}
 				}
 	
-				const deleteBtn = document.getElementById('deleteSaleBtn');
-				if (deleteBtn) {
-					deleteBtn.setAttribute('data-customer-id', SaleId);
-					deleteBtn.onclick = async () => {
-						const customerId = deleteBtn.getAttribute('data-customer-id');
-						if (!customerId) {
-							alert("Customer ID not found.");
+				const deleteSaleBtn = document.getElementById('deleteSaleBtn'); 
+				if (deleteSaleBtn) {
+					deleteSaleBtn.setAttribute('data-sale-id', SaleId); 
+					deleteSaleBtn.onclick = async () => {
+						const saleId = deleteSaleBtn.getAttribute('data-sale-id');
+
+						console.log("Delete Sale ID:", saleId);
+						if (!saleId) {
+							alert("Sale ID not found.");
 							return;
 						}
-	
-						showConfirmModal("Delete Customer", "Are you sure you want to delete this customer?", async () => {
+
+						showConfirmModal("Delete Sale", "Are you sure you want to delete this sale and all associated products?", async () => {
 							const formData = new FormData();
-							formData.append("customer_id", customerId);
-	
+							formData.append("sale_id", saleId);
+
 							try {
-								const response = await fetch('api/delete_customer.php', {
+								const response = await fetch('api/delete_sale.php', {
 									method: 'POST',
 									body: formData
 								});
-	
+
 								const data = await response.json();
+
+								let banner = document.getElementById('status-message');
+								let statusText = document.getElementById('status-text');
+								let statusImage = document.getElementById('status-image');
+				
+								statusText.innerText = data.message;
+								statusImage.src = data.img_gif;
+								banner.style.display = 'block';
+								banner.style.opacity = '1';
+
 								if (data.success) {
-									alert("Customer deleted successfully");
-									window.location.reload();
-								} else {
-									alert("Failed to delete customer: " + data.message);
+									setTimeout(() => {
+										banner.style.opacity = '0';
+										setTimeout(() => {
+											window.location.href = data.redirect_url || window.location.href;
+										}, 1000);
+									}, 3000);
 								}
 							} catch (error) {
-								console.error("Error deleting customer:", error);
-								alert("Error deleting customer. Check console.");
+								console.error("Error deleting sale:", error);
+								alert("Error deleting sale. Check console.");
 							}
 						});
 					};
@@ -3663,8 +3677,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			console.error("Error loading sale data:", error);
 		}
 	}
-
-	// AQUI
+ 
 	const formEditSale = document.getElementById('formEditSale');
 	if (formEditSale) {
 		formEditSale.addEventListener('submit', async function (e) {

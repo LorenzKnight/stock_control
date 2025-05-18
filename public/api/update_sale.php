@@ -18,7 +18,6 @@ try {
     $userId = $_SESSION["sc_UserId"] ?? null;
     if (!$userId) throw new Exception("User session not found.");
 
-    // Capturar datos del formulario
     $saleId = isset($_POST["sale_id"]) ? (int)$_POST["sale_id"] : null;
     $customerId = isset($_POST["customer_id"]) ? (int)$_POST["customer_id"] : null;
 
@@ -26,7 +25,6 @@ try {
         throw new Exception("Incomplete data to update the sale.");
     }
 
-    // Datos de la venta
     $updateFields = [
         "customer_id" => $customerId,
         "price_sum" => number_format((float)$_POST["edit_price_sum"], 2, '.', ''),
@@ -39,7 +37,6 @@ try {
         "due" => number_format((float)$_POST["edit_due"], 2, '.', '')
     ];
 
-    // Actualizar la venta
     $result = update_table("sales", $updateFields, ["sales_id" => $saleId]);
 	if (is_string($result)) {
 		$result = json_decode($result, true);
@@ -49,7 +46,6 @@ try {
         throw new Exception("Failed to update sale. " . ($result["message"] ?? "Unknown error."));
     }
 
-    // Eliminar productos antiguos
     $deleteResult = delete_from("purchased_products", ["sales_id" => $saleId]);
 
 	if (is_string($deleteResult)) {
@@ -60,18 +56,15 @@ try {
 		throw new Exception("Failed to delete old products. " . ($deleteResult["message"] ?? "Unknown error."));
     }
 
-    // Verificar si los productos se enviaron correctamente
     if (empty($_POST["products"])) {
         throw new Exception("No products received.");
     }
 
-    // Decodificar el JSON de productos
     $products = json_decode($_POST["products"], true);
     if (!is_array($products)) {
         throw new Exception("Invalid products format.");
     }
 
-    // Agregar los productos nuevos
     foreach ($products as $product) {
         if (!isset($product["product_id"], $product["quantity"], $product["price"], $product["discount"], $product["total"])) {
             throw new Exception("Invalid product data.");
