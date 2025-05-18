@@ -1,6 +1,6 @@
 <div class="bg-popup" id="edit-members-form">
 	<div class="formular-frame">
-		<form action="stock.php" method="post" name="formEditMembers" id="formEditMembers">
+		<form action="stock.php" method="post" name="formEditMembers" id="formEditMembers" enctype="multipart/form-data">
 			<table width="80%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td style="font-size: 12px;" colspan="6" align="center" valign="middle">
