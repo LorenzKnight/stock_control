@@ -21,19 +21,44 @@ try {
 
     $saleId = (int)$_POST["sale_id"];
 
-    // Eliminar productos asociados a la venta
+    $productResult = json_decode(select_from(
+        "purchased_products",
+        ["product_id", "quantity"],
+        ["sales_id" => $saleId]
+    ), true);
+
+    if (!$productResult["success"]) {
+        throw new Exception("Failed to fetch associated products: " . $productResult["message"]);
+    }
+
+    $productsToUpdate = $productResult["data"];
+
+    foreach ($productsToUpdate as $product) {
+        $productId = (int)$product["product_id"];
+        $quantityToAdd = (int)$product["quantity"];
+
+        $updateQuery = "
+            UPDATE products 
+            SET quantity = quantity + $quantityToAdd 
+            WHERE product_id = $productId;
+        ";
+        
+        $updateResult = pg_query($updateQuery);
+        if (!$updateResult) {
+            throw new Exception("Failed to update product quantity for product ID: $productId");
+        }
+    }
+
     $deleteProductsResult = json_decode(delete_from("purchased_products", ["sales_id" => $saleId]), true);
     if (!$deleteProductsResult["success"]) {
         throw new Exception("Failed to delete associated products.");
     }
 
-    // Eliminar la venta
     $deleteSaleResult = json_decode(delete_from("sales", ["sales_id" => $saleId]), true);
     if (!$deleteSaleResult["success"]) {
         throw new Exception("Failed to delete sale.");
     }
 
-    // Registrar en el log
     log_activity(
         $_SESSION["sc_UserId"] ?? null,
         "delete_sale",
