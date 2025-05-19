@@ -3290,7 +3290,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 						openEditSaleForm(SaleId);
 
-						animateHeightChange(popupContent, editDiv, () => { //AQUI
+						animateHeightChange(popupContent, editDiv, () => {
 							fadeOutAndHide(menuDiv, () => {
 								showWithFadeIn(editDiv);
 							});
