@@ -17,7 +17,7 @@
 	<?php // include("components/modal_add_sale.php"); ?>
 	<?php include("components/message.php"); ?>
 	<?php include("components/header.php"); ?>
-	<?php // include("components/sales_container.php"); ?>
+	<?php include("components/payments_container.php"); ?>
 </body>
 
 </html>
