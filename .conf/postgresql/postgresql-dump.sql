@@ -164,6 +164,7 @@ CREATE TABLE IF NOT EXISTS payments (
 	sales_id INTEGER NULL,
 	customer_id INTEGER NULL,
 	currency VARCHAR(10) NULL,
+	payment_method INTEGER NULL,
 	amount NUMERIC(10,2) NULL,
 	interest NUMERIC(10,2) NULL,
 	installments_month INTEGER NULL,
@@ -171,9 +172,6 @@ CREATE TABLE IF NOT EXISTS payments (
 	payment_date TIMESTAMP NULL,
 	due NUMERIC(10,2) NULL,
 	status INTEGER NULL,
-	create_by INTEGER NULL,
+	created_by INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-ALTER TABLE sales
-ADD COLUMN currency VARCHAR(10);
