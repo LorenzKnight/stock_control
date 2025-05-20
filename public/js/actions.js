@@ -2812,7 +2812,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									<td align="right">Remaining :</td><td style="padding-left: 5px;">${sale.remaining}</td>
 								</tr>
 								<tr valign="baseline" class="form_height">
-									<td align="right">Interest :</td><td style="padding-left: 5px;">${sale.interest}</td>
+									<td align="right">Interest :</td><td style="padding-left: 5px;">${sale.total_interest}</td>
 								</tr>
 								<tr valign="baseline" class="form_height">
 									<td align="right">Installments / month :</td><td style="padding-left: 5px;">${sale.no_installments} / ${sale.installments_month}</td>

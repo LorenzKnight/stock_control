@@ -121,6 +121,7 @@ CREATE TABLE IF NOT EXISTS sales (
 	sales_id SERIAL PRIMARY KEY,
 	ord_no INTEGER NULL,
 	customer_id INTEGER NULL,
+	currency VARCHAR(10) NULL,
 	price_sum NUMERIC(10,2) NULL,
 	Initial NUMERIC(10,2) NULL,
 	delivery_date TIMESTAMP NULL,
@@ -155,3 +156,24 @@ CREATE TABLE IF NOT EXISTS purchased_products (
 -- INSERT INTO purchased_products (sales_id, customer_id, product_id, quantity, price, discount, total, create_by, created_at)
 -- VALUES (1, 4, 6, 1, 3000, 0, 3000, 1, '2025-03-14 15:06:38.783'),
 -- 	   (1, 4, 4, 1, 1000, 0, 1000, 1, '2025-03-14 15:06:38.783');
+
+CREATE TABLE IF NOT EXISTS payments (
+	payment_id SERIAL PRIMARY KEY,
+	ord_no INTEGER NULL,
+	payment_no INTEGER NULL,
+	sales_id INTEGER NULL,
+	customer_id INTEGER NULL,
+	currency VARCHAR(10) NULL,
+	amount NUMERIC(10,2) NULL,
+	interest NUMERIC(10,2) NULL,
+	installments_month INTEGER NULL,
+	no_installments INTEGER NULL,	
+	payment_date TIMESTAMP NULL,
+	due NUMERIC(10,2) NULL,
+	status INTEGER NULL,
+	create_by INTEGER NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE sales
+ADD COLUMN currency VARCHAR(10);
