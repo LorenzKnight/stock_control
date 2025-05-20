@@ -3761,6 +3761,74 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	//############################################################# END SALES ##################################################################
 
+	//############################################################# PAYMENTS ##################################################################
+
+	const paymentsContainer = document.getElementById('payments-list');
+	const searchPaymentField = document.getElementById('paymentsSearchField');
+
+	if (paymentsContainer || searchPaymentField) {
+		async function fetchAndRenderPayments() {
+			try {
+				const searchTerm = searchPaymentField?.value.trim() || "";
+
+				const params = new URLSearchParams();
+				if (searchTerm) params.append('search', searchTerm);
+
+				const res = await fetch(`api/get_payments.php?${params.toString()}`, {
+					method: 'GET',
+					headers: { 'Accept': 'application/json' }
+				});
+				const data = await res.json();
+
+				paymentsContainer.innerHTML = "";
+
+				if (data.success && data.data.length > 0) {
+					data.data.forEach(payment => {
+						const row = document.createElement('div');
+						row.className = 'payment-row';
+
+						row.innerHTML = `
+							<table width="100%" align="center" cellspacing="0">
+								<tr valign="baseline" class="form_height">
+									<td width="10%" align="center">#${payment.payment_no || ''}</td>
+									<td width="15%">${payment.customer_name || 'Unknown'}</td>
+									<td width="10%">${payment.currency || ''}</td>
+									<td width="15%">${parseFloat(payment.amount).toFixed(2)}</td>
+									<td width="10%">${parseFloat(payment.interest).toFixed(2)}</td>
+									<td width="15%">${payment.payment_date || ''}</td>
+									<td width="15%">${parseFloat(payment.due).toFixed(2)}</td>
+									<td width="10%" align="center">
+										<div class="payments-menu">
+											<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
+										</div>
+									</td>
+								</tr>
+							</table>
+						`;
+
+						paymentsContainer.appendChild(row);
+
+						const paymentsMenuBtn = row.querySelector('.payments-menu');
+						paymentsMenuBtn.addEventListener('click', () => {
+							openPaymentsForm(payment.payment_id);
+						});
+					});
+				} else {
+					paymentsContainer.innerHTML = `<p style="text-align:center;">No payments found.</p>`;
+				}
+			} catch (err) {
+				console.error("Error loading payments:", err);
+				paymentsContainer.innerHTML = `<p style="text-align:center;">Error loading payments</p>`;
+			}
+		}
+
+		searchPaymentField?.addEventListener('keyup', fetchAndRenderPayments);
+
+		fetchAndRenderPayments();
+	}
+
+	//############################################################# END PAYMENTS ##################################################################
+
 	//############################################################# FUNCTIONES ##################################################################
 
 	// 📌 cerrar al hacer clic fuera del formulario
