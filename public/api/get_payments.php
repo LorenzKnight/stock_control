@@ -20,9 +20,7 @@ try {
     if (!empty($search)) {
         $where['OR'] = [
             'CAST(ord_no AS TEXT) ILIKE' => "%$search%",
-            'CAST(payment_no AS TEXT) ILIKE' => "%$search%",
-            // 'CAST(amount AS TEXT) ILIKE' => "%$search%",
-            // 'CAST(currency AS TEXT) ILIKE' => "%$search%"
+            'CAST(payment_no AS TEXT) ILIKE' => "%$search%"
         ];
     }
 
@@ -59,6 +57,7 @@ try {
         $payment["sales_id"] = $payment["sales_id"] ?? null;
         $payment["customer_id"] = $payment["customer_id"] ?? null;
         $payment["currency"] = $payment["currency"] ?? '';
+        $payment["payment_method"] = $payment["payment_method"] ?? '';
         $payment["amount"] = number_format((float)$payment["amount"], 2, '.', '');
         $payment["interest"] = number_format((float)$payment["interest"], 2, '.', '');
         $payment["installments_month"] = number_format((float)$payment["installments_month"], 2, '.', '');
