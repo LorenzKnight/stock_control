@@ -5,6 +5,7 @@
 @import url("products.css");
 @import url("customers.css");
 @import url("sales.css");
+@import url("payments.css");
 
 :root {
     --main-bg-dark-blue: #022e63;

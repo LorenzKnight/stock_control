@@ -51,23 +51,56 @@ try {
 		throw new Exception("No products available.");
 	}
 
-    foreach ($parsedPayments["data"] as &$payment) {
-        $payment["ord_no"] = $payment["ord_no"] ?? '';
-        $payment["payment_no"] = $payment["payment_no"] ?? '';
-        $payment["sales_id"] = $payment["sales_id"] ?? null;
-        $payment["customer_id"] = $payment["customer_id"] ?? null;
-        $payment["currency"] = $payment["currency"] ?? '';
-        $payment["payment_method"] = $payment["payment_method"] ?? '';
-        $payment["amount"] = number_format((float)$payment["amount"], 2, '.', '');
-        $payment["interest"] = number_format((float)$payment["interest"], 2, '.', '');
-        $payment["installments_month"] = number_format((float)$payment["installments_month"], 2, '.', '');
-        $payment["no_installments"] = number_format((float)$payment["no_installments"], 2, '.', '');
-        $payment["payment_date"] = date('Y-m-d H:i:s', strtotime($payment["payment_date"]));
-        $payment["due"] = number_format((float)$payment["due"], 2, '.', '');
-        $payment["status"] = $payment["status"] ?? null;
-        $payment["created_by"] = $payment["created_by"] ?? null;
-        $payment["created_at"] = date('Y-m-d H:i:s', strtotime($payment["created_at"]));
-    }
+	foreach ($parsedPayments["data"] as &$payment) {
+		$customerId = $payment["customer_id"] ?? null;
+		if (!$customerId) continue;
+		
+		$customerResult = json_decode(select_from("customers", [
+			"customer_name",
+			"customer_surname",
+			"customer_document_type",
+			"customer_document_no",
+			"customer_status",
+			"customer_image"
+		], ["customer_id" => $customerId], ["fetch_first" => true]), true);
+
+		if (!$customerId) {
+			error_log("No customer_id in payment_id: {$payment['payment_id']}");
+			continue;
+		}
+
+		if (!$customerResult["success"]) {
+			error_log("Customer not found for ID: $customerId");
+			continue;
+		}
+
+		$customer = $customerResult["data"];
+
+		$payment["payment_id"] = (int)$payment["payment_id"];
+		$payment["ord_no"] = $payment["ord_no"] ?? '';
+		$payment["payment_no"] = $payment["payment_no"] ?? '';
+		$payment["sales_id"] = $payment["sales_id"] ?? null;
+		$payment["full_name"] = trim(($customer["customer_name"] ?? '') . ' ' . ($customer["customer_surname"] ?? ''));
+
+		$docType = $customer["customer_document_type"] ?? null;
+	    $payment["document_type"] = GlobalArrays::$documentTypes[$docType] ?? "Unknown";
+
+		$payment["document_no"] = $customer["customer_document_no"] ?? '';
+		$payment["currency"] = $payment["currency"] ?? '';
+
+		$payMethod = $payment["payment_method"] ?? null;
+		$payment["payment_method"] = GlobalArrays::$PaymentMethods[$payMethod] ?? "Unknown";
+
+		$payment["amount"] = number_format((float)$payment["amount"], 2, '.', '');
+		$payment["interest"] = number_format((float)$payment["interest"], 2, '.', '');
+		$payment["installments_month"] = number_format((float)$payment["installments_month"], 2, '.', '');
+		$payment["no_installments"] = number_format((float)$payment["no_installments"], 2, '.', '');
+		$payment["payment_date"] = date('Y-m-d', strtotime($payment["payment_date"]));
+		$payment["due"] = number_format((float)$payment["due"], 2, '.', '');
+		$payment["status"] = $payment["status"] ?? null;
+		$payment["created_by"] = $payment["created_by"] ?? null;
+		$payment["created_at"] = date('Y-m-d', strtotime($payment["created_at"]));
+	}
 
     $response = [
         "success" => true,
