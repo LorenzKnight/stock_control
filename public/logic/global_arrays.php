@@ -103,5 +103,27 @@ class GlobalArrays {
 		'+58'     => 'Venezuela',
 		'+84'     => 'Vietnam'
 	];
+
+	public static $PaymentMethods = [
+		1 => "Cash",
+		2 => "Credit Card",
+		3 => "Debit Card",
+		4 => "Bank Transfer",
+		5 => "Mobile Payment",
+		6 => "Cryptocurrency"
+	];
+
+	public static $PaymentStatus = [
+		1 => "Pending",
+		2 => "Completed",
+		3 => "Failed",
+		4 => "Refunded"
+	];
+	
+	public static $SaleStatus = [
+		1 => "Pending",
+		2 => "Completed",
+		3 => "Cancelled"
+	];
 }
 ?>

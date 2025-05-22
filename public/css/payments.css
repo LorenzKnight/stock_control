@@ -5,3 +5,50 @@
 	overflow: auto;
 	justify-content: center;
 }
+
+.payment-row {
+	width: 100%;
+	height: 20px;
+	background-color: var(--main-bg-color);
+	margin: 0 0 10px;
+	padding: 10px 0;
+	font-size: 12px;
+	border-radius: 5px;
+	display: flex;
+	align-items: center;
+}
+
+.payment-row:hover {
+	background-color: var(--btn-neutral);
+	color: var(--clr-white);
+	transition: all 1.0s ease;
+}
+
+.payments-menu {
+    width: 38px;
+    height: 38px;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.payments-menu img {
+    width: 38px;
+	filter: brightness(0) saturate(0) invert(0);
+    opacity: 1;
+    transition: filter 0.3s ease;
+}
+
+.payment-row:hover .payments-menu img {
+    filter: brightness(0) saturate(100%) invert(100%);
+    transition: all 1.0s ease;
+}
+
+.payments-menu img:hover {
+	filter: brightness(0) saturate(0) invert(55%) !important;
+	transition: all 0.6s ease;
+}
+
+.payment-row:hover .mini-title {
+	color: #fff;
+	transition: all 2.0s ease !important;
+}

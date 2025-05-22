@@ -3790,14 +3790,43 @@ document.addEventListener("DOMContentLoaded", async function () {
 						row.innerHTML = `
 							<table width="100%" align="center" cellspacing="0">
 								<tr valign="baseline" class="form_height">
-									<td width="10%" align="center">#${payment.payment_no || ''}</td>
-									<td width="15%">${payment.customer_name || 'Unknown'}</td>
-									<td width="10%">${payment.currency || ''}</td>
-									<td width="15%">${parseFloat(payment.amount).toFixed(2)}</td>
-									<td width="10%">${parseFloat(payment.interest).toFixed(2)}</td>
-									<td width="15%">${payment.payment_date || ''}</td>
-									<td width="15%">${parseFloat(payment.due).toFixed(2)}</td>
-									<td width="10%" align="center">
+									<td width="8%" align="center" valign="middle">
+										<p class="mini-title">Payment no:</p>
+										${payment.payment_no || ''}
+									</td>
+									<td width="8%" align="center" valign="middle">
+										<p class="mini-title">Ord no:</p>
+										${payment.ord_no || ''}
+									</td>
+									<td width="13%" align="left" valign="middle" style="padding-left:2%;">
+										<p class="mini-title">Name:</p>
+										${payment.full_name || ''}
+									</td>
+									<td width="10%" align="center" valign="middle">
+										<p class="mini-title">${payment.document_type}:</p>
+										${payment.document_no || ''}
+									</td>
+									<td width="11%" align="center" valign="middle">
+										<p class="mini-title">Payment method:</p>
+										${payment.payment_method || ''}
+									</td>
+									<td width="11%" align="center" valign="middle">
+										<p class="mini-title">Amount:</p>
+										${parseFloat(payment.amount).toFixed(2)}
+									</td>
+									<td width="11%" align="center" valign="middle">
+										<p class="mini-title">Interest:</p>
+										${parseFloat(payment.interest).toFixed(2)}
+									</td>
+									<td width="11%" align="center" valign="middle">
+										<p class="mini-title">Due:</p>
+										${parseFloat(payment.due).toFixed(2)}
+									</td>
+									<td width="10%" align="center" valign="middle">
+										<p class="mini-title">Payment Date:</p>
+										${payment.payment_date || ''}
+									</td>
+									<td width="5%" align="center" valign="middle">
 										<div class="payments-menu">
 											<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
 										</div>
