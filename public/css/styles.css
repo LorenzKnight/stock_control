@@ -24,12 +24,12 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
+    /* font-family: Arial, sans-serif; */
+    font-family: sans-serif;
     margin: 0;
     padding: 0;
     background-color: var(--main-bg-color);
-    font-family: 'Montserrat', sans-serif;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .container {
@@ -90,7 +90,7 @@ body {
     width: 90%;
     margin: 5px 0;
     padding: 10px;
-    font-size: 14px;
+    font-size: 12px;
     border-radius: 5px;
     border: 1px solid var(--clr-border);
     text-align: center;
@@ -105,7 +105,7 @@ body {
     width: 80%;
     margin: 5px 0;
     padding: 10px;
-    font-size: 14px;
+    font-size: 12px;
     border-radius: 5px;
     border: 1px solid var(--clr-border);
     text-align: center;
