@@ -180,6 +180,8 @@ input:checked + .slider:before {
 
 select.form-medium-input-style, select.form-input-style {
 	width: 93.5%;
+    color: var(--btn-neutral);
+    font-size: 12px;
 }
 
 .card-menu {

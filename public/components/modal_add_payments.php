@@ -53,9 +53,9 @@
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<span style="display: block; margin-bottom: 5px;">Status</span>
+						<span style="display: block; margin: 15px 0 5px;">Status</span>
 						<label class="switch" style="margin-bottom: 20px;">
-							<input type="checkbox" name="edit_status" id="edit_status" value="1">
+							<input type="checkbox" name="edit_status" id="edit_status" value="1" checked>
 							<span class="slider round"></span>
 						</label>
 					</td>
