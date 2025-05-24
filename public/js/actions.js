@@ -3856,6 +3856,37 @@ document.addEventListener("DOMContentLoaded", async function () {
 		fetchAndRenderPayments();
 	}
 
+	// 📌 script para add customers popup
+	let addPaymentsButton = document.getElementById('add-payments-btn');
+	if (addPaymentsButton) {
+		addPaymentsButton.addEventListener('click', async function (e) {
+			scrollToTopIfNeeded();
+			
+			const addPaymentForm = document.getElementById('add-payment-form');
+			const popupContent = addPaymentForm.querySelector('.formular-frame');
+
+			if (addPaymentForm && popupContent) {
+			    addPaymentForm.style.display = 'block';
+			    addPaymentForm.style.opacity = '0';
+			    addPaymentForm.style.transition = 'opacity 0.5s ease';
+			    setTimeout(() => {
+			        addPaymentForm.style.opacity = '1';
+			    }, 10);
+
+			    popupContent.style.transform = 'scale(0.7)';
+			    popupContent.style.opacity = '0';
+			    popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+			    setTimeout(() => {
+			        popupContent.style.transform = 'scale(1)';
+			        popupContent.style.opacity = '1';
+			    }, 50);
+			}
+
+			populateCurrencies('currency', 'USD');
+
+			populatePaymentMethods('payment_method');
+		});
+	}
 	//############################################################# END PAYMENTS ##################################################################
 
 	//############################################################# FUNCTIONES ##################################################################
@@ -4071,6 +4102,73 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
+	async function populateCurrencies(selectId, selectedValue = '') {
+		const select = document.getElementById(selectId);
+		if (!select) return;
+
+		select.innerHTML = '';
+
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = 'Select Currency';
+		select.appendChild(defaultOption);
+
+		try {
+			const res = await fetch('api/get_global_array.php?key=currencies');
+			const data = await res.json();
+
+			if (data.success && data.data) {
+				for (const [value, label] of Object.entries(data.data)) {
+					const option = document.createElement('option');
+					option.value = value;
+					option.textContent = label;
+					if (String(value) === String(selectedValue)) {
+						option.selected = true;
+					}
+					select.appendChild(option);
+				}
+			} else {
+				select.innerHTML += `<option value="">No currencies found</option>`;
+			}
+		} catch (error) {
+			console.error("Error loading currencies:", error);
+			select.innerHTML += `<option value="">Error loading currencies</option>`;
+		}
+	}
+
+	async function populatePaymentMethods(selectId, selectedValue = '') {
+		const select = document.getElementById(selectId);
+		if (!select) return;
+
+		select.innerHTML = '';
+
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = 'Select Payment Method';
+		select.appendChild(defaultOption);
+
+		try {
+			const res = await fetch('api/get_global_array.php?key=paymentMethods');
+			const data = await res.json();
+
+			if (data.success && data.data) {
+				for (const [value, label] of Object.entries(data.data)) {
+					const option = document.createElement('option');
+					option.value = value;
+					option.textContent = label;
+					if (String(value) === String(selectedValue)) {
+						option.selected = true;
+					}
+					select.appendChild(option);
+				}
+			} else {
+				select.innerHTML += `<option value="">No payment methods found</option>`;
+			}
+		} catch (error) {
+			console.error("Error loading payment methods:", error);
+			select.innerHTML += `<option value="">Error loading payment methods</option>`;
+		}
+	}
 
 	function showConfirmModal(title, message, onConfirm) {
 		const modal = document.getElementById('globalConfirmModal');

@@ -20,7 +20,8 @@ try {
     if (!empty($search)) {
         $where['OR'] = [
             'CAST(ord_no AS TEXT) ILIKE' => "%$search%",
-            'CAST(payment_no AS TEXT) ILIKE' => "%$search%"
+            'CAST(payment_no AS TEXT) ILIKE' => "%$search%",
+			'CAST(payment_date AS TEXT) ILIKE' => "%$search%"
         ];
     }
 

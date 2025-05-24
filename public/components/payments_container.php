@@ -4,7 +4,7 @@
 			<table width="100%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td width="15%" align="center" valign="middle">
-						<button type="button" class="button-style-agree" id="add-payment-btn">Create Payment</button>
+						<button type="button" class="button-style-agree" id="add-payments-btn">Make a Payment</button>
 					</td>
 					<td width="85%" align="center" valign="middle">
 						<input type="text" name="paymentsSearchField" id="paymentsSearchField" class="big-search-field" placeholder="Search Payment..." title="Search Payment">
