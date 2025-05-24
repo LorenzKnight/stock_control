@@ -1,7 +1,7 @@
 <div class="bg-popup" id="add-sale-form">
 	<div class="formular-big-frame">
-        <form method="post" name="formAddSale" id="formAddSale">
-            <table width="80%" align="center" cellspacing="0">
+		<form method="post" name="formAddSale" id="formAddSale">
+			<table width="80%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
 						<h2>Create a Sale</h2>
@@ -11,7 +11,7 @@
 					<td colspan="2" align="center" valign="middle">
 						<div class="formular-customers-list">
 							<div class="create-list-holder">
-                                <input class="form-input-style" type="text" name="search-customer" id="search-customer" placeholder="Enter a name or Doc No..." title="Enter a valid name"/>
+								<input class="form-input-style" type="text" name="search-customer" id="search-customer" placeholder="Enter a name or Doc No..." title="Enter a valid name"/>
 							</div>
 							<div class="cat-all-list">
 								<table id="select-customers-list" cellspacing="0"></table>
@@ -103,6 +103,6 @@
 					</td>
 				</tr>
 			</table>
-        </form>
-    </div>
+		</form>
+	</div>
 </div>

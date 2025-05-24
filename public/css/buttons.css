@@ -178,6 +178,9 @@ input:checked + .slider:before {
     line-height: 32px;
 }
 
+select.form-medium-input-style, select.form-input-style {
+	width: 93.5%;
+}
 
 .card-menu {
     width: 44px;

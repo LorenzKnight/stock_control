@@ -104,7 +104,7 @@ class GlobalArrays {
 		'+84'     => 'Vietnam'
 	];
 
-	public static $PaymentMethods = [
+	public static $paymentMethods = [
 		1 => "Cash",
 		2 => "Credit Card",
 		3 => "Debit Card",
@@ -113,17 +113,46 @@ class GlobalArrays {
 		6 => "Cryptocurrency"
 	];
 
-	public static $PaymentStatus = [
+	public static $paymentStatus = [
 		1 => "Pending",
 		2 => "Completed",
 		3 => "Failed",
 		4 => "Refunded"
 	];
 	
-	public static $SaleStatus = [
+	public static $saleStatus = [
 		1 => "Pending",
 		2 => "Completed",
 		3 => "Cancelled"
+	];
+
+	public static $currencies = [
+		"USD" => "(USD) United States Dollar",
+		"EUR" => "(EUR) Euro",
+		// "JPY" => "(JPY) Japanese Yen",
+		// "GBP" => "(GBP) British Pound Sterling",
+		// "AUD" => "(AUD) Australian Dollar",
+		// "CAD" => "(CAD) Canadian Dollar",
+		// "CHF" => "(CHF) Swiss Franc",
+		// "CNY" => "(CNY) Chinese Yuan",
+		"SEK" => "(SEK) Swedish Krona",
+		// "NZD" => "(NZD) New Zealand Dollar",
+		// "MXN" => "(MXN) Mexican Peso",
+		// "SGD" => "(SGD) Singapore Dollar",
+		// "HKD" => "(HKD) Hong Kong Dollar",
+		"NOK" => "(NOK) Norwegian Krone",
+		// "KRW" => "(KRW) South Korean Won",
+		// "TRY" => "(TRY) Turkish Lira",
+		// "RUB" => "(RUB) Russian Ruble",
+		// "INR" => "(INR) Indian Rupee",
+		// "BRL" => "(BRL) Brazilian Real",
+		// "ZAR" => "(ZAR) South African Rand",
+		// "DKK" => "(DKK) Danish Krone",
+		// "PLN" => "(PLN) Polish Zloty",
+		// "TWD" => "(TWD) New Taiwan Dollar",
+		// "THB" => "(THB) Thai Baht",
+		// "IDR" => "(IDR) Indonesian Rupiah",
+		"DOP" => "(DOP) Dominican Peso"
 	];
 }
 ?>
