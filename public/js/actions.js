@@ -3882,9 +3882,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 			    }, 50);
 			}
 
-			populateCurrencies('currency', 'USD');
+			populateCurrencies('currency');
 
 			populatePaymentMethods('payment_method');
+
+			populateDocumentTypes('payer_document_type');
 		});
 	}
 	//############################################################# END PAYMENTS ##################################################################
@@ -3923,6 +3925,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	handlePopupClose("customers-options", ".formular-frame", ["customers-options"]);
 	handlePopupClose("add-sale-form", ".formular-big-frame", ["add-sale-form"]);
 	handlePopupClose("sale-options", ".formular-frame", ["sale-options"]);
+	handlePopupClose("add-payment-form", ".formular-frame", ["add-payment-form"]);
 
 	// 📌 reset multiple popup view
 	function resetMultiplePopupView() {
