@@ -183,6 +183,17 @@ select.form-medium-input-style, select.form-input-style {
 	width: 93.5%;
     color: var(--btn-neutral);
     font-size: 12px;
+    appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+
+    background-image: linear-gradient(45deg, transparent 50%, var(--clr-border) 50%),
+					  linear-gradient(135deg, var(--clr-border) 50%, transparent 50%);
+	background-position: calc(100% - 15px) calc(50% - -1px), calc(100% - 10px) calc(50% - -1px);
+    
+	background-size: 5px 5px, 5px 5px;
+	background-repeat: no-repeat;
+	padding-right: 30px;
 }
 
 .card-menu {
