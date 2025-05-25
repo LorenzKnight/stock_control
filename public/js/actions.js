@@ -3889,6 +3889,66 @@ document.addEventListener("DOMContentLoaded", async function () {
 			populateDocumentTypes('payer_document_type');
 		});
 	}
+
+	const ordNoInput = document.getElementById('ord_no');
+	const amountInput = document.getElementById('amount');
+	const payInterestInput = document.getElementById('interest');
+	let currentOrderInterest = 0;
+	if (ordNoInput && amountInput) {
+		ordNoInput.addEventListener('input', async () => {
+			const ordNo = ordNoInput.value.trim();
+			if (!ordNo || isNaN(ordNo)) return;
+
+			try {
+				const res = await fetch(`api/get_order_info.php?ord_no=${ordNo}`, {
+					method: 'GET',
+					headers: { 'Accept': 'application/json' }
+				});
+				const data = await res.json();
+				console.log("Order data:", data);
+				if (data.success && data.data) {
+					const order = data.data;
+
+					currentOrderInterest = parseFloat(order.interest) || 0;
+
+					// 🔁 Llena los campos del formulario con los datos encontrados
+					document.getElementById('customer').value = order.customer_name || '';
+					document.getElementById('payer_document_no').value = order.document_no || '';
+					document.getElementById('payer_phone').value = order.phone || '';
+					document.getElementById('customer_email').value = order.email || '';
+
+					// Selecciona en los <select> si hay valores
+					if (order.currency) {
+						document.getElementById('currency').value = order.currency;
+					}
+					if (order.payment_method) {
+						document.getElementById('payment_method').value = order.payment_method;
+					}
+					if (order.document_type) {
+						document.getElementById('payer_document_type').value = order.document_type;
+					}
+
+					if (amountInput.value && !isNaN(amountInput.value)) {
+						const amount = parseFloat(amountInput.value);
+						const interestAmount = amount * currentOrderInterest / 100;
+						payInterestInput.value = interestAmount.toFixed(2);
+					}
+				}
+			} catch (error) {
+				console.error("Error loading order data:", error);
+			}
+		});
+
+		amountInput.addEventListener('input', () => {
+			const amount = parseFloat(amountInput.value);
+			if (isNaN(amount) || currentOrderInterest <= 0) {
+				payInterestInput.value = '';
+				return;
+			}
+			const interestAmount = amount * currentOrderInterest / 100;
+			payInterestInput.value = interestAmount.toFixed(2);
+		});
+	}
 	//############################################################# END PAYMENTS ##################################################################
 
 	//############################################################# FUNCTIONES ##################################################################

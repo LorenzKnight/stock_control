@@ -10,6 +10,7 @@
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
 						<input class="form-input-style" type="text" name="ord_no" id="ord_no" placeholder="Ord no." title="Enter a valid Ord no." required/>
+                        <div id="ord-no-suggestions" class="autocomplete-box"></div>
 					</td>
 				</tr>
                 <tr valign="baseline" class="form_height">
@@ -38,7 +39,7 @@
 						<input class="form-medium-input-style" type="number" name="amount" id="amount" placeholder="Enter a amount..." title="Enter a amount"/>
 					</td>
 					<td width="50%" align="center" valign="middle">
-						<input class="form-medium-input-style" type="number" name="interest" id="interest" placeholder="interest" title="interest" disabled/>
+						<input class="form-medium-input-style" type="text" name="interest" id="interest" placeholder="interest" title="interest" disabled/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
