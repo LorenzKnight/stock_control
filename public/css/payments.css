@@ -52,3 +52,26 @@
 	color: #fff;
 	transition: all 2.0s ease !important;
 }
+
+
+.autocomplete-box {
+	position: absolute;
+	background: white;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	max-height: 200px;
+	overflow-y: auto;
+	z-index: 999;
+	display: none;
+	width: 250px;
+	box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.autocomplete-box div {
+	padding: 8px 12px;
+	cursor: pointer;
+}
+
+.autocomplete-box div:hover {
+	background-color: #f0f0f0;
+}
