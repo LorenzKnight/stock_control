@@ -58,7 +58,7 @@
 					<td colspan="6" align="center" valign="middle">
 						<span style="display: block; margin: 15px 0 5px;">Status</span>
 						<label class="switch" style="margin-bottom: 20px;">
-							<input type="checkbox" name="edit_status" id="edit_status" value="1" checked>
+							<input type="checkbox" name="payment_status" id="payment_status" value="1" checked>
 							<span class="slider round"></span>
 						</label>
 					</td>

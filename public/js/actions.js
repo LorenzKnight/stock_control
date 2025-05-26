@@ -1081,6 +1081,68 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
+
+	const formAddPayment = document.getElementById('formAddPayment');
+	if (formAddPayment) {
+		formAddPayment.addEventListener('submit', async function (e) {
+			e.preventDefault();
+
+			const formData = new FormData(this);
+
+			// Asegurarse de que el campo "interest" deshabilitado también se incluya
+			const interestInput = document.getElementById('interest');
+			if (interestInput && interestInput.disabled) {
+				formData.append('interest', interestInput.value || '0');
+			}
+
+			try {
+				const response = await fetch('api/create_payment.php', {
+					method: 'POST',
+					headers: {
+						Accept: 'application/json'
+					},
+					body: formData
+				});
+
+				const data = await response.json();
+				console.log('Server response:', data);
+
+				const banner = document.getElementById('status-message');
+				const statusText = document.getElementById('status-text');
+				const statusImage = document.getElementById('status-image');
+
+				if (data.success) {
+					statusText.innerText = data.message;
+					statusImage.src = data.img_gif || "images/sys-img/success.gif";
+					banner.style.display = 'block';
+					banner.style.opacity = '1';
+
+					setTimeout(() => {
+						banner.style.opacity = '0';
+						setTimeout(() => {
+							window.location.href = data.redirect_url || window.location.href;
+						}, 1000);
+					}, 3000);
+				} else {
+					statusText.innerText = "Error: " + data.message;
+					statusImage.src = data.img_gif || "images/sys-img/error.gif";
+					banner.style.display = 'block';
+					banner.style.opacity = '1';
+				}
+			} catch (error) {
+				console.error("Request failed:", error);
+
+				const banner = document.getElementById('status-message');
+				const statusText = document.getElementById('status-text');
+				const statusImage = document.getElementById('status-image');
+
+				statusText.innerText = "Error procesando la solicitud.";
+				statusImage.src = "images/sys-img/error.gif";
+				banner.style.display = 'block';
+				banner.style.opacity = '1';
+			}
+		});
+	}
 //################################################################ PRODUCTS #####################################################################
 
 	// 📌 script para add product popup
@@ -3967,7 +4029,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				try {
 					const res = await fetch(`api/get_ordnos.php?search=${encodeURIComponent(search)}`);
 					const data = await res.json();
-					
+
 					ordSuggestions.innerHTML = '';
 					if (data.success && data.data.length > 0) {
 						data.data.forEach(sale => {
