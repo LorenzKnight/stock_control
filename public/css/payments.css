@@ -55,16 +55,17 @@
 
 
 .autocomplete-box {
-	position: absolute;
+	width: 250px;
+	max-height: 200px;
 	background: white;
 	border: 1px solid #ccc;
 	border-radius: 5px;
-	max-height: 200px;
+	position: absolute;
+	left: 33px;
 	overflow-y: auto;
-	z-index: 999;
 	display: none;
-	width: 250px;
 	box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+	z-index: 999;
 }
 
 .autocomplete-box div {
