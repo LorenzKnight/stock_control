@@ -3905,7 +3905,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					headers: { 'Accept': 'application/json' }
 				});
 				const data = await res.json();
-				console.log("Order data:", data);
+				// console.log("Order data:", data);
 				if (data.success && data.data) {
 					const order = data.data;
 
@@ -3947,6 +3947,54 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 			const interestAmount = amount * currentOrderInterest / 100;
 			payInterestInput.value = interestAmount.toFixed(2);
+		});
+	}
+
+	const ordSuggestions = document.getElementById('ord-no-suggestions');
+	if (ordNoInput && ordSuggestions) {
+		let debounceTimeout;
+
+		ordNoInput.addEventListener('input', () => {
+			clearTimeout(debounceTimeout);
+			const search = ordNoInput.value.trim();
+
+			if (search.length === 0) {
+				ordSuggestions.style.display = 'none';
+				return;
+			}
+
+			debounceTimeout = setTimeout(async () => {
+				try {
+					const res = await fetch(`api/get_ordnos.php?search=${encodeURIComponent(search)}`);
+					const data = await res.json();
+					
+					ordSuggestions.innerHTML = '';
+					if (data.success && data.data.length > 0) {
+						data.data.forEach(sale => {
+							const item = document.createElement('div');
+							item.textContent = `${sale.ord_no} - ${sale.full_name}`;
+							item.addEventListener('click', () => {
+								ordNoInput.value = sale.ord_no;
+								ordNoInput.dispatchEvent(new Event('input'));
+								ordSuggestions.style.display = 'none';
+							});
+							ordSuggestions.appendChild(item);
+						});
+						ordSuggestions.style.display = 'block';
+					} else {
+						ordSuggestions.style.display = 'none';
+					}
+				} catch (err) {
+					console.error("Error fetching order suggestions:", err);
+				}
+			}, 300);
+		});
+
+		// Ocultar sugerencias si se hace clic fuera
+		document.addEventListener('click', (e) => {
+			if (!ordSuggestions.contains(e.target) && e.target !== ordNoInput) {
+				ordSuggestions.style.display = 'none';
+			}
 		});
 	}
 	//############################################################# END PAYMENTS ##################################################################
