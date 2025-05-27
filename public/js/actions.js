@@ -3841,7 +3841,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					headers: { 'Accept': 'application/json' }
 				});
 				const data = await res.json();
-
+console.log("Payments data:", data);
 				paymentsContainer.innerHTML = "";
 
 				if (data.success && data.data.length > 0) {

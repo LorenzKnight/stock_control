@@ -163,7 +163,7 @@ CREATE TABLE IF NOT EXISTS payments (
 	payment_no INTEGER NULL,
 	sales_id INTEGER NULL,
 	customer_id INTEGER NULL,
-	person_who_paid INTEGER NULL,
+	person_who_paid VARCHAR(255) NULL,
 	payer_document_type INTEGER NULL,
 	payer_document_no VARCHAR(20) NULL,
 	payer_phone VARCHAR(20) NULL,
