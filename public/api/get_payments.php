@@ -55,7 +55,7 @@ try {
 	foreach ($parsedPayments["data"] as &$payment) {
 		$customerId = $payment["customer_id"] ?? null;
 		if (!$customerId) continue;
-		
+
 		$customerResult = json_decode(select_from("customers", [
 			"customer_name",
 			"customer_surname",
@@ -90,7 +90,7 @@ try {
 		$payment["currency"] = $payment["currency"] ?? '';
 
 		$payMethod = $payment["payment_method"] ?? null;
-		$payment["payment_method"] = GlobalArrays::$PaymentMethods[$payMethod] ?? "Unknown";
+		$payment["payment_method"] = GlobalArrays::$paymentMethods[$payMethod] ?? "Unknown";
 
 		$payment["amount"] = number_format((float)$payment["amount"], 2, '.', '');
 		$payment["interest"] = number_format((float)$payment["interest"], 2, '.', '');

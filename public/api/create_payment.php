@@ -33,15 +33,24 @@ try {
     $interest = isset($_POST['interest']) ? (float)$_POST['interest'] : 0;
     $status = isset($_POST['payment_status']) ? (int)$_POST['payment_status'] : 0;
     $userId = $_SESSION['sc_UserId'] ?? null;
+
     if (!$userId) throw new Exception("User not authenticated.");
 
     // Buscar datos de la orden para obtener customer_id y sales_id
-    $saleRes = json_decode(select_from("sales", ["sales_id", "customer_id", "interest", "installments_month", "no_installments", "payment_date", "due", "currency"], ["ord_no" => $ordNo], ["fetch_first" => true]), true);
-    if (!$saleRes['success']) throw new Exception("Order not found.");
+    $saleRes = json_decode(select_from("sales", ["sales_id", "customer_id", "interest", "installments_month", "no_installments", "due", "currency"], ["ord_no" => $ordNo], ["fetch_first" => true]), true);
+    if (!$saleRes['success']) throw new Exception("Order not found."); 
 
     $sale = $saleRes['data'];
 
     $newPaymentNo = get_next_increment_value("payments", "payment_no", 20000);
+
+    $month = get_next_increment_value("payments", "no_installments", 1);
+    $noInstallments = $month < $sale["installments_month"] ? $month : 0;
+    if ($noInstallments && $noInstallments < 1) {
+        throw new Exception("All payments were made.");
+    }
+
+	$due = ($sale["due"] ?? 0) - (($amount ?? 0) - ($interest ?? 0));
 
     $paymentData = [
         "ord_no" => $ordNo,
@@ -57,19 +66,24 @@ try {
         "payment_method" => $paymentMethod,
         "amount" => $amount,
         "interest" => $interest,
-        // "installments_month" => $sale["installments_month"] ?? null,
-        // "no_installments" => $sale["no_installments"] ?? null,
+        "installments_month" => $sale["installments_month"] ?? null,
+        "no_installments" => $noInstallments,
         "payment_date" => date("Y-m-d H:i:s"),
-        "due" => $sale["due"] ?? null, // realizar el carculo.
+        "due" => $due,
         "status" => $status,
-        "create_by" => $userId
+        "created_by" => $userId
     ];
-cdebug($paymentData);
-exit;
 
     $insert = json_decode(insert_into("payments", $paymentData), true);
     if (!$insert['success']) {
         throw new Exception("Failed to insert payment record.");
+    }
+
+	if ($insert["success"]) {
+        $updateResult = json_decode(update_table("sales", ["due" => $due], ["sales_id" => $sale["sales_id"]]), true);
+		if (!$updateResult["success"]) throw new Exception("Failed to update sales record.");
+
+        $action = "updated";
     }
 
     log_activity(
@@ -83,7 +97,7 @@ exit;
     $response = [
         "success" => true,
         "message" => "Payment created successfully",
-        "img_gif" => "images/sys-img/success.gif",
+        "img_gif" => "images/sys-img/loading1.gif",
         "redirect_url" => "payments.php"
     ];
 

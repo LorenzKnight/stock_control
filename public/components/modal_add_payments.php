@@ -10,7 +10,7 @@
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
                         <div style="position: relative; display: inline-block; width: 100%;">
-							<input class="form-input-style" type="text" name="ord_no" id="ord_no" placeholder="Ord no." title="Enter a valid Ord no." required/>
+							<input class="form-input-style" type="text" name="ord_no" id="ord_no" placeholder="Ord no." title="Enter a valid Ord no." autocomplete="off" required/>
 							<div id="ord-no-suggestions" class="autocomplete-box"></div>
 						</div>
 					</td>
@@ -30,10 +30,10 @@
 				</tr>
 				<tr valign="baseline" class="form_height">
                     <td width="50%" align="center" valign="middle">
-						<select class="form-medium-input-style" name="currency" id="currency"></select>
+						<select class="form-medium-input-style" name="currency" id="currency" required></select> 
 					</td>
 					<td width="50%" align="center" valign="middle">
-						<select class="form-medium-input-style" name="payment_method" id="payment_method"></select>
+						<select class="form-medium-input-style" name="payment_method" id="payment_method" required></select>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
