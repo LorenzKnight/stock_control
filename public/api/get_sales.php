@@ -20,7 +20,7 @@ try {
 
 	$salesResult = select_from("sales", [
 		"sales_id", "ord_no", "customer_id", "price_sum", "initial", "delivery_date",
-		"remaining", "interest", "installments_month", "no_installments",
+		"currency", "remaining", "interest", "installments_month", "no_installments",
 		"payment_date", "due", "created_at"
 	], $where, [
 		"order_by" => "created_at",
@@ -90,6 +90,14 @@ try {
 		$documentNo = strtolower($customer["customer_document_no"] ?? '');
 		$searchLower = strtolower($search);
 
+		$paymentQuery = select_from("payments", ["ord_no"], ["sales_id" => $sale["sales_id"]]);
+		$paymentCountParsed = json_decode($paymentQuery, true);
+		$paymentCount = 0;
+		
+		if ($paymentCountParsed && $paymentCountParsed["success"] && isset($paymentCountParsed["count"])) {
+			$paymentCount = (int)$paymentCountParsed["count"];
+		}
+
 		if (
 			!$filterBySearch ||
 			strpos($customerFullName, $searchLower) !== false ||
@@ -119,7 +127,9 @@ try {
 					"image"				=> $customer["customer_image"] ?? ''
 				],
 
-				"products"				=> $productsData
+				"products"				=> $productsData,
+
+				"payments"				=> $paymentCount
 			];
 		}
 	}

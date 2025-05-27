@@ -48,7 +48,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				});
 
 				let data = await response.json();
-				console.log('Server response:', data);
 
 				let banner = document.getElementById('status-message');
 				let statusText = document.getElementById('status-text');
@@ -99,7 +98,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				});
 
 				let data = await response.json();
-				console.log('Server response:', data);
 
 				let banner = document.getElementById('status-message');
 				let statusText = document.getElementById('status-text');
@@ -147,7 +145,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				});
 
 				let data = await response.json();
-				console.log('Server response:', data);
 
 				let banner = document.getElementById('status-message');
 				let statusText = document.getElementById('status-text');
@@ -210,7 +207,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
 
         let data = await response.json();
-        // console.log("Server response:", data);
 
 		let myName = document.getElementById("my-name");
 		let hiUser = document.getElementById("hi-user");
@@ -281,7 +277,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			});
 
 			let data = await response.json();
-			// console.log("Server response:", data);
 
 			if (data.success && data.data) {
 				let company = data.data;
@@ -315,7 +310,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			});
 
 			let data = await response.json();
-			// console.log('Server response:', data);
 
 			spot.innerHTML = data.count !== "" ? data.count : "0";
 
@@ -433,7 +427,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				});
 	
 				const data = await response.json();
-				console.log("Update response:", data);
 	
 				let banner = document.getElementById('status-message');
 				let statusText = document.getElementById('status-text');
@@ -484,7 +477,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 					});
 
 					const data = await response.json();
-					console.log('Delete response:', data);
 
 					let banner = document.getElementById('status-message');
 					let statusText = document.getElementById('status-text');
@@ -551,7 +543,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			});
 	
 			let data = await response.json();
-			console.log("Current package data:", data);
 	
 			if (data.success && data.current_pack && selectPack) {
 				let currentPack = parseInt(data.current_pack);
@@ -678,7 +669,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				});
 
 				let data = await response.json();
-				console.log('Server response:', data);
 
 				let banner = document.getElementById('status-message');
 				let statusText = document.getElementById('status-text');
@@ -758,7 +748,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				});
 
 				let data = await response.json();
-				console.log('Server response:', data);
 
 				let banner = document.getElementById('status-message');
 				let statusText = document.getElementById('status-text');
@@ -802,7 +791,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			});
 	
 			let data = await response.json();
-			console.log("User Info:", data);
 	
 			if (data.success && data.data) {
 				let user = data.data;
@@ -914,7 +902,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				});
 
 				let data = await response.json();
-				console.log('Server response:', data);
 
 				let banner = document.getElementById('status-message');
 				let statusText = document.getElementById('status-text');
@@ -1046,7 +1033,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				});
 
 				let data = await response.json();
-				console.log('Server response:', data);
 
 				let banner = document.getElementById('status-message');
 				let statusText = document.getElementById('status-text');
@@ -1105,7 +1091,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				});
 
 				const data = await response.json();
-				console.log('Server response:', data);
 
 				const banner = document.getElementById('status-message');
 				const statusText = document.getElementById('status-text');
@@ -1198,7 +1183,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				});
 
 				const data = await response.json();
-				console.log('Server response:', data);
 
 				const banner = document.getElementById('status-message');
 				const statusText = document.getElementById('status-text');
@@ -1660,7 +1644,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				});
 
 				const data = await response.json();
-				console.log("Server response:", data);
 
 				let banner = document.getElementById("status-message");
 				let statusText = document.getElementById("status-text");
@@ -1943,7 +1926,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 								});
 				
 								const data = await response.json();
-								console.log('Delete response:', data);
 				
 								let banner = document.getElementById('status-message');
 								let statusText = document.getElementById('status-text');
@@ -2420,7 +2402,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				});
 	
 				const data = await response.json();
-				console.log('Server response:', data);
 	
 				const banner = document.getElementById('status-message');
 				const statusText = document.getElementById('status-text');
@@ -2556,7 +2537,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 								});
 				
 								const data = await response.json();
-								console.log('Delete response:', data);
 				
 								let banner = document.getElementById('status-message');
 								let statusText = document.getElementById('status-text');
@@ -2734,7 +2714,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				const data = await res.json();
 				salesContainer.innerHTML = "";
-
+				
 				if (data.success && data.data.length > 0) {
 					data.data.forEach(sale => {
 						const row = document.createElement('div');
@@ -2745,7 +2725,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							: 'images/sys-img/NonProfilePic.png';
 
 						const paymentDateFormatted = sale.payment_date
-							? `Every ${new Date(sale.payment_date).getDate()}th`
+							? `Every ${new Date(sale.payment_date).getDate()}th` // AQUI
 							: '-';
 
 						let productsHtml = '';
@@ -2877,7 +2857,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									<td align="right">Interest :</td><td style="padding-left: 5px;">${sale.total_interest}</td>
 								</tr>
 								<tr valign="baseline" class="form_height">
-									<td align="right">Installments / month :</td><td style="padding-left: 5px;">${sale.no_installments} / ${sale.installments_month}</td>
+									<td align="right">Installments / month :</td><td style="padding-left: 5px;">${sale.no_installments} / ${sale.payments}</td>
 								</tr>
 								<tr valign="baseline" class="form_height">
 									<td align="right">Payment date :</td><td style="padding-left: 5px;">${paymentDateFormatted}</td>
@@ -3366,7 +3346,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 					deleteSaleBtn.onclick = async () => {
 						const saleId = deleteSaleBtn.getAttribute('data-sale-id');
 
-						console.log("Delete Sale ID:", saleId);
 						if (!saleId) {
 							alert("Sale ID not found.");
 							return;
@@ -3462,7 +3441,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			if (data.success && data.data.length > 0) {
 				const sale = data.data.find(s => s.sales_id == saleId);
 				if (!sale) return;
-				// console.log(sale);
+				
 				// Inicializar selección de clientes
 				const searchCustomerInput = document.getElementById('search-customer-for-edit');
 				const customerListTable = document.getElementById('select-customers-list-for-edit');
@@ -3841,7 +3820,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					headers: { 'Accept': 'application/json' }
 				});
 				const data = await res.json();
-console.log("Payments data:", data);
+				
 				paymentsContainer.innerHTML = "";
 
 				if (data.success && data.data.length > 0) {
@@ -3967,7 +3946,7 @@ console.log("Payments data:", data);
 					headers: { 'Accept': 'application/json' }
 				});
 				const data = await res.json();
-				// console.log("Order data:", data);
+				
 				if (data.success && data.data) {
 					const order = data.data;
 
