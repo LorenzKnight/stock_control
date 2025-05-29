@@ -14,6 +14,7 @@
 </head>
 
 <body>
+	<?php include("components/modal_payments_options.php"); ?>
 	<?php include("components/modal_add_payments.php"); ?>
 	<?php include("components/message.php"); ?>
 	<?php include("components/header.php"); ?>

@@ -14,7 +14,8 @@ try {
 	if (!$userId) throw new Exception("User session not found.");
 
     $search = $_GET['search'] ?? '';
-    
+	$paymentId = isset($_GET['payment_id']) ? (int)$_GET['payment_id'] : null;
+
     $where = [];
 
     if (!empty($search)) {
@@ -23,7 +24,9 @@ try {
             'CAST(payment_no AS TEXT) ILIKE' => "%$search%",
 			'CAST(payment_date AS TEXT) ILIKE' => "%$search%"
         ];
-    }
+    } elseif ($paymentId) {
+		$where["payment_id"] = $paymentId;
+	}
 
     $paymentsResult = select_from('payments', [
         'payment_id', 
