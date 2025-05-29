@@ -3897,6 +3897,124 @@ document.addEventListener("DOMContentLoaded", async function () {
 		fetchAndRenderPayments();
 	}
 
+	async function openPaymentsForm(paymentId) {
+		scrollToTopIfNeeded();
+		
+		const paymentsOptions = document.getElementById('payments-options');
+		const popupContent = paymentsOptions.querySelector('.formular-frame');
+		const ordNoName = document.getElementById('ord-no-name');
+	
+		if (!paymentId) return;
+
+		try {
+			const res = await fetch(`api/get_payments.php?payment_id=${paymentId}`);
+			const data = await res.json();
+
+			if (data.success && data.data.length > 0) {
+				const payment = data.data.find(p => p.payment_id == paymentId);
+				if (payment && ordNoName) {
+					ordNoName.textContent = payment.ord_no + ' - ' + payment.full_name;
+				}
+			}
+
+			if (paymentsOptions && popupContent) {
+				resetMultiplePopupView();
+
+				paymentsOptions.style.display = 'block';
+				paymentsOptions.style.opacity = '0';
+				paymentsOptions.style.transition = 'opacity 0.5s ease';
+				setTimeout(() => {
+					paymentsOptions.style.opacity = '1';
+				}, 10);
+
+				popupContent.style.opacity = '0';
+				popupContent.style.transform = 'scale(0.7)';
+				popupContent.classList.remove('animate-elastic');
+				setTimeout(() => {
+					popupContent.style.transform = 'scale(1)';
+					popupContent.style.opacity = '1';
+				}, 50);
+				
+				// Botón: Edit Customer
+				const editBtn = document.getElementById('editPaymentBtn');
+				if (editBtn) {
+
+					editBtn.setAttribute('data-customer-id', paymentId);
+
+					editBtn.onclick = () => {
+						const menuDiv = document.getElementById('payments-menu-buttons');
+						const editDiv = document.getElementById('edit-payments-modal');
+
+						const paymentId = editBtn.getAttribute('data-payment-id');
+						if (!paymentId) return;
+
+						openEditCustomerForm(paymentId);
+			
+						animateHeightChange(popupContent, editDiv, () => {
+							fadeOutAndHide(menuDiv, () => {
+								showWithFadeIn(editDiv);
+							});
+						});
+					}
+				}
+
+				// Botón: Delete Customer
+				const deleteBtn = document.getElementById('deletePaymentBtn');
+				if (deleteBtn) {
+					deleteBtn.onclick = () => {
+
+						deleteBtn.setAttribute('data-payment-id', paymentId);
+						
+						if (!paymentId) {
+							alert("Payment ID not found.");
+							return;
+						}
+
+						showConfirmModal("Delete Customer", "Are you sure you want to delete this cusomer?", async () => {
+							const frame = document.querySelector('.formular-frame');
+							if (frame) frame.style.display = 'none';
+
+							const formData = new FormData();
+							formData.append("payment_id", paymentId);
+				
+							try {
+								const response = await fetch('api/delete_payment.php', {
+									method: 'POST',
+									body: formData
+								});
+				
+								const data = await response.json();
+				
+								let banner = document.getElementById('status-message');
+								let statusText = document.getElementById('status-text');
+								let statusImage = document.getElementById('status-image');
+				
+								statusText.innerText = data.message;
+								statusImage.src = data.img_gif;
+								banner.style.display = 'block';
+								banner.style.opacity = '1';
+				
+								if (data.success) {
+									setTimeout(() => {
+										banner.style.opacity = '0';
+										setTimeout(() => {
+											window.location.href = data.redirect_url || window.location.href;
+										}, 1000);
+									}, 3000);
+								}
+							} catch (error) {
+								console.error("Error deleting product:", error);
+								alert("Error deleting product. Check console.");
+							}
+						});
+					};
+				}
+			}
+		} catch (error) {
+			console.error("Error loading product info:", error);
+		}
+	}
+
 	// 📌 script para add customers popup
 	let addPaymentsButton = document.getElementById('add-payments-btn');
 	if (addPaymentsButton) {
@@ -4075,6 +4193,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	handlePopupClose("add-sale-form", ".formular-big-frame", ["add-sale-form"]);
 	handlePopupClose("sale-options", ".formular-frame", ["sale-options"]);
 	handlePopupClose("add-payment-form", ".formular-frame", ["add-payment-form"]);
+	handlePopupClose("payments-options", ".formular-frame", ["payments-options"]);
 
 	// 📌 reset multiple popup view
 	function resetMultiplePopupView() {
