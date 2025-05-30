@@ -180,3 +180,19 @@ CREATE TABLE IF NOT EXISTS payments (
 	created_by INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS interest_earnings (
+	earnings_id SERIAL PRIMARY KEY,
+	sales_id INTEGER NULL,
+	payment_id INTEGER NULL,
+	customer_id INTEGER NULL,
+	payment_no INTEGER NULL,
+	ord_no INTEGER NULL,
+	interest NUMERIC(10,2) NULL,
+	installments_month INTEGER NULL,
+	no_installments INTEGER NULL,
+	payment_date TIMESTAMP NULL,
+	initial_debt NUMERIC(10,2) NULL,
+	created_by INTEGER NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
