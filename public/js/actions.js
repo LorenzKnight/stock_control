@@ -3913,7 +3913,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			if (data.success && data.data.length > 0) {
 				const payment = data.data.find(p => p.payment_id == paymentId);
 				if (payment && ordNoName) {
-					ordNoName.textContent = payment.ord_no + ' - ' + payment.full_name;
+					ordNoName.textContent = payment.payment_no + ' - ' + payment.full_name;
 				}
 			}
 

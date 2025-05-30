@@ -37,7 +37,7 @@ try {
     if (!$userId) throw new Exception("User not authenticated.");
 
     // Buscar datos de la orden para obtener customer_id y sales_id
-    $saleRes = json_decode(select_from("sales", ["sales_id", "customer_id", "interest", "installments_month", "no_installments", "due", "currency"], ["ord_no" => $ordNo], ["fetch_first" => true]), true);
+    $saleRes = json_decode(select_from("sales", ["sales_id", "customer_id", "price_sum", "interest", "installments_month", "no_installments", "due", "currency"], ["ord_no" => $ordNo], ["fetch_first" => true]), true);
     if (!$saleRes['success']) throw new Exception("Order not found."); 
 
     $sale = $saleRes['data'];
@@ -48,6 +48,16 @@ try {
     $noInstallments = $month < $sale["installments_month"] ? $month : 0;
     if ($noInstallments && $noInstallments < 1) {
         throw new Exception("All payments were made.");
+    }
+
+	$saleDue = (float)($sale['due'] ?? 0);
+	$paymentNet = (float)($amount ?? 0) - (float)($interest ?? 0);
+
+	if ($saleDue < $paymentNet) {
+        throw new Exception(
+			"The debt (" . number_format($saleDue, 2) . " " . ($sale['currency'] ?? '') . 
+			") is less than the amount being paid (" . number_format($paymentNet, 2) . ")."
+		);
     }
 
 	$due = ($sale["due"] ?? 0) - (($amount ?? 0) - ($interest ?? 0));
@@ -74,12 +84,32 @@ try {
         "created_by" => $userId
     ];
 
-    $insert = json_decode(insert_into("payments", $paymentData), true);
+    $insert = json_decode(insert_into("payments", $paymentData, ["id" => "payment_id"]), true);
     if (!$insert['success']) {
         throw new Exception("Failed to insert payment record.");
     }
 
-	if ($insert["success"]) {
+	$interestData = [
+		"sales_id" => $sale["sales_id"],
+		"payment_id" => $insert["id"] ?? null,
+		"customer_id" => $sale["customer_id"],
+		"payment_no" => $newPaymentNo,
+		"ord_no" => $ordNo,
+		"interest" => $interest,
+		"installments_month" => $sale["installments_month"] ?? null,
+		"no_installments" => $noInstallments,
+		"payment_date" => date("Y-m-d H:i:s"),
+		"initial_debt" => $sale["price_sum"] ?? 0,
+		"created_by" => $userId,
+		"created_at" => date("Y-m-d H:i:s")
+	];
+
+	$insertInterest = json_decode(insert_into("interest_earnings", $interestData), true);
+	if (!$insertInterest["success"]) {
+		throw new Exception("Failed to insert interest record.");
+	}
+
+	if ($insert["success"] && $insertInterest["success"]) {
         $updateResult = json_decode(update_table("sales", ["due" => $due], ["sales_id" => $sale["sales_id"]]), true);
 		if (!$updateResult["success"]) throw new Exception("Failed to update sales record.");
 
