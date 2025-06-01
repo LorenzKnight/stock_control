@@ -3857,7 +3857,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									</td>
 									<td width="11%" align="center" valign="middle">
 										<p class="mini-title">Interest:</p>
-										${parseFloat(payment.interest).toFixed(2)}
+										- ${parseFloat(payment.interest).toFixed(2)}
 									</td>
 									<td width="11%" align="center" valign="middle">
 										<p class="mini-title">Due:</p>
@@ -3970,7 +3970,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							return;
 						}
 
-						showConfirmModal("Delete Customer", "Are you sure you want to delete this cusomer?", async () => {
+						showConfirmModal("Delete Customer", "Are you sure you want to delete this Payment?", async () => {
 							const frame = document.querySelector('.formular-frame');
 							if (frame) frame.style.display = 'none';
 

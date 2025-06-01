@@ -37,7 +37,16 @@ try {
     if (!$userId) throw new Exception("User not authenticated.");
 
     // Buscar datos de la orden para obtener customer_id y sales_id
-    $saleRes = json_decode(select_from("sales", ["sales_id", "customer_id", "price_sum", "interest", "installments_month", "no_installments", "due", "currency"], ["ord_no" => $ordNo], ["fetch_first" => true]), true);
+    $saleRes = json_decode(select_from("sales", [
+        "sales_id", 
+        "customer_id", 
+        "price_sum", 
+        "interest", 
+        "installments_month", 
+        "no_installments", 
+        "due", 
+        "currency"
+    ], ["ord_no" => $ordNo], ["fetch_first" => true]), true);
     if (!$saleRes['success']) throw new Exception("Order not found."); 
 
     $sale = $saleRes['data'];
@@ -60,7 +69,7 @@ try {
 		);
     }
 
-	$due = ($sale["due"] ?? 0) - (($amount ?? 0) - ($interest ?? 0));
+	$due = $saleDue - $paymentNet;
 
     $paymentData = [
         "ord_no" => $ordNo,
@@ -74,7 +83,7 @@ try {
         "customer_email" => $email,
         "currency" => $_POST['currency'] ?? $sale["currency"] ?? null,
         "payment_method" => $paymentMethod,
-        "amount" => $amount,
+        "amount" => $paymentNet,
         "interest" => $interest,
         "installments_month" => $sale["installments_month"] ?? null,
         "no_installments" => $noInstallments,
@@ -83,7 +92,7 @@ try {
         "status" => $status,
         "created_by" => $userId
     ];
-
+    
     $insert = json_decode(insert_into("payments", $paymentData, ["id" => "payment_id"]), true);
     if (!$insert['success']) {
         throw new Exception("Failed to insert payment record.");
