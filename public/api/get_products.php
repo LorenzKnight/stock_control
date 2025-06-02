@@ -53,6 +53,7 @@ try {
 		"product_year",
 		"product_image",
 		"product_type",
+		"currency",
 		"prise",
 		"quantity"
 	], $where, [

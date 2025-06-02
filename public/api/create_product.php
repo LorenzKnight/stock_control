@@ -18,15 +18,16 @@ try {
     $userId = $_SESSION["sc_UserId"] ?? null;
     if (!$userId) throw new Exception("User session not found.");
 
-    $productName     = trim($_POST["product_name"] ?? '');
-    $productType     = intval($_POST["product_type"] ?? 0);
-    $productMark     = intval($_POST["product_mark"] ?? 0);
-    $productModel    = intval($_POST["product_model"] ?? 0);
-    $productSubModel = intval($_POST["product_sub_model"] ?? 0);
-    $productYear     = intval($_POST["product_year"] ?? '');
-    $productPrise    = trim($_POST["prise"] ?? '');
-    $productQuantity = trim($_POST["quantity"] ?? '');
-    $description     = trim($_POST["description"] ?? '');
+    $productName     		= trim($_POST["product_name"] ?? '');
+    $productType     		= intval($_POST["product_type"] ?? 0);
+    $productMark     		= intval($_POST["product_mark"] ?? 0);
+    $productModel    		= intval($_POST["product_model"] ?? 0);
+    $productSubModel		= intval($_POST["product_sub_model"] ?? 0);
+    $productPriceCurrency   = trim($_POST["currency"] ?? '');
+    $productPrise         	= trim($_POST["prise"] ?? '');
+    $productYear     		= intval($_POST["product_year"] ?? '');
+    $productQuantity 		= trim($_POST["quantity"] ?? '');
+    $description     		= trim($_POST["description"] ?? '');
 
     if ($productName === '') {
         throw new Exception("Product name are required.");
@@ -67,13 +68,14 @@ try {
         "product_model"     => $productModel,
         "product_sub_model" => $productSubModel,
         "product_year"      => $productYear,
+		"quantity"          => $productQuantity,
+		"currency"			=> $productPriceCurrency,
         "prise"				=> $productPrise,
-        "quantity"          => $productQuantity,
         "description"       => $description,
         "status"            => 1,
         "created_at"        => date("Y-m-d H:i:s")
     ];
-
+	
     if ($imageName) {
         $insertData["product_image"] = $imageName;
     }
