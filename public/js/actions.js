@@ -3579,6 +3579,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									const checkbox = document.getElementById(uniqueId);
 									const quantityInput = document.getElementById(`qty-${uniqueId}`);
 									const selectedProduct = sale.products.find(p => p.product_id === product.product_id);
+									const OutOfStock = product.quantity <= 0;
 
 									if (sale.products.some(p => p.product_id === product.product_id)) {
 										checkbox.checked = true;
@@ -3586,17 +3587,34 @@ document.addEventListener("DOMContentLoaded", async function () {
 										quantityInput.value = selectedProduct.quantity;
 									}
 
-									checkbox.addEventListener('change', function () {
-										if (this.checked) {
-											quantityInput.disabled = false;
-											quantityInput.focus(); 
-											editCalculatePriceSum();
+									if (OutOfStock) {
+										if (checkbox.checked) {
+											checkbox.addEventListener('change', function () {
+												if (!this.checked) {
+													quantityInput.disabled = true;
+													quantityInput.value = 0;
+													checkbox.disabled = true;
+													editCalculatePriceSum();
+												}
+											});
 										} else {
+											checkbox.disabled = true;
 											quantityInput.disabled = true;
-											quantityInput.value = 1;
-											editCalculatePriceSum();
+											quantityInput.value = 0;
 										}
-									});
+									} else {
+										checkbox.addEventListener('change', function () {
+											if (this.checked) {
+												quantityInput.disabled = false;
+												quantityInput.focus();
+												editCalculatePriceSum();
+											} else {
+												quantityInput.disabled = true;
+												quantityInput.value = 1;
+												editCalculatePriceSum();
+											}
+										});
+									}
 
 									quantityInput.addEventListener('input', function () {
 										if (parseInt(this.value) <= 0 || isNaN(parseInt(this.value))) {
