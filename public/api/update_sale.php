@@ -46,13 +46,30 @@ try {
         throw new Exception("Failed to update sale. " . ($result["message"] ?? "Unknown error."));
     }
 
-    $deleteResult = delete_from("purchased_products", ["sales_id" => $saleId]);
+    $existingProducts = json_decode(select_from("purchased_products", ["product_id", "quantity"], ["sales_id" => $saleId]), true);
+    if ($existingProducts["success"] && !empty($existingProducts["data"])) {
+        foreach ($existingProducts["data"] as $product) {
+            $productId = (int)$product["product_id"];
+            $quantityToAdd = (int)$product["quantity"];
 
+            $updateResult = json_decode(update_table(
+                "products",
+                ["quantity" => "quantity + $quantityToAdd"],
+                ["product_id" => $productId]
+            ), true);
+
+            if (!$updateResult || !$updateResult["success"]) {
+                throw new Exception("Failed to update product quantity for product ID: $productId. " . ($updateResult["message"] ?? "Unknown error."));
+            }
+        }
+    }
+
+    $deleteResult = delete_from("purchased_products", ["sales_id" => $saleId]);
 	if (is_string($deleteResult)) {
 		$deleteResult = json_decode($deleteResult, true);
 	}
 
-    if (!$deleteResult || !$deleteResult["success"]) {
+    if (!$deleteResult || (!$deleteResult["success"] && stripos($deleteResult["message"] ?? '', 'No records deleted') === false)) {
 		throw new Exception("Failed to delete old products. " . ($deleteResult["message"] ?? "Unknown error."));
     }
 
@@ -88,6 +105,19 @@ try {
 
         if (!$insertResult || !$insertResult["success"]) {
             throw new Exception("Failed to add product: " . $product["product_id"] . ". " . ($insertResult["message"] ?? "Unknown error."));
+        }
+
+        $productId = (int)$product["product_id"];
+        $quantityToSubtract = (int)$product["quantity"];
+
+        $updateProductResult = json_decode(update_table(
+            "products",
+            ["quantity" => "quantity - $quantityToSubtract"],
+            ["product_id" => $productId]
+        ), true);
+        
+        if (!$updateProductResult || !$updateProductResult["success"]) {
+            throw new Exception("Failed to update product quantity for product ID: $productId. " . ($updateProductResult["message"] ?? "Unknown error."));
         }
     }
 

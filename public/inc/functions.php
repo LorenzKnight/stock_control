@@ -175,11 +175,15 @@ function update_table($tableName, array $queryData = [], array $whereClause = []
 	$setParts = [];
 	foreach ($queryData as $column => $value) {
 		if ($value === "NULL" || is_null($value)) {
-			$setParts[] = "$column = NULL";
-		} else {
-			$escapedValue = is_numeric($value) ? $value : "'" . pg_escape_string((string)$value) . "'";
-			$setParts[] = "$column = $escapedValue";
-		}
+            $setParts[] = "$column = NULL";
+        } elseif (is_numeric($value)) {
+            $setParts[] = "$column = $value";
+        } elseif (preg_match('/^\s*([a-zA-Z_]+\s*[\+\-\*\/]\s*\d+)\s*$/', $value)) {
+            $setParts[] = "$column = $value";
+        } else {
+            $escapedValue = "'" . pg_escape_string((string)$value) . "'";
+            $setParts[] = "$column = $escapedValue";
+        }
 	}
 	$setClause = implode(', ', $setParts);
 
@@ -257,7 +261,7 @@ function delete_from(string $tableName, array $whereClause = [], array $options 
 	$affected = pg_affected_rows($result);
 
 	return json_encode([
-		"success" => $affected > 0,
+		"success" => true,
 		"message" => $affected > 0 ? "Deleted successfully." : "No record deleted.",
 		"count" => $affected
 	]);
