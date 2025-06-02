@@ -1162,6 +1162,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 				populateVehicleTypes('product_type');
 
 				initCategorySelectors('product_mark', 'product_model', 'product_sub_model');
+
+				populateCurrencies('currency');
 			}
 		});
 	}
@@ -1740,7 +1742,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									<p>Year<br><strong>${product.product_year || ''}</strong></p>
 								</td>
 								<td style="width: 50%; border-top: 1px solid #CCC;">
-									<p>Prise<br><strong>${product.prise ? '$' + product.prise : ''}</strong></p>
+									<p>Prise<br><strong>${product.prise ? '$' + product.prise + ' ' + product.currency : ''}</strong></p>
 								</td>
 							</tr>
 						</table>

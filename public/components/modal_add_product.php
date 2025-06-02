@@ -42,14 +42,15 @@
 						<input class="form-medium-input-style input-year-only" type="number" name="product_year" id="product_year" placeholder="Product Year" title="Product Year"/>
 					</td>
 					<td width="50%" align="center" valign="middle">
-						<input class="form-medium-input-style" type="number" name="prise" id="prise" placeholder="Product Prise" title="Product Prise"/>
+						<input class="form-medium-input-style" type="number" name="quantity" id="quantity" placeholder="Quantity" title="Quantity"/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td width="50%" align="center" valign="middle">
-						<input class="form-medium-input-style" type="number" name="quantity" id="quantity" placeholder="Quantity" title="Quantity"/>
+						<select class="form-input-style" name="currency" id="currency"></select>
 					</td>
 					<td width="50%" align="center" valign="middle">
+						<input class="form-medium-input-style" type="number" name="prise" id="prise" placeholder="Product Prise" title="Product Prise"/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
