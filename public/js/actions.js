@@ -3044,18 +3044,26 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 						const checkbox = document.getElementById(uniqueId);
 						const quantityInput = document.getElementById(`qty-${uniqueId}`);
+						const OutOfStock = product.quantity <= 0;
 
-						checkbox.addEventListener('change', function () {
-							if (this.checked) {
-								quantityInput.disabled = false;
-								quantityInput.focus(); 
-								calculatePriceSum();
-							} else {
-								quantityInput.disabled = true;
-								quantityInput.value = 1;
-								calculatePriceSum();
-							}
-						});
+						if (OutOfStock) {
+							checkbox.disabled = true;
+							checkbox.checked = false;
+							quantityInput.disabled = true;
+							quantityInput.value = 0;
+						} else {
+							checkbox.addEventListener('change', function () {
+								if (this.checked) {
+									quantityInput.disabled = false;
+									quantityInput.focus(); 
+									calculatePriceSum();
+								} else {
+									quantityInput.disabled = true;
+									quantityInput.value = 1;
+									calculatePriceSum();
+								}
+							});
+						}
 
 						quantityInput.addEventListener('input', function () {
 							if (parseInt(this.value) <= 0 || isNaN(parseInt(this.value))) {
