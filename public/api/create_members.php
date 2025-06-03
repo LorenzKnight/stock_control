@@ -21,6 +21,9 @@ try {
 		throw new Exception("Method not allowed");
 	}
 
+	$userInfo = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
+	$companyId = json_decode($userInfo, true)["data"]["company_id"] ?? null;
+
 	$requiredFields = ["name", "surname", "birthday", "phone", "email", "password", "rank"];
 	$data = [];
 
@@ -32,6 +35,7 @@ try {
 	}
 
 	$data["parent_user"] = $userId;
+	$data["company_id"] = $companyId;
 	$data["status"] = 1;
 	$data["username"] = strtolower($data["name"] . "_" . $data["surname"]);
 	$data["verified"] = 0;
