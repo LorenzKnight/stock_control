@@ -34,16 +34,15 @@ try {
 			$productId = (int)$product["product_id"];
 			$quantityToAdd = (int)$product["quantity"];
 
-			$updateQuery = "
-				UPDATE products 
-				SET quantity = quantity + $quantityToAdd 
-				WHERE product_id = $productId;
-			";
-			
-			$updateResult = pg_query($updateQuery);
-			if (!$updateResult) {
-				throw new Exception("Failed to update product quantity for product ID: $productId");
-			}
+			$updateResult = json_decode(update_table(
+				"products",
+				["quantity" => "quantity + $quantityToAdd"],
+				["product_id" => $productId]
+			), true);
+
+			if (!$updateResult || !$updateResult["success"]) {
+                throw new Exception("Failed to update product quantity for product ID: $productId. " . ($updateResult["message"] ?? "Unknown error."));
+            }
 		}
 
 		$deleteProductsResult = json_decode(delete_from("purchased_products", ["sales_id" => $saleId]), true);
