@@ -16,7 +16,20 @@ try {
     $search = $_GET['search'] ?? '';
 	$paymentId = isset($_GET['payment_id']) ? (int)$_GET['payment_id'] : null;
 
-    $where = [];
+	$companyResult = json_decode(select_from("companies", [
+		"company_id"
+	], ["user_id" => $userId], ["fetch_first" => true]), true);
+
+	if (!$companyResult["success"]) {
+		throw new Exception("No matching company found.");
+	}
+
+    $companyInfo = $companyResult["data"];
+    $companyId = $companyInfo["company_id"];
+
+    $where = [
+		"company_id" => $companyId,
+	];
 
     if (!empty($search)) {
         $where['OR'] = [

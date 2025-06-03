@@ -66,6 +66,11 @@ try {
         $insertResult = json_decode($insertResponse, true);
     
         if (!$insertResult["success"]) throw new Exception("Insert failed.");
+
+		$updateCompanyId = update_table("users", ["company_id" => $insertResult["id"]], ["user_id" => $userId]);
+		$updateResult = json_decode($updateCompanyId, true);
+
+	    if (!$updateResult["success"]) throw new Exception("Update failed.");
     
         $action = "created";
     }

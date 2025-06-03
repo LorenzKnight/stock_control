@@ -12,9 +12,22 @@ try {
 	$userId = $_SESSION["sc_UserId"] ?? null;
 	if (!$userId) throw new Exception("User session not found.");
 
+	$companyResult = json_decode(select_from("companies", [
+		"company_id"
+	], ["user_id" => $userId], ["fetch_first" => true]), true);
+
+	if (!$companyResult["success"]) {
+		throw new Exception("No matching company found.");
+	}
+
+    $companyInfo = $companyResult["data"];
+    $companyId = $companyInfo["company_id"];
+
 	$search = $_GET["search"] ?? '';
 
-    $where = [];
+    $where = [
+		"company_id" => $companyId,
+	];
 
 	if (!empty($search)) {
 		$where["OR"] = [
