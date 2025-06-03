@@ -60,7 +60,7 @@ try {
     }
 
 	$saleDue = (float)($sale['due'] ?? 0);
-	$paymentNet = (float)($amount ?? 0) - (float)($interest ?? 0);
+	$paymentNet = (float)($amount ?? 0);
 
 	if ($saleDue < $paymentNet) {
         throw new Exception(

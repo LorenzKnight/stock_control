@@ -38,7 +38,7 @@
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td width="50%" align="center" valign="middle">
-						<input class="form-medium-input-style" type="number" name="amount" id="amount" placeholder="Enter a amount..." title="Enter a amount" required/>
+						<input class="form-medium-input-style" type="text" name="amount" id="amount" placeholder="Enter a amount..." title="Enter a amount" required/>
 					</td>
 					<td width="50%" align="center" valign="middle">
 						<input class="form-medium-input-style" type="text" name="interest" id="interest" placeholder="interest" title="interest" disabled/>
