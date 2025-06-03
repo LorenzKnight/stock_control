@@ -90,6 +90,7 @@ CREATE TABLE IF NOT EXISTS category (
 
 CREATE TABLE IF NOT EXISTS customers (
 	customer_id SERIAL PRIMARY KEY,
+	company_id INTEGER NULL,
 	customer_name VARCHAR(255) NULL,
 	customer_surname VARCHAR(255) NULL,
 	customer_image VARCHAR(255) NULL,
@@ -122,6 +123,7 @@ CREATE TABLE IF NOT EXISTS sales (
 	sales_id SERIAL PRIMARY KEY,
 	ord_no INTEGER NULL,
 	customer_id INTEGER NULL,
+	company_id INTEGER NULL,
 	currency VARCHAR(10) NULL,
 	price_sum NUMERIC(10,2) NULL,
 	Initial NUMERIC(10,2) NULL,
@@ -160,6 +162,7 @@ CREATE TABLE IF NOT EXISTS purchased_products (
 
 CREATE TABLE IF NOT EXISTS payments (
 	payment_id SERIAL PRIMARY KEY,
+	company_id INTEGER NULL,
 	ord_no INTEGER NULL,
 	payment_no INTEGER NULL,
 	sales_id INTEGER NULL,
