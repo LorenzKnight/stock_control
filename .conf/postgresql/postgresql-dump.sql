@@ -201,3 +201,106 @@ CREATE TABLE IF NOT EXISTS interest_earnings (
 	created_by INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS roles (
+	role_id SERIAL PRIMARY KEY,
+	role_name VARCHAR(50) NULL
+);
+
+-- INSERT INTO roles (role_id, role_name) VALUES
+-- (1, 'Creator'),
+-- (2, 'Owner'),
+-- (3, 'Super Admin'),
+-- (4, 'Administrator'),
+-- (5, 'Manager'),
+-- (6, 'Supervisor'),
+-- (7, 'Operator'),
+-- (8, 'Viewer');
+
+CREATE TABLE IF NOT EXISTS permissions (
+	permission_id SERIAL PRIMARY KEY,
+	permission_name VARCHAR(50) NULL,
+	description VARCHAR(255) NULL
+);
+
+-- INSERT INTO permissions (permission_id, permission_name, description) VALUES
+-- (1, 'manage_all', 'Can manage all aspects of the system'),
+-- (2, 'manage_intern_admin', 'Can manage internal admin settings'),
+-- (3, 'manage_users', 'Can manage user accounts'),
+-- (4, 'create_data', 'Can create records'),
+-- (5, 'delete_data', 'Can delete records'),
+-- (6, 'edit_products', 'Can edit product info'),
+-- (7, 'view_dashboard', 'Can view the dashboard'),
+-- (8, 'manage_sales', 'Can manage sales and clients services'),
+-- (9, 'export_reports', 'Can export reports');
+
+CREATE TABLE IF NOT EXISTS role_permissions (
+	role_permission_id SERIAL PRIMARY KEY,
+	user_id INTEGER NULL,
+	role_id INTEGER NULL,
+	permission_id INTEGER NULL
+);
+
+-- -- Creator: acceso total
+-- INSERT INTO role_permissions (role_id, permission_id) VALUES
+-- (1, 1),  -- manage_all
+-- (1, 2),  -- manage_intern_admin
+-- (1, 3),  -- manage_users
+-- (1, 4),  -- create_data
+-- (1, 5),  -- delete_data
+-- (1, 6),  -- edit_products
+-- (1, 7),  -- view_dashboard
+-- (1, 8),  -- manage_sales
+-- (1, 9);  -- export_reports
+
+-- -- Owner: acceso casi completo (excepto manage_all)
+-- INSERT INTO role_permissions (role_id, permission_id) VALUES
+-- (2, 2),  -- manage_intern_admin
+-- (2, 3),  -- manage_users
+-- (2, 4),  -- create_data
+-- (2, 5),  -- delete_data
+-- (2, 6),  -- edit_products
+-- (2, 7),  -- view_dashboard
+-- (2, 8),  -- manage_sales
+-- (2, 9);  -- export_reports
+
+-- -- Super Admin
+-- INSERT INTO role_permissions (role_id, permission_id) VALUES
+-- (3, 3),  -- manage_users
+-- (3, 4),  -- create_data
+-- (3, 5),  -- delete_data
+-- (3, 6),  -- edit_products
+-- (3, 7),  -- view_dashboard
+-- (3, 8),  -- manage_sales
+-- (3, 9);  -- export_reports
+
+-- -- Administrator
+-- INSERT INTO role_permissions (role_id, permission_id) VALUES
+-- (4, 3),  -- manage_users
+-- (4, 4),  -- create_data
+-- (4, 6),  -- edit_products
+-- (4, 7),  -- view_dashboard
+-- (4, 8),  -- manage_sales
+
+-- -- Manager
+-- INSERT INTO role_permissions (role_id, permission_id) VALUES
+-- (5, 4),  -- create_data
+-- (5, 6),  -- edit_products
+-- (5, 7),  -- view_dashboard
+-- (5, 8);  -- manage_sales
+
+-- -- Supervisor
+-- INSERT INTO role_permissions (role_id, permission_id) VALUES
+-- (6, 4),  -- create_data
+-- (6, 7),  -- view_dashboard
+-- (6, 8);  -- manage_sales
+
+-- -- Operator
+-- INSERT INTO role_permissions (role_id, permission_id) VALUES
+-- (7, 4),  -- create_data
+-- (7, 6),  -- edit_products
+-- (7, 7);  -- view_dashboard
+
+-- -- Viewer
+-- INSERT INTO role_permissions (role_id, permission_id) VALUES
+-- (8, 7);  -- view_dashboard

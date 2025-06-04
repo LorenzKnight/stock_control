@@ -2,14 +2,12 @@
 	<div class="container">
 		<nav>
 			<ul class="menu">
-				<li>
+				<li class="no-redirect">
 					<div class="logo">
 					    <h3>StockControl</h3>
 					</div>
 				</li>
-                <li class="header-spacer">
-					<!-- <input type="text" name="searchField" id="searchField" class="search-field"> -->
-				</li>
+                <li class="header-spacer"></li>
 				<li>Sales</li>
 				<li>Products</li>
 				<li>Customers</li>
@@ -21,6 +19,7 @@
 					<div id="profileDropdown" style="display: none;">
 						<ul>
 							<li class="no-redirect"><a href="profile.php" id="my-name"></a></li>
+							<li><a href="#">Admin</a></li>
 							<li><a href="#">Settings</a></li>
 							<li class="no-redirect"><a href="#" id="logout-button">Logout</a></li>
 						</ul>

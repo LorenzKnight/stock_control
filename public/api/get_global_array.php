@@ -18,7 +18,6 @@ try {
 
     // 🔒 Seguridad: lista blanca de claves permitidas
     $allowedKeys = [
-        'ranks',
         'vehicleTypes',
         'documentTypes',
         'customerTypes',
