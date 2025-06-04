@@ -392,7 +392,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 	
 			if (data.success && data.data) {
 				const user = data.data;
-				const ranks = data.ranks;
 
 				document.getElementById('edit_name').value = user.name || '';
 				document.getElementById('edit_surname').value = user.surname || '';
@@ -400,7 +399,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				document.getElementById('edit_phone').value = user.phone || '';
 				document.getElementById('edit_email').value = user.email || '';
 
-				populateRankSelect('edit_rank', user.rank, ranks);
+				populateRankSelect('edit_rank', user.rank);
 				// Opcional: Puedes ocultar el campo de contraseña si estás editando
 				// document.getElementById('edit_password').value = '';
 				document.getElementById("edit_status").checked = user.status === "1" || user.status === 1;
@@ -932,27 +931,39 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
-
-	// Función para llenar el <select>
-	function populateRankSelect(selectId, selectedValue = '', ranks = {}) {
+	// Función para llenar el <select> con los roles de usuario
+	async function populateRankSelect(selectId, selectedValue = '') {
 		const select = document.getElementById(selectId);
 		if (!select) return;
-	
+
 		select.innerHTML = '';
-	
+
 		const defaultOption = document.createElement('option');
 		defaultOption.value = '';
 		defaultOption.textContent = 'Select user role';
 		select.appendChild(defaultOption);
-	
-		for (const [value, label] of Object.entries(ranks)) {
-			const option = document.createElement('option');
-			option.value = value;
-			option.textContent = label;
-			if (String(value) === String(selectedValue)) {
-				option.selected = true;
+
+		try {
+			const response = await fetch('api/get_roles.php');
+			const data = await response.json();
+
+			if (!data.success) {
+				console.error("Failed to fetch roles:", data.message);
+				return;
 			}
-			select.appendChild(option);
+
+			const roles = data.data;
+			for (const [value, label] of Object.entries(roles)) {
+				const option = document.createElement('option');
+				option.value = value;
+				option.textContent = label;
+				if (String(value) === String(selectedValue)) {
+					option.selected = true;
+				}
+				select.appendChild(option);
+			}
+		} catch (error) {
+			console.error("Error fetching roles:", error);
 		}
 	}
 
@@ -997,18 +1008,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 						popupContent.style.opacity = '1';
 					}, 50);
 
-					try {
-						const res = await fetch('api/get_global_array.php?key=ranks');
-						const data = await res.json();
-		
-						if (data.success && data.data) {
-							populateRankSelect('rank', '', data.data);
-						} else {
-							console.error("Failed to load ranks:", data.message);
-						}
-					} catch (err) {
-						console.error("Error fetching ranks:", err);
-					}
+					populateRankSelect('rank');
 				}
 			} catch (err) {
 				console.error("Error validating member limit:", err);
@@ -3985,7 +3985,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
-	// 📌 script para add customers popup
+	// 📌 script para add payments popup
 	let addPaymentsButton = document.getElementById('add-payments-btn');
 	if (addPaymentsButton) {
 		addPaymentsButton.addEventListener('click', async function (e) {
