@@ -21,11 +21,10 @@
     --clr-neutral: #666; 
     --cancel-red: rgb(239, 0, 0);
     --agree-blue: rgb(1, 115, 196);
-    --agree-green: rgb(0, 172, 0);
+    --agree-green: rgb(0, 151, 0);
 }
 
 body {
-    /* font-family: Arial, sans-serif; */
     font-family: sans-serif;
     margin: 0;
     padding: 0;

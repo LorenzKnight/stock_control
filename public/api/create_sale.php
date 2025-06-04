@@ -13,6 +13,9 @@ try {
 	$userId = $_SESSION["sc_UserId"] ?? null;
 	if (!$userId) throw new Exception("User session not found.");
 
+	$userInfo = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
+	$companyId = json_decode($userInfo, true)["data"]["company_id"] ?? null;
+
 	$input = json_decode(file_get_contents('php://input'), true);
 	if (!$input) throw new Exception("No data received.");
 
@@ -23,6 +26,7 @@ try {
 		}
 	}
 
+	$currency = $input["currency"] ?? "USD"; // Default to USD if not provided
 	$priceSum = number_format((float)$input["price_sum"], 2, '.', '');
 	$initial = number_format((float)$input["initial"], 2, '.', '');
 	$remaining = number_format((float)$input["remaining"], 2, '.', '');
@@ -38,6 +42,8 @@ try {
 	$saleData = [
 		"ord_no"				=> $newOrdNo,
 		"customer_id"			=> (int)$input["customer_id"],
+		"company_id"			=> $companyId,
+		"currency"				=> $currency,
 		"price_sum"				=> $priceSum,
 		"initial"				=> $initial,
 		"delivery_date"			=> $deliveryDate,

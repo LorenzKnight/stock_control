@@ -45,8 +45,11 @@
 							<div class="cat-all-list">
 								<table width="100%" align="center" cellspacing="0">
 									<tr valign="baseline" class="form_height">
-										<td colspan="2" align="center" valign="middle">
-											<input class="form-input-style" type="text" name="price_sum" id="price_sum" placeholder="Price sum..." disabled/>
+										<td width="50%" align="center" valign="middle">
+											<select class="form-input-style" name="currency" id="currency" required></select>
+										</td>
+										<td width="50%" align="center" valign="middle">
+											<input class="form-medium-input-style" type="text" name="price_sum" id="price_sum" placeholder="Price sum..." disabled/>
 										</td>
 									</tr>
 									<tr valign="baseline" class="form_height">

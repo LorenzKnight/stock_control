@@ -18,6 +18,9 @@ try {
 	$userId = $_SESSION["sc_UserId"] ?? null;
 	if (!$userId) throw new Exception("User session not found.");
 
+	$userInfo = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
+	$companyId = json_decode($userInfo, true)["data"]["company_id"] ?? null;
+
 	$name		= trim($_POST["customer_name"] ?? '');
 	$surname	= trim($_POST["customer_surname"] ?? '');
 	$email		= trim($_POST["customer_email"] ?? '');
@@ -65,6 +68,7 @@ try {
 		"references_1_phone"		=> $ref1Phone,
 		"references_2"				=> $ref2,
 		"references_2_phone"		=> $ref2Phone,
+		"company_id"				=> $companyId,
 		"create_by"					=> $userId,
 		"created_at"				=> date("Y-m-d H:i:s")
 	];
