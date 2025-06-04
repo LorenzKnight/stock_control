@@ -9,18 +9,19 @@
 
 :root {
     --main-bg-dark-blue: #022e63;
-    --clr-border: #999;
-    --frm-bg-transparent-grey: rgba(255, 255, 255, 0.35);
-    --frm-border-semi-transparent: rgba(255, 255, 255, 0.239);
     --main-bg-beige: rgb(221, 216, 212);
     --main-bg-pop-up: rgba(0, 0, 0, 0.512);
-    --main-box-shadow: rgba(0, 0, 0, 0.286);
-    --clr-white: #fff;
     --main-bg-color: #f0f0f0;
     --main-bg-blue: rgb(4, 144, 244);
-    --btn-neutral: #666; 
-    --btn-green: rgb(0, 172, 0);
-    --btn-cancel: rgb(239, 0, 0); 
+    --frm-bg-transparent-grey: rgba(255, 255, 255, 0.35);
+    --frm-border-semi-transparent: rgba(255, 255, 255, 0.239);
+    --main-box-shadow: rgba(0, 0, 0, 0.286);
+    --clr-border: #999;
+    --clr-white: #fff;
+    --clr-neutral: #666; 
+    --cancel-red: rgb(239, 0, 0);
+    --agree-blue: rgb(1, 115, 196);
+    --agree-green: rgb(0, 172, 0);
 }
 
 body {

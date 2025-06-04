@@ -19,7 +19,7 @@
 }
 
 .payment-row:hover {
-	background-color: var(--btn-neutral);
+	background-color: var(--clr-neutral);
 	color: var(--clr-white);
 	transition: all 1.0s ease;
 }
