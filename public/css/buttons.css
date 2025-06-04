@@ -1,10 +1,10 @@
 .button-style-agree {
 	width: 95%;
-	background: var(--btn-green); 
+	background: var(--agree-blue); 
 	color: var(--clr-white);
 	font-size: 12px;
 	/* margin: 10px auto; */
-	padding: 15px 0;
+	padding: 11px 0;
 	border: 0;
 	border-radius: 5px;
 	box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
@@ -13,8 +13,8 @@
 
 .neutral-btn {
 	width: 95%;
-	padding: 15px 0;
-	background: var(--btn-neutral); 
+	padding: 11px 0;
+	background: var(--clr-neutral); 
 	color: var(--clr-white);
     font-size: 12px;
 	border: 0;
@@ -25,11 +25,11 @@
 
 .cancel-btn {
 	width: 95%;
-	background: var(--btn-cancel); 
+	background: var(--cancel-red); 
 	color: var(--clr-white);
 	font-size: 12px;
 	margin: 10px auto;
-	padding: 15px 0;
+	padding: 11px 0;
 	border: 0;
 	border-radius: 5px;
 	box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
@@ -68,7 +68,7 @@
 }
 
 *::-webkit-scrollbar-thumb {
-	background-color: var(--btn-neutral); 
+	background-color: var(--clr-neutral); 
 	border-radius: 10px;
 	box-shadow: 0px 0px 8px var(--main-bg-pop-up);
     transition: all 1.0s ease;
@@ -181,7 +181,7 @@ input:checked + .slider:before {
 
 select.form-medium-input-style, select.form-input-style {
 	width: 93.5%;
-    color: var(--btn-neutral);
+    color: var(--clr-neutral);
     font-size: 12px;
     appearance: none;
 	-webkit-appearance: none;
