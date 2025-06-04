@@ -15,6 +15,12 @@ try {
         throw new Exception("Invalid request method.");
     }
 
+    $userId = $_SESSION['sc_UserId'] ?? null;
+    if (!$userId) throw new Exception("User not authenticated.");
+
+    $userInfo = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
+	$companyId = json_decode($userInfo, true)["data"]["company_id"] ?? null;
+
     $requiredFields = ["ord_no", "amount", "customer_email"];
     foreach ($requiredFields as $field) {
         if (empty($_POST[$field])) {
@@ -32,9 +38,6 @@ try {
     $amount = (float)$_POST['amount'];
     $interest = isset($_POST['interest']) ? (float)$_POST['interest'] : 0;
     $status = isset($_POST['payment_status']) ? (int)$_POST['payment_status'] : 0;
-    $userId = $_SESSION['sc_UserId'] ?? null;
-
-    if (!$userId) throw new Exception("User not authenticated.");
 
     // Buscar datos de la orden para obtener customer_id y sales_id
     $saleRes = json_decode(select_from("sales", [
@@ -90,6 +93,7 @@ try {
         "payment_date" => date("Y-m-d H:i:s"),
         "due" => $due,
         "status" => $status,
+        "company_id" => $companyId,
         "created_by" => $userId
     ];
     
