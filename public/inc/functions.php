@@ -13,7 +13,12 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 
 	$whereParts = [];
 	foreach ($whereClause as $column => $value) {
-		if ($column === 'OR' && is_array($value)) {
+		if (is_array($value) && isset($value['condition'], $value['value'])) {
+			$escapedVal = is_numeric($value['value'])
+				? $value['value']
+				: "'" . pg_escape_string($value['value']) . "'";
+			$whereParts[] = "\"$column\" {$value['condition']} $escapedVal";
+		} elseif ($column === 'OR' && is_array($value)) {
 			$orParts = [];
 			foreach ($value as $orKey => $orVal) {
 				$escapedVal = pg_escape_string((string)$orVal);

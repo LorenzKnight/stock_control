@@ -38,7 +38,23 @@ try {
     ]);
 
     $users = json_decode($userResponse, true);
-    $ranks = GlobalArrays::$ranks;
+    
+    $minRoleId = 1; // Cambia esto según el rol mínimo que quieras mostrar
+    $rolesResponse = select_from("roles", ["role_id", "role_name"], [
+        "role_id" => ["condition" => ">=", "value" => $minRoleId]
+    ], [
+        "order_by" => "role_id",
+        "order_direction" => "ASC"
+    ]);
+
+    $rolesData = json_decode($rolesResponse, true);
+    $ranks = [];
+
+    if ($rolesData["success"] && !empty($rolesData["data"])) {
+        foreach ($rolesData["data"] as $role) {
+            $ranks[$role["role_id"]] = $role["role_name"];
+        }
+    }
 
     if ($users["success"] && !empty($users["data"])) {
         foreach ($users["data"] as &$user) {

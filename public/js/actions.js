@@ -932,7 +932,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// Función para llenar el <select> con los roles de usuario
-	async function populateRankSelect(selectId, selectedValue = '') {
+	async function populateRankSelect(selectId, selectedValue = '', minRoleId = 1) {
 		const select = document.getElementById(selectId);
 		if (!select) return;
 
@@ -954,13 +954,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			const roles = data.data;
 			for (const [value, label] of Object.entries(roles)) {
-				const option = document.createElement('option');
-				option.value = value;
-				option.textContent = label;
-				if (String(value) === String(selectedValue)) {
-					option.selected = true;
+				if (parseInt(value) >= parseInt(minRoleId)) {
+					const option = document.createElement('option');
+					option.value = value;
+					option.textContent = label;
+					if (String(value) === String(selectedValue)) {
+						option.selected = true;
+					}
+					select.appendChild(option);
 				}
-				select.appendChild(option);
 			}
 		} catch (error) {
 			console.error("Error fetching roles:", error);
@@ -1008,7 +1010,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 						popupContent.style.opacity = '1';
 					}, 50);
 
-					populateRankSelect('rank');
+					populateRankSelect('rank', '', 4); // Solo roles 4 o superiores
 				}
 			} catch (err) {
 				console.error("Error validating member limit:", err);
