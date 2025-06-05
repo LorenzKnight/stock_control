@@ -380,6 +380,43 @@ function get_next_increment_value(string $table, string $field, int $startFrom =
 		: $startFrom;
 }
 
+function check_user_permission($userId, $permissionName) {
+    // Obtener el ID del permiso solicitado
+    $permQuery = "
+        SELECT permission_id 
+        FROM permissions 
+        WHERE permission_name = '$permissionName'
+    ";
+    $permResult = pg_query($permQuery);
+    if (!$permResult) {
+        throw new Exception("Database query failed.");
+    }
+    $permRow = pg_fetch_assoc($permResult);
+    if (!$permRow) {
+        throw new Exception("Permission not found.");
+    }
+    $requestedPermissionId = (int)$permRow["permission_id"];
+
+    // Obtener el permiso más alto del usuario
+    $userPermQuery = "
+        SELECT MIN(p.permission_id) as user_permission_id
+        FROM users u
+        JOIN roles r ON u.rank = r.role_id
+        JOIN role_permissions rp ON r.role_id = rp.role_id
+        JOIN permissions p ON rp.permission_id = p.permission_id
+        WHERE u.user_id = $userId
+    ";
+    $userPermResult = pg_query($userPermQuery);
+    if (!$userPermResult) {
+        throw new Exception("Database query failed.");
+    }
+    $userPermRow = pg_fetch_assoc($userPermResult);
+    $userPermissionId = (int)($userPermRow["user_permission_id"] ?? 9999);
+
+    // Comparar: si el permiso del usuario es <= al permiso solicitado, tiene acceso
+    return $userPermissionId <= $requestedPermissionId;
+}
+
 
 //function to display any type of variable
 function cdebug($var, $name = 'var', $die = false)
