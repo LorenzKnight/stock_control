@@ -35,6 +35,10 @@ try {
 		throw new Exception("User session not found.");
 	}
 
+	if (!check_user_permission($userId, 'manage_users')) {
+		throw new Exception("Access denied. You do not have permission to upgrade the supscription.");
+	}
+
 	$currentPackResponse = select_from("users", ["members"], ["user_id" => $userId], ["fetch_first" => true]);
 	$currentPackData = json_decode($currentPackResponse, true);
 

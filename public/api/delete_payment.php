@@ -25,6 +25,10 @@ try {
 		throw new Exception("No authenticated user.");
 	}
 
+	if (!check_user_permission($sessionUserId, 'delete_data')) {
+		throw new Exception("Access denied. You do not have permission to delete data.");
+	}
+
 	$paymentRes = json_decode(select_from("payments", ["sales_id", "interest", "amount", "due"], ["payment_id" => $paymentId], ["fetch_first" => true]), true);
 	if (!$paymentRes || !$paymentRes['success']) {
         throw new Exception("Payment record not found.");
