@@ -7,47 +7,57 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 
 	$columnNames = empty($columns)
 		? '*'
-		: implode(', ', array_map(fn($col) => "\"$col\"", $columns));
+		: implode(', ', array_map(function($col) {
+			// Detectar funciones agregadas y alias
+			if (preg_match('/\b(COUNT|SUM|AVG|MIN|MAX)\s*\(/i', $col) || stripos($col, ' as ') !== false) {
+				return $col;
+			}
+			return "\"$col\"";
+		}, $columns));
 
-	$tableName = '"' . pg_escape_string($tableName) . '"';
+	if (preg_match('/\s|JOIN|\(|\)/i', $tableName)) {
+		$escapedTable = $tableName;
+	} else {
+		$escapedTable = '"' . pg_escape_string($tableName) . '"';
+	}
 
 	$whereParts = [];
 	foreach ($whereClause as $column => $value) {
+		$colFormatted = (strpos($column, '.') === false) ? "\"$column\"" : $column;
+
 		if (is_array($value) && isset($value['condition'], $value['value'])) {
 			$escapedVal = is_numeric($value['value'])
 				? $value['value']
 				: "'" . pg_escape_string($value['value']) . "'";
-			$whereParts[] = "\"$column\" {$value['condition']} $escapedVal";
+			$whereParts[] = "$colFormatted {$value['condition']} $escapedVal";
 		} elseif ($column === 'OR' && is_array($value)) {
 			$orParts = [];
 			foreach ($value as $orKey => $orVal) {
+				$orColFormatted = (strpos($orKey, '.') === false) ? "\"$orKey\"" : $orKey;
 				$escapedVal = pg_escape_string((string)$orVal);
 				if (stripos($orKey, 'LIKE') !== false || stripos($orKey, 'ILIKE') !== false) {
-					$orParts[] = "$orKey '$escapedVal'";
+					$orParts[] = "$orColFormatted '$escapedVal'";
 				} else {
-					$orParts[] = "$orKey = '$escapedVal'";
+					$orParts[] = "$orColFormatted = '$escapedVal'";
 				}
 			}
 			$whereParts[] = '(' . implode(' OR ', $orParts) . ')';
-
 		} elseif ($column === 'OR_IN' && is_array($value)) {
 			$orInParts = [];
 			foreach ($value as $field => $inValues) {
+				$orInCol = (strpos($field, '.') === false) ? "\"$field\"" : $field;
 				$escapedVals = array_map(fn($val) => "'" . pg_escape_string($val) . "'", $inValues);
-				$orInParts[] = "\"$field\" IN (" . implode(',', $escapedVals) . ")";
+				$orInParts[] = "$orInCol IN (" . implode(',', $escapedVals) . ")";
 			}
 			$whereParts[] = '(' . implode(' OR ', $orInParts) . ')';
-
 		} elseif (stripos($column, 'LIKE') !== false || stripos($column, 'ILIKE') !== false) {
 			$escapedVal = pg_escape_string((string)$value);
-			$whereParts[] = "$column '$escapedVal'";
-
+			$whereParts[] = "$colFormatted '$escapedVal'";
 		} elseif ($value === null) {
-			$whereParts[] = "\"$column\" IS NULL";
-
+			$whereParts[] = "$colFormatted IS NULL";
 		} else {
 			$escapedVal = pg_escape_string((string)$value);
-			$whereParts[] = "\"$column\" = '$escapedVal'";
+			$whereParts[] = "$colFormatted = '$escapedVal'";
 		}
 	}
 
@@ -65,7 +75,7 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 		$limitClause = " LIMIT " . intval($options['limit']);
 	}
 
-	$query = "SELECT $columnNames FROM $tableName$whereClauseStr$orderClause$limitClause;";
+	$query = "SELECT $columnNames FROM $escapedTable$whereClauseStr$orderClause$limitClause;";
 
 	if (isset($options['echo_query']) && $options['echo_query'] && php_sapi_name() === 'cli') {
 		echo "Q: $query\n";
@@ -75,10 +85,10 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 
 	if (!$result) {
 		return json_encode([
-			"success" => false,
-			"message" => "Error executing query",
-			"query" => (isset($options['echo_query']) && $options['echo_query']) ? $query : null,
-			"count" => 0
+			"success"	=> false,
+			"message"	=> "Error executing query",
+			"query"		=> (isset($options['echo_query']) && $options['echo_query']) ? $query : null,
+			"count"		=> 0
 		]);
 	}
 
@@ -381,40 +391,55 @@ function get_next_increment_value(string $table, string $field, int $startFrom =
 }
 
 function check_user_permission($userId, $permissionName) {
-    // Obtener el ID del permiso solicitado
-    $permQuery = "
-        SELECT permission_id 
-        FROM permissions 
-        WHERE permission_name = '$permissionName'
-    ";
-    $permResult = pg_query($permQuery);
-    if (!$permResult) {
-        throw new Exception("Database query failed.");
-    }
-    $permRow = pg_fetch_assoc($permResult);
-    if (!$permRow) {
+	// Obtener el ID del permiso solicitado
+	$permResponse = select_from(
+        "permissions",
+        ["permission_id"],
+        ["permission_name" => $permissionName],
+        ["fetch_first" => true]
+    );
+    $permResult = json_decode($permResponse, true);
+
+    if (!$permResult["success"] || empty($permResult["data"]["permission_id"])) {
         throw new Exception("Permission not found.");
     }
-    $requestedPermissionId = (int)$permRow["permission_id"];
+    $requestedPermissionId = (int)$permResult["data"]["permission_id"];
 
-    // Obtener el permiso más alto del usuario
-    $userPermQuery = "
-        SELECT MIN(p.permission_id) as user_permission_id
-        FROM users u
-        JOIN roles r ON u.rank = r.role_id
-        JOIN role_permissions rp ON r.role_id = rp.role_id
-        JOIN permissions p ON rp.permission_id = p.permission_id
-        WHERE u.user_id = $userId
-    ";
-    $userPermResult = pg_query($userPermQuery);
-    if (!$userPermResult) {
-        throw new Exception("Database query failed.");
+	// // Obtener el permiso más alto del usuario
+	// $userPermQuery = "
+	// 	SELECT MIN(p.permission_id) as user_permission_id
+	// 	FROM users u
+	// 	JOIN roles r ON u.rank = r.role_id
+	// 	JOIN role_permissions rp ON r.role_id = rp.role_id
+	// 	JOIN permissions p ON rp.permission_id = p.permission_id
+	// 	WHERE u.user_id = $userId
+	// ";
+	// $userPermResult = pg_query($userPermQuery);
+	// if (!$userPermResult) {
+	// 	throw new Exception("Database query failed.");
+	// }
+	// $userPermRow = pg_fetch_assoc($userPermResult);
+	// $userPermissionId = (int)($userPermRow["user_permission_id"] ?? 9999);
+
+	$userPermResponse = select_from(
+        "users u
+		JOIN roles r ON u.rank = r.role_id
+		JOIN role_permissions rp ON r.role_id = rp.role_id
+		JOIN permissions p ON rp.permission_id = p.permission_id",
+		["MIN(p.permission_id) as user_permission_id"],
+		["u.user_id" => $userId],
+		["fetch_first" => true]
+    );
+    $userPermResult = json_decode($userPermResponse, true);
+// cdebug($userPermResult);
+    if (!$userPermResult["success"]) {
+        throw new Exception("Failed to fetch user permissions.");
     }
-    $userPermRow = pg_fetch_assoc($userPermResult);
-    $userPermissionId = (int)($userPermRow["user_permission_id"] ?? 9999);
 
-    // Comparar: si el permiso del usuario es <= al permiso solicitado, tiene acceso
-    return $userPermissionId <= $requestedPermissionId;
+    $userPermissionId = (int)($userPermResult["data"]["user_permission_id"] ?? 9999);
+
+	// Comparar: si el permiso del usuario es <= al permiso solicitado, tiene acceso
+	return $userPermissionId <= $requestedPermissionId;
 }
 
 
