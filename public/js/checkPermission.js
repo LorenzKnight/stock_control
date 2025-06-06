@@ -15,23 +15,58 @@ document.addEventListener("DOMContentLoaded", async function () {
 			return false;
 		}
 	}
+	
+	// Definir los permisos jerárquicos en orden descendente (más poderoso primero)
+    async function getPermissionHierarchy() {
+        try {
+            const res = await fetch('api/get_permission_hierarchy.php');
+            const data = await res.json();
 
-	const subscButton = document.getElementById("subsc-button");
-	const editCompButton = document.getElementById("edit-comp-button");
-
-    const hasManageAllPermission = await checkPermission('manage_all');
-	console.log(hasManageAllPermission);
-    if (!hasManageAllPermission) {
-		if (subscButton) {
-			subscButton.disabled = true;
-			subscButton.title = "You don't have permission to delete data.";
-			subscButton.classList.add('button-ghost');
-		}
-
-		if (editCompButton) {
-			editCompButton.disabled = true;
-			editCompButton.title = "You don't have permission to edit data.";
-			editCompButton.classList.add('button-ghost');
-		}
+            if (data.success) {
+                return data.permissions;
+            } else {
+                console.error("Error fetching permissions hierarchy:", data.message);
+                return [];
+            }
+        } catch (error) {
+            console.error("Error fetching permissions hierarchy:", error);
+            return [];
+        }
     }
+
+    const permissionHierarchy = await getPermissionHierarchy();
+    console.log("Jerarquía de permisos:", permissionHierarchy);
+
+    let grantedPermission = null;
+
+    for (let permission of permissionHierarchy) {
+        const hasPermission = await checkPermission(permission);
+        console.log(`${permission}: ${hasPermission}`);
+        if (hasPermission) {
+            grantedPermission = permission;
+            break; // Salimos con el permiso más alto concedido
+        }
+    }
+
+	// const subscButton = document.getElementById("subsc-button");
+	// const editCompButton = document.getElementById("edit-comp-button");
+	
+    // Ahora simular un "switch" usando if-else:
+    if (grantedPermission === 'manage_all') {
+        console.log("El usuario tiene acceso total");
+        // Aquí habilitas TODO
+        // ej: subscButton.disabled = false;
+    } else if (grantedPermission === 'manage_intern_admin') {
+        console.log("El usuario tiene acceso de administrador interno");
+        // Habilita lo que este permiso permite
+        // ej: subscButton.disabled = false; 
+        // editCompButton.disabled = false;
+    } else if (grantedPermission === 'manage_users') {
+        console.log("El usuario puede gestionar usuarios");
+        // Habilita solo lo permitido a este nivel
+    } else {
+        console.log("El usuario no tiene permisos para realizar estas acciones");
+        // Deshabilita todo
+    }
+
 });
