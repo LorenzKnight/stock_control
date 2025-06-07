@@ -232,7 +232,7 @@ CREATE TABLE IF NOT EXISTS permissions (
 -- (6, 'create_data', 'Can create records'),
 -- (7, 'view_dashboard', 'Can view the dashboard'),
 -- (8, 'manage_sales', 'Can manage sales and clients services'),
--- (9, 'export_reports', 'Can export reports');
+-- (9, 'export_reports', 'Can export reports'),
 -- (10, 'create_prod_data', 'Can create production records');
 
 CREATE TABLE IF NOT EXISTS role_permissions (
@@ -252,7 +252,8 @@ CREATE TABLE IF NOT EXISTS role_permissions (
 -- (1, 6),  -- create_data
 -- (1, 7),  -- view_dashboard
 -- (1, 8),  -- manage_sales
--- (1, 9);  -- export_reports
+-- (1, 9),  -- export_reports
+-- (1, 10); -- create_prod_data
 
 -- -- Owner: acceso casi completo (excepto manage_all)
 -- INSERT INTO role_permissions (role_id, permission_id) VALUES
@@ -263,7 +264,8 @@ CREATE TABLE IF NOT EXISTS role_permissions (
 -- (2, 6),  -- create_data
 -- (2, 7),  -- view_dashboard
 -- (2, 8),  -- manage_sales
--- (2, 9);  -- export_reports
+-- (2, 9),  -- export_reports
+-- (2, 10); -- create_prod_data
 
 -- -- Super Admin
 -- INSERT INTO role_permissions (role_id, permission_id) VALUES
@@ -273,7 +275,8 @@ CREATE TABLE IF NOT EXISTS role_permissions (
 -- (3, 6),  -- create_data
 -- (3, 7),  -- view_dashboard
 -- (3, 8),  -- manage_sales
--- (3, 9);  -- export_reports
+-- (3, 9),  -- export_reports
+-- (3, 10); -- create_prod_data
 
 -- -- Administrator
 -- INSERT INTO role_permissions (role_id, permission_id) VALUES
@@ -283,6 +286,7 @@ CREATE TABLE IF NOT EXISTS role_permissions (
 -- (4, 6),  -- create_data
 -- (4, 7),  -- view_dashboard
 -- (4, 8),  -- manage_sales
+-- (4, 10); -- create_prod_data
 
 -- -- Manager
 -- INSERT INTO role_permissions (role_id, permission_id) VALUES
