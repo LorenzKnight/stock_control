@@ -18,6 +18,10 @@ try {
     $userId = $_SESSION["sc_UserId"] ?? null;
     if (!$userId) throw new Exception("User session not found.");
 
+    if (!check_user_permission($userId, 'edit_data')) {
+		throw new Exception("Access denied. You do not have permission to edit data.");
+	}
+
     $saleId = isset($_POST["sale_id"]) ? (int)$_POST["sale_id"] : null;
     $customerId = isset($_POST["customer_id"]) ? (int)$_POST["customer_id"] : null;
 
@@ -115,7 +119,7 @@ try {
             ["quantity" => "quantity - $quantityToSubtract"],
             ["product_id" => $productId]
         ), true);
-        
+
         if (!$updateProductResult || !$updateProductResult["success"]) {
             throw new Exception("Failed to update product quantity for product ID: $productId. " . ($updateProductResult["message"] ?? "Unknown error."));
         }

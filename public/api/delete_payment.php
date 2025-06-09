@@ -15,19 +15,18 @@ try {
 		throw new Exception("Method not allowed");
 	}
 
+	$userId = $_SESSION["sc_UserId"] ?? null;
+    if (!$userId) throw new Exception("User session not found.");
+
+    if (!check_user_permission($userId, 'delete_data')) {
+		throw new Exception("Access denied. You do not have permission to delete data.");
+	}
+
 	if (empty($_POST["payment_id"]) || !is_numeric($_POST["payment_id"])) {
 		throw new Exception("Missing or invalid payment ID.");
 	}
 
-	$paymentId = intval($_POST["payment_id"]);
-	$sessionUserId = $_SESSION["sc_UserId"] ?? null;
-	if (!$sessionUserId) {
-		throw new Exception("No authenticated user.");
-	}
-
-	if (!check_user_permission($sessionUserId, 'delete_data')) {
-		throw new Exception("Access denied. You do not have permission to delete data.");
-	}
+	$paymentId = (int)($_POST["payment_id"]);
 
 	$paymentRes = json_decode(select_from("payments", ["sales_id", "interest", "amount", "due"], ["payment_id" => $paymentId], ["fetch_first" => true]), true);
 	if (!$paymentRes || !$paymentRes['success']) {
@@ -54,7 +53,7 @@ try {
 	}
 
 	log_activity(
-		$sessionUserId,
+		$userId,
 		"delete_payment",
 		"User deleted a payment (ID: {$paymentId}).",
 		"payment",

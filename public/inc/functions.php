@@ -405,22 +405,7 @@ function check_user_permission($userId, $permissionName) {
     }
     $requestedPermissionId = (int)$permResult["data"]["permission_id"];
 
-	// // Obtener el permiso más alto del usuario
-	// $userPermQuery = "
-	// 	SELECT MIN(p.permission_id) as user_permission_id
-	// 	FROM users u
-	// 	JOIN roles r ON u.rank = r.role_id
-	// 	JOIN role_permissions rp ON r.role_id = rp.role_id
-	// 	JOIN permissions p ON rp.permission_id = p.permission_id
-	// 	WHERE u.user_id = $userId
-	// ";
-	// $userPermResult = pg_query($userPermQuery);
-	// if (!$userPermResult) {
-	// 	throw new Exception("Database query failed.");
-	// }
-	// $userPermRow = pg_fetch_assoc($userPermResult);
-	// $userPermissionId = (int)($userPermRow["user_permission_id"] ?? 9999);
-
+	// Obtener el permiso más alto del usuario
 	$userPermResponse = select_from(
         "users u
 		JOIN roles r ON u.rank = r.role_id
@@ -431,14 +416,13 @@ function check_user_permission($userId, $permissionName) {
 		["fetch_first" => true]
     );
     $userPermResult = json_decode($userPermResponse, true);
-// cdebug($userPermResult);
+
     if (!$userPermResult["success"]) {
         throw new Exception("Failed to fetch user permissions.");
     }
 
     $userPermissionId = (int)($userPermResult["data"]["user_permission_id"] ?? 9999);
 
-	// Comparar: si el permiso del usuario es <= al permiso solicitado, tiene acceso
 	return $userPermissionId <= $requestedPermissionId;
 }
 

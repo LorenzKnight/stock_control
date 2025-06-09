@@ -15,17 +15,18 @@ try {
 		throw new Exception("Method not allowed");
 	}
 
-	// Validar ID del producto
+	$userId = $_SESSION["sc_UserId"] ?? null;
+    if (!$userId) throw new Exception("User session not found.");
+
+    if (!check_user_permission($userId, 'delete_data')) {
+		throw new Exception("Access denied. You do not have permission to delete data.");
+	}
+
 	if (empty($_POST["product_id"]) || !is_numeric($_POST["product_id"])) {
 		throw new Exception("Missing or invalid product ID.");
 	}
 
-	$productId = intval($_POST["product_id"]);
-	$sessionUserId = $_SESSION["sc_UserId"] ?? null;
-
-	if (!$sessionUserId) {
-		throw new Exception("No authenticated user.");
-	}
+	$productId = (int)$_POST["product_id"];
 
     $deleteImgResult = delete_image_from_record([
 		"table"        => "products",
@@ -51,7 +52,7 @@ try {
 	}
 
 	log_activity(
-		$sessionUserId,
+		$userId,
 		"delete_product",
 		"User deleted a product (ID: {$productId}).",
 		"products",

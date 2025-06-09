@@ -18,6 +18,10 @@ try {
     $userId = $_SESSION["sc_UserId"] ?? null;
     if (!$userId) throw new Exception("User session not found.");
 
+    if (!check_user_permission($userId, 'create_data')) {
+		throw new Exception("Access denied. You do not have permission to create data.");
+	}
+
     $productName     		= trim($_POST["product_name"] ?? '');
     $productType     		= intval($_POST["product_type"] ?? 0);
     $productMark     		= intval($_POST["product_mark"] ?? 0);
