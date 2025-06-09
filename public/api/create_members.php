@@ -17,6 +17,10 @@ try {
 	$userId = $_SESSION["sc_UserId"] ?? null;
 	if (!$userId) throw new Exception("User not logged in.");
 
+	if (!check_user_permission($userId, 'manage_users')) {
+		throw new Exception("Access denied. You do not have permission to create data.");
+	}
+
 	if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 		throw new Exception("Method not allowed");
 	}

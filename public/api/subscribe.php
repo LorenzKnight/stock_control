@@ -35,7 +35,7 @@ try {
 		throw new Exception("User session not found.");
 	}
 
-	if (!check_user_permission($userId, 'manage_users')) {
+	if (!check_user_permission($userId, 'export_reports')) {
 		throw new Exception("Access denied. You do not have permission to upgrade the supscription.");
 	}
 
