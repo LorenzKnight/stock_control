@@ -82,6 +82,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 	const editPaymentBtn = document.getElementById("editPaymentBtn");
 	const deletePaymentBtn = document.getElementById("deletePaymentBtn");
 
+	const salesSite = document.getElementById("sales-site");
+	const paymentsSite = document.getElementById("payments-site");
+	const adminSite = document.getElementById("admin-site");
+
     // Ahora simular un "switch" usando if-else:
     if (grantedPermission === 'manage_all') {
         console.log("El usuario tiene acceso total");
@@ -115,6 +119,16 @@ document.addEventListener("DOMContentLoaded", async function () {
     } else if (grantedPermission === 'view_dashboard') {
         console.log("El usuario puede ver el dashboard");
         // Habilita solo lo permitido a este nivel
+		if (salesSite) {
+			salesSite.style.display = "none";
+		}
+		if (paymentsSite) {
+			paymentsSite.style.display = "none";
+		}
+		if (adminSite) {
+			adminSite.style.display = "none";
+		}
+
 		if (subscButton) {
             subscButton.disabled = true;
             subscButton.title = "You don't have permission to delete data.";
