@@ -15,16 +15,18 @@ try {
 		throw new Exception("Method not allowed");
 	}
 
+	$userId = $_SESSION["sc_UserId"] ?? null;
+	if (!$userId) throw new Exception("User session not found.");
+
+	if (!check_user_permission($userId, 'create_data')) {
+		throw new Exception("Access denied. You do not have permission to delete data.");
+	}
+
 	if (empty($_POST["customer_id"]) || !is_numeric($_POST["customer_id"])) {
 		throw new Exception("Missing or invalid customer ID.");
 	}
 
-	$customerId = intval($_POST["customer_id"]);
-	$sessionUserId = $_SESSION["sc_UserId"] ?? null;
-
-	if (!$sessionUserId) {
-		throw new Exception("No authenticated user.");
-	}
+	$customerId = (int)($_POST["customer_id"]);
 
 	$deleteImgResult = delete_image_from_record([
 		"table"        => "customers",
@@ -50,7 +52,7 @@ try {
 	}
 
 	log_activity(
-		$sessionUserId,
+		$userId,
 		"delete_customer",
 		"User deleted a customer (ID: {$customerId}).",
 		"customers",

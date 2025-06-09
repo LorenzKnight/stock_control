@@ -18,6 +18,10 @@ try {
 	$userId = $_SESSION["sc_UserId"] ?? null;
 	if (!$userId) throw new Exception("User session not found.");
 
+	if (!check_user_permission($userId, 'edit_data')) {
+		throw new Exception("Access denied. You do not have permission to edit data.");
+	}
+
 	$customerId = intval($_POST["edit_customer_id"] ?? 0);
 	if (!$customerId) throw new Exception("Missing customer ID.");
 

@@ -53,6 +53,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 	const addMembersButton = document.getElementById("add-members-button");
 
 	const cardMenuBtn = document.getElementsByClassName("card-menu");
+
+	const saleMenuBtn = document.getElementsByClassName("sale-menu");
 	
 	const addSaleBtn = document.getElementById("add-sale-btn");
 	const editSaleBtn = document.getElementById("editSaleBtn");
@@ -60,10 +62,25 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	const productMenuBtn = document.getElementsByClassName("product-menu");
 
+	const editProductBtn = document.getElementById("editProductBtn");
+	const deleteProductBtn = document.getElementById("deleteProductBtn");
+
 	const addProductBtn = document.getElementById("add-product-btn");
 	const addCategoryBtn = document.getElementById("add-category-btn");
 
 	const addCustomersButton = document.getElementById("add-customers-button");
+
+	const customersMenuBtn = document.getElementsByClassName("customers-menu");
+	
+	const editCustomerBtn = document.getElementById("editCustomerBtn");
+	const deleteCustomerBtn = document.getElementById("deleteCustomerBtn");
+
+	const addPaymentsBtn = document.getElementById("add-payments-btn");
+
+	const paymentsMenuBtn = document.getElementsByClassName("payments-menu");
+
+	const editPaymentBtn = document.getElementById("editPaymentBtn");
+	const deletePaymentBtn = document.getElementById("deletePaymentBtn");
 
     // Ahora simular un "switch" usando if-else:
     if (grantedPermission === 'manage_all') {
@@ -123,6 +140,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		}
 
+		if (saleMenuBtn) {
+			for (let btn of saleMenuBtn) {
+				btn.disabled = true;
+				btn.title = "You don't have permission to access this feature.";
+				btn.classList.add('button-ghost');
+			}
+		}
+
 		if (addSaleBtn) {
 			addSaleBtn.disabled = true;
 			addSaleBtn.title = "You don't have permission to add sales.";
@@ -149,6 +174,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		}
 
+		if (editProductBtn) {
+			editProductBtn.disabled = true;
+			editProductBtn.title = "You don't have permission to edit products.";
+			editProductBtn.classList.add('button-ghost');
+		}
+
+		if (deleteProductBtn) {
+			deleteProductBtn.disabled = true;
+			deleteProductBtn.title = "You don't have permission to delete products.";
+			deleteProductBtn.classList.add('button-ghost');
+		}
+
 		if (addProductBtn) {
 			addProductBtn.disabled = true;
 			addProductBtn.title = "You don't have permission to add products.";
@@ -165,6 +202,52 @@ document.addEventListener("DOMContentLoaded", async function () {
 			addCustomersButton.disabled = true;
 			addCustomersButton.title = "You don't have permission to add customers.";
 			addCustomersButton.classList.add('button-ghost');
+		}
+
+		if (customersMenuBtn) {
+			for (let btn of customersMenuBtn) {
+				btn.disabled = true;
+				btn.title = "You don't have permission to access this feature.";
+				btn.classList.add('button-ghost');
+			}
+		}
+
+		if (editCustomerBtn) {
+			editCustomerBtn.disabled = true;
+			editCustomerBtn.title = "You don't have permission to edit customers.";
+			editCustomerBtn.classList.add('button-ghost');
+		}
+
+		if (deleteCustomerBtn) {
+			deleteCustomerBtn.disabled = true;
+			deleteCustomerBtn.title = "You don't have permission to delete customers.";
+			deleteCustomerBtn.classList.add('button-ghost');
+		}
+
+		if (addPaymentsBtn) {
+			addPaymentsBtn.disabled = true;
+			addPaymentsBtn.title = "You don't have permission to add payments.";
+			addPaymentsBtn.classList.add('button-ghost');
+		}
+
+		if (paymentsMenuBtn) {
+			for (let btn of paymentsMenuBtn) {
+				btn.disabled = true;
+				btn.title = "You don't have permission to access this feature.";
+				btn.classList.add('button-ghost');
+			}
+		}
+
+		if (editPaymentBtn) {
+			editPaymentBtn.disabled = true;
+			editPaymentBtn.title = "You don't have permission to edit payments.";
+			editPaymentBtn.classList.add('button-ghost');
+		}
+
+		if (deletePaymentBtn) {
+			deletePaymentBtn.disabled = true;
+			deletePaymentBtn.title = "You don't have permission to delete payments.";
+			deletePaymentBtn.classList.add('button-ghost');
 		}
 	}
 });

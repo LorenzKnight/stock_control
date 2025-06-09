@@ -15,6 +15,13 @@ try {
         throw new Exception("Method not allowed");
     }
 
+    $userId = $_SESSION["sc_UserId"] ?? null;
+    if (!$userId) throw new Exception("User session not found.");
+
+    if (!check_user_permission($userId, 'delete_data')) {
+		throw new Exception("Access denied. You do not have permission to delete data.");
+	}
+
     if (empty($_POST["sale_id"])) {
         throw new Exception("Sale ID is required.");
     }

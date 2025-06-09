@@ -18,6 +18,10 @@ try {
 	$userId = $_SESSION["sc_UserId"] ?? null;
 	if (!$userId) throw new Exception("User session not found.");
 
+    if (!check_user_permission($userId, 'edit_data')) {
+		throw new Exception("Access denied. You do not have permission to edit data.");
+	}
+
 	if (empty($_POST["edit_product_id"]) || !is_numeric($_POST["edit_product_id"])) {
 		throw new Exception("Missing product ID.");
 	}

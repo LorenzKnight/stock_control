@@ -18,6 +18,10 @@ try {
 	$userId = $_SESSION["sc_UserId"] ?? null;
 	if (!$userId) throw new Exception("User session not found.");
 
+	if (!check_user_permission($userId, 'create_data')) {
+		throw new Exception("Access denied. You do not have permission to create data.");
+	}
+
 	$userInfo = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
 	$companyId = json_decode($userInfo, true)["data"]["company_id"] ?? null;
 
