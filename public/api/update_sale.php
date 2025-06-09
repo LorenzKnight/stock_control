@@ -18,7 +18,7 @@ try {
     $userId = $_SESSION["sc_UserId"] ?? null;
     if (!$userId) throw new Exception("User session not found.");
 
-    if (!check_user_permission($userId, 'edit_data')) {
+    if (!check_user_permission($userId, 'manage_sales')) {
 		throw new Exception("Access denied. You do not have permission to edit data.");
 	}
 

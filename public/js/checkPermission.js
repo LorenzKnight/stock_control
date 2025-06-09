@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         try {
             const res = await fetch('api/get_permission_hierarchy.php');
             const data = await res.json();
-
+console.log("Data:", data);
             if (data.success) {
                 return data.permissions;
             } else {
@@ -93,29 +93,888 @@ document.addEventListener("DOMContentLoaded", async function () {
     } else if (grantedPermission === 'manage_intern_admin') {
         console.log("El usuario tiene acceso de administrador interno");
         // Habilita lo que este permiso permite
-        // ej: subscButton.disabled = false; 
-        // editCompButton.disabled = false;
-    } else if (grantedPermission === 'manage_users') {
-        console.log("El usuario puede gestionar usuarios");
+	} else if (grantedPermission === 'export_reports') {
+        console.log("El usuario puede exportar reportes");
         // Habilita solo lo permitido a este nivel
+		// if (salesSite) {
+		// 	salesSite.style.display = "none";
+		// }
+		// if (paymentsSite) {
+		// 	paymentsSite.style.display = "none";
+		// }
+		// if (adminSite) {
+		// 	adminSite.style.display = "none";
+		// }
+
+		// if (subscButton) {
+        //     subscButton.disabled = true;
+        //     subscButton.title = "You don't have permission to delete data.";
+        //     subscButton.classList.add('button-ghost');
+        // }
+        // if (editCompButton) {
+        //     editCompButton.disabled = true;
+        //     editCompButton.title = "You don't have permission to edit data.";
+        //     editCompButton.classList.add('button-ghost');
+        // }
+
+		// if (addMembersButton) {
+		// 	addMembersButton.disabled = true;
+		// 	addMembersButton.title = "You don't have permission to add members.";
+		// 	addMembersButton.classList.add('button-ghost');
+		// }
+
+		// if (cardMenuBtn) {
+		// 	for (let btn of cardMenuBtn) {
+		// 		btn.disabled = true;
+		// 		btn.title = "You don't have permission to access this feature.";
+		// 		btn.classList.add('button-ghost');
+		// 	}
+		// }
+
+		// if (saleMenuBtn) {
+		// 	for (let btn of saleMenuBtn) {
+		// 		btn.disabled = true;
+		// 		btn.title = "You don't have permission to access this feature.";
+		// 		btn.classList.add('button-ghost');
+		// 	}
+		// }
+
+		// if (addSaleBtn) {
+		// 	addSaleBtn.disabled = true;
+		// 	addSaleBtn.title = "You don't have permission to add sales.";
+		// 	addSaleBtn.classList.add('button-ghost');
+		// }
+
+		// if (editSaleBtn) {
+		// 	editSaleBtn.disabled = true;
+		// 	editSaleBtn.title = "You don't have permission to edit sales.";
+		// 	editSaleBtn.classList.add('button-ghost');
+		// }
+
+		// if (deleteSaleBtn) {
+		// 	deleteSaleBtn.disabled = true;
+		// 	deleteSaleBtn.title = "You don't have permission to delete sales.";
+		// 	deleteSaleBtn.classList.add('button-ghost');
+		// }
+
+		// if (productMenuBtn) {
+		// 	for (let btn of productMenuBtn) {
+		// 		btn.disabled = true;
+		// 		btn.title = "You don't have permission to access this feature.";
+		// 		btn.classList.add('button-ghost');
+		// 	}
+		// }
+
+		// if (editProductBtn) {
+		// 	editProductBtn.disabled = true;
+		// 	editProductBtn.title = "You don't have permission to edit products.";
+		// 	editProductBtn.classList.add('button-ghost');
+		// }
+
+		// if (deleteProductBtn) {
+		// 	deleteProductBtn.disabled = true;
+		// 	deleteProductBtn.title = "You don't have permission to delete products.";
+		// 	deleteProductBtn.classList.add('button-ghost');
+		// }
+
+		// if (addProductBtn) {
+		// 	addProductBtn.disabled = true;
+		// 	addProductBtn.title = "You don't have permission to add products.";
+		// 	addProductBtn.classList.add('button-ghost');
+		// }
+
+		// if (addCategoryBtn) {
+		// 	addCategoryBtn.disabled = true;
+		// 	addCategoryBtn.title = "You don't have permission to add categories.";
+		// 	addCategoryBtn.classList.add('button-ghost');
+		// }
+
+		// if (addCustomersButton) {
+		// 	addCustomersButton.disabled = true;
+		// 	addCustomersButton.title = "You don't have permission to add customers.";
+		// 	addCustomersButton.classList.add('button-ghost');
+		// }
+
+		// if (customersMenuBtn) {
+		// 	for (let btn of customersMenuBtn) {
+		// 		btn.disabled = true;
+		// 		btn.title = "You don't have permission to access this feature.";
+		// 		btn.classList.add('button-ghost');
+		// 	}
+		// }
+
+		// if (editCustomerBtn) {
+		// 	editCustomerBtn.disabled = true;
+		// 	editCustomerBtn.title = "You don't have permission to edit customers.";
+		// 	editCustomerBtn.classList.add('button-ghost');
+		// }
+
+		// if (deleteCustomerBtn) {
+		// 	deleteCustomerBtn.disabled = true;
+		// 	deleteCustomerBtn.title = "You don't have permission to delete customers.";
+		// 	deleteCustomerBtn.classList.add('button-ghost');
+		// }
+
+		// if (addPaymentsBtn) {
+		// 	addPaymentsBtn.disabled = true;
+		// 	addPaymentsBtn.title = "You don't have permission to add payments.";
+		// 	addPaymentsBtn.classList.add('button-ghost');
+		// }
+
+		// if (paymentsMenuBtn) {
+		// 	for (let btn of paymentsMenuBtn) {
+		// 		btn.disabled = true;
+		// 		btn.title = "You don't have permission to access this feature.";
+		// 		btn.classList.add('button-ghost');
+		// 	}
+		// }
+
+		// if (editPaymentBtn) {
+		// 	editPaymentBtn.disabled = true;
+		// 	editPaymentBtn.title = "You don't have permission to edit payments.";
+		// 	editPaymentBtn.classList.add('button-ghost');
+		// }
+
+		// if (deletePaymentBtn) {
+		// 	deletePaymentBtn.disabled = true;
+		// 	deletePaymentBtn.title = "You don't have permission to delete payments.";
+		// 	deletePaymentBtn.classList.add('button-ghost');
+		// }
 	} else if (grantedPermission === 'delete_data') {
         console.log("El usuario puede eliminar datos");
         // Habilita solo lo permitido a este nivel
+		// if (salesSite) {
+		// 	salesSite.style.display = "none";
+		// }
+		// if (paymentsSite) {
+		// 	paymentsSite.style.display = "none";
+		// }
+		// if (adminSite) {
+		// 	adminSite.style.display = "none";
+		// }
+
+		if (subscButton) {
+            subscButton.disabled = true;
+            subscButton.title = "You don't have permission to delete data.";
+            subscButton.classList.add('button-ghost');
+        }
+        if (editCompButton) {
+            editCompButton.disabled = true;
+            editCompButton.title = "You don't have permission to edit data.";
+            editCompButton.classList.add('button-ghost');
+        }
+
+		// if (addMembersButton) {
+		// 	addMembersButton.disabled = true;
+		// 	addMembersButton.title = "You don't have permission to add members.";
+		// 	addMembersButton.classList.add('button-ghost');
+		// }
+
+		// if (cardMenuBtn) {
+		// 	for (let btn of cardMenuBtn) {
+		// 		btn.disabled = true;
+		// 		btn.title = "You don't have permission to access this feature.";
+		// 		btn.classList.add('button-ghost');
+		// 	}
+		// }
+
+		// if (saleMenuBtn) {
+		// 	for (let btn of saleMenuBtn) {
+		// 		btn.disabled = true;
+		// 		btn.title = "You don't have permission to access this feature.";
+		// 		btn.classList.add('button-ghost');
+		// 	}
+		// }
+
+		// if (addSaleBtn) {
+		// 	addSaleBtn.disabled = true;
+		// 	addSaleBtn.title = "You don't have permission to add sales.";
+		// 	addSaleBtn.classList.add('button-ghost');
+		// }
+
+		// if (editSaleBtn) {
+		// 	editSaleBtn.disabled = true;
+		// 	editSaleBtn.title = "You don't have permission to edit sales.";
+		// 	editSaleBtn.classList.add('button-ghost');
+		// }
+
+		if (deleteSaleBtn) {
+			deleteSaleBtn.disabled = true;
+			deleteSaleBtn.title = "You don't have permission to delete sales.";
+			deleteSaleBtn.classList.add('button-ghost');
+		}
+
+		// if (productMenuBtn) {
+		// 	for (let btn of productMenuBtn) {
+		// 		btn.disabled = true;
+		// 		btn.title = "You don't have permission to access this feature.";
+		// 		btn.classList.add('button-ghost');
+		// 	}
+		// }
+
+		// if (editProductBtn) {
+		// 	editProductBtn.disabled = true;
+		// 	editProductBtn.title = "You don't have permission to edit products.";
+		// 	editProductBtn.classList.add('button-ghost');
+		// }
+
+		if (deleteProductBtn) {
+			deleteProductBtn.disabled = true;
+			deleteProductBtn.title = "You don't have permission to delete products.";
+			deleteProductBtn.classList.add('button-ghost');
+		}
+
+		// if (addProductBtn) {
+		// 	addProductBtn.disabled = true;
+		// 	addProductBtn.title = "You don't have permission to add products.";
+		// 	addProductBtn.classList.add('button-ghost');
+		// }
+
+		// if (addCategoryBtn) {
+		// 	addCategoryBtn.disabled = true;
+		// 	addCategoryBtn.title = "You don't have permission to add categories.";
+		// 	addCategoryBtn.classList.add('button-ghost');
+		// }
+
+		// if (addCustomersButton) {
+		// 	addCustomersButton.disabled = true;
+		// 	addCustomersButton.title = "You don't have permission to add customers.";
+		// 	addCustomersButton.classList.add('button-ghost');
+		// }
+
+		// if (customersMenuBtn) {
+		// 	for (let btn of customersMenuBtn) {
+		// 		btn.disabled = true;
+		// 		btn.title = "You don't have permission to access this feature.";
+		// 		btn.classList.add('button-ghost');
+		// 	}
+		// }
+
+		// if (editCustomerBtn) {
+		// 	editCustomerBtn.disabled = true;
+		// 	editCustomerBtn.title = "You don't have permission to edit customers.";
+		// 	editCustomerBtn.classList.add('button-ghost');
+		// }
+
+		if (deleteCustomerBtn) {
+			deleteCustomerBtn.disabled = true;
+			deleteCustomerBtn.title = "You don't have permission to delete customers.";
+			deleteCustomerBtn.classList.add('button-ghost');
+		}
+
+		// if (addPaymentsBtn) {
+		// 	addPaymentsBtn.disabled = true;
+		// 	addPaymentsBtn.title = "You don't have permission to add payments.";
+		// 	addPaymentsBtn.classList.add('button-ghost');
+		// }
+
+		// if (paymentsMenuBtn) {
+		// 	for (let btn of paymentsMenuBtn) {
+		// 		btn.disabled = true;
+		// 		btn.title = "You don't have permission to access this feature.";
+		// 		btn.classList.add('button-ghost');
+		// 	}
+		// }
+
+		// if (editPaymentBtn) {
+		// 	editPaymentBtn.disabled = true;
+		// 	editPaymentBtn.title = "You don't have permission to edit payments.";
+		// 	editPaymentBtn.classList.add('button-ghost');
+		// }
+
+		if (deletePaymentBtn) {
+			deletePaymentBtn.disabled = true;
+			deletePaymentBtn.title = "You don't have permission to delete payments.";
+			deletePaymentBtn.classList.add('button-ghost');
+		}
+    } else if (grantedPermission === 'manage_users') {
+        console.log("El usuario puede gestionar usuarios");
+        // Habilita solo lo permitido a este nivel
+		// if (salesSite) {
+		// 	salesSite.style.display = "none";
+		// }
+		// if (paymentsSite) {
+		// 	paymentsSite.style.display = "none";
+		// }
+		// if (adminSite) {
+		// 	adminSite.style.display = "none";
+		// }
+
+		if (subscButton) {
+            subscButton.disabled = true;
+            subscButton.title = "You don't have permission to delete data.";
+            subscButton.classList.add('button-ghost');
+        }
+        if (editCompButton) {
+            editCompButton.disabled = true;
+            editCompButton.title = "You don't have permission to edit data.";
+            editCompButton.classList.add('button-ghost');
+        }
+
+		// if (addMembersButton) {
+		// 	addMembersButton.disabled = true;
+		// 	addMembersButton.title = "You don't have permission to add members.";
+		// 	addMembersButton.classList.add('button-ghost');
+		// }
+
+		// if (cardMenuBtn) {
+		// 	for (let btn of cardMenuBtn) {
+		// 		btn.disabled = true;
+		// 		btn.title = "You don't have permission to access this feature.";
+		// 		btn.classList.add('button-ghost');
+		// 	}
+		// }
+
+		// if (saleMenuBtn) {
+		// 	for (let btn of saleMenuBtn) {
+		// 		btn.disabled = true;
+		// 		btn.title = "You don't have permission to access this feature.";
+		// 		btn.classList.add('button-ghost');
+		// 	}
+		// }
+
+		// if (addSaleBtn) {
+		// 	addSaleBtn.disabled = true;
+		// 	addSaleBtn.title = "You don't have permission to add sales.";
+		// 	addSaleBtn.classList.add('button-ghost');
+		// }
+
+		// if (editSaleBtn) {
+		// 	editSaleBtn.disabled = true;
+		// 	editSaleBtn.title = "You don't have permission to edit sales.";
+		// 	editSaleBtn.classList.add('button-ghost');
+		// }
+
+		if (deleteSaleBtn) {
+			deleteSaleBtn.disabled = true;
+			deleteSaleBtn.title = "You don't have permission to delete sales.";
+			deleteSaleBtn.classList.add('button-ghost');
+		}
+
+		// if (productMenuBtn) {
+		// 	for (let btn of productMenuBtn) {
+		// 		btn.disabled = true;
+		// 		btn.title = "You don't have permission to access this feature.";
+		// 		btn.classList.add('button-ghost');
+		// 	}
+		// }
+
+		// if (editProductBtn) {
+		// 	editProductBtn.disabled = true;
+		// 	editProductBtn.title = "You don't have permission to edit products.";
+		// 	editProductBtn.classList.add('button-ghost');
+		// }
+
+		if (deleteProductBtn) {
+			deleteProductBtn.disabled = true;
+			deleteProductBtn.title = "You don't have permission to delete products.";
+			deleteProductBtn.classList.add('button-ghost');
+		}
+
+		// if (addProductBtn) {
+		// 	addProductBtn.disabled = true;
+		// 	addProductBtn.title = "You don't have permission to add products.";
+		// 	addProductBtn.classList.add('button-ghost');
+		// }
+
+		// if (addCategoryBtn) {
+		// 	addCategoryBtn.disabled = true;
+		// 	addCategoryBtn.title = "You don't have permission to add categories.";
+		// 	addCategoryBtn.classList.add('button-ghost');
+		// }
+
+		// if (addCustomersButton) {
+		// 	addCustomersButton.disabled = true;
+		// 	addCustomersButton.title = "You don't have permission to add customers.";
+		// 	addCustomersButton.classList.add('button-ghost');
+		// }
+
+		// if (customersMenuBtn) {
+		// 	for (let btn of customersMenuBtn) {
+		// 		btn.disabled = true;
+		// 		btn.title = "You don't have permission to access this feature.";
+		// 		btn.classList.add('button-ghost');
+		// 	}
+		// }
+
+		// if (editCustomerBtn) {
+		// 	editCustomerBtn.disabled = true;
+		// 	editCustomerBtn.title = "You don't have permission to edit customers.";
+		// 	editCustomerBtn.classList.add('button-ghost');
+		// }
+
+		if (deleteCustomerBtn) {
+			deleteCustomerBtn.disabled = true;
+			deleteCustomerBtn.title = "You don't have permission to delete customers.";
+			deleteCustomerBtn.classList.add('button-ghost');
+		}
+
+		// if (addPaymentsBtn) {
+		// 	addPaymentsBtn.disabled = true;
+		// 	addPaymentsBtn.title = "You don't have permission to add payments.";
+		// 	addPaymentsBtn.classList.add('button-ghost');
+		// }
+
+		// if (paymentsMenuBtn) {
+		// 	for (let btn of paymentsMenuBtn) {
+		// 		btn.disabled = true;
+		// 		btn.title = "You don't have permission to access this feature.";
+		// 		btn.classList.add('button-ghost');
+		// 	}
+		// }
+
+		// if (editPaymentBtn) {
+		// 	editPaymentBtn.disabled = true;
+		// 	editPaymentBtn.title = "You don't have permission to edit payments.";
+		// 	editPaymentBtn.classList.add('button-ghost');
+		// }
+
+		if (deletePaymentBtn) {
+			deletePaymentBtn.disabled = true;
+			deletePaymentBtn.title = "You don't have permission to delete payments.";
+			deletePaymentBtn.classList.add('button-ghost');
+		}
     } else if (grantedPermission === 'edit_data') {
         console.log("El usuario puede editar datos");
         // Habilita solo lo permitido a este nivel
+		// if (salesSite) {
+		// 	salesSite.style.display = "none";
+		// }
+		if (paymentsSite) {
+			paymentsSite.style.display = "none";
+		}
+		if (adminSite) {
+			adminSite.style.display = "none";
+		}
+
+		if (subscButton) {
+            subscButton.disabled = true;
+            subscButton.title = "You don't have permission to delete data.";
+            subscButton.classList.add('button-ghost');
+        }
+        if (editCompButton) {
+            editCompButton.disabled = true;
+            editCompButton.title = "You don't have permission to edit data.";
+            editCompButton.classList.add('button-ghost');
+        }
+
+		if (addMembersButton) {
+			addMembersButton.disabled = true;
+			addMembersButton.title = "You don't have permission to add members.";
+			addMembersButton.classList.add('button-ghost');
+		}
+
+		if (cardMenuBtn) {
+			for (let btn of cardMenuBtn) {
+				btn.disabled = true;
+				btn.title = "You don't have permission to access this feature.";
+				btn.classList.add('button-ghost');
+			}
+		}
+
+		// if (saleMenuBtn) {
+		// 	for (let btn of saleMenuBtn) {
+		// 		btn.disabled = true;
+		// 		btn.title = "You don't have permission to access this feature.";
+		// 		btn.classList.add('button-ghost');
+		// 	}
+		// }
+
+		// if (addSaleBtn) {
+		// 	addSaleBtn.disabled = true;
+		// 	addSaleBtn.title = "You don't have permission to add sales.";
+		// 	addSaleBtn.classList.add('button-ghost');
+		// }
+
+		// if (editSaleBtn) {
+		// 	editSaleBtn.disabled = true;
+		// 	editSaleBtn.title = "You don't have permission to edit sales.";
+		// 	editSaleBtn.classList.add('button-ghost');
+		// }
+
+		if (deleteSaleBtn) {
+			deleteSaleBtn.disabled = true;
+			deleteSaleBtn.title = "You don't have permission to delete sales.";
+			deleteSaleBtn.classList.add('button-ghost');
+		}
+
+		// if (productMenuBtn) {
+		// 	for (let btn of productMenuBtn) {
+		// 		btn.disabled = true;
+		// 		btn.title = "You don't have permission to access this feature.";
+		// 		btn.classList.add('button-ghost');
+		// 	}
+		// }
+
+		// if (editProductBtn) {
+		// 	editProductBtn.disabled = true;
+		// 	editProductBtn.title = "You don't have permission to edit products.";
+		// 	editProductBtn.classList.add('button-ghost');
+		// }
+
+		if (deleteProductBtn) {
+			deleteProductBtn.disabled = true;
+			deleteProductBtn.title = "You don't have permission to delete products.";
+			deleteProductBtn.classList.add('button-ghost');
+		}
+
+		// if (addProductBtn) {
+		// 	addProductBtn.disabled = true;
+		// 	addProductBtn.title = "You don't have permission to add products.";
+		// 	addProductBtn.classList.add('button-ghost');
+		// }
+
+		if (addCategoryBtn) {
+			addCategoryBtn.disabled = true;
+			addCategoryBtn.title = "You don't have permission to add categories.";
+			addCategoryBtn.classList.add('button-ghost');
+		}
+
+		// if (addCustomersButton) {
+		// 	addCustomersButton.disabled = true;
+		// 	addCustomersButton.title = "You don't have permission to add customers.";
+		// 	addCustomersButton.classList.add('button-ghost');
+		// }
+
+		// if (customersMenuBtn) {
+		// 	for (let btn of customersMenuBtn) {
+		// 		btn.disabled = true;
+		// 		btn.title = "You don't have permission to access this feature.";
+		// 		btn.classList.add('button-ghost');
+		// 	}
+		// }
+
+		// if (editCustomerBtn) {
+		// 	editCustomerBtn.disabled = true;
+		// 	editCustomerBtn.title = "You don't have permission to edit customers.";
+		// 	editCustomerBtn.classList.add('button-ghost');
+		// }
+
+		if (deleteCustomerBtn) {
+			deleteCustomerBtn.disabled = true;
+			deleteCustomerBtn.title = "You don't have permission to delete customers.";
+			deleteCustomerBtn.classList.add('button-ghost');
+		}
+
+		if (addPaymentsBtn) {
+			addPaymentsBtn.disabled = true;
+			addPaymentsBtn.title = "You don't have permission to add payments.";
+			addPaymentsBtn.classList.add('button-ghost');
+		}
+
+		if (paymentsMenuBtn) {
+			for (let btn of paymentsMenuBtn) {
+				btn.disabled = true;
+				btn.title = "You don't have permission to access this feature.";
+				btn.classList.add('button-ghost');
+			}
+		}
+
+		if (editPaymentBtn) {
+			editPaymentBtn.disabled = true;
+			editPaymentBtn.title = "You don't have permission to edit payments.";
+			editPaymentBtn.classList.add('button-ghost');
+		}
+
+		if (deletePaymentBtn) {
+			deletePaymentBtn.disabled = true;
+			deletePaymentBtn.title = "You don't have permission to delete payments.";
+			deletePaymentBtn.classList.add('button-ghost');
+		}
     } else if (grantedPermission === 'create_data') {
         console.log("El usuario puede crear datos");
         // Habilita solo lo permitido a este nivel
-	} else if (grantedPermission === 'manage_sales') {
-        console.log("El usuario puede gestionar ventas");
+		// if (salesSite) {
+		// 	salesSite.style.display = "none";
+		// }
+		if (paymentsSite) {
+			paymentsSite.style.display = "none";
+		}
+		if (adminSite) {
+			adminSite.style.display = "none";
+		}
+
+		if (subscButton) {
+            subscButton.disabled = true;
+            subscButton.title = "You don't have permission to delete data.";
+            subscButton.classList.add('button-ghost');
+        }
+        if (editCompButton) {
+            editCompButton.disabled = true;
+            editCompButton.title = "You don't have permission to edit data.";
+            editCompButton.classList.add('button-ghost');
+        }
+
+		if (addMembersButton) {
+			addMembersButton.disabled = true;
+			addMembersButton.title = "You don't have permission to add members.";
+			addMembersButton.classList.add('button-ghost');
+		}
+
+		if (cardMenuBtn) {
+			for (let btn of cardMenuBtn) {
+				btn.disabled = true;
+				btn.title = "You don't have permission to access this feature.";
+				btn.classList.add('button-ghost');
+			}
+		}
+
+		// if (saleMenuBtn) {
+		// 	for (let btn of saleMenuBtn) {
+		// 		btn.disabled = true;
+		// 		btn.title = "You don't have permission to access this feature.";
+		// 		btn.classList.add('button-ghost');
+		// 	}
+		// }
+
+		// if (addSaleBtn) {
+		// 	addSaleBtn.disabled = true;
+		// 	addSaleBtn.title = "You don't have permission to add sales.";
+		// 	addSaleBtn.classList.add('button-ghost');
+		// }
+
+		// if (editSaleBtn) {
+		// 	editSaleBtn.disabled = true;
+		// 	editSaleBtn.title = "You don't have permission to edit sales.";
+		// 	editSaleBtn.classList.add('button-ghost');
+		// }
+
+		if (deleteSaleBtn) {
+			deleteSaleBtn.disabled = true;
+			deleteSaleBtn.title = "You don't have permission to delete sales.";
+			deleteSaleBtn.classList.add('button-ghost');
+		}
+
+		if (productMenuBtn) {
+			for (let btn of productMenuBtn) {
+				btn.disabled = true;
+				btn.title = "You don't have permission to access this feature.";
+				btn.classList.add('button-ghost');
+			}
+		}
+
+		if (editProductBtn) {
+			editProductBtn.disabled = true;
+			editProductBtn.title = "You don't have permission to edit products.";
+			editProductBtn.classList.add('button-ghost');
+		}
+
+		if (deleteProductBtn) {
+			deleteProductBtn.disabled = true;
+			deleteProductBtn.title = "You don't have permission to delete products.";
+			deleteProductBtn.classList.add('button-ghost');
+		}
+
+		if (addProductBtn) {
+			addProductBtn.disabled = true;
+			addProductBtn.title = "You don't have permission to add products.";
+			addProductBtn.classList.add('button-ghost');
+		}
+
+		if (addCategoryBtn) {
+			addCategoryBtn.disabled = true;
+			addCategoryBtn.title = "You don't have permission to add categories.";
+			addCategoryBtn.classList.add('button-ghost');
+		}
+
+		// if (addCustomersButton) {
+		// 	addCustomersButton.disabled = true;
+		// 	addCustomersButton.title = "You don't have permission to add customers.";
+		// 	addCustomersButton.classList.add('button-ghost');
+		// }
+
+		// if (customersMenuBtn) {
+		// 	for (let btn of customersMenuBtn) {
+		// 		btn.disabled = true;
+		// 		btn.title = "You don't have permission to access this feature.";
+		// 		btn.classList.add('button-ghost');
+		// 	}
+		// }
+
+		// if (editCustomerBtn) {
+		// 	editCustomerBtn.disabled = true;
+		// 	editCustomerBtn.title = "You don't have permission to edit customers.";
+		// 	editCustomerBtn.classList.add('button-ghost');
+		// }
+
+		if (deleteCustomerBtn) {
+			deleteCustomerBtn.disabled = true;
+			deleteCustomerBtn.title = "You don't have permission to delete customers.";
+			deleteCustomerBtn.classList.add('button-ghost');
+		}
+
+		if (addPaymentsBtn) {
+			addPaymentsBtn.disabled = true;
+			addPaymentsBtn.title = "You don't have permission to add payments.";
+			addPaymentsBtn.classList.add('button-ghost');
+		}
+
+		if (paymentsMenuBtn) {
+			for (let btn of paymentsMenuBtn) {
+				btn.disabled = true;
+				btn.title = "You don't have permission to access this feature.";
+				btn.classList.add('button-ghost');
+			}
+		}
+
+		if (editPaymentBtn) {
+			editPaymentBtn.disabled = true;
+			editPaymentBtn.title = "You don't have permission to edit payments.";
+			editPaymentBtn.classList.add('button-ghost');
+		}
+
+		if (deletePaymentBtn) {
+			deletePaymentBtn.disabled = true;
+			deletePaymentBtn.title = "You don't have permission to delete payments.";
+			deletePaymentBtn.classList.add('button-ghost');
+		}
+    } else if (grantedPermission === 'manage_sales') {
+		console.log("El usuario puede gestionar ventas");
         // Habilita solo lo permitido a este nivel
-    } else if (grantedPermission === 'export_reports') {
-        console.log("El usuario puede exportar reportes");
-        // Habilita solo lo permitido a este nivel
-    } else if (grantedPermission === 'create_prod_data') {
-        console.log("El usuario puede crear datos de productos");
-        // Habilita solo lo permitido a este nivel
+		// if (salesSite) {
+		// 	salesSite.style.display = "none";
+		// }
+		if (paymentsSite) {
+			paymentsSite.style.display = "none";
+		}
+		if (adminSite) {
+			adminSite.style.display = "none";
+		}
+
+		if (subscButton) {
+            subscButton.disabled = true;
+            subscButton.title = "You don't have permission to delete data.";
+            subscButton.classList.add('button-ghost');
+        }
+        if (editCompButton) {
+            editCompButton.disabled = true;
+            editCompButton.title = "You don't have permission to edit data.";
+            editCompButton.classList.add('button-ghost');
+        }
+
+		if (addMembersButton) {
+			addMembersButton.disabled = true;
+			addMembersButton.title = "You don't have permission to add members.";
+			addMembersButton.classList.add('button-ghost');
+		}
+
+		if (cardMenuBtn) {
+			for (let btn of cardMenuBtn) {
+				btn.disabled = true;
+				btn.title = "You don't have permission to access this feature.";
+				btn.classList.add('button-ghost');
+			}
+		}
+
+		// if (saleMenuBtn) {
+		// 	for (let btn of saleMenuBtn) {
+		// 		btn.disabled = true;
+		// 		btn.title = "You don't have permission to access this feature.";
+		// 		btn.classList.add('button-ghost');
+		// 	}
+		// }
+
+		// if (addSaleBtn) {
+		// 	addSaleBtn.disabled = true;
+		// 	addSaleBtn.title = "You don't have permission to add sales.";
+		// 	addSaleBtn.classList.add('button-ghost');
+		// }
+
+		// if (editSaleBtn) {
+		// 	editSaleBtn.disabled = true;
+		// 	editSaleBtn.title = "You don't have permission to edit sales.";
+		// 	editSaleBtn.classList.add('button-ghost');
+		// }
+
+		if (deleteSaleBtn) {
+			deleteSaleBtn.disabled = true;
+			deleteSaleBtn.title = "You don't have permission to delete sales.";
+			deleteSaleBtn.classList.add('button-ghost');
+		}
+
+		if (productMenuBtn) {
+			for (let btn of productMenuBtn) {
+				btn.disabled = true;
+				btn.title = "You don't have permission to access this feature.";
+				btn.classList.add('button-ghost');
+			}
+		}
+
+		if (editProductBtn) {
+			editProductBtn.disabled = true;
+			editProductBtn.title = "You don't have permission to edit products.";
+			editProductBtn.classList.add('button-ghost');
+		}
+
+		if (deleteProductBtn) {
+			deleteProductBtn.disabled = true;
+			deleteProductBtn.title = "You don't have permission to delete products.";
+			deleteProductBtn.classList.add('button-ghost');
+		}
+
+		if (addProductBtn) {
+			addProductBtn.disabled = true;
+			addProductBtn.title = "You don't have permission to add products.";
+			addProductBtn.classList.add('button-ghost');
+		}
+
+		if (addCategoryBtn) {
+			addCategoryBtn.disabled = true;
+			addCategoryBtn.title = "You don't have permission to add categories.";
+			addCategoryBtn.classList.add('button-ghost');
+		}
+
+		// if (addCustomersButton) {
+		// 	addCustomersButton.disabled = true;
+		// 	addCustomersButton.title = "You don't have permission to add customers.";
+		// 	addCustomersButton.classList.add('button-ghost');
+		// }
+
+		// if (customersMenuBtn) {
+		// 	for (let btn of customersMenuBtn) {
+		// 		btn.disabled = true;
+		// 		btn.title = "You don't have permission to access this feature.";
+		// 		btn.classList.add('button-ghost');
+		// 	}
+		// }
+
+		// if (editCustomerBtn) {
+		// 	editCustomerBtn.disabled = true;
+		// 	editCustomerBtn.title = "You don't have permission to edit customers.";
+		// 	editCustomerBtn.classList.add('button-ghost');
+		// }
+
+		if (deleteCustomerBtn) {
+			deleteCustomerBtn.disabled = true;
+			deleteCustomerBtn.title = "You don't have permission to delete customers.";
+			deleteCustomerBtn.classList.add('button-ghost');
+		}
+
+		if (addPaymentsBtn) {
+			addPaymentsBtn.disabled = true;
+			addPaymentsBtn.title = "You don't have permission to add payments.";
+			addPaymentsBtn.classList.add('button-ghost');
+		}
+
+		if (paymentsMenuBtn) {
+			for (let btn of paymentsMenuBtn) {
+				btn.disabled = true;
+				btn.title = "You don't have permission to access this feature.";
+				btn.classList.add('button-ghost');
+			}
+		}
+
+		if (editPaymentBtn) {
+			editPaymentBtn.disabled = true;
+			editPaymentBtn.title = "You don't have permission to edit payments.";
+			editPaymentBtn.classList.add('button-ghost');
+		}
+
+		if (deletePaymentBtn) {
+			deletePaymentBtn.disabled = true;
+			deletePaymentBtn.title = "You don't have permission to delete payments.";
+			deletePaymentBtn.classList.add('button-ghost');
+		}
     } else if (grantedPermission === 'view_dashboard') {
         console.log("El usuario puede ver el dashboard");
         // Habilita solo lo permitido a este nivel
