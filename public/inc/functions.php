@@ -25,11 +25,17 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 	foreach ($whereClause as $column => $value) {
 		$colFormatted = (strpos($column, '.') === false) ? "\"$column\"" : $column;
 
-		if (is_array($value) && isset($value['condition'], $value['value'])) {
-			$escapedVal = is_numeric($value['value'])
-				? $value['value']
-				: "'" . pg_escape_string($value['value']) . "'";
-			$whereParts[] = "$colFormatted {$value['condition']} $escapedVal";
+		if (is_array($value) && isset($value['condition'])) {
+			$condition = strtoupper($value['condition']);
+			if (in_array($condition, ['IS NULL', 'IS NOT NULL'])) {
+				// No necesitamos un valor si es IS NULL o IS NOT NULL
+				$whereParts[] = "$colFormatted {$condition}";
+			} else {
+				$escapedVal = is_numeric($value['value'])
+					? $value['value']
+					: "'" . pg_escape_string($value['value']) . "'";
+				$whereParts[] = "$colFormatted {$value['condition']} $escapedVal";
+			}
 		} elseif ($column === 'OR' && is_array($value)) {
 			$orParts = [];
 			foreach ($value as $orKey => $orVal) {

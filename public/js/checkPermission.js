@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         try {
             const res = await fetch('api/get_permission_hierarchy.php');
             const data = await res.json();
-console.log("Data:", data);
+
             if (data.success) {
                 return data.permissions;
             } else {
