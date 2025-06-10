@@ -1,5 +1,5 @@
 <?php
-require_once('../logic/stock_be.php'); // Ajusta la ruta si es necesario
+require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
 

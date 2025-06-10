@@ -32,6 +32,7 @@ try {
     $data["username"] = strtolower($data["name"] . "_" . $data["surname"]);
     $data["verified"] = 0;
     $data["signup_date"] = date("Y-m-d H:i:s");
+    $data["rank"] = 3;
 
     $emailCheckResponse = select_from("users", ["user_id"], ["email" => $data["email"]], ["fetch_first" => true]);
     $emailCheck = json_decode($emailCheckResponse, true);

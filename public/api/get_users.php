@@ -19,10 +19,20 @@ try {
         throw new Exception("No user is logged in.");
     }
 
-    $userId = $_SESSION["sc_UserId"];
+    $userId = $_SESSION["sc_UserId"] ?? null;
+	if (!$userId) throw new Exception("User session not found.");
+
+    $companyIdRes = json_decode(select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]), true);
+    if (!$companyIdRes || !$companyIdRes["success"] || empty($companyIdRes["data"]["company_id"])) {
+        throw new Exception("Company ID not found for the user.");
+    }
+
+    $companyId = $companyIdRes["data"]["company_id"];
 
     // Obtener todos los usuarios
-    $userResponse = select_from("users", [
+    $userResponse = select_from(
+    "users",
+    [
         "user_id",
         "name",
         "surname",
@@ -32,9 +42,15 @@ try {
         "rank",
         "status",
         "signup_date"
-    ], ["parent_user" => $userId], [
+    ],
+    [
+        "company_id" => $companyId,
+        "parent_user" => ["condition" => "IS NOT NULL"]
+    ],
+    [
         "order_by" => "user_id",
-        "order_direction" => "ASC"
+        "order_direction" => "ASC",
+        "fetch_all" => true
     ]);
 
     $users = json_decode($userResponse, true);

@@ -16,9 +16,11 @@ try {
 		throw new Exception("Method not allowed.");
 	}
 
-	$sessionUserId = $_SESSION["sc_UserId"] ?? null;
-	if (!$sessionUserId) {
-		throw new Exception("User session not found.");
+	$userId = $_SESSION["sc_UserId"] ?? null;
+	if (!$userId) throw new Exception("User session not found.");
+
+	if (!check_user_permission($userId, 'manage_users')) {
+		throw new Exception("Access denied. You do not have permission to update company info.");
 	}
 
 	$targetUserId = $_POST["user_id"] ?? null;
@@ -28,7 +30,7 @@ try {
 
 	$checkUser = select_from("users", ["user_id"], [
 		"user_id" => $targetUserId,
-		"parent_user" => $sessionUserId
+		"parent_user" => $userId
 	], ["fetch_first" => true]);
 
 	$checkResult = json_decode($checkUser, true);
@@ -57,7 +59,7 @@ try {
 	}
 
 	log_activity(
-		$sessionUserId,
+		$userId,
 		"delete_user",
 		"User deleted a co-worker (ID: {$targetUserId}).",
 		"users",
