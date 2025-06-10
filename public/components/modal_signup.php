@@ -1,4 +1,4 @@
-<div class="formular-front-frame" id="formular-Signup" style="display: none;">
+<div class="formular-front-frame positioning" id="formular-Signup" style="display: block;">
 	<div class="formular_front">
 		<form action="stock.php" method="post" name="formsignup" id="formsignup">
 			<table width="80%" align="center" cellspacing="0">
@@ -45,7 +45,7 @@
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td nowrap="nowrap" align="center" valign="middle">
-						<a href="" id="close-link">Cancel</a>
+						<a href="#" id="toggle-link">Do you have an existing account?</a>
 					</td>
 				</tr>
 			</table>

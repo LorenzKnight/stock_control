@@ -6,9 +6,11 @@
 @import url("customers.css");
 @import url("sales.css");
 @import url("payments.css");
+@import url("floating-header.css");
 
 :root {
-    --main-bg-dark-blue: #022e63;
+    /* --main-bg-dark-blue: #0c2d57; */
+    --main-bg-dark-blue: #013471;
     /* --main-bg-dark-blue: rgb(0, 52, 83); */
     --main-bg-beige: rgb(221, 216, 212);
     --main-bg-pop-up: rgba(0, 0, 0, 0.512);
@@ -33,6 +35,17 @@ body {
     font-size: 12px;
 }
 
+.wrapper-dark-blue {
+    background-color: var(--main-bg-dark-blue);
+}
+
+.blue-curve {
+    height: 250px;
+    background-color: var(--main-bg-dark-blue);
+    /* clip-path: polygon(0 0, 100% 0, 100% 50%, 0 100%); */
+    border-bottom-right-radius: 100% 90%;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -49,11 +62,11 @@ body {
 }
 
 .container-login {
-    background-color: var(--main-bg-blue);
+    /* background-color: var(--main-bg-blue); */
 }
 
 .container-signup {
-    background-color: var(--main-bg-blue);
+    /* background-color: var(--main-bg-blue); */
 }
 
 .data-container {
@@ -85,6 +98,11 @@ body {
     /* display: none; */
 	align-items: center;
 	align-content: center;
+}
+
+.positioning {
+    position: relative;
+    bottom: -180px;
 }
 
 .form-input-style {

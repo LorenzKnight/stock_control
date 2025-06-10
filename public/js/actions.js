@@ -183,8 +183,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             e.preventDefault();
 
             if (formLogin && formSignup) {
-                formLogin.style.display = "none";
-                formSignup.style.display = "block";
+                formLogin.style.display = "block";
+                formSignup.style.display = "none";
             }
         });
     }
@@ -192,9 +192,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 	if (closeLink) {
         closeLink.addEventListener("click", function (e) {
             e.preventDefault();
-            if (formLogin && formSignup) {
-                formLogin.style.display = "block";
-                formSignup.style.display = "none";
+            
+			if (formLogin && formSignup) {
+                formLogin.style.display = "none";
+                formSignup.style.display = "block";
             }
         });
     }

@@ -13,16 +13,10 @@
 	<script defer src="js/actions.js"></script>
 </head>
 
-<body style="background-color: var(--main-bg-dark-blue);">
+<body>
 	<?php include("components/message.php"); ?>
-	<div class="container height-100 flex" id="result-container">
-		<div class="container-login">
-			<?php include("components/modal_signup.php"); ?>
-		</div>
-		<div class="container-signup">
-			<?php include("components/modal_login.php"); ?>
-		</div>
-	</div>
+	<?php include("components/front_header.php"); ?>
+	<?php include("components/front_container.php"); ?>
 </body>
 
 </html>
