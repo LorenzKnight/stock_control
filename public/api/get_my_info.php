@@ -15,14 +15,14 @@ try {
 
     $userDataResponse = select_from("users", [
         "user_id",
+        "parent_user",
         "name",
         "surname",
         "birthday",
         "phone",
         "email",
         "image",
-        "signup_date",
-        "members"
+        "signup_date"
     ], ["user_id" => $userId], ["fetch_first" => true]);
 
     $userData = json_decode($userDataResponse, true);
@@ -31,10 +31,26 @@ try {
         throw new Exception("No user data found.");
     }
 
+    $userInfo = $userData["data"];
+    $members = null;
+
+    $altUser = empty($userInfo["parent_user"] ?? null) ? $userId : $userInfo["parent_user"];
+    $planInfo = json_decode(select_from("users", [
+        "members"
+    ], ["user_id" =>  $altUser], ["fetch_first" => true]), true);
+
+    if ($planInfo["success"] && isset($planInfo["data"]["members"])) {
+        $members = $planInfo["data"];
+    }
+
+    if (!empty($members)) {
+        $userInfo["members"] = $members["members"] ?? null;
+    }
+
     $response = [
         "success" => true,
         "message" => "User data retrieved successfully.",
-        "data" => $userData["data"]
+        "data" => $userInfo
     ];
 } catch (Exception $e) {
     $response["message"] = $e->getMessage();
