@@ -3,6 +3,15 @@ require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
 
+if (empty($_SESSION["sc_UserId"])) {
+    $response = [
+        "success" => false,
+        "message" => "User data not found",
+        "data" => []
+    ];
+    exit;
+}
+
 $response = [
     "success" => false,
     "message" => "User data not found",
@@ -43,10 +52,8 @@ try {
         $members = $planInfo["data"];
     }
 
-    if (!empty($members)) {
-        $userInfo["members"] = $members["members"] ?? null;
-    }
-
+    $userInfo["members"] = $members["members"] ?? null;
+   
     $response = [
         "success" => true,
         "message" => "User data retrieved successfully.",

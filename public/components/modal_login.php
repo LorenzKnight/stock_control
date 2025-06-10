@@ -1,4 +1,4 @@
-<div class="formular-front-frame" id="formular-Login" style="display: block;">
+<div class="formular-front-frame positioning" id="formular-Login" style="display: none;">
 	<div class="formular_front">
 		<form action="stock.php" method="post" name="formlogin" id="formlogin">
 			<table width="80%" align="center" cellspacing="0">
@@ -25,7 +25,8 @@
 				<tr valign="baseline" class="form_height">
 					<td nowrap="nowrap" align="center" valign="middle">
 						Don't have an account yet?
-						<a href="#" id="toggle-link">Create account</a>
+						
+						<a href="" id="close-link">Create account!</a>
 					</td>
 				</tr>
 			</table>
