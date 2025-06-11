@@ -1,5 +1,5 @@
 <div class="formular-front-frame positioning" id="formular-Signup" style="display: block;">
-	<div class="formular_front">
+	<div class="formular_front" style="transform: rotate(3deg);">
 		<form action="stock.php" method="post" name="formsignup" id="formsignup">
 			<table width="80%" align="center" cellspacing="0">
 				<tr valign="baseline">

@@ -25,6 +25,7 @@
     --cancel-red: rgb(239, 0, 0);
     --agree-blue: rgb(1, 115, 196);
     --agree-green: rgb(0, 151, 0);
+    --warning-orange: rgb(236, 103, 38);
 }
 
 body {
@@ -81,7 +82,7 @@ body {
 /* form-modal */
 .formular-front-frame {
 	width: 100%;
-	/* background: red; */
+	/* background: var(--warning-orange); */
 	display: flex; 
 }
 
@@ -89,11 +90,11 @@ body {
     width: 350px;
     margin: 80px auto 20px;
     padding: 30px 0;
-    background: var(--clr-white);
+    background: var(--warning-orange);
     box-shadow: 0 4px 10px 0 rgba(47, 48, 63, 0.193);
     backdrop-filter: blur( 4px );
     -webkit-backdrop-filter: blur( 4px );
-    border-radius: 4px;
+    border-radius: 20px;
     font-weight: 200;
     /* display: none; */
 	align-items: center;

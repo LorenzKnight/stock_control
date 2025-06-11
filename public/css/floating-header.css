@@ -1,18 +1,17 @@
 .floating-header {
     position: fixed;
-    top: 50px; /* Retirado del top */
+    top: 40px; /* Retirado del top */
     left: 50%;
     transform: translateX(-50%); /* Para centrar horizontalmente */
     width: 500px;
     height: 65px;
-    background-color: var(--main-bg-color);
-    /* color: var(--clr-white); */
+    background-color: transparent;
+    color: var(--clr-white);
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
-    box-shadow: 0 2px 5px var(--main-box-shadow);
-    border-radius: 70px; /* Ovalado en horizontal */
+    border-radius: 70px;
     z-index: 100;
 }
 
@@ -30,4 +29,10 @@
     display: inline-block;
     margin: 0 10px;
     text-transform: uppercase;
+}
+
+.floating-header.scrolled-out {
+  background-color: var(--clr-white);
+  color: var(--main-bg-dark-blue);
+  box-shadow: 0 2px 5px var(--main-box-shadow);
 }
