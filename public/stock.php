@@ -11,6 +11,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="css/styles.css">
 	<script defer src="js/actions.js"></script>
+	<script defer src="js/styleEffects.js"></script>
 </head>
 
 <body>

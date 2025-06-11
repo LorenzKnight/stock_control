@@ -3,6 +3,6 @@
         <li id="sales-site">Sales</li>
         <li>Products</li>
         <li>Customers</li>
-        <li id="payments-site">Log In</li>
+        <li>Log In</li>
     </ul>   
 </div>

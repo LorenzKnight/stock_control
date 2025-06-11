@@ -33,7 +33,7 @@ nav ul.menu li:hover {
 }
 
 .menu li.active {
-	color: #fd802c;
+	color: var(--warning-orange);
 }
 
 .header-spacer {
@@ -49,7 +49,7 @@ nav ul.menu li:hover {
 }
 
 .big-profile img {
-    background-color: orangered;
+    background-color: var(--warning-orange);
     width: 200px;
     height: 200px;
     border-radius: 50%;
