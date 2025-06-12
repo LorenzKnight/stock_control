@@ -4,7 +4,8 @@
 			<table width="80%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td style="font-size: 12px;" colspan="6" align="center" valign="middle">
-						<h2>Registration form</h2>
+						<h2>Come on, Join us!</h2>
+						<p>let's start the control here</p>
 					</td>      
 				</tr>
 				<tr valign="baseline" class="form_height">
@@ -45,7 +46,7 @@
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td nowrap="nowrap" align="center" valign="middle">
-						<a href="#" id="toggle-link">Do you have an existing account?</a>
+						<a href="#" id="close-link">Do you have an existing account?</a>
 					</td>
 				</tr>
 			</table>

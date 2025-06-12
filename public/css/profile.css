@@ -17,7 +17,7 @@
     margin: 5px 10px;
     padding: 10px;
     color: #666;
-    background-color: var(--main-bg-beige);
+    background-color: var(--main-bg-color);
     font-size: 12px;
     display: flex;
     flex-direction: column;

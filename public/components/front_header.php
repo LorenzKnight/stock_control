@@ -1,8 +1,8 @@
 <div class="floating-header">
     <ul class="menu">
-        <li id="sales-site">Sales</li>
-        <li>Products</li>
-        <li>Customers</li>
-        <li>Sign up</li>
+        <li>Home</li>
+        <li>Features</li>
+        <li>Pricing</li>
+        <li class="no-redirect"><a href="" id="toggle-link">Sign up</a></li>
     </ul>   
 </div>
