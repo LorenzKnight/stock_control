@@ -43,7 +43,6 @@ body {
 .blue-curve {
     height: 250px;
     background-color: var(--main-bg-dark-blue);
-    /* clip-path: polygon(0 0, 100% 0, 100% 50%, 0 100%); */
     border-bottom-right-radius: 100% 90%;
 }
 
@@ -62,13 +61,13 @@ body {
     padding: 20px;
 }
 
-.container-login {
-    /* background-color: var(--main-bg-blue); */
+/* .container-login {
+    background-color: var(--main-bg-blue);
 }
 
 .container-signup {
-    /* background-color: var(--main-bg-blue); */
-}
+    background-color: var(--main-bg-blue);
+} */
 
 .data-container {
     width: 98%;
@@ -89,7 +88,7 @@ body {
     width: 350px;
     margin: 80px auto 20px;
     padding: 30px 0;
-    background: var(--warning-orange);
+    background: var(--main-bg-blue);
     box-shadow: var(--main-box-shadow);
     backdrop-filter: blur( 4px );
     -webkit-backdrop-filter: blur( 4px );
@@ -102,7 +101,7 @@ body {
 
 .positioning {
     position: relative;
-    bottom: -180px;
+    bottom: -170px;
 }
 
 .form-input-style {

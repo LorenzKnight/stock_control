@@ -31,8 +31,21 @@
     text-transform: uppercase;
 }
 
+.floating-header ul li a {
+    color: var(--clr-white);
+    text-decoration: none;
+    /* font-weight: bold; */
+    /* font-size: 14px; */
+}
+
+.floating-header ul li:hover, .floating-header ul li a:hover {
+    color: var(--clr-border);
+    cursor: pointer;
+}
+
 .floating-header.scrolled-out {
   background-color: var(--clr-white);
   color: var(--main-bg-dark-blue);
   box-shadow: 0 2px 5px var(--main-box-shadow);
+  transition: all 0.5s ease-in-out;
 }
