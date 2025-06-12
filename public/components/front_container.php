@@ -1,10 +1,10 @@
 <div class="wrapper-dark-blue">
 	<div class="container flex" id="result-container" style="height: 450px;">
-		<div class="container-signup">
-			<?php include("components/modal_login.php"); ?>
-		</div>
 		<div class="container-login">
 			<?php include("components/modal_signup.php"); ?>
+		</div>
+		<div class="container-signup">
+			<?php include("components/modal_login.php"); ?>
 		</div>
 	</div>
 </div>

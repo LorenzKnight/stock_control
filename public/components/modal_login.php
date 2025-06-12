@@ -1,4 +1,4 @@
-<div class="formular-front-frame positioning" id="formular-Login" style="display: none;">
+<div class="formular-front-frame positioning" id="formular-Login" style="display: block;">
 	<div class="formular_front">
 		<form action="stock.php" method="post" name="formlogin" id="formlogin">
 			<table width="80%" align="center" cellspacing="0">

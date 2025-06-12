@@ -183,8 +183,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             e.preventDefault();
 
             if (formLogin && formSignup) {
-                formLogin.style.display = "block";
-                formSignup.style.display = "none";
+                formLogin.style.display = "none";
+                formSignup.style.display = "block";
             }
         });
     }
@@ -194,8 +194,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             e.preventDefault();
             
 			if (formLogin && formSignup) {
-                formLogin.style.display = "none";
-                formSignup.style.display = "block";
+                formLogin.style.display = "block";
+                formSignup.style.display = "none";
             }
         });
     }
@@ -292,7 +292,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					`<p><strong>Org No.:</strong> ` + (company.organization_no && company.organization_no.trim() !== "" ? `${company.organization_no}</p>` : "-</p>") +
 					`<p><strong>Name:</strong> ` + (company.company_name && company.company_name.trim() !== "" ? `${company.company_name}</p>` : "-</p>");
 			} else {
-				myCompany.innerHTML = `<p>No company information available.</p>`;
+				myCompany.innerHTML = `<p style="color: var(--warning-orange);">To initialize the system, it is necessary to complete it with your company's data.</p>`;
 			}
 		} catch (error) {
 			console.error("Error fetching data:", error);
@@ -983,10 +983,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 	
 				const userInfoRes = await fetch('api/get_my_info.php');
 				const userInfo = await userInfoRes.json();
-				const allowedMembers = userInfo.success ? parseInt(userInfo.data.members) : 0;
+				const rawAllowed = userInfo.success ? userInfo.data.members : null;
+				const allowedMembers = rawAllowed !== null && rawAllowed !== "" ? parseInt(rawAllowed) : null;
 	
-				if (currentMemberCount >= allowedMembers) {
-					showAlertModal("Maximum allowed members reached", "If you want to have the ability to add more members, upgrade your membership.");
+				if (allowedMembers === null || currentMemberCount >= allowedMembers) {
+					allowedTitle = (allowedMembers === null) ? "You have 0 member slots" : "Maximum allowed members reached";
+					allowedText = "If you want to have the ability to add more members, upgrade your membership.";
+					showAlertModal(allowedTitle, allowedText);
 					return;
 				}
 
@@ -1702,7 +1705,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 					});
 				});
 			} else {
-				container.innerHTML = `<p style="text-align:center;">No products found</p>`;
+				container.innerHTML = `
+					<p class="isNotLinkedToCompany" style="text-align: center; color: var(--warning-orange);">To activate this section you must complete the company details <a href="profile.php">here.</a></p>
+					<p style="text-align:center;">No products found</p>
+				`;
 			}
 		} catch (error) {
 			console.error("Error loading products:", error);
@@ -2158,7 +2164,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 						});
 					});
 				} else {
-					customerContainer.innerHTML = `<p style="text-align:center;">No customers found.</p>`;
+					customerContainer.innerHTML = `
+						<p class="isNotLinkedToCompany" style="text-align: center; color: var(--warning-orange);">To activate this section you must complete the company details <a href="profile.php">here.</a></p>
+						<p style="text-align:center;">No customers found.</p>
+					`;
 				}
 			} catch (err) {
 				console.error("Error loading customers:", err);
@@ -2821,7 +2830,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 						});
 					});
 				} else {
-					salesContainer.innerHTML = `<p style="text-align:center;">No sales found.</p>`;
+					salesContainer.innerHTML = `
+						<p class="isNotLinkedToCompany" style="text-align: center; color: var(--warning-orange);">To activate this section you must complete the company details <a href="profile.php">here.</a></p>
+						<p style="text-align:center;">No sales found.</p>
+					`;
 				}
 			} catch (err) {
 				console.error("Error loading sales:", err);
@@ -3857,7 +3869,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 						});
 					});
 				} else {
-					paymentsContainer.innerHTML = `<p style="text-align:center;">No payments found.</p>`;
+					paymentsContainer.innerHTML = `
+						<p class="isNotLinkedToCompany" style="text-align: center; color: var(--warning-orange);">To activate this section you must complete the company details <a href="profile.php">here.</a></p>
+						<p style="text-align:center;">No payments found.</p>
+					`;
 				}
 			} catch (err) {
 				console.error("Error loading payments:", err);
