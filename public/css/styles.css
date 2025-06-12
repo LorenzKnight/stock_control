@@ -90,7 +90,7 @@ body {
     margin: 80px auto 20px;
     padding: 30px 0;
     background: var(--warning-orange);
-    box-shadow: var(--main-box-shadow); /* aqui */
+    box-shadow: var(--main-box-shadow);
     backdrop-filter: blur( 4px );
     -webkit-backdrop-filter: blur( 4px );
     border-radius: 20px;
