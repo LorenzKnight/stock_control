@@ -31,7 +31,8 @@ try {
         "phone",
         "email",
         "image",
-        "signup_date"
+        "signup_date",
+        "company_id"
     ], ["user_id" => $userId], ["fetch_first" => true]);
 
     $userData = json_decode($userDataResponse, true);

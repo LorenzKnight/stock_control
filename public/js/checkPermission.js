@@ -34,6 +34,25 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
 
+	async function checkCompanyId() {
+		try {
+			const res = await fetch('api/get_my_info.php');
+			const data = await res.json();
+
+			if (data.success) {
+				return data.data.company_id == null;
+			} else {
+				console.error("Error checking company ID:", data.message);
+				return false;
+			}
+		} catch (error) {
+			console.error("Error checking company ID:", error);
+			return false;
+		}
+	}
+
+	const isLinkedToCompany = await checkCompanyId();
+
     const permissionHierarchy = await getPermissionHierarchy();
     // console.log("Jerarquía de permisos:", permissionHierarchy);
 
@@ -85,6 +104,52 @@ document.addEventListener("DOMContentLoaded", async function () {
 	const salesSite = document.getElementById("sales-site");
 	const paymentsSite = document.getElementById("payments-site");
 	const adminSite = document.getElementById("admin-site");
+
+	const elements = document.getElementsByClassName("isNotLinkedToCompany");
+
+	if (isLinkedToCompany) {
+		console.log("El usuario no está vinculado a una empresa.");
+
+		if (addMembersButton) {
+			addMembersButton.disabled = true;
+			addMembersButton.title = "You don't have permission to add members.";
+			addMembersButton.classList.add('button-ghost');
+		}
+
+		if (addSaleBtn) {
+			addSaleBtn.disabled = true;
+			addSaleBtn.title = "You don't have permission to add sales.";
+			addSaleBtn.classList.add('button-ghost');
+		}
+
+		if (addProductBtn) {
+			addProductBtn.disabled = true;
+			addProductBtn.title = "You don't have permission to add products.";
+			addProductBtn.classList.add('button-ghost');
+		}
+
+		if (addCategoryBtn) {
+			addCategoryBtn.disabled = true;
+			addCategoryBtn.title = "You don't have permission to add categories.";
+			addCategoryBtn.classList.add('button-ghost');
+		}
+
+		if (addCustomersButton) {
+			addCustomersButton.disabled = true;
+			addCustomersButton.title = "You don't have permission to add customers.";
+			addCustomersButton.classList.add('button-ghost');
+		}
+
+		if (addPaymentsBtn) {
+			addPaymentsBtn.disabled = true;
+			addPaymentsBtn.title = "You don't have permission to add payments.";
+			addPaymentsBtn.classList.add('button-ghost');
+		}
+	} else {
+		for (const el of elements) {
+            el.style.display = "none";
+        }
+	}
 
     // Ahora simular un "switch" usando if-else:
     if (grantedPermission === 'manage_all') {
