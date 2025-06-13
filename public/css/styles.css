@@ -9,9 +9,7 @@
 @import url("floating-header.css");
 
 :root {
-    /* --main-bg-dark-blue: #0c2d57; */
     --main-bg-dark-blue: #013471;
-    /* --main-bg-dark-blue: rgb(0, 52, 83); */
     --main-bg-beige: rgb(221, 216, 212);
     --main-bg-pop-up: rgba(0, 0, 0, 0.512);
     --main-bg-color: #f0f0f0;
@@ -52,13 +50,16 @@ body {
 }
 
 .container-login,
-.container-signup {
+.container-signup,
+.container-login-info,
+.container-signup-info {
     flex: 1; 
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 20px;
+    color: var(--clr-white);
 }
 
 /* .container-login {

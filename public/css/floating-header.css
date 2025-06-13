@@ -34,8 +34,6 @@
 .floating-header ul li a {
     color: var(--clr-white);
     text-decoration: none;
-    /* font-weight: bold; */
-    /* font-size: 14px; */
 }
 
 .floating-header ul li:hover, .floating-header ul li a:hover {
@@ -46,6 +44,11 @@
 .floating-header.scrolled-out {
   background-color: var(--clr-white);
   color: var(--main-bg-dark-blue);
-  box-shadow: 0 2px 5px var(--main-box-shadow);
+  box-shadow: 0 4px 6px -4px var(--main-box-shadow);
   transition: all 0.5s ease-in-out;
+}
+
+.floating-header.scrolled-out ul li a {
+    color: var(--main-bg-dark-blue);
+    transition: all 0.5s ease-in-out;
 }

@@ -17,7 +17,7 @@
 <body>
 	<?php include("components/message.php"); ?>
 	<?php include("components/front_header.php"); ?>
-	<?php include("components/front_container.php"); ?>
+	<?php include("components/banner_container.php"); ?>
 </body>
 
 </html>

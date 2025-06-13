@@ -175,28 +175,32 @@ document.addEventListener("DOMContentLoaded", async function () {
 	// 📌 Alternar entre login y signup
 	let toggleLink = document.getElementById("toggle-link");
 	let closeLink = document.getElementById("close-link");
-    let formLogin = document.getElementById("formular-Login");
-    let formSignup = document.getElementById("formular-Signup");
+    let formLogin = document.getElementById("formular-login");
+    let formSignup = document.getElementById("formular-signup");
+	let formLoginInfo = document.getElementById("container-login-info");
+	let formSignupInfo = document.getElementById("container-signup-info");
 
     if (toggleLink) {
         toggleLink.addEventListener("click", function (e) {
             e.preventDefault();
+			scrollToTopIfNeeded();
 
-            if (formLogin && formSignup) {
-                formLogin.style.display = "none";
-                formSignup.style.display = "block";
-            }
+            if (formLogin) formLogin.style.display = "none";
+            if (formSignup) formSignup.style.display = "block";
+            if (formLoginInfo) formLoginInfo.style.display = "none";
+            if (formSignupInfo) formSignupInfo.style.display = "block";
         });
     }
 
 	if (closeLink) {
         closeLink.addEventListener("click", function (e) {
             e.preventDefault();
+			scrollToTopIfNeeded();
             
-			if (formLogin && formSignup) {
-                formLogin.style.display = "block";
-                formSignup.style.display = "none";
-            }
+			if (formLogin) formLogin.style.display = "block";
+            if (formSignup) formSignup.style.display = "none";
+            if (formLoginInfo) formLoginInfo.style.display = "block";
+            if (formSignupInfo) formSignupInfo.style.display = "none";
         });
     }
 
