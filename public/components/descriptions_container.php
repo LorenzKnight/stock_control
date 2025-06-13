@@ -6,13 +6,15 @@
 			</div>
 		</div>
 		<div class="container-left">
-			texto
+            <h1>Title</h1>
+			<p>texto</p>
 		</div>
 	</div>
 
 	<div class="container flex" style="height: 350px;">
 		<div class="container-right">
-			texto
+            <h1>Title</h1>
+			<p>texto</p>
 		</div>
 		<div class="container-left">
 			<div class="image-container">
@@ -28,13 +30,15 @@
 			</div>
 		</div>
 		<div class="container-left">
-			texto
+            <h1>Title</h1>
+			<p>texto</p>
 		</div>
 	</div>
 
 	<div class="container flex" style="height: 350px;">
 		<div class="container-right">
-			texto
+            <h1>Title</h1>
+			<p>texto</p>
 		</div>
 		<div class="container-left">
 			<div class="image-container">
