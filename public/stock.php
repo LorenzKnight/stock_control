@@ -18,6 +18,8 @@
 	<?php include("components/message.php"); ?>
 	<?php include("components/front_header.php"); ?>
 	<?php include("components/banner_container.php"); ?>
+	<?php include("components/descriptions_container.php"); ?>
+	<?php include("components/footer.php"); ?>
 </body>
 
 </html>
