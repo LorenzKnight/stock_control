@@ -44,6 +44,14 @@ body {
     padding: 20px;
 }
 
+.container-right p,
+.container-left p {
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 2;
+    color: var(--main-text-color);
+}
+
 /* .container-right {
     background-color: var(--main-bg-blue);
 }
@@ -79,7 +87,7 @@ body {
 
 .positioning {
     position: relative;
-    bottom: -170px;
+    bottom: -150px;
 }
 
 .bg-popup {
