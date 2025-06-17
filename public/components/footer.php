@@ -10,7 +10,7 @@
 	<div class="contact-us" id="contactBox">
 		<img src="../images/sys-img/email.gif" alt="e-mail" class="">
 		
-		<form id="contactForm">
+		<form id="contactForm" method="POST">
 			<button id="closeContactForm" class="close-btn">&times;</button>
 			<table width="100%" align="center" cellspacing="0">
 				<tr valign="baseline" class="form_height">
@@ -35,7 +35,7 @@
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="2" align="center" valign="middle">
-						<button type="submit" class="button-style-agree">Enviar</button>
+						<button type="submit" class="button-style-agree">Send</button>
 					</td>
 				</tr>
 			</table>

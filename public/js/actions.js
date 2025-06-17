@@ -4213,6 +4213,73 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 	//############################################################# END PAYMENTS ##################################################################
 
+	//############################################################# SEND EMAIL ##################################################################
+	const contactForm = document.getElementById('contactForm');
+	if (contactForm) {
+		contactForm.addEventListener('submit', async function (e) {
+			e.preventDefault();
+
+			const formData = new FormData(this);
+
+			try {
+				const response = await fetch('api/send_email.php', {
+					method: 'POST',
+					headers: { Accept: 'application/json' },
+					body: formData
+				});
+
+				const data = await response.json();
+
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				statusText.innerText = data.message;
+				statusImage.src = data.img_gif || '';
+				banner.style.display = 'block';
+				banner.style.opacity = '1';
+
+				if (data.success) {
+					setTimeout(() => {
+						banner.style.opacity = '0';
+						setTimeout(() => {
+							contactForm.reset();
+							banner.style.display = 'none';
+
+							const contactBox = document.getElementById('contactBox');
+							const form = contactBox.querySelector('form');
+
+							// Remover clase expandido
+							contactBox.classList.remove('expanded');
+
+							// Ocultar formulario
+							if (form) {
+								form.style.display = 'none';
+								form.style.opacity = 0;
+							}
+
+							// Restaurar imagen
+							if (!contactBox.querySelector('img')) {
+								const img = document.createElement('img');
+								img.src = '../images/sys-img/email.gif';
+								img.alt = 'e-mail';
+								img.style.width = '140%';
+								img.style.height = '140%';
+								img.style.borderRadius = '50%';
+								img.style.objectFit = 'cover';
+								img.style.marginBottom = '5px';
+								contactBox.prepend(img);
+							}
+						}, 1000);
+					}, 1000);
+				}
+			} catch (error) {
+				console.error("Error sending email:", error);
+			}
+		});
+	}
+	//############################################################# END SEND EMAIL ##################################################################
+
 	//############################################################# FUNCTIONES ##################################################################
 
 	// 📌 cerrar al hacer clic fuera del formulario
