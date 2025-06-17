@@ -10,19 +10,7 @@
 				<tr valign="baseline" class="form_height">
 					<td colspan="2" align="center" valign="middle">
 						<label for="packs">Member Package:</label>
-						<select class="form-input-style" name="packs" id="packs">
-							<option value="">Select a pack</option>
-							<option value="5">Mini Pack (5 members)</option>
-							<option value="10">Smart Pack (10 members)</option>
-							<option value="15">Plus Pack (15 members)</option>
-							<option value="20">Growth Pack (20 members)</option>
-							<option value="25">Boost Pack (25 members)</option>
-							<option value="30">Power Pack (30 members)</option>
-							<option value="35">Max Pack (35 members)</option>
-							<option value="40">Super Pack (40 members)</option>
-							<option value="45">Mega Pack (45 members)</option>
-							<option value="50">Ultra Pack (50 members)</option>
-						</select>
+						<select class="form-input-style" name="packs" id="packs"></select>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">

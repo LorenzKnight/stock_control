@@ -21,6 +21,19 @@ class GlobalArrays {
 		2 => "Used"
 	];
 
+	public static $packages = [
+		5	=> "Mini Pack (5 members)",
+		10	=> "Smart Pack (10 members)",
+		15	=> "Plus Pack (15 members)",
+		20	=> "Growth Pack (20 members)",
+		25	=> "Boost Pack (25 members)",
+		30	=> "Power Pack (30 members)",
+		35	=> "Max Pack (35 members)",
+		40	=> "Super Pack (40 members)",
+		45	=> "Mega Pack (45 members)",
+		50	=> "Ultra Pack (50 members)"
+	];
+
 	public static $documentTypes = [
 		1 => "National ID / Cedula",
 		2 => "Passport",

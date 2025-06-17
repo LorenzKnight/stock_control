@@ -1,3 +1,21 @@
+.floating-logo {
+    position: fixed;
+    top: 30px; /* Retirado del top */
+    left: 8%;
+    transform: translateX(-50%); /* Para centrar horizontalmente */
+    width: 120px;
+    height: 120px;
+    z-index: 100;
+}
+.floating-logo img {
+    width: 100%;
+}
+
+.color-change {
+    filter: brightness(0) saturate(105%) invert(11%) sepia(87%) saturate(6795%) hue-rotate(195deg) brightness(82%) contrast(105%);
+    transition: all 0.1s ease;
+}
+
 .floating-header {
     position: fixed;
     top: 40px; /* Retirado del top */

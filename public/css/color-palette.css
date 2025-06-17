@@ -9,10 +9,15 @@
     --main-box-shadow: rgba(0, 0, 0, 0.286);
     --clr-border: #999;
     --clr-white: #fff;
-    --clr-neutral: #666; 
+    --clr-neutral: #767676; 
     --cancel-red: rgb(239, 0, 0);
     --agree-blue: rgb(1, 115, 196);
     --agree-green: rgb(0, 151, 0);
     --warning-orange: rgb(236, 103, 38);
     --main-text-color: #333;
+
+    --basic-green: rgb(62 165 139);
+    --plus-turquoise: rgb(10, 214, 225);
+    --max-blue: rgb(6, 162, 247);
+    --ultra-purple: rgb(93, 103, 250);
 }
