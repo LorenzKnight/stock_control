@@ -1,3 +1,7 @@
+<div class="floating-logo">
+    <img src="images/sys-img/asc-logo.png" alt="Logo" class="asc-logo">
+</div>
+
 <div class="floating-header">
     <ul class="menu">
         <li>Home</li>

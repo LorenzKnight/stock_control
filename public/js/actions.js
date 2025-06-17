@@ -519,10 +519,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 	});
 
 	// 📌 recoje el valor del select del formulario subscripcion
-	let selectPack = document.getElementById('packs');
+	let selectPack = document.getElementById('packs'); // AQUI
 	let estimated = document.getElementById('estimated');
 	let estimatedInput = document.getElementById('estimated_cost');
-	const pricePerMember = 100;
+	const pricePerMember = 10;
 
 	function updateEstimatedCost() {
 		if (selectPack && estimated && estimatedInput) {
@@ -732,6 +732,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 					popupContent.style.opacity = '1';
 					loadCurrentPackage();
 				}, 50);
+
+				populatePackages('packs');
 			}
 		});
 	}
@@ -4491,6 +4493,42 @@ document.addEventListener("DOMContentLoaded", async function () {
 		} catch (error) {
 			console.error("Error loading payment methods:", error);
 			select.innerHTML += `<option value="">Error loading payment methods</option>`;
+		}
+	}
+
+	async function populatePackages(selectId, selectedValue = '') {
+		const select = document.getElementById(selectId);
+		if (!select) return;
+
+		// Limpiar contenido actual del <select>
+		select.innerHTML = '';
+
+		// Opción por defecto
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = 'Select a Package';
+		select.appendChild(defaultOption);
+
+		try {
+			const res = await fetch('api/get_global_array.php?key=packages');
+			const data = await res.json();
+
+			if (data.success && data.data) {
+				for (const [value, label] of Object.entries(data.data)) {
+					const option = document.createElement('option');
+					option.value = value;
+					option.textContent = label;
+					if (String(value) === String(selectedValue)) {
+						option.selected = true;
+					}
+					select.appendChild(option);
+				}
+			} else {
+				select.innerHTML += `<option value="">No packages found</option>`;
+			}
+		} catch (error) {
+			console.error("Error loading packages:", error);
+			select.innerHTML += `<option value="">Error loading packages</option>`;
 		}
 	}
 

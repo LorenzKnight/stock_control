@@ -52,14 +52,6 @@ body {
     color: var(--main-text-color);
 }
 
-/* .container-right {
-    background-color: var(--main-bg-blue);
-}
-
-.container-left {
-    background-color: var(--main-bg-blue);
-} */
-
 .image-container {
     width: 80%;
     height: 300px;
@@ -146,6 +138,98 @@ body {
     align-items: center;
 }
 
+.space-between {
+    display: flex;
+	justify-content: space-between;
+	padding: 0; /* sin padding para que los extremos toquen el borde */
+	gap: 0; /* sin gap para más control */  
+}
+
 .grayscale-img {
 	filter: grayscale(75%);
 }
+
+
+.title-and-subtitle {
+    text-align: center;
+    margin: 50px 0;
+}
+
+.title-and-subtitle p {
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 2;
+    color: var(--main-text-color);
+}
+
+.pricing-card {
+    width: 300px;
+    height: 550px;
+    background-color: var(--clr-white);
+    border-radius: 10px;
+    margin: 0 10px;
+    /* padding: 20px; */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    position: relative;
+}
+
+.pricing-header {
+    height: 250px;
+    background-color: var(--main-bg-dark-blue);
+    color: var(--clr-white);
+    padding: 10px;
+    border-radius: 10px 10px 0 0;
+    clip-path: polygon(0 0, 100% 0, 100% 80%, 0 100%);
+}
+
+.pricing-header-comp {
+    width: 100%;
+    height: 250px;
+    background-color: red;
+    clip-path: polygon(126% 29%, 100% 4%, 49% 15%);
+    position: absolute;
+    top: 206px;
+}
+
+.pricing-content {
+    /* background-color: rgba(255, 0, 0, 0.298); */
+    height: 180px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.pricing-header p {
+    color: var(--clr-white);
+    margin-bottom: 20px;
+}
+
+.pricing-content ul {
+    padding: 0;
+    margin: 0;
+    width: 70%;
+}
+.pricing-content ul li {
+    font-size: 13px;
+    font-weight: 300;
+    margin: 6px 0;
+    color: var(--main-text-color);
+    text-align: left;
+}
+
+.pricing-card:first-child {
+	margin-left: 0;
+}
+
+.pricing-card:last-child {
+	margin-right: 0;
+}
+
+/* .pricing-card h1 {
+    color: var(--main-text-color);
+    margin-bottom: 10px;
+} */
+
