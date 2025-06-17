@@ -45,8 +45,8 @@
 			<div class="pricing-content">
 				<h2>Includes:</h2>
 				<ul>
-					<li>offert 1</li>
-					<li>offert 2</li>
+					<li>Max 15 Members</li>
+					<li>Unlimited Products</li>
 					<li>offert 3</li>
 					<li>offert 4</li>
 				</ul>
