@@ -1,5 +1,6 @@
 header {
     background-color: var(--main-bg-dark-blue);
+    /* background: radial-gradient(50% 100% at 64.83% 30px, #3f71aebd 1.95%, #375d8bbd 48.44%, #08203ebd 89.02%), linear-gradient(142.79deg, #000 38.6%, #162b45 83.59%); */
     height: 6vh;
     color: #fff;
     display: flex;
