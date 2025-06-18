@@ -27,9 +27,9 @@
 				<ul>
 					<li>Max 5 Members</li>
 					<li>max 1 Branch / Affiliate</li>
+					<li>Max 1 Admin</li>
 					<li>Max 10 Products</li>
 					<li>Max 1 Backups per month</li>
-					<li>Max 1 Admin</li>
 				</ul>
 			</div>
 			<button class="access-btn">Select</button>
