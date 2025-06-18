@@ -70,3 +70,8 @@
     color: var(--main-bg-dark-blue);
     transition: all 0.5s ease-in-out;
 }
+
+.floating-header.scrolled-out ul li a:hover {
+    color: var(--clr-border);
+    transition: all 0s ease-in-out;
+}
