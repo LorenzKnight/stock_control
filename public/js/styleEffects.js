@@ -17,6 +17,15 @@ document.addEventListener('scroll', function() {
 	}
 });
 
+const homeBtn = document.getElementById('home-btn');
+if (homeBtn) {
+	homeBtn.addEventListener('click', function(e) {
+		e.preventDefault();
+
+		scrollToTop();
+	});
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
 	const contactBox = document.getElementById('contactBox');
 	let originalImg = null;
@@ -64,3 +73,14 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
     }
 });
+
+//################################################################ FUNCTIONS ################################################################
+
+function scrollToTop() {
+	if (window.scrollY > 0) {
+		window.scrollTo({
+			top: 0,
+			behavior: 'smooth'
+		});
+	}
+};
