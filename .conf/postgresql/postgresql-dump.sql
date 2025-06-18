@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS companies (
 	company_id SERIAL PRIMARY KEY,
 	user_id INT NOT NULL,
 	company_type INTEGER NULL,
+	branch_affiliate INTEGER NULL,
 	company_name VARCHAR(255) NULL,
 	organization_no INTEGER NULL,
 	company_address VARCHAR(255) NULL,
