@@ -26,6 +26,9 @@ if (homeBtn) {
 	});
 }
 
+scrollToElementOnClick("pricing-btn", "pricing-container", 50)
+// AQUI 
+
 document.addEventListener("DOMContentLoaded", async function () {
 	const contactBox = document.getElementById('contactBox');
 	let originalImg = null;
@@ -84,3 +87,23 @@ function scrollToTop() {
 		});
 	}
 };
+
+function scrollToElementOnClick(triggerId, targetId, offset = 0) {
+	const trigger = document.getElementById(triggerId);
+	const target = document.getElementById(targetId);
+
+	if (trigger && target) {
+		trigger.addEventListener("click", function (e) {
+		e.preventDefault();
+		const elementPosition = target.getBoundingClientRect().top + window.pageYOffset;
+		const offsetPosition = elementPosition - offset;
+
+		window.scrollTo({
+			top: offsetPosition,
+			behavior: "smooth"
+		});
+		});
+	} else {
+		console.warn(`Elemento con ID '${triggerId}' o '${targetId}' no encontrado.`);
+	}
+}

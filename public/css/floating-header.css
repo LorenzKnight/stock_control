@@ -54,7 +54,7 @@
     text-decoration: none;
 }
 
-.floating-header ul li:hover, .floating-header ul li a:hover {
+.floating-header ul li a:hover {
     color: var(--clr-border);
     cursor: pointer;
 }

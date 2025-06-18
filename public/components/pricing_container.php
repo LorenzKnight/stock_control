@@ -1,4 +1,4 @@
-<div>
+<div id="pricing-container">
 	<div class="container flex">
 		<div class="title-and-subtitle">
 			<h1>Which package suits your needs?</h1>
@@ -26,6 +26,7 @@
 				<h2>Includes:</h2>
 				<ul>
 					<li>Max 5 Members</li>
+					<li>max 1 Branch / Affiliate</li>
 					<li>Max 10 Products</li>
 					<li>Max 1 Backups per month</li>
 					<li>Max 1 Admin</li>
