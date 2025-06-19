@@ -32,7 +32,8 @@ try {
         "email",
         "image",
         "signup_date",
-        "company_id"
+        "company_id",
+        "package_id"
     ], ["user_id" => $userId], ["fetch_first" => true]);
 
     $userData = json_decode($userDataResponse, true);
@@ -42,18 +43,29 @@ try {
     }
 
     $userInfo = $userData["data"];
-    $members = null;
 
     $altUser = empty($userInfo["parent_user"] ?? null) ? $userId : $userInfo["parent_user"];
     $planInfo = json_decode(select_from("users", [
-        "members"
+        "package_id"
     ], ["user_id" =>  $altUser], ["fetch_first" => true]), true);
 
-    if ($planInfo["success"] && isset($planInfo["data"]["members"])) {
-        $members = $planInfo["data"];
+    if ($planInfo["success"] && isset($planInfo["data"]["package_id"])) {
+        $packageId = $planInfo["data"]["package_id"] ?? null;
     }
 
-    $userInfo["members"] = $members["members"] ?? null;
+    if (!empty($packageId)) {
+        $packageInfo = json_decode(select_from("packages", [
+            "package_id",
+            "package_name",
+            "members_limit"
+        ], ["package_id" =>  $packageId], ["fetch_first" => true]), true);
+
+        if ($packageInfo["success"] && isset($packageInfo["data"])) {
+            $userInfo["package_info"] = $packageInfo["data"];
+        }
+    } else {
+        $userInfo["package_info"] = null;
+    }
    
     $response = [
         "success" => true,

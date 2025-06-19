@@ -15,12 +15,12 @@ try {
         throw new Exception("User not logged in");
     }
 
-    $userResponse = select_from("users", ["members"], ["user_id" => $userId], ["fetch_first" => true]);
+    $userResponse = select_from("users", ["package_id"], ["user_id" => $userId], ["fetch_first" => true]);
     $userData = json_decode($userResponse, true);
 
-    if ($userData["success"] && !empty($userData["data"]["members"])) {
+    if ($userData["success"] && !empty($userData["data"]["package_id"])) {
         $response["success"] = true;
-        $response["current_pack"] = intval($userData["data"]["members"]);
+        $response["current_pack"] = intval($userData["data"]["package_id"]);
         $response["message"] = "Current package retrieved";
     }
 } catch (Exception $e) {

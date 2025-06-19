@@ -39,11 +39,11 @@ try {
 		throw new Exception("Access denied. You do not have permission to upgrade the supscription.");
 	}
 
-	$currentPackResponse = select_from("users", ["members"], ["user_id" => $userId], ["fetch_first" => true]);
+	$currentPackResponse = select_from("users", ["package_id"], ["user_id" => $userId], ["fetch_first" => true]);
 	$currentPackData = json_decode($currentPackResponse, true);
 
-	if ($currentPackData["success"] && !empty($currentPackData["data"]["members"])) {
-		$currentPack = intval($currentPackData["data"]["members"]);
+	if ($currentPackData["success"] && !empty($currentPackData["data"]["package_id"])) {
+		$currentPack = intval($currentPackData["data"]["package_id"]);
 
 		if ($currentPack === $selectedPack) {
 			$response = [
@@ -75,7 +75,7 @@ try {
 		throw new Exception("Database insertion failed.");
 	}
 
-	$updateResponse = update_table("users", ["members" => $selectedPack], ["user_id" => $userId]);
+	$updateResponse = update_table("users", ["package_id" => $selectedPack], ["user_id" => $userId]);
 	$updateResult = json_decode($updateResponse, true);
 
 	if (!$updateResult["success"]) {
