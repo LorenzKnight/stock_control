@@ -13,7 +13,7 @@
 		</div>
 		<div class="small-box">
 			<h2 class="box-title">Membership</h2>
-			<h1 id="subsc"></h1>
+			<div id="subsc"></div>
 			<button class="button-style-neutral" id="subsc-button">Subscription</button>
 		</div>
 		<div class="small-box">
@@ -23,7 +23,7 @@
 		</div>
 		<div class="small-box">
 			<h2 class="box-title">Spot</h2>
-			<p><span id="spot">0</span> / <span id="total-spot">0</span></p>
+			<h2><span id="spot">0</span> / <span id="total-spot">0</span></h2>
 			<button class="button-style-neutral" id="add-members-button">Add Members</button>
 		</div>
 	</div>
