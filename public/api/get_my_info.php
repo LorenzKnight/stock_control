@@ -57,7 +57,9 @@ try {
         $packageInfo = json_decode(select_from("packages", [
             "package_id",
             "package_name",
-            "members_limit"
+            "members_limit",
+            "branch_affiliate_limit",
+            "products_limit"
         ], ["package_id" =>  $packageId], ["fetch_first" => true]), true);
 
         if ($packageInfo["success"] && isset($packageInfo["data"])) {

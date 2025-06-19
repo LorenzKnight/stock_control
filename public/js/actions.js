@@ -237,8 +237,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 				subsc.innerHTML = 
 					user.package_info && user.package_info.package_id 
 						? `
-							<p>${user.package_info.package_name || "No Package"}</p>
-							<p>${user.package_info.members_limit} members</p>
+							<p><strong>Pack:</strong> ${user.package_info.package_name || "No Package"}</p>
+							<p><strong>Members:</strong> ${user.package_info.members_limit}</p>
+							<p><strong>Branch:</strong> ${user.package_info.branch_affiliate_limit}</p>
+							<p><strong>Product limit:</strong> ${user.package_info.products_limit}</p>
 						` 
 						: "0";
 				// MODIFICAR O COMPLETAR AQUI
