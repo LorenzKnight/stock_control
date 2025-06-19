@@ -13,17 +13,83 @@ CREATE TABLE IF NOT EXISTS users (
 	signup_date TIMESTAMP NULL,
 	rank INTEGER NULL,
 	company_id INTEGER NULL,
-	members INTEGER NULL,
+	package_id INTEGER NULL,
 	status INTEGER NULL,
 	status_by_admin INTEGER NULL
 );
 
--- INSERT INTO users (parent_user, name, surname, email, phone, username, password, image, verified, birthday, signup_date, company_id, members, status)
+-- INSERT INTO users (parent_user, name, surname, email, phone, username, password, image, verified, birthday, signup_date, company_id, package_id, status)
 -- VALUES (null, 'Lorenz', 'Knight', 'lorenz.knight@gmail.com', 763199480, 'lorenz_knight', 123456, 'profile_user_1_1742243935.jpg', 0, '1984-09-03 00:00:00', '2022-10-18 00:00:00', 1, 5, 1),
 -- 	(1, 'Joel', 'Knight', 'joel.knight@gmail.com', null, 'joel_knight', 123456, null, 0, '1984-09-03 00:00:00', '2022-10-18 00:00:00', 1, null, 1),
 -- 	(1, 'Shael', 'Knight', 'shael.knight@gmail.com', null, 'shael_knight', 123456, 'perfil.png', 0, '1984-09-03 00:00:00', '2022-10-18 00:00:00', 1, null, 1),
 -- 	(1, 'John', 'Doe', 'john.doe@gmail.com', null, 'john_doe', 123456, null, 0, '1984-09-03 00:00:00', '2022-10-18 00:00:00', 1, null, 1),
 -- 	(1, 'Lorenzo', 'Knight', 'lorenzo.knight@gmail.com', 763199480, 'john_doe', 123456, null, 0, '1984-09-03 00:00:00', '2022-10-18 00:00:00', 1, null, 1);
+
+CREATE TABLE IF NOT EXISTS packages (
+	package_id SERIAL PRIMARY KEY,
+	package_name VARCHAR(255) NULL,
+	package_image VARCHAR(255) NULL,
+	package_description TEXT NULL,
+	package_price INTEGER NULL,
+	members_limit INTEGER NULL, -- Límite de miembros
+	admin_limit INTEGER NULL, -- Límite de administradores
+	branch_affiliate_limit INTEGER NULL, -- Límite de sucursales afiliadas
+	products_limit INTEGER NULL, -- Límite de productos
+	package_duration INTEGER NULL, -- Duración en dias
+	package_status INTEGER NULL, -- 0: Inactivo, 1: Activo
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- INSERT INTO packages (
+--   package_name, package_description, package_price, members_limit, admin_limit, branch_affiliate_limit, products_limit, package_duration, package_status
+-- ) VALUES 
+-- ('Tried Pack',  
+--  'Perfect to explore the system with no commitment. Includes 1 user, limited access to essential features, and 1 affiliate branch. Great for solo entrepreneurs.', 
+--  NULL, 1, 0, 1, 5, 30, 1),
+
+-- ('Basic Pack',  
+--  'Basic plan for individual users. Includes 1 member, essential tools, 1 affiliate branch, and up to 10 products. Ideal for freelancers or micro-businesses.', 
+--  2, 1, 1, 1, 10, NULL, 1),
+
+-- ('Mini Pack',  
+--  'Designed for small teams. Supports up to 5 members, shared admin access, 1 affiliate branch, and up to 50 products. Perfect for local shops.', 
+--  10, 5, 1, 1, 50, NULL, 1),
+
+-- ('Smart Pack', 
+--  'A great choice for growing teams. Allows up to 10 members, 1 admin, 2 affiliate branches, and up to 100 products. Ideal for emerging small businesses.', 
+--  20, 10, 1, 2, 100, NULL, 1),
+
+-- ('Plus Pack',  
+--  'Mid-range capacity for moderately expanding businesses. Up to 15 members, 2 admins, 3 affiliate branches, and 150 products.', 
+--  30, 15, 2, 3, 150, NULL, 1),
+
+-- ('Growth Pack', 
+--  'Optimized for expansion. Includes 20 members, 2 admins, 4 affiliate branches, and up to 200 products. Balanced for scale and control.', 
+--  40, 20, 2, 4, 200, NULL, 1),
+
+-- ('Boost Pack',  
+--  'A boost for larger operations. Supports 25 members, 3 admins, 5 affiliate branches, and 250 products. Ideal for chains and franchises.', 
+--  50, 25, 3, 5, 250, NULL, 1),
+
+-- ('Power Pack',  
+--  'Strong operational power. Allows 30 users, 3 admins, 6 affiliate branches, and 300 products. Great for businesses with multiple locations.', 
+--  60, 30, 3, 6, 300, NULL, 1),
+
+-- ('Max Pack',    
+--  'For large business structures. Includes 35 members, 4 admins, 7 affiliate branches, and up to 350 products. Perfect for diversified operations.', 
+--  70, 35, 4, 7, 350, NULL, 1),
+
+-- ('Super Pack',  
+--  'Wide coverage for big enterprises. Supports 40 members, 4 admins, 8 affiliate branches, and 400 products. Recommended for regional operations.', 
+--  80, 40, 4, 8, 400, NULL, 1),
+
+-- ('Mega Pack',   
+--  'Robust solution for high-activity organizations. 45 members, 5 admins, 9 affiliate branches, and 450 products.', 
+--  90, 45, 5, 9, 450, NULL, 1),
+
+-- ('Ultra Pack',  
+--  'The full experience. Includes 50 members, 5 admins, 10 affiliate branches, and up to 500 products. Recommended for well-structured companies.', 
+--  100, 50, 5, 10, 500, NULL, 1);
 
 CREATE TABLE IF NOT EXISTS subscriptions (
 	subsc_id SERIAL PRIMARY KEY,
@@ -48,7 +114,7 @@ CREATE TABLE IF NOT EXISTS companies (
 	company_id SERIAL PRIMARY KEY,
 	user_id INT NOT NULL,
 	company_type INTEGER NULL,
-	branch_affiliate INTEGER NULL,
+	parent_company INTEGER NULL,
 	company_name VARCHAR(255) NULL,
 	organization_no INTEGER NULL,
 	company_address VARCHAR(255) NULL,

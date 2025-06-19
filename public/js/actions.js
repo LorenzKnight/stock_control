@@ -234,11 +234,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 
 			if (subsc) {
-				subsc.innerHTML = user.members && String(user.members).trim() !== "" ? `<p>${user.members}</p>` : "0";
+				subsc.innerHTML = 
+					user.package_info && user.package_info.package_id 
+						? `
+							<p>${user.package_info.package_name || "No Package"}</p>
+							<p>${user.package_info.members_limit} members</p>
+						` 
+						: "0";
+				// MODIFICAR O COMPLETAR AQUI
 			}
 	
 			if (totalSpot) {
-				totalSpot.innerHTML = user.members && String(user.members).trim() !== "" ? user.members : "0";
+				totalSpot.innerHTML = user.package_info && user.package_info.package_id ? user.package_info.members_limit : "0";
 			}
 
 			if (myName) {
@@ -989,7 +996,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	
 				const userInfoRes = await fetch('api/get_my_info.php');
 				const userInfo = await userInfoRes.json();
-				const rawAllowed = userInfo.success ? userInfo.data.members : null;
+				const rawAllowed = userInfo.success ? userInfo.data.package_info.members_limit : null;
 				const allowedMembers = rawAllowed !== null && rawAllowed !== "" ? parseInt(rawAllowed) : null;
 	
 				if (allowedMembers === null || currentMemberCount >= allowedMembers) {
@@ -4567,29 +4574,27 @@ document.addEventListener("DOMContentLoaded", async function () {
 		const select = document.getElementById(selectId);
 		if (!select) return;
 
-		// Limpiar contenido actual del <select>
 		select.innerHTML = '';
 
-		// Opción por defecto
 		const defaultOption = document.createElement('option');
 		defaultOption.value = '';
 		defaultOption.textContent = 'Select a Package';
 		select.appendChild(defaultOption);
 
 		try {
-			const res = await fetch('api/get_global_array.php?key=packages');
+			const res = await fetch('api/get_packages.php');
 			const data = await res.json();
 
-			if (data.success && data.data) {
-				for (const [value, label] of Object.entries(data.data)) {
+			if (data.success && data.packages) {
+				data.packages.forEach(pkg => {
 					const option = document.createElement('option');
-					option.value = value;
-					option.textContent = label;
-					if (String(value) === String(selectedValue)) {
+					option.value = pkg.package_id;
+					option.textContent = `${pkg.package_name} - ${pkg.members_limit} members`;
+					if (String(pkg.package_id) === String(selectedValue)) {
 						option.selected = true;
 					}
 					select.appendChild(option);
-				}
+				});
 			} else {
 				select.innerHTML += `<option value="">No packages found</option>`;
 			}

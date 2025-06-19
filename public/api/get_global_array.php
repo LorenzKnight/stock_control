@@ -25,8 +25,7 @@ try {
         'maritalStatus',
         'paymentTerms',
         'paymentMethods',
-        'currencies',
-        'packages'
+        'currencies'
     ]; // Agrega más si lo necesitas
 
     if (!in_array($key, $allowedKeys)) {
