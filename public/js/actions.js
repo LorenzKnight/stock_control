@@ -243,7 +243,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 							<p><strong>Product limit:</strong> ${user.package_info.products_limit}</p>
 						` 
 						: "0";
-				// MODIFICAR O COMPLETAR AQUI
 			}
 	
 			if (totalSpot) {
@@ -531,15 +530,32 @@ document.addEventListener("DOMContentLoaded", async function () {
 	let selectPack = document.getElementById('packs'); // AQUI
 	let estimated = document.getElementById('estimated');
 	let estimatedInput = document.getElementById('estimated_cost');
-	const pricePerMember = 10;
 
-	function updateEstimatedCost() {
-		if (selectPack && estimated && estimatedInput) {
-			let selectedValue = parseInt(selectPack.value);
-			let totalCost = selectedValue > 0 ? selectedValue * pricePerMember : 0;
-			estimated.innerHTML = `Estimated cost: <strong>$ ${totalCost}</strong>`;
-			estimatedInput.value = totalCost;
-			
+	async function updateEstimatedCost() {
+		if (!selectPack || !estimated || !estimatedInput) return;
+
+		selectedValue = parseInt(selectPack.value);
+
+		try {
+			const res = await fetch('api/get_packages.php');
+			const data = await res.json();
+
+			if (data.success && Array.isArray(data.packages)) {
+				const pkg = data.packages.find(p => parseInt(p.package_id) === selectedValue);
+
+				if (pkg) {
+					const totalCost = pkg.package_price ?? 0;
+					estimated.innerHTML = `Estimated cost: <strong>$ ${totalCost}</strong>`;
+					estimatedInput.value = totalCost;
+				} else {
+					estimated.innerHTML = `Estimated cost: <strong>$ 0</strong>`;
+					estimatedInput.value = 0;
+				}
+			}
+		} catch (error) {
+			console.error("Error loading package data:", error);
+			estimated.innerHTML = `Estimated cost: <strong>$ 0</strong>`;
+			estimatedInput.value = 0;
 		}
 	}
 
@@ -2694,7 +2710,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							: 'images/sys-img/NonProfilePic.png';
 
 						const paymentDateFormatted = sale.payment_date
-							? `Every ${new Date(sale.payment_date).getDate()}th` // AQUI
+							? `Every ${new Date(sale.payment_date).getDate()}th`
 							: '-';
 
 						let productsHtml = '';
@@ -4584,7 +4600,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		select.appendChild(defaultOption);
 
 		try {
-			const res = await fetch('api/get_packages.php');
+			const res = await fetch('api/get_packages.php'); // AQUI
 			const data = await res.json();
 
 			if (data.success && data.packages) {
