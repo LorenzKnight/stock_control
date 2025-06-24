@@ -22,6 +22,11 @@ try {
 		throw new Exception("Access denied. You do not have permission to update company info.");
 	}
 
+	$companyId = $_POST['company_id'] ?? null;
+	if ($companyId && !is_numeric($companyId)) {
+		throw new Exception("Invalid company ID.");
+	}
+
 	$companyName = trim($_POST['company_name'] ?? '');
 	$orgNo = trim($_POST['organization_no'] ?? '');
 	$address = trim($_POST['company_address'] ?? '');
@@ -54,11 +59,8 @@ try {
 		throw new Exception("Logo upload failed: " . $imgEx->getMessage());
 	}
 
-    $checkCompany = select_from("companies", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
-    $checkResult = json_decode($checkCompany, true);
-
-    if ($checkResult["success"] && !empty($checkResult["data"])) {
-        $updateResponse = update_table("companies", $updateData, ["user_id" => $userId]);
+    if (!empty($companyId) && is_numeric($companyId)) {
+        $updateResponse = update_table("companies", $updateData, ["user_id" => $userId, "company_id" => $companyId]);
         $updateResult = json_decode($updateResponse, true);
 
 	    if (!$updateResult["success"]) throw new Exception("Update failed.");
@@ -70,11 +72,6 @@ try {
         $insertResult = json_decode($insertResponse, true);
     
         if (!$insertResult["success"]) throw new Exception("Insert failed.");
-
-		$updateCompanyId = update_table("users", ["company_id" => $insertResult["id"]], ["user_id" => $userId]);
-		$updateResult = json_decode($updateCompanyId, true);
-
-	    if (!$updateResult["success"]) throw new Exception("Update failed.");
     
         $action = "created";
     }
@@ -94,7 +91,7 @@ try {
 
 	$response = [
 		"success" => true,
-		"message" => "Company info updated successfully!",
+		"message" => "Company info {$action} successfully!",
 		"img_gif" => "../images/sys-img/loading1.gif",
 		"redirect_url" => ""
 	];

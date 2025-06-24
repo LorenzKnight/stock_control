@@ -65,6 +65,12 @@
     -webkit-appearance: inherit;
 }
 
+/* .small-select {
+    width: 90%;
+    margin: 10px 0 5px !important;
+    padding: 5px;
+} */
+
 .search-field {
     width: 90%;
     margin: 5px 0;
@@ -104,6 +110,22 @@
     transition: height 0.5s ease-out;
 	overflow: hidden;
     max-height: 75vh;
+}
+
+.formular-medium-frame {
+    width: 750px;
+    margin: 100px auto;
+    padding: 20px 0 50px;
+    background-color: var(--frm-bg-transparent-grey);
+    box-shadow: 0 4px 10px 0 rgba(37, 37, 37, 0.388);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border-radius: 10px;
+    border: 1px solid var(--frm-border-semi-transparent);
+    font-weight: 200;
+    transform: scale(0.7);
+    opacity: 0;
+    transition: transform 0.5s ease, opacity 0.5s ease;
 }
 
 .formular-big-frame {

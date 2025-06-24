@@ -280,6 +280,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
     }
 
+	// 📌 carga todos los usuarios hijos de la empresa seleccionada
+	const selectedInput = document.querySelector('input[name="company_edit_info"]:checked');
+	if (selectedInput) {
+		const selectedCompanyId = selectedInput.dataset.company;
+		if (selectedCompanyId && !isNaN(selectedCompanyId)) {
+			loadChildUsers(selectedCompanyId);
+		} else {
+			loadChildUsers();
+		}
+	} else {
+		loadChildUsers();
+	}
+
 	// 📌 Manejo de lo datos de Empresa
 	const myCompany = document.getElementById("company-data");
 	if (myCompany) {
@@ -292,7 +305,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			let data = await response.json();
 
 			if (data.success && data.data) {
-				let company = data.data;
+				let company = data.data[0];
 
 				let logoHTML = "";
 				if (company.company_logo && company.company_logo.trim() !== "") {
@@ -313,62 +326,68 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// 📌 Manejo de lista de usuarios hijos
-	const spot = document.getElementById("spot");
-	const userContainer = document.getElementById('child-user-table');
-	if (spot && userContainer) {
-		try {
-			let response = await fetch('api/get_users.php', {
+	function loadChildUsers(companyId) {
+		const spot = document.getElementById("spot");
+		const userContainer = document.getElementById('child-user-table');
+		if (spot && userContainer) {
+			let url = 'api/get_users.php';
+			if (companyId && !isNaN(companyId)) {
+				url += `?select_company=${companyId}`;
+			}
+
+			fetch(url, {
 				method: 'GET',
 				headers: { 'Accept': 'application/json' }
-			});
+			})
+			.then(response => response.json())
+			.then(data => {
+				spot.innerHTML = data.count !== "" ? data.count : "0";
 
-			let data = await response.json();
+				if (data.success && data.count > 0) {
+					userContainer.innerHTML = '';
 
-			spot.innerHTML = data.count !== "" ? data.count : "0";
+					data.users.forEach(user => {
+						let card = document.createElement("div");
+						card.classList.add("members-card");
 
-			if (data.success && data.count > 0) {
-				userContainer.innerHTML = '';
+						let profileImage = user.image && user.image.trim() !== "" 
+						? `images/profile/${user.image}` 
+						: "images/sys-img/NonProfilePic.png";
 
-				data.users.forEach(user => {
-					let card = document.createElement("div");
-					card.classList.add("members-card");
+						let borderColor = Number(user.status) === 1 ? "#8cda8a" : "#fbadad";
 
-					let profileImage = user.image && user.image.trim() !== "" 
-					? `images/profile/${user.image}` 
-					: "images/sys-img/NonProfilePic.png";
-
-					let borderColor = Number(user.status) === 1 ? "#8cda8a" : "#fbadad";
-
-					card.innerHTML = `
-						<div class="mini-banner">
-							<div class="mini-profile" style="border: 2px solid ${borderColor};">
-								<img src="${profileImage}" alt="Profile Picture">
+						card.innerHTML = `
+							<div class="mini-banner">
+								<div class="mini-profile" style="border: 2px solid ${borderColor};">
+									<img src="${profileImage}" alt="Profile Picture">
+								</div>
+								<div class="co-worker-position">${user.rank_text || 'Unknown role'}</div>
 							</div>
-							<div class="co-worker-position">${user.rank_text || 'Unknown role'}</div>
-						</div>
-						<div class="card-info">
-							<h3>${user.name} ${user.surname}</h3>
-							<p><strong>Email:</strong> ${user.email}</p>
-							<p><strong>Phone:</strong> ${user.phone ? user.phone : "No Phone Number"}</p>
-						</div>
-						<div class="card-menu">
-							<img src="images/sys-img/edit-icon.png" alt="edit-card">
-						</div>
-					`;
+							<div class="card-info">
+								<h3>${user.name} ${user.surname}</h3>
+								<p><strong>Email:</strong> ${user.email}</p>
+								<p><strong>Phone:</strong> ${user.phone ? user.phone : "No Phone Number"}</p>
+							</div>
+							<div class="card-menu">
+								<img src="images/sys-img/edit-icon.png" alt="edit-card">
+							</div>
+						`;
 
-					userContainer.appendChild(card);
+						userContainer.appendChild(card);
 
-					const cardMenuBtn = card.querySelector('.card-menu');
-					cardMenuBtn.addEventListener('click', () => {
-						openMemberForm(user.user_id);
+						const cardMenuBtn = card.querySelector('.card-menu');
+						cardMenuBtn.addEventListener('click', () => {
+							openMemberForm(user.user_id);
+						});
 					});
-				});
-			} else {
-				userContainer.innerHTML = "<p>No members found.</p>";
-			}
-		} catch (error) {
-			console.error('Error fetching data:', error);
-			document.getElementById("child-user-table").innerHTML = `<p>Error loading user data.</p>`;
+				} else {
+					userContainer.innerHTML = "<p>No members found.</p>";
+				}
+			})
+			.catch(error => {
+				console.error('Error fetching data:', error);
+				userContainer.innerHTML = `<p>Error loading user data.</p>`;
+			});
 		}
 	}
 
@@ -527,7 +546,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	});
 
 	// 📌 recoje el valor del select del formulario subscripcion
-	let selectPack = document.getElementById('packs'); // AQUI
+	let selectPack = document.getElementById('packs');
 	let estimated = document.getElementById('estimated');
 	let estimatedInput = document.getElementById('estimated_cost');
 
@@ -846,46 +865,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 			console.error("Error loading user info:", error);
 		}
 	}
-	
-	// 📌 script para recojer los datos de la compania
-	async function loadCompanyData() {
-		try {
-			let response = await fetch('api/get_company_info.php', {
-				method: 'GET',
-				headers: { 'Accept': 'application/json' }
-			});
-	
-			let data = await response.json();
-			if (data.success && data.data) {
-				let company = data.data;
-
-				document.getElementById('company_name').value = company.company_name || '';
-				document.getElementById('organization_no').value = company.organization_no || '';
-				document.getElementById('company_address').value = company.company_address || '';
-				document.getElementById('company_phone').value = company.company_phone || '';
-
-				const logoPreview = document.getElementById('logo-preview');
-				if (logoPreview) {
-					if (company.company_logo && company.company_logo.trim() !== "") {
-						logoPreview.src = `images/company-logos/${company.company_logo}`;
-						logoPreview.style.display = 'block';
-						logoPreview.style.visibility = 'visible';
-						logoPreview.style.opacity = '1';
-					} else {
-						logoPreview.src = '';
-						logoPreview.style.display = 'none';
-						logoPreview.style.visibility = 'hidden';
-						logoPreview.style.opacity = '0';
-					}
-				}
-			}
-		} catch (error) {
-			console.error("Error loading company data:", error);
-		}
-	}
 
 	// 📌 script para update company popup
-	let editCompButton = document.getElementById('edit-comp-button');
+	let editCompButton = document.getElementById('manage-comp-button');
 	if (editCompButton) {
 		editCompButton.addEventListener('click', function (e) {
 			e.preventDefault();
@@ -893,7 +875,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			scrollToTopIfNeeded();
 
 			const editCompanyForm = document.getElementById('edit-company-form');
-			const popupContent = editCompanyForm.querySelector('.formular-frame');
+			const popupContent = editCompanyForm.querySelector('.formular-medium-frame');
 
 			if (editCompanyForm && popupContent) {
 				editCompanyForm.style.display = 'block';
@@ -909,7 +891,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				setTimeout(() => {
 					popupContent.style.transform = 'scale(1)';
 					popupContent.style.opacity = '1';
-					loadCompanyData();
 				}, 50);
 
 				initDragAndDrop('company-logo-drop-area', 'company_logo', 'logo-preview');
@@ -917,11 +898,171 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
+	let originalCompanyData = {};
+	let hasChanges = false;
+
+	const affList = document.getElementById('affiliate-list');
+	const addAffBtn = document.getElementById('add-aff-btn');
+	if (addAffBtn) {
+		try {
+			let response = await fetch('api/get_company_info.php', { //AQUI
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			});
+
+			let data = await response.json();
+
+			if (data.success && data.data.length > 0) {
+				data.data.forEach(company => {
+					const uniqueId = `company-db-${company.company_id}`;
+					const row = document.createElement('tr');
+					row.className = "categoryContainer";
+					row.innerHTML = `
+						<td width="10%" align="center" valign="middle">
+							<div class="list-icon">
+								<img src="images/sys-img/element-list.png" alt="">
+							</div>
+						</td>
+						<td width="80%" valign="middle" style="padding-left:10px;">${company.company_name}</td>
+						<td width="10%" align="center" valign="middle">
+							<div class="opcion-radio">
+								<input type="radio" id="${uniqueId}" name="company_edit_info" class="category-radio" data-company="${company.company_id}" />
+								<label for="${uniqueId}"></label>
+							</div>
+						</td>
+					`;
+					affList.appendChild(row);
+				});
+			}
+		} catch (error) {
+			console.error("Error loading categories:", error);
+		}
+	}
+
+	// CARGAR FORMULARIO DE COMPANY
+	document.addEventListener('change', function (e) {
+		if (e.target.matches('input[name="company_edit_info"]')) {
+			const notCompanyForm = document.getElementById('not-company-form');
+			const companyForm = document.getElementById('company-form');
+			const companyActionBtn = document.getElementById('company-action-btn');
+			if (e.target.checked) {
+				notCompanyForm.classList.add('hidden');
+				companyForm.classList.remove('hidden');
+				companyActionBtn.value = "Select Company";
+			}
+			const selectedCompanyId = e.target.dataset.company;
+			loadCompanyData(selectedCompanyId);
+		}
+	});
+
+	const inputs = document.querySelectorAll('#company-form input[type="text"]');
+	inputs.forEach(input => {
+		input.addEventListener('input', () => {
+			const field = input.id;
+			const currentValue = input.value ?? '';
+			const originalValue = originalCompanyData[field] ?? '';
+			const companyActionBtn = document.getElementById('company-action-btn');
+
+			if (currentValue !== originalValue) {
+				hasChanges = true;
+				showChangeAlert();
+				companyActionBtn.value = "Save Changes";
+			} else {
+				checkIfAnyChange(inputs);
+				if (!hasChanges) {
+					companyActionBtn.value = "Select Company";
+
+					const selectedInput = document.querySelector('input[name="company_edit_info"]:checked');
+					if (selectedInput) {
+						const selectedCompanyId = selectedInput.dataset.company;
+						if (selectedCompanyId && !isNaN(selectedCompanyId)) {
+							loadChildUsers(selectedCompanyId); // ← si hay una seleccion
+						} else {
+							loadChildUsers(); // ← si no hay empresa seleccionada, carga todos
+						}
+					} else {
+						loadChildUsers(); // ← si no hay input seleccionado, también carga todos
+					}
+				}
+			}
+		});
+	});
+
+	function showChangeAlert() {
+		const banner = document.getElementById('status-message');
+		const statusText = document.getElementById('status-text');
+		const statusImage = document.getElementById('status-image');
+
+		statusText.innerText = "You have unsaved changes.";
+		statusImage.src = "images/sys-img/error.gif";
+		banner.style.display = 'block';
+		banner.style.opacity = '1';
+	}
+
+	function hideChangeBanner() {
+		const banner = document.getElementById('status-message');
+		if (banner) {
+			banner.style.opacity = '0';
+			setTimeout(() => {
+				banner.style.display = 'none';
+			}, 500);
+		}
+	}
+
+	function checkIfAnyChange(inputs) {
+		hasChanges = Array.from(inputs).some(input => {
+			const field = input.id;
+			const currentValue = input.value ?? '';
+			const originalValue = originalCompanyData[field] ?? '';
+			return currentValue !== originalValue;
+		});
+
+		if (!hasChanges) hideChangeBanner();
+	}
+
 	// 📌 Manejo del formulario de update Company
 	let formEditCompany = document.getElementById('formEditCompany');
 	if (formEditCompany) {
 		formEditCompany.addEventListener('submit', async function (e) {
 			e.preventDefault();
+
+			const companyActionBtn = document.getElementById('company-action-btn');
+			const isSelecting = companyActionBtn.value === "Select Company";
+
+			if (isSelecting) {
+				const selectedInput = document.querySelector('input[name="company_edit_info"]:checked');
+				if (selectedInput) {
+					const selectedCompanyId = selectedInput.dataset.company;
+					if (selectedCompanyId && !isNaN(selectedCompanyId)) {
+						loadChildUsers(selectedCompanyId); // o tu función de carga
+					}
+				}
+
+				const banner = document.getElementById('status-message');
+				const statusText = document.getElementById('status-text');
+				const statusImage = document.getElementById('status-image');
+
+				statusText.innerText = "Company selected successfully.";
+				statusImage.src = "images/sys-img/loading1.gif";
+				banner.style.display = 'block';
+				banner.style.opacity = '1';
+
+				const companyForm = document.getElementById('edit-company-form');
+				const popupContent = document.querySelector('.formular-medium-frame');
+				if (companyForm && popupContent) {
+					companyForm.style.display = "";
+					popupContent.style.display = "";
+
+					setTimeout(() => {
+						banner.style.opacity = '0';
+						setTimeout(() => {
+							window.location.href = data.redirect_url || window.location.href;
+						}, 1000);
+					}, 1500);
+				}
+
+				return; // No enviar si no hay cambios
+			}
 
 			let formData = new FormData(this);
 
@@ -964,7 +1105,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// Función para llenar el <select> con los roles de usuario
-	async function populateRankSelect(selectId, selectedValue = '', minRoleId = 1) {
+	async function populateRankSelect(selectId, selectedValue = '', minRoleId = 1) { // AQUI
 		const select = document.getElementById(selectId);
 		if (!select) return;
 
@@ -4329,7 +4470,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 	handlePopupClose("edit-my_info-form", ".formular-frame", ["edit-my_info-form"]);
 	handlePopupClose("subsc-form", ".formular-frame", ["subsc-form"]);
-	handlePopupClose("edit-company-form", ".formular-frame", ["edit-company-form"]);
+	handlePopupClose("edit-company-form", ".formular-medium-frame", ["edit-company-form"]);
 	handlePopupClose("add-members-form", ".formular-frame", ["add-members-form"]);
 	handlePopupClose("edit-members-form", ".formular-frame", ["edit-members-form"]);
 	handlePopupClose("add-product-form", ".formular-frame", ["add-product-form"]);
@@ -4364,6 +4505,53 @@ document.addEventListener("DOMContentLoaded", async function () {
 				section.style.transform = 'scale(0.8)';
 			}
 		});
+	}
+
+	// 📌 script para recojer los datos de la compania
+	async function loadCompanyData(selectedCompanyId) {
+		if (!isNaN(selectedCompanyId)) {
+			try {
+				let response = await fetch(`api/get_company_info.php?select_company=${selectedCompanyId}`, {
+					method: 'GET',
+					headers: { 'Accept': 'application/json' }
+				});
+		
+				let data = await response.json();
+				if (data.success && data.data && data.data.length > 0) {
+					let company = data.data[0];
+
+					originalCompanyData = {
+						company_name: company.company_name || '',
+						organization_no: company.organization_no || '',
+						company_address: company.company_address || '',
+						company_phone: company.company_phone || ''
+					};
+
+					document.getElementById('company_id').value = company.company_id;
+					document.getElementById('company_name').value = originalCompanyData.company_name || '';
+					document.getElementById('organization_no').value = originalCompanyData.organization_no || '';
+					document.getElementById('company_address').value = originalCompanyData.company_address || '';
+					document.getElementById('company_phone').value = originalCompanyData.company_phone || '';
+
+					const logoPreview = document.getElementById('logo-preview');
+					if (logoPreview) {
+						if (company.company_logo && company.company_logo.trim() !== "") {
+							logoPreview.src = `images/company-logos/${company.company_logo}`;
+							logoPreview.style.display = 'block';
+							logoPreview.style.visibility = 'visible';
+							logoPreview.style.opacity = '1';
+						} else {
+							logoPreview.src = '';
+							logoPreview.style.display = 'none';
+							logoPreview.style.visibility = 'hidden';
+							logoPreview.style.opacity = '0';
+						}
+					}
+				}
+			} catch (error) {
+				console.error("Error loading company data:", error);
+			}
+		}
 	}
 
 	// 📌 script para cargar marcas, modelos y submodelos
@@ -4600,7 +4788,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		select.appendChild(defaultOption);
 
 		try {
-			const res = await fetch('api/get_packages.php'); // AQUI
+			const res = await fetch('api/get_packages.php');
 			const data = await res.json();
 
 			if (data.success && data.packages) {
