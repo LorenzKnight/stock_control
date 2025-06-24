@@ -22,12 +22,14 @@ try {
     $userId = $_SESSION["sc_UserId"] ?? null;
 	if (!$userId) throw new Exception("User session not found.");
 
-    $companyIdRes = json_decode(select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]), true);
-    if (!$companyIdRes || !$companyIdRes["success"] || empty($companyIdRes["data"]["company_id"])) {
-        throw new Exception("Company ID not found for the user.");
-    }
+    $where = [
+		"parent_user" => ["condition" => "IS NOT NULL"]
+	];
 
-    $companyId = $companyIdRes["data"]["company_id"];
+	$selectCompany = $_GET["select_company"] ?? null;
+	if ($selectCompany !== null && $selectCompany !== '') {
+		$where["company_id"] = $selectCompany;
+	}
 
     // Obtener todos los usuarios
     $userResponse = select_from(
@@ -42,11 +44,7 @@ try {
         "rank",
         "status",
         "signup_date"
-    ],
-    [
-        "company_id" => $companyId,
-        "parent_user" => ["condition" => "IS NOT NULL"]
-    ],
+    ], $where,
     [
         "order_by" => "user_id",
         "order_direction" => "ASC",

@@ -20,21 +20,34 @@ try {
     $userInfo = $userData["data"];
 
     $altUser = empty($userInfo["parent_user"] ?? null) ? $userId : $userInfo["parent_user"];
+
+    $where = [
+		"user_id" => $altUser
+	];
+
+    $selectCompany = $_GET["select_company"] ?? '';
+    if (!empty($selectCompany)) {
+        $where["company_id"] = $selectCompany; // ✅ asignar el valor real
+    }
     
     $companyResponse = select_from("companies", [
+        "company_id",
         "company_name",
         "organization_no",
         "company_address",
         "company_phone",
         "company_logo"
-    ], ["user_id" => $altUser], ["fetch_first" => true]);
+    ], $where, [
+        "order_by" => "company_id",
+        "oder_direction" => "ASC"
+    ]);
 
     $companyData = json_decode($companyResponse, true);
 
     if ($companyData["success"] && !empty($companyData["data"])) {
         $response["success"] = true;
         $response["message"] = "Company info loaded.";
-        $response["data"] = $companyData["data"];
+        $response["data"] = array_values($companyData["data"]);
     }
 } catch (Exception $e) {
     $response["message"] = $e->getMessage();

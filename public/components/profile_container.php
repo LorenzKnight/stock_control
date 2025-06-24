@@ -18,8 +18,10 @@
 		</div>
 		<div class="small-box">
 			<h2 class="box-title">Company data</h2>
+				
 			<span id="company-data"></span>
-			<button class="button-style-neutral" id="edit-comp-button">Update Company</button>
+			<!-- <button class="button-style-neutral" id="edit-comp-button">Update Company</button> -->
+			<button class="button-style-neutral" id="manage-comp-button">manage</button>
 		</div>
 		<div class="small-box">
 			<h2 class="box-title">Spot</h2>
@@ -29,6 +31,6 @@
 	</div>
 	<div class="data-container">
 		<h2 style="margin-left: 10px;">User List</h2>
-		<div class="members-table" id="child-user-table">Cargando usuarios...</div>
+		<div class="members-table" id="child-user-table">Loading users...</div>
 	</div>
 </div>
