@@ -15,20 +15,7 @@
 							</div>
 							<div class="cat-all-list">
 								<table class="all-mark-list" id="affiliate-list" cellspacing="0">
-									<!-- <tr class="categoryContainer">
-										<td width="10%" align="center" valign="middle">
-											<div class="list-icon">
-												<img src="images/sys-img/element-list.png" alt="">
-											</div>
-										</td>
-										<td width="80%" valign="middle" style="padding-left:10px;">All</td>
-										<td width="10%" align="center" valign="middle">
-											<div class="opcion-radio">
-												<input type="radio" id="" name="company_edit_info" class="category-radio" data-company="" />
-												<label for=""></label>
-											</div>
-										</td>
-									</tr> -->
+								
 								</table>
 							</div>
 						</div>

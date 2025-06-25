@@ -67,6 +67,8 @@ try {
 
         $action = "updated";
     } else {
+		cdebug("Creating new company info for user ID: $userId");
+		exit;
         $updateData["user_id"] = $userId;
         $insertResponse = insert_into("companies", $updateData, ["id" => "company_id"]);
         $insertResult = json_decode($insertResponse, true);

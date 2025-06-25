@@ -939,11 +939,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 	let originalCompanyData = {};
 	let hasChanges = false;
 
+	// 📌 Cargar la lista de empresas
 	const affList = document.getElementById('affiliate-list');
-	const addAffBtn = document.getElementById('add-aff-btn');
-	if (addAffBtn) {
+	if (affList) {
 		try {
-			let response = await fetch('api/get_company_info.php', { //AQUI
+			let response = await fetch('api/get_company_info.php', {
 				method: 'GET',
 				headers: { 'Accept': 'application/json' }
 			});
@@ -1102,6 +1102,109 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				return; // No enviar si no hay cambios
 			}
+
+			let formData = new FormData(this);
+
+			try {
+				let response = await fetch('api/update_company.php', {
+					method: 'POST',
+					headers: { Accept: 'application/json' },
+					body: formData
+				});
+
+				let data = await response.json();
+
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				statusText.innerText = data.message;
+				statusImage.src = data.img_gif;
+				banner.style.display = 'block';
+				banner.style.opacity = '1';
+
+				if (data.success) {
+					setTimeout(() => {
+						banner.style.opacity = '0';
+						setTimeout(() => {
+							window.location.href = data.redirect_url;
+						}, 1000);
+					}, 3000);
+				}
+			} catch (error) {
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				statusText.innerText = "Error procesando la solicitud.";
+				statusImage.src = "../images/sys-img/error.gif";
+				banner.style.display = 'block';
+			}
+		});
+	}
+
+	const addAffBtn = document.getElementById('add-aff-btn'); //AQUI
+	if (addAffBtn) {
+		addAffBtn.addEventListener('click', function (e) {
+			e.preventDefault();
+
+			scrollToTopIfNeeded();
+
+			const notCompanyForm = document.getElementById('not-company-form');
+			const companyForm = document.getElementById('company-form');
+			const companyActionBtn = document.getElementById('company-action-btn');
+
+			notCompanyForm.classList.add('hidden');
+			companyForm.classList.remove('hidden');
+			companyActionBtn.value = "Add Company";
+
+			loadCompanyData();
+		});
+	}
+
+	// 📌 Manejo del formulario de update Company
+	let formAddCompany = document.getElementById('formEditCompany');
+	if (formAddCompany) {
+		formAddCompany.addEventListener('submit', async function (e) {
+			e.preventDefault();
+
+			const companyActionBtn = document.getElementById('company-action-btn');
+			const isSelecting = companyActionBtn.value === "Add Company";
+
+			// if (isSelecting) {
+			// 	const selectedInput = document.querySelector('input[name="company_edit_info"]:checked');
+			// 	if (selectedInput) {
+			// 		const selectedCompanyId = selectedInput.dataset.company;
+			// 		if (selectedCompanyId && !isNaN(selectedCompanyId)) {
+			// 			loadChildUsers(selectedCompanyId);
+			// 		}
+			// 	}
+
+			// 	const banner = document.getElementById('status-message');
+			// 	const statusText = document.getElementById('status-text');
+			// 	const statusImage = document.getElementById('status-image');
+
+			// 	statusText.innerText = "Company selected successfully.";
+			// 	statusImage.src = "images/sys-img/loading1.gif";
+			// 	banner.style.display = 'block';
+			// 	banner.style.opacity = '1';
+
+			// 	const companyForm = document.getElementById('edit-company-form');
+			// 	const popupContent = document.querySelector('.formular-medium-frame');
+			// 	if (companyForm && popupContent) {
+			// 		companyForm.style.display = "";
+			// 		popupContent.style.display = "";
+
+			// 		setTimeout(() => {
+			// 			banner.style.opacity = '0';
+			// 			// setTimeout(() => {
+			// 			// 	window.location.href = data.redirect_url || window.location.href;
+			// 			// }, 1000);
+			// 		}, 1500);
+			// 	}
+
+			// 	return; // No enviar si no hay cambios
+			// }
 
 			let formData = new FormData(this);
 
