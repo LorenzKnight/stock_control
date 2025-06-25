@@ -989,7 +989,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				companyActionBtn.value = "Select Company";
 			}
 			const selectedCompanyId = e.target.dataset.company;
-			loadCompanyData(selectedCompanyId);
+			loadCompanyFormOrData(selectedCompanyId);
 		}
 	});
 
@@ -1158,7 +1158,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			companyForm.classList.remove('hidden');
 			companyActionBtn.value = "Add Company";
 
-			loadCompanyData();
+			loadCompanyFormOrData();
 		});
 	}
 
@@ -1171,77 +1171,44 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const companyActionBtn = document.getElementById('company-action-btn');
 			const isSelecting = companyActionBtn.value === "Add Company";
 
-			// if (isSelecting) {
-			// 	const selectedInput = document.querySelector('input[name="company_edit_info"]:checked');
-			// 	if (selectedInput) {
-			// 		const selectedCompanyId = selectedInput.dataset.company;
-			// 		if (selectedCompanyId && !isNaN(selectedCompanyId)) {
-			// 			loadChildUsers(selectedCompanyId);
-			// 		}
-			// 	}
+			if (isSelecting) {
+				let formData = new FormData(this);
 
-			// 	const banner = document.getElementById('status-message');
-			// 	const statusText = document.getElementById('status-text');
-			// 	const statusImage = document.getElementById('status-image');
+				try {
+					let response = await fetch('api/update_company.php', { // hagamos esto con la logica de como creamos una marca
+						method: 'POST',
+						headers: { Accept: 'application/json' },
+						body: formData
+					});
 
-			// 	statusText.innerText = "Company selected successfully.";
-			// 	statusImage.src = "images/sys-img/loading1.gif";
-			// 	banner.style.display = 'block';
-			// 	banner.style.opacity = '1';
+					let data = await response.json();
 
-			// 	const companyForm = document.getElementById('edit-company-form');
-			// 	const popupContent = document.querySelector('.formular-medium-frame');
-			// 	if (companyForm && popupContent) {
-			// 		companyForm.style.display = "";
-			// 		popupContent.style.display = "";
+					let banner = document.getElementById('status-message');
+					let statusText = document.getElementById('status-text');
+					let statusImage = document.getElementById('status-image');
 
-			// 		setTimeout(() => {
-			// 			banner.style.opacity = '0';
-			// 			// setTimeout(() => {
-			// 			// 	window.location.href = data.redirect_url || window.location.href;
-			// 			// }, 1000);
-			// 		}, 1500);
-			// 	}
+					statusText.innerText = data.message;
+					statusImage.src = data.img_gif;
+					banner.style.display = 'block';
+					banner.style.opacity = '1';
 
-			// 	return; // No enviar si no hay cambios
-			// }
-
-			let formData = new FormData(this);
-
-			try {
-				let response = await fetch('api/update_company.php', {
-					method: 'POST',
-					headers: { Accept: 'application/json' },
-					body: formData
-				});
-
-				let data = await response.json();
-
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
-
-				statusText.innerText = data.message;
-				statusImage.src = data.img_gif;
-				banner.style.display = 'block';
-				banner.style.opacity = '1';
-
-				if (data.success) {
-					setTimeout(() => {
-						banner.style.opacity = '0';
+					if (data.success) {
 						setTimeout(() => {
-							window.location.href = data.redirect_url;
-						}, 1000);
-					}, 3000);
-				}
-			} catch (error) {
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
+							banner.style.opacity = '0';
+							setTimeout(() => {
+								window.location.href = data.redirect_url; // esta linea esta refrescando la pagina (lo cual no queremos))
+							}, 1000);
+						}, 3000);
+					}
+				} catch (error) {
+					let banner = document.getElementById('status-message');
+					let statusText = document.getElementById('status-text');
+					let statusImage = document.getElementById('status-image');
 
-				statusText.innerText = "Error procesando la solicitud.";
-				statusImage.src = "../images/sys-img/error.gif";
-				banner.style.display = 'block';
+					statusText.innerText = "Error procesando la solicitud.";
+					statusImage.src = "../images/sys-img/error.gif";
+					banner.style.display = 'block';
+				}
 			}
 		});
 	}
@@ -4650,7 +4617,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// 📌 script para recojer los datos de la compania
-	async function loadCompanyData(selectedCompanyId) {
+	async function loadCompanyFormOrData(selectedCompanyId) {
 		if (!isNaN(selectedCompanyId)) {
 			try {
 				let response = await fetch(`api/get_company_info.php?select_company=${selectedCompanyId}`, {
@@ -4692,6 +4659,28 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}
 			} catch (error) {
 				console.error("Error loading company data:", error);
+			}
+		} else {
+			// 🧹 Si no se pasa ID válido, limpiamos los campos
+			originalCompanyData = {
+				company_name: '',
+				organization_no: '',
+				company_address: '',
+				company_phone: ''
+			};
+
+			document.getElementById('company_id').value = '';
+			document.getElementById('company_name').value = '';
+			document.getElementById('organization_no').value = '';
+			document.getElementById('company_address').value = '';
+			document.getElementById('company_phone').value = '';
+
+			const logoPreview = document.getElementById('logo-preview');
+			if (logoPreview) {
+				logoPreview.src = '';
+				logoPreview.style.display = 'none';
+				logoPreview.style.visibility = 'hidden';
+				logoPreview.style.opacity = '0';
 			}
 		}
 	}
