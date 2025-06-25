@@ -27,7 +27,7 @@ try {
 
     $selectCompany = $_GET["select_company"] ?? '';
     if (!empty($selectCompany)) {
-        $where["company_id"] = $selectCompany; // ✅ asignar el valor real
+        $where["company_id"] = $selectCompany;
     }
     
     $companyResponse = select_from("companies", [
