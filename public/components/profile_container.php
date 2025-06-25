@@ -1,6 +1,6 @@
 <div class="container">
 	<h1 id="hi-user"></h1>
-	<div class="data-container flex">
+	<div class="data-container flex" id="profile-data">
 		<div class="info-box">
 			<h1>Welcome to</h1>
 			<h4>Stock Control</h4>
