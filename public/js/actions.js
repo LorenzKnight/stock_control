@@ -205,131 +205,169 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
 	// 📌 Manejo del datos de usuario
-    try {
-        let response = await fetch('api/get_my_info.php', {
-            method: 'GET',
-            headers: { Accept: "application/json" }
-        });
-
-        let data = await response.json();
-
-		let myName = document.getElementById("my-name");
-		let hiUser = document.getElementById("hi-user");
-		let myData = document.getElementById("my-data");
-		let subsc = document.getElementById("subsc");
-		let totalSpot = document.getElementById("total-spot");
-		const headerProfilePic = document.getElementById("header-profile-pic");
-
-		if (data.success && data.data) {
-			let user = data.data;
-
-			if (hiUser) hiUser.innerHTML = `Hi, ${user.name || 'User'}!`;
-
-			if (myData) {
-				myData.innerHTML =
-					`<p><strong>ID:</strong> ${user.user_id?.trim() || "-"}</p>` +
-					`<p><strong>Phone:</strong> ${user.phone?.trim() || "No Phone Number"}</p>` +
-					`<p><strong>Email:</strong> ${user.email?.trim() || "No Email"}</p>`;
-				;
-			}
-
-			if (subsc) {
-				subsc.innerHTML = 
-					user.package_info && user.package_info.package_id 
-						? `
-							<p><strong>Pack:</strong> ${user.package_info.package_name || "No Package"}</p>
-							<p><strong>Members:</strong> ${user.package_info.members_limit}</p>
-							<p><strong>Branch:</strong> ${user.package_info.branch_affiliate_limit}</p>
-							<p><strong>Product limit:</strong> ${user.package_info.products_limit}</p>
-						` 
-						: "0";
-			}
-	
-			if (totalSpot) {
-				totalSpot.innerHTML = user.package_info && user.package_info.package_id ? user.package_info.members_limit : "0";
-			}
-
-			if (myName) {
-				myName.innerHTML = (String(user.name).trim() || "") + " " + (String(user.surname).trim() || "");
-			}
-
-			if (headerProfilePic) {
-				const hasCustomImage = user.image && user.image.trim() !== "";
-			
-				headerProfilePic.src = hasCustomImage
-					? `../images/profile/${user.image}`
-					: "../images/sys-img/NonProfilePic.png";
-			
-				headerProfilePic.alt = hasCustomImage
-					? "User profile picture"
-					: "Default profile picture";
-			
-				headerProfilePic.classList.remove("default-profile-pic", "custom-profile-pic");
-				headerProfilePic.classList.add(hasCustomImage ? "custom-profile-pic" : "default-profile-pic");
-			}
-        } else {
-            if (myData) {
-				myData.innerHTML = `<p>No user data found.</p>`;
-			}
-        }
-    } catch (error) {
-    	console.error("Error fetching data:", error);
-		const myData = document.getElementById("my-data");
-		if (myData) {
-			myData.innerHTML = `<p>Error loading user data.</p>`;
-		}
-    }
-
-	// 📌 carga todos los usuarios hijos de la empresa seleccionada
-	const selectedInput = document.querySelector('input[name="company_edit_info"]:checked');
-	if (selectedInput) {
-		const selectedCompanyId = selectedInput.dataset.company;
-		if (selectedCompanyId && !isNaN(selectedCompanyId)) {
-			loadChildUsers(selectedCompanyId);
-		} else {
-			loadChildUsers();
-		}
-	} else {
-		loadChildUsers();
-	}
-
-	// 📌 Manejo de lo datos de Empresa
-	const myCompany = document.getElementById("company-data");
-	if (myCompany) {
+	const headerMenu = document.getElementById("header-menu");
+	if (headerMenu) {
 		try {
-			let response = await fetch('api/get_company_info.php', {
+			let response = await fetch('api/get_my_info.php', {
 				method: 'GET',
 				headers: { Accept: "application/json" }
 			});
 
 			let data = await response.json();
 
-			if (data.success && data.data) {
-				let company = data.data[0];
+			let myName = document.getElementById("my-name");
+			let hiUser = document.getElementById("hi-user");
+			let myData = document.getElementById("my-data");
+			let subsc = document.getElementById("subsc");
+			let totalSpot = document.getElementById("total-spot");
+			const headerProfilePic = document.getElementById("header-profile-pic");
 
-				let logoHTML = "";
-				if (company.company_logo && company.company_logo.trim() !== "") {
-					logoHTML = `<p><img src="images/company-logos/${company.company_logo}" alt="Company Logo" style="max-width: 40px; margin: 0 auto; border-radius: 50%; border: 1px solid #000;"></p>`;
+			if (data.success && data.data) {
+				let user = data.data;
+
+				if (hiUser) hiUser.innerHTML = `Hi, ${user.name || 'User'}!`;
+
+				if (myData) {
+					myData.innerHTML =
+						`<p><strong>ID:</strong> ${user.user_id?.trim() || "-"}</p>` +
+						`<p><strong>Phone:</strong> ${user.phone?.trim() || "No Phone Number"}</p>` +
+						`<p><strong>Email:</strong> ${user.email?.trim() || "No Email"}</p>`;
+					;
 				}
 
-				myCompany.innerHTML = 
-					logoHTML +
-					`<p><strong>Org No.:</strong> ` + (company.organization_no && company.organization_no.trim() !== "" ? `${company.organization_no}</p>` : "-</p>") +
-					`<p><strong>Name:</strong> ` + (company.company_name && company.company_name.trim() !== "" ? `${company.company_name}</p>` : "-</p>");
+				if (subsc) {
+					subsc.innerHTML = 
+						user.package_info && user.package_info.package_id 
+							? `
+								<p><strong>Pack:</strong> ${user.package_info.package_name || "No Package"}</p>
+								<p><strong>Members:</strong> ${user.package_info.members_limit}</p>
+								<p><strong>Branch:</strong> ${user.package_info.branch_affiliate_limit}</p>
+								<p><strong>Product limit:</strong> ${user.package_info.products_limit}</p>
+							` 
+							: "0";
+				}
+		
+				if (totalSpot) {
+					totalSpot.innerHTML = user.package_info && user.package_info.package_id ? user.package_info.members_limit : "0";
+				}
+
+				if (myName) {
+					myName.innerHTML = (String(user.name).trim() || "") + " " + (String(user.surname).trim() || "");
+				}
+
+				if (headerProfilePic) {
+					const hasCustomImage = user.image && user.image.trim() !== "";
+				
+					headerProfilePic.src = hasCustomImage
+						? `../images/profile/${user.image}`
+						: "../images/sys-img/NonProfilePic.png";
+				
+					headerProfilePic.alt = hasCustomImage
+						? "User profile picture"
+						: "Default profile picture";
+				
+					headerProfilePic.classList.remove("default-profile-pic", "custom-profile-pic");
+					headerProfilePic.classList.add(hasCustomImage ? "custom-profile-pic" : "default-profile-pic");
+				}
 			} else {
-				myCompany.innerHTML = `<p style="color: var(--warning-orange);">To initialize the system, it is necessary to complete it with your company's data.</p>`;
+				if (myData) {
+					myData.innerHTML = `<p>No user data found.</p>`;
+				}
 			}
 		} catch (error) {
 			console.error("Error fetching data:", error);
-			document.getElementById("company-data").innerHTML = `<tr><td colspan="6">Error al cargar los datos de empresa.</td></tr>`;
+			const myData = document.getElementById("my-data");
+			if (myData) {
+				myData.innerHTML = `<p>Error loading user data.</p>`;
+			}
+		}
+	}
+
+	const profileData = document.getElementById("profile-data");
+	if (profileData) {
+		try {
+			let response = await fetch('api/get_users.php', {
+				method: 'GET',
+				headers: { Accept: "application/json" }
+			});
+
+			let data = await response.json();
+			const spot = document.getElementById("spot");
+			
+			if (data.success && typeof data.count !== 'undefined') {
+				spot.innerHTML = data.count !== "" ? data.count : "0";
+			}
+		} catch (error) {
+			console.error("Error fetching data:", error);
+		}
+	}
+
+	// 📌 Al hacer clic en una empresa
+	let selectedCompanyId = null;
+	document.addEventListener('change', function (e) {
+		if (e.target.matches('input[name="company_edit_info"]')) {
+			selectedCompanyId = Number(e.target.dataset.company);
+			
+			if (!isNaN(selectedCompanyId)) {
+				loadCompanyOnDashboard(selectedCompanyId);
+			} else {
+				loadCompanyOnDashboard();
+				loadChildUsers();
+			}
+		}
+	});
+	if (!selectedCompanyId) {
+		loadChildUsers();
+		loadCompanyOnDashboard();
+	}
+
+	// 📌 Manejo de lo datos de Empresa
+	function loadCompanyOnDashboard(companyId) {
+		const myCompany = document.getElementById("company-data");
+		if (myCompany) {
+			let url = 'api/get_company_info.php';
+			if (companyId && !isNaN(companyId)) {
+				url += `?select_company=${companyId}`;
+			}
+
+			fetch(url, {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			})
+			.then(response => response.json())
+			.then(data => {
+				// console.log("Data received:", data);
+				if (data.success && data.data) {
+					let company = data.data[0];
+
+					let logoHTML = "";
+					if (company.company_logo && company.company_logo.trim() !== "") {
+						logoHTML = `<p><img src="images/company-logos/${company.company_logo}" alt="Company Logo" style="max-width: 40px; margin: 0 auto; border-radius: 50%; border: 1px solid #000;"></p>`;
+					}
+
+					const orgNo = (company.organization_no || "-").toString().trim();
+					const compName = (company.company_name || "-").toString().trim();
+
+					myCompany.innerHTML = 
+						logoHTML +
+						`<p><strong>Org No.:</strong> ${orgNo}</p>` +
+						`<p><strong>Name:</strong> ${compName}</p>`;
+				} else {
+					myCompany.innerHTML = `<p style="color: var(--warning-orange);">To initialize the system, it is necessary to complete it with your company's data.</p>`;
+				}
+			})
+			.catch (error => {
+				console.error("Error fetching data:", error);
+				document.getElementById("company-data").innerHTML = `<p>Error al cargar los datos de empresa.</p>`;
+			});
 		}
 	}
 
 	// 📌 Manejo de lista de usuarios hijos
 	function loadChildUsers(companyId) {
-		const spot = document.getElementById("spot");
+		// const spot = document.getElementById("spot"); // spot AQUI
 		const userContainer = document.getElementById('child-user-table');
-		if (spot && userContainer) {
+		if (/* spot && */ userContainer) {
 			let url = 'api/get_users.php';
 			if (companyId && !isNaN(companyId)) {
 				url += `?select_company=${companyId}`;
@@ -341,7 +379,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			})
 			.then(response => response.json())
 			.then(data => {
-				spot.innerHTML = data.count !== "" ? data.count : "0";
+				// spot.innerHTML = data.count !== "" ? data.count : "0";
 
 				if (data.success && data.count > 0) {
 					userContainer.innerHTML = '';
@@ -964,26 +1002,27 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const companyActionBtn = document.getElementById('company-action-btn');
 
 			if (currentValue !== originalValue) {
-				hasChanges = true;
+				// hasChanges = true;
 				showChangeAlert();
 				companyActionBtn.value = "Save Changes";
-			} else {
+			} 
+			else {
 				checkIfAnyChange(inputs);
-				if (!hasChanges) {
-					companyActionBtn.value = "Select Company";
+				// if (!hasChanges) {
+					// companyActionBtn.value = "Select Company";
 
-					const selectedInput = document.querySelector('input[name="company_edit_info"]:checked');
-					if (selectedInput) {
-						const selectedCompanyId = selectedInput.dataset.company;
-						if (selectedCompanyId && !isNaN(selectedCompanyId)) {
-							loadChildUsers(selectedCompanyId); // ← si hay una seleccion
-						} else {
-							loadChildUsers(); // ← si no hay empresa seleccionada, carga todos
-						}
-					} else {
-						loadChildUsers(); // ← si no hay input seleccionado, también carga todos
-					}
-				}
+					// const selectedInput = document.querySelector('input[name="company_edit_info"]:checked');
+					// if (selectedInput) {
+					// 	const selectedCompanyId = selectedInput.dataset.company;
+					// 	if (selectedCompanyId && !isNaN(selectedCompanyId)) {
+					// 		// loadChildUsers(selectedCompanyId); // ← si hay una seleccion
+					// 	} else {
+					// 		loadChildUsers(); // ← si no hay empresa seleccionada, carga todos
+					// 	}
+					// } else {
+					// 	loadChildUsers(); // ← si no hay input seleccionado, también carga todos
+					// }
+				// }
 			}
 		});
 	});
@@ -1034,7 +1073,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				if (selectedInput) {
 					const selectedCompanyId = selectedInput.dataset.company;
 					if (selectedCompanyId && !isNaN(selectedCompanyId)) {
-						loadChildUsers(selectedCompanyId); // o tu función de carga
+						loadChildUsers(selectedCompanyId);
 					}
 				}
 
@@ -1055,9 +1094,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 					setTimeout(() => {
 						banner.style.opacity = '0';
-						setTimeout(() => {
-							window.location.href = data.redirect_url || window.location.href;
-						}, 1000);
+						// setTimeout(() => {
+						// 	window.location.href = data.redirect_url || window.location.href;
+						// }, 1000);
 					}, 1500);
 				}
 

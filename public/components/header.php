@@ -1,7 +1,7 @@
 <header>
 	<div class="container">
 		<nav>
-			<ul class="menu">
+			<ul class="menu" id="header-menu">
 				<li class="no-redirect">
 					<div class="logo">
 					    <h3>StockControl</h3>
