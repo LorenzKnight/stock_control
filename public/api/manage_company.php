@@ -67,13 +67,16 @@ try {
 
         $action = "updated";
     } else {
-		cdebug("Creating new company info for user ID: $userId");
-		exit;
+		// cdebug("Creating new company info for user ID: $userId");
+		// exit;
         $updateData["user_id"] = $userId;
         $insertResponse = insert_into("companies", $updateData, ["id" => "company_id"]);
         $insertResult = json_decode($insertResponse, true);
-    
-        if (!$insertResult["success"]) throw new Exception("Insert failed.");
+
+		if (!$insertResult["success"]) throw new Exception("Insert failed.");
+
+		// $newCompanyId = $insertResult["id"] ?? null;
+		// if (!$newCompanyId) throw new Exception("Failed to retrieve inserted company ID.");
     
         $action = "created";
     }
