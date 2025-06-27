@@ -304,7 +304,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	// 📌 Al hacer clic en una empresa
 	let selectedCompanyId = null;
-	document.addEventListener('change', function (e) {
+	document.addEventListener('change', function (e) { // AQUI REVISA ESTO PARA QUE SOLO CAMBIE CUANDO PRECIONAMOS EL BOTON SELECCIONAR
 		if (e.target.matches('input[name="company_edit_info"]')) {
 			selectedCompanyId = Number(e.target.dataset.company);
 			
@@ -658,7 +658,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// Drag & Drop + click
-	function initDragAndDrop(dropAreaId, inputFileId, previewImgId = null) {
+	function initDragAndDrop(dropAreaId, inputFileId, previewImgId = null) { // AQUI
 		const dropArea = document.getElementById(dropAreaId);
 		const fileInput = document.getElementById(inputFileId);
 		const previewImage = previewImgId ? document.getElementById(previewImgId) : null;
@@ -783,9 +783,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 				banner.style.display = 'block';
 			}
 		});
-	}
 
-	initDragAndDrop('profile-drop-area', 'image', 'profile-pic-preview');
+		initDragAndDrop('profile-drop-area', 'image', 'profile-pic-preview');
+	}
 
 	// 📌 script para subscrition popup
 	let subscButton = document.getElementById('subsc-button');
@@ -904,7 +904,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
-	// 📌 script para update company popup
+	// 📌 script para manage company popup
 	let editCompButton = document.getElementById('manage-comp-button');
 	if (editCompButton) {
 		editCompButton.addEventListener('click', function (e) {
@@ -1106,7 +1106,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			let formData = new FormData(this);
 
 			try {
-				let response = await fetch('api/update_company.php', {
+				let response = await fetch('api/manage_company.php', {
 					method: 'POST',
 					headers: { Accept: 'application/json' },
 					body: formData
@@ -1169,46 +1169,37 @@ document.addEventListener("DOMContentLoaded", async function () {
 			e.preventDefault();
 
 			const companyActionBtn = document.getElementById('company-action-btn');
-			const isSelecting = companyActionBtn.value === "Add Company";
+			const isAdding = companyActionBtn.value === "Add Company";
 
-			if (isSelecting) {
-				let formData = new FormData(this);
+			if (!isAdding) return;
 
-				try {
-					let response = await fetch('api/update_company.php', { // hagamos esto con la logica de como creamos una marca
-						method: 'POST',
-						headers: { Accept: 'application/json' },
-						body: formData
-					});
+			let formData = new FormData(this);
 
-					let data = await response.json();
+			try {
+				let response = await fetch('api/manage_company.php', { // AQUI
+					method: 'POST',
+					headers: { Accept: 'application/json' },
+					body: formData
+				});
 
-					let banner = document.getElementById('status-message');
-					let statusText = document.getElementById('status-text');
-					let statusImage = document.getElementById('status-image');
+				let data = await response.json();
 
-					statusText.innerText = data.message;
-					statusImage.src = data.img_gif;
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
 
-					if (data.success) {
-						setTimeout(() => {
-							banner.style.opacity = '0';
-							setTimeout(() => {
-								window.location.href = data.redirect_url; // esta linea esta refrescando la pagina (lo cual no queremos))
-							}, 1000);
-						}, 3000);
-					}
-				} catch (error) {
-					let banner = document.getElementById('status-message');
-					let statusText = document.getElementById('status-text');
-					let statusImage = document.getElementById('status-image');
+				statusText.innerText = data.message;
+				statusImage.src = data.img_gif;
+				banner.style.display = 'block';
+				banner.style.opacity = '1';
+			} catch (error) {
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
 
-					statusText.innerText = "Error procesando la solicitud.";
-					statusImage.src = "../images/sys-img/error.gif";
-					banner.style.display = 'block';
-				}
+				statusText.innerText = "Error procesando la solicitud.";
+				statusImage.src = "../images/sys-img/error.gif";
+				banner.style.display = 'block';
 			}
 		});
 	}
@@ -4642,7 +4633,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					document.getElementById('company_address').value = originalCompanyData.company_address || '';
 					document.getElementById('company_phone').value = originalCompanyData.company_phone || '';
 
-					const logoPreview = document.getElementById('logo-preview');
+					const logoPreview = document.getElementById('logo-preview'); // AQUI
 					if (logoPreview) {
 						if (company.company_logo && company.company_logo.trim() !== "") {
 							logoPreview.src = `images/company-logos/${company.company_logo}`;
