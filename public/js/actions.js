@@ -980,6 +980,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	// CARGAR FORMULARIO DE COMPANY
 	document.addEventListener('change', function (e) {
 		if (e.target.matches('input[name="company_edit_info"]')) {
+			console.log('AQUI');
 			const notCompanyForm = document.getElementById('not-company-form');
 			const companyForm = document.getElementById('company-form');
 			const companyActionBtn = document.getElementById('company-action-btn');
@@ -988,6 +989,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 				companyForm.classList.remove('hidden');
 				companyActionBtn.value = "Select Company";
 			}
+
+			// initImagePreview('company_logo', 'logo-preview').then((isImage) => {
+			// 	if (!isImage) {
+			// 		const logoPreview = document.getElementById('logo-preview');
+			// 		if (logoPreview) {
+			// 			logoPreview.src = '';
+			// 			logoPreview.style.display = 'none';
+			// 			logoPreview.style.visibility = 'hidden';
+			// 			logoPreview.style.opacity = '0';
+			// 		}
+			// 	}
+			// });
+
 			const selectedCompanyId = e.target.dataset.company;
 			loadCompanyFormOrData(selectedCompanyId);
 		}
@@ -1002,29 +1016,20 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const companyActionBtn = document.getElementById('company-action-btn');
 
 			if (currentValue !== originalValue) {
-				// hasChanges = true;
 				showChangeAlert();
 				companyActionBtn.value = "Save Changes";
 			} 
 			else {
 				checkIfAnyChange(inputs);
-				// if (!hasChanges) {
-					// companyActionBtn.value = "Select Company";
-
-					// const selectedInput = document.querySelector('input[name="company_edit_info"]:checked');
-					// if (selectedInput) {
-					// 	const selectedCompanyId = selectedInput.dataset.company;
-					// 	if (selectedCompanyId && !isNaN(selectedCompanyId)) {
-					// 		// loadChildUsers(selectedCompanyId); // ← si hay una seleccion
-					// 	} else {
-					// 		loadChildUsers(); // ← si no hay empresa seleccionada, carga todos
-					// 	}
-					// } else {
-					// 	loadChildUsers(); // ← si no hay input seleccionado, también carga todos
-					// }
-				// }
+				
 			}
 		});
+	});
+
+	initImagePreview('company_logo', 'logo-preview', () => {
+		const companyActionBtn = document.getElementById('company-action-btn');
+		showChangeAlert();
+		companyActionBtn.value = "Save Changes";
 	});
 
 	function showChangeAlert() {
@@ -1157,6 +1162,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 			notCompanyForm.classList.add('hidden');
 			companyForm.classList.remove('hidden');
 			companyActionBtn.value = "Add Company";
+
+			document.querySelectorAll('input[name="company_edit_info"]').forEach(radio => {
+				radio.checked = false;
+
+				const logoPreview = document.getElementById('logo-preview');
+				if (logoPreview) {
+					logoPreview.src = '';
+					logoPreview.style.display = 'none';
+					// logoPreview.style.visibility = 'hidden';
+					logoPreview.style.opacity = '0';
+				}
+			});
 
 			loadCompanyFormOrData();
 		});
@@ -4608,15 +4625,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// 📌 script para recojer los datos de la compania
-	async function loadCompanyFormOrData(selectedCompanyId) {
+	async function loadCompanyFormOrData(selectedCompanyId = undefined) {
 		if (!isNaN(selectedCompanyId)) {
 			try {
 				let response = await fetch(`api/get_company_info.php?select_company=${selectedCompanyId}`, {
 					method: 'GET',
 					headers: { 'Accept': 'application/json' }
 				});
-		
+
 				let data = await response.json();
+				
 				if (data.success && data.data && data.data.length > 0) {
 					let company = data.data[0];
 
@@ -4640,11 +4658,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 							logoPreview.style.display = 'block';
 							logoPreview.style.visibility = 'visible';
 							logoPreview.style.opacity = '1';
-						} else {
-							logoPreview.src = '';
-							logoPreview.style.display = 'none';
-							logoPreview.style.visibility = 'hidden';
-							logoPreview.style.opacity = '0';
 						}
 					}
 				}
@@ -4666,14 +4679,68 @@ document.addEventListener("DOMContentLoaded", async function () {
 			document.getElementById('company_address').value = '';
 			document.getElementById('company_phone').value = '';
 
-			const logoPreview = document.getElementById('logo-preview');
-			if (logoPreview) {
-				logoPreview.src = '';
-				logoPreview.style.display = 'none';
-				logoPreview.style.visibility = 'hidden';
-				logoPreview.style.opacity = '0';
-			}
+			initImagePreview('company_logo', 'logo-preview').then((isImage) => {
+				if (!isImage) {
+					const logoPreview = document.getElementById('logo-preview');
+					if (logoPreview) {
+						logoPreview.src = '';
+						logoPreview.style.display = 'none';
+						logoPreview.style.visibility = 'hidden';
+						logoPreview.style.opacity = '0';
+					}
+				}
+			});
 		}
+	}
+
+	function initImagePreview(inputFileId, previewImgId, onChangeCallback = null) {
+		return new Promise((resolve) => {
+			const fileInput = document.getElementById(inputFileId);
+			const previewImage = document.getElementById(previewImgId);
+
+			if (!fileInput || !previewImage) {
+				resolve(false);
+				return;
+			}
+
+			// Almacena el último archivo cargado para comparar cambios
+			let lastFileName = fileInput.files?.[0]?.name || '';
+
+			const processFile = (file) => {
+				if (file && file.type.startsWith('image/')) {
+					const reader = new FileReader();
+					reader.onload = function (e) {
+						previewImage.src = e.target.result;
+						previewImage.style.display = 'block';
+						previewImage.style.opacity = '1';
+
+						if (file.name !== lastFileName && typeof onChangeCallback === 'function') {
+							onChangeCallback(); // 🔁 Notifica el cambio de imagen
+						}
+
+						lastFileName = file.name;
+						resolve(true);
+					};
+					reader.readAsDataURL(file);
+				} else {
+					resolve(false);
+				}
+			};
+
+			// Detecta si ya había una imagen cargada
+			if (fileInput.files && fileInput.files[0]) {
+				processFile(fileInput.files[0]);
+			}
+
+			// Detecta cambios futuros del input
+			fileInput.addEventListener('change', () => {
+				if (fileInput.files && fileInput.files[0]) {
+					processFile(fileInput.files[0]);
+				} else {
+					resolve(false);
+				}
+			}, { once: true });
+		});
 	}
 
 	// 📌 script para cargar marcas, modelos y submodelos
