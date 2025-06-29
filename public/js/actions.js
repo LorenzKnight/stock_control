@@ -365,7 +365,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	// 📌 Manejo de lista de usuarios hijos
 	function loadChildUsers(companyId) {
-		// const spot = document.getElementById("spot"); // spot AQUI
+		// const spot = document.getElementById("spot");
 		const userContainer = document.getElementById('child-user-table');
 		if (/* spot && */ userContainer) {
 			let url = 'api/get_users.php';
@@ -1701,10 +1701,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			const selectedMarkId = e.target.dataset.mark;
 
+			const companySelect = document.getElementById('select-company');
+			const selectedCompany = companySelect?.value || "";
+			const params = new URLSearchParams();
+			if (selectedCompany) params.append('company', selectedCompany);
+
 			if (!isNaN(selectedMarkId)) {
 				modelList.innerHTML = '';
 
-				fetch(`api/get_sub_categories.php?mark_id=${selectedMarkId}`, {
+				fetch(`api/get_sub_categories.php?mark_id=${selectedMarkId}&${params.toString()}`, {
 					method: 'GET',
 					headers: { 'Accept': 'application/json' }
 				})
@@ -1820,10 +1825,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			const selectedModelId = e.target.dataset.model;
 
+			const companySelect = document.getElementById('select-company');
+			const selectedCompany = companySelect?.value || "";
+			const params = new URLSearchParams();
+			if (selectedCompany) params.append('company', selectedCompany);
+
 			if (!isNaN(selectedModelId)) {
 				submodelList.innerHTML = '';
 
-				fetch(`api/get_sub_models.php?model_id=${selectedModelId}`, {
+				fetch(`api/get_sub_models.php?model_id=${selectedModelId}&${params.toString()}`, {
 					method: 'GET',
 					headers: { 'Accept': 'application/json' }
 				})
@@ -4903,7 +4913,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
-	async function populateCompanies(selectId, selectedValue = '') { // AQUI
+	async function populateCompanies(selectId, selectedValue = '') {
 		const select = document.getElementById(selectId);
 		if (!select) return;
 

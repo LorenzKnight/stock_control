@@ -12,27 +12,43 @@ try {
 	$userId = $_SESSION["sc_UserId"] ?? null;
 	if (!$userId) throw new Exception("User session not found.");
 
-	$userInfoResponse = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
-	$userInfo = json_decode($userInfoResponse, true);
+	$userData = json_decode(select_from("users", ["parent_user"], ["user_id" => $userId], ["fetch_first" => true]), true);
+	if (!$userData["success"] || empty($userData["data"])) {
+        throw new Exception("No user data found.");
+    }
+	$userInfo = $userData["data"];
 
-	if (!$userInfo["success"] || empty($userInfo["data"]["company_id"])) {
-		throw new Exception("No company found for user.");
-	}
+	$altUser = empty($userInfo["parent_user"] ?? null) ? $userId : $userInfo["parent_user"];
+	$companyId = $_GET["company"] ?? '';
 
-	$companyId = intval($userInfo["data"]["company_id"]);
+	// $userInfoResponse = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
+	// $userInfo = json_decode($userInfoResponse, true);
+
+	// if (!$userInfo["success"] || empty($userInfo["data"]["company_id"])) {
+	// 	throw new Exception("No company found for user.");
+	// }
+
+	// $companyId = intval($userInfo["data"]["company_id"]);
 
 	$modelId = isset($_GET["model_id"]) ? intval($_GET["model_id"]) : null;
 	if (!$modelId || !is_numeric($modelId)) {
 		throw new Exception("Invalid model ID.");
 	}
 
+	$where = [
+		"sub_parent"	=> $modelId,
+		"company_id"	=> $companyId,
+		"user_id"		=> $altUser
+	];
+
+	if (!empty($companyId)) {
+		$where["company_id"] = $companyId;
+	}
+
 	$categoriesResponse = select_from("category", [
 		"category_id",
 		"category_name"
-	], [
-		"sub_parent" => $modelId,
-		"company_id" => $companyId
-	], [
+	], $where, [
 		"order_by" => "category_name"
 	]);
 
