@@ -1329,6 +1329,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	if (companySelect) {
 		const addProductBtn = document.getElementById("add-product-btn");
 		const addCategoryBtn = document.getElementById("add-category-btn");
+		const selectionNotice = document.getElementById("selection-notice");
 
 		// 👇 Desactivar los botones al iniciar
 		if (addProductBtn) {
@@ -1338,6 +1339,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (addCategoryBtn) {
 			addCategoryBtn.disabled = true;
 			addCategoryBtn.classList.add('button-ghost');
+		}
+
+		if (selectionNotice) {
+			selectionNotice.classList.remove('hidden');
 		}
 
 		// 👂 Escuchar cambios en el select
@@ -1356,6 +1361,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 					addCategoryBtn.disabled = false;
 					addCategoryBtn.classList.remove('button-ghost');
 				}
+
+				if (selectionNotice) {
+					selectionNotice.classList.add('hidden');
+				}
 			} else {
 				// console.log("Ninguna empresa está seleccionada.");
 
@@ -1366,6 +1375,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 				if (addCategoryBtn) {
 					addCategoryBtn.disabled = true;
 					addCategoryBtn.classList.add('button-ghost');
+				}
+				
+				if (selectionNotice) {
+					selectionNotice.classList.remove('hidden');
 				}
 			}
 		});

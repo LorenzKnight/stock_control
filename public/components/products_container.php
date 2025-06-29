@@ -29,6 +29,11 @@
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td colspan="4" align="center" valign="middle">
+							<p id="selection-notice" class="hidden" style="color:var(--main-bg-blue); font-size: 10px;">Select a company or affiliate to continue create</br>categories or products</p>
+						</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+						<td colspan="4" align="center" valign="middle">
 							<button class="button-style-agree" id="add-category-btn">Create Sub/Category</button>
 						</td>
 					</tr>
