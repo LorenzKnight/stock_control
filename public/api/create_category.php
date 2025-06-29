@@ -21,6 +21,14 @@ try {
 		throw new Exception("Access denied. You do not have permission to create data.");
 	}
 
+	$userData = json_decode(select_from("users", ["parent_user"], ["user_id" => $userId], ["fetch_first" => true]), true);
+	if (!$userData["success"] || empty($userData["data"])) {
+        throw new Exception("No user data found.");
+    }
+	$userInfo = $userData["data"];
+
+	$altUser = empty($userInfo["parent_user"] ?? null) ? $userId : $userInfo["parent_user"];
+
 	$companyId		= intval($_POST["company_id"]);
 	$categoryName	= trim($_POST["category_name"] ?? '');
 	$catParentSub	= trim($_POST["cat_parent_sub"] ?? '');
@@ -32,6 +40,7 @@ try {
 
 	$data = [
 		"category_name" => $categoryName,
+		"user_id"		=> $altUser,
 		"company_id"    => $companyId,
 		"create_by"     => $userId,
 		"created_at"    => date("Y-m-d H:i:s")
