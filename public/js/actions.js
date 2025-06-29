@@ -658,7 +658,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// Drag & Drop + click
-	function initDragAndDrop(dropAreaId, inputFileId, previewImgId = null) { // AQUI
+	function initDragAndDrop(dropAreaId, inputFileId, previewImgId = null) {
 		const dropArea = document.getElementById(dropAreaId);
 		const fileInput = document.getElementById(inputFileId);
 		const previewImage = previewImgId ? document.getElementById(previewImgId) : null;
@@ -980,7 +980,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 	// CARGAR FORMULARIO DE COMPANY
 	document.addEventListener('change', function (e) {
 		if (e.target.matches('input[name="company_edit_info"]')) {
-			console.log('AQUI');
 			const notCompanyForm = document.getElementById('not-company-form');
 			const companyForm = document.getElementById('company-form');
 			const companyActionBtn = document.getElementById('company-action-btn');
@@ -1193,7 +1192,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			let formData = new FormData(this);
 
 			try {
-				let response = await fetch('api/manage_company.php', { // AQUI
+				let response = await fetch('api/manage_company.php', {
 					method: 'POST',
 					headers: { Accept: 'application/json' },
 					body: formData
@@ -1219,44 +1218,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				banner.style.display = 'block';
 			}
 		});
-	}
-
-	// Función para llenar el <select> con los roles de usuario
-	async function populateRankSelect(selectId, selectedValue = '', minRoleId = 1) { // AQUI
-		const select = document.getElementById(selectId);
-		if (!select) return;
-
-		select.innerHTML = '';
-
-		const defaultOption = document.createElement('option');
-		defaultOption.value = '';
-		defaultOption.textContent = 'Select user role';
-		select.appendChild(defaultOption);
-
-		try {
-			const response = await fetch('api/get_roles.php');
-			const data = await response.json();
-
-			if (!data.success) {
-				console.error("Failed to fetch roles:", data.message);
-				return;
-			}
-
-			const roles = data.data;
-			for (const [value, label] of Object.entries(roles)) {
-				if (parseInt(value) >= parseInt(minRoleId)) {
-					const option = document.createElement('option');
-					option.value = value;
-					option.textContent = label;
-					if (String(value) === String(selectedValue)) {
-						option.selected = true;
-					}
-					select.appendChild(option);
-				}
-			}
-		} catch (error) {
-			console.error("Error fetching roles:", error);
-		}
 	}
 
 	// 📌 script para add members popup
@@ -1364,7 +1325,52 @@ document.addEventListener("DOMContentLoaded", async function () {
 //################################################################ END MEMBER #####################################################################
 	
 //################################################################ PRODUCTS #####################################################################
+	let companySelect = document.getElementById('select-company');
+	if (companySelect) {
+		const addProductBtn = document.getElementById("add-product-btn");
+		const addCategoryBtn = document.getElementById("add-category-btn");
 
+		// 👇 Desactivar los botones al iniciar
+		if (addProductBtn) {
+			addProductBtn.disabled = true;
+			addProductBtn.classList.add('button-ghost');
+		}
+		if (addCategoryBtn) {
+			addCategoryBtn.disabled = true;
+			addCategoryBtn.classList.add('button-ghost');
+		}
+
+		// 👂 Escuchar cambios en el select
+		companySelect.addEventListener('change', function () {
+			const selectedValue = this.value;
+			const isValid = selectedValue && selectedValue.trim() !== "";
+
+			if (isValid) {
+				// console.log("Empresa seleccionada:", selectedValue);
+
+				if (addProductBtn) {
+					addProductBtn.disabled = false;
+					addProductBtn.classList.remove('button-ghost');
+				}
+				if (addCategoryBtn) {
+					addCategoryBtn.disabled = false;
+					addCategoryBtn.classList.remove('button-ghost');
+				}
+			} else {
+				// console.log("Ninguna empresa está seleccionada.");
+
+				if (addProductBtn) {
+					addProductBtn.disabled = true;
+					addProductBtn.classList.add('button-ghost');
+				}
+				if (addCategoryBtn) {
+					addCategoryBtn.disabled = true;
+					addCategoryBtn.classList.add('button-ghost');
+				}
+			}
+		});
+	}
+	
 	// 📌 script para add product popup
 	let addProductButton = document.getElementById('add-product-btn');
 	if (addProductButton) {
@@ -1907,9 +1913,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	const container = document.getElementById('product-list');
 	const searchField = document.getElementById('searchField');
-	let markSelect = document.getElementById('search_product_mark');
-	let modelSelect = document.getElementById('search_product_model');
-	let submodelSelect = document.getElementById('search_product_sub_model');
+	// let markSelect = document.getElementById('search_product_mark');
+	// let modelSelect = document.getElementById('search_product_model');
+	// let submodelSelect = document.getElementById('search_product_sub_model');
+	// let companySelect = document.getElementById('select-company');
 
 	async function fetchAndRenderProducts() {
 		if (!container) return;
@@ -1917,17 +1924,20 @@ document.addEventListener("DOMContentLoaded", async function () {
 		markSelect = document.getElementById('search_product_mark');
 		modelSelect = document.getElementById('search_product_model');
 		submodelSelect = document.getElementById('search_product_sub_model');
+		companySelect = document.getElementById('select-company');
 
 		const searchText = searchField?.value.trim() || "";
 		let selectedMark = markSelect?.value || "";
 		let selectedModel = modelSelect?.value || "";
 		let selectedSubmodel = submodelSelect?.value || "";
+		let selectedCompany = companySelect?.value || "";
 
 		const params = new URLSearchParams();
 		if (searchText) params.append('search', searchText);
 		if (selectedMark) params.append('mark', selectedMark);
 		if (selectedModel) params.append('model', selectedModel);
 		if (selectedSubmodel) params.append('submodel', selectedSubmodel);
+		if (selectedCompany) params.append('company', selectedCompany);
 
 		// Log params para depuración
 		// console.log("🔍 Enviando filtros a get_products.php:", params.toString());
@@ -1995,7 +2005,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				});
 			} else {
 				container.innerHTML = `
-					<p class="isNotLinkedToCompany" style="text-align: center; color: var(--warning-orange);">To activate this section you must complete the company details <a href="profile.php">here.</a></p>
+					<p class="isNotLinkedToCompany hidden" style="text-align: center; color: var(--warning-orange);">To activate this section you must complete the company details <a href="profile.php">here.</a></p>
 					<p style="text-align:center;">No products found</p>
 				`;
 			}
@@ -2008,13 +2018,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 	searchField?.addEventListener('keyup', fetchAndRenderProducts);
 	document.addEventListener('change', (e) => {
 		const id = e.target?.id;
-		if (["search_product_mark", "search_product_model", "search_product_sub_model"].includes(id)) {
+		if (["search_product_mark", "search_product_model", "search_product_sub_model", "select-company"].includes(id)) {
 			fetchAndRenderProducts();
 		}
 	});
 
 	// 📌 JavaScript para recoger datos de los select del formulario de busqueda(search)
 	initCategorySelectors('search_product_mark', 'search_product_model', 'search_product_sub_model');
+
+	populateCompanies('select-company');
 
 	fetchAndRenderProducts();
 
@@ -2454,7 +2466,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					});
 				} else {
 					customerContainer.innerHTML = `
-						<p class="isNotLinkedToCompany" style="text-align: center; color: var(--warning-orange);">To activate this section you must complete the company details <a href="profile.php">here.</a></p>
+						<p class="isNotLinkedToCompany hidden" style="text-align: center; color: var(--warning-orange);">To activate this section you must complete the company details <a href="profile.php">here.</a></p>
 						<p style="text-align:center;">No customers found.</p>
 					`;
 				}
@@ -3120,7 +3132,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					});
 				} else {
 					salesContainer.innerHTML = `
-						<p class="isNotLinkedToCompany" style="text-align: center; color: var(--warning-orange);">To activate this section you must complete the company details <a href="profile.php">here.</a></p>
+						<p class="isNotLinkedToCompany hidden" style="text-align: center; color: var(--warning-orange);">To activate this section you must complete the company details <a href="profile.php">here.</a></p>
 						<p style="text-align:center;">No sales found.</p>
 					`;
 				}
@@ -4159,7 +4171,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					});
 				} else {
 					paymentsContainer.innerHTML = `
-						<p class="isNotLinkedToCompany" style="text-align: center; color: var(--warning-orange);">To activate this section you must complete the company details <a href="profile.php">here.</a></p>
+						<p class="isNotLinkedToCompany hidden" style="text-align: center; color: var(--warning-orange);">To activate this section you must complete the company details <a href="profile.php">here.</a></p>
 						<p style="text-align:center;">No payments found.</p>
 					`;
 				}
@@ -4651,7 +4663,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					document.getElementById('company_address').value = originalCompanyData.company_address || '';
 					document.getElementById('company_phone').value = originalCompanyData.company_phone || '';
 
-					const logoPreview = document.getElementById('logo-preview'); // AQUI
+					const logoPreview = document.getElementById('logo-preview');
 					if (logoPreview) {
 						if (company.company_logo && company.company_logo.trim() !== "") {
 							logoPreview.src = `images/company-logos/${company.company_logo}`;
@@ -4861,6 +4873,44 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
+	async function populateCompanies(selectId, selectedValue = '') { // AQUI
+		const select = document.getElementById(selectId);
+		if (!select) return;
+
+		// 🔹 Limpiar el contenido actual del <select>
+		select.innerHTML = '';
+
+		// 🔹 Agregar opción por defecto
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = 'Select a Company';
+		select.appendChild(defaultOption);
+
+		try {
+			const res = await fetch('api/get_company_info.php'); // Usa tu API existente
+			const data = await res.json();
+
+			if (data.success && data.data) {
+				data.data.forEach(company => {
+					const option = document.createElement('option');
+					option.value = company.company_id;
+					option.textContent = company.company_name;
+
+					if (String(company.company_id) === String(selectedValue)) {
+						option.selected = true;
+					}
+
+					select.appendChild(option);
+				});
+			} else {
+				select.innerHTML += `<option value="">No companies found</option>`;
+			}
+		} catch (error) {
+			console.error("Error loading companies:", error);
+			select.innerHTML += `<option value="">Error loading companies</option>`;
+		}
+	}
+
 	async function populateVehicleTypes(selectId, selectedValue = '') {
 		const select = document.getElementById(selectId);
 		if (!select) return;
@@ -4894,6 +4944,44 @@ document.addEventListener("DOMContentLoaded", async function () {
 		} catch (error) {
 			console.error("Error loading vehicle types:", error);
 			select.innerHTML += `<option value="">Error loading vehicle types</option>`;
+		}
+	}
+
+	// Función para llenar el <select> con los roles de usuario
+	async function populateRankSelect(selectId, selectedValue = '', minRoleId = 1) {
+		const select = document.getElementById(selectId);
+		if (!select) return;
+
+		select.innerHTML = '';
+
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = 'Select user role';
+		select.appendChild(defaultOption);
+
+		try {
+			const response = await fetch('api/get_roles.php');
+			const data = await response.json();
+
+			if (!data.success) {
+				console.error("Failed to fetch roles:", data.message);
+				return;
+			}
+
+			const roles = data.data;
+			for (const [value, label] of Object.entries(roles)) {
+				if (parseInt(value) >= parseInt(minRoleId)) {
+					const option = document.createElement('option');
+					option.value = value;
+					option.textContent = label;
+					if (String(value) === String(selectedValue)) {
+						option.selected = true;
+					}
+					select.appendChild(option);
+				}
+			}
+		} catch (error) {
+			console.error("Error fetching roles:", error);
 		}
 	}
 

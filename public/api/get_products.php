@@ -12,17 +12,25 @@ try {
 	$userId = $_SESSION["sc_UserId"] ?? null;
 	if (!$userId) throw new Exception("User session not found.");
 
-	$userInfo = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
-	$companyId = json_decode($userInfo, true)["data"]["company_id"] ?? null;
+	$userData = json_decode(select_from("users", ["parent_user"], ["user_id" => $userId], ["fetch_first" => true]), true);
+    if (!$userData["success"] || empty($userData["data"])) {
+        throw new Exception("No user data found.");
+    }
+    $userInfo = $userData["data"];
+
+    $altUser = empty($userInfo["parent_user"] ?? null) ? $userId : $userInfo["parent_user"];
+
+	$companyData = json_decode(select_from("companies", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]), true);
+    $companyId = $companyData["data"]["company_id"];
 
 	// Leer filtros desde la URL
 	$search = $_GET["search"] ?? '';
 	$mark = $_GET["mark"] ?? '';
 	$model = $_GET["model"] ?? '';
 	$submodel = $_GET["submodel"] ?? '';
+	$company = $_GET["company"] ?? '';
 
 	$where = [
-		"company_id" => $companyId,
 		// "status" => 1
 	];
 
@@ -34,6 +42,11 @@ try {
 	}
 	if (!empty($submodel)) {
 		$where["product_sub_model"] = $submodel;
+	}
+	if (!empty($company)) {
+		$where["company_id"] = $company;
+	} else {
+		$where["company_id"] = $companyId;
 	}
 
 	if (!empty($search)) {
