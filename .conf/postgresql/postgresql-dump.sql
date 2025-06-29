@@ -114,7 +114,6 @@ CREATE TABLE IF NOT EXISTS companies (
 	company_id SERIAL PRIMARY KEY,
 	user_id INT NOT NULL,
 	company_type INTEGER NULL,
-	parent_company INTEGER NULL,
 	company_name VARCHAR(255) NULL,
 	organization_no INTEGER NULL,
 	company_address VARCHAR(255) NULL,
@@ -146,6 +145,7 @@ CREATE TABLE IF NOT EXISTS products (
 );
 
 CREATE TABLE IF NOT EXISTS category (
+	user_id INT NOT NULL,
 	category_id SERIAL PRIMARY KEY,
 	company_id INTEGER NULL,
 	create_by INTEGER NULL,

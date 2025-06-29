@@ -21,17 +21,10 @@ try {
 		throw new Exception("Access denied. You do not have permission to create data.");
 	}
 
-	$userInfoResponse = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
-	$userInfo = json_decode($userInfoResponse, true);
-
-	if (!$userInfo["success"] || empty($userInfo["data"]["company_id"])) {
-		throw new Exception("Company ID not found for this user.");
-	}
-	$companyId = intval($userInfo["data"]["company_id"]);
-
-	$categoryName = trim($_POST["category_name"] ?? '');
-	$catParentSub = trim($_POST["cat_parent_sub"] ?? '');
-	$subParent    = trim($_POST["sub_parent"] ?? '');
+	$companyId		= intval($_POST["company_id"]);
+	$categoryName	= trim($_POST["category_name"] ?? '');
+	$catParentSub	= trim($_POST["cat_parent_sub"] ?? '');
+	$subParent		= trim($_POST["sub_parent"] ?? '');
 
 	if ($categoryName === '') {
 		throw new Exception("Category name is required.");
