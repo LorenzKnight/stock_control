@@ -67,18 +67,25 @@ try {
 
         $action = "updated";
     } else {
-		// cdebug("Creating new company info for user ID: $userId");
-		// exit;
-        $updateData["user_id"] = $userId;
-        $insertResponse = insert_into("companies", $updateData, ["id" => "company_id"]);
-        $insertResult = json_decode($insertResponse, true);
+		$updateData["user_id"] = $userId;
+		$insertResponse = insert_into("companies", $updateData, ["id" => "company_id"]);
+		$insertResult = json_decode($insertResponse, true);
 
 		if (!$insertResult["success"]) throw new Exception("Insert failed.");
 
-		// $newCompanyId = $insertResult["id"] ?? null;
-		// if (!$newCompanyId) throw new Exception("Failed to retrieve inserted company ID.");
-    
-        $action = "created";
+		$userInfo = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
+		$decodedUser = json_decode($userInfo, true);
+
+		$companyId = $decodedUser["data"]["company_id"] ?? null;
+
+		if (empty($companyId)) {
+			$updateResponse = update_table("users", ["company_id" => $insertResult["id"]], ["user_id" => $userId]);
+			$updateResult = json_decode($updateResponse, true);
+
+			if (!$updateResult["success"]) throw new Exception("Update failed.");
+		}
+	
+		$action = "created";
     }
 
 	$description = "User {$action} company information.";

@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const data = await res.json();
 
 			if (data.success) {
-				return data.data.company_id == null;
+				return data.data.company_id !== null && data.data.company_id !== "";
 			} else {
 				console.error("Error checking company ID:", data.message);
 				return false;
@@ -60,10 +60,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     for (let permission of permissionHierarchy) {
         const hasPermission = await checkPermission(permission);
-        // console.log(`${permission}: ${hasPermission}`);
         if (hasPermission) {
             grantedPermission = permission;
-            break; // Salimos con el permiso más alto concedido
+            break; 
         }
     }
 
@@ -107,9 +106,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	const elements = document.getElementsByClassName("isNotLinkedToCompany");
 
-	if (isLinkedToCompany) {
-		console.log("El usuario no está vinculado a una empresa.");
-
+	if (!isLinkedToCompany) {
 		if (addMembersButton) {
 			addMembersButton.disabled = true;
 			addMembersButton.title = "You don't have permission to add members.";
@@ -145,21 +142,21 @@ document.addEventListener("DOMContentLoaded", async function () {
 			addPaymentsBtn.title = "You don't have permission to add payments.";
 			addPaymentsBtn.classList.add('button-ghost');
 		}
-	} else {
+
 		for (const el of elements) {
-            el.style.display = "none";
+            el.classList.remove('hidden');
         }
 	}
 
     // Ahora simular un "switch" usando if-else:
     if (grantedPermission === 'manage_all') {
-        console.log("El usuario tiene acceso total");
+        // console.log("El usuario tiene acceso total");
         // Aquí habilitas TODO
     } else if (grantedPermission === 'manage_intern_admin') {
-        console.log("El usuario tiene acceso de administrador interno");
+        // console.log("El usuario tiene acceso de administrador interno");
         // Habilita lo que este permiso permite
 	} else if (grantedPermission === 'export_reports') {
-        console.log("El usuario puede exportar reportes");
+        // console.log("El usuario puede exportar reportes");
         // Habilita solo lo permitido a este nivel
 		// if (salesSite) {
 		// 	salesSite.style.display = "none";
@@ -306,7 +303,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		// 	deletePaymentBtn.classList.add('button-ghost');
 		// }
 	} else if (grantedPermission === 'delete_data') {
-        console.log("El usuario puede eliminar datos");
+        // console.log("El usuario puede eliminar datos");
         // Habilita solo lo permitido a este nivel
 		// if (salesSite) {
 		// 	salesSite.style.display = "none";
@@ -453,7 +450,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			deletePaymentBtn.classList.add('button-ghost');
 		}
     } else if (grantedPermission === 'manage_users') {
-        console.log("El usuario puede gestionar usuarios");
+        // console.log("El usuario puede gestionar usuarios");
         // Habilita solo lo permitido a este nivel
 		// if (salesSite) {
 		// 	salesSite.style.display = "none";
@@ -600,7 +597,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			deletePaymentBtn.classList.add('button-ghost');
 		}
     } else if (grantedPermission === 'edit_data') {
-        console.log("El usuario puede editar datos");
+        // console.log("El usuario puede editar datos");
         // Habilita solo lo permitido a este nivel
 		// if (salesSite) {
 		// 	salesSite.style.display = "none";
@@ -747,7 +744,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			deletePaymentBtn.classList.add('button-ghost');
 		}
     } else if (grantedPermission === 'create_data') {
-        console.log("El usuario puede crear datos");
+        // console.log("El usuario puede crear datos");
         // Habilita solo lo permitido a este nivel
 		// if (salesSite) {
 		// 	salesSite.style.display = "none";
@@ -894,7 +891,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			deletePaymentBtn.classList.add('button-ghost');
 		}
     } else if (grantedPermission === 'manage_sales') {
-		console.log("El usuario puede gestionar ventas");
+		// console.log("El usuario puede gestionar ventas");
         // Habilita solo lo permitido a este nivel
 		// if (salesSite) {
 		// 	salesSite.style.display = "none";
@@ -1041,7 +1038,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			deletePaymentBtn.classList.add('button-ghost');
 		}
     } else if (grantedPermission === 'view_dashboard') {
-        console.log("El usuario puede ver el dashboard");
+        // console.log("El usuario puede ver el dashboard");
         // Habilita solo lo permitido a este nivel
 		if (salesSite) {
 			salesSite.style.display = "none";
