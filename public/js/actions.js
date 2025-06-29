@@ -1376,7 +1376,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					addCategoryBtn.disabled = true;
 					addCategoryBtn.classList.add('button-ghost');
 				}
-				
+
 				if (selectionNotice) {
 					selectionNotice.classList.remove('hidden');
 				}
@@ -1472,7 +1472,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	// 📌 script para add category popup
 	let addCategoryButton = document.getElementById('add-category-btn');
 	if (addCategoryButton) {
-		addCategoryButton.addEventListener('click', function (e) {
+		addCategoryButton.addEventListener('click', async function (e) {
 			e.preventDefault();
 
 			scrollToTopIfNeeded();
@@ -1495,6 +1495,48 @@ document.addEventListener("DOMContentLoaded", async function () {
 					popupContent.style.transform = 'scale(1)';
 					popupContent.style.opacity = '1';
 				}, 50);
+			}
+
+			const companySelect = document.getElementById('select-company');
+			const selectedCompany = companySelect?.value || "";
+			const params = new URLSearchParams();
+			if (selectedCompany) params.append('company', selectedCompany);
+
+			try {
+				const response = await fetch(`api/get_categories.php?${params.toString()}`, {
+					method: 'GET',
+					headers: { 'Accept': 'application/json' }
+				});
+
+				const data = await response.json();
+				const markList = document.getElementById('mark-list');
+
+				markList.innerHTML = '';
+
+				if (data.success && data.data.length > 0) {
+					data.data.forEach(category => {
+						const uniqueId = `mark-db-${category.category_id}`;
+						const row = document.createElement('tr');
+						row.className = "categoryContainer";
+						row.innerHTML = `
+							<td width="10%" align="center" valign="middle">
+								<div class="list-icon">
+									<img src="images/sys-img/element-list.png" alt="">
+								</div>
+							</td>
+							<td width="80%" valign="middle" style="padding-left:10px;">${category.category_name}</td>
+							<td width="10%" align="center" valign="middle">
+								<div class="opcion-radio">
+									<input type="radio" id="${uniqueId}" name="product_mark" class="category-radio" data-mark="${category.category_id}" />
+									<label for="${uniqueId}"></label>
+								</div>
+							</td>
+						`;
+						markList.appendChild(row);
+					});
+				}
+			} catch (error) {
+				console.error("Error loading categories:", error);
 			}
 		});
 	}
@@ -1579,40 +1621,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				inputProductMark.value = '';
 			}
 		});
-
-		try {
-			let response = await fetch('api/get_categories.php', {
-				method: 'GET',
-				headers: { 'Accept': 'application/json' }
-			});
-
-			let data = await response.json();
-
-			if (data.success && data.data.length > 0) {
-				data.data.forEach(category => {
-					const uniqueId = `mark-db-${category.category_id}`;
-					const row = document.createElement('tr');
-					row.className = "categoryContainer";
-					row.innerHTML = `
-						<td width="10%" align="center" valign="middle">
-							<div class="list-icon">
-								<img src="images/sys-img/element-list.png" alt="">
-							</div>
-						</td>
-						<td width="80%" valign="middle" style="padding-left:10px;">${category.category_name}</td>
-						<td width="10%" align="center" valign="middle">
-							<div class="opcion-radio">
-								<input type="radio" id="${uniqueId}" name="product_mark" class="category-radio" data-mark="${category.category_id}" />
-								<label for="${uniqueId}"></label>
-							</div>
-						</td>
-					`;
-					markList.appendChild(row);
-				});
-			}
-		} catch (error) {
-			console.error("Error loading categories:", error);
-		}
 	}
 
 
@@ -1862,6 +1870,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const selectedMark = document.querySelector('input[name="product_mark"]:checked');
 			const selectedModel = document.querySelector('input[name="product_model"]:checked');
 			const selectedSubmodel = document.querySelector('input[name="product_sub_model"]:checked');
+			const companySelect = document.getElementById("select-company");
 
 			let name = "";
 			let cat_parent_sub = null;
@@ -1891,6 +1900,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 			formData.append("category_name", name);
 			formData.append("cat_parent_sub", cat_parent_sub ?? "");
 			formData.append("sub_parent", sub_parent ?? "");
+
+			// ✅ Añadir company_id si está seleccionado
+			if (companySelect && companySelect.value.trim() !== "") {
+				formData.append("company_id", companySelect.value);
+			} else {
+				alert("You must select a company.");
+				return;
+			}
 
 			try {
 				const response = await fetch("api/create_category.php", {
