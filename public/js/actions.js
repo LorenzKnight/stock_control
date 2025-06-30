@@ -1430,7 +1430,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 		formAddProduct.addEventListener('submit', async function (e) {
 			e.preventDefault();
 
+			const companySelect = document.getElementById("select-company");
+
 			const formData = new FormData(this);
+
+			// ✅ Añadir company_id si está seleccionado
+			if (companySelect && companySelect.value.trim() !== "") {
+				formData.append("company_id", companySelect.value);
+			} else {
+				alert("You must select a company.");
+				return;
+			}
 
 			try {
 				const response = await fetch('api/create_product.php', {

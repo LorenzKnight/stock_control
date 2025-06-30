@@ -22,6 +22,7 @@ try {
 		throw new Exception("Access denied. You do not have permission to create data.");
 	}
 
+    $companyId              = intval($_POST["company_id"] ?? '');
     $productName     		= trim($_POST["product_name"] ?? '');
     $productType     		= intval($_POST["product_type"] ?? 0);
     $productMark     		= intval($_POST["product_mark"] ?? 0);
@@ -41,14 +42,15 @@ try {
         throw new Exception("Product type are required.");
     }
 
-	$companyResult = select_from("companies", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
-	$companyData = json_decode($companyResult, true);
+	// $companyResult = select_from("companies", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
+	// $companyData = json_decode($companyResult, true);
 
-	if (!$companyData["success"] || empty($companyData["data"]["company_id"])) {
-		throw new Exception("Company ID not found for this user.");
-	}
+	// if (!$companyData["success"] || empty($companyData["data"]["company_id"])) {
+	// 	throw new Exception("Company ID not found for this user.");
+	// }
 
-	$companyId = intval($companyData["data"]["company_id"]);
+	// $companyId = intval($companyData["data"]["company_id"]);
+    
 
     $imageName = null;
 	try {

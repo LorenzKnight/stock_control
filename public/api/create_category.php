@@ -29,7 +29,7 @@ try {
 
 	$altUser = empty($userInfo["parent_user"] ?? null) ? $userId : $userInfo["parent_user"];
 
-	$companyId		= intval($_POST["company_id"]);
+	$companyId		= intval($_POST["company_id"] ?? '');
 	$categoryName	= trim($_POST["category_name"] ?? '');
 	$catParentSub	= trim($_POST["cat_parent_sub"] ?? '');
 	$subParent		= trim($_POST["sub_parent"] ?? '');
