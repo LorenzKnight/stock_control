@@ -37,7 +37,6 @@ try {
 
 	$where = [
 		"sub_parent"	=> $modelId,
-		"company_id"	=> $companyId,
 		"user_id"		=> $altUser
 	];
 

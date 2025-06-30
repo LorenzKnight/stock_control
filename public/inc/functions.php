@@ -39,11 +39,15 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 		} elseif ($column === 'OR' && is_array($value)) {
 			$orParts = [];
 			foreach ($value as $orKey => $orVal) {
-				$orColFormatted = (strpos($orKey, '.') === false) ? "\"$orKey\"" : $orKey;
-				$escapedVal = pg_escape_string((string)$orVal);
-				if (stripos($orKey, 'LIKE') !== false || stripos($orKey, 'ILIKE') !== false) {
-					$orParts[] = "$orColFormatted '$escapedVal'";
+				if (preg_match('/^(.+)\s+(ILIKE|LIKE)$/i', $orKey, $matches)) {
+					$field = trim($matches[1]);
+					$operator = strtoupper($matches[2]);
+					$fieldFormatted = (strpos($field, '.') === false) ? "\"$field\"" : $field;
+					$escapedVal = pg_escape_string((string)$orVal);
+					$orParts[] = "$fieldFormatted $operator '%$escapedVal%'";
 				} else {
+					$orColFormatted = (strpos($orKey, '.') === false) ? "\"$orKey\"" : $orKey;
+					$escapedVal = pg_escape_string((string)$orVal);
 					$orParts[] = "$orColFormatted = '$escapedVal'";
 				}
 			}
@@ -56,9 +60,14 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 				$orInParts[] = "$orInCol IN (" . implode(',', $escapedVals) . ")";
 			}
 			$whereParts[] = '(' . implode(' OR ', $orInParts) . ')';
-		} elseif (stripos($column, 'LIKE') !== false || stripos($column, 'ILIKE') !== false) {
+		} elseif (preg_match('/^(.+)\s+(ILIKE|LIKE)$/i', $column, $matches)) {
+			$field = trim($matches[1]);
+			$operator = strtoupper($matches[2]);
+
+			$fieldFormatted = (strpos($field, '.') === false) ? "\"$field\"" : $field;
 			$escapedVal = pg_escape_string((string)$value);
-			$whereParts[] = "$colFormatted '$escapedVal'";
+
+			$whereParts[] = "$fieldFormatted $operator '%$escapedVal%'";
 		} elseif ($value === null) {
 			$whereParts[] = "$colFormatted IS NULL";
 		} else {
