@@ -28,7 +28,6 @@ try {
 
 	$where = [
 		"cat_parent_sub"	=> $markId,
-		"company_id"		=> $companyId,
 		"user_id"			=> $altUser
 	];
 

@@ -51,7 +51,7 @@ try {
 
 	if (!empty($search)) {
 		$where["OR"] = [
-			"product_name ILIKE" => "%" . $search . "%"
+			"product_name ILIKE" => $search
 		];
 	}
 

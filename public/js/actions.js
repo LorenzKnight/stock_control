@@ -4796,37 +4796,41 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// 📌 script para cargar marcas, modelos y submodelos
-	async function initCategorySelectors(markId, modelId, submodelId) {
-		const markSelect = document.getElementById(markId);
+	async function initCategorySelectors(markId, modelId, submodelId/*, companyId*/) {
+		let markSelect = document.getElementById(markId);
 		let modelSelect = document.getElementById(modelId);
 		let submodelSelect = document.getElementById(submodelId);
+		// let companySelect = document.getElementById(companyId);
 	
-		if (!markSelect || !modelSelect || !submodelSelect) return;
+		if (!markSelect || !modelSelect || !submodelSelect /*|| !companySelect*/) return;
 	
 		// 🔹 Cargar marcas
-		try {
-			const response = await fetch("api/get_categories.php", {
-				method: "GET",
-				headers: { "Accept": "application/json" }
-			});
-			const data = await response.json();
-	
-			markSelect.innerHTML = `<option value="">All Marks</option>`;
-	
-			if (data.success && data.data.length > 0) {
-				data.data.forEach(category => {
-					const option = document.createElement("option");
-					option.value = category.category_id;
-					option.textContent = category.category_name;
-					markSelect.appendChild(option);
+		// companySelect.addEventListener('change', async () => {
+		// 	const companyId = companySelect.value;
+			try {
+				const response = await fetch("api/get_categories.php", {
+					method: "GET",
+					headers: { "Accept": "application/json" }
 				});
-			} else {
-				markSelect.innerHTML += `<option value="">No marks found</option>`;
+				const data = await response.json();
+		
+				markSelect.innerHTML = `<option value="">All Marks</option>`;
+		
+				if (data.success && data.data.length > 0) {
+					data.data.forEach(category => {
+						const option = document.createElement("option");
+						option.value = category.category_id;
+						option.textContent = category.category_name;
+						markSelect.appendChild(option);
+					});
+				} else {
+					markSelect.innerHTML += `<option value="">No marks found</option>`;
+				}
+			} catch (error) {
+				console.error("Error loading marks:", error);
+				markSelect.innerHTML = `<option value="">Error loading marks</option>`;
 			}
-		} catch (error) {
-			console.error("Error loading marks:", error);
-			markSelect.innerHTML = `<option value="">Error loading marks</option>`;
-		}
+		// });
 	
 		// 🔹 Reemplazar modelo (por si venía como input) y configurar
 		const modelSelectCloned = document.createElement('select');
