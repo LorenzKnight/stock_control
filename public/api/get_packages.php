@@ -11,9 +11,7 @@ $response = [
 
 try {
     // Obtener solo los paquetes activos (package_status = 1)
-    $packagesResponse = select_from("packages", [
-        // todos los campos estan disponibles
-    ], ["package_status" => 1], [
+    $packagesResponse = select_from("packages", ["*"], ["package_status" => 1], [
         "order_by" => "members_limit",
 		"order_direction" => "ASC"
     ]);

@@ -6,6 +6,8 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 	}
 
 	$columnNames = empty($columns)
+	? '*'
+	: ($columns === ['*']
 		? '*'
 		: implode(', ', array_map(function($col) {
 			// Detectar funciones agregadas y alias
@@ -13,7 +15,7 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 				return $col;
 			}
 			return "\"$col\"";
-		}, $columns));
+		}, $columns)));
 
 	if (preg_match('/\s|JOIN|\(|\)/i', $tableName)) {
 		$escapedTable = $tableName;
