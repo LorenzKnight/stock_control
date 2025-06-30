@@ -1394,6 +1394,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			const addProductForm = document.getElementById('add-product-form');
 			const popupContent = addProductForm.querySelector('.formular-frame');
+			// AQUI INCLUIREMOS EL ID RECOGIDO DE LA COMPANIA
 
 			if (addProductForm && popupContent) {
 				addProductForm.style.display = 'block';
@@ -1415,7 +1416,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				populateVehicleTypes('product_type');
 
-				initCategorySelectors('product_mark', 'product_model', 'product_sub_model');
+				initCategorySelectors('product_mark', 'product_model', 'product_sub_model', 'select-company');
 
 				populateCurrencies('currency');
 			}
@@ -2064,7 +2065,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	});
 
 	// 📌 JavaScript para recoger datos de los select del formulario de busqueda(search)
-	initCategorySelectors('search_product_mark', 'search_product_model', 'search_product_sub_model');
+	initCategorySelectors('search_product_mark', 'search_product_model', 'search_product_sub_model', 'select-company');
 
 	populateCompanies('select-company');
 
@@ -2285,7 +2286,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					
 				await populateVehicleTypes('edit_product_type', product.product_type);
 	
-				await initCategorySelectors('edit_product_mark', 'edit_product_model', 'edit_product_sub_model');
+				await initCategorySelectors('edit_product_mark', 'edit_product_model', 'edit_product_sub_model', 'select-company');
 
 				initDragAndDrop('edit-drop-product-area', 'edit_Product_image', 'edit-product-image-preview');
 				
@@ -4796,26 +4797,32 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// 📌 script para cargar marcas, modelos y submodelos
-	async function initCategorySelectors(markId, modelId, submodelId/*, companyId*/) {
+	async function initCategorySelectors(markId, modelId, submodelId, companyId) {
 		let markSelect = document.getElementById(markId);
 		let modelSelect = document.getElementById(modelId);
 		let submodelSelect = document.getElementById(submodelId);
-		// let companySelect = document.getElementById(companyId);
+		let companySelect = document.getElementById(companyId);
 	
-		if (!markSelect || !modelSelect || !submodelSelect /*|| !companySelect*/) return;
+		if (!markSelect || !modelSelect || !submodelSelect || !companySelect) return;
 	
-		// 🔹 Cargar marcas
-		// companySelect.addEventListener('change', async () => {
-		// 	const companyId = companySelect.value;
+		// 🔹 Función para cargar marcas
+		async function loadMarksByCompany(companyIdValue) {
+			let url = 'api/get_categories.php';
+			if (companyIdValue && !isNaN(companyIdValue)) {
+				url += `?company=${companyIdValue}`;
+			}
+
 			try {
-				const response = await fetch("api/get_categories.php", {
+				const response = await fetch(url, {
 					method: "GET",
 					headers: { "Accept": "application/json" }
 				});
 				const data = await response.json();
-		
+
 				markSelect.innerHTML = `<option value="">All Marks</option>`;
-		
+				modelSelect.innerHTML = `<option value="">Select Model</option>`;
+				submodelSelect.innerHTML = `<option value="">Select Submodel</option>`;
+
 				if (data.success && data.data.length > 0) {
 					data.data.forEach(category => {
 						const option = document.createElement("option");
@@ -4830,7 +4837,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 				console.error("Error loading marks:", error);
 				markSelect.innerHTML = `<option value="">Error loading marks</option>`;
 			}
-		// });
+		}
+
+		// 🔹 Cargar marcas iniciales (si hay una empresa ya seleccionada)
+		await loadMarksByCompany(companySelect.value);
+
+		// 🔹 Cuando cambia la empresa → recargar marcas
+		companySelect.addEventListener('change', async () => {
+			const newCompanyId = companySelect.value;
+			await loadMarksByCompany(newCompanyId);
+		});
 	
 		// 🔹 Reemplazar modelo (por si venía como input) y configurar
 		const modelSelectCloned = document.createElement('select');

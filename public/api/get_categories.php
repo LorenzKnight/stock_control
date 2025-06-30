@@ -13,22 +13,26 @@ try {
 	$userId = $_SESSION["sc_UserId"] ?? null;
 	if (!$userId) throw new Exception("User session not found.");
 
-	$userData = json_decode(select_from("users", ["parent_user"], ["user_id" => $userId], ["fetch_first" => true]), true);
+	$userData = json_decode(select_from("users", ["parent_user", "company_id"], ["user_id" => $userId], ["fetch_first" => true]), true);
 	if (!$userData["success"] || empty($userData["data"])) {
         throw new Exception("No user data found.");
     }
 	$userInfo = $userData["data"];
 
 	$altUser = empty($userInfo["parent_user"] ?? null) ? $userId : $userInfo["parent_user"];
-	$companyId = $_GET["company"] ?? '';
+	$companyId = $userInfo["company_id"];
 
+	$company = $_GET["company"] ?? '';
+	
 	$where = [
 		"cat_parent_sub"	=> null,
 		"sub_parent"		=> null,
 		"user_id"			=> $altUser
 	];
 
-	if (!empty($companyId)) {
+	if (!empty($company)) {
+		$where["company_id"] = $company;
+	} else {
 		$where["company_id"] = $companyId;
 	}
 
