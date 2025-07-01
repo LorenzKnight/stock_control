@@ -28,10 +28,16 @@
 						<input class="form-input-style" type="number" name="phone" id="phone" placeholder="Enter a phone number..." title="Enter a valid phone number"/>
 					</td>
 				</tr>
+				<tr valign="baseline" class="form_height">
+					<td colspan="2" align="center" valign="middle">
+						<label for="rank">Company / Affiliate:</label>
+						<select class="form-input-style" name="company" id="company" required></select>
+					</td>
+				</tr>
                 <tr valign="baseline" class="form_height">
 					<td colspan="2" align="center" valign="middle">
 						<label for="rank">User Role / Permissions:</label>
-						<select class="form-input-style" name="rank" id="rank"></select>
+						<select class="form-input-style" name="rank" id="rank" required></select>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">

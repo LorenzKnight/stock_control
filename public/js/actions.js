@@ -905,9 +905,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// 📌 script para manage company popup
-	let editCompButton = document.getElementById('manage-comp-button');
-	if (editCompButton) {
-		editCompButton.addEventListener('click', function (e) {
+	let manageCompBtn = document.getElementById('manage-comp-button');
+	if (manageCompBtn) {
+		manageCompBtn.addEventListener('click', function (e) {
 			e.preventDefault();
 
 			scrollToTopIfNeeded();
@@ -1265,6 +1265,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 					}, 50);
 
 					populateRankSelect('rank', '', 4); // Solo roles 4 o superiores
+
+					populateCompanies('company');
 				}
 			} catch (err) {
 				console.error("Error validating member limit:", err);

@@ -25,10 +25,15 @@ try {
 		throw new Exception("Method not allowed");
 	}
 
-	$userInfo = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
-	$companyId = json_decode($userInfo, true)["data"]["company_id"] ?? null;
+	$userData = json_decode(select_from("users", ["parent_user"], ["user_id" => $userId], ["fetch_first" => true]), true);
+	if (!$userData["success"] || empty($userData["data"])) {
+        throw new Exception("No user data found.");
+    }
+	$userInfo = $userData["data"];
 
-	$requiredFields = ["name", "surname", "birthday", "phone", "email", "password", "rank"];
+	$altUser = empty($userInfo["parent_user"] ?? null) ? $userId : $userInfo["parent_user"];
+
+	$requiredFields = ["name", "surname", "birthday", "phone", "email", "password", "company", "rank"];
 	$data = [];
 
 	foreach ($requiredFields as $field) {
@@ -38,13 +43,6 @@ try {
 		$data[$field] = htmlspecialchars(trim($_POST[$field]));
 	}
 
-	$data["parent_user"] = $userId;
-	$data["company_id"] = $companyId;
-	$data["status"] = 1;
-	$data["username"] = strtolower($data["name"] . "_" . $data["surname"]);
-	$data["verified"] = 0;
-	$data["signup_date"] = date("Y-m-d H:i:s");
-
 	$emailCheckResponse = select_from("users", ["user_id"], ["email" => $data["email"]], ["fetch_first" => true]);
 	$emailCheck = json_decode($emailCheckResponse, true);
 
@@ -52,7 +50,23 @@ try {
 		throw new Exception("The email is already registered.");
 	}
 
-	$insertResponse = insert_into("users", $data, ["id" => "user_id"]);
+	$insertData = [
+		"name"			=> $data["name"],
+		"surname"		=> $data["surname"],
+		"birthday"		=> $data["birthday"],
+		"phone"			=> $data["phone"],
+		"email"			=> $data["email"],
+		"password"		=> password_hash($data["password"], PASSWORD_DEFAULT),
+		"rank"			=> $data["rank"],
+		"parent_user"	=> $altUser,
+		"company_id"	=> $data["company"],
+		"status"		=> 1,
+		"username"		=> strtolower($data["name"] . "_" . $data["surname"]),
+		"verified"		=> 0,
+		"signup_date"	=> date("Y-m-d H:i:s")
+	];
+
+	$insertResponse = insert_into("users", $insertData, ["id" => "user_id"]);
 	$insertResult = json_decode($insertResponse, true);
 
 	if (!$insertResult["success"]) {
