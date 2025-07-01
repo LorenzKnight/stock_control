@@ -11,7 +11,7 @@
 					<td colspan="2" align="center" valign="middle">
 						<div class="drop-area" id="drop-product-area">
 							<img class="image-preview" id="product-image-preview" src="" alt="Product Image Preview">
-							<p>Drop logo image here or click to select</p>
+							<p>Drop image here or click to select</p>
 							<input type="file" name="product_image" id="product_image" accept="image/*" style="display: none;">
 						</div>
 					</td>

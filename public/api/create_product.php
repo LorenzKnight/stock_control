@@ -42,16 +42,6 @@ try {
         throw new Exception("Product type are required.");
     }
 
-	// $companyResult = select_from("companies", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
-	// $companyData = json_decode($companyResult, true);
-
-	// if (!$companyData["success"] || empty($companyData["data"]["company_id"])) {
-	// 	throw new Exception("Company ID not found for this user.");
-	// }
-
-	// $companyId = intval($companyData["data"]["company_id"]);
-    
-
     $imageName = null;
 	try {
 		$imageName = handle_uploaded_image(
