@@ -25,7 +25,12 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 
 	$whereParts = [];
 	foreach ($whereClause as $column => $value) {
-		$colFormatted = (strpos($column, '.') === false) ? "\"$column\"" : $column;
+		if (stripos($column, 'CAST(') === 0 || stripos($column, '(') !== false) {
+			// No escapamos expresiones tipo CAST(...) o funciones
+			$colFormatted = $column;
+		} else {
+			$colFormatted = (strpos($column, '.') === false) ? "\"$column\"" : $column;
+		}
 
 		if (is_array($value) && isset($value['condition'])) {
 			$condition = strtoupper($value['condition']);
@@ -44,7 +49,11 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 				if (preg_match('/^(.+)\s+(ILIKE|LIKE)$/i', $orKey, $matches)) {
 					$field = trim($matches[1]);
 					$operator = strtoupper($matches[2]);
-					$fieldFormatted = (strpos($field, '.') === false) ? "\"$field\"" : $field;
+
+					$fieldFormatted = (preg_match('/\bCAST\s*\(.+\)/i', $field) || strpos($field, '(') !== false)
+						? $field
+						: ((strpos($field, '.') === false) ? "\"$field\"" : $field);
+
 					$escapedVal = pg_escape_string((string)$orVal);
 					$orParts[] = "$fieldFormatted $operator '%$escapedVal%'";
 				} else {
@@ -66,7 +75,9 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 			$field = trim($matches[1]);
 			$operator = strtoupper($matches[2]);
 
-			$fieldFormatted = (strpos($field, '.') === false) ? "\"$field\"" : $field;
+			$fieldFormatted = (preg_match('/\bCAST\s*\(.+\)/i', $field) || strpos($field, '(') !== false)
+				? $field
+				: ((strpos($field, '.') === false) ? "\"$field\"" : $field);
 			$escapedVal = pg_escape_string((string)$value);
 
 			$whereParts[] = "$fieldFormatted $operator '%$escapedVal%'";

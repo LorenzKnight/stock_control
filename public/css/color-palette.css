@@ -10,7 +10,9 @@
     --clr-border: #999;
     --clr-white: #fff;
     --clr-neutral: #767676; 
+    --clr-neutral-dark: #5a5a5a;
     --cancel-red: rgb(239, 0, 0);
+    --cancel-dark-red: rgb(185, 1, 1);
     --agree-blue: rgb(1, 115, 196);
     --agree-green: rgb(0, 151, 0);
     --warning-orange: rgb(236, 103, 38);
