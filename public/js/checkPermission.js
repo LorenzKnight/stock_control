@@ -342,7 +342,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			inputCompanyAddress.disabled = true;
 			inputCompanyPhone.disabled = true;
 		}
-		// AQUI
 
 		// if (addMembersButton) {
 		// 	addMembersButton.disabled = true;
@@ -1128,7 +1127,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			inputCompanyAddress.disabled = true;
 			inputCompanyPhone.disabled = true;
 		}
-		
+
 		if (addMembersButton) {
 			addMembersButton.disabled = true;
 			addMembersButton.title = "You don't have permission to add members.";
