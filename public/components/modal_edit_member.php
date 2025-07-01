@@ -41,7 +41,7 @@
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
-					<td colspan="6" align="center" valign="middle">
+					<td colspan="6" style="padding-bottom: 5px" align="center" valign="middle">
 						<input class="form-input-style" type="email" name="edit_email" id="edit_email" placeholder="Enter a E-Mail..." title="Enter a valid email" required/>
 					</td>
 				</tr>
@@ -51,8 +51,10 @@
 					</td>
 				</tr> -->
 				<tr valign="baseline" class="form_height">
-					<td colspan="6" align="center" valign="middle">
-						<span style="display: block; margin-bottom: 5px;">Status</span>
+					<td width="50%" style="border-top: 1px solid var(--clr-border); border-bottom: 1px solid var(--clr-border); padding: 5px 10px;" align="left" valign="middle">
+						<span style="display: block;">Status</span>
+					</td>
+					<td width="50%" style="border-top: 1px solid var(--clr-border); border-bottom: 1px solid var(--clr-border); padding: 5px 10px;" align="right" valign="middle">
 						<label class="switch">
 							<input type="checkbox" name="edit_status" id="edit_status" value="1">
 							<span class="slider round"></span>
