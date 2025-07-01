@@ -17,8 +17,10 @@ try {
 		throw new Exception("Access denied. You do not have permission to create data.");
 	}
 
-	$userInfo = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
-	$companyId = json_decode($userInfo, true)["data"]["company_id"] ?? null;
+	$userInfo = json_decode(select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]), true);
+	$userData = $userInfo["data"];
+
+	$companyId = $userData["company_id"] ?? null;
 
 	$input = json_decode(file_get_contents('php://input'), true);
 	if (!$input) throw new Exception("No data received.");

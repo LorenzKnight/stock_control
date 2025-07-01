@@ -24,7 +24,13 @@
 	border: 0;
 	border-radius: 5px;
 	box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
+    transition: background-color 0.3s ease;
 	cursor: pointer;
+}
+
+.neutral-btn:hover {
+    background: var(--clr-neutral-dark);
+	color: var(--clr-white);
 }
 
 .cancel-btn {
@@ -37,7 +43,13 @@
 	border: 0;
 	border-radius: 5px;
 	box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
+    transition: background-color 0.3s ease;
 	cursor: pointer;
+}
+
+.cancel-btn:hover {
+    background: var(--cancel-dark-red);
+	color: var(--clr-white);
 }
 
 .button-style-neutral {

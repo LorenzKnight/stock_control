@@ -74,7 +74,7 @@
 						<td colspan="2" align="center" valign="middle">
 							<div class="formular-customers-list">
 								<div class="create-list-holder">
-									<button type="button" class="button-style-agree disabled" id="" disabled>Method of Payment</button>
+									<button type="button" class="button-style-agree disabled" style="pointer-events: none" disabled>Method of Payment</button>
 								</div>
 								<div class="cat-all-list">
 									<table width="100%" align="center" cellspacing="0">

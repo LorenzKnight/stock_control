@@ -4,10 +4,10 @@ require_once('../logic/stock_be.php');
 header("Content-Type: application/json");
 
 $response = [
-	"success" => false,
-	"message" => "Invalid request",
-	"img_gif" => "../images/sys-img/error.gif",
-	"redirect_url" => ""
+	"success"		=> false,
+	"message"		=> "Invalid request",
+	"img_gif"		=> "../images/sys-img/error.gif",
+	"redirect_url"	=> ""
 ];
 
 try {
@@ -22,8 +22,10 @@ try {
 		throw new Exception("Access denied. You do not have permission to create data.");
 	}
 
-	$userInfo = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
-	$companyId = json_decode($userInfo, true)["data"]["company_id"] ?? null;
+	$userInfo = json_decode(select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]), true);
+	$userData = $userInfo["data"];
+
+	$companyId = $userData["company_id"] ?? null;
 
 	$name		= trim($_POST["customer_name"] ?? '');
 	$surname	= trim($_POST["customer_surname"] ?? '');
@@ -42,6 +44,10 @@ try {
 
 	if ($name === '') {
 		throw new Exception("Customer name is required.");
+	}
+
+	if ($birthday === '') {
+		throw new Exception("Customer birthday is required.");
 	}
 
 	$imageName = null;
@@ -97,18 +103,18 @@ try {
 	);
 
 	$response = [
-		"success" => true,
-		"message" => "Customer created successfully!",
-		"img_gif" => "../images/sys-img/loading1.gif",
-		"redirect_url" => ""
+		"success"		=> true,
+		"message"		=> "Customer created successfully!",
+		"img_gif"		=> "../images/sys-img/loading1.gif",
+		"redirect_url"	=> ""
 	];
 
 } catch (Exception $e) {
 	$response = [
-		"success" => false,
-		"message" => $e->getMessage(),
-		"img_gif" => "../images/sys-img/error.gif",
-		"redirect_url" => ""
+		"success"		=> false,
+		"message"		=> $e->getMessage(),
+		"img_gif"		=> "../images/sys-img/error.gif",
+		"redirect_url"	=> ""
 	];
 }
 

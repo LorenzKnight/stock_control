@@ -4,10 +4,10 @@ require_once('../logic/stock_be.php');
 header("Content-Type: application/json");
 
 $response = [
-    "success" => false,
-    "message" => "Payment creation failed",
-    "img_gif" => "images/sys-img/error.gif",
-    "redirect_url" => null
+    "success"       => false,
+    "message"       => "Payment creation failed",
+    "img_gif"       => "images/sys-img/error.gif",
+    "redirect_url"  => null
 ];
 
 try {
@@ -22,8 +22,10 @@ try {
         throw new Exception("Access denied. You do not have permission to edit data.");
     }
 
-    $userInfo = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
-	$companyId = json_decode($userInfo, true)["data"]["company_id"] ?? null;
+    $userInfo = json_decode(select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]), true);
+	$userData = $userInfo["data"];
+
+	$companyId = $userData["company_id"] ?? null;
 
     $requiredFields = ["ord_no", "amount", "customer_email"];
     foreach ($requiredFields as $field) {
@@ -32,16 +34,16 @@ try {
         }
     }
 
-    $ordNo = (int)$_POST['ord_no'];
-    $personWhoPaid = $_POST['person_who_paid'] ?? null;
-    $documentType = $_POST['payer_document_type'] ?? null;
-    $documentNo = $_POST['payer_document_no'] ?? null;
-    $phone = $_POST['payer_phone'] ?? null;
-    $email = $_POST['customer_email'] ?? null;
-    $paymentMethod = $_POST['payment_method'] ?? null;
-    $amount = (float)$_POST['amount'];
-    $interest = isset($_POST['interest']) ? (float)$_POST['interest'] : 0;
-    $status = isset($_POST['payment_status']) ? (int)$_POST['payment_status'] : 0;
+    $ordNo          = (int)$_POST['ord_no'];
+    $personWhoPaid  = $_POST['person_who_paid'] ?? null;
+    $documentType   = $_POST['payer_document_type'] ?? null;
+    $documentNo     = $_POST['payer_document_no'] ?? null;
+    $phone          = $_POST['payer_phone'] ?? null;
+    $email          = $_POST['customer_email'] ?? null;
+    $paymentMethod  = $_POST['payment_method'] ?? null;
+    $amount         = (float)$_POST['amount'];
+    $interest       = isset($_POST['interest']) ? (float)$_POST['interest'] : 0;
+    $status         = isset($_POST['payment_status']) ? (int)$_POST['payment_status'] : 0;
 
     // Buscar datos de la orden para obtener customer_id y sales_id
     $saleRes = json_decode(select_from("sales", [
@@ -79,26 +81,26 @@ try {
 	$due = $saleDue - $paymentNet;
 
     $paymentData = [
-        "ord_no" => $ordNo,
-        "payment_no" => $newPaymentNo,
-        "sales_id" => $sale["sales_id"],
-        "customer_id" => $sale["customer_id"],
-        "person_who_paid" => $personWhoPaid,
-        "payer_document_type" => $documentType,
-        "payer_document_no" => $documentNo,
-        "payer_phone" => $phone,
-        "customer_email" => $email,
-        "currency" => $_POST['currency'] ?? $sale["currency"] ?? null,
-        "payment_method" => $paymentMethod,
-        "amount" => $paymentNet,
-        "interest" => $interest,
-        "installments_month" => $sale["installments_month"] ?? null,
-        "no_installments" => $noInstallments,
-        "payment_date" => date("Y-m-d H:i:s"),
-        "due" => $due,
-        "status" => $status,
-        "company_id" => $companyId,
-        "created_by" => $userId
+        "ord_no"                => $ordNo,
+        "payment_no"            => $newPaymentNo,
+        "sales_id"              => $sale["sales_id"],
+        "customer_id"           => $sale["customer_id"],
+        "person_who_paid"       => $personWhoPaid,
+        "payer_document_type"   => $documentType,
+        "payer_document_no"     => $documentNo,
+        "payer_phone"           => $phone,
+        "customer_email"        => $email,
+        "currency"              => $_POST['currency'] ?? $sale["currency"] ?? null,
+        "payment_method"        => $paymentMethod,
+        "amount"                => $paymentNet,
+        "interest"              => $interest,
+        "installments_month"    => $sale["installments_month"] ?? null,
+        "no_installments"       => $noInstallments,
+        "payment_date"          => date("Y-m-d H:i:s"),
+        "due"                   => $due,
+        "status"                => $status,
+        "company_id"            => $companyId,
+        "created_by"            => $userId
     ];
     
     $insert = json_decode(insert_into("payments", $paymentData, ["id" => "payment_id"]), true);
@@ -107,18 +109,18 @@ try {
     }
 
 	$interestData = [
-		"sales_id" => $sale["sales_id"],
-		"payment_id" => $insert["id"] ?? null,
-		"customer_id" => $sale["customer_id"],
-		"payment_no" => $newPaymentNo,
-		"ord_no" => $ordNo,
-		"interest" => $interest,
-		"installments_month" => $sale["installments_month"] ?? null,
-		"no_installments" => $noInstallments,
-		"payment_date" => date("Y-m-d H:i:s"),
-		"initial_debt" => $sale["price_sum"] ?? 0,
-		"created_by" => $userId,
-		"created_at" => date("Y-m-d H:i:s")
+		"sales_id"              => $sale["sales_id"],
+		"payment_id"            => $insert["id"] ?? null,
+		"customer_id"           => $sale["customer_id"],
+		"payment_no"            => $newPaymentNo,
+		"ord_no"                => $ordNo,
+		"interest"              => $interest,
+		"installments_month"    => $sale["installments_month"] ?? null,
+		"no_installments"       => $noInstallments,
+		"payment_date"          => date("Y-m-d H:i:s"),
+		"initial_debt"          => $sale["price_sum"] ?? 0,
+		"created_by"            => $userId,
+		"created_at"            => date("Y-m-d H:i:s")
 	];
 
 	$insertInterest = json_decode(insert_into("interest_earnings", $interestData), true);
@@ -142,10 +144,10 @@ try {
     );
 
     $response = [
-        "success" => true,
-        "message" => "Payment created successfully",
-        "img_gif" => "images/sys-img/loading1.gif",
-        "redirect_url" => "payments.php"
+        "success"       => true,
+        "message"       => "Payment created successfully",
+        "img_gif"       => "images/sys-img/loading1.gif",
+        "redirect_url"  => "payments.php"
     ];
 
 } catch (Exception $e) {
