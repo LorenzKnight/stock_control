@@ -4,7 +4,7 @@
 			<table width="80%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
-						<h2>Add or Edit Company o Affiliate</h2>
+						<h2>Add or Edit Company or Affiliate</h2>
 					</td>      
 				</tr>
 				<tr valign="baseline">

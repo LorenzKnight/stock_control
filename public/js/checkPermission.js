@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
 	const subscButton = document.getElementById("subsc-button");
-	const editCompButton = document.getElementById("edit-comp-button");
+	const addAffBtn = document.getElementById("add-aff-btn");
 	const addMembersButton = document.getElementById("add-members-button");
 
 	const cardMenuBtn = document.getElementsByClassName("card-menu");
@@ -173,10 +173,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         //     subscButton.title = "You don't have permission to delete data.";
         //     subscButton.classList.add('button-ghost');
         // }
-        // if (editCompButton) {
-        //     editCompButton.disabled = true;
-        //     editCompButton.title = "You don't have permission to edit data.";
-        //     editCompButton.classList.add('button-ghost');
+        // if (addAffBtn) {
+        //     addAffBtn.disabled = true;
+        //     addAffBtn.title = "You don't have permission to edit data.";
+        //     addAffBtn.classList.add('button-ghost');
         // }
 
 		// if (addMembersButton) {
@@ -320,10 +320,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             subscButton.title = "You don't have permission to delete data.";
             subscButton.classList.add('button-ghost');
         }
-        if (editCompButton) {
-            editCompButton.disabled = true;
-            editCompButton.title = "You don't have permission to edit data.";
-            editCompButton.classList.add('button-ghost');
+        if (addAffBtn) {
+            addAffBtn.disabled = true;
+            addAffBtn.title = "You don't have permission to edit data.";
+            addAffBtn.classList.add('button-ghost');
         }
 
 		// if (addMembersButton) {
@@ -467,10 +467,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             subscButton.title = "You don't have permission to delete data.";
             subscButton.classList.add('button-ghost');
         }
-        if (editCompButton) {
-            editCompButton.disabled = true;
-            editCompButton.title = "You don't have permission to edit data.";
-            editCompButton.classList.add('button-ghost');
+        if (addAffBtn) {
+            addAffBtn.disabled = true;
+            addAffBtn.title = "You don't have permission to edit data.";
+            addAffBtn.classList.add('button-ghost');
         }
 
 		// if (addMembersButton) {
@@ -614,10 +614,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             subscButton.title = "You don't have permission to delete data.";
             subscButton.classList.add('button-ghost');
         }
-        if (editCompButton) {
-            editCompButton.disabled = true;
-            editCompButton.title = "You don't have permission to edit data.";
-            editCompButton.classList.add('button-ghost');
+        if (addAffBtn) {
+            addAffBtn.disabled = true;
+            addAffBtn.title = "You don't have permission to edit data.";
+            addAffBtn.classList.add('button-ghost');
         }
 
 		if (addMembersButton) {
@@ -761,10 +761,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             subscButton.title = "You don't have permission to delete data.";
             subscButton.classList.add('button-ghost');
         }
-        if (editCompButton) {
-            editCompButton.disabled = true;
-            editCompButton.title = "You don't have permission to edit data.";
-            editCompButton.classList.add('button-ghost');
+        if (addAffBtn) {
+            addAffBtn.disabled = true;
+            addAffBtn.title = "You don't have permission to edit data.";
+            addAffBtn.classList.add('button-ghost');
         }
 
 		if (addMembersButton) {
@@ -908,10 +908,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             subscButton.title = "You don't have permission to delete data.";
             subscButton.classList.add('button-ghost');
         }
-        if (editCompButton) {
-            editCompButton.disabled = true;
-            editCompButton.title = "You don't have permission to edit data.";
-            editCompButton.classList.add('button-ghost');
+        if (addAffBtn) {
+            addAffBtn.disabled = true;
+            addAffBtn.title = "You don't have permission to edit data.";
+            addAffBtn.classList.add('button-ghost');
         }
 
 		if (addMembersButton) {
@@ -1055,10 +1055,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             subscButton.title = "You don't have permission to delete data.";
             subscButton.classList.add('button-ghost');
         }
-        if (editCompButton) {
-            editCompButton.disabled = true;
-            editCompButton.title = "You don't have permission to edit data.";
-            editCompButton.classList.add('button-ghost');
+        if (addAffBtn) {
+            addAffBtn.disabled = true;
+            addAffBtn.title = "You don't have permission to edit data.";
+            addAffBtn.classList.add('button-ghost');
         }
 
 		if (addMembersButton) {
