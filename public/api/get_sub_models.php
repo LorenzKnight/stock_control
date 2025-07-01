@@ -21,15 +21,6 @@ try {
 	$altUser = empty($userInfo["parent_user"] ?? null) ? $userId : $userInfo["parent_user"];
 	$companyId = $_GET["company"] ?? '';
 
-	// $userInfoResponse = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
-	// $userInfo = json_decode($userInfoResponse, true);
-
-	// if (!$userInfo["success"] || empty($userInfo["data"]["company_id"])) {
-	// 	throw new Exception("No company found for user.");
-	// }
-
-	// $companyId = intval($userInfo["data"]["company_id"]);
-
 	$modelId = isset($_GET["model_id"]) ? intval($_GET["model_id"]) : null;
 	if (!$modelId || !is_numeric($modelId)) {
 		throw new Exception("Invalid model ID.");
