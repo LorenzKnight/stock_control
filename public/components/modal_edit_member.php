@@ -30,6 +30,12 @@
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="2" align="center" valign="middle">
+						<label for="rank">Company / Affiliate:</label>
+						<select class="form-input-style" name="edit_company" id="edit_company" required></select>
+					</td>
+				</tr>
+				<tr valign="baseline" class="form_height">
+					<td colspan="2" align="center" valign="middle">
 						<label for="rank">User Role / Permissions:</label>
 						<select class="form-input-style" name="edit_rank" id="edit_rank"></select>
 					</td>
@@ -55,7 +61,7 @@
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td width="50%" align="center" valign="middle">
-						<button type="button" class="neutral-btn">Cancel</button>
+						<button type="button" class="cancel-btn" id="deleteAccountBtn">Delete Account</button>
 					</td>
 					<td width="50%" align="center" valign="middle">
 						<input type="submit" class="button-style-agree" value="Update" />
@@ -63,7 +69,7 @@
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="cancel-btn" id="deleteAccountBtn">Delete Account</button>
+						<button type="button" class="neutral-btn">Cancel</button>
 					</td>
 				</tr>
 			</table>

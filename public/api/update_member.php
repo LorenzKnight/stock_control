@@ -26,6 +26,7 @@ try {
     $birthday = trim($_POST["edit_birthday"] ?? '');
     $phone    = trim($_POST["edit_phone"] ?? '');
     $email    = trim($_POST["edit_email"] ?? '');
+    $company  = intval($_POST["edit_company"] ?? 0);
     $rank     = intval($_POST["edit_rank"] ?? 0);
     $status   = isset($_POST["edit_status"]) ? 1 : 0;
 
@@ -38,13 +39,14 @@ try {
     }
 
     $updateData = [
-        "name"      => $name,
-        "surname"   => $surname,
-        "birthday"  => $birthday,
-        "phone"     => $phone,
-        "email"     => $email,
-        "rank"      => $rank,
-        "status"    => $status
+        "name"          => $name,
+        "surname"       => $surname,
+        "birthday"      => $birthday,
+        "phone"         => $phone,
+        "email"         => $email,
+        "company_id"    => $company,
+        "rank"          => $rank,
+        "status"        => $status
     ];
 
     $updateResponse = update_table("users", $updateData, ["user_id" => $targetUserId]);

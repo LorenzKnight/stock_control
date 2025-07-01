@@ -470,6 +470,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 				document.getElementById('edit_email').value = user.email || '';
 
 				populateRankSelect('edit_rank', user.rank, '4');
+
+				populateCompanies('edit_company', user.company_id);
+
 				// Opcional: Puedes ocultar el campo de contraseña si estás editando
 				// document.getElementById('edit_password').value = '';
 				document.getElementById("edit_status").checked = user.status === "1" || user.status === 1;

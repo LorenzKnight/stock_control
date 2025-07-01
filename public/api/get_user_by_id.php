@@ -29,6 +29,7 @@ try {
         "phone",
         "email",
         "rank",
+		"company_id",
 		"status"
 	], ["user_id" => $userId], ["fetch_first" => true]);
 
