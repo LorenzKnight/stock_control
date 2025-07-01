@@ -68,6 +68,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	const subscButton = document.getElementById("subsc-button");
 	const addAffBtn = document.getElementById("add-aff-btn");
+
+	const companyLogoDropArea = document.getElementById("company-logo-drop-area");
+	const inputCompanyName = document.getElementById("company_name");
+	const inputOrganizationNo = document.getElementById("organization_no");
+	const inputCompanyAddress = document.getElementById("company_address");
+	const inputCompanyPhone = document.getElementById("company_phone");
+
 	const addMembersButton = document.getElementById("add-members-button");
 
 	const cardMenuBtn = document.getElementsByClassName("card-menu");
@@ -326,6 +333,17 @@ document.addEventListener("DOMContentLoaded", async function () {
             addAffBtn.classList.add('button-ghost');
         }
 
+		if (companyLogoDropArea) {
+			companyLogoDropArea.style.pointerEvents = "none";
+		}
+		if (inputCompanyName && inputOrganizationNo && inputCompanyAddress && inputCompanyPhone) {
+			inputCompanyName.disabled = true;
+			inputOrganizationNo.disabled = true;
+			inputCompanyAddress.disabled = true;
+			inputCompanyPhone.disabled = true;
+		}
+		// AQUI
+
 		// if (addMembersButton) {
 		// 	addMembersButton.disabled = true;
 		// 	addMembersButton.title = "You don't have permission to add members.";
@@ -472,6 +490,16 @@ document.addEventListener("DOMContentLoaded", async function () {
             addAffBtn.title = "You don't have permission to edit data.";
             addAffBtn.classList.add('button-ghost');
         }
+
+		if (companyLogoDropArea) {
+			companyLogoDropArea.style.pointerEvents = "none";
+		}
+		if (inputCompanyName && inputOrganizationNo && inputCompanyAddress && inputCompanyPhone) {
+			inputCompanyName.disabled = true;
+			inputOrganizationNo.disabled = true;
+			inputCompanyAddress.disabled = true;
+			inputCompanyPhone.disabled = true;
+		}
 
 		// if (addMembersButton) {
 		// 	addMembersButton.disabled = true;
@@ -620,6 +648,16 @@ document.addEventListener("DOMContentLoaded", async function () {
             addAffBtn.classList.add('button-ghost');
         }
 
+		if (companyLogoDropArea) {
+			companyLogoDropArea.style.pointerEvents = "none";
+		}
+		if (inputCompanyName && inputOrganizationNo && inputCompanyAddress && inputCompanyPhone) {
+			inputCompanyName.disabled = true;
+			inputOrganizationNo.disabled = true;
+			inputCompanyAddress.disabled = true;
+			inputCompanyPhone.disabled = true;
+		}
+
 		if (addMembersButton) {
 			addMembersButton.disabled = true;
 			addMembersButton.title = "You don't have permission to add members.";
@@ -766,6 +804,16 @@ document.addEventListener("DOMContentLoaded", async function () {
             addAffBtn.title = "You don't have permission to edit data.";
             addAffBtn.classList.add('button-ghost');
         }
+
+		if (companyLogoDropArea) {
+			companyLogoDropArea.style.pointerEvents = "none";
+		}
+		if (inputCompanyName && inputOrganizationNo && inputCompanyAddress && inputCompanyPhone) {
+			inputCompanyName.disabled = true;
+			inputOrganizationNo.disabled = true;
+			inputCompanyAddress.disabled = true;
+			inputCompanyPhone.disabled = true;
+		}
 
 		if (addMembersButton) {
 			addMembersButton.disabled = true;
@@ -914,6 +962,16 @@ document.addEventListener("DOMContentLoaded", async function () {
             addAffBtn.classList.add('button-ghost');
         }
 
+		if (companyLogoDropArea) {
+			companyLogoDropArea.style.pointerEvents = "none";
+		}
+		if (inputCompanyName && inputOrganizationNo && inputCompanyAddress && inputCompanyPhone) {
+			inputCompanyName.disabled = true;
+			inputOrganizationNo.disabled = true;
+			inputCompanyAddress.disabled = true;
+			inputCompanyPhone.disabled = true;
+		}
+
 		if (addMembersButton) {
 			addMembersButton.disabled = true;
 			addMembersButton.title = "You don't have permission to add members.";
@@ -1061,6 +1119,16 @@ document.addEventListener("DOMContentLoaded", async function () {
             addAffBtn.classList.add('button-ghost');
         }
 
+		if (companyLogoDropArea) {
+			companyLogoDropArea.style.pointerEvents = "none";
+		}
+		if (inputCompanyName && inputOrganizationNo && inputCompanyAddress && inputCompanyPhone) {
+			inputCompanyName.disabled = true;
+			inputOrganizationNo.disabled = true;
+			inputCompanyAddress.disabled = true;
+			inputCompanyPhone.disabled = true;
+		}
+		
 		if (addMembersButton) {
 			addMembersButton.disabled = true;
 			addMembersButton.title = "You don't have permission to add members.";

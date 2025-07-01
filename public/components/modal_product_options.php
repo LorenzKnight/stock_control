@@ -50,7 +50,7 @@
 						<td colspan="2" align="center" valign="middle">
 							<div class="drop-area" id="edit-drop-product-area">
 								<img class="image-preview" id="edit-product-image-preview" src="" alt="Product Image Preview">
-								<p>Drop logo image here or click to select</p>
+								<p>Drop image here or click to select</p>
 								<input type="file" name="edit_Product_image" id="edit_Product_image" accept="image/*" style="display: none;">
 							</div>
 						</td>
