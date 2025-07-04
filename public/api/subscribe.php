@@ -39,17 +39,17 @@ try {
 		throw new Exception("Access denied. You do not have permission to upgrade the supscription.");
 	}
 
-	$currentPackResponse = select_from("users", ["package_id"], ["user_id" => $userId], ["fetch_first" => true]);
-	$currentPackData = json_decode($currentPackResponse, true);
+	$currentPackResponse = json_decode(select_from("users", ["package_id"], ["user_id" => $userId], ["fetch_first" => true]), true);
+	$currentPackData = $currentPackResponse["data"];
 
-	if ($currentPackData["success"] && !empty($currentPackData["data"]["package_id"])) {
-		$currentPack = intval($currentPackData["data"]["package_id"]);
+	if ($currentPackData["success"] && !empty($currentPackData["package_id"])) {
+		$currentPack = intval($currentPackData["package_id"]);
 
 		if ($currentPack === $selectedPack) {
 			$response = [
 				"success" => false,
 				"message" => "You already have this subscription package.",
-				"img_gif" => "../images/sys-img/info_bell.gif", // puedes usar otro ícono para mensaje informativo
+				"img_gif" => "../images/sys-img/error.gif",
 				"redirect_url" => ""
 			];
 			echo json_encode($response);

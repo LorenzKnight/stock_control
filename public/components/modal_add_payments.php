@@ -54,7 +54,7 @@
 						<input class="form-input-style" type="email" name="customer_email" id="customer_email" placeholder="Enter a E-Mail..." title="Enter a valid email" required/>
 					</td>
 				</tr>
-				<tr valign="baseline" class="form_height">
+				<!-- <tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
 						<span style="display: block; margin: 15px 0 5px;">Status</span>
 						<label class="switch" style="margin-bottom: 20px;">
@@ -62,12 +62,23 @@
 							<span class="slider round"></span>
 						</label>
 					</td>
+				</tr> -->
+				<tr valign="baseline" class="form_height">
+					<td width="50%" style="border-block: 1px solid var(--clr-border); padding: 5px 10px;" align="left" valign="middle">
+						<span style="display: block;">Status</span>
+					</td>
+					<td width="50%" style="border-block: 1px solid var(--clr-border); padding: 5px 10px;" align="right" valign="middle">
+						<label class="switch">
+							<input type="checkbox" name="payment_status" id="payment_status" value="1" checked>
+							<span class="slider round"></span>
+						</label>
+					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
-					<td width="50%" align="center" valign="middle">
+					<td width="50%" style="padding: 15px 0" align="center" valign="middle">
 						<button type="button" class="neutral-btn">Cancel</button>
 					</td>
-					<td width="50%" align="center" valign="middle">
+					<td width="50%" style="padding: 15px 0" align="center" valign="middle">
 						<input type="submit" class="button-style-agree" value="Make Payment" />
 					</td>
 				</tr>
