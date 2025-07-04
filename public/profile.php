@@ -10,6 +10,7 @@
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="css/styles.css">
+	<script src="http://js.stripe.com/v3/"></script>
 	<script defer src="js/actions.js"></script>
 	<script defer src="js/checkPermission.js"></script>
 </head>

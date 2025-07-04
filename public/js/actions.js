@@ -651,15 +651,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
-	function scrollToTopIfNeeded() {
-		if (window.scrollY > 0) {
-			window.scrollTo({
-				top: 0,
-				behavior: 'smooth'
-			});
-		}
-	}
-
 	// Drag & Drop + click
 	function initDragAndDrop(dropAreaId, inputFileId, previewImgId = null) {
 		const dropArea = document.getElementById(dropAreaId);
@@ -823,7 +814,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
-	// 📌 Manejo del formulario de subscripcion
+	// 📌 Manejo del formulario de subscripcion y checkout
+	const stripe = Stripe("pk_test_51RgisC2U3dKi7TbU15EH5Uvh8ROGajM59RWTLbTzEGcxkZk0dzRbYzz28h8jBcef5E3PLJbvFL7BBtHoJJ1WKkOD00feIg5oQG");
 	let formSubscription = document.getElementById('formSubscription');
 	if (formSubscription) {
 		formSubscription.addEventListener('submit', async function (e) {
@@ -832,7 +824,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			let formData = new FormData(this);
 
 			try {
-				let response = await fetch('api/subscribe.php', {
+				let response = await fetch('api/checkout.php', {
 					method: 'POST',
 					headers: { 'Accept': 'application/json' },
 					body: formData
@@ -844,22 +836,24 @@ document.addEventListener("DOMContentLoaded", async function () {
 				let statusText = document.getElementById('status-text');
 				let statusImage = document.getElementById('status-image');
 
-				if (data.success) {
-					statusText.innerText = data.message;
-					statusImage.src = data.img_gif;
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
+				statusText.innerText = data.message;
+				statusImage.src = data.img_gif;
+				banner.style.display = 'block';
+				banner.style.opacity = '1';
 
+				if (data.success && data.sessionId) {
+					// Espera 1 segundo antes de redirigir a Stripe
+					setTimeout(() => {
+						stripe.redirectToCheckout({ sessionId: data.sessionId });
+					}, 1000);
+				} else if (data.success && data.redirect_url) {
+					// Caso anterior: redirección manual
 					setTimeout(() => {
 						banner.style.opacity = '0';
 						setTimeout(() => {
 							window.location.href = data.redirect_url;
 						}, 1000);
 					}, 3000);
-				} else {
-					statusText.innerText = "Error: " + data.message;
-					statusImage.src = data.img_gif;
-					banner.style.display = 'block';
 				}
 			} catch (error) {
 				let banner = document.getElementById('status-message');
@@ -4632,6 +4626,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 	//############################################################# END SEND EMAIL ##################################################################
 
 	//############################################################# FUNCTIONES ##################################################################
+
+	// 📌 scroll to top 
+	function scrollToTopIfNeeded() {
+		if (window.scrollY > 0) {
+			window.scrollTo({
+				top: 0,
+				behavior: 'smooth'
+			});
+		}
+	}
 
 	// 📌 cerrar al hacer clic fuera del formulario
 	function handlePopupClose(popupId, contentSelector, otherPopups = []) {

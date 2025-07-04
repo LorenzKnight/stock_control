@@ -51,10 +51,10 @@
 					</td>
 				</tr> -->
 				<tr valign="baseline" class="form_height">
-					<td width="50%" style="border-top: 1px solid var(--clr-border); border-bottom: 1px solid var(--clr-border); padding: 5px 10px;" align="left" valign="middle">
+					<td width="50%" style="border-block: 1px solid var(--clr-border); padding: 5px 10px;" align="left" valign="middle">
 						<span style="display: block;">Status</span>
 					</td>
-					<td width="50%" style="border-top: 1px solid var(--clr-border); border-bottom: 1px solid var(--clr-border); padding: 5px 10px;" align="right" valign="middle">
+					<td width="50%" style="border-block: 1px solid var(--clr-border); padding: 5px 10px;" align="right" valign="middle">
 						<label class="switch">
 							<input type="checkbox" name="edit_status" id="edit_status" value="1">
 							<span class="slider round"></span>
