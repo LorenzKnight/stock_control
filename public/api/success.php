@@ -1,5 +1,13 @@
 <?php
 require_once('../logic/stock_be.php');
+
+$response = [
+	"success" => false,
+	"message" => "Invalid request",
+	"img_gif" => "../images/sys-img/error.gif",
+	"redirect_url" => "../profile.php"
+];
+
 \Stripe\Stripe::setApiKey('sk_test_51RgisC2U3dKi7TbUepLwOh1zeTOYwRz3QNgqRn18kJm5DH8hs6nbv0qiLBbmmpmtS7HjqbTG38TMZnuBkoINEvdc00AQjR1jfP');
 
 $sessionId = $_GET['session_id'] ?? null;
@@ -20,22 +28,23 @@ try {
     }
 
     // 2. Recuperar datos personalizados de sesión si los guardaste (opcional)
-
     $userId = $_SESSION['sc_UserId'] ?? null;
     if (!$userId) {
         throw new Exception("No user session found.");
     }
 
-    // Aquí podrías haber guardado el paquete elegido en base de datos antes del checkout,
-    // pero si no lo hiciste, podrías también usar `metadata` (si lo incluiste en la sesión)
-
     // 3. Actualizar base de datos (ejemplo)
     $subscriptionDate = date("Y-m-d H:i:s");
     $expirationDate = date("Y-m-d H:i:s", strtotime("+1 month"));
 
+	$packageId = $session->metadata->package_id ?? null;
+	if (!$packageId) {
+		throw new Exception("No package ID found in session metadata.");
+	}
+
     $data = [
         "user_id" => $userId,
-        "members_packs" => 1, // ⚠️ Cambia esto por el pack real
+        "package_id" => $packageId,
         "estimated_cost" => $amountTotal,
         "subscription_date" => $subscriptionDate,
         "expiration_date" => $expirationDate
@@ -49,7 +58,7 @@ try {
     }
 
     // (Opcional) actualizar usuario
-    update_table("users", ["package_id" => 1], ["user_id" => $userId]);
+    update_table("users", ["package_id" => $packageId], ["user_id" => $userId]);
 
     log_activity(
         $userId,
@@ -59,10 +68,25 @@ try {
         $userId
     );
 
-    echo "<h2>¡Pago exitoso!</h2>";
-    echo "<p>Gracias por tu compra. Licencia activada correctamente.</p>";
-
+    $response = [
+		"success" => true,
+		"message" => "Subscription upgraded successfully!",
+		"img_gif" => "../images/sys-img/loading1.gif",
+		"redirect_url" => "../profile.php"
+	];
 } catch (Exception $e) {
-    echo "<h2>Error</h2>";
-    echo "<p>" . $e->getMessage() . "</p>";
+    $response = [
+        "success" => false,
+        "message" => $e->getMessage(),
+        "img_gif" => "../images/sys-img/error.gif",
+        "redirect_url" => "../profile.php"
+    ];
 }
+
+if ($response["success"]) {
+	$_SESSION["payment_message"] = $response["message"];
+}
+
+header("Location: " . $response["redirect_url"]);
+exit;
+?>

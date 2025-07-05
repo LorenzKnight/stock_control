@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS packages (
 CREATE TABLE IF NOT EXISTS subscriptions (
 	subsc_id SERIAL PRIMARY KEY,
 	user_id INTEGER NULL,
-	members_packs INTEGER NULL,
+	package_id INTEGER NULL,
 	estimated_cost INTEGER NULL,
 	subscription_date TIMESTAMP NULL,
 	expiration_date TIMESTAMP NULL
