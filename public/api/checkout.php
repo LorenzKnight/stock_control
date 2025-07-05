@@ -31,10 +31,8 @@ try {
 	$estimatedCost = floatval($_POST['estimated_cost']);
     $unitAmount = intval($estimatedCost * 100);
 
-    // $subscriptionDate = date("Y-m-d H:i:s");
-	// $expirationDate = date("Y-m-d H:i:s", strtotime("+1 month"));
-
     $myUrl = 'http://localhost:8889/';
+    // $myUrl = 'http://allstockcontrol.com/';
 
     $checkoutSession = \Stripe\Checkout\Session::create([
         'payment_method_types' => ['card'],
@@ -49,8 +47,13 @@ try {
             'quantity' => 1,
         ]],
         'mode' => 'payment',
-        'success_url'   => $myUrl.'success.php?session_id={CHECKOUT_SESSION_ID}',
-        'cancel_url'    => $myUrl.'cancel.html',
+        'success_url'   => $myUrl.'api/success.php?session_id={CHECKOUT_SESSION_ID}',
+        'cancel_url'    => $myUrl.'api/cancel.php',
+        'metadata' => [
+            'user_id'    => $userId,
+            'package_id' => $selectedPackId,
+            'cost'       => $unitAmount / 100  // Opcional, para registrar el precio como referencia
+        ]
     ]);
 
     echo json_encode([

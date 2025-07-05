@@ -1,4 +1,22 @@
 document.addEventListener("DOMContentLoaded", async function () {
+	if (window.paymentMessage) {
+		let banner = document.getElementById('status-message');
+		let statusText = document.getElementById('status-text');
+		let statusImage = document.getElementById('status-image');
+
+		statusText.innerText = window.paymentMessage;
+		statusImage.src = "../images/sys-img/loading1.gif"; // O el ícono que prefieras
+		banner.style.display = 'block';
+		banner.style.opacity = '1';
+
+		setTimeout(() => {
+			banner.style.opacity = '0';
+			setTimeout(() => {
+				banner.style.display = 'none';
+			}, 1000);
+		}, 3000);
+	}
+	
 	// 📌 Redireccionar al hacer clic en Menu
 	document.querySelectorAll('.menu li').forEach(item => {
 		if (!item.classList.contains('no-redirect')) {
