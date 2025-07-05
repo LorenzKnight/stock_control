@@ -13,14 +13,7 @@
 	<script src="http://js.stripe.com/v3/"></script>
 	<script defer src="js/actions.js"></script>
 	<script defer src="js/checkPermission.js"></script>
-	<script>
-		<?php if (!empty($_SESSION["payment_message"])): ?>
-			window.paymentMessage = <?php echo json_encode($_SESSION["payment_message"]); ?>;
-			<?php unset($_SESSION["payment_message"]); ?>
-		<?php else: ?>
-			window.paymentMessage = null;
-		<?php endif; ?>
-	</script>
+	<script src="logic/payment_message.php"></script>
 </head>
 
 <body>
