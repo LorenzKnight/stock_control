@@ -832,10 +832,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
-	// 📌 Manejo del formulario de subscripcion y checkout
-	const stripe = Stripe("pk_test_51RgisC2U3dKi7TbU15EH5Uvh8ROGajM59RWTLbTzEGcxkZk0dzRbYzz28h8jBcef5E3PLJbvFL7BBtHoJJ1WKkOD00feIg5oQG");
+	// 📌 Manejo del formulario de subscripcion y checkout via Stripe
 	let formSubscription = document.getElementById('formSubscription');
 	if (formSubscription) {
+		const stripe = Stripe("pk_test_51RgisC2U3dKi7TbU15EH5Uvh8ROGajM59RWTLbTzEGcxkZk0dzRbYzz28h8jBcef5E3PLJbvFL7BBtHoJJ1WKkOD00feIg5oQG"); // PROBLEMA CON ESTA VARIABLE
+
 		formSubscription.addEventListener('submit', async function (e) {
 			e.preventDefault();
 
