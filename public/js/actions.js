@@ -832,10 +832,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
-	// 📌 Manejo del formulario de subscripcion y checkout
-	const stripe = Stripe("REMOVED_STRIPE_TEST_PUBLIC");
+	// 📌 Manejo del formulario de subscripcion y checkout via Stripe
 	let formSubscription = document.getElementById('formSubscription');
 	if (formSubscription) {
+		const stripe = Stripe("REMOVED_STRIPE_TEST_PUBLIC"); // PROBLEMA CON ESTA VARIABLE
+
 		formSubscription.addEventListener('submit', async function (e) {
 			e.preventDefault();
 
