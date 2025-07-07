@@ -5085,7 +5085,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 						<div class="pack-img">
 							<img src="images/sys-img/${pkg.package_image}" alt="Package Image">
 						</div>
-						<div><strong>${pkg.package_name}</strong></div>
+						<div class="pack-name"><strong>${pkg.package_name}</strong></div>
 						<div class="pack-details">
 							<ul>
 								<li>${pkg.members_limit} members</li>
@@ -5093,7 +5093,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 								<li>${pkg.products_limit} products</li>
 							</ul>
 						</div>
-						<div><strong>$ ${pkg.package_price != null ? pkg.package_price : 'free'}</strong></div>
+						<div class="pack-price"><strong>$ ${pkg.package_price != null ? pkg.package_price : 'free'}</strong></div>
 						<div class="opcion-radio">
 							<input type="radio" id="${uniqueId}" name="packs" class="category-radio"
 								value="${pkg.package_id}"
