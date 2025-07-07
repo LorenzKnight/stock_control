@@ -11,7 +11,7 @@ $response = [
 
 try {
     $packagesResponse = select_from("packages", ["*"], ["package_status" => 1], [
-        "order_by" => "members_limit",
+        "order_by" => "package_id",
 		"order_direction" => "ASC"
     ]);
 

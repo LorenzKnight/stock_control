@@ -116,6 +116,7 @@ body {
 
 .disabled {
     background-color: #ccc;
+    pointer-events: none;
 }
 
 .height-100 {
