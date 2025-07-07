@@ -5,18 +5,17 @@
 				<tr valign="baseline">
 					<td style="font-size: 12px;" colspan="4" align="center" valign="middle">
 						<h2>Upgrade your Subscription</h2>
+						<p>Select a Subscription Package</p>
 					</td>      
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="4" align="center" valign="middle">
-						<label for="packs">Member Package:</label>
-						<!-- <select class="form-input-style" name="packs" id="packs"></select> -->
 						<div class="pack-container" id="packs"></div> 
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="4" align="center" valign="middle">
-						<div id="estimated">Estimated cost: <strong>$ 0</strong></div>
+						<div class="estimated" id="estimated">Estimated cost: <strong>$ 0</strong></div>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
