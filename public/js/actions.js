@@ -604,122 +604,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	});
 
-	// 📌 recoje el valor del select del formulario subscripcion
-	let selectPack = document.getElementById('packs');
-	let estimated = document.getElementById('estimated');
-	let estimatedInput = document.getElementById('estimated_cost');
-
-	async function updateEstimatedCost() {
-		if (!selectPack || !estimated || !estimatedInput) return;
-
-		selectedValue = parseInt(selectPack.value);
-
-		try {
-			const res = await fetch('api/get_packages.php');
-			const data = await res.json();
-
-			if (data.success && Array.isArray(data.packages)) {
-				const pkg = data.packages.find(p => parseInt(p.package_id) === selectedValue);
-
-				if (pkg) {
-					const totalCost = pkg.package_price ?? 0;
-					estimated.innerHTML = `Estimated cost: <strong>$ ${totalCost}</strong>`;
-					estimatedInput.value = totalCost;
-				} else {
-					estimated.innerHTML = `Estimated cost: <strong>$ 0</strong>`;
-					estimatedInput.value = 0;
-				}
-			}
-		} catch (error) {
-			console.error("Error loading package data:", error);
-			estimated.innerHTML = `Estimated cost: <strong>$ 0</strong>`;
-			estimatedInput.value = 0;
-		}
-	}
-
-	if (selectPack) {
-		selectPack.addEventListener('change', updateEstimatedCost);
-	}
-
-	// 📌 script para recojer el paquete actual
-	async function loadCurrentPackage() {
-		try {
-			let response = await fetch('api/get_current_package.php', {
-				method: 'GET',
-				headers: { 'Accept': 'application/json' }
-			});
-	
-			let data = await response.json();
-	
-			if (data.success && data.current_pack && selectPack) {
-				let currentPack = parseInt(data.current_pack);
-				let options = selectPack.querySelectorAll("option");
-				options.forEach(option => {
-					let value = parseInt(option.value);
-					if (!isNaN(value)) {
-						option.style.display = value < currentPack ? 'none' : 'block';
-					}
-				});
-
-				selectPack.value = currentPack;
-				updateEstimatedCost();
-			}
-		} catch (error) {
-			console.error("Error loading current package:", error);
-		}
-	}
-
-	// Drag & Drop + click
-	function initDragAndDrop(dropAreaId, inputFileId, previewImgId = null) {
-		const dropArea = document.getElementById(dropAreaId);
-		const fileInput = document.getElementById(inputFileId);
-		const previewImage = previewImgId ? document.getElementById(previewImgId) : null;
-	
-		if (!dropArea || !fileInput) return;
-	
-		// Al hacer clic en el área se dispara el input
-		dropArea.addEventListener('click', () => fileInput.click());
-	
-		// Drag events
-		dropArea.addEventListener('dragenter', (e) => {
-			e.preventDefault();
-			dropArea.classList.add('active');
-		});
-		dropArea.addEventListener('dragleave', () => dropArea.classList.remove('active'));
-		dropArea.addEventListener('dragover', (e) => e.preventDefault());
-	
-		// Drop file
-		dropArea.addEventListener('drop', (e) => {
-			e.preventDefault();
-			dropArea.classList.remove('active');
-			const files = e.dataTransfer.files;
-			fileInput.files = files;
-	
-			if (previewImage && files && files[0]) {
-				const reader = new FileReader();
-				reader.onload = function (e) {
-					previewImage.src = e.target.result;
-					previewImage.style.display = 'block';
-					previewImage.style.opacity = 1;
-				};
-				reader.readAsDataURL(files[0]);
-			}
-		});
-	
-		// Input change
-		fileInput.addEventListener('change', () => {
-			if (previewImage && fileInput.files && fileInput.files[0]) {
-				const reader = new FileReader();
-				reader.onload = function (e) {
-					previewImage.src = e.target.result;
-					previewImage.style.display = 'block';
-					previewImage.style.opacity = 1;
-				};
-				reader.readAsDataURL(fileInput.files[0]);
-			}
-		});
-	}
-
 	// 📌 script para my info popup
 	let editMyDataButton = document.getElementById('edit-my-data');
 	if (editMyDataButton) {
@@ -808,7 +692,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			scrollToTopIfNeeded();
 
 			const subscForm = document.getElementById('subsc-form');
-			const popupContent = subscForm.querySelector('.formular-frame');
+			const popupContent = subscForm.querySelector('.formular-medium-frame');
 
 			if (subscForm && popupContent) {
 				subscForm.style.display = 'block';
@@ -824,7 +708,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				setTimeout(() => {
 					popupContent.style.transform = 'scale(1)';
 					popupContent.style.opacity = '1';
-					loadCurrentPackage();
 				}, 50);
 
 				populatePackages('packs');
@@ -4677,7 +4560,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 	handlePopupClose("edit-my_info-form", ".formular-frame", ["edit-my_info-form"]);
-	handlePopupClose("subsc-form", ".formular-frame", ["subsc-form"]);
+	handlePopupClose("subsc-form", ".formular-medium-frame", ["subsc-form"]);
 	handlePopupClose("edit-company-form", ".formular-medium-frame", ["edit-company-form"]);
 	handlePopupClose("add-members-form", ".formular-frame", ["add-members-form"]);
 	handlePopupClose("edit-members-form", ".formular-frame", ["edit-members-form"]);
@@ -5151,38 +5034,203 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
-	async function populatePackages(selectId, selectedValue = '') {
-		const select = document.getElementById(selectId);
-		if (!select) return;
+	async function populatePackages(containerId, selectedValue = '') {
+		const packageList = document.getElementById(containerId);
+		if (!packageList) return;
 
-		select.innerHTML = '';
+		packageList.innerHTML = ''; // limpia el contenedor
 
-		const defaultOption = document.createElement('option');
-		defaultOption.value = '';
-		defaultOption.textContent = 'Select a Package';
-		select.appendChild(defaultOption);
+		let currentPackId = 0;
+
+		// 1. Obtener el paquete actual del usuario
+		try {
+			const currentRes = await fetch('api/get_current_package.php', {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			});
+			const currentData = await currentRes.json();
+			if (currentData.success && currentData.current_pack) {
+				currentPackId = parseInt(currentData.current_pack);
+			}
+		} catch (err) {
+			console.warn("The current package could not be loaded:", err);
+		}
+
+		// 2. Cargar los paquetes disponibles
+		try {
+			const response = await fetch('api/get_packages.php', {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			});
+
+			const data = await response.json();
+
+			if (data.success && data.packages.length > 0) {
+				data.packages.forEach(pkg => {
+					const uniqueId = `package-${pkg.package_id}`;
+					const pkgId = parseInt(pkg.package_id);
+					const isAvailable = pkgId > currentPackId;
+
+					const container = document.createElement('div');
+					container.className = 'packages';
+					container.dataset.radioId = uniqueId;
+
+					if (!isAvailable) {
+						container.style.opacity = '0.3';
+						container.style.pointerEvents = 'none';
+						container.style.backgroundColor = '#f2f2f2'; // estilo visual para desactivado
+					}
+
+					container.innerHTML = `
+						<div class="pack-img">
+							<img src="images/sys-img/${pkg.package_image}" alt="Package Image">
+						</div>
+						<div><strong>${pkg.package_name}</strong></div>
+						<div class="pack-details">
+							<ul>
+								<li>${pkg.members_limit} members</li>
+								<li>${pkg.branch_affiliate_limit} affiliate</li>
+								<li>${pkg.products_limit} products</li>
+							</ul>
+						</div>
+						<div><strong>$ ${pkg.package_price != null ? pkg.package_price : 'free'}</strong></div>
+						<div class="opcion-radio">
+							<input type="radio" id="${uniqueId}" name="packs" class="category-radio"
+								value="${pkg.package_id}"
+								${String(pkg.package_id) === String(selectedValue) ? 'checked' : ''}
+								${!isAvailable ? 'disabled' : ''}
+							/>
+							<label for="${uniqueId}"></label>
+						</div>
+					`;
+
+					// Si este es el seleccionado, aplicamos estilo visual
+					if (String(pkg.package_id) === String(selectedValue)) {
+						container.classList.add('selected-package');
+					}
+
+					// Asignar evento al div para seleccionar el radio
+					container.addEventListener('click', () => {
+						const radio = container.querySelector('input[type="radio"]');
+						if (!radio.disabled) {
+							radio.checked = true;
+
+							// Desmarcar todos los paquetes
+							document.querySelectorAll('.packages').forEach(p => p.classList.remove('selected-package'));
+
+							// Marcar este paquete
+							container.classList.add('selected-package');
+
+							// Actualizar costo estimado
+							updateEstimatedCost();
+						}
+					});
+
+					packageList.appendChild(container);
+				});
+
+				assignPackageListeners();
+			} else {
+				packageList.innerHTML = '<p>No packages found.</p>';
+			}
+		} catch (error) {
+			console.error("Error loading packages:", error);
+			packageList.innerHTML = '<p>Error loading packages.</p>';
+		}
+	}
+
+	// 📌 recoje el valor del select del formulario subscripcion
+	let estimated = document.getElementById('estimated');
+	let estimatedInput = document.getElementById('estimated_cost');
+	let packUpdateBtn = document.getElementById('packUpgradeBtn'); 
+
+	async function updateEstimatedCost() {
+		const selectedRadio = document.querySelector('input[name="packs"]:checked');
+		if (!selectedRadio || !estimated || !estimatedInput) return;
+
+		const selectedValue = parseInt(selectedRadio.value);
 
 		try {
 			const res = await fetch('api/get_packages.php');
 			const data = await res.json();
 
-			if (data.success && data.packages) {
-				data.packages.forEach(pkg => {
-					const option = document.createElement('option');
-					option.value = pkg.package_id;
-					option.textContent = `${pkg.package_name} - ${pkg.members_limit} members`;
-					if (String(pkg.package_id) === String(selectedValue)) {
-						option.selected = true;
-					}
-					select.appendChild(option);
-				});
-			} else {
-				select.innerHTML += `<option value="">No packages found</option>`;
+			if (data.success && Array.isArray(data.packages)) {
+				const pkg = data.packages.find(p => parseInt(p.package_id) === selectedValue);
+
+				if (pkg) {
+					const totalCost = pkg.package_price ?? 0;
+					estimated.innerHTML = `Estimated cost: <strong>$ ${totalCost}</strong>`;
+					estimatedInput.value = totalCost;
+
+					packUpdateBtn.classList.remove('disabled');
+				} else {
+					estimated.innerHTML = `Estimated cost: <strong>$ 0</strong>`;
+					estimatedInput.value = 0;
+				}
 			}
 		} catch (error) {
-			console.error("Error loading packages:", error);
-			select.innerHTML += `<option value="">Error loading packages</option>`;
+			console.error("Error loading package data:", error);
+			estimated.innerHTML = `Estimated cost: <strong>$ 0</strong>`;
+			estimatedInput.value = 0;
 		}
+	}
+
+	// 📌 Asigna el evento a todos los radios de paquetes
+	function assignPackageListeners() {
+		document.querySelectorAll('input[name="packs"]').forEach(radio => {
+			radio.addEventListener('change', updateEstimatedCost);
+		});
+	}
+
+	// Drag & Drop + click
+	function initDragAndDrop(dropAreaId, inputFileId, previewImgId = null) {
+		const dropArea = document.getElementById(dropAreaId);
+		const fileInput = document.getElementById(inputFileId);
+		const previewImage = previewImgId ? document.getElementById(previewImgId) : null;
+	
+		if (!dropArea || !fileInput) return;
+	
+		// Al hacer clic en el área se dispara el input
+		dropArea.addEventListener('click', () => fileInput.click());
+	
+		// Drag events
+		dropArea.addEventListener('dragenter', (e) => {
+			e.preventDefault();
+			dropArea.classList.add('active');
+		});
+		dropArea.addEventListener('dragleave', () => dropArea.classList.remove('active'));
+		dropArea.addEventListener('dragover', (e) => e.preventDefault());
+	
+		// Drop file
+		dropArea.addEventListener('drop', (e) => {
+			e.preventDefault();
+			dropArea.classList.remove('active');
+			const files = e.dataTransfer.files;
+			fileInput.files = files;
+	
+			if (previewImage && files && files[0]) {
+				const reader = new FileReader();
+				reader.onload = function (e) {
+					previewImage.src = e.target.result;
+					previewImage.style.display = 'block';
+					previewImage.style.opacity = 1;
+				};
+				reader.readAsDataURL(files[0]);
+			}
+		});
+	
+		// Input change
+		fileInput.addEventListener('change', () => {
+			if (previewImage && fileInput.files && fileInput.files[0]) {
+				const reader = new FileReader();
+				reader.onload = function (e) {
+					previewImage.src = e.target.result;
+					previewImage.style.display = 'block';
+					previewImage.style.opacity = 1;
+				};
+				reader.readAsDataURL(fileInput.files[0]);
+			}
+		});
 	}
 
 	function showConfirmModal(title, message, onConfirm) {
