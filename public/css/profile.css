@@ -170,6 +170,7 @@
     padding: 10px 0;
 }
 
+/* ################## Packages styles ################## */
 .packages {
     width: 152px;
     height: 250px;
@@ -191,7 +192,6 @@
 .pack-img img {
     width: 120px;
 	height: 120px;
-    /* background-color: var(--main-bg-color); */
     object-fit: cover;
 }
 
