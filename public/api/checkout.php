@@ -34,25 +34,33 @@ try {
     $myUrl = 'http://localhost:8889/';
     // $myUrl = 'http://allstockcontrol.com/';
 
+    // 1. Crear producto dinámico
+    $product = \Stripe\Product::create([
+        'name' => 'AllStockControl License: ' . $selectedPackName,
+    ]);
+
+    // 2. Crear precio recurrente mensual
+    $price = \Stripe\Price::create([
+        'unit_amount' => $unitAmount,
+        'currency' => 'usd',
+        'recurring' => ['interval' => 'month'],
+        'product' => $product->id,
+    ]);
+
+    // 3. Crear sesión de Checkout como SUSCRIPCIÓN
     $checkoutSession = \Stripe\Checkout\Session::create([
         'payment_method_types' => ['card'],
+        'mode' => 'subscription',
         'line_items' => [[
-            'price_data' => [
-                'currency' => 'usd',
-                'unit_amount' => $unitAmount, // ejemplo: 1999 para $19.99
-                'product_data' => [
-                    'name' => 'AllStockControl License, Pack: ' . $selectedPackName,
-                ],
-            ],
+            'price' => $price->id,
             'quantity' => 1,
         ]],
-        'mode' => 'payment',
         'success_url'   => $myUrl.'api/success.php?session_id={CHECKOUT_SESSION_ID}',
         'cancel_url'    => $myUrl.'api/cancel.php',
         'metadata' => [
             'user_id'    => $userId,
             'package_id' => $selectedPackId,
-            'cost'       => $unitAmount / 100  // Opcional, para registrar el precio como referencia
+            'cost'       => $unitAmount / 100
         ]
     ]);
 
