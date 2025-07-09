@@ -744,10 +744,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 				banner.style.opacity = '1';
 
 				if (data.success && data.sessionId) {
-					// Espera 1 segundo antes de redirigir a Stripe
+					// Espera medio segundo antes de redirigir a Stripe
 					setTimeout(() => {
 						stripe.redirectToCheckout({ sessionId: data.sessionId });
-					}, 1000);
+					}, 500);
 				} else if (data.success && data.redirect_url) {
 					// Caso anterior: redirección manual
 					setTimeout(() => {
