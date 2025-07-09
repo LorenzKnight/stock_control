@@ -1,5 +1,5 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
+if (!defined('IS_STRIPE_WEBHOOK') && session_status() === PHP_SESSION_NONE) {
   session_start();
 }
 
