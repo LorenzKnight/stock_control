@@ -22,8 +22,16 @@ try {
     $userId = $_SESSION["sc_UserId"] ?? null;
 	if (!$userId) throw new Exception("User session not found.");
 
+    $userData = json_decode(select_from("users", ["parent_user"], ["user_id" => $userId], ["fetch_first" => true]), true);
+	if (!$userData["success"] || empty($userData["data"])) {
+        throw new Exception("No user data found.");
+    }
+	$userInfo = $userData["data"];
+
+	$altUser = empty($userInfo["parent_user"] ?? null) ? $userId : $userInfo["parent_user"];
+
     $where = [
-		"parent_user" => ["condition" => "IS NOT NULL"]
+        "parent_user" => $altUser
 	];
 
 	$selectCompany = $_GET["select_company"] ?? null;
