@@ -62,6 +62,11 @@ Use:
 https://abc123.ngrok-free.app/api/stripe_webhook.php
 Done! You can now test webhooks locally as if you were in production. 🎯
 
+7. update stripe_webhook.php
+
+this line:
+<!-- $endpointSecret = 'whsec_YrXZi2jJDbN5hmQ12pNrH53jXhPWKOhf'; -->
+
 ## Main page - localhost
 http://localhost:8889/
 

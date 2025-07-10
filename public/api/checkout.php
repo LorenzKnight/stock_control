@@ -48,34 +48,49 @@ try {
     ]);
 
     // 3. Buscar si ya existe una suscripción activa
-    $subscriptionRecord = json_decode(select_from("subscriptions", ["stripe_subscription_id"], ["user_id" => $userId], [
+    $subscriptionRecord = json_decode(select_from("subscriptions", ["stripe_subscription_id", "subsc_id"], ["user_id" => $userId], [
         "order_by" => "subsc_id",
 		"order_direction" => "DESC",
         "fetch_first" => true
     ]), true);
     
     if ($subscriptionRecord["success"] && !empty($subscriptionRecord["data"]["stripe_subscription_id"])) {
-        // Usuario ya tiene suscripción, se actualiza
-        $subscriptionId = $subscriptionRecord["data"]["stripe_subscription_id"];
-        $subscription = \Stripe\Subscription::retrieve($subscriptionId);
-        $subscriptionItemId = $subscription->items->data[0]->id;
+        // Usuario ya tiene suscripción, se cancela y se crea una nueva
+		$previousSubscriptionId = $subscriptionRecord["data"]["stripe_subscription_id"];
+		$subscId = $subscriptionRecord["data"]["subsc_id"];
 
-        // Actualizar la suscripción con el nuevo plan (upgrade/downgrade)
-        $updatedSubscription = \Stripe\Subscription::update($subscriptionId, [
-            'cancel_at_period_end' => false,
-            'proration_behavior' => 'create_prorations',
-            'items' => [[
-                'id' => $subscriptionItemId,
-                'price' => $price->id,
-            ]],
-        ]);
+		try {
+			// Cancela inmediatamente la suscripción anterior
+			$subscription = \Stripe\Subscription::retrieve($previousSubscriptionId);
+			$subscription->cancel();
 
-        echo json_encode([
-            'success' => true,
-            "message" => "Subscription updated to new plan.",
-            "img_gif" => "../images/sys-img/loading1.gif",
-            'subscriptionId' => $updatedSubscription->id
-        ]);
+			// Crear nueva sesión de checkout para nueva suscripción
+			$checkoutSession = \Stripe\Checkout\Session::create([
+				'payment_method_types' => ['card'],
+				'mode' => 'subscription',
+				'line_items' => [[
+					'price' => $price->id,
+					'quantity' => 1,
+				]],
+				'success_url' => $myUrl.'api/success.php?session_id={CHECKOUT_SESSION_ID}',
+				'cancel_url'  => $myUrl.'api/cancel.php',
+				'metadata' => [
+					'user_id'        => $userId,
+					'package_id'     => $selectedPackId,
+					'cost'           => $unitAmount / 100,
+					'subsc_id'       => $subscId // importante para actualizar desde el webhook
+				]
+			]);
+
+			echo json_encode([
+				'success' => true,
+				"message" => "Subscription updated to new plan via new session.",
+				"img_gif" => "../images/sys-img/loading1.gif",
+				'sessionId' => $checkoutSession->id
+			]);
+		} catch (\Exception $e) {
+			throw new Exception("Error cancelling previous subscription: " . $e->getMessage());
+		}
     } else {
         // No hay suscripción activa: crear nueva
         $checkoutSession = \Stripe\Checkout\Session::create([
