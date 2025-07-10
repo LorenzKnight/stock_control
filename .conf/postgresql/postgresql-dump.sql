@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS subscriptions (
 	subsc_id SERIAL PRIMARY KEY,
 	user_id INTEGER NULL,
 	package_id INTEGER NULL,
-	stripe_subscription_id INTEGER NULL,
+	stripe_subscription_id VARCHAR(100) NULL,
 	estimated_cost INTEGER NULL,
 	subscription_date TIMESTAMP NULL,
 	expiration_date TIMESTAMP NULL

@@ -20,48 +20,63 @@ try {
     exit();
 }
 
-// -------------------------
-// Evento: checkout completado
-// -------------------------
+// ------------------------------------------
+// Evento: checkout completado (nueva suscripción)
+// ------------------------------------------
 if ($event->type === 'checkout.session.completed') {
     $session = $event->data->object;
 
     $userId = $session->metadata->user_id ?? null;
     $packageId = $session->metadata->package_id ?? null;
     $subscriptionId = $session->subscription ?? null;
+    $subscId = $session->metadata->subsc_id ?? null;
     $amountTotal = $session->amount_total / 100; // Stripe da el monto en centavos
     
     if ($userId && $subscriptionId) {
-        // Verifica si ya existe para evitar duplicados
-        $existing = json_decode(select_from("subscriptions", ["stripe_subscription_id"], [
-            "user_id" => $userId,
-            "stripe_subscription_id" => $subscriptionId
-        ], ["fetch_first" => true]), true);
-
-        if (!$existing['success']) {
-            $insert = insert_into("subscriptions", [
-                "user_id" => $userId,
-                "package_id" => $packageId,
+        if (!empty($subscId) && is_numeric($subscId)) {
+            // 🔁 ACTUALIZAR la suscripción existente con el nuevo stripe_subscription_id
+            update_table("subscriptions", [
                 "stripe_subscription_id" => $subscriptionId,
+                "package_id" => $packageId,
                 "estimated_cost" => $amountTotal,
                 "subscription_date" => date("Y-m-d H:i:s"),
                 "expiration_date" => date("Y-m-d H:i:s", strtotime("+1 month"))
-            ]);
+            ], ["subsc_id" => $subscId]);
 
-            $insertResult = json_decode($insert, true);
-            if (!$insertResult['success']) {
-                log_activity($userId, "webhook_error", "Fallo al registrar la suscripción", "subscriptions", $userId);
+            log_activity($userId, "webhook_update", "Subscripción actualizada con nuevo stripe_subscription_id: $subscriptionId", "subscriptions", $userId);
+        } else {
+            $existing = json_decode(select_from("subscriptions", ["stripe_subscription_id"], [
+                "user_id" => $userId,
+                "stripe_subscription_id" => $subscriptionId
+            ], ["fetch_first" => true]), true);
+
+            if (!isset($existing['success']) || !$existing['success']) {
+                $insert = insert_into("subscriptions", [
+                    "user_id" => $userId,
+                    "package_id" => $packageId,
+                    "stripe_subscription_id" => $subscriptionId,
+                    "estimated_cost" => $amountTotal,
+                    "subscription_date" => date("Y-m-d H:i:s"),
+                    "expiration_date" => date("Y-m-d H:i:s", strtotime("+1 month"))
+                ], ["id" => "subsc_id"]);
+
+                $insertResult = json_decode($insert, true);
+
+                if (!is_array($insertResult) || !$insertResult['success']) {
+                    log_activity($userId, "webhook_error", "Fallo al registrar la suscripción: " . $insert, "subscriptions", $userId);
+                } else {
+                    log_activity($userId, "webhook_success", "Suscripción insertada correctamente. ID: ". $insertResult["id"], "subscriptions", $userId);
+                }
             }
         }
 
         // También puedes actualizar el usuario si quieres
         update_table("users", ["package_id" => $packageId], ["user_id" => $userId]);
 
-        // Log opcional
         log_activity(
             $userId,
             "webhook_checkout_completed",
-            "Stripe webhook: sesión completada y subscripción registrada. ID: $subscriptionId",
+            "Sesión de Stripe completada con éxito. Subscripción: $subscriptionId",
             "subscriptions",
             $userId
         );
