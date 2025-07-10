@@ -51,19 +51,20 @@ try {
 	}
 
 	$insertData = [
-		"name"			=> $data["name"],
-		"surname"		=> $data["surname"],
-		"birthday"		=> $data["birthday"],
-		"phone"			=> $data["phone"],
-		"email"			=> $data["email"],
-		"password"		=> password_hash($data["password"], PASSWORD_DEFAULT),
-		"rank"			=> $data["rank"],
-		"parent_user"	=> $altUser,
-		"company_id"	=> $data["company"],
-		"status"		=> 1,
-		"username"		=> strtolower($data["name"] . "_" . $data["surname"]),
-		"verified"		=> 0,
-		"signup_date"	=> date("Y-m-d H:i:s")
+		"name"				=> $data["name"],
+		"surname"			=> $data["surname"],
+		"birthday"			=> $data["birthday"],
+		"phone"				=> $data["phone"],
+		"email"				=> $data["email"],
+		"password"			=> password_hash($data["password"], PASSWORD_DEFAULT),
+		"rank"				=> $data["rank"],
+		"parent_user"		=> $altUser,
+		"company_id"		=> $data["company"],
+		"status"			=> 1,
+		"username"			=> strtolower($data["name"] . "_" . $data["surname"]),
+		"verified"			=> 0,
+		"signup_date"		=> date("Y-m-d H:i:s"),
+		"status_by_admin"	=> 1
 	];
 
 	$insertResponse = insert_into("users", $insertData, ["id" => "user_id"]);
