@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS packages (
 -- ) VALUES 
 -- ('Tried Pack',  
 --  'Perfect to explore the system with no commitment. Includes 1 user, limited access to essential features, and 1 affiliate branch. Great for solo entrepreneurs.', 
---  NULL, 1, 0, 1, 5, 30, 1),
+--  NULL, 0, 0, 0, 5, 30, 1),
 
 -- ('Basic Pack',  
 --  'Basic plan for individual users. Includes 1 member, essential tools, 1 affiliate branch, and up to 10 products. Ideal for freelancers or micro-businesses.', 

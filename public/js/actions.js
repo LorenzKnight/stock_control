@@ -631,6 +631,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 					popupContent.style.opacity = '1';
 					loadMyInfo();
 				}, 50);
+
+				initDragAndDrop('profile-drop-area', 'profile-img', 'profile-pic-preview');
 			}
 		});
 	}
@@ -679,8 +681,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				banner.style.display = 'block';
 			}
 		});
-
-		initDragAndDrop('profile-drop-area', 'image', 'profile-pic-preview');
 	}
 
 	// 📌 script para subscrition popup
@@ -793,8 +793,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 				if (user.image && user.image.trim() !== "") {
 					profilePicPreview.src = `../images/profile/${user.image}`;
 					profilePicPreview.style.display = 'block';
+					profilePicPreview.style.visibility = 'visible';
+					profilePicPreview.style.opacity = '1';
 				} else {
-					profilePicPreview.src = ""; // Deja la imagen en blanco si no hay una
+					profilePicPreview.src = "";
 					profilePicPreview.style.display = 'none';
 				}
 			}
