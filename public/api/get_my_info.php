@@ -58,6 +58,7 @@ try {
             "package_id",
             "package_name",
             "members_limit",
+            "admins_limit",
             "branch_affiliate_limit",
             "products_limit"
         ], ["package_id" =>  $packageId], ["fetch_first" => true]), true);

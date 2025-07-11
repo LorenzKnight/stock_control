@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS packages (
 	package_description TEXT NULL,
 	package_price INTEGER NULL,
 	members_limit INTEGER NULL, -- Límite de miembros
-	admin_limit INTEGER NULL, -- Límite de administradores
+	admins_limit INTEGER NULL, -- Límite de administradores
 	branch_affiliate_limit INTEGER NULL, -- Límite de sucursales afiliadas
 	products_limit INTEGER NULL, -- Límite de productos
 	package_duration INTEGER NULL, -- Duración en dias
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS packages (
 );
 
 -- INSERT INTO packages (
---   package_name, package_description, package_price, members_limit, admin_limit, branch_affiliate_limit, products_limit, package_duration, package_status
+--   package_name, package_description, package_price, members_limit, admins_limit, branch_affiliate_limit, products_limit, package_duration, package_status
 -- ) VALUES 
 -- ('Tried Pack',  
 --  'Perfect to explore the system with no commitment. Includes 1 user, limited access to essential features, and 1 affiliate branch. Great for solo entrepreneurs.', 
