@@ -12,7 +12,7 @@
 						<div class="drop-area" id="profile-drop-area">
 							<img class="image-preview" id="profile-pic-preview" src="" alt="profile pic preview">
 							<p>Drop image here or click to select</p>
-							<input type="file" name="image" id="image" accept="image/*" style="display: none;">
+							<input type="file" name="image" id="profile-img" accept="image/*" style="display: none;">
 						</div>
 					</td>
 				</tr>
