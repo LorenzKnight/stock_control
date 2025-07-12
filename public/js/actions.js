@@ -1048,34 +1048,62 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
-	const addAffBtn = document.getElementById('add-aff-btn'); //AQUI
+	const addAffBtn = document.getElementById('add-aff-btn');
 	if (addAffBtn) {
-		addAffBtn.addEventListener('click', function (e) {
+		addAffBtn.addEventListener('click', async function (e) {
 			e.preventDefault();
 
-			scrollToTopIfNeeded();
+			addAffBtn.disabled = true;
+			setTimeout(() => addAffBtn.disabled = false, 1000);
 
-			const notCompanyForm = document.getElementById('not-company-form');
-			const companyForm = document.getElementById('company-form');
-			const companyActionBtn = document.getElementById('company-action-btn');
+			try {
+				const companiesRes = await fetch('api/get_company_info.php');
+				const companiesData = await companiesRes.json();
+				const currentAffiliatesCount = companiesData.success ? companiesData.count : 0;
 
-			notCompanyForm.classList.add('hidden');
-			companyForm.classList.remove('hidden');
-			companyActionBtn.value = "Add Company";
-
-			document.querySelectorAll('input[name="company_edit_info"]').forEach(radio => {
-				radio.checked = false;
-
-				const logoPreview = document.getElementById('logo-preview');
-				if (logoPreview) {
-					logoPreview.src = '';
-					logoPreview.style.display = 'none';
-					// logoPreview.style.visibility = 'hidden';
-					logoPreview.style.opacity = '0';
+				const userInfoRes = await fetch('api/get_my_info.php');
+				const userInfo = await userInfoRes.json();
+				const rawAllowed = userInfo.success ? userInfo.data.package_info.branch_affiliate_limit : null;
+				const allowedAffiliates = rawAllowed !== null && rawAllowed !== "" ? parseInt(rawAllowed) : null;
+	
+				console.log(currentAffiliatesCount, allowedAffiliates);
+				
+				// validar aqui
+				if (allowedAffiliates === null || currentAffiliatesCount >= allowedAffiliates) {
+					const allowedTitle = (allowedAffiliates === null) ? "You have 0 affiliate slots" : "Maximum allowed affiliates reached";
+					const allowedText = "If you want to have the ability to add more affiliates, upgrade your pack.";
+					showAlertModal(allowedTitle, allowedText);
+					return;
 				}
-			});
 
-			loadCompanyFormOrData();
+				scrollToTopIfNeeded();
+
+				const notCompanyForm = document.getElementById('not-company-form');
+				const companyForm = document.getElementById('company-form');
+				const companyActionBtn = document.getElementById('company-action-btn');
+
+				if (notCompanyForm && companyForm && companyActionBtn) {
+					notCompanyForm.classList.add('hidden');
+					companyForm.classList.remove('hidden');
+					companyActionBtn.value = "Add Company";
+				}
+
+				document.querySelectorAll('input[name="company_edit_info"]').forEach(radio => {
+					radio.checked = false;
+
+					const logoPreview = document.getElementById('logo-preview');
+					if (logoPreview) {
+						logoPreview.src = '';
+						logoPreview.style.display = 'none';
+						logoPreview.style.opacity = '0';
+					}
+				});
+
+				loadCompanyFormOrData();
+			} catch (err) {
+				console.error("Error opening add company form:", err);
+				alert("An error occurred while trying to open the add company form.");
+			}
 		});
 	}
 
@@ -1138,8 +1166,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 				const allowedMembers = rawAllowed !== null && rawAllowed !== "" ? parseInt(rawAllowed) : null;
 	
 				if (allowedMembers === null || currentMemberCount >= allowedMembers) {
-					allowedTitle = (allowedMembers === null) ? "You have 0 member slots" : "Maximum allowed members reached";
-					allowedText = "If you want to have the ability to add more members, upgrade your membership.";
+					const allowedTitle = (allowedMembers === null) ? "You have 0 member slots" : "Maximum allowed members reached";
+					const allowedText = "If you want to have the ability to add more members, upgrade your membership.";
 					showAlertModal(allowedTitle, allowedText);
 					return;
 				}

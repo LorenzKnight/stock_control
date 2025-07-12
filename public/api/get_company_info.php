@@ -6,6 +6,7 @@ header("Content-Type: application/json");
 $response = [
     "success" => false,
     "message" => "No company info found",
+    "count" => 0,
     "data" => []
 ];
 
@@ -47,6 +48,7 @@ try {
     if ($companyData["success"] && !empty($companyData["data"])) {
         $response["success"] = true;
         $response["message"] = "Company info loaded.";
+        $response["count"] = $companyData["count"];
         $response["data"] = array_values($companyData["data"]);
     }
 } catch (Exception $e) {
