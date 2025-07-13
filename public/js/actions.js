@@ -1975,13 +1975,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 									<p style="margin: 10px 0 0;">${product.product_name}</p>
 								</td>
 								<td style="width: 50%;" align="right">
-									<p style="margin: 10px 0 0;">Qty: ${product.quantity || ''}</p>
+									<p style="margin: 10px 0 0;">Qty: <strong>${product.quantity || ''}</strong></p>
 								</td>
 							</tr>
 							<tr valign="baseline">
 								<td colspan="2">
 									<h3><strong>${product.mark_name + ' - ' + product.model_name}</strong></h3>
-									<p>${product.submodel_name || ''}</p>
+								</td>
+							</tr>
+							<tr valign="baseline">
+								<td colspan="2" style="height: 20px;">
+									${product.submodel_name || ''}
 								</td>
 							</tr>
 							<tr valign="baseline">

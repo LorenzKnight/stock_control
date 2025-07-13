@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS packages (
 
 -- ('Basic Pack',  
 --  'Basic plan for individual users. Includes 1 member, essential tools, 1 affiliate branch, and up to 10 products. Ideal for freelancers or micro-businesses.', 
---  2, 1, 1, 1, 10, NULL, 1),
+--  2, 0, 1, 1, 10, NULL, 1),
 
 -- ('Mini Pack',  
 --  'Designed for small teams. Supports up to 5 members, shared admin access, 1 affiliate branch, and up to 50 products. Perfect for local shops.', 
