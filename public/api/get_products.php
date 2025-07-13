@@ -3,9 +3,10 @@ require_once('../logic/stock_be.php');
 header("Content-Type: application/json");
 
 $response = [
-	"success" => false,
-	"message" => "No products found",
-	"data" => []
+	"success"	=> false,
+	"message"	=> "No products found",
+	"count"		=> 0,
+	"data"		=> []
 ];
 
 try {
@@ -22,11 +23,11 @@ try {
     $companyId = $userInfo["company_id"];
 
 	// Leer filtros desde la URL
-	$search = $_GET["search"] ?? '';
-	$mark = $_GET["mark"] ?? '';
-	$model = $_GET["model"] ?? '';
-	$submodel = $_GET["submodel"] ?? '';
-	$company = $_GET["company"] ?? '';
+	$search		= $_GET["search"]	?? '';
+	$mark		= $_GET["mark"]		?? '';
+	$model		= $_GET["model"]	?? '';
+	$submodel	= $_GET["submodel"]	?? '';
+	$company	= $_GET["company"]	?? '';
 
 	$where = [
 		// "status" => 1
@@ -105,9 +106,12 @@ try {
 		}
 	}
 
-	$response["success"] = true;
-	$response["data"] = $productsData;
-	$response["message"] = "Products loaded.";
+	$response = [
+		"success"	=> true,
+		"message"	=> "Products loaded.",
+		"count"		=> count($productsData),
+		"data"		=> array_values($productsData)
+	];
 } catch (Exception $e) {
 	$response["message"] = $e->getMessage();
 }
