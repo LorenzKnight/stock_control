@@ -1065,10 +1065,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				const userInfo = await userInfoRes.json();
 				const rawAllowed = userInfo.success ? userInfo.data.package_info.branch_affiliate_limit : null;
 				const allowedAffiliates = rawAllowed !== null && rawAllowed !== "" ? parseInt(rawAllowed) : null;
-	
-				console.log(currentAffiliatesCount, allowedAffiliates);
-				
-				// validar aqui
+
 				if (allowedAffiliates === null || currentAffiliatesCount >= allowedAffiliates) {
 					const allowedTitle = (allowedAffiliates === null) ? "You have 0 affiliate slots" : "Maximum allowed affiliates reached";
 					const allowedText = "If you want to have the ability to add more affiliates, upgrade your pack.";
@@ -1318,38 +1315,61 @@ document.addEventListener("DOMContentLoaded", async function () {
 	// 📌 script para add product popup
 	let addProductButton = document.getElementById('add-product-btn');
 	if (addProductButton) {
-		addProductButton.addEventListener('click', function (e) {
+		addProductButton.addEventListener('click', async function (e) {
 			e.preventDefault();
 
-			scrollToTopIfNeeded();
+			addProductButton.disabled = true;
+			setTimeout(() => addProductButton.disabled = false, 1000);
 
-			const addProductForm = document.getElementById('add-product-form');
-			const popupContent = addProductForm.querySelector('.formular-frame');
-			// AQUI INCLUIREMOS EL ID RECOGIDO DE LA COMPANIA
+			try {
+				const productsRes = await fetch('api/get_products.php');
+				const productsData = await productsRes.json();
+				const productsCount = productsData.success ? productsData.count : 0;
 
-			if (addProductForm && popupContent) {
-				addProductForm.style.display = 'block';
-				addProductForm.style.opacity = '0';
-				addProductForm.style.transition = 'opacity 0.5s ease';
-				setTimeout(() => {
-					addProductForm.style.opacity = '1';
-				}, 10);
+				const userInfoRes = await fetch('api/get_my_info.php');
+				const userInfo = await userInfoRes.json();
+				const rawAllowed = userInfo.success ? userInfo.data.package_info.products_limit : null;
+				const allowedProducts = rawAllowed !== null && rawAllowed !== "" ? parseInt(rawAllowed) : null;
 
-				popupContent.style.transform = 'scale(0.7)';
-				popupContent.style.opacity = '0';
-				popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-				setTimeout(() => {
-					popupContent.style.transform = 'scale(1)';
-					popupContent.style.opacity = '1';
-				}, 50);
+				if (allowedProducts === null || productsCount >= allowedProducts) {
+					const allowedTitle = (allowedProducts === null) ? "You have 0 product slots" : "Maximum allowed products reached";
+					const allowedText = "If you want to have the ability to add more products, upgrade your pack.";
+					showAlertModal(allowedTitle, allowedText);
+					return;
+				}
 
-				initDragAndDrop('drop-product-area', 'product_image', 'product-image-preview');
+				scrollToTopIfNeeded();
 
-				populateVehicleTypes('product_type');
+				const addProductForm = document.getElementById('add-product-form');
+				const popupContent = addProductForm.querySelector('.formular-frame');
 
-				initCategorySelectors('product_mark', 'product_model', 'product_sub_model', 'select-company');
+				if (addProductForm && popupContent) {
+					addProductForm.style.display = 'block';
+					addProductForm.style.opacity = '0';
+					addProductForm.style.transition = 'opacity 0.5s ease';
+					setTimeout(() => {
+						addProductForm.style.opacity = '1';
+					}, 10);
 
-				populateCurrencies('currency');
+					popupContent.style.transform = 'scale(0.7)';
+					popupContent.style.opacity = '0';
+					popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+					setTimeout(() => {
+						popupContent.style.transform = 'scale(1)';
+						popupContent.style.opacity = '1';
+					}, 50);
+
+					initDragAndDrop('drop-product-area', 'product_image', 'product-image-preview');
+
+					populateVehicleTypes('product_type');
+
+					initCategorySelectors('product_mark', 'product_model', 'product_sub_model', 'select-company');
+
+					populateCurrencies('currency');
+				}
+			} catch (err) {
+				console.error("Error opening add product form:", err);
+				alert("An error occurred while trying to open the add product form.");
 			}
 		});
 	}
@@ -1943,7 +1963,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					: `images/products/${product.product_image}`;
 
 					let imageClass = isDefaultImage ? "grayscale-img" : "";
-
+// AQUI PRODUCTOS
 					card.innerHTML = `
 					<div class="product-pic">
 						<img src="${productImage}" alt="${product.product_name}" class="${imageClass}" />
