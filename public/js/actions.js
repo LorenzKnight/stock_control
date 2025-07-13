@@ -1971,15 +1971,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 					<div class="product-desc">
 						<table width="90%" align="center" cellspacing="0">
 							<tr valign="baseline">
-								<td style="width: 50%;">
+								<td style="width: 50%; height: 20px;">
 									<p style="margin: 10px 0 0;">${product.product_name}</p>
 								</td>
-								<td style="width: 50%;" align="right">
+								<td style="width: 50%; height: 20px;" align="right">
 									<p style="margin: 10px 0 0;">Qty: <strong>${product.quantity || ''}</strong></p>
 								</td>
 							</tr>
 							<tr valign="baseline">
-								<td colspan="2">
+								<td colspan="2" style="height: 20px;">
 									<h3><strong>${product.mark_name + ' - ' + product.model_name}</strong></h3>
 								</td>
 							</tr>
