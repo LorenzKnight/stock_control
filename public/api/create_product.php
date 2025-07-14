@@ -31,17 +31,15 @@ try {
     $productPriceCurrency   = trim($_POST["currency"] ?? '');
     $productPrise         	= trim($_POST["prise"] ?? '');
     $productYear     		= intval($_POST["product_year"] ?? '');
-    $productQuantity 		= trim($_POST["quantity"] ?? '');
+    $productQuantity        = is_numeric($_POST["quantity"] ?? null) ? intval($_POST["quantity"]) : 0;
     $productMinQuantity     = isset($_POST["min_quantity"]) && trim($_POST["min_quantity"]) !== '' ? intval($_POST["min_quantity"]) : 10;
     $description     		= trim($_POST["description"] ?? '');
+    $confirmUpdate          = $_POST["confirm_update"] ?? 'false';
 
-    if ($productName === '') {
-        throw new Exception("Product name are required.");
-    }
-
-    if ($productType === 0) {
-        throw new Exception("Product type are required.");
-    }
+    if ($productName === '') throw new Exception("Product name is required.");
+    if ($productType === 0) throw new Exception("Product type is required.");
+    if ($productQuantity < 0) throw new Exception("Quantity must be 0 or more.");
+    if ($productPrise < 0) throw new Exception("Price must be 0 or more.");
 
     $imageName = null;
 	try {
@@ -78,11 +76,47 @@ try {
         $insertData["product_image"] = $imageName;
     }
 
-    $insertResponse = insert_into("products", $insertData, ["id" => "product_id"]);
-    $insertResult = json_decode($insertResponse, true);
+    $productRes = json_decode(select_from("products", ["product_id", "quantity"], [
+        "company_id" => $companyId,
+        "product_mark" => $productMark,
+        "product_model" => $productModel,
+        "product_sub_model" => $productSubModel,
+        "product_year" => $productYear
+    ], ["fetch_first" => true]), true);
 
-    if (!$insertResult["success"]) {
-        throw new Exception("Error saving product data.");
+    $existingProduct = $productRes["data"];
+
+    if ($productRes["success"] && !empty($existingProduct) && $confirmUpdate !== 'true') {
+        $response = [
+            "success" => false,
+            "needs_confirmation" => true,
+            "message" => "This product already exists. Do you want to update the quantity?",
+            "existing_product_id" => $existingProduct["product_id"],
+            "existing_quantity" => $existingProduct["quantity"]
+        ];
+        echo json_encode($response);
+        exit;
+    }
+
+    if ($productRes["success"] && !empty($existingProduct) && $confirmUpdate === 'true') {
+        $updateResult = json_decode(update_table("products", [
+            "quantity" => $existingProduct["quantity"] + $productQuantity,
+            "updated_at" => date("Y-m-d H:i:s")
+        ], ["product_id" => $existingProduct["product_id"]]), true);
+
+        if (!$updateResult["success"]) {
+            throw new Exception("Error updating existing product quantity.");
+        }
+
+        $finalProductId = $existingProduct["product_id"];
+    } else {
+        $insertResult = json_decode(insert_into("products", $insertData, ["id" => "product_id"]), true);
+
+        if (!$insertResult["success"]) {
+            throw new Exception("Error saving product data.");
+        }
+
+        $finalProductId = $insertResult["id"];
     }
 
     log_activity(
@@ -90,7 +124,7 @@ try {
         "create_product",
         "User added a new product: {$productName}",
         "products",
-        $insertResult["id"] ?? null
+        $finalProductId
     );
 
     $response = [

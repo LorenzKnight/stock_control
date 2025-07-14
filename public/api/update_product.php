@@ -28,15 +28,17 @@ try {
 	$productId = (int) $_POST["edit_product_id"];
 
 	$productData = [
-		"product_name"       => $_POST["edit_product_name"] ?? "",
-        "product_type"       => (int) ($_POST["edit_product_type"] ?? 0),
-        "product_mark"       => (int) ($_POST["edit_product_mark"] ?? 0),
-        "product_model"      => (int) ($_POST["edit_product_model"] ?? 0),
-        "product_sub_model"  => (int) ($_POST["edit_product_sub_model"] ?? 0),
-        "product_year"       => (int) ($_POST["edit_product_year"] ?? 0),
-        "prise"              => is_numeric($_POST["edit_prise"] ?? null) ? $_POST["edit_prise"] : 0,
-		"quantity"           => is_numeric($_POST["edit_quantity"] ?? null) ? $_POST["edit_quantity"] : 0,
-        "description"        => $_POST["edit_description"] ?? ""
+		"product_name"      => $_POST["edit_product_name"] ?? "",
+        "product_type"      => (int) ($_POST["edit_product_type"] ?? 0),
+        "product_mark"      => (int) ($_POST["edit_product_mark"] ?? 0),
+        "product_model"     => (int) ($_POST["edit_product_model"] ?? 0),
+        "product_sub_model" => (int) ($_POST["edit_product_sub_model"] ?? 0),
+        "product_year"      => (int) ($_POST["edit_product_year"] ?? 0),
+        "prise"             => is_numeric($_POST["edit_prise"] ?? null) ? $_POST["edit_prise"] : 0,
+		"quantity"          => is_numeric($_POST["edit_quantity"] ?? null) ? $_POST["edit_quantity"] : 0,
+		"min_quantity"      => isset($_POST["edit_min_quantity"]) && trim($_POST["edit_min_quantity"]) !== '' ? intval($_POST["edit_min_quantity"]) : 10,
+        "description"       => $_POST["edit_description"] ?? "",
+		"updated_at"		=> date("Y-m-d H:i:s")
 	];
 
 	if ($productData["product_name"] === '') {

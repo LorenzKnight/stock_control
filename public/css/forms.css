@@ -19,6 +19,16 @@
 	align-content: center;
 }
 
+label {
+    font-size: 9px;
+    color: var(--main-text-color);
+    text-align: center;
+    display: block;
+    margin-bottom: 5px;
+    position: fixed;
+    margin: 8px 0 0 12px;
+}
+
 .form-input-style {
     width: 90%;
     margin: 5px 0;

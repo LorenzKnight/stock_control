@@ -67,7 +67,8 @@ try {
 		"product_type",
 		"currency",
 		"prise",
-		"quantity"
+		"quantity",
+		"min_quantity"
 	], $where, [
 		"order_by" => "created_at",
 		"order_direction" => "DESC"

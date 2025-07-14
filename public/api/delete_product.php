@@ -4,10 +4,10 @@ require_once('../logic/stock_be.php');
 header("Content-Type: application/json");
 
 $response = [
-	"success" => false,
-	"message" => "Invalid request",
-	"img_gif" => "../images/sys-img/error.gif",
-	"redirect_url" => ""
+	"success"		=> false,
+	"message"		=> "Invalid request",
+	"img_gif"		=> "../images/sys-img/error.gif",
+	"redirect_url"	=> ""
 ];
 
 try {
@@ -59,10 +59,12 @@ try {
 		$productId
 	);
 
-	$response["success"] = true;
-	$response["message"] = "Product deleted successfully.";
-	$response["img_gif"] = "../images/sys-img/loading1.gif";
-	$response["redirect_url"] = "";
+	$response = [
+		"success"		=> true,
+		"message"		=> "Product deleted successfully.",
+		"img_gif"		=> "../images/sys-img/loading1.gif",
+		"redirect_url"	=> ""
+	];
 
 } catch (Exception $e) {
 	$response["message"] = $e->getMessage();
