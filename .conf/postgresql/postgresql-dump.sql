@@ -141,6 +141,7 @@ CREATE TABLE IF NOT EXISTS products (
 	currency VARCHAR(10) NULL,
 	prise INTEGER NULL,
 	quantity INTEGER NULL,
+	min_quantity INTEGER NULL,
 	status INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

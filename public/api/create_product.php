@@ -32,6 +32,7 @@ try {
     $productPrise         	= trim($_POST["prise"] ?? '');
     $productYear     		= intval($_POST["product_year"] ?? '');
     $productQuantity 		= trim($_POST["quantity"] ?? '');
+    $productMinQuantity     = isset($_POST["min_quantity"]) && trim($_POST["min_quantity"]) !== '' ? intval($_POST["min_quantity"]) : 10;
     $description     		= trim($_POST["description"] ?? '');
 
     if ($productName === '') {
@@ -65,6 +66,7 @@ try {
         "product_sub_model" => $productSubModel,
         "product_year"      => $productYear,
 		"quantity"          => $productQuantity,
+        "min_quantity"      => $productMinQuantity,
 		"currency"			=> $productPriceCurrency,
         "prise"				=> $productPrise,
         "description"       => $description,
