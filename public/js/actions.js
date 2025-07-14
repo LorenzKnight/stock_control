@@ -1382,7 +1382,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			e.preventDefault();
 
 			const companySelect = document.getElementById("select-company");
-
 			const formData = new FormData(this);
 
 			// ✅ Añadir company_id si está seleccionado
@@ -1393,7 +1392,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 				return;
 			}
 
-			try {
+			const trySubmit = async (isRetry = false) => {
+				if (isRetry) {
+					formData.append("confirm_update", "true");
+				}
+
 				const response = await fetch('api/create_product.php', {
 					method: 'POST',
 					headers: { Accept: 'application/json' },
@@ -1401,6 +1404,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 				});
 
 				const data = await response.json();
+
+				if (data.needs_confirmation && !isRetry) {
+					showConfirmModal(
+						"Update Product",
+						data.message,
+						async () => {
+							await trySubmit(true); // retry con confirmación
+						}
+					);
+					return; // Esperar la decisión del usuario
+				}
 
 				const banner = document.getElementById('status-message');
 				const statusText = document.getElementById('status-text');
@@ -1419,6 +1433,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 						}, 1000);
 					}, 3000);
 				}
+			};
+
+			try {
+				await trySubmit();
 			} catch (error) {
 				const banner = document.getElementById('status-message');
 				const statusText = document.getElementById('status-text');
@@ -2234,6 +2252,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				document.getElementById('edit_product_year').value = product.product_year || '';
 				document.getElementById('edit_prise').value = product.prise || '';
 				document.getElementById('edit_quantity').value = product.quantity || '';
+				document.getElementById('edit_min_quantity').value = product.min_quantity || '';
 				document.getElementById('edit_description').value = product.description || '';
 	
 				const preview = document.getElementById('edit-product-image-preview');
@@ -2250,6 +2269,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}
 					
 				await populateVehicleTypes('edit_product_type', product.product_type);
+
+				await populateCurrencies('edit_currency', product.currency);
 	
 				await initCategorySelectors('edit_product_mark', 'edit_product_model', 'edit_product_sub_model', 'select-company');
 
