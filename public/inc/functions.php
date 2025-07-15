@@ -24,6 +24,12 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 	}
 
 	$whereParts = [];
+
+	if (isset($whereClause['RAW'])) {
+		$whereParts[] = $whereClause['RAW'];
+		unset($whereClause['RAW']);
+	}
+	
 	foreach ($whereClause as $column => $value) {
 		if (stripos($column, 'CAST(') === 0 || stripos($column, '(') !== false) {
 			// No escapamos expresiones tipo CAST(...) o funciones
