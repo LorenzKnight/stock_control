@@ -233,3 +233,8 @@ body {
     margin-bottom: 10px;
 } */
 
+.min-qty {
+    color: red;
+    font-size: 16px !important;
+    font-weight: bold;
+}

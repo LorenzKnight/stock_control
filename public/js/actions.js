@@ -863,7 +863,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							</div>
 						</td>
 						<td width="80%" valign="middle" style="padding-left:10px;">${company.company_name}</td>
-						<td width="10%" align="center" valign="middle">
+						<td width="10%" align="center" valign="middle" style="position: relative;">
 							<div class="opcion-radio">
 								<input type="radio" id="${uniqueId}" name="company_edit_info" class="category-radio" data-company="${company.company_id}" />
 								<label for="${uniqueId}"></label>
@@ -1974,13 +1974,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 				data.data.forEach(product => {
 					const card = document.createElement('div');
 					card.className = 'product-card';
-
+					
 					let isDefaultImage = !product.product_image || product.product_image.trim() === "";
 					let productImage = isDefaultImage 
 					? "images/sys-img/wooden-box.png"
 					: `images/products/${product.product_image}`;
 
 					let imageClass = isDefaultImage ? "grayscale-img" : "";
+					
+					let minQty = (product.quantity !== null && product.min_quantity !== null && 
+					!isNaN(product.quantity) && !isNaN(product.min_quantity) &&
+					Number(product.quantity) <= Number(product.min_quantity))
+					? "min-qty" : "";
 // AQUI PRODUCTOS
 					card.innerHTML = `
 					<div class="product-pic">
@@ -1993,7 +1998,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									<p style="margin: 10px 0 0;">${product.product_name}</p>
 								</td>
 								<td style="width: 50%; height: 20px;" align="right">
-									<p style="margin: 10px 0 0;">Qty: <strong>${product.quantity || ''}</strong></p>
+									<p style="margin: 10px 0 0;">Qty: <strong class="${minQty}">${product.quantity || ''}</strong></p>
 								</td>
 							</tr>
 							<tr valign="baseline">

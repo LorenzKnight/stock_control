@@ -30,6 +30,7 @@ try {
 	$company	= $_GET["company"]	?? '';
 
 	$where = [
+		// "RAW" => "quantity < min_quantity",
 		// "status" => 1
 	];
 
