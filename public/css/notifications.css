@@ -1,0 +1,12 @@
+.notifications-sidebar {
+    width: 25%;
+    height: 710px;
+    background-color: var(--main-bg-color);
+    border-radius: 5px;
+}
+
+.notifications-details {
+    width: 75%;
+    height: 710px;
+    overflow: auto;
+}

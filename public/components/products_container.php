@@ -10,11 +10,6 @@
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
-						<td colspan="4" style="border-top: 1px solid #ccc; padding: 5px 0;" align="center" valign="middle">
-							<select class="form-input-style" name="select-company" id="select-company"></select>
-						</td>
-					</tr>
-					<tr valign="baseline" class="form_height">
 						<td colspan="4" style="border-top: 1px solid #ccc; padding-top: 5px;" align="center" valign="middle">
 							<select class="form-input-style" name="search_product_mark" id="search_product_mark"></select>
 						</td>
@@ -25,6 +20,18 @@
 						</td>
 						<td width="50%" style="padding-bottom: 5px;" align="center" valign="middle">
 							<select class="form-input-style" name="search_product_sub_model" id="search_product_sub_model"></select>
+						</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+						<td colspan="4" style="border-top: 1px solid #ccc; padding: 5px 0;" align="center" valign="middle">
+							<select class="form-input-style" name="products-order-by" id="products-order-by">
+								<option value="">* Order by</option>
+							</select>
+						</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+						<td colspan="4" style="border-top: 1px solid #ccc; padding: 5px 0;" align="center" valign="middle">
+							<select class="form-input-style" name="select-company" id="select-company"></select>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
