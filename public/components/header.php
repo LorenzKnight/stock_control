@@ -8,11 +8,14 @@
 					</div>
 				</li>
                 <li class="header-spacer"></li>
-				<li id="sales-site">Sales</li>
+				<li>Sales</li>
 				<li>Products</li>
 				<li>Customers</li>
-				<li id="payments-site">Payments</li>
-				<!-- <li id="requests-site">Requests</li> -->
+				<li>Payments</li>
+				<li class="no-redirect" id="notification-site">
+					<img src="images/sys-img/notif.png" alt="Notification" id="notification-icon" class="notification-icon">
+					<div class="notifications-no">10</div>
+				</li>
 				<li class="no-redirect">
 					<div class="profile" id="profileTrigger">
 						<img id="header-profile-pic" src="" alt="header profile pic">

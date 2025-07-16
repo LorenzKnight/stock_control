@@ -8,14 +8,14 @@
 						<p id="product-name"></p>
 					</td>      
 				</tr>
-				<tr valign="baseline">
+				<!-- <tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
 						<button type="button" class="button-style-agree" id="assignSaleBtn">Assign to a sale</button>
 					</td>
-				</tr>
+				</tr> -->
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="button-style-agree" id="receiveInitialBtn">Receive as an initial </button>
+						<button type="button" class="button-style-agree" id="requestProductBtn">Request Product</button>
 					</td>
 				</tr>
 				<tr valign="baseline">
@@ -124,7 +124,7 @@
 			<div class="back-to-menu-btn">
 				<img src="images/sys-img/backward.png" alt="back">
 			</div>
-			<form method="post" name="formEditProduct" id="formEditProduct">
+			<form method="post" name="formRequestProduct" id="formRequestProduct">
 				<table width="80%" align="center" cellspacing="0">
 					<tr valign="baseline">
 						<td style="font-size: 12px;" colspan="6" align="center" valign="middle">

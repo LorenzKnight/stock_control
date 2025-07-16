@@ -34,6 +34,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	});
 
+	let notificationSite = document.getElementById('notification-site');
+	if (notificationSite) {
+		notificationSite.addEventListener('click', function () {
+			window.location.href = "notifications.php";
+		});
+	}
+
 	// 📌 Mostrar y ocultar menú de perfil
 	var profileTrigger = document.getElementById('profileTrigger');
 	var profileDropdown = document.getElementById('profileDropdown');
@@ -1986,7 +1993,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					!isNaN(product.quantity) && !isNaN(product.min_quantity) &&
 					Number(product.quantity) <= Number(product.min_quantity))
 					? "min-qty" : "";
-// AQUI PRODUCTOS
+
 					card.innerHTML = `
 					<div class="product-pic">
 						<img src="${productImage}" alt="${product.product_name}" class="${imageClass}" />
@@ -2132,29 +2139,30 @@ document.addEventListener("DOMContentLoaded", async function () {
 				const assignBtn = document.getElementById('assignSaleBtn');
 				if (assignBtn) {
 					assignBtn.onclick = () => {
-						const menuDiv = document.getElementById('product-menu-buttons');
-						const assignDiv = document.getElementById('assign-sale-section');
+						// const menuDiv = document.getElementById('product-menu-buttons');
+						// const assignDiv = document.getElementById('assign-sale-section');
 				
-						animateHeightChange(popupContent, assignDiv, () => {
-							fadeOutAndHide(menuDiv, () => {
-								showWithFadeIn(assignDiv);
-							});
-						});
+						// animateHeightChange(popupContent, assignDiv, () => {
+						// 	fadeOutAndHide(menuDiv, () => {
+						// 		showWithFadeIn(assignDiv);
+						// 	});
+						// });
 					};
 				}
 
 				// Botón: Receive as initial
-				const receiveBtn = document.getElementById('receiveInitialBtn');
-				if (receiveBtn) {
-					receiveBtn.onclick = () => {
-						const menuDiv = document.getElementById('product-menu-buttons');
-						const receiveDiv = document.getElementById('receive-as-initial'); 
+				const requestProductBtn = document.getElementById('requestProductBtn');
+				if (requestProductBtn) {
+					requestProductBtn.onclick = () => {
+						console.log("Request sent");
+						// const menuDiv = document.getElementById('product-menu-buttons');
+						// const receiveDiv = document.getElementById('receive-as-initial'); 
 				
-						animateHeightChange(popupContent, receiveDiv, () => {
-							fadeOutAndHide(menuDiv, () => {
-								showWithFadeIn(receiveDiv);
-							});
-						});
+						// animateHeightChange(popupContent, receiveDiv, () => {
+						// 	fadeOutAndHide(menuDiv, () => {
+						// 		showWithFadeIn(receiveDiv);
+						// 	});
+						// });
 					};
 				}
 				

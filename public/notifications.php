@@ -1,5 +1,3 @@
-<?php // require_once('logic/stock_be.php'); ?>
-
 <!DOCTYPE html>
 <html class="no-js" lang="sw">
 
@@ -15,11 +13,11 @@
 </head>
 
 <body>
-	<?php include("components/modal_payments_options.php"); ?>
-	<?php include("components/modal_add_payments.php"); ?>
+	<?php // include("components/modal_payments_options.php"); ?>
+	<?php // include("components/modal_add_payments.php"); ?>
 	<?php include("components/message.php"); ?>
 	<?php include("components/header.php"); ?>
-	<?php include("components/payments_container.php"); ?>
+	<?php include("components/notifications_container.php"); ?>
 </body>
 
 </html>

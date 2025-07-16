@@ -8,6 +8,7 @@
 @import url("customers.css");
 @import url("sales.css");
 @import url("payments.css");
+@import url("notifications.css");
 @import url("forms.css");
 @import url("footer.css");
 
@@ -227,11 +228,6 @@ body {
 .pricing-card:last-child {
 	margin-right: 0;
 }
-
-/* .pricing-card h1 {
-    color: var(--main-text-color);
-    margin-bottom: 10px;
-} */
 
 .min-qty {
     color: red;
