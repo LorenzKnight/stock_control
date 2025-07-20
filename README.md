@@ -67,6 +67,32 @@ Done! You can now test webhooks locally as if you were in production. 🎯
 this line:
 <!-- $endpointSecret = 'whsec_YrXZi2jJDbN5hmQ12pNrH53jXhPWKOhf'; -->
 
+## install (WebSocket) ws and express
+From your terminal, go to the folder where ws-server.js is, for example:
+cd /Users/lorenzoknight/Documents/Projects/stock_control/public
+
+npm init -y
+npm install ws express
+
+Add pg (the PostgreSQL client for Node.js):
+
+npm install pg
+
+npm install cors
+
+## Run WebSocket
+From your terminal, in the folder where ws-server.js is, for example:
+cd /Users/lorenzoknight/Documents/Projects/stock_control/public
+
+node ws-server.js
+
+Or productión:
+
+pm2 start ws-server.js --name allstock-ws
+
+## test enviroment for "webSocket"
+http://localhost:8000/public/test-environment/frontend-test.html
+
 ## Main page - localhost
 http://localhost:8889/
 

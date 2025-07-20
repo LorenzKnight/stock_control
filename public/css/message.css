@@ -61,3 +61,17 @@
 	align-items: center;
 	justify-content: center;
 }
+
+.notification-modal-box {
+	background: var(--clr-white);
+	padding: 5px;
+	border-radius: 12px;
+	box-shadow: 0 8px 20px var(--main-bg-pop-up);
+	text-align: center;
+	width: 90%;
+	max-width: 250px;
+	position: fixed;
+	top: 57px;
+	right: 10px;
+	z-index: 9999;
+}

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>WebSocket Test</title>
+	<style>
+		body {
+			font-family: sans-serif;
+			margin: 20px;
+		}
+		textarea {
+			width: 100%;
+			height: 100px;
+		}
+		#log {
+			background: #f0f0f0;
+			padding: 10px;
+			margin-top: 20px;
+			height: 200px;
+			overflow-y: scroll;
+			font-size: 14px;
+		}
+	</style>
+</head>
+<body>
+
+	<h2>Enviar notificación al WebSocket</h2>
+
+	<label>Mensaje JSON a enviar a <code>http://localhost:3002/notify</code>:</label><br>
+	<textarea id="payloadInput">
+        {
+        "message": "Stock crítico: producto X con cantidad 0"
+        }
+    </textarea><br><br>
+
+	<!-- <label>ID del usuario para enviar notificación:</label><br>
+	<input type="number" id="userIdInput" placeholder="Ej: 1" /><br><br> -->
+
+	<button onclick="sendRequest()">Enviar POST al servidor WebSocket</button>
+
+	<h3>WebSocket Log</h3>
+	<div id="log">Conectando...</div>
+
+	<script>
+		const socket = new WebSocket('ws://localhost:3001');
+
+		socket.addEventListener('open', () => {
+			log('✅ WebSocket conectado');
+		});
+
+		socket.addEventListener('message', event => {
+			const data = JSON.parse(event.data);
+			log('🔔 Recibido desde WebSocket: ' + JSON.stringify(data, null, 2));
+		});
+
+		socket.addEventListener('close', () => {
+			log('⚠️ WebSocket desconectado');
+		});
+
+		socket.addEventListener('error', error => {
+			log('❌ Error en WebSocket: ' + error);
+		});
+
+		function sendRequest() {
+			const payload = document.getElementById('payloadInput').value;
+
+			fetch('http://localhost:3002/notify', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: payload
+			})
+			.then(res => res.json())
+			.then(data => {
+				log('📡 POST enviado: ' + JSON.stringify(data, null, 2));
+			})
+			.catch(err => {
+				log('🚫 Error al enviar: ' + err);
+			});
+		}
+
+		// function sendRequest() {
+		// 	const userId = document.getElementById('userIdInput').value;
+
+		// 	if (!userId) {
+		// 		log('⚠️ Ingresa un ID de usuario válido.');
+		// 		return;
+		// 	}
+
+		// 	fetch(`http://localhost:8889/api/test_notify.php?user_id=${userId}`) 
+		// 		.then(res => res.json())
+		// 		.then(data => {
+		// 			log('📡 Backend respondió: ' + JSON.stringify(data, null, 2));
+		// 		})
+		// 		.catch(err => {
+		// 			log('🚫 Error al enviar al backend: ' + err);
+		// 		});
+		// }
+
+		function log(msg) {
+			const logDiv = document.getElementById('log');
+			logDiv.innerText += '\n' + msg;
+			logDiv.scrollTop = logDiv.scrollHeight;
+		}
+	</script>
+
+</body>
+</html>

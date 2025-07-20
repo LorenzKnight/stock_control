@@ -4615,6 +4615,47 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 	//############################################################# END SEND EMAIL ##################################################################
 
+	//############################################################# NOTIFICATIONS ##################################################################
+
+	if (headerMenu) {
+		const socket = new WebSocket('ws://localhost:3001'); // Usa tu IP pública si es remoto
+
+		socket.addEventListener('open', () => {
+			console.log('✅ WebSocket conectado');
+		});
+
+		socket.addEventListener('message', async event => {
+			const data = JSON.parse(event.data);
+			console.log(data);
+			if (data.type === 'notification') {
+				console.log('🔔 Notificación recibida:', data);
+
+				const message = data.message;
+				const notifType = data.notification_type || 'type not defined';
+
+				// Mostrar en modal
+				document.querySelector('.notification-modal-box').style.display = 'block';
+				document.getElementById('notification-modal-title').textContent = notifType;
+				document.getElementById('notification-modal-message').textContent = message;
+
+				// Opcional: Ocultar después de unos segundos
+				setTimeout(() => {
+					document.querySelector('.notification-modal-box').style.display = 'none';
+				}, 5000);
+			}
+		});
+
+		socket.addEventListener('close', () => {
+			console.warn('⚠️ WebSocket desconectado');
+		});
+
+		socket.addEventListener('error', error => {
+			console.error('❌ Error en WebSocket:', error);
+		});
+	}
+
+	//############################################################# END NOTIFICATIONS ##################################################################
+
 	//############################################################# FUNCTIONES ##################################################################
 
 	// 📌 scroll to top 

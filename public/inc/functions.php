@@ -310,9 +310,9 @@ function delete_from(string $tableName, array $whereClause = [], array $options 
 	$affected = pg_affected_rows($result);
 
 	return json_encode([
-		"success" => true,
-		"message" => $affected > 0 ? "Deleted successfully." : "No record deleted.",
-		"count" => $affected
+		"success"	=> true,
+		"message"	=> $affected > 0 ? "Deleted successfully." : "No record deleted.",
+		"count"		=> $affected
 	]);
 }
 
@@ -327,6 +327,72 @@ function log_activity($userId, $actionType, $description, $relatedTable = null, 
 	];
 
 	return insert_into("activity_history", $data);
+}
+
+function notify_user($userId, $content, $link = null, $type = 'info') {
+	$data = [
+		"user_id"				=> $userId,
+		"notification_type"		=> $type,
+		"notification_content"	=> $content,
+		"notification_link"		=> $link,
+		"created_at"			=> date("Y-m-d H:i:s")
+	];
+	insert_into("notifications", $data);
+}
+
+function triggerRealtimeNotification($userId) {
+	$res = json_decode(select_from("notifications", ["*"], [
+		"to_user_id" => $userId,
+		"is_read" => 0
+	], [
+		"order_by" => "created_at",
+		"order_direction" => "DESC",
+		"limit" => 1,
+		"fetch_first" => true
+	]), true);
+
+	if (!$res["success"] || empty($res["data"])) {
+		return;
+	}
+
+	$userData = json_decode(select_from("users", ["user_id", "name"], [
+		"user_id" => $userId
+	], [
+		"fetch_first" => true
+	]), true);
+
+	$notif = $res["data"];
+	$userInfo = $userData["data"];
+	
+	$data = json_encode([
+		"type" => "notification",
+		"notification_type" => $notif["notification_type"] . " from " . $userInfo["name"] ?? "info",
+		"user_id" => $userId,
+		"message" => $notif["notification_content"] ?? "Notificación sin contenido",
+		
+	]);
+
+	// Enviar al WebSocket (puente en express)
+	// $url = 'http://localhost:3002/notify';
+	$url = 'http://host.docker.internal:3002/notify';
+
+	$options = [
+		'http' => [
+			'header'  => "Content-type: application/json\r\n",
+			'method'  => 'POST',
+			'content' => $data,
+			'ignore_errors' => true
+		]
+	];
+
+	$context = stream_context_create($options);
+	$response = @file_get_contents($url, false, $context);
+
+	if ($response === false) {
+		error_log("❌ No se pudo contactar con WebSocket bridge.");
+	} else {
+		error_log("✅ Respuesta del WebSocket bridge: $response");
+	}
 }
 
 function handle_uploaded_image(
