@@ -387,6 +387,7 @@ CREATE TABLE IF NOT EXISTS role_permissions (
 CREATE TABLE IF NOT EXISTS notifications (
 	notification_id SERIAL PRIMARY KEY,
 	user_id INTEGER NULL,
+	to_user_id INTEGER NULL, -- Usuario al que va dirigida la notificación
 	notification_type VARCHAR(50) NULL, -- Ej: 'message', 'alert', 'reminder'
 	notification_content TEXT NULL,
 	notification_link VARCHAR(255) NULL, -- Enlace relacionado con la notificación

@@ -70,6 +70,9 @@ try {
 		throw new Exception("Database update failed.");
 	}
 
+	// AQUI
+	// triggerRealtimeNotification($userId);
+
 	log_activity(
 		$userId,
 		"update_product",
