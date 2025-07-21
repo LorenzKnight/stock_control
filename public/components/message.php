@@ -24,7 +24,4 @@
 	</div>
 </div>
 
-<div class="notification-modal-box" style="display: none;">
-	<h3 id="notification-modal-title">Notification</h3>
-	<p id="notification-modal-message">You have a new notification.</p>
-</div>
+<div id="notification-container" class="notification-container"></div>
