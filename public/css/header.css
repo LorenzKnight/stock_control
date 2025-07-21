@@ -31,6 +31,7 @@ nav ul.menu li {
 
 nav ul.menu li:hover {
     color: var(--main-bg-blue);
+    cursor: pointer;
 }
 
 .menu li.active {
@@ -41,6 +42,7 @@ nav ul.menu li:hover {
     width: 603px;
     float: left;
     flex: 1;
+    cursor: default !important;
 }
 
 .profile-frame {

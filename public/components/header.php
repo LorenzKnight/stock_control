@@ -7,7 +7,7 @@
 					    <h3>StockControl</h3>
 					</div>
 				</li>
-                <li class="header-spacer"></li>
+                <li class="header-spacer no-redirect"></li>
 				<li>Sales</li>
 				<li>Products</li>
 				<li>Customers</li>

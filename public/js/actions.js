@@ -4628,7 +4628,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const data = JSON.parse(event.data);
 
 			if (data.type === 'notification') {
-				console.log('🔔 Notificación recibida:', data);
+				// console.log('🔔 Notificación recibida:', data);
 
 				const message = data.message;
 				const notifType = data.notification_type || 'General';
