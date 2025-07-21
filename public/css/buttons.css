@@ -356,4 +356,5 @@ select.form-medium-input-style, select.form-input-style {
     justify-content: center;
     align-items: center;
     font-weight: bold;
+    cursor: pointer;
 }
