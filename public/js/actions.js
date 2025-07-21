@@ -4626,7 +4626,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 		socket.addEventListener('message', async event => {
 			const data = JSON.parse(event.data);
-			console.log(data);
+			
 			if (data.type === 'notification') {
 				console.log('🔔 Notificación recibida:', data);
 
@@ -4637,6 +4637,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 				document.querySelector('.notification-modal-box').style.display = 'block';
 				document.getElementById('notification-modal-title').textContent = notifType;
 				document.getElementById('notification-modal-message').textContent = message;
+
+				await checkNotifications();
 
 				// Opcional: Ocultar después de unos segundos
 				setTimeout(() => {
@@ -4653,6 +4655,29 @@ document.addEventListener("DOMContentLoaded", async function () {
 			console.error('❌ Error en WebSocket:', error);
 		});
 	}
+
+	async function checkNotifications() {
+		const notifCount = document.getElementById('notif-count');
+		if (!notifCount) return;
+
+		try {
+			const response = await fetch('api/get_notifications.php', {
+				method: 'POST',
+				headers: { 'Accept': 'application/json' },
+			});
+
+			const data = await response.json();
+			const count = (data.success && typeof data.count !== 'undefined') ? parseInt(data.count, 10) : 0;
+
+			notifCount.textContent = count > 0 ? count : '';
+			notifCount.style.display = count > 0 ? 'inline-block' : 'none';
+
+		} catch (error) {
+			console.error("❌ Error al obtener notificaciones:", error);
+			notifCount.textContent = '';
+			notifCount.style.display = 'none';
+		}
+	} checkNotifications();
 
 	//############################################################# END NOTIFICATIONS ##################################################################
 

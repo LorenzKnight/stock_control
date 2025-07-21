@@ -20,29 +20,21 @@ try {
     }
 
     // Cargar las notificaciones más recientes no leídas para el usuario
-    $notifResponse = select_from(
-        "notifications", ["*"],
-        [
-            "user_id" => $userId
+    $notifData = json_decode(select_from("notifications", ["*"], [
+            "to_user_id" => $userId,
+		    "is_read" => 0
         ],
         [
             "order_by" => "created_at",
-            "order_direction" => "DESC",
-            // "limit" => 10
+            "order_direction" => "DESC"
         ]
-    );
-
-    $notifData = json_decode($notifResponse, true);
+    ), true);
 
     if ($notifData["success"] && !empty($notifData["data"])) {
-
-        require_once('../logic/realtime.php'); // si triggerRealtimeNotification está en otro archivo
-        triggerRealtimeNotification($userId);
-        
         $response = [
             "success"   => true,
             "message"   => "Notifications retrieved successfully.",
-            "count"     => count($notifData["data"]),
+            "count"     => (int)$notifData["count"] ?? 0,
             "data"      => $notifData["data"]
         ];
     } else {
