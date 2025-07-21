@@ -1,4 +1,6 @@
 <?php
+// usa esto en el navegador para ver los cambios recientes
+// http://localhost:8889/api/test_notify.php?to_user_id=1
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");

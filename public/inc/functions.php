@@ -355,7 +355,7 @@ function triggerRealtimeNotification($userId) {
 		return;
 	}
 
-	$userData = json_decode(select_from("users", ["user_id", "name"], [
+	$userData = json_decode(select_from("users", ["user_id", "name", "surname"], [
 		"user_id" => $userId
 	], [
 		"fetch_first" => true
@@ -366,10 +366,9 @@ function triggerRealtimeNotification($userId) {
 	
 	$data = json_encode([
 		"type" => "notification",
-		"notification_type" => $notif["notification_type"] . " from " . $userInfo["name"] ?? "info",
+		"notification_type" => $notif["notification_type"] ." from ". $userInfo["name"] .' '. $userInfo["surname"] ?? "info",
 		"user_id" => $userId,
 		"message" => $notif["notification_content"] ?? "Notificación sin contenido",
-		
 	]);
 
 	// Enviar al WebSocket (puente en express)

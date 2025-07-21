@@ -347,11 +347,10 @@ select.form-medium-input-style, select.form-input-style {
     position: relative;
     top: 8px;
     right: 7px;
-    width: 20px;
-    height: 20px;
+    padding: 5px 7.5px;
     background-color: var(--cancel-red);
     color: var(--clr-white);
-    border-radius: 50%;
+    border-radius: 10px;
     font-size: 10px;
     display: flex;
     justify-content: center;

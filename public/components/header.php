@@ -14,7 +14,7 @@
 				<li>Payments</li>
 				<li class="no-redirect" id="notification-site">
 					<img src="images/sys-img/notif.png" alt="Notification" id="notification-icon" class="notification-icon">
-					<div class="notifications-no">10</div>
+					<div class="notifications-no" id="notif-count"></div>
 				</li>
 				<li class="no-redirect">
 					<div class="profile" id="profileTrigger">
