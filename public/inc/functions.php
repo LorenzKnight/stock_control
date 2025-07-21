@@ -369,6 +369,7 @@ function triggerRealtimeNotification($userId) {
 		"notification_type" => $notif["notification_type"] ." from ". $userInfo["name"] .' '. $userInfo["surname"] ?? "info",
 		"user_id" => $userId,
 		"message" => $notif["notification_content"] ?? "Notificación sin contenido",
+		"link" => $notif["notification_link"] ?? null
 	]);
 
 	// Enviar al WebSocket (puente en express)

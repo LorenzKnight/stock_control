@@ -4626,24 +4626,45 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 		socket.addEventListener('message', async event => {
 			const data = JSON.parse(event.data);
-			
+
 			if (data.type === 'notification') {
 				console.log('🔔 Notificación recibida:', data);
 
 				const message = data.message;
-				const notifType = data.notification_type || 'type not defined';
+				const notifType = data.notification_type || 'General';
+				const link = data.link;
 
-				// Mostrar en modal
-				document.querySelector('.notification-modal-box').style.display = 'block';
-				document.getElementById('notification-modal-title').textContent = notifType;
-				document.getElementById('notification-modal-message').textContent = message;
+				// Crear el nodo de notificación
+				const container = document.getElementById('notification-container');
+
+				const box = document.createElement('div');
+				box.classList.add('notification-box');
+
+				box.innerHTML = `
+					<div class="notification-title">${notifType}</div>
+					<div class="notification-message">${message}</div>
+				`;
+
+				if (link) {
+					box.style.cursor = 'pointer';
+					box.addEventListener('click', () => {
+						window.location.href = link;
+					});
+				}
+
+				container.appendChild(box);
+
+				// Forzar reflow para que la transición funcione
+				void box.offsetWidth;
+				box.classList.add('show');
 
 				await checkNotifications();
 
-				// Opcional: Ocultar después de unos segundos
+				// Eliminar después de 5 segundos
 				setTimeout(() => {
-					document.querySelector('.notification-modal-box').style.display = 'none';
-				}, 5000);
+					box.classList.remove('show');
+					setTimeout(() => container.removeChild(box), 300); // coincide con el transition
+				}, 10000);
 			}
 		});
 
