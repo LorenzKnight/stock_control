@@ -3,7 +3,13 @@ if (!defined('IS_STRIPE_WEBHOOK') && session_status() === PHP_SESSION_NONE) {
   session_start();
 }
 
-$conn_host    = 'host=stock_pgdb'; //container's name instead for "localhost" 
+// $conn_host    = 'host=127.0.0.1'; // live server
+// $conn_port    = ' port=5432';
+// $conn_dbname  = ' dbname=stock_control_db';
+// $conn_user    = ' user=admin';
+// $conn_pass    = ' password=Bohe03++++';
+
+$conn_host    = 'host=stock_pgdb'; //container's name instead for "localhost"
 $conn_port    = ' port=5432';
 $conn_dbname  = ' dbname=stock_control_db';
 $conn_user    = ' user=admin';
@@ -28,6 +34,6 @@ if (is_file("inc/security.php")) {
 }
 
 $dominio = "localhost:8889";
-// $dominio = "http://www.stockcontrol.se";
-$pageName = "Stock Control";
+// $dominio = "http://www.allstockcontrol.com";
+$pageName = "All Stock Control";
 ?>

@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				let statusImage = document.getElementById('status-image');
 
 				statusText.innerText = "Error procesando la solicitud.";
-				statusImage.src = data.img_gif;
+				statusImage.src = "../images/sys-img/error.gif";
 				banner.style.display = 'block';
 			}
 		});
