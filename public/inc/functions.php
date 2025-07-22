@@ -398,9 +398,9 @@ function triggerRealtimeNotification($userId) {
 function handle_uploaded_image(
 	string $fieldName,
 	string $uploadDir,
-	array $allowedExts = ['jpg', 'jpeg', 'png', 'webp'],
 	string $fileName,
-	?int $userId = null
+	?int $userId = null,
+	array $allowedExts = ['jpg', 'jpeg', 'png', 'webp']
 ): ?string {
 	if (!isset($_FILES[$fieldName]) || empty($_FILES[$fieldName]['name'])) {
 		return null;

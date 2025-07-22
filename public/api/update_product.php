@@ -53,9 +53,9 @@ try {
 		$imageName = handle_uploaded_image(
 			"edit_Product_image",
 			__DIR__ . "/../images/products",
-			["jpg", "jpeg", "png", "webp"],
 			"product",
-			$userId
+			$userId,
+			["jpg", "jpeg", "png", "webp"]
 		);
 
 		if ($imageName) {
