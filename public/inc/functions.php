@@ -31,6 +31,14 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 	}
 	
 	foreach ($whereClause as $column => $value) {
+		if (preg_match('/^(.+)\s+IN$/i', $column, $matches) && is_array($value)) {
+			$field = trim($matches[1]);
+			$fieldFormatted = (strpos($field, '.') === false) ? "\"$field\"" : $field;
+			$escapedVals = array_map(fn($val) => "'" . pg_escape_string((string)$val) . "'", $value);
+			$whereParts[] = "$fieldFormatted IN (" . implode(', ', $escapedVals) . ")";
+			continue;
+		}
+
 		if (stripos($column, 'CAST(') === 0 || stripos($column, '(') !== false) {
 			// No escapamos expresiones tipo CAST(...) o funciones
 			$colFormatted = $column;
@@ -52,6 +60,14 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 		} elseif ($column === 'OR' && is_array($value)) {
 			$orParts = [];
 			foreach ($value as $orKey => $orVal) {
+				if (preg_match('/^(.+)\s+IN$/i', $orKey, $matches) && is_array($orVal)) {
+					$orField = trim($matches[1]);
+					$orColFormatted = (strpos($orField, '.') === false) ? "\"$orField\"" : $orField;
+					$escapedVals = array_map(fn($val) => "'" . pg_escape_string($val) . "'", $orVal);
+					$orParts[] = "$orColFormatted IN (" . implode(',', $escapedVals) . ")";
+					continue;
+				}
+
 				if (preg_match('/^(.+)\s+(ILIKE|LIKE)$/i', $orKey, $matches)) {
 					$field = trim($matches[1]);
 					$operator = strtoupper($matches[2]);

@@ -4700,6 +4700,92 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	} checkNotifications();
 
+
+	const messageListContainer = document.getElementById('messageList');
+	const searchMessageField = document.getElementById('messageSearchField');
+	if (messageListContainer && searchMessageField) {
+		async function fetchAndRenderNotifications() {
+			try {
+				const searchTerm = searchMessageField.value.trim().toLowerCase();
+
+				const params = new URLSearchParams();
+				if (searchTerm) params.append('search', searchTerm);
+
+				const res = await fetch(`api/get_notifications.php?${params.toString()}`, {
+					method: 'GET',
+					headers: { 'Accept': 'application/json' }
+				});
+				const data = await res.json();
+				
+				messageListContainer.innerHTML = "";
+
+				if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+					data.data.forEach(notif => {
+						const row = document.createElement('tr');
+						row.className = 'form_height';
+						row.setAttribute('data-id', notif.notification_id);
+
+						row.innerHTML = `
+							<td width="20%" align="center" valign="middle">
+								<div class="customers-profile">
+									<img src="images/sys-img/${notif.from_user_image}" alt="Profile Pic">
+								</div>
+							</td>
+							<td width="80%" align="left" valign="middle">
+								<p>${notif.is_read == 0 ? `<strong>${notif.from_user_name || 'Notification'}</strong>` : `${notif.from_user_name || 'Notification'}`}</p>
+								<p>${notif.notification_type || ''}</p>
+							</td>
+						`;
+
+						// Agregar evento al tr
+						row.addEventListener('click', async () => {
+							try {
+								const formData = new URLSearchParams();
+								formData.append('notification_id', notif.notification_id);
+
+								await fetch('api/mark_notification_read.php', {
+									method: 'POST',
+									headers: {
+										'Accept': 'application/json'
+									},
+									body: formData
+								});
+							
+								const nameCell = row.querySelector('td:nth-child(2) p:first-child');
+								if (nameCell && nameCell.innerHTML.includes('<strong>')) {
+									nameCell.innerHTML = notif.from_user_name || 'Notification';
+								}
+
+								const detailsDiv = document.getElementById('notifications-details');
+								if (detailsDiv) {
+									detailsDiv.innerHTML = `
+										<h3>Detalles de la notificación</h3>
+										<p><strong>De:</strong> ${notif.from_user_name}</p>
+										<p><strong>Tipo:</strong> ${notif.notification_type}</p>
+										<p><strong>Contenido:</strong> ${notif.notification_content}</p>
+										<p><strong>Fecha:</strong> ${notif.created_at}</p>
+									`;
+								}
+							} catch (err) {
+								console.error("Error marking notification as read:", err);
+							}
+						});
+
+						messageListContainer.appendChild(row);
+					});
+				} else {
+					messageListContainer.innerHTML = `<p style="text-align:center;">No notifications found.</p>`;
+				}
+			} catch (err) {
+				console.error("Error loading notifications:", err);
+				messageListContainer.innerHTML = `<p style="text-align:center;">Error loading notifications</p>`;
+			}
+		}
+
+		searchMessageField.addEventListener('keyup', fetchAndRenderNotifications);
+		fetchAndRenderNotifications();
+	}
+
 	//############################################################# END NOTIFICATIONS ##################################################################
 
 	//############################################################# FUNCTIONES ##################################################################

@@ -19,7 +19,61 @@ try {
         throw new Exception("Unauthorized: No user session found.");
     }
 
-    // Cargar las notificaciones más recientes no leídas para el usuario
+	$search = strtolower(trim($_GET["search"] ?? ""));
+	$where = [];
+	$whereName = [];
+
+	$where = ["to_user_id" => $userId];
+
+	if (!empty($search)) {
+		$whereName["OR"] = [
+			"name ILIKE" => "%$search%",
+			"surname ILIKE" => "%$search%"
+		];
+
+		$userMatches = json_decode(select_from("users", ["user_id"], $whereName), true);
+		$userIds = array_column($userMatches["data"] ?? [], "user_id");
+
+		$orBlock = [
+			"notification_content ILIKE" => $search,
+			"notification_type ILIKE" => $search
+		];
+
+		if (!empty($userIds)) {
+			$orBlock["user_id IN"] = $userIds;
+		}
+
+		$where["OR"] = $orBlock;	
+	}
+
+	$allNotifications = json_decode(select_from("notifications", ["*"], $where, [
+		"order_by" => "created_at",
+		"order_direction" => "DESC"
+	]), true);
+
+	if (!$allNotifications["success"]) {
+		throw new Exception("Failed to fetch all notifications.");
+	}
+
+	foreach ($allNotifications["data"] as &$notification) {
+
+		$userData = json_decode(select_from("users", ["user_id", "name", "surname", "image"], [
+			"user_id" => $notification["user_id"]
+		], ["fetch_first" => true]), true);
+
+		$user = $userData["data"] ?? null;
+
+		if (!$user) {
+			error_log("User not found for ID: " .$user["user_id"]);
+			continue;
+		}
+
+		$notification["from_user_name"] = trim($user["name"] . " " . $user["surname"]);
+		$notification["from_user_image"] = $user["image"] ?? "NonProfilePic.png";
+		
+	}
+
+	// Cargar las notificaciones más recientes no leídas para el usuario
     $notifData = json_decode(select_from("notifications", ["*"], [
             "to_user_id" => $userId,
 		    "is_read" => 0
@@ -30,20 +84,16 @@ try {
         ]
     ), true);
 
-    if ($notifData["success"] && !empty($notifData["data"])) {
-        $response = [
-            "success"   => true,
-            "message"   => "Notifications retrieved successfully.",
-            "count"     => (int)$notifData["count"] ?? 0,
-            "data"      => $notifData["data"]
-        ];
-    } else {
-        $response["message"] = "No notifications found.";
-    }
-
+	$response = [
+		"success"   => true,
+		"message"   => "Notifications retrieved successfully.",
+		"count"     => (int)$notifData["count"] ?? 0,
+		"data"      => $allNotifications["data"]
+	];
 } catch (Exception $e) {
     $response["message"] = $e->getMessage();
 }
 
 echo json_encode($response);
 exit;
+?>
