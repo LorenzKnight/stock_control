@@ -9,10 +9,12 @@
 							<input type="text" name="messageSearchField" id="messageSearchField" class="search-field" placeholder="Search Messages...">
 						</td>
 					</tr>
-					
 				</table>
+				<table id="messageList" width="90%" align="center" cellspacing="0" style="margin-top: 15px;"></table>
 			</div>
-			<div class="notifications-details" id="notifications-details"></div>
+			<div class="notifications-details" id="notifications-details">
+				
+			</div>
 		</div>
 	</div>
 </div>
