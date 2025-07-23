@@ -4731,9 +4731,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 									<img src="images/sys-img/${notif.from_user_image}" alt="Profile Pic">
 								</div>
 							</td>
-							<td width="80%" align="left" valign="middle">
+							<td width="65%" align="left" valign="middle">
 								<p>${notif.is_read == 0 ? `<strong>${notif.from_user_name || 'Notification'}</strong>` : `${notif.from_user_name || 'Notification'}`}</p>
 								<p>${notif.notification_type || ''}</p>
+							</td>
+							<td width="15%" align="center" valign="top">
+								<p>${notif.is_read == 0 ? `<strong>${formatNotificationDate(notif.created_at)}</strong>` : `${formatNotificationDate(notif.created_at)}`}</p>
 							</td>
 						`;
 
@@ -4756,6 +4759,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 									nameCell.innerHTML = notif.from_user_name || 'Notification';
 								}
 
+								const dateCell = row.querySelector('td:nth-child(3) p');
+								if (dateCell && dateCell.innerHTML.includes('<strong>')) {
+									dateCell.innerHTML = formatNotificationDate(notif.created_at);
+								}
+
 								const detailsDiv = document.getElementById('notifications-details');
 								if (detailsDiv) {
 									detailsDiv.innerHTML = `
@@ -4773,12 +4781,27 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 						messageListContainer.appendChild(row);
 					});
+
+					const detailsDiv = document.getElementById('notifications-details');
+					if (detailsDiv && detailsDiv.innerHTML.trim() === "") {
+						detailsDiv.innerHTML = `<p style="text-align:center; opacity: 0.7;">Select a notification</p>`;
+					}
 				} else {
 					messageListContainer.innerHTML = `<p style="text-align:center;">No notifications found.</p>`;
+
+					const detailsDiv = document.getElementById('notifications-details');
+					if (detailsDiv) {
+						detailsDiv.innerHTML = `<p style="text-align:center; opacity: 0.7;">Select a notification</p>`;
+					}
 				}
 			} catch (err) {
 				console.error("Error loading notifications:", err);
 				messageListContainer.innerHTML = `<p style="text-align:center;">Error loading notifications</p>`;
+
+				const detailsDiv = document.getElementById('notifications-details');
+				if (detailsDiv) {
+					detailsDiv.innerHTML = `<p style="text-align:center; opacity: 0.7;">Select a notification</p>`;
+				}
 			}
 		}
 
@@ -4834,6 +4857,23 @@ document.addEventListener("DOMContentLoaded", async function () {
 	handlePopupClose("sale-options", ".formular-frame", ["sale-options"]);
 	handlePopupClose("add-payment-form", ".formular-frame", ["add-payment-form"]);
 	handlePopupClose("payments-options", ".formular-frame", ["payments-options"]);
+
+	// 📌 formatear fecha de notificación
+	function formatNotificationDate(dateString) {
+		const monthsAbbr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+		const dateObj = new Date(dateString);
+		const now = new Date();
+
+		const isToday = dateObj.toDateString() === now.toDateString();
+
+		if (isToday) {
+			// Mostrar solo la hora: HH:MM
+			return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+		} else {
+			// Mostrar día y mes abreviado: ej. 21 Jul
+			return `${dateObj.getDate()} ${monthsAbbr[dateObj.getMonth()]}`;
+		}
+	}
 
 	// 📌 reset multiple popup view
 	function resetMultiplePopupView() {
