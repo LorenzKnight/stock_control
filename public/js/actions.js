@@ -4865,13 +4865,20 @@ document.addEventListener("DOMContentLoaded", async function () {
 		const now = new Date();
 
 		const isToday = dateObj.toDateString() === now.toDateString();
+		const isSameYear = dateObj.getFullYear() === now.getFullYear();
 
 		if (isToday) {
 			// Mostrar solo la hora: HH:MM
 			return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-		} else {
+		} else if (isSameYear) {
 			// Mostrar día y mes abreviado: ej. 21 Jul
 			return `${dateObj.getDate()} ${monthsAbbr[dateObj.getMonth()]}`;
+		} else {
+			// Mostrar día/mes/año corto: ej. 24/11/23
+			const day = String(dateObj.getDate()).padStart(2, '0');
+			const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+			const year = String(dateObj.getFullYear()).slice(-2);
+			return `${year}/${month}/${day}`;
 		}
 	}
 
