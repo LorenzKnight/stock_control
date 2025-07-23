@@ -56,21 +56,28 @@ try {
 	}
 
 	foreach ($allNotifications["data"] as &$notification) {
+		$userId = $notification["user_id"] ?? null;
+
+		if (empty($userId)) {
+			$notification["from_user_name"] = "System";
+			$notification["from_user_image"] = "NonProfilePic.png";
+			continue;
+		}
 
 		$userData = json_decode(select_from("users", ["user_id", "name", "surname", "image"], [
-			"user_id" => $notification["user_id"]
+			"user_id" => $userId
 		], ["fetch_first" => true]), true);
 
 		$user = $userData["data"] ?? null;
 
-		if (!$user) {
-			error_log("User not found for ID: " .$user["user_id"]);
+		if (!$userData["success"] || !$user) {
+			$notification["from_user_name"] = "Unknown User";
+			$notification["from_user_image"] = "NonProfilePic.png";
 			continue;
 		}
 
 		$notification["from_user_name"] = trim($user["name"] . " " . $user["surname"]);
 		$notification["from_user_image"] = $user["image"] ?? "NonProfilePic.png";
-		
 	}
 
 	// Cargar las notificaciones más recientes no leídas para el usuario
