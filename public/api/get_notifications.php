@@ -56,16 +56,16 @@ try {
 	}
 
 	foreach ($allNotifications["data"] as &$notification) {
-		$userId = $notification["user_id"] ?? null;
+		$notifUserId = $notification["user_id"] ?? null;
 
-		if (empty($userId)) {
+		if (empty($notifUserId)) {
 			$notification["from_user_name"] = "System";
 			$notification["from_user_image"] = "NonProfilePic.png";
 			continue;
 		}
 
 		$userData = json_decode(select_from("users", ["user_id", "name", "surname", "image"], [
-			"user_id" => $userId
+			"user_id" => $notifUserId
 		], ["fetch_first" => true]), true);
 
 		$user = $userData["data"] ?? null;

@@ -4764,6 +4764,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 									dateCell.innerHTML = formatNotificationDate(notif.created_at);
 								}
 
+								await checkNotifications();
+
 								const detailsDiv = document.getElementById('notifications-details');
 								if (detailsDiv) {
 									detailsDiv.innerHTML = `
