@@ -24,25 +24,43 @@ try {
         throw new Exception("ID de notificación inválido.");
     }
 
-    $result = update_table("notifications", ["is_read" => 1], [
+    $checkNotification = json_decode(select_from("notifications", ["is_read"], [
         "notification_id" => $notificationId,
         "to_user_id" => $userId
-    ]);
+    ], [
+        "fetch_first" => true
+    ]), true);
+    $isRead = $checkNotification["data"]["is_read"] ?? null;
 
-    if (is_string($result)) {
-        $result = json_decode($result, true);
+    if ((int)$isRead === 1) {
+        // Ya estaba leída, no es necesario actualizar
+        $response = [
+            "success" => true,
+            "message" => "Notificación ya estaba marcada como leída.",
+            "img_gif" => "images/sys-img/loading1.gif",
+            "redirect_url" => null
+        ];
+    } else {
+        $result = update_table("notifications", ["is_read" => 1], [
+            "notification_id" => $notificationId,
+            "to_user_id" => $userId
+        ]);
+
+        if (is_string($result)) {
+            $result = json_decode($result, true);
+        }
+
+        if (!$result || !$result["success"]) {
+            throw new Exception("No se pudo actualizar la notificación. " . ($result["message"] ?? ""));
+        }
+
+        $response = [
+            "success" => true,
+            "message" => "Notificación marcada como leída.",
+            "img_gif" => "images/sys-img/loading1.gif",
+            "redirect_url" => null
+        ];
     }
-
-    if (!$result || !$result["success"]) {
-        throw new Exception("No se pudo actualizar la notificación. " . ($result["message"] ?? ""));
-    }
-
-    $response = [
-        "success" => true,
-        "message" => "Notificación marcada como leída.",
-        "img_gif" => "images/sys-img/loading1.gif",
-        "redirect_url" => null
-    ];
 } catch (Exception $e) {
     $response["message"] = $e->getMessage();
 }

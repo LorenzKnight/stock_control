@@ -10,7 +10,9 @@
 						</td>
 					</tr>
 				</table>
-				<table id="messageList" width="90%" align="center" cellspacing="0" style="margin-top: 15px;"></table>
+				<div class="notifications-list" id="notificationsList">
+					<table class="message-list" id="messageList" width="90%" align="center" cellspacing="0" style="margin-top: 15px;"></table>
+				</div>
 			</div>
 			<div class="notifications-details" id="notifications-details">
 				
