@@ -93,7 +93,6 @@
 .notifications-list {
 	width: 99%;
 	height: 640px;
-	/* background-color: rgba(255, 0, 0, 0.298); */
 	overflow-y: auto;
 }
 
@@ -114,6 +113,16 @@
 
 .message-list tr td {
 	border-bottom: 1px solid var(--main-bg-beige);
+	padding: 5px 0;
+}
+
+.message-list tr td p {
+	font-weight: 200;
+	margin: 5px 0;
+}
+
+.message-list tr td p strong {
+	font-weight: 600;
 }
 
 .message-list tr:hover {
