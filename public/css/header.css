@@ -11,8 +11,16 @@ header {
     flex: 1;
 }
 
-.logo h1 {
+.logo a {
     margin: 0;
+    text-decoration: none;
+    color: var(--clr-white);
+}
+
+.logo a strong {
+    /* color: var(--warning-orange); */
+    font-size: 1.1em;
+    font-weight: 600;
 }
 
 nav ul.menu {
@@ -57,6 +65,12 @@ nav ul.menu li:hover {
     height: 200px;
     border-radius: 50%;
     object-fit: cover;
+}
+
+.profile {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
 }
 
 .profile img {

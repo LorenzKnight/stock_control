@@ -55,8 +55,20 @@ try {
 		throw new Exception("Failed to fetch all notifications.");
 	}
 
+	$notification = [];
 	foreach ($allNotifications["data"] as &$notification) {
-		$notifUserId = $notification["user_id"] ?? null;
+		$notifUserId = $notification["from_user_id"] ?? null;
+
+		$productData = json_decode(select_from("products", ["*"], [
+			"product_id" => (int)$notification["notification_content"] ?? null
+		], ["fetch_first" => true]), true);
+		$product = $productData["data"] ?? null;
+		if ($notification["notification_type"] === "Product Request") {
+			$notification["product"] = [
+				"product_id"	=> $product["product_id"] ?? null,
+				"product_name"	=> $product["product_name"] ?? "Unknown Product"
+			];
+		}
 
 		if (empty($notifUserId)) {
 			$notification["from_user_name"] = "System";

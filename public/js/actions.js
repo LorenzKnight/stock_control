@@ -2154,15 +2154,49 @@ document.addEventListener("DOMContentLoaded", async function () {
 				const requestProductBtn = document.getElementById('requestProductBtn');
 				if (requestProductBtn) {
 					requestProductBtn.onclick = () => {
-						console.log("Request sent");
-						// const menuDiv = document.getElementById('product-menu-buttons');
-						// const receiveDiv = document.getElementById('receive-as-initial'); 
+						requestProductBtn.setAttribute('data-product-id', productId);
+						if (!productId) {
+							alert("Product ID not found.");
+							return;
+						}
+						// console.log("Request sent ", productId);
+						showConfirmModal("Request this Product", "Are you sure you want request this product?", async () => {
+							const frame = document.querySelector('.formular-frame');
+							if (frame) frame.style.display = 'none';
+
+							const formData = new FormData();
+							formData.append("product_id", productId);
 				
-						// animateHeightChange(popupContent, receiveDiv, () => {
-						// 	fadeOutAndHide(menuDiv, () => {
-						// 		showWithFadeIn(receiveDiv);
-						// 	});
-						// });
+							try {
+								const response = await fetch('api/request_product.php', {
+									method: 'POST',
+									body: formData
+								});
+				
+								const data = await response.json();
+				
+								let banner = document.getElementById('status-message');
+								let statusText = document.getElementById('status-text');
+								let statusImage = document.getElementById('status-image');
+				
+								statusText.innerText = data.message;
+								statusImage.src = data.img_gif;
+								banner.style.display = 'block';
+								banner.style.opacity = '1';
+				
+								if (data.success) {
+									setTimeout(() => {
+										banner.style.opacity = '0';
+										setTimeout(() => {
+											window.location.href = data.redirect_url || window.location.href;
+										}, 1000);
+									}, 3000);
+								}
+							} catch (error) {
+								console.error("Error requesting product:", error);
+								alert("Error requesting product. Check console.");
+							}
+						});
 					};
 				}
 				
@@ -4638,7 +4672,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				const container = document.getElementById('notification-container');
 
 				const box = document.createElement('div');
-				box.classList.add('notification-box');
+				box.classList.add('notification-box'); // VALIDAR QUE SOLO SALGA LA NOTIFICACION AL IDE MANDADO
 
 				box.innerHTML = `
 					<div class="notification-title">${notifType}</div>
@@ -4769,11 +4803,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 								const detailsDiv = document.getElementById('notifications-details');
 								if (detailsDiv) {
 									detailsDiv.innerHTML = `
-										<h3>Detalles de la notificación</h3>
+										<h3>${notif.notification_type}</h3>
 										<p><strong>De:</strong> ${notif.from_user_name}</p>
-										<p><strong>Tipo:</strong> ${notif.notification_type}</p>
+										<p><strong>Fecha:</strong> ${formatFullDateTime(notif.created_at)}</p>
 										<p><strong>Contenido:</strong> ${notif.notification_content}</p>
-										<p><strong>Fecha:</strong> ${notif.created_at}</p>
 									`;
 								}
 							} catch (err) {
@@ -4882,6 +4915,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const year = String(dateObj.getFullYear()).slice(-2);
 			return `${year}/${month}/${day}`;
 		}
+	}
+
+	// 📌 formatear fecha y hora completa
+	function formatFullDateTime(dateString) {
+		const date = new Date(dateString);
+
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, '0'); // meses van de 0 a 11
+		const day = String(date.getDate()).padStart(2, '0');
+		const hours = String(date.getHours()).padStart(2, '0');
+		const minutes = String(date.getMinutes()).padStart(2, '0');
+
+		return `${year}-${month}-${day} ${hours}:${minutes}`;
 	}
 
 	// 📌 reset multiple popup view
