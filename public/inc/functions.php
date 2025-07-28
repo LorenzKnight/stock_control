@@ -345,18 +345,21 @@ function log_activity($userId, $actionType, $description, $relatedTable = null, 
 	return insert_into("activity_history", $data);
 }
 
-function notify_user($userId, $content, $link = null, $type = 'info') {
+function notify_user($userId, $toUserId, $content, $link = null, $type = 'info') {
 	$data = [
-		"user_id"				=> $userId,
-		"notification_type"		=> $type,
+		"from_user_id"				=> $userId,	
+		"to_user_id"			=> $toUserId,
 		"notification_content"	=> $content,
 		"notification_link"		=> $link,
+		"notification_type"		=> $type,
 		"created_at"			=> date("Y-m-d H:i:s")
 	];
 	insert_into("notifications", $data);
 }
 
 function triggerRealtimeNotification($userId) {
+	if ($userId == $_SESSION['sc_UserId']) return;
+
 	$res = json_decode(select_from("notifications", ["*"], [
 		"to_user_id" => $userId,
 		"is_read" => 0
@@ -371,18 +374,30 @@ function triggerRealtimeNotification($userId) {
 		return;
 	}
 
-	$userData = json_decode(select_from("users", ["user_id", "name", "surname"], [
-		"user_id" => $userId
+	$notif = $res["data"];
+
+	$userData = json_decode(select_from("users", ["user_id", "name", "surname"], [ // AQUI
+		"user_id" => $notif["from_user_id"] ?? null
 	], [
 		"fetch_first" => true
 	]), true);
-
-	$notif = $res["data"];
+	
 	$userInfo = $userData["data"];
+	
+	if (empty($notif["from_user_id"])) {
+		$userInfo["from_user_name"] = "System";
+		$userInfo["from_user_image"] = "NonProfilePic.png";
+	} else if (!$userData["success"] || empty($userInfo)) {
+		$userInfo["from_user_name"] = "Unknown User";
+		$userInfo["from_user_image"] = "NonProfilePic.png";
+	} else {
+		$userInfo["from_user_name"] = trim($userInfo["name"] . " " . $userInfo["surname"]);
+		$userInfo["from_user_image"] = $userInfo["image"] ?? "NonProfilePic.png";
+	}
 	
 	$data = json_encode([
 		"type" => "notification",
-		"notification_type" => $notif["notification_type"] ." from ". $userInfo["name"] .' '. $userInfo["surname"] ?? "info",
+		"notification_type" => $notif["notification_type"] ." from ". $userInfo["from_user_name"] ?? "info",
 		"user_id" => $userId,
 		"message" => $notif["notification_content"] ?? "Notificación sin contenido",
 		"link" => $notif["notification_link"] ?? null
