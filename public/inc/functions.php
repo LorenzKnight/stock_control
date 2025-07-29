@@ -358,8 +358,6 @@ function notify_user($userId, $toUserId, $content, $link = null, $type = 'info')
 }
 
 function triggerRealtimeNotification($userId) {
-	if ($userId == $_SESSION['sc_UserId']) return;
-
 	$res = json_decode(select_from("notifications", ["*"], [
 		"to_user_id" => $userId,
 		"is_read" => 0
@@ -376,7 +374,7 @@ function triggerRealtimeNotification($userId) {
 
 	$notif = $res["data"];
 
-	$userData = json_decode(select_from("users", ["user_id", "name", "surname"], [ // AQUI
+	$userData = json_decode(select_from("users", ["user_id", "name", "surname"], [
 		"user_id" => $notif["from_user_id"] ?? null
 	], [
 		"fetch_first" => true
@@ -398,7 +396,7 @@ function triggerRealtimeNotification($userId) {
 	$data = json_encode([
 		"type" => "notification",
 		"notification_type" => $notif["notification_type"] ." from ". $userInfo["from_user_name"] ?? "info",
-		"user_id" => $userId,
+		"to_user_id" => $userId,
 		"message" => $notif["notification_content"] ?? "Notificación sin contenido",
 		"link" => $notif["notification_link"] ?? null
 	]);

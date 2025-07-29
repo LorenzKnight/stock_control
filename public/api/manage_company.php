@@ -48,9 +48,9 @@ try {
 		$imageName = handle_uploaded_image(
 			"company_logo",
 			__DIR__ . "/../images/company-logos",
-			["png", "jpg", "jpeg", "webp"],
 			"logo",
-			$userId
+			$userId,
+			["png", "jpg", "jpeg", "webp"],
 		);
 		if ($imageName) {
 			$updateData["company_logo"] = $imageName;

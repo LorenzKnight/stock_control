@@ -47,9 +47,9 @@ try {
 		$imageName = handle_uploaded_image(
 			"image",
 			__DIR__ . "/../images/profile",
-			["jpg", "jpeg", "png", "webp"],
 			"profile",
-			$userId
+			$userId,
+            ["jpg", "jpeg", "png", "webp"]
 		);
 
 		if ($imageName) {

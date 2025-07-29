@@ -72,7 +72,7 @@ try {
 
 		if (empty($notifUserId)) {
 			$notification["from_user_name"] = "System";
-			$notification["from_user_image"] = "NonProfilePic.png";
+			$notification["from_user_image"] = "images/sys-img/NonProfilePic.png";
 			continue;
 		}
 
@@ -84,12 +84,12 @@ try {
 
 		if (!$userData["success"] || !$user) {
 			$notification["from_user_name"] = "Unknown User";
-			$notification["from_user_image"] = "NonProfilePic.png";
+			$notification["from_user_image"] = "images/sys-img/NonProfilePic.png";
 			continue;
 		}
 
 		$notification["from_user_name"] = trim($user["name"] . " " . $user["surname"]);
-		$notification["from_user_image"] = $user["image"] ?? "NonProfilePic.png";
+		$notification["from_user_image"] = "images/profile/".$user["image"] ?? "images/profile/NonProfilePic.png";
 	}
 
 	// Cargar las notificaciones más recientes no leídas para el usuario
