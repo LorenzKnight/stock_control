@@ -2281,13 +2281,22 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	async function openEditProductForm(productId) {
+		console.log(productId);
 		const formEditProduct = document.getElementById('formEditProduct');
 		if (!formEditProduct) return;
 	
 		formEditProduct.setAttribute('data-product-id', productId);
+
+		const companySelect = document.getElementById('select-company');
+		const selectedCompany = companySelect?.value || "";
+
+		const params = new URLSearchParams();
+		params.append('product_id', productId);
+
+		if (selectedCompany) params.append('company', selectedCompany);
 	
 		try {
-			const response = await fetch(`api/get_products.php?product_id=${productId}`);
+			const response = await fetch(`api/get_products.php?${params.toString()}`);
 			const data = await response.json();
 	
 			if (data.success && data.data.length > 0) {
@@ -4652,6 +4661,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 	//############################################################# NOTIFICATIONS ##################################################################
 
 	if (headerMenu) {
+		let currentUserId = 0;
+
+		let response = await fetch('api/get_my_info.php', {
+			method: 'GET',
+			headers: { Accept: "application/json" }
+		});
+
+		let data = await response.json();
+		if (data.success && data.data) {
+			let user = data.data;
+			currentUserId = parseInt(user.user_id) || 0;
+		}
+
 		const socket = new WebSocket('ws://localhost:3001'); // Usa tu IP pública si es remoto
 
 		socket.addEventListener('open', () => {
@@ -4663,6 +4685,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			if (data.type === 'notification') {
 				// console.log('🔔 Notificación recibida:', data);
+				if (data.to_user_id !== currentUserId) return;
 
 				const message = data.message;
 				const notifType = data.notification_type || 'General';
@@ -4762,7 +4785,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 						row.innerHTML = `
 							<td width="20%" align="center" valign="middle">
 								<div class="customers-profile">
-									<img src="images/sys-img/${notif.from_user_image}" alt="Profile Pic">
+									<img src="${notif.from_user_image}" alt="Profile Pic">
 								</div>
 							</td>
 							<td width="65%" align="left" valign="middle">
@@ -5081,7 +5104,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		let companySelect = document.getElementById(companyId);
 	
 		if (!markSelect || !modelSelect || !submodelSelect || !companySelect) return;
-	
+	console.log(companySelect.value); // AQUI
 		// 🔹 Función para cargar marcas
 		async function loadMarksByCompany(companyIdValue) {
 			let url = 'api/get_categories.php';

@@ -37,8 +37,6 @@ try {
     $UserData = json_decode(select_from("users", ["user_id"], ["company_id" => $companyId]), true);
 
     foreach ($UserData["data"] as $user) {
-        // if ($user["user_id"] == $userId) continue;
-
         notify_user(
             $userId,
             $user["user_id"],

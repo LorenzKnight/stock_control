@@ -55,9 +55,9 @@ try {
 		$imageName = handle_uploaded_image(
 			"customer_image",
 			__DIR__ . "/../images/customers/",
-			["jpg", "jpeg", "png", "webp"],
 			"customer",
-			$userId
+			$userId,
+			["jpg", "jpeg", "png", "webp"]
 		);
 	} catch (Exception $ex) {
 		throw new Exception("Image upload failed: " . $ex->getMessage());

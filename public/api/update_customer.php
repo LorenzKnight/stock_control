@@ -63,9 +63,9 @@ try {
 		$imageName = handle_uploaded_image(
 			"edit_customer_image",
 			__DIR__ . "/../images/customers",
-			["jpg", "jpeg", "png", "webp"],
 			"customer",
-			$userId
+			$userId,
+			["jpg", "jpeg", "png", "webp"]
 		);
 
 		if ($imageName) {
