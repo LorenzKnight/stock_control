@@ -380,7 +380,7 @@ function triggerRealtimeNotification($userId) {
 		"fetch_first" => true
 	]), true);
 	
-	$userInfo = $userData["data"];
+	$userInfo = $userData["data"] ?? [];
 	
 	if (empty($notif["from_user_id"])) {
 		$userInfo["from_user_name"] = "System";
@@ -389,38 +389,46 @@ function triggerRealtimeNotification($userId) {
 		$userInfo["from_user_name"] = "Unknown User";
 		$userInfo["from_user_image"] = "NonProfilePic.png";
 	} else {
-		$userInfo["from_user_name"] = trim($userInfo["name"] . " " . $userInfo["surname"]);
+		$userInfo["from_user_name"] = trim(($userInfo["name"] ?? '') . ' ' . ($userInfo["surname"] ?? ''));
 		$userInfo["from_user_image"] = $userInfo["image"] ?? "NonProfilePic.png";
 	}
-	
-	$data = json_encode([
+
+	$payload = [
 		"type" => "notification",
-		"notification_type" => $notif["notification_type"] ." from ". $userInfo["from_user_name"] ?? "info",
+		"notification_type" => ($notif["notification_type"] ?? "Info") . " from " . ($userInfo["from_user_name"] ?? "System"),
 		"to_user_id" => $userId,
 		"message" => $notif["notification_content"] ?? "Notificación sin contenido",
 		"link" => $notif["notification_link"] ?? null
-	]);
+	];
 
 	// Enviar al WebSocket (puente en express)
 	// $url = 'http://localhost:3002/notify';
-	$url = 'http://host.docker.internal:3002/notify';
+	// $url = 'http://192.168.1.123:3002/notify';
+	// $url = 'http://host.docker.internal:3002/notify';
 
-	$options = [
-		'http' => [
-			'header'  => "Content-type: application/json\r\n",
-			'method'  => 'POST',
-			'content' => $data,
-			'ignore_errors' => true
-		]
-	];
-
-	$context = stream_context_create($options);
-	$response = @file_get_contents($url, false, $context);
-
-	if ($response === false) {
-		error_log("❌ No se pudo contactar con WebSocket bridge.");
+	if (file_exists('/.dockerenv') || getenv('USE_DOCKER_BRIDGE') === '1') {
+		$url = 'http://host.docker.internal:3002/notify';
 	} else {
-		error_log("✅ Respuesta del WebSocket bridge: $response");
+		$hostname = $_SERVER['HTTP_HOST'] ?? 'localhost';
+		$hostname = explode(':', $hostname)[0];
+		$url = "http://{$hostname}:3002/notify";
+	}
+
+	$ch = curl_init($url);
+	curl_setopt($ch, CURLOPT_POST, true);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+
+	$result = curl_exec($ch);
+	$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	$error = curl_error($ch);
+	curl_close($ch);
+
+	if ($result === false || $httpCode >= 400) {
+		error_log("❌ Error al contactar WebSocket bridge en $url: $error (HTTP $httpCode)");
+	} else {
+		error_log("✅ Notificación enviada al WebSocket: $result");
 	}
 }
 

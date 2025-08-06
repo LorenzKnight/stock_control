@@ -19,7 +19,7 @@
 				</tr>
                 <tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<label for="fecha">Birthdate:</label>
+						<label for="birthday">Birthdate:</label>
 						<input class="form-input-style" type="date" name="birthday" id="birthday" placeholder="" title="" required/>
 					</td>
 				</tr>
@@ -30,7 +30,7 @@
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="2" align="center" valign="middle">
-						<label for="rank">Company / Affiliate:</label>
+						<label for="company">Company / Affiliate:</label>
 						<select class="form-input-style" name="company" id="company" required></select>
 					</td>
 				</tr>

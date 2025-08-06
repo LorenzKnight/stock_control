@@ -18,11 +18,13 @@
 				</tr>
                 <tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
+						<label for="user_name">Name:</label>
 						<input class="form-input-style" type="text" name="user_name" id="user_name" placeholder="Enter your name..." title="Enter a valid name" required/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
+						<label for="user_surname">Surname:</label>
 						<input class="form-input-style" type="text" name="user_surname" id="user_surname" placeholder="Enter your surname..." title="Enter a valid surname" required/>
 					</td>
 				</tr>
@@ -33,12 +35,18 @@
 					</td>
 				</tr>
                 <tr valign="baseline" class="form_height">
-					<td colspan="6" align="center" valign="middle">
-						<input class="form-input-style" type="number" name="user_phone" id="user_phone" placeholder="Enter your phone number..." title="Enter a valid phone number"/>
+					<td width="20%" align="center" valign="middle">
+						<label for="country_code">Country Code:</label>
+						<select class="form-medium-input-style" name="country_code" id="country_code" required></select>
+					</td>
+					<td width="80%" align="center" valign="middle">
+						<label for="user_phone">Phone Number:</label>
+						<input class="form-medium-input-style" type="text" name="user_phone" id="user_phone" placeholder="Enter your phone number..." title="Enter a valid phone number"/>
 					</td>
 				</tr>
                 <tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
+						<label for="user_email">E-Mail:</label>
 						<input class="form-input-style" type="email" name="user_email" id="user_email" placeholder="Enter your E-Mail..." title="Enter a valid email" required/>
 					</td>
 				</tr>

@@ -26,10 +26,10 @@ try {
     $email = pg_escape_string(trim($_POST["login_email"]));
     $password = pg_escape_string(trim($_POST["login_password"]));
 
-    $whereClause = ["email" => $email, "password" => $password];
+    $whereClause = ["email" => $email];
     $options = ["fetch_first" => true];
 
-    $userResponse = select_from("users", ["user_id", "email", "rank"], $whereClause, $options);
+    $userResponse = select_from("users", ["user_id", "email", "rank", "password"], $whereClause, $options);
     $userData = json_decode($userResponse, true);
 
     if (!$userData["success"] || empty($userData["data"])) {
@@ -37,6 +37,11 @@ try {
     }
 
     $user = $userData["data"];
+    $hashedPassword = $user["password"];
+
+    if (!password_verify($password, $hashedPassword)) {
+        throw new Exception("Contraseña incorrecta.");
+    }
 
     $_SESSION["sc_UserId"] = $user["user_id"];
     $_SESSION["sc_Mail"] = $user["email"];

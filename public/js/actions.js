@@ -640,6 +640,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}, 50);
 
 				initDragAndDrop('profile-drop-area', 'profile-img', 'profile-pic-preview');
+
+				populateCountryPhoneCodes('country_code', 'user_phone');
 			}
 		});
 	}
@@ -4674,7 +4676,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 			currentUserId = parseInt(user.user_id) || 0;
 		}
 
-		const socket = new WebSocket('ws://localhost:3001'); // Usa tu IP pública si es remoto
+		// const socket = new WebSocket('ws://allstockcontrol.com:3001'); // solo si es HTTP
+		// const socket = new WebSocket('wss://allstockcontrol.com:3001'); // si usas HTTPS
+		// const socket = new WebSocket('ws://localhost:3001'); // Usa tu IP pública si es remoto
+		const socket = new WebSocket(`ws://${location.hostname}:3001`);
 
 		socket.addEventListener('open', () => {
 			console.log('✅ WebSocket conectado');
@@ -4695,7 +4700,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				const container = document.getElementById('notification-container');
 
 				const box = document.createElement('div');
-				box.classList.add('notification-box'); // VALIDAR QUE SOLO SALGA LA NOTIFICACION AL IDE MANDADO
+				box.classList.add('notification-box');
 
 				box.innerHTML = `
 					<div class="notification-title">${notifType}</div>
@@ -5306,6 +5311,84 @@ document.addEventListener("DOMContentLoaded", async function () {
 			select.innerHTML += `<option value="">Error loading vehicle types</option>`;
 		}
 	}
+
+	async function populateCountryPhoneCodes(selectId, phoneInputId, selectedValue = '') {
+		const select = document.getElementById(selectId);
+		const phoneInput = document.getElementById(phoneInputId);
+		if (!select || !phoneInput) return;
+
+		// Limpia el select
+		select.innerHTML = '';
+
+		// Opción por defecto
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = 'Select a Country Code';
+		select.appendChild(defaultOption);
+
+		try {
+			const res = await fetch('api/get_global_array.php?key=countryPhoneCodes');
+			const data = await res.json();
+
+			if (data.success && data.data) {
+				for (const [value, label] of Object.entries(data.data)) {
+					const option = document.createElement('option');
+					option.value = value;
+					option.textContent = `${label} (${value.split('|')[1]})`;
+					if (String(value) === String(selectedValue)) {
+						option.selected = true;
+						setPhonePrefix(phoneInput, value.split('|')[1]);
+					}
+					select.appendChild(option);
+				}
+			} else {
+				select.innerHTML += `<option value="">No country codes found</option>`;
+			}
+		} catch (error) {
+			console.error("Error loading country codes:", error);
+			select.innerHTML += `<option value="">Error loading country codes</option>`;
+		}
+
+		// Evento para actualizar prefijo al cambiar el país
+		select.addEventListener('change', () => {
+			const selected = select.value;
+			const prefix = selected ? selected.split('|')[1] : '';
+			setPhonePrefix(phoneInput, prefix);
+		});
+	}
+
+	function setPhonePrefix(input, prefix) {
+		if (!prefix) {
+			input.value = '';
+			input.readOnly = false;
+			return;
+		}
+
+		input.value = prefix + ' ';
+		input.readOnly = false;
+
+		// Elimina cualquier listener previo para evitar duplicados
+		input.oninput = null;
+
+		input.addEventListener('input', () => {
+			if (!input.value.startsWith(prefix)) {
+				input.value = prefix + ' ';
+				input.setSelectionRange(input.value.length, input.value.length); // mover cursor al final
+				return;
+			}
+
+			let numberPart = input.value.substring(prefix.length).replace(/[^0-9]/g, '');
+
+			// Eliminar ceros iniciales si existen
+			if (numberPart.startsWith('0')) {
+				numberPart = numberPart.replace(/^0+/, '');
+			}
+
+			input.value = prefix + ' ' + numberPart;
+			input.setSelectionRange(input.value.length, input.value.length); // mantener cursor al final
+		});
+	}
+
 
 	// Función para llenar el <select> con los roles de usuario
 	async function populateRankSelect(selectId, selectedValue = '', minRoleId = 1) {
