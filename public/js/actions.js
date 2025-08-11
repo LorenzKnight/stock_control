@@ -614,7 +614,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	// 📌 script para my info popup
 	let editMyDataButton = document.getElementById('edit-my-data');
 	if (editMyDataButton) {
-		editMyDataButton.addEventListener('click', function (e) {
+		editMyDataButton.addEventListener('click', async function (e) {
 			e.preventDefault();
 
 			scrollToTopIfNeeded();
@@ -633,15 +633,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 				popupContent.style.transform = 'scale(0.7)';
 				popupContent.style.opacity = '0';
 				popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+				
 				setTimeout(() => {
 					popupContent.style.transform = 'scale(1)';
 					popupContent.style.opacity = '1';
-					loadMyInfo();
 				}, 50);
 
 				initDragAndDrop('profile-drop-area', 'profile-img', 'profile-pic-preview');
 
-				populateCountryPhoneCodes('country_code', 'user_phone');
+				const info = await loadMyInfo();
+				const user = info?.data || {};
+				const selectedKeyFromDB = user.country_code || '';
+
+				await populateCountryPhoneCodes('country_code', 'user_phone', selectedKeyFromDB);
 			}
 		});
 	}
@@ -808,6 +812,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 					profilePicPreview.src = "";
 					profilePicPreview.style.display = 'none';
 				}
+
+				return data;
 			}
 		} catch (error) {
 			console.error("Error loading user info:", error);
@@ -5337,7 +5343,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					option.textContent = `${label} (${value.split('|')[1]})`;
 					if (String(value) === String(selectedValue)) {
 						option.selected = true;
-						setPhonePrefix(phoneInput, value.split('|')[1]);
+						setPhonePrefix(phoneInput, value.split('|')[1], true);
 					}
 					select.appendChild(option);
 				}
@@ -5353,40 +5359,62 @@ document.addEventListener("DOMContentLoaded", async function () {
 		select.addEventListener('change', () => {
 			const selected = select.value;
 			const prefix = selected ? selected.split('|')[1] : '';
-			setPhonePrefix(phoneInput, prefix);
+			setPhonePrefix(phoneInput, prefix, true);
 		});
 	}
 
-	function setPhonePrefix(input, prefix) {
+	function setPhonePrefix(input, prefix, preserveExisting = true) {
 		if (!prefix) {
+			if (input._prefixHandler) {
+			input.removeEventListener('input', input._prefixHandler);
+			input._prefixHandler = null;
+			}
 			input.value = '';
 			input.readOnly = false;
 			return;
 		}
 
-		input.value = prefix + ' ';
+		const base = prefix + ' ';
+
+		if (input._prefixHandler) {
+			input.removeEventListener('input', input._prefixHandler);
+			input._prefixHandler = null;
+		}
+
+		let numberPart = '';
+		if (preserveExisting && input.value) {
+			const normalized = String(input.value).replace(/[^\d+]/g, '');
+			if (normalized.startsWith(prefix)) {
+				numberPart = normalized.slice(prefix.length).replace(/[^0-9]/g, '');
+			} else if (normalized.startsWith('+')) {
+				numberPart = normalized.replace(/^\+\d+/, '').replace(/[^0-9]/g, '');
+			} else {
+				numberPart = normalized.replace(/[^0-9]/g, '');
+			}
+		}
+
+		numberPart = numberPart.replace(/^0+/, '');
+
+		input.value = base + numberPart;
 		input.readOnly = false;
 
-		// Elimina cualquier listener previo para evitar duplicados
-		input.oninput = null;
-
-		input.addEventListener('input', () => {
-			if (!input.value.startsWith(prefix)) {
-				input.value = prefix + ' ';
-				input.setSelectionRange(input.value.length, input.value.length); // mover cursor al final
+		const handler = () => {
+			if (!input.value.startsWith(base)) {
+				input.value = base + '';
+				input.setSelectionRange(input.value.length, input.value.length);
 				return;
 			}
+			
+			let np = input.value.slice(base.length).replace(/[^0-9]/g, '');
+			np = np.replace(/^0+/, '');
+			input.value = base + np;
+			input.setSelectionRange(input.value.length, input.value.length);
+		};
 
-			let numberPart = input.value.substring(prefix.length).replace(/[^0-9]/g, '');
+		input._prefixHandler = handler;
+		input.addEventListener('input', handler);
 
-			// Eliminar ceros iniciales si existen
-			if (numberPart.startsWith('0')) {
-				numberPart = numberPart.replace(/^0+/, '');
-			}
-
-			input.value = prefix + ' ' + numberPart;
-			input.setSelectionRange(input.value.length, input.value.length); // mantener cursor al final
-		});
+		input.setSelectionRange(input.value.length, input.value.length);
 	}
 
 

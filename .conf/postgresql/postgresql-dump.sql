@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
 	name VARCHAR(255) NULL,
 	surname VARCHAR(255) NULL,
 	email VARCHAR(255) NULL,
+	country_code VARCHAR(10) NULL,
 	phone VARCHAR(20) NULL,
 	username VARCHAR(255) NULL,
 	password VARCHAR(255) NULL,
@@ -19,7 +20,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 -- INSERT INTO users (parent_user, name, surname, email, phone, username, password, image, verified, birthday, signup_date, company_id, package_id, status)
--- VALUES (null, 'Lorenz', 'Knight', 'lorenz.knight@gmail.com', 763199480, 'lorenz_knight', 123456, 'profile_user_1_1742243935.jpg', 0, '1984-09-03 00:00:00', '2022-10-18 00:00:00', 1, 5, 1),
+-- VALUES (null, 'Lorenz', 'Knight', 'lorenz.knight@gmail.com', 763199480, 'lorenz_knight', 123456, 'profile_user_1_1742243935.jpg', 0, '1984-09-03 00:00:00', '2022-10-18 00:00:00', null, 3, 1),
 -- 	(1, 'Joel', 'Knight', 'joel.knight@gmail.com', null, 'joel_knight', 123456, null, 0, '1984-09-03 00:00:00', '2022-10-18 00:00:00', 1, null, 1),
 -- 	(1, 'Shael', 'Knight', 'shael.knight@gmail.com', null, 'shael_knight', 123456, 'perfil.png', 0, '1984-09-03 00:00:00', '2022-10-18 00:00:00', 1, null, 1),
 -- 	(1, 'John', 'Doe', 'john.doe@gmail.com', null, 'john_doe', 123456, null, 0, '1984-09-03 00:00:00', '2022-10-18 00:00:00', 1, null, 1),

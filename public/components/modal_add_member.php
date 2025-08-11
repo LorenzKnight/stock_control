@@ -1,6 +1,6 @@
 <div class="bg-popup" id="add-members-form">
 	<div class="formular-frame">
-        <form action="stock.php" method="post" name="formMembers" id="formMembers">
+        <form method="post" name="formMembers" id="formMembers">
             <table width="80%" align="center" cellspacing="0">
                 <tr valign="baseline">
 					<td style="font-size: 12px;" colspan="6" align="center" valign="middle">

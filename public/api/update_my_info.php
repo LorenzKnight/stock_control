@@ -21,6 +21,7 @@ try {
     $name = trim($_POST['user_name'] ?? '');
     $surname = trim($_POST['user_surname'] ?? '');
     $birthday = trim($_POST['user_birthday'] ?? '');
+    $countryCode = trim($_POST['country_code'] ?? '');
     $phone = trim($_POST['user_phone'] ?? '');
     $email = trim($_POST['user_email'] ?? '');
 
@@ -35,6 +36,7 @@ try {
     $updateData = [
         "name" => $name,
         "surname" => $surname,
+        "country_code" => $countryCode,
         "phone" => $phone,
         "email" => $email
     ];

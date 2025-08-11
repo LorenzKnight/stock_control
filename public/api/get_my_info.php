@@ -28,6 +28,7 @@ try {
         "name",
         "surname",
         "birthday",
+        "country_code",
         "phone",
         "email",
         "image",
