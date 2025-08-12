@@ -35,11 +35,11 @@
 					</td>
 				</tr>
                 <tr valign="baseline" class="form_height">
-					<td width="20%" align="center" valign="middle">
+					<td width="50%" align="center" valign="middle">
 						<label for="country_code">Country Code:</label>
 						<select class="form-medium-input-style" name="country_code" id="country_code" required></select>
 					</td>
-					<td width="80%" align="center" valign="middle">
+					<td width="50%" align="center" valign="middle">
 						<label for="user_phone">Phone Number:</label>
 						<input class="form-medium-input-style" type="text" name="user_phone" id="user_phone" placeholder="Enter your phone number..." title="Enter a valid phone number"/>
 					</td>

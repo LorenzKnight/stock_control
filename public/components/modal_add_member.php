@@ -9,11 +9,13 @@
 				</tr>
                 <tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
+						<label for="name">Name:</label>
 						<input class="form-input-style" type="text" name="name" id="name" placeholder="Enter a name..." title="Enter a valid name" required/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
+						<label for="surname">Surame:</label>
 						<input class="form-input-style" type="text" name="surname" id="surname" placeholder="Enter a surname..." title="Enter a valid surname" required/>
 					</td>
 				</tr>
@@ -24,8 +26,13 @@
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
-					<td colspan="6" align="center" valign="middle">
-						<input class="form-input-style" type="number" name="phone" id="phone" placeholder="Enter a phone number..." title="Enter a valid phone number"/>
+					<td width="50%" align="center" valign="middle">
+						<label for="country_code">Country Code:</label>
+						<select class="form-medium-input-style" name="member_country_code" id="member_country_code" required></select>
+					</td>
+					<td width="50%" align="center" valign="middle">
+						<label for="phone">Phone Number:</label>
+						<input class="form-medium-input-style" type="text" name="phone" id="phone" placeholder="Enter a phone number..." title="Enter a valid phone number"/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
@@ -42,11 +49,13 @@
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
+						<label for="email">E-Mail:</label>
 						<input class="form-input-style" type="email" name="email" id="email" placeholder="Enter a E-Mail..." title="Enter a valid email" required/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
+						<label for="password">Password:</label>
 						<input class="form-input-style" type="password" name="password" id="password" placeholder="Enter a Password..." required/>
 					</td>
 				</tr>

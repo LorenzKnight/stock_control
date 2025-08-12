@@ -21,14 +21,15 @@ try {
     $targetUserId = intval($_POST["edit_user_id"] ?? 0);
     if ($targetUserId <= 0) throw new Exception("Invalid user ID.");
 
-    $name     = trim($_POST["edit_name"] ?? '');
-    $surname  = trim($_POST["edit_surname"] ?? '');
-    $birthday = trim($_POST["edit_birthday"] ?? '');
-    $phone    = trim($_POST["edit_phone"] ?? '');
-    $email    = trim($_POST["edit_email"] ?? '');
-    $company  = intval($_POST["edit_company"] ?? 0);
-    $rank     = intval($_POST["edit_rank"] ?? 0);
-    $status   = isset($_POST["edit_status"]) ? 1 : 0;
+    $name           = trim($_POST["edit_name"] ?? '');
+    $surname        = trim($_POST["edit_surname"] ?? '');
+    $birthday       = trim($_POST["edit_birthday"] ?? '');
+    $countryCode    = trim($_POST["edit_member_country_code"] ?? '');
+    $phone          = trim($_POST["edit_phone"] ?? '');
+    $email          = trim($_POST["edit_email"] ?? '');
+    $company        = intval($_POST["edit_company"] ?? 0);
+    $rank           = intval($_POST["edit_rank"] ?? 0);
+    $status         = isset($_POST["edit_status"]) ? 1 : 0;
 
     if ($name === '' || $surname === '' || $email === '') {
         throw new Exception("Name, surname and email are required.");
@@ -42,6 +43,7 @@ try {
         "name"          => $name,
         "surname"       => $surname,
         "birthday"      => $birthday,
+        "country_code"  => $countryCode,
         "phone"         => $phone,
         "email"         => $email,
         "company_id"    => $company,

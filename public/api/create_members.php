@@ -43,6 +43,8 @@ try {
 		$data[$field] = htmlspecialchars(trim($_POST[$field]));
 	}
 
+	$countryCode = isset($_POST['member_country_code']) ? trim($_POST['member_country_code']) : (isset($_POST['member_country_code']) ? trim($_POST['member_country_code']) : null);
+	
 	$emailCheckResponse = select_from("users", ["user_id"], ["email" => $data["email"]], ["fetch_first" => true]);
 	$emailCheck = json_decode($emailCheckResponse, true);
 
@@ -54,6 +56,7 @@ try {
 		"name"				=> $data["name"],
 		"surname"			=> $data["surname"],
 		"birthday"			=> $data["birthday"],
+		"country_code"		=> $countryCode,
 		"phone"				=> $data["phone"],
 		"email"				=> $data["email"],
 		"password"			=> password_hash($data["password"], PASSWORD_DEFAULT),

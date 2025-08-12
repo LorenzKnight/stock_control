@@ -9,11 +9,13 @@
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
+						<label for="edit_name">Name:</label>
 						<input class="form-input-style" type="text" name="edit_name" id="edit_name" placeholder="Enter a name..." title="Enter a valid name" required/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
+						<label for="edit_surname">Surame:</label>
 						<input class="form-input-style" type="text" name="edit_surname" id="edit_surname" placeholder="Enter a surname..." title="Enter a valid surname" required/>
 					</td>
 				</tr>
@@ -24,24 +26,30 @@
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
-					<td colspan="6" align="center" valign="middle">
-						<input class="form-input-style" type="number" name="edit_phone" id="edit_phone" placeholder="Enter a phone number..." title="Enter a valid phone number"/>
+					<td width="50%" align="center" valign="middle">
+						<label for="country_code">Country Code:</label>
+						<select class="form-medium-input-style" name="edit_member_country_code" id="edit_member_country_code" required></select>
+					</td>
+					<td width="50%" align="center" valign="middle">
+						<label for="edit_phone">Phone Number:</label>
+						<input class="form-medium-input-style" type="text" name="edit_phone" id="edit_phone" placeholder="Enter a phone number..." title="Enter a valid phone number"/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="2" align="center" valign="middle">
-						<label for="rank">Company / Affiliate:</label>
+						<label for="edit_company">Company / Affiliate:</label>
 						<select class="form-input-style" name="edit_company" id="edit_company" required></select>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="2" align="center" valign="middle">
-						<label for="rank">User Role / Permissions:</label>
+						<label for="edit_rank">User Role / Permissions:</label>
 						<select class="form-input-style" name="edit_rank" id="edit_rank"></select>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" style="padding-bottom: 5px" align="center" valign="middle">
+						<label for="edit_email">E-Mail:</label>
 						<input class="form-input-style" type="email" name="edit_email" id="edit_email" placeholder="Enter a E-Mail..." title="Enter a valid email" required/>
 					</td>
 				</tr>

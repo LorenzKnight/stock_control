@@ -493,14 +493,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 				document.getElementById('edit_birthday').value = user.birthday ? user.birthday.split(" ")[0] : '';
 				document.getElementById('edit_phone').value = user.phone || '';
 				document.getElementById('edit_email').value = user.email || '';
+				// Opcional: Puedes ocultar el campo de contraseña si estás editando
+				// document.getElementById('edit_password').value = '';
+				document.getElementById("edit_status").checked = user.status === "1" || user.status === 1;
+
+				const selectedKeyFromDB = user.country_code || '';
+				await populateCountryPhoneCodes('edit_member_country_code', 'edit_phone', selectedKeyFromDB);
 
 				populateRankSelect('edit_rank', user.rank, '4');
 
 				populateCompanies('edit_company', user.company_id);
-
-				// Opcional: Puedes ocultar el campo de contraseña si estás editando
-				// document.getElementById('edit_password').value = '';
-				document.getElementById("edit_status").checked = user.status === "1" || user.status === 1;
 			}
 		} catch (error) {
 			console.error("Error loading user data:", error);
@@ -1186,6 +1188,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				scrollToTopIfNeeded();
 
+				clearFields(['name', 'surname', 'birthday', 'phone', 'email', 'password']);
+
 				const addMembersForm = document.getElementById('add-members-form');
 				const popupContent = addMembersForm.querySelector('.formular-frame');
 
@@ -1204,6 +1208,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 						popupContent.style.transform = 'scale(1)';
 						popupContent.style.opacity = '1';
 					}, 50);
+
+					await populateCountryPhoneCodes('member_country_code', 'phone');
 
 					populateRankSelect('rank', '', 4); // Solo roles 4 o superiores
 
@@ -4890,6 +4896,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 				behavior: 'smooth'
 			});
 		}
+	}
+
+	function clearFields(ids) {
+		ids.forEach(id => {
+			const el = document.getElementById(id);
+			if (el) el.value = '';
+		});
 	}
 
 	// 📌 cerrar al hacer clic fuera del formulario
