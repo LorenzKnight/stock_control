@@ -4688,13 +4688,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 			currentUserId = parseInt(user.user_id) || 0;
 		}
 
-		// const socket = new WebSocket('ws://allstockcontrol.com:3001'); // solo si es HTTP
-		// const socket = new WebSocket('wss://allstockcontrol.com:3001'); // si usas HTTPS
-		// const socket = new WebSocket('ws://localhost:3001'); // Usa tu IP pública si es remoto
+		// const wsProtocol = location.protocol === 'https:' ? 'wss' : 'ws';
+		// const wsUrl = `${wsProtocol}://${location.host}/ws`; // sin puertos; Nginx proxya a 3001
+		// const socket = new WebSocket(wsUrl);
 		const socket = new WebSocket(`ws://${location.hostname}:3001`);
 
 		socket.addEventListener('open', () => {
-			console.log('✅ WebSocket conectado');
+			console.log('✅ WebSocket conected');
 		});
 
 		socket.addEventListener('message', async event => {

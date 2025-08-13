@@ -25,18 +25,27 @@
 // 	ws.on('close', () => {
 // 		clients = clients.filter(client => client !== ws);
 // 	});
+
+// 	ws.isAlive = true;
+// 	ws.on('pong', () => (ws.isAlive = true));
 // });
 
 // function broadcastNotification(payload) {
-// 	console.log("📤 Enviando a clientes:", JSON.stringify(payload, null, 2));
-// 	clients.forEach(client => {
+// 	// Garantiza que el payload sea objeto
+// 	let data = payload;
+// 	if (typeof payload === 'string') {
+// 		try { data = JSON.parse(payload); } catch { data = { message: String(payload) }; }
+// 	}
+// 	const msg = JSON.stringify(data);
+// 	console.log('📤 Enviando a clientes:', msg);
+// 	clients.forEach((client) => {
 // 		if (client.readyState === WebSocket.OPEN) {
-// 			client.send(JSON.stringify(payload));
+// 			try { client.send(msg); } catch (e) { /* ignore */ }
 // 		}
 // 	});
 // }
 
-// server.listen(PORT, () => {
+// server.listen(WS_PORT, '127.0.0.1', () => {
 // 	console.log(`🟢 WebSocket server listening on ws://allstockcontrol.com:${PORT}`);
 // });
 
@@ -46,17 +55,19 @@
 // app.use(express.json());
 
 // app.post('/notify', (req, res) => {
-// 	console.log('🔔 Notificación recibida desde PHP:', req.body);
-// 	if (!req.body.message) {
+// 	const body = req.body || {};
+// 	console.log('🔔 Notificación recibida desde PHP:', body);
+
+// 	if (!body.message) {
 // 		return res.status(400).json({ success: false, message: "Falta 'message' en el payload." });
 // 	}
 	
-// 	broadcastNotification(req.body);
+// 	broadcastNotification(body);
 // 	res.json({ success: true });
 // });
 
-// app.listen(HTTP_BRIDGE_PORT, () => {
-// 	console.log(`🟢 HTTP bridge listening on http://allstockcontrol.com:${HTTP_BRIDGE_PORT}/notify`);
+// app.listen(HTTP_BRIDGE_PORT, '127.0.0.1', () => {
+// 	console.log(`🟢 HTTP bridge listening on http://127.0.0.1:${HTTP_BRIDGE_PORT}/notify`);
 // });
 
 
