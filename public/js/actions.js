@@ -1,4 +1,111 @@
 document.addEventListener("DOMContentLoaded", async function () {
+	const setUp = document.getElementById('setup-form');
+	if (setUp) {
+		const popupContent = setUp.querySelector('.formular-frame');
+		try {
+				let response = await fetch('api/get_my_info.php', {
+					method: 'GET',
+					headers: { Accept: 'application/json' }
+				});
+
+				let data = await response.json();
+
+				if (data.success && data.data) {
+					let user = data.data;
+
+					if (user.company_id === null || user.company_id === "" || user.company_id === undefined) {
+						setUp.style.display = 'block';
+						setUp.style.opacity = '0';
+						setUp.style.transition = 'opacity 0.5s ease';
+						setTimeout(() => {
+							setUp.style.opacity = '1';
+						}, 10);
+
+						popupContent.style.transform = 'scale(0.7)';
+						popupContent.style.opacity = '0';
+						popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+						setTimeout(() => {
+							popupContent.style.transform = 'scale(1)';
+							popupContent.style.opacity = '1';
+						}, 50);
+					}
+				}
+		} catch (error) {
+			console.error("Error fetching setup data:", error);
+		}
+	}
+
+
+	const termsCheck = document.getElementById('terms-check');
+    const privacyCheck = document.getElementById('privacy-check');
+    const submitBtn = document.getElementById('submit-company-info');
+
+    function updateButtonState() {
+        const enabled = termsCheck.checked && privacyCheck.checked;
+        submitBtn.disabled = !enabled;
+        
+        if (enabled) {
+            submitBtn.classList.remove('button-ghost');
+        } else {
+            submitBtn.classList.add('button-ghost');
+        }
+    }
+
+    if (termsCheck && privacyCheck && submitBtn) {
+        termsCheck.addEventListener('change', updateButtonState);
+        privacyCheck.addEventListener('change', updateButtonState);
+        updateButtonState(); // Estado inicial al cargar
+    }
+
+	
+	const submitCompanyInfo = document.getElementById('submit-company-info');
+	if (submitCompanyInfo) {
+		submitCompanyInfo.addEventListener('click', async (e) => {
+			e.preventDefault();
+
+			const setUp = document.getElementById('setup-form');
+			const popupContent = setUp?.querySelector('.formular-frame');
+
+			if (setUp && popupContent) {
+				setUp.style.transition = 'opacity 300ms ease';
+				setUp.style.display = 'block';
+				void setUp.offsetWidth;
+				setUp.style.opacity = '0';
+
+				setUp.addEventListener('transitionend', () => {
+					setUp.style.display = 'none';
+					setUp.style.opacity = '';
+					setUp.style.transition = '';
+				}, { once: true });
+			}
+
+			const editCompanyForm = document.getElementById('edit-company-form');
+			const companyPopupContent = editCompanyForm?.querySelector('.formular-medium-frame');
+
+			if (editCompanyForm && companyPopupContent) {
+				editCompanyForm.style.display = 'block';
+				editCompanyForm.style.opacity = '0';
+				editCompanyForm.style.transition = 'opacity 300ms ease';
+
+				void editCompanyForm.offsetWidth;
+				editCompanyForm.style.opacity = '1';
+
+				companyPopupContent.style.transform = 'scale(0.7)';
+				companyPopupContent.style.opacity = '0';
+				companyPopupContent.style.transition = 'transform 300ms ease, opacity 300ms ease';
+				
+				void companyPopupContent.offsetWidth;
+				companyPopupContent.style.transform = 'scale(1)';
+				companyPopupContent.style.opacity = '1';
+
+				if (!editCompanyForm.dataset.ddInit && typeof initDragAndDrop === 'function') {
+					initDragAndDrop('company-logo-drop-area', 'company_logo', 'logo-preview');
+					editCompanyForm.dataset.ddInit = '1';
+				}
+			}
+		});
+	}
+
 	if (window.paymentMessage) {
 		let banner = document.getElementById('status-message');
 		let statusText = document.getElementById('status-text');
@@ -5128,7 +5235,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 		let companySelect = document.getElementById(companyId);
 	
 		if (!markSelect || !modelSelect || !submodelSelect || !companySelect) return;
-	console.log(companySelect.value); // AQUI
 		// 🔹 Función para cargar marcas
 		async function loadMarksByCompany(companyIdValue) {
 			let url = 'api/get_categories.php';
