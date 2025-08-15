@@ -19,7 +19,7 @@
                                 <input type="checkbox" id="terms-check" name="acepto" value="1">
                             </td>
                             <td colspan="5" align="left" valign="middle">
-                                Acepto los <a href="URL_DE_POLITICA" target="_blank">términos y condiciones</a> de uso de AllStockControl
+                                I accept the <a href="URL_DE_POLITICA" target="_blank">terms and conditions</a> of use of AllStockControl
                             </td>
                         </tr>
                         <tr valign="baseline" height="60px">
@@ -27,9 +27,9 @@
                                 <input type="checkbox" id="privacy-check" name="acepto" value="1">
                             </td>
                             <td colspan="5" align="left" valign="middle">
-                                Acepto el tratamiento de mis datos personales conforme a la 
-                                <a href="URL_DE_POLITICA" target="_blank">Política de Privacidad</a> y en cumplimiento de las leyes aplicables: 
-                                GDPR (Suecia/UE), CCPA/CPRA (EE.UU.), LGPD (Brasil), LFPDPPP (México) y demás normativas vigentes.
+                                I accept the processing of my personal data in accordance with the
+                                <a href="URL_DE_POLITICA" target="_blank">Privacy Policy</a> and in compliance with the applicable laws:</br>
+                                GDPR (Sweden/EU), CCPA/CPRA (USA), LGPD (Brazil), LFPDPPP (Mexico), and other relevant regulations.
                             </td>
                         </tr>
                     </table>
