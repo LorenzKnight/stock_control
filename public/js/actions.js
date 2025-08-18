@@ -485,7 +485,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 						`<p><strong>Org No.:</strong> ${orgNo}</p>` +
 						`<p><strong>Name:</strong> ${compName}</p>`;
 				} else {
-					myCompany.innerHTML = `<p style="color: var(--warning-orange);">To initialize the system, it is necessary to complete it with your company's data.</p>`;
+					myCompany.innerHTML = `<div class="warning-message">
+						<p>To initialize the system, it is necessary to complete it with your company's data.</p>
+					</div>`;
 				}
 			})
 			.catch (error => {

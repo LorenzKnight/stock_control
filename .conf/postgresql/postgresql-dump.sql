@@ -42,53 +42,53 @@ CREATE TABLE IF NOT EXISTS packages (
 );
 
 -- INSERT INTO packages (
---   package_name, package_description, package_price, members_limit, admins_limit, branch_affiliate_limit, products_limit, package_duration, package_status
+--   package_name, package_image, package_description, package_price, members_limit, admins_limit, branch_affiliate_limit, products_limit, package_duration, package_status
 -- ) VALUES 
--- ('Tried Pack',  
+-- ('Tried Pack', 'pack-upgrade-2.png',
 --  'Perfect to explore the system with no commitment. Includes 1 user, limited access to essential features, and 1 affiliate branch. Great for solo entrepreneurs.', 
 --  NULL, 0, 0, 1, 5, 30, 1),
 
--- ('Basic Pack',  
+-- ('Basic Pack', 'pack-upgrade-2.png',
 --  'Basic plan for individual users. Includes 1 member, essential tools, 1 affiliate branch, and up to 10 products. Ideal for freelancers or micro-businesses.', 
 --  2, 0, 1, 1, 10, NULL, 1),
 
--- ('Mini Pack',  
+-- ('Mini Pack', 'pack-upgrade-2.png',
 --  'Designed for small teams. Supports up to 5 members, shared admin access, 1 affiliate branch, and up to 50 products. Perfect for local shops.', 
 --  10, 5, 1, 1, 50, NULL, 1),
 
--- ('Smart Pack', 
+-- ('Smart Pack', 'pack-upgrade-2.png',
 --  'A great choice for growing teams. Allows up to 10 members, 1 admin, 2 affiliate branches, and up to 100 products. Ideal for emerging small businesses.', 
 --  20, 10, 1, 2, 100, NULL, 1),
 
--- ('Plus Pack',  
+-- ('Plus Pack', 'pack-upgrade-2.png',
 --  'Mid-range capacity for moderately expanding businesses. Up to 15 members, 2 admins, 3 affiliate branches, and 150 products.', 
 --  30, 15, 2, 3, 150, NULL, 1),
 
--- ('Growth Pack', 
+-- ('Growth Pack', 'pack-upgrade-2.png',
 --  'Optimized for expansion. Includes 20 members, 2 admins, 4 affiliate branches, and up to 200 products. Balanced for scale and control.', 
 --  40, 20, 2, 4, 200, NULL, 1),
 
--- ('Boost Pack',  
+-- ('Boost Pack', 'pack-upgrade-2.png',
 --  'A boost for larger operations. Supports 25 members, 3 admins, 5 affiliate branches, and 250 products. Ideal for chains and franchises.', 
 --  50, 25, 3, 5, 250, NULL, 1),
 
--- ('Power Pack',  
+-- ('Power Pack', 'pack-upgrade-2.png',
 --  'Strong operational power. Allows 30 users, 3 admins, 6 affiliate branches, and 300 products. Great for businesses with multiple locations.', 
 --  60, 30, 3, 6, 300, NULL, 1),
 
--- ('Max Pack',    
+-- ('Max Pack', 'pack-upgrade-2.png',
 --  'For large business structures. Includes 35 members, 4 admins, 7 affiliate branches, and up to 350 products. Perfect for diversified operations.', 
 --  70, 35, 4, 7, 350, NULL, 1),
 
--- ('Super Pack',  
+-- ('Super Pack', 'pack-upgrade-2.png',
 --  'Wide coverage for big enterprises. Supports 40 members, 4 admins, 8 affiliate branches, and 400 products. Recommended for regional operations.', 
 --  80, 40, 4, 8, 400, NULL, 1),
 
--- ('Mega Pack',   
+-- ('Mega Pack', 'pack-upgrade-2.png',
 --  'Robust solution for high-activity organizations. 45 members, 5 admins, 9 affiliate branches, and 450 products.', 
 --  90, 45, 5, 9, 450, NULL, 1),
 
--- ('Ultra Pack',  
+-- ('Ultra Pack', 'pack-upgrade-2.png',
 --  'The full experience. Includes 50 members, 5 admins, 10 affiliate branches, and up to 500 products. Recommended for well-structured companies.', 
 --  100, 50, 5, 10, 500, NULL, 1);
 
