@@ -18,7 +18,7 @@ try {
         throw new Exception("Method not allowed");
     }
 
-    $requiredFields = ["name", "surname", "birthday", "phone", "email", "password"];
+    $requiredFields = ["name", "surname", "birthday", "email", "password"];
     $data = [];
 
 	foreach ($requiredFields as $field) {
@@ -42,13 +42,6 @@ try {
 
     if ($emailCheck && $emailCheck["success"] && !empty($emailCheck["data"])) {
         throw new Exception("The email is already registered.");
-    }
-
-    $phoneCheckResponse = select_from("users", ["user_id"], ["phone" => $data["phone"]], ["fetch_first" => true]);
-    $phoneCheck = json_decode($phoneCheckResponse, true);
-
-    if ($phoneCheck && $phoneCheck["success"] && !empty($phoneCheck["data"])) {
-        throw new Exception("The phone number is already registered.");
     }
 
     $insertResponse = insert_into("users", $data, ["id" => "user_id"]);

@@ -165,10 +165,24 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// 📌 Manejo del formulario de registro
-	let formsignin = document.getElementById('formsignup');
-	if (formsignin) {
-		formsignin.addEventListener('submit', async function (e) {
+	let formSignUp = document.getElementById('formsignup');
+	if (formSignUp) {
+		formSignUp.addEventListener('submit', async function (e) {
 			e.preventDefault();
+
+			let password = document.getElementById('password').value.trim();
+			let confirmPassword = document.getElementById('confirm_password').value.trim();
+
+			if (password !== confirmPassword) {
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				statusText.innerText = "Error: Passwords do not match.";
+				statusImage.src = "../images/sys-img/error.gif";
+				banner.style.display = 'block';
+				return;
+			}
 
 			let formData = new FormData(this);
 
