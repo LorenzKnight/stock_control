@@ -626,6 +626,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 				populateRankSelect('edit_rank', user.rank, '4');
 
 				populateCompanies('edit_company', user.company_id);
+
+				handlePopupClose("edit-members-form", ".formular-frame", []);
 			}
 		} catch (error) {
 			console.error("Error loading user data:", error);
@@ -771,6 +773,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 				const selectedKeyFromDB = user.country_code || '';
 
 				await populateCountryPhoneCodes('country_code', 'user_phone', selectedKeyFromDB);
+			
+				handlePopupClose("edit-my_info-form", ".formular-frame", []);
 			}
 		});
 	}
@@ -849,6 +853,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}, 50);
 
 				populatePackages('packs');
+
+				handlePopupClose("subsc-form", ".formular-medium-frame", []);
 			}
 		});
 	}
@@ -946,36 +952,91 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// 📌 script para manage company popup
-	let manageCompBtn = document.getElementById('manage-comp-button');
-	if (manageCompBtn) {
-		manageCompBtn.addEventListener('click', function (e) {
-			e.preventDefault();
+	// let manageCompBtn = document.getElementById('manage-comp-button');
+	// if (manageCompBtn) {
+	// 	manageCompBtn.addEventListener('click', async function (e) {
+	// 		e.preventDefault();
 
-			scrollToTopIfNeeded();
+	// 		scrollToTopIfNeeded();
+	// 		console.log("Manage Company Button Clicked");
 
-			const editCompanyForm = document.getElementById('edit-company-form');
-			const popupContent = editCompanyForm.querySelector('.formular-medium-frame');
+	// 		const editCompanyForm = document.getElementById('edit-company-form');
+	// 		const popupContent = editCompanyForm.querySelector('.formular-medium-frame');
 
-			if (editCompanyForm && popupContent) {
-				editCompanyForm.style.display = 'block';
-				editCompanyForm.style.opacity = '0';
-				editCompanyForm.style.transition = 'opacity 0.5s ease';
-				setTimeout(() => {
-					editCompanyForm.style.opacity = '1';
-				}, 10);
+	// 		if (editCompanyForm && popupContent) {
+	// 			editCompanyForm.style.display = 'block';
+	// 			editCompanyForm.style.opacity = '0';
+	// 			editCompanyForm.style.transition = 'opacity 0.5s ease';
+	// 			setTimeout(() => {
+	// 				editCompanyForm.style.opacity = '1';
+	// 			}, 10);
 
-				popupContent.style.transform = 'scale(0.7)';
-				popupContent.style.opacity = '0';
-				popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-				setTimeout(() => {
-					popupContent.style.transform = 'scale(1)';
-					popupContent.style.opacity = '1';
-				}, 50);
+	// 			popupContent.style.transform = 'scale(0.7)';
+	// 			popupContent.style.opacity = '0';
+	// 			popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+	// 			setTimeout(() => {
+	// 				popupContent.style.transform = 'scale(1)';
+	// 				popupContent.style.opacity = '1';
+	// 			}, 50);
 
-				initDragAndDrop('company-logo-drop-area', 'company_logo', 'logo-preview');
+	// 			initDragAndDrop('company-logo-drop-area', 'company_logo', 'logo-preview');
+			
+	// 			handlePopupClose("edit-company-form", ".formular-medium-frame", []);
+	// 		}
+	// 	});
+	// }
+
+	document.addEventListener('click', function onManageCompClick(e) {
+		const btn = e.target.closest('#manage-comp-button');
+		if (!btn) return;              // no es el click al botón, salir
+
+		e.preventDefault();
+
+		try {
+			if (typeof scrollToTopIfNeeded === 'function') scrollToTopIfNeeded();
+
+			const popupId = 'edit-company-form';
+			const form = document.getElementById(popupId);
+			if (!form) {
+			// Visibilidad clara aunque te hayan removido los console.log en prod
+			alert('No se encontró #edit-company-form en el DOM.');
+			return;
 			}
-		});
-	}
+
+			const content = form.querySelector('.formular-medium-frame');
+			if (!content) {
+			alert('No se encontró .formular-medium-frame dentro del formulario.');
+			return;
+			}
+
+			// Mostrar con animación
+			form.style.display = 'block';
+			form.style.opacity = '0';
+			content.style.transform = 'scale(0.7)';
+			content.style.opacity = '0';
+
+			// Usa requestAnimationFrame para asegurar reflow antes de animar
+			requestAnimationFrame(() => {
+			form.style.transition = 'opacity 0.5s ease';
+			content.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+			form.style.opacity = '1';
+			content.style.transform = 'scale(1)';
+			content.style.opacity = '1';
+			});
+
+			// Tu lógica
+			if (typeof initDragAndDrop === 'function') {
+			initDragAndDrop('company-logo-drop-area', 'company_logo', 'logo-preview');
+			}
+
+			// Cerrar al hacer clic fuera
+			handlePopupClose(popupId, '.formular-medium-frame', []);
+		} catch (err) {
+			// Si en prod te quitan console.log, al menos verás el error
+			alert('Error abriendo el popup: ' + (err?.message || err));
+		}
+	}, true);
+
 
 	let originalCompanyData = {};
 	let hasChanges = false;
@@ -1510,6 +1571,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 					initCategorySelectors('product_mark', 'product_model', 'product_sub_model', 'select-company');
 
 					populateCurrencies('currency');
+
+					handlePopupClose("add-product-form", ".formular-frame", []);
 				}
 			} catch (err) {
 				console.error("Error opening add product form:", err);
@@ -1659,6 +1722,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 						markList.appendChild(row);
 					});
 				}
+
+				handlePopupClose("add-category-form", ".formular-big-frame", []);
 			} catch (error) {
 				console.error("Error loading categories:", error);
 			}
@@ -2174,6 +2239,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 					const cardMenuBtn = card.querySelector('.product-menu');
 					cardMenuBtn.addEventListener('click', () => {
 						openProductForm(product.product_id);
+
+						handlePopupClose("product-options", ".formular-frame", []);
 					});
 				});
 			} else {
@@ -2340,9 +2407,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				// Botón: Edit product
 				const editBtn = document.getElementById('editProductBtn');
 				if (editBtn) {
-
 					editBtn.setAttribute('data-product-id', productId);
-
 					editBtn.onclick = () => {
 						const menuDiv = document.getElementById('product-menu-buttons');
 						const editDiv = document.getElementById('edit-product-modal');
@@ -2418,7 +2483,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	async function openEditProductForm(productId) {
-		console.log(productId);
 		const formEditProduct = document.getElementById('formEditProduct');
 		if (!formEditProduct) return;
 	
@@ -2471,7 +2535,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 				
 				document.getElementById('edit_product_mark').value = product.product_mark;
 				await loadModels(product.product_mark, 'edit_product_model', product.product_model);
+
 				await loadSubModels(product.product_model, 'edit_product_sub_model', product.product_sub_model);
+
+				handlePopupClose("product-options", ".formular-frame", []);
 			}
 		} catch (error) {
 			console.error("Error loading product data:", error);
@@ -2682,6 +2749,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 						const customersMenuBtn = row.querySelector('.customers-menu');
 						customersMenuBtn.addEventListener('click', () => {
 							openCusomersForm(customer.customer_id);
+
+							handlePopupClose("customers-options", ".formular-frame", []);
 						});
 					});
 				} else {
@@ -2735,6 +2804,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 			populateCustomerTypes('customer_type', 1);
 
 			populateCustomerStatus('customer_status', 1);
+
+			handlePopupClose("add-customers-form", ".formular-frame", []);
 		});
 	}
 
@@ -3091,6 +3162,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 	
 				// Inicializar drag and drop
 				initDragAndDrop('edit-customer-drop-area', 'edit_customer_image', 'edit-customer-pic-preview');
+
+				handlePopupClose("customers-options", ".formular-frame", []);
 			}
 		} catch (error) {
 			console.error("Error loading customer data:", error);
@@ -3348,6 +3421,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 						const salesMenuBtn = row.querySelector('.sale-menu');
 						salesMenuBtn.addEventListener('click', () => {
 							openEditSalesForm(sale.sales_id);
+
+							handlePopupClose("sale-options", ".formular-frame", []);
 						});
 					});
 				} else {
@@ -3397,6 +3472,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 			populatePaymentTerms('installments_month');
 
 			populateCurrencies('currency');
+
+			handlePopupClose("add-sale-form", ".formular-big-frame", []);
 		});
 	}
 
@@ -4219,6 +4296,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				// Cargar el select de cuotas
 				await populatePaymentTerms('edit_installments_month', sale.installments_month);
+
+				handlePopupClose("sale-options", ".formular-frame", []);
 			}
 		} catch (error) {
 			console.error("Error loading sale data:", error);
@@ -4387,6 +4466,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 						const paymentsMenuBtn = row.querySelector('.payments-menu');
 						paymentsMenuBtn.addEventListener('click', () => {
 							openPaymentsForm(payment.payment_id);
+
+							handlePopupClose("payments-options", ".formular-frame", []);
 						});
 					});
 				} else {
@@ -4451,19 +4532,20 @@ document.addEventListener("DOMContentLoaded", async function () {
 					editBtn.setAttribute('data-customer-id', paymentId);
 
 					editBtn.onclick = () => {
-						const menuDiv = document.getElementById('payments-menu-buttons');
-						const editDiv = document.getElementById('edit-payments-modal');
+						console.log("Edit Payment button clicked");
+						// const menuDiv = document.getElementById('payments-menu-buttons');
+						// const editDiv = document.getElementById('edit-payments-modal');
 
-						const paymentId = editBtn.getAttribute('data-payment-id');
-						if (!paymentId) return;
+						// const paymentId = editBtn.getAttribute('data-payment-id');
+						// if (!paymentId) return;
 
-						openEditCustomerForm(paymentId);
+						// openEditCustomerForm(paymentId);
 			
-						animateHeightChange(popupContent, editDiv, () => {
-							fadeOutAndHide(menuDiv, () => {
-								showWithFadeIn(editDiv);
-							});
-						});
+						// animateHeightChange(popupContent, editDiv, () => {
+						// 	fadeOutAndHide(menuDiv, () => {
+						// 		showWithFadeIn(editDiv);
+						// 	});
+						// });
 					}
 				}
 
@@ -4555,6 +4637,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 			populatePaymentMethods('payment_method');
 
 			populateDocumentTypes('payer_document_type');
+
+			handlePopupClose("add-payment-form", ".formular-frame", []);
 		});
 	}
 
@@ -5031,37 +5115,41 @@ document.addEventListener("DOMContentLoaded", async function () {
 	// 📌 cerrar al hacer clic fuera del formulario
 	function handlePopupClose(popupId, contentSelector, otherPopups = []) {
 		const popup = document.getElementById(popupId);
-	
-		if (popup) {
-			const popupContent = popup.querySelector(contentSelector);
-			if (!popupContent) return;
+		if (!popup) return;
 
-			popup.addEventListener("click", function (e) {
-				if (!popupContent.contains(e.target)) {
-					popup.style.display = "none";
-	
+		const content = popup.querySelector(contentSelector);
+		if (!content) return;
+
+		const isVisible = (el) => !!(el && (el.offsetWidth || el.offsetHeight || el.getClientRects().length));
+
+		setTimeout(() => {
+			const handler = (e) => {
+				if (!isVisible(popup)) return;
+				const clickDentroContenido = content.contains(e.target);
+				if (!clickDentroContenido) {
+					popup.style.display = 'none';
 					otherPopups.forEach(id => {
 						const other = document.getElementById(id);
-						if (other) other.style.display = "none";
+						if (other) other.style.display = 'none';
 					});
 				}
-			});
-		}
+			};
+			document.addEventListener('click', handler, { capture: true, once: true });
+		}, 0);
 	}
-	handlePopupClose("edit-my_info-form", ".formular-frame", ["edit-my_info-form"]);
-	handlePopupClose("subsc-form", ".formular-medium-frame", ["subsc-form"]);
-	handlePopupClose("edit-company-form", ".formular-medium-frame", ["edit-company-form"]);
+	
+	
 	handlePopupClose("add-members-form", ".formular-frame", ["add-members-form"]);
-	handlePopupClose("edit-members-form", ".formular-frame", ["edit-members-form"]);
-	handlePopupClose("add-product-form", ".formular-frame", ["add-product-form"]);
-	handlePopupClose("add-category-form", ".formular-big-frame", ["add-category-form"]);
-	handlePopupClose("product-options", ".formular-frame", ["product-options"]);
-	handlePopupClose("add-customers-form", ".formular-frame", ["add-customers-form"]);
-	handlePopupClose("customers-options", ".formular-frame", ["customers-options"]);
-	handlePopupClose("add-sale-form", ".formular-big-frame", ["add-sale-form"]);
-	handlePopupClose("sale-options", ".formular-frame", ["sale-options"]);
-	handlePopupClose("add-payment-form", ".formular-frame", ["add-payment-form"]);
-	handlePopupClose("payments-options", ".formular-frame", ["payments-options"]);
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	// 📌 formatear fecha de notificación
 	function formatNotificationDate(dateString) {

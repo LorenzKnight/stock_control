@@ -20,7 +20,6 @@
 			<h2 class="box-title">Company data</h2>
 				
 			<span id="company-data"></span>
-			<!-- <button class="button-style-neutral" id="edit-comp-button">Update Company</button> -->
 			<button class="button-style-neutral" id="manage-comp-button">manage</button>
 		</div>
 		<div class="small-box">
