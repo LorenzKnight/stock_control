@@ -862,7 +862,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	// 📌 Manejo del formulario de subscripcion y checkout via Stripe
 	let formSubscription = document.getElementById('formSubscription');
 	if (formSubscription) {
-		const stripe = Stripe("REMOVED_STRIPE_TEST_PUBLIC"); // PROBLEMA CON ESTA VARIABLE
+		// const stripe = Stripe("REMOVED_STRIPE_TEST_PUBLIC"); // PROBLEMA CON ESTA VARIABLE
 
 		formSubscription.addEventListener('submit', async function (e) {
 			e.preventDefault();
@@ -890,7 +890,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				if (data.success && data.sessionId) {
 					// Espera medio segundo antes de redirigir a Stripe
 					setTimeout(() => {
-						stripe.redirectToCheckout({ sessionId: data.sessionId });
+						// stripe.redirectToCheckout({ sessionId: data.sessionId }); // RESOLVER ESTO
 					}, 500);
 				} else if (data.success && data.redirect_url) {
 					// Caso anterior: redirección manual
@@ -952,91 +952,38 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// 📌 script para manage company popup
-	// let manageCompBtn = document.getElementById('manage-comp-button');
-	// if (manageCompBtn) {
-	// 	manageCompBtn.addEventListener('click', async function (e) {
-	// 		e.preventDefault();
+	let manageCompBtn = document.getElementById('manage-comp-button');
+	if (manageCompBtn) {
+		manageCompBtn.addEventListener('click', async function (e) {
+			e.preventDefault();
 
-	// 		scrollToTopIfNeeded();
-	// 		console.log("Manage Company Button Clicked");
+			scrollToTopIfNeeded();
 
-	// 		const editCompanyForm = document.getElementById('edit-company-form');
-	// 		const popupContent = editCompanyForm.querySelector('.formular-medium-frame');
+			const editCompanyForm = document.getElementById('edit-company-form');
+			const popupContent = editCompanyForm.querySelector('.formular-medium-frame');
 
-	// 		if (editCompanyForm && popupContent) {
-	// 			editCompanyForm.style.display = 'block';
-	// 			editCompanyForm.style.opacity = '0';
-	// 			editCompanyForm.style.transition = 'opacity 0.5s ease';
-	// 			setTimeout(() => {
-	// 				editCompanyForm.style.opacity = '1';
-	// 			}, 10);
+			if (editCompanyForm && popupContent) {
+				editCompanyForm.style.display = 'block';
+				editCompanyForm.style.opacity = '0';
+				editCompanyForm.style.transition = 'opacity 0.5s ease';
+				setTimeout(() => {
+					editCompanyForm.style.opacity = '1';
+				}, 10);
 
-	// 			popupContent.style.transform = 'scale(0.7)';
-	// 			popupContent.style.opacity = '0';
-	// 			popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-	// 			setTimeout(() => {
-	// 				popupContent.style.transform = 'scale(1)';
-	// 				popupContent.style.opacity = '1';
-	// 			}, 50);
+				popupContent.style.transform = 'scale(0.7)';
+				popupContent.style.opacity = '0';
+				popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+				setTimeout(() => {
+					popupContent.style.transform = 'scale(1)';
+					popupContent.style.opacity = '1';
+				}, 50);
 
-	// 			initDragAndDrop('company-logo-drop-area', 'company_logo', 'logo-preview');
+				initDragAndDrop('company-logo-drop-area', 'company_logo', 'logo-preview');
 			
-	// 			handlePopupClose("edit-company-form", ".formular-medium-frame", []);
-	// 		}
-	// 	});
-	// }
-
-	document.addEventListener('click', function onManageCompClick(e) {
-		const btn = e.target.closest('#manage-comp-button');
-		if (!btn) return;              // no es el click al botón, salir
-
-		e.preventDefault();
-
-		try {
-			if (typeof scrollToTopIfNeeded === 'function') scrollToTopIfNeeded();
-
-			const popupId = 'edit-company-form';
-			const form = document.getElementById(popupId);
-			if (!form) {
-			// Visibilidad clara aunque te hayan removido los console.log en prod
-			alert('No se encontró #edit-company-form en el DOM.');
-			return;
+				handlePopupClose("edit-company-form", ".formular-medium-frame", []);
 			}
-
-			const content = form.querySelector('.formular-medium-frame');
-			if (!content) {
-			alert('No se encontró .formular-medium-frame dentro del formulario.');
-			return;
-			}
-
-			// Mostrar con animación
-			form.style.display = 'block';
-			form.style.opacity = '0';
-			content.style.transform = 'scale(0.7)';
-			content.style.opacity = '0';
-
-			// Usa requestAnimationFrame para asegurar reflow antes de animar
-			requestAnimationFrame(() => {
-			form.style.transition = 'opacity 0.5s ease';
-			content.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-			form.style.opacity = '1';
-			content.style.transform = 'scale(1)';
-			content.style.opacity = '1';
-			});
-
-			// Tu lógica
-			if (typeof initDragAndDrop === 'function') {
-			initDragAndDrop('company-logo-drop-area', 'company_logo', 'logo-preview');
-			}
-
-			// Cerrar al hacer clic fuera
-			handlePopupClose(popupId, '.formular-medium-frame', []);
-		} catch (err) {
-			// Si en prod te quitan console.log, al menos verás el error
-			alert('Error abriendo el popup: ' + (err?.message || err));
-		}
-	}, true);
-
+		});
+	}
 
 	let originalCompanyData = {};
 	let hasChanges = false;
@@ -1398,6 +1345,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 					populateRankSelect('rank', '', 4); // Solo roles 4 o superiores
 
 					populateCompanies('company');
+
+					handlePopupClose("add-members-form", ".formular-frame", []);
 				}
 			} catch (err) {
 				console.error("Error validating member limit:", err);
@@ -5137,18 +5086,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			document.addEventListener('click', handler, { capture: true, once: true });
 		}, 0);
 	}
-	
-	
-	handlePopupClose("add-members-form", ".formular-frame", ["add-members-form"]);
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 
 	// 📌 formatear fecha de notificación
