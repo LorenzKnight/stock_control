@@ -1,7 +1,10 @@
 <?php
 require_once('../logic/stock_be.php');
 
-\Stripe\Stripe::setApiKey('REMOVED_STRIPE_TEST_SECRET');
+$STRIPE_SK_LIVE = 'REMOVED_STRIPE_LIVE_SECRET';
+$STRIPE_SK_TEST = 'REMOVED_STRIPE_TEST_SECRET';
+
+\Stripe\Stripe::setApiKey($STRIPE_SK_TEST);
 
 header('Content-Type: application/json');
 
@@ -31,8 +34,8 @@ try {
 	$estimatedCost = floatval($_POST['estimated_cost']);
     $unitAmount = intval($estimatedCost * 100);
 
-    $myUrl = 'http://localhost:8889/';
-    // $myUrl = 'http://allstockcontrol.com/';
+    // $myUrl = 'http://localhost:8889/';
+    $myUrl = 'https://www.allstockcontrol.com/';
 
     // 1. Crear producto dinámico
     $product = \Stripe\Product::create([

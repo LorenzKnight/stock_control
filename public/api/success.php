@@ -2,7 +2,10 @@
 define('IS_STRIPE_WEBHOOK', true);
 require_once('../logic/stock_be.php');
 
-\Stripe\Stripe::setApiKey('REMOVED_STRIPE_TEST_SECRET');
+$STRIPE_SK_LIVE = 'REMOVED_STRIPE_LIVE_SECRET';
+$STRIPE_SK_TEST = 'REMOVED_STRIPE_TEST_SECRET';
+
+\Stripe\Stripe::setApiKey($STRIPE_SK_TEST);
 
 $sessionId = $_GET['session_id'] ?? null;
 

@@ -862,10 +862,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 	// 📌 Manejo del formulario de subscripcion y checkout via Stripe
 	let formSubscription = document.getElementById('formSubscription');
 	if (formSubscription) {
-		// const stripe = Stripe("REMOVED_STRIPE_TEST_PUBLIC"); // PROBLEMA CON ESTA VARIABLE
+		const STRIPE_PK_LIVE = 'REMOVED_STRIPE_LIVE_PUBLIC';
+		const STRIPE_PK_TEST = 'REMOVED_STRIPE_TEST_PUBLIC';
 
+		let stripe;
+		
 		formSubscription.addEventListener('submit', async function (e) {
 			e.preventDefault();
+
+			if (typeof window.Stripe !== 'function') {
+				alert('Stripe.js no se cargó. Revisa <script src="https://js.stripe.com/v3"></script> y tu CSP.');
+				return;
+			}
+			stripe = stripe || window.Stripe(STRIPE_PK_TEST); // Cambia a STRIPE_PK_LIVE en producción
 
 			let formData = new FormData(this);
 
@@ -890,7 +899,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				if (data.success && data.sessionId) {
 					// Espera medio segundo antes de redirigir a Stripe
 					setTimeout(() => {
-						// stripe.redirectToCheckout({ sessionId: data.sessionId }); // RESOLVER ESTO
+						stripe.redirectToCheckout({ sessionId: data.sessionId }); // RESOLVER ESTO
 					}, 500);
 				} else if (data.success && data.redirect_url) {
 					// Caso anterior: redirección manual
@@ -4830,82 +4839,82 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	//############################################################# NOTIFICATIONS ##################################################################
 
-	if (headerMenu) {
-		let currentUserId = 0;
+	// if (headerMenu) {
+	// 	let currentUserId = 0;
 
-		let response = await fetch('api/get_my_info.php', {
-			method: 'GET',
-			headers: { Accept: "application/json" }
-		});
+	// 	let response = await fetch('api/get_my_info.php', {
+	// 		method: 'GET',
+	// 		headers: { Accept: "application/json" }
+	// 	});
 
-		let data = await response.json();
-		if (data.success && data.data) {
-			let user = data.data;
-			currentUserId = parseInt(user.user_id) || 0;
-		}
+	// 	let data = await response.json();
+	// 	if (data.success && data.data) {
+	// 		let user = data.data;
+	// 		currentUserId = parseInt(user.user_id) || 0;
+	// 	}
 
-		// const wsProtocol = location.protocol === 'https:' ? 'wss' : 'ws';
-		// const wsUrl = `${wsProtocol}://${location.host}/ws`; // sin puertos; Nginx proxya a 3001
-		// const socket = new WebSocket(wsUrl);
-		const socket = new WebSocket(`ws://${location.hostname}:3001`);
+	// 	// const wsProtocol = location.protocol === 'https:' ? 'wss' : 'ws';
+	// 	// const wsUrl = `${wsProtocol}://${location.host}/ws`; // sin puertos; Nginx proxya a 3001
+	// 	// const socket = new WebSocket(wsUrl);
+	// 	const socket = new WebSocket(`ws://${location.hostname}:3001`);
 
-		socket.addEventListener('open', () => {
-			console.log('✅ WebSocket conected');
-		});
+	// 	socket.addEventListener('open', () => {
+	// 		console.log('✅ WebSocket conected');
+	// 	});
 
-		socket.addEventListener('message', async event => {
-			const data = JSON.parse(event.data);
+	// 	socket.addEventListener('message', async event => {
+	// 		const data = JSON.parse(event.data);
 
-			if (data.type === 'notification') {
-				// console.log('🔔 Notificación recibida:', data);
-				if (data.to_user_id !== currentUserId) return;
+	// 		if (data.type === 'notification') {
+	// 			// console.log('🔔 Notificación recibida:', data);
+	// 			if (data.to_user_id !== currentUserId) return;
 
-				const message = data.message;
-				const notifType = data.notification_type || 'General';
-				const link = data.link;
+	// 			const message = data.message;
+	// 			const notifType = data.notification_type || 'General';
+	// 			const link = data.link;
 
-				// Crear el nodo de notificación
-				const container = document.getElementById('notification-container');
+	// 			// Crear el nodo de notificación
+	// 			const container = document.getElementById('notification-container');
 
-				const box = document.createElement('div');
-				box.classList.add('notification-box');
+	// 			const box = document.createElement('div');
+	// 			box.classList.add('notification-box');
 
-				box.innerHTML = `
-					<div class="notification-title">${notifType}</div>
-					<div class="notification-message">${message}</div>
-				`;
+	// 			box.innerHTML = `
+	// 				<div class="notification-title">${notifType}</div>
+	// 				<div class="notification-message">${message}</div>
+	// 			`;
 
-				if (link) {
-					box.style.cursor = 'pointer';
-					box.addEventListener('click', () => {
-						window.location.href = link;
-					});
-				}
+	// 			if (link) {
+	// 				box.style.cursor = 'pointer';
+	// 				box.addEventListener('click', () => {
+	// 					window.location.href = link;
+	// 				});
+	// 			}
 
-				container.appendChild(box);
+	// 			container.appendChild(box);
 
-				// Forzar reflow para que la transición funcione
-				void box.offsetWidth;
-				box.classList.add('show');
+	// 			// Forzar reflow para que la transición funcione
+	// 			void box.offsetWidth;
+	// 			box.classList.add('show');
 
-				await checkNotifications();
+	// 			await checkNotifications();
 
-				// Eliminar después de 5 segundos
-				setTimeout(() => {
-					box.classList.remove('show');
-					setTimeout(() => container.removeChild(box), 300); // coincide con el transition
-				}, 10000);
-			}
-		});
+	// 			// Eliminar después de 5 segundos
+	// 			setTimeout(() => {
+	// 				box.classList.remove('show');
+	// 				setTimeout(() => container.removeChild(box), 300); // coincide con el transition
+	// 			}, 10000);
+	// 		}
+	// 	});
 
-		socket.addEventListener('close', () => {
-			console.warn('⚠️ WebSocket desconectado');
-		});
+	// 	socket.addEventListener('close', () => {
+	// 		console.warn('⚠️ WebSocket desconectado');
+	// 	});
 
-		socket.addEventListener('error', error => {
-			console.error('❌ Error en WebSocket:', error);
-		});
-	}
+	// 	socket.addEventListener('error', error => {
+	// 		console.error('❌ Error en WebSocket:', error);
+	// 	});
+	// }
 
 	async function checkNotifications() {
 		const notifCount = document.getElementById('notif-count');

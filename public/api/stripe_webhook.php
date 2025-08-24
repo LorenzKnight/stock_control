@@ -5,6 +5,9 @@ require_once('../logic/stock_be.php');
 \Stripe\Stripe::setApiKey('REMOVED_STRIPE_TEST_SECRET'); // tu clave secreta
 $endpointSecret = 'REMOVED_STRIPE_WEBHOOK_SECRET'; // tu clave secreta del webhook (desde el dashboard de Stripe)
 
+// \Stripe\Stripe::setApiKey('REMOVED_STRIPE_LIVE_SECRET');
+// $endpointSecret = 'REMOVED_STRIPE_WEBHOOK_SECRET';
+
 // 1. Captura y verifica el evento
 $payload = @file_get_contents('php://input');
 $sigHeader = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
