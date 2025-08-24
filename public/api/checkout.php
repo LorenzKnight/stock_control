@@ -34,8 +34,8 @@ try {
 	$estimatedCost = floatval($_POST['estimated_cost']);
     $unitAmount = intval($estimatedCost * 100);
 
-    // $myUrl = 'http://localhost:8889/';
-    $myUrl = 'https://www.allstockcontrol.com/';
+    $myUrl = 'http://localhost:8889/';
+    // $myUrl = 'https://www.allstockcontrol.com/';
 
     // 1. Crear producto dinámico
     $product = \Stripe\Product::create([
