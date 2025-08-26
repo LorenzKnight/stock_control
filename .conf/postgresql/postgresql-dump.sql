@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS packages (
 -- INSERT INTO packages (
 --   package_name, package_image, package_description, package_price, members_limit, admins_limit, branch_affiliate_limit, products_limit, package_duration, package_status
 -- ) VALUES 
--- ('Tried Pack', 'pack-upgrade-2.png',
+-- ('Try Pack', 'pack-upgrade-2.png',
 --  'Perfect to explore the system with no commitment. Includes 1 user, limited access to essential features, and 1 affiliate branch. Great for solo entrepreneurs.', 
 --  NULL, 0, 0, 1, 5, 30, 1),
 

@@ -61,7 +61,8 @@ try {
             "members_limit",
             "admins_limit",
             "branch_affiliate_limit",
-            "products_limit"
+            "products_limit",
+            "package_duration"
         ], ["package_id" =>  $packageId], ["fetch_first" => true]), true);
 
         if ($packageInfo["success"] && isset($packageInfo["data"])) {

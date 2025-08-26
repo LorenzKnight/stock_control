@@ -415,6 +415,41 @@ document.addEventListener("DOMContentLoaded", async function () {
 					headerProfilePic.classList.remove("default-profile-pic", "custom-profile-pic");
 					headerProfilePic.classList.add(hasCustomImage ? "custom-profile-pic" : "default-profile-pic");
 				}
+
+				// VERIFICA SI EL PAQUETE DE PRUEBA HA EXPIRADO
+				const signup = parseDbTimestamp(user.signup_date);
+				const days = Number(user.package_info.package_duration) || 0;
+
+				// Fecha de expiración = fecha de alta + días
+				const expirateDate = new Date(signup);
+				expirateDate.setDate(expirateDate.getDate() + days);
+
+				const today = new Date();
+				today.setHours(0,0,0,0);
+				const expDay = new Date(expirateDate);
+				expDay.setHours(0,0,0,0);
+
+				const expiratedPack = today >= expDay;
+
+				const activatePackForm = document.getElementById('activate-pack-form');
+				const popupContent = activatePackForm.querySelector('.formular-frame');
+
+				if (parseInt(user.package_id) === 1 && expiratedPack) {
+					activatePackForm.style.display = 'block';
+					activatePackForm.style.opacity = '0';
+					activatePackForm.style.transition = 'opacity 0.5s ease';
+					setTimeout(() => {
+						activatePackForm.style.opacity = '1';
+					}, 10);
+
+					popupContent.style.transform = 'scale(0.7)';
+					popupContent.style.opacity = '0';
+					popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+					setTimeout(() => {
+						popupContent.style.transform = 'scale(1)';
+						popupContent.style.opacity = '1';
+					}, 50);
+				}
 			} else {
 				if (myData) {
 					myData.innerHTML = `<p>No user data found.</p>`;
@@ -5069,6 +5104,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 		const minutes = String(date.getMinutes()).padStart(2, '0');
 
 		return `${year}-${month}-${day} ${hours}:${minutes}`;
+	}
+
+	function parseDbTimestamp(s) {
+		// intenta ISO-like
+		const d = new Date(s.replace(' ', 'T')); // "2025-07-18T13:05:11.000"
+		if (!isNaN(d)) return d;
+
+		// fallback manual: "YYYY-MM-DD HH:mm:ss.fff"
+		const [datePart, timePart='00:00:00'] = s.split(' ');
+		const [y, m, d2] = datePart.split('-').map(Number);
+		const [h, min, secMs] = timePart.split(':');
+		const [s2, ms='0'] = (secMs || '0').split('.');
+		return new Date(y, (m-1), d2, Number(h||0), Number(min||0), Number(s2||0), Number(ms||0));
 	}
 
 	// 📌 reset multiple popup view

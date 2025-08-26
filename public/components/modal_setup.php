@@ -36,7 +36,7 @@
                 </td>      
 			</tr>
             <tr valign="baseline" height="60px">
-                <td width="50%" align="center" valign="middle">
+                <td colspan="6" align="center" valign="middle">
                     <button type="button" class="button-style-agree button-ghost" id="submit-company-info">Submit Company info</button>
                 </td>
             </tr>
