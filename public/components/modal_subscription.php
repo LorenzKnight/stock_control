@@ -22,7 +22,8 @@
 					<td width="25%" align="center" valign="middle">
 					</td>
 					<td width="25%" align="center" valign="middle">
-						<button type="button" class="neutral-btn">Cancel</button>
+						<button type="button" class="cancel-btn logout-button hidden" id="subs-logout-btn">Log Out</button>
+						<button type="button" class="neutral-btn" id="subs-cancel-btn">Cancel</button>
 					</td>
 					<td width="25%" align="center" valign="middle">
 						<input type="submit" class="button-style-agree disabled" id="packUpgradeBtn" value="Upgrade"/>

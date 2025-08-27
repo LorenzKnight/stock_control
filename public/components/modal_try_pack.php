@@ -20,10 +20,10 @@
             </tr>
             <tr valign="baseline" height="60px">
                 <td width="50%" align="center" valign="middle">
-                    <button type="button" class="cancel-btn" id="">Log Out</button>
+                    <button type="button" class="cancel-btn logout-button">Log Out</button>
                 </td>
                 <td width="50%" align="center" valign="middle">
-                    <button type="button" class="button-style-agree" id="">Upgrade your Package</button>
+                    <button type="button" class="button-style-agree" id="upgrade-package">Upgrade your Package</button>
                 </td>
             </tr>
         </table>

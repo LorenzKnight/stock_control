@@ -279,43 +279,44 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// 📌 Manejo del botón de logout
-	let logoutButton = document.getElementById('logout-button');
-	if (logoutButton) {
-		logoutButton.addEventListener('click', async function (e) {
-			e.preventDefault();
+	document.querySelectorAll('.logout-button').forEach((btn) => {
+		btn.addEventListener('click', onLogoutClick);
+	});
 
-			try {
-				let response = await fetch('api/logout.php', {
-					method: 'POST',
-					headers: { 'Accept': 'application/json' }
-				});
+	async function onLogoutClick(e) {
+		e.preventDefault();
 
-				let data = await response.json();
+		try {
+			let response = await fetch('api/logout.php', {
+				method: 'POST',
+				headers: { 'Accept': 'application/json' }
+			});
 
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
+			let data = await response.json();
 
-				if (data.success) {
-					statusText.innerText = data.message;
-					statusImage.src = data.img_gif;
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
+			let banner = document.getElementById('status-message');
+			let statusText = document.getElementById('status-text');
+			let statusImage = document.getElementById('status-image');
 
+			if (data.success) {
+				statusText.innerText = data.message;
+				statusImage.src = data.img_gif;
+				banner.style.display = 'block';
+				banner.style.opacity = '1';
+
+				setTimeout(() => {
+					banner.style.opacity = '0';
 					setTimeout(() => {
-						banner.style.opacity = '0';
-						setTimeout(() => {
-							window.location.href = data.redirect_url;
-						}, 1000);
-					}, 3000);
-				} else {
-					alert("Error al cerrar sesión: " + data.message);
-				}
-			} catch (error) {
-				console.error('Error en la solicitud:', error);
-				alert("Error al procesar la solicitud.");
+						window.location.href = data.redirect_url;
+					}, 1000);
+				}, 3000);
+			} else {
+				alert("Error al cerrar sesión: " + data.message);
 			}
-		});
+		} catch (error) {
+			console.error('Error en la solicitud:', error);
+			alert("Error al procesar la solicitud.");
+		}
 	}
 
 	// 📌 Alternar entre login y signup
@@ -462,6 +463,58 @@ document.addEventListener("DOMContentLoaded", async function () {
 				myData.innerHTML = `<p>Error loading user data.</p>`;
 			}
 		}
+	}
+
+	const upgradePackage = document.getElementById('upgrade-package');
+	if (upgradePackage) {
+		upgradePackage.addEventListener('click', function() {
+			const activatePackForm = document.getElementById('activate-pack-form');
+			const popupContent = activatePackForm.querySelector('.formular-frame');
+
+			if (activatePackForm && popupContent) {
+				activatePackForm.style.transition = 'opacity 300ms ease';
+				activatePackForm.style.display = 'block';
+				void activatePackForm.offsetWidth;
+				activatePackForm.style.opacity = '0';
+
+				activatePackForm.addEventListener('transitionend', () => {
+					activatePackForm.style.display = 'none';
+					activatePackForm.style.opacity = '';
+					activatePackForm.style.transition = '';
+				}, { once: true });
+			}
+
+			const subscForm = document.getElementById('subsc-form');
+			const popupContentMedium = subscForm.querySelector('.formular-medium-frame');
+			const subsCancelBtn = document.getElementById('subs-cancel-btn');
+			const subsLogoutBtn = document.getElementById('subs-logout-btn');
+
+			if (subscForm && popupContentMedium) {
+				scrollToTopIfNeeded();
+
+				subscForm.style.display = 'block';
+				subscForm.style.opacity = '0';
+				subscForm.style.transition = 'opacity 0.5s ease';
+				setTimeout(() => {
+					subscForm.style.opacity = '1';
+				}, 10);
+
+				popupContentMedium.style.transform = 'scale(0.7)';
+				popupContentMedium.style.opacity = '0';
+				popupContentMedium.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+				setTimeout(() => {
+					popupContentMedium.style.transform = 'scale(1)';
+					popupContentMedium.style.opacity = '1';
+				}, 50);
+
+				populatePackages('packs');
+
+				// handlePopupClose("subsc-form", ".formular-medium-frame", []);
+
+				subsCancelBtn.classList.add('hidden');
+				subsLogoutBtn.classList.remove('hidden');
+			}
+		});
 	}
 
 	const profileData = document.getElementById("profile-data");

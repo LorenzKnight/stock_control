@@ -25,7 +25,7 @@
 							<li class="no-redirect"><a href="profile.php" id="my-name"></a></li>
 							<li id="admin-site"><a href="#">Admin</a></li>
 							<li><a href="#">Settings</a></li>
-							<li class="no-redirect"><a href="#" id="logout-button">Log Out</a></li>
+							<li class="no-redirect"><a href="#" class="logout-button">Log Out</a></li>
 						</ul>
 					</div>
 				</li>
