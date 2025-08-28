@@ -119,13 +119,14 @@ CREATE TABLE IF NOT EXISTS companies (
 	company_name VARCHAR(255) NULL,
 	organization_no INTEGER NULL,
 	company_address VARCHAR(255) NULL,
+	country_code VARCHAR(10) NULL,
 	company_phone VARCHAR(20) NULL,
 	company_logo VARCHAR(255) NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- INSERT INTO companies (user_id, company_type, company_name, organization_no, company_address, company_phone, company_logo, created_at)
--- VALUES (1, null, 'My Company', 1234123, 'Siriusgatan 102', 763199480, 'logo_user_1_1742063586.png', '2025-03-14 15:06:38.783');
+-- VALUES (1, null, 'My Company', 1234123, 'Siriusgatan 102', 'SE|+46', '+46 763199480', 'logo_user_1_1742063586.png', '2025-03-14 15:06:38.783');
 
 CREATE TABLE IF NOT EXISTS products (
 	product_id SERIAL PRIMARY KEY,

@@ -34,6 +34,6 @@ if (is_file("inc/security.php")) {
 }
 
 $dominio = "localhost:8889";
-// $dominio = "http://www.allstockcontrol.com";
+// $dominio = "https://www.allstockcontrol.com";
 $pageName = "All Stock Control";
 ?>

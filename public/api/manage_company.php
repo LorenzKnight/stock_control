@@ -31,6 +31,7 @@ try {
 	$orgNo = trim($_POST['organization_no'] ?? '');
 	$address = trim($_POST['company_address'] ?? '');
 	$phone = trim($_POST['company_phone'] ?? '');
+	$countryCode = trim($_POST['company_country_code'] ?? '');
 
 	if ($companyName === '' || $orgNo === '' || $address === '' || $phone === '') {
 		throw new Exception("All fields are required.");
@@ -40,6 +41,7 @@ try {
 		"company_name" => $companyName,
 		"organization_no" => $orgNo,
 		"company_address" => $address,
+		"country_code" => $countryCode,
 		"company_phone" => $phone
 	];
 

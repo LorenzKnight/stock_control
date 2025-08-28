@@ -36,6 +36,7 @@ try {
         "company_name",
         "organization_no",
         "company_address",
+        "country_code",
         "company_phone",
         "company_logo"
     ], $where, [

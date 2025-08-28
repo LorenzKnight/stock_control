@@ -1090,6 +1090,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 	});
 
 	const inputs = document.querySelectorAll('#company-form input[type="text"]');
+	const selects = document.querySelectorAll('#company-form select');
+	const allFields = [...inputs, ...selects];
 	inputs.forEach(input => {
 		input.addEventListener('input', () => {
 			const field = input.id;
@@ -1102,8 +1104,23 @@ document.addEventListener("DOMContentLoaded", async function () {
 				companyActionBtn.value = "Save Changes";
 			} 
 			else {
-				checkIfAnyChange(inputs);
-				
+				checkIfAnyChange(allFields);
+			}
+		});
+	});
+
+	selects.forEach(select => {
+		select.addEventListener('change', () => {
+			const field = select.id;
+			const currentValue = select.value ?? '';
+			const originalValue = originalCompanyData[field] ?? '';
+			const companyActionBtn = document.getElementById('company-action-btn');
+
+			if (currentValue !== originalValue) {
+				showChangeAlert();
+				companyActionBtn.value = "Save Changes";
+			} else {
+				checkIfAnyChange(allFields);
 			}
 		});
 	});
@@ -1135,10 +1152,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
-	function checkIfAnyChange(inputs) {
-		hasChanges = Array.from(inputs).some(input => {
-			const field = input.id;
-			const currentValue = input.value ?? '';
+	function checkIfAnyChange(elements) {
+		hasChanges = Array.from(elements).some(el => {
+			const field = el.id;
+			const currentValue = el.value ?? '';
 			const originalValue = originalCompanyData[field] ?? '';
 			return currentValue !== originalValue;
 		});
@@ -5214,7 +5231,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 						company_name: company.company_name || '',
 						organization_no: company.organization_no || '',
 						company_address: company.company_address || '',
-						company_phone: company.company_phone || ''
+						company_phone: company.company_phone || '',
+						country_code: company.country_code || ''
 					};
 
 					document.getElementById('company_id').value = company.company_id;
@@ -5222,6 +5240,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 					document.getElementById('organization_no').value = originalCompanyData.organization_no || '';
 					document.getElementById('company_address').value = originalCompanyData.company_address || '';
 					document.getElementById('company_phone').value = originalCompanyData.company_phone || '';
+					document.getElementById('company_country_code').value = originalCompanyData.country_code || '';
+
+					const selectedKeyFromDB = originalCompanyData.country_code || '';
+					await populateCountryPhoneCodes('company_country_code', 'company_phone', selectedKeyFromDB);
 
 					const logoPreview = document.getElementById('logo-preview');
 					if (logoPreview) {
@@ -5250,6 +5272,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 			document.getElementById('organization_no').value = '';
 			document.getElementById('company_address').value = '';
 			document.getElementById('company_phone').value = '';
+
+			await populateCountryPhoneCodes('company_country_code', 'company_phone');
 
 			initImagePreview('company_logo', 'logo-preview').then((isImage) => {
 				if (!isImage) {

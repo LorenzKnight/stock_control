@@ -48,8 +48,11 @@
 									</td>
 								</tr>
 								<tr valign="baseline" class="form_height">
-									<td colspan="2" align="center" valign="middle">
-										<input class="form-input-style" type="text" name="company_phone" id="company_phone" placeholder="Company Phone..." title="Company Phone"/>
+									<td width="50%" align="center" valign="middle">
+										<select class="form-medium-input-style" name="company_country_code" id="company_country_code" required></select>
+									</td>
+									<td width="50%" align="center" valign="middle">
+										<input class="form-medium-input-style" type="text" name="company_phone" id="company_phone" placeholder="Company Phone..." title="Company Phone"/>
 									</td>
 								</tr>
 								
