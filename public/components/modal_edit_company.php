@@ -34,24 +34,29 @@
 								</tr>
 								<tr valign="baseline" class="form_height">
 									<td colspan="2" align="center" valign="middle">
+										<label for="company_name">Company Name:</label>
 										<input class="form-input-style" type="text" name="company_name" id="company_name" placeholder="Company Name..." title="Company name"/>
 									</td>
 								</tr>
 								<tr valign="baseline" class="form_height">
 									<td colspan="2" align="center" valign="middle">
+										<label for="organization_no">Organization No.:</label>
 										<input class="form-input-style" type="text" name="organization_no" id="organization_no" placeholder="Organization No." title="Organization No."/>
 									</td>
 								</tr>
 								<tr valign="baseline" class="form_height">
 									<td colspan="2" align="center" valign="middle">
+										<label for="company_address">Company Address:</label>
 										<input class="form-input-style" type="text" name="company_address" id="company_address" placeholder="Company Address..." title="Company Address"/>
 									</td>
 								</tr>
 								<tr valign="baseline" class="form_height">
 									<td width="50%" align="center" valign="middle">
+										<label for="company_country_code">Country Code:</label>
 										<select class="form-medium-input-style" name="company_country_code" id="company_country_code" required></select>
 									</td>
 									<td width="50%" align="center" valign="middle">
+										<label for="company_phone">Company Phone:</label>
 										<input class="form-medium-input-style" type="text" name="company_phone" id="company_phone" placeholder="Company Phone..." title="Company Phone"/>
 									</td>
 								</tr>
