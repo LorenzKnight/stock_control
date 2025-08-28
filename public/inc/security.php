@@ -1,24 +1,65 @@
 <?php
+// if (!defined('SKIP_SESSION') && session_status() === PHP_SESSION_NONE) {
+//     session_start();
+// }
+
+// $currentUrl = $_SERVER['REQUEST_URI'];
+// $scriptName = $_SERVER['SCRIPT_NAME'];
+
+// // Lista de páginas que NO deben redirigir al usuario si no está logeado (paginas pernmitidas)
+// $allowedPages = ["/", "/login.php", "/api/login.php", "/api/signup.php", "/api/success.php", "/api/cancel.php"];
+
+// if (
+//     !defined('IS_STRIPE_WEBHOOK') &&
+//     !isset($_SESSION['sc_UserId']) &&
+//     !in_array($currentUrl, $allowedPages) &&
+//     !in_array($scriptName, $allowedPages)
+// ) {
+//     header("Location: /");
+//     exit();
+// } else {
+//     // echo "<h3 style='color: red; text-align: center;'>Obs. The security module is active!</h3>";
+//     // echo $_SESSION['sc_UserId'];
+// }
+
+
+
 if (!defined('SKIP_SESSION') && session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$currentUrl = $_SERVER['REQUEST_URI'];
-$scriptName = $_SERVER['SCRIPT_NAME'];
+// No filtrar los webhooks de Stripe
+if (defined('IS_STRIPE_WEBHOOK')) {
+    return;
+}
 
-// Lista de páginas que NO deben redirigir al usuario si no está logeado (paginas pernmitidas)
-$allowedPages = ["/", "/login.php", "/api/login.php", "/api/signup.php"];
+// Normalizar path (sin querystring, sin slash final excepto "/")
+$path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+if ($path !== '/' && substr($path, -1) === '/') {
+    $path = rtrim($path, '/');
+}
 
-if (
-    !defined('IS_STRIPE_WEBHOOK') &&
-    !isset($_SESSION['sc_UserId']) &&
-    !in_array($currentUrl, $allowedPages) &&
-    !in_array($scriptName, $allowedPages)
-) {
-    header("Location: /");
-    exit();
-} else {
-    // echo "<h3 style='color: red; text-align: center;'>Obs. The security module is active!</h3>";
-    // echo $_SESSION['sc_UserId'];
+// Deja pasar estáticos
+if (preg_match('#^/(css|js|images|img|fonts|uploads|vendor)/#i', $path)) {
+    return;
+}
+
+// Páginas públicas (sin login), en ambas variantes .php y “bonita”
+$allowed = [
+    '/', 
+    '/login', '/login.php',
+    '/signup', '/signup.php',
+    '/api/login.php', '/api/signup.php',
+    '/api/success.php', '/api/cancel.php',
+    // agrega aquí otras públicas si las tienes:
+    // '/pricing', '/pricing.php',
+    // '/forgot-password', '/forgot-password.php',
+];
+
+// Si NO está logueado y la ruta no está permitida, redirige
+$loggedIn = !empty($_SESSION['sc_UserId']);
+if (!$loggedIn && !in_array($path, $allowed, true)) {
+    header('Location: /');
+    exit;
 }
 ?>
