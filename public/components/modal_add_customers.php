@@ -17,7 +17,7 @@
 					</td>
 				</tr>
 			</table>
-			<div class="customer-form-menu">
+			<div class="customer-form-section">
 				<ul>
 					<li id="tab-customer-data">customers data</li>
 					<li id="tab-customer-reference">customers Reference</li>
@@ -45,7 +45,15 @@
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td width="50%" align="center" valign="middle">
+							<select class="form-medium-input-style" name="customer_country_code" id="customer_country_code" required></select>
+						</td>
+						<td width="50%" align="center" valign="middle">
 							<input class="form-medium-input-style" type="text" name="customer_phone" id="customer_phone" placeholder="Enter a phone..." title="Enter a valid phone"/>
+						</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+						<td width="50%" align="center" valign="middle">
+							<select class="form-input-style" name="customer_type" id="customer_type"></select>
 						</td>
 						<td width="50%" align="center" valign="middle">
 							<input class="form-medium-input-style" type="date" name="customer_birthday" id="customer_birthday" placeholder="Enter a birthday date..." title="Enter a birthday date"/>
@@ -59,14 +67,6 @@
 							<input class="form-medium-input-style" type="text" name="customer_document_no" id="customer_document_no" placeholder="Document no..." title="Document no"/>
 						</td>
 					</tr>
-					<tr valign="baseline" class="form_height">
-						<td width="50%" align="center" valign="middle">
-							<select class="form-input-style" name="customer_type" id="customer_type"></select>
-						</td>
-						<td width="50%" align="center" valign="middle">
-							<select class="form-input-style" name="customer_status" id="customer_status"></select>
-						</td>
-					</tr>
 				</table>
 			</div>
 			<div class="" id="customer-reference">
@@ -77,8 +77,11 @@
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
-						<td colspan="2" align="center" valign="middle">
-							<input class="form-input-style" type="text" name="references_1_phone" id="references_1_phone" placeholder="Reference 1 Phone..." title="Enter a valid phone"/>
+						<td width="50%" align="center" valign="middle">
+							<select class="form-medium-input-style" name="references_1_country_code" id="references_1_country_code" required></select>
+						</td>
+						<td width="50%" align="center" valign="middle">
+							<input class="form-medium-input-style" type="text" name="references_1_phone" id="references_1_phone" placeholder="Reference 1 Phone..." title="Enter a valid phone"/>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
@@ -87,13 +90,27 @@
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
-						<td colspan="2" align="center" valign="middle">
-							<input class="form-input-style" type="text" name="references_2_phone" id="references_2_phone" placeholder="Reference 2 Phone..." title="Enter a valid phone"/>
+						<td width="50%" align="center" valign="middle">
+							<select class="form-medium-input-style" name="references_2_country_code" id="references_2_country_code" required></select>
+						</td>
+						<td width="50%" align="center" valign="middle">
+							<input class="form-medium-input-style" type="text" name="references_2_phone" id="references_2_phone" placeholder="Reference 2 Phone..." title="Enter a valid phone"/>
+						</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+						<td width="50%" style="border-block: 1px solid var(--clr-border); padding: 5px 10px;" align="left" valign="middle">
+							<span style="display: block;">Status</span>
+						</td>
+						<td width="50%" style="border-block: 1px solid var(--clr-border); padding: 5px 10px;" align="right" valign="middle">
+							<label class="switch">
+								<input type="checkbox" name="customer_status" id="customer_status" value="1" checked>
+								<span class="slider round"></span>
+							</label>
 						</td>
 					</tr>
 				</table>
 			</div>
-			<table width="80%" align="center" cellspacing="0">
+			<table width="80%" style="margin-top: 10px;" align="center" cellspacing="0">
 				<tr valign="baseline" class="form_height">
 					<td colspan="1" align="center" valign="middle">
 						<button type="button" class="neutral-btn">Cancel</button>

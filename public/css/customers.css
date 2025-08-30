@@ -34,19 +34,19 @@
 }
 
 
-.customer-form-menu {
+.customer-form-section {
 	width: 80%;
 	height: 30px;
 	margin: 0 auto 10px;
 	font-size: 12px;
 }
 
-.customer-form-menu ul {
+.customer-form-section ul {
 	padding: 0;
 	display: flex;
 }
 
-.customer-form-menu ul li {
+.customer-form-section ul li {
 	width: 50%;
 	margin: 0 1px;
 	padding: 10px 10px 5px;
@@ -57,11 +57,11 @@
 	text-align: center;
 }
 
-.customer-form-menu ul li a {
+.customer-form-section ul li a {
 	text-decoration: none;
 }
 
-.customer-form-menu ul li:hover {
+.customer-form-section ul li:hover {
 	font-weight: 400;
 	background: linear-gradient(to bottom, rgba(255, 255, 255, 0.641), rgba(255, 255, 255, 0));
 }

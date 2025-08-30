@@ -2803,7 +2803,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			populateCustomerTypes('customer_type', 1);
 
-			populateCustomerStatus('customer_status', 1);
+			await populateCountryPhoneCodes('customer_country_code', 'customer_phone');
+
+			await populateCountryPhoneCodes('references_1_country_code', 'references_1_phone');
+
+			await populateCountryPhoneCodes('references_2_country_code', 'references_2_phone');
 
 			handlePopupClose("add-customers-form", ".formular-frame", []);
 		});
@@ -2895,40 +2899,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 		} catch (error) {
 			console.error("Error loading customer types:", error);
 			select.innerHTML += `<option value="">Error loading customer types</option>`;
-		}
-	}
-
-	async function populateCustomerStatus(selectId, selectedValue = '') {
-		const select = document.getElementById(selectId);
-		if (!select) return;
-	
-		select.innerHTML = '';
-	
-		const defaultOption = document.createElement('option');
-		defaultOption.value = '';
-		defaultOption.textContent = 'Select Status';
-		select.appendChild(defaultOption);
-	
-		try {
-			const res = await fetch('api/get_global_array.php?key=customerStatus');
-			const data = await res.json();
-	
-			if (data.success && data.data) {
-				for (const [value, label] of Object.entries(data.data)) {
-					const option = document.createElement('option');
-					option.value = value;
-					option.textContent = label;
-					if (String(value) === String(selectedValue)) {
-						option.selected = true;
-					}
-					select.appendChild(option);
-				}
-			} else {
-				select.innerHTML += `<option value="">No status types found</option>`;
-			}
-		} catch (error) {
-			console.error("Error loading customer status:", error);
-			select.innerHTML += `<option value="">Error loading customer status</option>`;
 		}
 	}
 
@@ -3133,13 +3103,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 				document.getElementById('edit_customer_surname').value = customer.customer_surname || '';
 				document.getElementById('edit_customer_email').value = customer.customer_email || '';
 				document.getElementById('edit_customer_address').value = customer.customer_address || '';
+				document.getElementById('edit_customer_country_code').value = customer.cu_country_code || '';
 				document.getElementById('edit_customer_phone').value = customer.customer_phone || '';
 				document.getElementById('edit_customer_birthday').value = customer.customer_birthday ? customer.customer_birthday.split(" ")[0] : '';
 				document.getElementById('edit_customer_document_no').value = customer.customer_document_no || '';
 				document.getElementById('edit_references_1').value = customer.references_1 || '';
+				document.getElementById('edit_references_1_country_code').value = customer.r1_country_code || '';
 				document.getElementById('edit_references_1_phone').value = customer.references_1_phone || '';
 				document.getElementById('edit_references_2').value = customer.references_2 || '';
+				document.getElementById('edit_references_2_country_code').value = customer.r2_country_code || '';
 				document.getElementById('edit_references_2_phone').value = customer.references_2_phone || '';
+				document.getElementById("edit_customer_status").checked = customer.customer_status === "1" || customer.customer_status === 1;
 	
 				// Imagen de perfil
 				const preview = document.getElementById('edit-customer-pic-preview');
@@ -3158,10 +3132,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 				// Cargar select de tipo de documento, tipo de cliente y estatus
 				await populateDocumentTypes('edit_customer_document_type', customer.customer_document_type);
 				await populateCustomerTypes('edit_customer_type', customer.customer_type);
-				await populateCustomerStatus('edit_customer_status', customer.customer_status);
 	
 				// Inicializar drag and drop
 				initDragAndDrop('edit-customer-drop-area', 'edit_customer_image', 'edit-customer-pic-preview');
+
+				const selectedCuCcFromDB = customer.cu_country_code || '';
+				await populateCountryPhoneCodes('edit_customer_country_code', 'edit_customer_phone', selectedCuCcFromDB);
+
+				const selectedr1CcFromDB = customer.r1_country_code || '';
+				await populateCountryPhoneCodes('edit_references_1_country_code', 'edit_references_1_phone', selectedr1CcFromDB);
+
+				const selectedr2CcFromDB = customer.r1_country_code || '';
+				await populateCountryPhoneCodes('edit_references_2_country_code', 'edit_references_2_phone', selectedr2CcFromDB);
 
 				handlePopupClose("customers-options", ".formular-frame", []);
 			}

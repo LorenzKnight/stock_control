@@ -34,6 +34,7 @@ try {
 		"customer_name",
 		"customer_surname",
         "customer_email",
+		"cu_country_code",
         "customer_phone",
         "customer_birthday",
         "customer_type",
@@ -43,8 +44,10 @@ try {
 		"customer_address",
 		"customer_status",
         "references_1",
+		"r1_country_code",
         "references_1_phone",
         "references_2",
+		"r2_country_code",
         "references_2_phone"
 	], $where, [
 		"order_by" => "created_at",

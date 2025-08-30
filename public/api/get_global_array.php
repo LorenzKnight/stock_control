@@ -21,7 +21,6 @@ try {
         'vehicleTypes',
         'documentTypes',
         'customerTypes',
-        'customerStatus',
         'maritalStatus',
         'paymentTerms',
         'paymentMethods',

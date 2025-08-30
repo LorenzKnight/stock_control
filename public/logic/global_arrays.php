@@ -34,11 +34,6 @@ class GlobalArrays {
 		2 => "Company"
 	];
 	
-	public static $customerStatus = [
-		1 => "Active",
-		2 => "Inactive"
-	];
-	
 	public static $maritalStatus = [
 		1 => "Single",
 		2 => "Married",

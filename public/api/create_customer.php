@@ -31,15 +31,18 @@ try {
 	$surname	= trim($_POST["customer_surname"] ?? '');
 	$email		= trim($_POST["customer_email"] ?? '');
 	$address	= trim($_POST["customer_address"] ?? '');
+	$cuCountry	= trim($_POST["customer_country_code"] ?? '');
 	$phone		= trim($_POST["customer_phone"] ?? '');
 	$birthday   = trim($_POST["customer_birthday"] ?? '');
 	$docType    = intval($_POST["customer_document_type"] ?? 0);
 	$docNo      = trim($_POST["customer_document_no"] ?? '');
 	$type       = intval($_POST["customer_type"] ?? 0);
-	$status     = intval($_POST["customer_status"] ?? 1);
+	$status     = intval($_POST["customer_status"] ?? 0);
 	$ref1       = trim($_POST["references_1"] ?? '');
+	$r1Country  = trim($_POST["references_1_country_code"] ?? '');
 	$ref1Phone  = trim($_POST["references_1_phone"] ?? '');
 	$ref2       = trim($_POST["references_2"] ?? '');
+	$r2Country  = trim($_POST["references_2_country_code"] ?? '');
 	$ref2Phone  = trim($_POST["references_2_phone"] ?? '');
 
 	if ($name === '') {
@@ -68,6 +71,7 @@ try {
 		"customer_surname"			=> $surname,
 		"customer_email"			=> $email,
 		"customer_address"			=> $address,
+		"cu_country_code"			=> $cuCountry,
 		"customer_phone"			=> $phone,
 		"customer_birthday"			=> $birthday,
 		"customer_document_type"	=> $docType,
@@ -75,8 +79,10 @@ try {
 		"customer_type"				=> $type,
 		"customer_status"			=> $status,
 		"references_1"				=> $ref1,
+		"r1_country_code"			=> $r1Country,
 		"references_1_phone"		=> $ref1Phone,
 		"references_2"				=> $ref2,
+		"r2_country_code"			=> $r2Country,
 		"references_2_phone"		=> $ref2Phone,
 		"company_id"				=> $companyId,
 		"create_by"					=> $userId,

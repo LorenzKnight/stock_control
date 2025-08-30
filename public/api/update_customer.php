@@ -29,6 +29,7 @@ try {
 	$surname    = trim($_POST["edit_customer_surname"] ?? '');
 	$email      = trim($_POST["edit_customer_email"] ?? '');
 	$address    = trim($_POST["edit_customer_address"] ?? '');
+	$cuCountry	= trim($_POST["edit_customer_country_code"] ?? '');
 	$phone      = trim($_POST["edit_customer_phone"] ?? '');
 	$birthday   = trim($_POST["edit_customer_birthday"] ?? '');
 	$docType    = intval($_POST["edit_customer_document_type"] ?? 0);
@@ -36,8 +37,10 @@ try {
 	$type       = intval($_POST["edit_customer_type"] ?? 0);
 	$status     = intval($_POST["edit_customer_status"] ?? 1);
 	$ref1       = trim($_POST["edit_references_1"] ?? '');
+	$r1Country  = trim($_POST["edit_references_1_country_code"] ?? '');
 	$ref1Phone  = trim($_POST["edit_references_1_phone"] ?? '');
 	$ref2       = trim($_POST["edit_references_2"] ?? '');
+	$r2Country  = trim($_POST["edit_references_2_country_code"] ?? '');
 	$ref2Phone  = trim($_POST["edit_references_2_phone"] ?? '');
 
 	if ($name === '') throw new Exception("Customer name is required.");
@@ -47,6 +50,7 @@ try {
 		"customer_surname"         => $surname,
 		"customer_email"           => $email,
 		"customer_address"         => $address,
+		"cu_country_code"          => $cuCountry,
 		"customer_phone"           => $phone,
 		"customer_birthday"        => $birthday,
 		"customer_document_type"   => $docType,
@@ -54,8 +58,10 @@ try {
 		"customer_type"            => $type,
 		"customer_status"          => $status,
 		"references_1"             => $ref1,
+		"r1_country_code"          => $r1Country,
 		"references_1_phone"       => $ref1Phone,
 		"references_2"             => $ref2,
+		"r2_country_code"          => $r2Country,
 		"references_2_phone"       => $ref2Phone
 	];
 
