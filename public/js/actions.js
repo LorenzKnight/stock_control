@@ -432,24 +432,27 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				const expiratedPack = today >= expDay;
 
-				const activatePackForm = document.getElementById('activate-pack-form');
-				const popupContent = activatePackForm.querySelector('.formular-frame');
+				
 
 				if (parseInt(user.package_id) === 1 && expiratedPack) {
-					activatePackForm.style.display = 'block';
-					activatePackForm.style.opacity = '0';
-					activatePackForm.style.transition = 'opacity 0.5s ease';
-					setTimeout(() => {
-						activatePackForm.style.opacity = '1';
-					}, 10);
+					const activatePackForm = document.getElementById('activate-pack-form');
+					const popupContent = activatePackForm.querySelector('.formular-frame');
+					if (activatePackForm && popupContent) {
+						activatePackForm.style.display = 'block';
+						activatePackForm.style.opacity = '0';
+						activatePackForm.style.transition = 'opacity 0.5s ease';
+						setTimeout(() => {
+							activatePackForm.style.opacity = '1';
+						}, 10);
 
-					popupContent.style.transform = 'scale(0.7)';
-					popupContent.style.opacity = '0';
-					popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-					setTimeout(() => {
-						popupContent.style.transform = 'scale(1)';
-						popupContent.style.opacity = '1';
-					}, 50);
+						popupContent.style.transform = 'scale(0.7)';
+						popupContent.style.opacity = '0';
+						popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+						setTimeout(() => {
+							popupContent.style.transform = 'scale(1)';
+							popupContent.style.opacity = '1';
+						}, 50);
+					}
 				}
 			} else {
 				if (myData) {
@@ -5104,19 +5107,35 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 		const isVisible = (el) => !!(el && (el.offsetWidth || el.offsetHeight || el.getClientRects().length));
 
+		// Evita listeners duplicados si re-llamas esta función
+		if (popup._outsideHandler) {
+			document.removeEventListener('click', popup._outsideHandler, true);
+			popup._outsideHandler = null;
+		}
+
+		const handler = (e) => {
+			if (!isVisible(popup)) return;
+
+			const clickDentroContenido = content.contains(e.target);
+			if (clickDentroContenido) return; // si clickeas dentro, mantenemos el listener
+
+			// Cerrar
+			popup.style.display = 'none';
+			otherPopups.forEach(id => {
+				const other = document.getElementById(id);
+				if (other) other.style.display = 'none';
+			});
+
+			// Limpieza: ya no necesitamos seguir escuchando
+			document.removeEventListener('click', handler, true);
+			popup._outsideHandler = null;
+		};
+
+		popup._outsideHandler = handler;
+
+		// Deja que termine de abrir/transicionar antes de enganchar el listener
 		setTimeout(() => {
-			const handler = (e) => {
-				if (!isVisible(popup)) return;
-				const clickDentroContenido = content.contains(e.target);
-				if (!clickDentroContenido) {
-					popup.style.display = 'none';
-					otherPopups.forEach(id => {
-						const other = document.getElementById(id);
-						if (other) other.style.display = 'none';
-					});
-				}
-			};
-			document.addEventListener('click', handler, { capture: true, once: true });
+			document.addEventListener('click', handler, { capture: true }); // ← sin once
 		}, 0);
 	}
 	
