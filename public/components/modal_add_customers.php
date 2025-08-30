@@ -27,43 +27,53 @@
 				<table width="80%" align="center" cellspacing="0">
 					<tr valign="baseline" class="form_height">
 						<td width="50%" align="center" valign="middle">
+							<label for="customer_name">Name:</label>
 							<input class="form-medium-input-style" type="text" name="customer_name" id="customer_name" placeholder="Enter a name..." title="Enter a valid name"/>
 						</td>
 						<td width="50%" align="center" valign="middle">
+							<label for="customer_surname">Surame:</label>
 							<input class="form-medium-input-style" type="text" name="customer_surname" id="customer_surname" placeholder="Enter a surname..." title="Enter a valid surname"/>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td colspan="2" align="center" valign="middle">
+							<label for="customer_email">E-Mail:</label>
 							<input class="form-input-style" type="text" name="customer_email" id="customer_email" placeholder="Enter a email..." title="Enter a valid name"/>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td colspan="2" align="center" valign="middle">
+							<label for="customer_address">Address:</label>
 							<input class="form-input-style" type="text" name="customer_address" id="customer_address" placeholder="Enter a address..." title="Enter a valid address"/>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td width="50%" align="center" valign="middle">
+							<label for="customer_country_code">Country Code:</label>
 							<select class="form-medium-input-style" name="customer_country_code" id="customer_country_code" required></select>
 						</td>
 						<td width="50%" align="center" valign="middle">
+							<label for="customer_phone">Phone Number:</label>
 							<input class="form-medium-input-style" type="text" name="customer_phone" id="customer_phone" placeholder="Enter a phone..." title="Enter a valid phone"/>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td width="50%" align="center" valign="middle">
+							<label for="customer_type">Customer Type:</label>
 							<select class="form-input-style" name="customer_type" id="customer_type"></select>
 						</td>
 						<td width="50%" align="center" valign="middle">
+							<label for="customer_birthday">Birthday:</label>
 							<input class="form-medium-input-style" type="date" name="customer_birthday" id="customer_birthday" placeholder="Enter a birthday date..." title="Enter a birthday date"/>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td width="50%" align="center" valign="middle">
+							<label for="customer_document_type">Document Type:</label>
 							<select class="form-input-style" name="customer_document_type" id="customer_document_type"></select>
 						</td>
 						<td width="50%" align="center" valign="middle">
+							<label for="customer_document_no">Document No.:</label>
 							<input class="form-medium-input-style" type="text" name="customer_document_no" id="customer_document_no" placeholder="Document no..." title="Document no"/>
 						</td>
 					</tr>
@@ -73,27 +83,33 @@
 				<table width="80%" align="center" cellspacing="0">
 					<tr valign="baseline" class="form_height">
 						<td colspan="2" align="center" valign="middle">
+							<label for="references_1">Ref 1 Name:</label>
 							<input class="form-input-style" type="text" name="references_1" id="references_1" placeholder="Reference 1 Name and Surname..." title="Enter a valid Name and Surname"/>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td width="50%" align="center" valign="middle">
+							<label for="references_1_country_code">Country Code:</label>
 							<select class="form-medium-input-style" name="references_1_country_code" id="references_1_country_code" required></select>
 						</td>
 						<td width="50%" align="center" valign="middle">
+							<label for="references_1_phone">Ref 1 Phone:</label>
 							<input class="form-medium-input-style" type="text" name="references_1_phone" id="references_1_phone" placeholder="Reference 1 Phone..." title="Enter a valid phone"/>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td colspan="2" align="center" valign="middle">
+							<label for="references_2">Ref 2 Name:</label>
 							<input class="form-input-style" type="text" name="references_2" id="references_2" placeholder="Reference 2 Name and Surname..." title="Enter a valid Name and Surname"/>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td width="50%" align="center" valign="middle">
+							<label for="references_2_country_code">Country Code:</label>
 							<select class="form-medium-input-style" name="references_2_country_code" id="references_2_country_code" required></select>
 						</td>
 						<td width="50%" align="center" valign="middle">
+							<label for="references_2_phone">Ref 2 Phone:</label>
 							<input class="form-medium-input-style" type="text" name="references_2_phone" id="references_2_phone" placeholder="Reference 2 Phone..." title="Enter a valid phone"/>
 						</td>
 					</tr>
