@@ -12,7 +12,7 @@
 		</div>
 	</div>
 
-	<div class="container space-between flex">
+	<div class="pricing-container">
 		<div class="pricing-card">
 			<div class="pricing-header">
 				<h1 style="color: var(--basic-green);">Mini Pack</h1>

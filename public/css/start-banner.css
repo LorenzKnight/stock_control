@@ -1,0 +1,42 @@
+@media (max-width: 768px) {
+    .wrapper-dark-blue {
+        width: 100%;
+        height: 80vh;
+        background-color: var(--main-bg-dark-blue);
+    }
+
+    .banner-container {
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .blue-curve {
+        height: 150px;
+        background-color: var(--main-bg-dark-blue);
+        border-bottom-right-radius: 100% 90%;
+    }
+}
+
+@media (min-width: 1024px) {
+    .wrapper-dark-blue {
+        background-color: var(--main-bg-dark-blue);
+    }
+
+    .banner-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0 auto;
+        padding: 40px 80px;
+        max-width: 1200px;
+        height: 450px;
+    }
+
+    .blue-curve {
+        height: 250px;
+        background-color: var(--main-bg-dark-blue);
+        border-bottom-right-radius: 100% 90%;
+    }
+}
