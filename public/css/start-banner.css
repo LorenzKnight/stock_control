@@ -1,7 +1,7 @@
 @media (max-width: 768px) {
     .wrapper-dark-blue {
         width: 100%;
-        height: 80vh;
+        height: 85vh;
         background-color: var(--main-bg-dark-blue);
     }
 
@@ -16,6 +16,7 @@
         height: 150px;
         background-color: var(--main-bg-dark-blue);
         border-bottom-right-radius: 100% 90%;
+        margin-bottom: 50px;
     }
 }
 
