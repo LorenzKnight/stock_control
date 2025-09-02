@@ -179,9 +179,3 @@ body {
     line-height: 2;
     color: var(--main-text-color);
 }
-
-.min-qty {
-    color: red;
-    font-size: 16px !important;
-    font-weight: bold;
-}

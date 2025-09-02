@@ -69,3 +69,9 @@
     height: 400px;
     overflow: auto;
 }
+
+.min-qty {
+    color: red;
+    font-size: 16px !important;
+    font-weight: bold;
+}

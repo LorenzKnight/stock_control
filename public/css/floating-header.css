@@ -9,10 +9,10 @@
 		left: 50%;
 		transform: translateX(-50%); /* Para centrar horizontalmente */
 		width: 85%;
-		height: 65px;
+		min-height: 65px;
 		background-color: transparent;
 		color: var(--clr-white);
-		display: flex;
+		/* display: flex; */
 		align-items: center;
 		justify-content: space-between;
 		padding: 0 20px;
@@ -24,7 +24,11 @@
 		display: none;
 	}
 
-	.floating-header ul.menu-mobile {
+	.mobile-menu-container {
+		display: flex; 
+	}
+
+	.floating-header ul.menu-hamburger {
 		display: flex;
 		padding: 0;
 		margin: 0;
@@ -39,30 +43,20 @@
 		object-fit: cover;
 	}
 
-	.floating-header ul.menu-mobile img {
+	.floating-header ul.menu-hamburger img {
 		width: 38px;
 		filter: brightness(0) saturate(0) invert(100%);
 		opacity: 1;
 		transition: filter 0.3s ease;
 	}
 
-	.floating-header ul.menu-mobile li {
+	.floating-header ul.menu-hamburger li {
 		flex: 1;
 		text-align: right;
 		display: inline-block;
 		margin: 0 10px;
 		text-transform: uppercase;
 	}
-
-	/* .floating-header ul li a {
-		color: var(--clr-white);
-		text-decoration: none;
-	}
-
-	.floating-header ul li a:hover {
-		color: var(--clr-border);
-		cursor: pointer;
-	} */
 
 	.floating-header.scrolled-out {
 	background-color: var(--clr-white);
@@ -71,16 +65,36 @@
 	transition: all 0.5s ease-in-out;
 	}
 
-	.floating-header.scrolled-out ul.menu-mobile li a, .floating-header.scrolled-out .mobile-logo img {
+	.floating-header.scrolled-out ul.menu-hamburger li a, .floating-header.scrolled-out .mobile-logo img {
 		filter: brightness(0) saturate(0) invert(0) !important;
 		color: var(--main-bg-dark-blue);
 		transition: all 0.5s ease-in-out;
 	}
 
-	/* .floating-header.scrolled-out ul li a:hover {
-		color: var(--clr-border);
-		transition: all 0s ease-in-out;
-	} */
+	.mobile-menu {
+		display: none;
+		/* background-color: var(--clr-white); */
+	}
+
+	.mobile-menu ul {
+		padding: 0;
+		margin: 0;
+		list-style: none;
+		width: 100%;
+	}
+
+	.mobile-menu ul li {
+		text-align: center;
+		display: block;
+		margin: 20px 0;
+		text-transform: uppercase;
+		padding-bottom: 10px;
+	}
+
+	.floating-header ul li a {
+		color: var(--main-bg-dark-blue);
+		text-decoration: none;
+	}
 }
 
 @media (min-width: 1024px) {
@@ -119,11 +133,11 @@
 		z-index: 100;
 	}
 
-	.floating-header ul.menu-mobile {
+	.mobile-logo img, .floating-header ul.menu-hamburger {
 		display: none;
 	}
 
-	.mobile-logo img {
+	.mobile-menu-container, .mobile-menu {
 		display: none;
 	}
 
