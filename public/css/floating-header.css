@@ -82,11 +82,12 @@
 	}
 
 	.mobile-menu ul li {
+		font-size: 18px;
 		text-align: center;
 		display: block;
 		margin: 20px 0;
 		text-transform: uppercase;
-		padding-bottom: 10px;
+		padding-bottom: 15px;
 	}
 
 	.floating-header ul li a {
