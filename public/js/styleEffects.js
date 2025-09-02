@@ -29,7 +29,55 @@ if (homeBtn) {
 scrollToElementOnClick("pricing-btn", "pricing-container", 50)
 // AQUI 
 
+
+
 document.addEventListener("DOMContentLoaded", async function () {
+	const menuHamburger			= document.getElementById('home-btn-mobile');
+	const mobileHeaderAscLogo	= document.getElementById('mobile-header-asc-logo');
+	const mobileMenu			= document.getElementById('mobile-menu');
+	const floatingHeader		= document.querySelector('.floating-header');
+
+	if (menuHamburger && mobileMenu && floatingHeader) {
+		const closeMenu = () => {
+			if (!mobileMenu.classList.contains('hidden')) {
+				mobileMenu.classList.add('hidden');
+			}
+			floatingHeader.classList.remove('floating-header-transform');
+			menuHamburger.classList.remove('img-color-change');
+			if (mobileHeaderAscLogo) mobileHeaderAscLogo.classList.remove('img-color-change');
+		};
+
+		const toggleOpen = (e) => {
+      		if (e) { e.preventDefault(); e.stopPropagation(); }
+			const willOpen = mobileMenu.classList.contains('hidden'); // estado antes del toggle
+			
+			if (willOpen) {
+				mobileMenu.classList.toggle('hidden');
+				floatingHeader.classList.add('floating-header-transform');
+				menuHamburger.classList.toggle('img-color-change');
+				if (mobileHeaderAscLogo) mobileHeaderAscLogo.classList.add('img-color-change');
+			} else {
+				closeMenu();
+			}
+		};
+
+		menuHamburger.addEventListener('click', toggleOpen, false);
+		menuHamburger.addEventListener('touchend', function (e) {
+			// evita doble disparo (touch+click) en iOS
+			e.preventDefault();
+			toggleOpen(e);
+		}, { passive: false });
+
+		// (opcional) cerrar al hacer clic fuera
+		document.addEventListener('click', function (e) {
+			if (!mobileMenu.classList.contains('hidden') &&
+				!mobileMenu.contains(e.target) &&
+				!menuHamburger.contains(e.target)) {
+					closeMenu();
+			}
+		}, true);
+	}
+
 	const contactBox = document.getElementById('contactBox');
 	let originalImg = null;
 

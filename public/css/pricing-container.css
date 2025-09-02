@@ -1,4 +1,4 @@
-@media (max-width: 768px) {
+@media (max-width: 883px) {
     .pricing-container {
         max-width: 1200px;
         margin: 0 auto;
@@ -20,7 +20,7 @@
 	}
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 884px) {
     .pricing-container {
         max-width: 1200px;
         margin: 0 auto;

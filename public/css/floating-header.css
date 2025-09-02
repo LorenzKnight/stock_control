@@ -1,4 +1,4 @@
-@media (max-width: 768px) {
+@media (max-width: 883px) {
 	.floating-logo {
 		display: none;
 	}
@@ -16,7 +16,8 @@
 		align-items: center;
 		justify-content: space-between;
 		padding: 0 20px;
-		border-radius: 70px;
+		border-radius: 40px;
+		transition: all 500ms ease;
 		z-index: 100;
 	}
 
@@ -34,6 +35,8 @@
 		margin: 0;
 		list-style: none;
 		width: 100%;
+		justify-content: flex-end;
+		align-items: center;
 	}
 	
 	.mobile-logo img {
@@ -71,11 +74,6 @@
 		transition: all 0.5s ease-in-out;
 	}
 
-	.mobile-menu {
-		display: none;
-		/* background-color: var(--clr-white); */
-	}
-
 	.mobile-menu ul {
 		padding: 0;
 		margin: 0;
@@ -95,9 +93,19 @@
 		color: var(--main-bg-dark-blue);
 		text-decoration: none;
 	}
+
+	.floating-header-transform {
+		background-color: var(--clr-white);
+		border-radius: 40px !important;
+	}
+
+	.img-color-change {
+		filter: brightness(0) saturate(0) invert(0) !important;
+		transition: all 0.3s ease;
+	}
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 884px) {
     .floating-logo {
 		position: fixed;
 		top: 30px; /* Retirado del top */

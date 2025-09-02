@@ -27,7 +27,7 @@ body {
     margin: 0 auto;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 883px) {
     .container-right,
     .container-left {
         flex: 1; 
@@ -44,7 +44,7 @@ body {
     }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 884px) {
     .container-right,
     .container-left {
         flex: 1; 
