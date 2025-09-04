@@ -7,7 +7,7 @@
         <li class="no-redirect"><a href="" class="start-btn">Start</a></li>
         <li class="no-redirect"><a href="" class="features-btn">Features</a></li>
         <li class="no-redirect"><a href="" class="pricing-btn">Pricing</a></li>
-        <li class="no-redirect"><a href="" id="toggle-link">Sign up</a></li>
+        <li class="no-redirect"><a href="" class="toggle-link">Sign up</a></li>
     </ul>
 
 	<div class="mobile-menu-container">

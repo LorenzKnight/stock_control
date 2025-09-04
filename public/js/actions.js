@@ -320,29 +320,36 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// 📌 Alternar entre login y signup
-	let toggleLink = document.getElementById("toggle-link");
+	const DESKTOP_MIN_WIDTH = 885;
+
+	let toggleLinks = document.querySelectorAll(".toggle-link");
 	let closeLink = document.getElementById("close-link");
     let formLogin = document.getElementById("formular-login");
     let formSignup = document.getElementById("formular-signup");
 	let formLoginInfo = document.getElementById("container-login-info");
 	let formSignupInfo = document.getElementById("container-signup-info");
 
-    if (toggleLink) {
-        toggleLink.addEventListener("click", function (e) {
-            e.preventDefault();
-			scrollToTopIfNeeded();
+    if (toggleLinks && toggleLinks.length) {
+		toggleLinks.forEach(link => {
+			link.addEventListener("click", function (e) {
+				e.preventDefault();
+				if (typeof scrollToTopIfNeeded === 'function') scrollToTopIfNeeded();
 
-            if (formLogin) formLogin.style.display = "none";
-            if (formSignup) formSignup.style.display = "block";
-            if (formLoginInfo) formLoginInfo.style.display = "none";
-            if (formSignupInfo) formSignupInfo.style.display = "block";
-        });
+				const isMobile = window.matchMedia(`(max-width: ${DESKTOP_MIN_WIDTH - 1}px)`).matches;
+				if (isMobile) window.closeMenu?.();
+
+				if (formLogin)     formLogin.style.display = "none";
+				if (formSignup)    formSignup.style.display = "block";
+				if (formLoginInfo) formLoginInfo.style.display = "none";
+				if (formSignupInfo)formSignupInfo.style.display = isMobile ? "none" : "block";
+			});
+		});
     }
 
 	if (closeLink) {
         closeLink.addEventListener("click", function (e) {
             e.preventDefault();
-			scrollToTopIfNeeded();
+			if (typeof scrollToTopIfNeeded === 'function') scrollToTopIfNeeded();
             
 			if (formLogin) formLogin.style.display = "block";
             if (formSignup) formSignup.style.display = "none";
