@@ -1,5 +1,5 @@
 <?php
-if (!defined('IS_STRIPE_WEBHOOK') && session_status() === PHP_SESSION_NONE) {
+if (!defined('DISABLE_SESSION') && !defined('IS_STRIPE_WEBHOOK') && session_status() === PHP_SESSION_NONE) {
   session_start();
 }
 
@@ -27,13 +27,14 @@ if (is_file("inc/functions.php")) {
   include("../inc/functions.php");
 }
 
-if (is_file("inc/security.php")) {
-  include("inc/security.php");
-} else {
-  include("../inc/security.php");
+if (!defined('DISABLE_SECURITY')) {
+  if (is_file("inc/security.php")) {
+    include("inc/security.php");
+  } else {
+    include("../inc/security.php");
+  }
 }
 
 $dominio = "localhost:8889";
 // $dominio = "https://www.allstockcontrol.com";
 $pageName = "All Stock Control";
-?>

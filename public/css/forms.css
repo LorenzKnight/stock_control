@@ -39,7 +39,7 @@
 
 
 
-label {
+form label {
     font-size: 9px;
     color: var(--main-text-color);
     text-align: center;

@@ -18,6 +18,10 @@
         border-bottom-right-radius: 100% 90%;
         margin-bottom: 50px;
     }
+
+    .banner-container h1 {
+        font-size: 30px;
+    }
 }
 
 @media (min-width: 884px) {
@@ -40,5 +44,9 @@
         background-color: var(--main-bg-dark-blue);
         border-bottom-right-radius: 100% 90%;
         margin-bottom: 50px;
+    }
+
+    .banner-container h1 {
+        font-size: 52px;
     }
 }

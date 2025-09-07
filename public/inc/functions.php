@@ -1,6 +1,11 @@
 <?php
 function select_from($tableName, array $columns = [], array $whereClause = [], array $options = []) : string
 {
+	global $sql;
+	if (!$sql) {
+        return json_encode(["success"=>false, "message"=>"No DB connection"]);
+    }
+
 	if (empty($tableName)) {
 		return json_encode(["success" => false, "message" => "Table name is required"]);
 	}
@@ -20,7 +25,7 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 	if (preg_match('/\s|JOIN|\(|\)/i', $tableName)) {
 		$escapedTable = $tableName;
 	} else {
-		$escapedTable = '"' . pg_escape_string($tableName) . '"';
+		$escapedTable = '"' . pg_escape_string($sql, $tableName) . '"';
 	}
 
 	$whereParts = [];
@@ -34,7 +39,7 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 		if (preg_match('/^(.+)\s+IN$/i', $column, $matches) && is_array($value)) {
 			$field = trim($matches[1]);
 			$fieldFormatted = (strpos($field, '.') === false) ? "\"$field\"" : $field;
-			$escapedVals = array_map(fn($val) => "'" . pg_escape_string((string)$val) . "'", $value);
+			$escapedVals = array_map(fn($val) => "'" . pg_escape_string($sql, (string)$val) . "'", $value);
 			$whereParts[] = "$fieldFormatted IN (" . implode(', ', $escapedVals) . ")";
 			continue;
 		}
@@ -54,8 +59,8 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 			} else {
 				$escapedVal = is_numeric($value['value'])
 					? $value['value']
-					: "'" . pg_escape_string($value['value']) . "'";
-				$whereParts[] = "$colFormatted {$value['condition']} $escapedVal";
+					: "'" . pg_escape_string($sql, $value['value']) . "'";
+				$whereParts[] = "$colFormatted {$condition} $escapedVal";
 			}
 		} elseif ($column === 'OR' && is_array($value)) {
 			$orParts = [];
@@ -63,7 +68,7 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 				if (preg_match('/^(.+)\s+IN$/i', $orKey, $matches) && is_array($orVal)) {
 					$orField = trim($matches[1]);
 					$orColFormatted = (strpos($orField, '.') === false) ? "\"$orField\"" : $orField;
-					$escapedVals = array_map(fn($val) => "'" . pg_escape_string($val) . "'", $orVal);
+					$escapedVals = array_map(fn($val) => "'" . pg_escape_string($sql, $val) . "'", $orVal);
 					$orParts[] = "$orColFormatted IN (" . implode(',', $escapedVals) . ")";
 					continue;
 				}
@@ -76,11 +81,11 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 						? $field
 						: ((strpos($field, '.') === false) ? "\"$field\"" : $field);
 
-					$escapedVal = pg_escape_string((string)$orVal);
+					$escapedVal = pg_escape_string($sql, (string)$orVal);
 					$orParts[] = "$fieldFormatted $operator '%$escapedVal%'";
 				} else {
 					$orColFormatted = (strpos($orKey, '.') === false) ? "\"$orKey\"" : $orKey;
-					$escapedVal = pg_escape_string((string)$orVal);
+					$escapedVal = pg_escape_string($sql, (string)$orVal);
 					$orParts[] = "$orColFormatted = '$escapedVal'";
 				}
 			}
@@ -89,7 +94,7 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 			$orInParts = [];
 			foreach ($value as $field => $inValues) {
 				$orInCol = (strpos($field, '.') === false) ? "\"$field\"" : $field;
-				$escapedVals = array_map(fn($val) => "'" . pg_escape_string($val) . "'", $inValues);
+				$escapedVals = array_map(fn($val) => "'" . pg_escape_string($sql, $val) . "'", $inValues);
 				$orInParts[] = "$orInCol IN (" . implode(',', $escapedVals) . ")";
 			}
 			$whereParts[] = '(' . implode(' OR ', $orInParts) . ')';
@@ -100,13 +105,13 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 			$fieldFormatted = (preg_match('/\bCAST\s*\(.+\)/i', $field) || strpos($field, '(') !== false)
 				? $field
 				: ((strpos($field, '.') === false) ? "\"$field\"" : $field);
-			$escapedVal = pg_escape_string((string)$value);
+			$escapedVal = pg_escape_string($sql, (string)$value);
 
 			$whereParts[] = "$fieldFormatted $operator '%$escapedVal%'";
 		} elseif ($value === null) {
 			$whereParts[] = "$colFormatted IS NULL";
 		} else {
-			$escapedVal = pg_escape_string((string)$value);
+			$escapedVal = pg_escape_string($sql, (string)$value);
 			$whereParts[] = "$colFormatted = '$escapedVal'";
 		}
 	}
@@ -131,7 +136,7 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 		echo "Q: $query\n";
 	}
 
-	$result = pg_query($query);
+	$result = pg_query($sql, $query);
 
 	if (!$result) {
 		return json_encode([

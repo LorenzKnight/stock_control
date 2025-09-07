@@ -12,87 +12,25 @@
 		</div>
 	</div>
 
+	<div class="title-and-subtitle">
+		<h1>Choose the number of employees</h1>
+	</div>
+	<div class="opcions-packages">
+		<div class="packs-selection">
+			<input type="radio" id="group-pack-1" name="group-pack" value="0" checked>
+			<label for="group-pack-1">0 - 10</label>
+		</div>
+		<div class="packs-selection">
+			<input type="radio" id="group-pack-2" name="group-pack" value="15">
+			<label for="group-pack-2">15 - 30</label>
+		</div>
+		<div class="packs-selection">
+			<input type="radio" id="group-pack-3" name="group-pack" value="35">
+			<label for="group-pack-3">35 - 50</label>
+		</div>
+	</div>
+
 	<div class="pricing-container">
-		<div class="pricing-card">
-			<div class="pricing-header">
-				<h1 style="color: var(--basic-green);">Mini Pack</h1>
-				<h1>€10 / member</h1>
-				<p>5 members</p>
-				<h2>$50 / month</h2>
-				
-			</div>
-			<div class="pricing-header-comp" style="background-color: var(--basic-green);"></div>
-			<div class="pricing-content">
-				<h2>Includes:</h2>
-				<ul>
-					<li>Max 5 Members</li>
-					<li>max 1 Branch / Affiliate</li>
-					<li>Max 1 Admin</li>
-					<li>Max 10 Products</li>
-					<li>Max 1 Backups per month</li>
-				</ul>
-			</div>
-			<button class="access-btn">Select</button>
-		</div>
-
-		<div class="pricing-card">
-			<div class="pricing-header">
-				<h1 style="color: var(--plus-turquoise);">Plus Pack</h1>
-				<h1>€10 / member</h1>
-				<p>15 members</p>
-				<h2>$150 / month</h2>
-			</div>
-			<div class="pricing-header-comp" style="background-color: var(--plus-turquoise);"></div>
-			<div class="pricing-content">
-				<h2>Includes:</h2>
-				<ul>
-					<li>Max 15 Members</li>
-					<li>Unlimited Products</li>
-					<li>offert 3</li>
-					<li>offert 4</li>
-				</ul>
-			</div>
-			<button class="access-btn">Select</button>
-		</div>
-
-		<div class="pricing-card">
-			<div class="pricing-header">
-				<h1 style="color: var(--max-blue);">Max Pack</h1>	
-				<h1>€10 / member</h1>
-				<p>35 members</p>
-				<h2>$350 / month</h2>
-			</div>
-			<div class="pricing-header-comp" style="background-color: var(--max-blue);"></div>
-			<div class="pricing-content">
-				<h2>Includes:</h2>
-				<ul>
-					<li>offert 1</li>
-					<li>offert 2</li>
-					<li>offert 3</li>
-					<li>offert 4</li>
-				</ul>
-			</div>
-			<button class="access-btn">Select</button>
-		</div>
-
-		<div class="pricing-card">
-			<div class="pricing-header">
-				<h1 style="color: var(--ultra-purple);">Ultra Pack</h1>
-				<h1>€10 / member</h1>
-				<p>50 members</p>
-				<h2>$500 / month</h2>
-			</div>
-			<div class="pricing-header-comp" style="background-color: var(--ultra-purple);"></div>
-			<div class="pricing-content">
-				<h2>Includes:</h2>
-				<ul>
-					<li>offert 1</li>
-					<li>offert 2</li>
-					<li>offert 3</li>
-					<li>offert 4</li>
-				</ul>
-			</div>
-			<button class="access-btn">Select</button>
-		</div>
+		<!-- Aquí se insertan los paquetes dinámicamente -->
 	</div>
 </div>

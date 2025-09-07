@@ -278,6 +278,185 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
+	(function () {
+		const wrapper = document.querySelector('.opcions-packages');
+		if (!wrapper) return;
+
+		wrapper.querySelectorAll('.packs-selection[tabindex]').forEach(el => el.removeAttribute('tabindex'));
+
+		const syncSelectedClass = () => {
+			const checked = wrapper.querySelector('input[name="group-pack"]:checked');
+			wrapper.querySelectorAll('.packs-selection').forEach(el => {
+				el.classList.toggle('selected-pack-group', checked && el.contains(checked));
+			});
+		};
+
+		syncSelectedClass();
+
+		wrapper.addEventListener('mousedown', (e) => {
+			const container = e.target.closest('.packs-selection');
+			if (!container) return;
+			e.preventDefault();
+		});
+
+		wrapper.addEventListener('click', (e) => {
+			const container = e.target.closest('.packs-selection');
+			if (!container) return;
+
+			const radio = container.querySelector('input[type="radio"][name="group-pack"]');
+			if (!radio || radio.disabled) return;
+
+			const prevY = window.scrollY;
+
+			if (!radio.checked) {
+				try { radio.focus({ preventScroll: true }); }
+				catch { radio.focus(); window.scrollTo(0, prevY); }
+
+				radio.checked = true;
+				radio.dispatchEvent(new Event('change', { bubbles: true }));
+			}
+
+			syncSelectedClass();
+			
+			if (window.scrollY !== prevY) window.scrollTo(0, prevY);
+		});
+
+		wrapper.addEventListener('keydown', (e) => {
+			if (!e.target.matches('input[name="group-pack"]')) return;
+			if (e.key === ' ' || e.key === 'Spacebar') e.preventDefault();
+		});
+
+		wrapper.addEventListener('change', (e) => {
+			if (e.target.matches('input[name="group-pack"]')) syncSelectedClass();
+		});
+	})();
+
+	document.addEventListener('change', function (e) {
+		if (!e.target.matches('input[name="group-pack"]')) return;
+
+		const threshold = parseInt(e.target.value, 10) || 0;
+		const container = document.querySelector('.pricing-container');
+		if (!container) return;
+
+		container.innerHTML = '<p style="text-align:center;padding:12px">Loading...</p>';
+
+		const params = new URLSearchParams();
+		if (threshold) params.append('min_members', String(threshold));
+		params.append('limit', '4');
+		params.append('sort', 'package_price');
+		params.append('dir', 'ASC');
+
+		const url = `api/get_packs_front.php?${params.toString()}`;
+
+		fetch(url, {
+			method: 'GET',
+			headers: { 'Accept': 'application/json' },
+			credentials: 'omit' // no enviar cookies/sesión
+		})
+		.then(async (res) => {
+			const ct  = res.headers.get('content-type') || '';
+			const raw = await res.text();
+
+			// Intenta parsear JSON
+			let data;
+			try {
+				data = JSON.parse(raw);
+			} catch (e) {
+				throw new Error('Respuesta no JSON del servidor');
+			}
+
+			if (!res.ok) {
+				throw new Error(`HTTP ${res.status}: ${data?.message || 'Request failed'}`);
+			}
+
+			return data;
+		})
+		.then(data => {
+			if (!data.success || !Array.isArray(data.packages)) {
+				container.innerHTML = `<p style="text-align:center;padding:12px;color:#c00">
+					${data.message ? `Error: ${data.message}` : 'Error loading packages.'}
+				</p>`;
+				return;
+			}
+
+			const esc = (s) => String(s ?? '')
+			.replace(/&/g,'&amp;').replace(/</g,'&lt;')
+			.replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+			const colorVarByIndex = (i) => {
+				const vars = ['--basic-green','--plus-turquoise','--max-blue','--ultra-purple'];
+				return vars[i % vars.length];
+			};
+
+			// Normaliza SOLO columnas existentes
+			const norm = (p) => {
+				const m = p.members_limit;
+				return {
+					id: p.package_id,
+					name: p.package_name || 'Package',
+					img: p.package_image || null,
+					desc: p.package_description || null,
+					price: p.package_price ?? null,
+					members: (m == null || m === '') ? null : Number(m), // null = ilimitado
+					admins: p.admins_limit ?? null,
+					branches: p.branch_affiliate_limit ?? null,
+					products: p.products_limit ?? null,
+					duration: p.package_duration ?? null
+				};
+			};
+
+			// Fallback: ilimitados o >= threshold
+			let list = data.packages.map(norm);
+			if (threshold) list = list.filter(pkg => pkg.members == null || pkg.members >= threshold);
+
+			if (!list.length) {
+				container.innerHTML = '<p style="text-align:center;padding:12px">No packages match this selection.</p>';
+				return;
+			}
+
+			const html = list.map((pkg, i) => {
+			const cvar = colorVarByIndex(i);
+			return `
+			<div class="pricing-card">
+				<div class="pricing-header">
+					<h1 style="color: var(${cvar});">${esc(pkg.name)}</h1>
+					${pkg.price != null ? `<h1>€${esc(pkg.price)} / month</h1>` : ''}
+					${pkg.members != null ? `<p>${esc(pkg.members)} members</p>` : '<p>Unlimited members</p>'}
+					${pkg.duration != null ? `<p>${esc(pkg.duration)} days</p>` : ''}
+				</div>
+				<div class="pricing-header-comp" style="background-color: var(${cvar});"></div>
+				<div class="pricing-content">
+					<div class="pricing-desc">
+						${pkg.desc ? `<p class="pkg-desc">${esc(pkg.desc)}</p>` : ''}
+					</div>
+					<h2>Includes:</h2>
+					<ul>
+						${pkg.members  != null ? `<li>Max ${esc(pkg.members)} Members</li>` : '<li>Unlimited Members</li>'}
+						${pkg.admins   != null ? `<li>Max ${esc(pkg.admins)} Admins</li>` : ''}
+						${pkg.branches != null ? `<li>Max ${esc(pkg.branches)} Branch / Affiliate</li>` : ''}
+						<!-- ${pkg.products != null ? `<li>Max ${esc(pkg.products)} Products</li>` : ''} -->
+						${pkg.duration != null ? `<li>Duration: ${esc(pkg.duration)} days</li>` : ''}
+					</ul>
+				</div>
+				<!-- <button class="access-btn" data-package-id="${esc(pkg.id)}">Select</button> -->
+			</div>`;
+			}).join('');
+
+			container.innerHTML = html;
+		})
+		.catch(err => {
+			console.error('Error loading packages:', err);
+			container.innerHTML = '<p style="text-align:center;padding:12px;color:#c00">Network or JSON error.</p>';
+		});
+	});
+	
+	let r = document.querySelector('input[name="group-pack"]:checked') || document.querySelector('input[name="group-pack"]');
+	if (r) {
+		r.checked = true;
+		r.dispatchEvent(new Event('change', { bubbles: true }));
+	}
+
+
 	// 📌 Manejo del botón de logout
 	document.querySelectorAll('.logout-button').forEach((btn) => {
 		btn.addEventListener('click', onLogoutClick);
