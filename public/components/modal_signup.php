@@ -52,7 +52,7 @@
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
 						</br>
-						<a href="#" id="close-link">Do you have an existing account?</a>
+						<a href="#" class="close-link">Do you have an existing account?</a>
 					</td>
 				</tr>
 			</table>

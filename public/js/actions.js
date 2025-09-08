@@ -501,41 +501,53 @@ document.addEventListener("DOMContentLoaded", async function () {
 	// 📌 Alternar entre login y signup
 	const DESKTOP_MIN_WIDTH = 885;
 
-	let toggleLinks = document.querySelectorAll(".toggle-link");
-	let closeLink = document.getElementById("close-link");
-    let formLogin = document.getElementById("formular-login");
-    let formSignup = document.getElementById("formular-signup");
-	let formLoginInfo = document.getElementById("container-login-info");
+	let formLogin      = document.getElementById("formular-login");
+	let formSignup     = document.getElementById("formular-signup");
+	let formLoginInfo  = document.getElementById("container-login-info");
 	let formSignupInfo = document.getElementById("container-signup-info");
 
-    if (toggleLinks && toggleLinks.length) {
-		toggleLinks.forEach(link => {
-			link.addEventListener("click", function (e) {
-				e.preventDefault();
-				if (typeof scrollToTopIfNeeded === 'function') scrollToTopIfNeeded();
-
-				const isMobile = window.matchMedia(`(max-width: ${DESKTOP_MIN_WIDTH - 1}px)`).matches;
-				if (isMobile) window.closeMenu?.();
-
-				if (formLogin)     formLogin.style.display = "none";
-				if (formSignup)    formSignup.style.display = "block";
-				if (formLoginInfo) formLoginInfo.style.display = "none";
-				if (formSignupInfo)formSignupInfo.style.display = isMobile ? "none" : "block";
-			});
+	const showSignup = (isMobile) => {
+		if (formLogin)      formLogin.style.display = "none";
+		if (formSignup)     formSignup.style.display = "block";
+		if (formLoginInfo)  formLoginInfo.style.display = "none";
+		if (formSignupInfo) formSignupInfo.style.display = isMobile ? "none" : "block";
+		
+		document.querySelectorAll(".toggle-link, .close-link").forEach(a => {
+			a.textContent = "Log In";
+			a.classList.remove("toggle-link");
+			a.classList.add("close-link");
 		});
-    }
+	};
 
-	if (closeLink) {
-        closeLink.addEventListener("click", function (e) {
-            e.preventDefault();
-			if (typeof scrollToTopIfNeeded === 'function') scrollToTopIfNeeded();
-            
-			if (formLogin) formLogin.style.display = "block";
-            if (formSignup) formSignup.style.display = "none";
-            if (formLoginInfo) formLoginInfo.style.display = "block";
-            if (formSignupInfo) formSignupInfo.style.display = "none";
-        });
-    }
+	const showLogin = () => {
+		if (formSignup)     formSignup.style.display = "none";
+		if (formLogin)      formLogin.style.display = "block";
+		if (formSignupInfo) formSignupInfo.style.display = "none";
+		if (formLoginInfo)  formLoginInfo.style.display = "block";
+		
+		document.querySelectorAll(".toggle-link, .close-link").forEach(a => {
+			a.textContent = "Sign up";
+			a.classList.remove("close-link");
+			a.classList.add("toggle-link");
+		});
+	};
+
+	document.addEventListener("click", (e) => {
+		const link = e.target.closest(".toggle-link, .close-link");
+		if (!link) return;
+
+		e.preventDefault();
+		if (typeof scrollToTopIfNeeded === "function") scrollToTopIfNeeded();
+
+		const isMobile = window.matchMedia(`(max-width: ${DESKTOP_MIN_WIDTH - 1}px)`).matches;
+		if (isMobile) window.closeMenu?.();
+
+		if (link.classList.contains("toggle-link")) {
+			showSignup(isMobile);
+		} else {
+			showLogin();
+		}
+	});
 
 	// 📌 Manejo del datos de usuario
 	const headerMenu = document.getElementById("header-menu");
