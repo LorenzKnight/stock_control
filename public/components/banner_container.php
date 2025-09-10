@@ -15,14 +15,3 @@
 	</div>
 </div>
 <div class="blue-curve"></div>
-<!-- 🧑‍💼 Para empresarios:
-"Eres empresario. Tu inventario merece una gestión moderna. Regístrate y optimiza el control de tu stock con una plataforma pensada para tu empresa."
-
-🚀 Para emprendedores:
-"Si estás haciendo crecer tu negocio, necesitas orden y control. Regístrate y comienza a gestionar tu inventario de forma simple y profesional."
-
-🏷 Para administradores de almacén:
-"Administra tu almacén con precisión y eficiencia. Regístrate y descubre una plataforma diseñada para facilitar tu trabajo diario." 
-
-🧩 Opción combinada (multi-perfil):
-"Seas empresario, emprendedor o administrador de almacén, nuestra plataforma de control de stock se adapta a ti. Regístrate y empieza hoy mismo." -->

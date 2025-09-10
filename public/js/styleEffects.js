@@ -84,8 +84,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// ✅ Ahora puedes registrar el scroll-to con cierre de menú en móvil
+	scrollToElementOnClick(".features-btn", "features-container", 70);
+
 	scrollToElementOnClick(".pricing-btn", "pricing-container", 50);
 
+	
 	const contactBox = document.getElementById('contactBox');
 	let originalImg = null;
 	if (contactBox) {
