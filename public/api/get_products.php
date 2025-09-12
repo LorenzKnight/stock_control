@@ -57,6 +57,7 @@ try {
 
 	$products = select_from("products", [
 		"product_id",
+		"company_id",
 		"product_name",
 		"product_image",
 		"product_mark",

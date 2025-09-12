@@ -1,20 +1,20 @@
 <?php
 class GlobalArrays {
-	public static $vehicleTypes = [
-		1  => "Motorcycle",
-		2  => "Car",
-		3  => "SUV",
-		4  => "Pickup Truck",
-		5  => "Van",
-		6  => "Minibus",
-		7  => "Bus",
-		8  => "Light Truck",
-		9  => "Medium Truck",
-		10 => "Heavy Truck",
-		11 => "Trailer Truck / Articulated Lorry",
-		12 => "Construction Vehicle",
-		13 => "Agricultural Vehicle"
-	];
+	// public static $vehicleTypes = [
+	// 	1  => "Motorcycle",
+	// 	2  => "Car",
+	// 	3  => "SUV",
+	// 	4  => "Pickup Truck",
+	// 	5  => "Van",
+	// 	6  => "Minibus",
+	// 	7  => "Bus",
+	// 	8  => "Light Truck",
+	// 	9  => "Medium Truck",
+	// 	10 => "Heavy Truck",
+	// 	11 => "Trailer Truck / Articulated Lorry",
+	// 	12 => "Construction Vehicle",
+	// 	13 => "Agricultural Vehicle"
+	// ];
 
 	public static $productTypes = [
 		1 => "New",

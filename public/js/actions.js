@@ -1767,7 +1767,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 					initDragAndDrop('drop-product-area', 'product_image', 'product-image-preview');
 
-					populateVehicleTypes('product_type');
+					populateProductTypes('product_type', '', '1', true);
 
 					initCategorySelectors('product_mark', 'product_model', 'product_sub_model', 'select-company');
 
@@ -2726,7 +2726,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					}
 				}
 					
-				await populateVehicleTypes('edit_product_type', product.product_type);
+				await populateProductTypes('edit_product_type', product.product_type, product.company_id, true);
 
 				await populateCurrencies('edit_currency', product.currency);
 	
@@ -5314,6 +5314,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 		const handler = (e) => {
 			if (!isVisible(popup)) return;
 
+			const mini = document.getElementById('create-type-form');
+			if (mini && isVisible(mini) && mini.contains(e.target)) {
+				return;
+			}
+
 			const clickDentroContenido = content.contains(e.target);
 			if (clickDentroContenido) return; // si clickeas dentro, mantenemos el listener
 
@@ -5712,40 +5717,267 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
-	async function populateVehicleTypes(selectId, selectedValue = '') {
+	async function populateProductTypes(selectId, selectedValue = '', companyId = '', withCreate = true) {
 		const select = document.getElementById(selectId);
 		if (!select) return;
 	
 		// 🔹 Limpiar contenido actual del <select>
 		select.innerHTML = '';
-	
-		// 🔹 Agregar opción por defecto
 		const defaultOption = document.createElement('option');
 		defaultOption.value = '';
 		defaultOption.textContent = 'Select a Type';
 		select.appendChild(defaultOption);
 	
 		try {
-			const res = await fetch('api/get_global_array.php?key=vehicleTypes');
-			const data = await res.json();
+			const params = new URLSearchParams();
+    		if (companyId) params.append('select_company', companyId);
+
+			const res = await fetch(`api/get_product_type.php${params.toString() ? `?${params}` : ''}`, {
+				headers: { 'Accept': 'application/json' },
+				credentials: 'same-origin'
+			});
 	
-			if (data.success && data.data) {
-				for (const [value, label] of Object.entries(data.data)) {
+			const ct   = res.headers.get('content-type') || '';
+			const raw  = await res.text();
+
+			// si no viene JSON, log y error claro
+			if (!ct.includes('application/json')) {
+				console.error('[get_product_type] Content-Type:', ct);
+				console.error('[get_product_type] Raw (primeros 400 chars):', raw.slice(0, 400));
+				throw new Error('Respuesta no JSON del servidor');
+			}
+
+			const data = JSON.parse(raw);
+			if (!res.ok) {
+				throw new Error(data?.message || `HTTP ${res.status}`);
+			}
+
+			// Tu API: { success, count, data:[ {product_type_id, product_type_name, ...}, ... ] }
+			if (data.success && Array.isArray(data.data) && data.data.length) {
+				for (const row of data.data) {
+					const value = String(row.product_type_id);
+					const label = row.product_type_name || `Type ${value}`;
 					const option = document.createElement('option');
 					option.value = value;
 					option.textContent = label;
-					if (String(value) === String(selectedValue)) {
-						option.selected = true;
-					}
+					if (String(value) === String(selectedValue)) option.selected = true;
 					select.appendChild(option);
 				}
+
+				// (Opcional) Opción "create type" al final, si la usas
+				if (withCreate) {
+					const plusOpt = document.createElement('option');
+					plusOpt.value = '+';
+					plusOpt.textContent = '+ create new type...';
+					select.appendChild(plusOpt);
+				}
 			} else {
-				select.innerHTML += `<option value="">No vehicle types found</option>`;
+				const emptyOpt = document.createElement('option');
+				emptyOpt.value = '';
+				emptyOpt.textContent = 'No types found';
+				select.appendChild(emptyOpt);
 			}
 		} catch (error) {
-			console.error("Error loading vehicle types:", error);
-			select.innerHTML += `<option value="">Error loading vehicle types</option>`;
+			console.error('Error loading product types:', error);
+			const errOpt = document.createElement('option');
+			errOpt.value = '';
+			errOpt.textContent = 'Error loading types';
+			select.appendChild(errOpt);
 		}
+
+		if (!select.dataset.createBound) {
+			bindCreateTypeMiniForm({
+				select,
+				companyId,
+				apiUrl: 'api/create_product_type.php',   // <-- ajusta si usas otra ruta
+				formId: 'create-type-form',
+				inputId: 'new-type-name',
+				saveId: 'save-type-btn',
+				cancelId: 'cancel-type-btn',
+				msgId: 'create-type-msg'
+			});
+			select.dataset.createBound = '1';
+		}
+	}
+
+	function bindCreateTypeMiniForm({ 
+		select, companyId = '', apiUrl, formId, inputId, saveId, cancelId, msgId 
+	}) {
+		const formBox	= document.getElementById(formId);          // overlay
+		const modalBox	= formBox?.querySelector('.delete-modal-box'); // caja interna
+		const input		= document.getElementById(inputId);
+		const saveBtn	= document.getElementById(saveId);
+		const cancelBtn	= document.getElementById(cancelId);
+		const msgEl		= document.getElementById(msgId);
+
+		if (!formBox || !modalBox || !input || !saveBtn || !cancelBtn || !msgEl) {
+			console.warn('[create-type] Falta algún elemento del mini-form.');
+			return;
+		}
+
+		// Evita doble binding si llamas varias veces a bindCreateTypeMiniForm
+		if (formBox.dataset.bound === '1') return;
+		formBox.dataset.bound = '1';
+
+		const setLoading = (b) => {
+			saveBtn.disabled = b;
+			cancelBtn.disabled = b;
+			input.disabled = b;
+		};
+
+		// --- Bloquear propagación dentro del modal ---
+		// Clics dentro de la caja NO burbujean hacia el overlay/documento
+		formBox.addEventListener('click', (e) => {
+			e.stopPropagation();
+		});
+
+		modalBox.addEventListener('click', (e) => {
+			e.stopPropagation();
+		});
+
+		const showForm = () => {
+			msgEl.textContent = '';
+			msgEl.style.color = '#c00';
+			input.value = '';
+			formBox.style.display = 'flex';
+			setTimeout(() => input.focus(), 0);
+			select.disabled = true;
+		};
+
+		const hideForm = () => {
+			formBox.style.display = 'none';
+			msgEl.textContent = '';
+			select.disabled = false;
+		};
+
+		let prevValue = select.value || '';
+
+		// Clic en el overlay (fuera de la caja) -> cerrar SOLO este overlay
+		formBox.addEventListener('click', (e) => {
+			// Si haces click fuera de modalBox, cierra solo este
+			if (e.target === formBox) {
+				e.preventDefault();
+				hideForm();
+				select.value = prevValue;
+			}
+		});
+
+		formBox.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape') {
+				e.preventDefault();
+				hideForm();
+				select.value = prevValue;
+			}
+		});
+
+		// Abrir cuando elijan "+"
+		select.addEventListener('change', (e) => {
+			const v = e.target.value;
+			if (v === '+') {
+				select.value = prevValue;
+				setTimeout(showForm, 0);
+			} else {
+				prevValue = v;
+				hideForm();
+			}
+		});
+
+		// Guardar
+		const doSave = async () => {
+			const name = (input.value || '').trim();
+			if (!name) {
+				msgEl.textContent = 'Please enter a name.';
+				input.focus();
+				return;
+			}
+			setLoading(true);
+			msgEl.style.color = '#666';
+			msgEl.textContent = 'Saving…';
+
+			try {
+				const payload = { name };
+				if (companyId) payload.company_id = companyId;
+
+				const res = await fetch(apiUrl, {
+					method: 'POST',
+					headers: { 'Accept':'application/json','Content-Type':'application/json' },
+					credentials: 'same-origin',
+					body: JSON.stringify(payload)
+				});
+
+				const ct  = res.headers.get('content-type') || '';
+				const raw = await res.text();
+				if (!ct.includes('application/json')) {
+					console.error('[create_product_type] Raw:', raw.slice(0, 400));
+					throw new Error('Respuesta no JSON del servidor');
+				}
+
+				const data = JSON.parse(raw);
+				if (!res.ok || !data.success || !data.id) {
+					throw new Error(data?.message || 'Request failed');
+				}
+
+				// Insertar/seleccionar el nuevo option (antes del "+")
+				const newVal   = String(data.id);
+				const newLabel = data.name || name;
+				let opt = Array.from(select.options).find(o => o.value === newVal);
+				if (!opt) {
+					opt = document.createElement('option');
+					opt.value = newVal;
+					opt.textContent = newLabel;
+					const plusOpt = Array.from(select.options).find(o => o.value === '+');
+					select.insertBefore(opt, plusOpt || null);
+				} else {
+					opt.textContent = newLabel;
+				}
+				select.value = newVal;
+				prevValue = newVal;
+
+				select.dispatchEvent(new Event('change', { bubbles: true }));
+
+				hideForm(); // <-- solo cierra este overlay
+			} catch (err) {
+				console.error(err);
+				msgEl.style.color = '#c00';
+				msgEl.textContent = err.message || 'Could not save. Try again.';
+				select.value = prevValue;
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		// Botón Save: impedir que un handler global cierre todo
+		saveBtn.addEventListener('click', (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+			doSave();
+		});
+
+		// Enter/Escape en el input
+		input.addEventListener('keydown', (e) => {
+			if (e.key === 'Enter') {
+				e.preventDefault();
+				e.stopPropagation();
+				e.stopImmediatePropagation();
+				doSave();
+			} else if (e.key === 'Escape') {
+				e.preventDefault();
+				e.stopPropagation();
+				e.stopImmediatePropagation();
+				hideForm();
+				select.value = prevValue;
+			}
+		});
+
+		// Botón Cancel: cerrar solo este
+		cancelBtn.addEventListener('click', (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+			hideForm();
+			select.value = prevValue;
+		});
 	}
 
 	async function populateCountryPhoneCodes(selectId, phoneInputId, selectedValue = '') {

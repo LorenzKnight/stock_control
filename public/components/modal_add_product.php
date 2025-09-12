@@ -18,46 +18,57 @@
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
+						<label for="product_name">Name:</label>
 						<input class="form-input-style" type="text" name="product_name" id="product_name" placeholder="Product Name..." title="Product name"/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="3" align="center" valign="middle">
+						<label for="product_type">Type:</label>
 						<select class="form-input-style" name="product_type" id="product_type"></select>
 					</td>
 					<td colspan="3" align="center" valign="middle">
+						<label for="product_year">Year:</label>
 						<input class="form-medium-input-style input-year-only" type="number" name="product_year" id="product_year" placeholder="Product Year" title="Product Year"/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="2" align="center" valign="middle">
+						<label for="product_mark">Mark:</label>
 						<select class="form-input-style" name="product_mark" id="product_mark"></select>
 					</td>
 					<td colspan="2" align="center" valign="middle">
+						<label for="product_model">Model:</label>
 						<select class="form-input-style" name="product_model" id="product_model"></select>
 					</td>
 					<td colspan="2" align="center" valign="middle">
+						<label for="product_sub_model">Sub-model:</label>
 						<select class="form-input-style" name="product_sub_model" id="product_sub_model"></select>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="3" align="center" valign="middle">
+						<label for="quantity">Quantity:</label>
 						<input class="form-medium-input-style" type="number" name="quantity" id="quantity" placeholder="Quantity" title="Quantity"/>
 					</td>
 					<td colspan="3" align="center" valign="middle">
+						<label for="min_quantity">Min Qty:</label>
 						<input class="form-medium-input-style" type="number" name="min_quantity" id="min_quantity" placeholder="Min Qty = 10" title="Min Quantity"/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="3" align="center" valign="middle">
+						<label for="currency">Currency:</label>
 						<select class="form-input-style" name="currency" id="currency"></select>
 					</td>
 					<td colspan="3" align="center" valign="middle">
+						<label for="prise">Price:</label>
 						<input class="form-medium-input-style" type="number" name="prise" id="prise" placeholder="Product Prise" title="Product Prise"/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
+						<label for="description">Description:</label>
 						<textarea class="form-input-style" id="description" name="description" rows="2" cols="35">
 						</textarea>
 					</td>

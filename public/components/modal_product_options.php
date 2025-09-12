@@ -73,12 +73,15 @@
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td colspan="2" align="center" valign="middle">
+							<label for="edit_product_mark">Mark:</label>
 							<select class="form-input-style" name="edit_product_mark" id="edit_product_mark"></select>
 						</td>
 						<td colspan="2" align="center" valign="middle">
+							<label for="edit_product_model">Model:</label>
 							<select class="form-input-style" name="edit_product_model" id="edit_product_model"></select>
 						</td>
 						<td colspan="2" align="center" valign="middle">
+							<label for="edit_product_sub_model">Sub-model:</label>
 							<select class="form-input-style" name="edit_product_sub_model" id="edit_product_sub_model"></select>
 						</td>
 					</tr>
