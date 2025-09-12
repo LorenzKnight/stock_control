@@ -5763,14 +5763,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 					if (String(value) === String(selectedValue)) option.selected = true;
 					select.appendChild(option);
 				}
-
-				// (Opcional) Opción "create type" al final, si la usas
-				if (withCreate) {
-					const plusOpt = document.createElement('option');
-					plusOpt.value = '+';
-					plusOpt.textContent = '+ create new type...';
-					select.appendChild(plusOpt);
-				}
 			} else {
 				const emptyOpt = document.createElement('option');
 				emptyOpt.value = '';
@@ -5783,6 +5775,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 			errOpt.value = '';
 			errOpt.textContent = 'Error loading types';
 			select.appendChild(errOpt);
+		}
+
+		// (Opcional) Opción "create type" al final, si la usas SIEMPRE (y sin duplicar)
+  		if (withCreate && !Array.from(select.options).some(o => o.value === '+')) {
+			const plusOpt = document.createElement('option');
+			plusOpt.value = '+';
+			plusOpt.textContent = '+ create new type...';
+			select.appendChild(plusOpt);
 		}
 
 		if (!select.dataset.createBound) {
