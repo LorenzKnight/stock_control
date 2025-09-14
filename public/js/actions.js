@@ -3470,9 +3470,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 							`;
 						} else if (sale.products.length === 1) {
 							const product = sale.products[0];
-							const productImg = product.image?.trim() !== ''
-								? `images/products/${product.image}`
-								: 'images/sys-img/wooden-box.png';
+
+							let isDefaultImage = !product.image || product.image.trim() === "";
+							const productImg = isDefaultImage
+								? 'images/sys-img/wooden-box.png'
+								: `images/products/${product.image}`;
+
+							let imageClass = isDefaultImage ? "grayscale-img" : "";
 						
 							productsHtml = `
 								<tr valign="baseline" class="form_height">
@@ -3482,7 +3486,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									</td>
 									<td width="25%" align="left" valign="middle">
 										<div class="sale-product-pic">
-											<img src="${productImg}" alt="product picture">
+											<img src="${productImg}" alt="product picture" class="${imageClass}" />
 										</div>
 									</td>
 									<td width="80%" align="left" valign="middle">
@@ -3497,10 +3501,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 							`;
 						} else {
 							sale.products.forEach(product => {
-								const productImg = product.image?.trim() !== ''
-									? `images/products/${product.image}`
-									: 'images/sys-img/wooden-box.png';
+								let isDefaultImage = !product.image || product.image.trim() === "";
+								const productImg = isDefaultImage
+									? 'images/sys-img/wooden-box.png'
+									: `images/products/${product.image}`;
 						
+								let imageClass = isDefaultImage ? "grayscale-img" : "";
+
 								productsHtml += `
 									<tr valign="baseline" class="form_height">
 										<td width="3%" align="center" valign="middle">
@@ -3509,7 +3516,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 										</td>
 										<td width="15%" align="left" valign="middle">
 											<div class="sale-list-product-pic">
-												<img src="${productImg}" alt="product picture">
+												<img src="${productImg}" alt="product picture" class="${imageClass}" />
 											</div>
 										</td>
 										<td width="40%" align="left" valign="middle">

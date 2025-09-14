@@ -40,13 +40,13 @@
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
-						<td colspan="4" style="padding-top: 5px;" align="center" valign="middle">
-							<button class="button-style-agree" id="add-category-btn">Create Sub/Category</button>
+						<td colspan="4" align="center" valign="middle">
+							<button class="button-style-agree" id="add-product-btn">Create Product</button>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
-						<td colspan="4" align="center" valign="middle">
-							<button class="button-style-agree" id="add-product-btn">Create Product</button>
+						<td colspan="4" style="padding-top: 5px;" align="center" valign="middle">
+							<button class="button-style-agree" id="add-category-btn">Create Sub/Category</button>
 						</td>
 					</tr>
 				</table>
