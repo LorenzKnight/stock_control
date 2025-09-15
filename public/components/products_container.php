@@ -1,3 +1,6 @@
+<div class="container-landscape">
+	<img src="images/sys-img/rotate_device.gif" alt="Landscape Mode" width="250px">
+</div>
 <div class="container">
 	<div class="data-container" style="height: 780px;">
 		<h2 style="margin-left: 10px;">Products List</h2>

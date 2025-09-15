@@ -1,3 +1,6 @@
+<div class="container-landscape">
+	<img src="images/sys-img/rotate_device.gif" alt="Landscape Mode" width="250px">
+</div>
 <div class="container">
 	<div class="data-container" style="height: 50px;">
 		<div class="centralize" style="width: 100%;">
