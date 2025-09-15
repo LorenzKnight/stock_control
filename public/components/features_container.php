@@ -1,5 +1,5 @@
 <div id="features-container" style="background-color: var(--main-bg-dark-blue);">
-	<div class="container container-grid">
+	<div class="feat-container container-grid">
 		<div class="title-and-subtitle">
 			<h1 class="features-title">Features</h1>
 		</div>

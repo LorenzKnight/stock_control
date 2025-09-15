@@ -1,14 +1,37 @@
-header {
-    background-color: var(--main-bg-dark-blue);
-    /* background: radial-gradient(50% 100% at 64.83% 30px, #3f71aebd 1.95%, #375d8bbd 48.44%, #08203ebd 89.02%), linear-gradient(142.79deg, #000 38.6%, #162b45 83.59%); */
-    height: 6vh;
-    color: #fff;
-    display: flex;
-    align-items: center;
+@media (orientation: landscape) and (max-height: 500px) {
+    header {
+        background-color: var(--main-bg-dark-blue);
+        height: 12vh;
+        color: #fff;
+        display: flex;
+        align-items: center;
+    }
+}
+
+@media (max-width: 600px) and (orientation: portrait) {
+    header {
+        background-color: var(--main-bg-dark-blue);
+        height: 6vh;
+        color: #fff;
+        display: flex;
+        align-items: center;
+    }
+}
+
+@media (min-width: 1024px) {
+    header {
+        background-color: var(--main-bg-dark-blue);
+        /* background: radial-gradient(50% 100% at 64.83% 30px, #3f71aebd 1.95%, #375d8bbd 48.44%, #08203ebd 89.02%), linear-gradient(142.79deg, #000 38.6%, #162b45 83.59%); */
+        height: 6vh;
+        color: #fff;
+        display: flex;
+        align-items: center;
+    }
 }
 
 .logo {
     flex: 1;
+    margin-left: 15px;
 }
 
 .logo a {
@@ -21,6 +44,11 @@ header {
     /* color: var(--warning-orange); */
     font-size: 1.1em;
     font-weight: 600;
+}
+
+nav {
+    width: 100%;
+    display: flex;
 }
 
 nav ul.menu {
@@ -47,7 +75,7 @@ nav ul.menu li:hover {
 }
 
 .header-spacer {
-    width: 603px;
+    /* max-width: 603px; */
     float: left;
     flex: 1;
     cursor: default !important;

@@ -1,13 +1,16 @@
 <header>
 	<div class="container">
 		<nav>
+			<!-- <ul class="menu" id="header-menu"> -->
+				<!-- <li class="no-redirect"> -->
+			<div style="flex: 1;">
+				<div class="logo">
+					<a href="profile.php"><h3>All<strong>Stock</strong>Control</h3></a>
+				</div>
+			</div>
+				<!-- </li> -->
+                <!-- <li class="header-spacer no-redirect"></li> -->
 			<ul class="menu" id="header-menu">
-				<li class="no-redirect">
-					<div class="logo">
-					    <a href="profile.php"><h3>All<strong>Stock</strong>Control</h3></a>
-					</div>
-				</li>
-                <li class="header-spacer no-redirect"></li>
 				<li>Sales</li>
 				<li>Products</li>
 				<li>Customers</li>

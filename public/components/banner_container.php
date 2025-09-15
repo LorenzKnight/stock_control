@@ -1,5 +1,5 @@
 <div class="wrapper-dark-blue">
-	<div class="banner-container" id="result-container" style="height: 450px;">
+	<div class="banner-container banner-height" id="result-container">
 		<div class="container-right" style="color: var(--clr-white);">
 			<?php include("components/modal_signup.php"); ?>
 			<div class="positioning" id="container-login-info" style="display: block;">

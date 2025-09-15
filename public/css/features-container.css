@@ -1,14 +1,84 @@
-.container-grid {
-    display: grid;
-    gap: 24px;
-    padding: 0 20px 80px;
+@media (orientation: landscape) and (max-height: 500px) {
+	.feat-container {
+		width: 90%;
+        margin: 0 auto;
+        display: block;
+	}
+
+	.features-title, .feature-name, .feature-desc {
+		color: var(--clr-white);
+	}
+
+	.container-grid {
+		display: grid;
+		gap: 24px;
+		padding: 0 0px 80px;
+	}
+
+    /* Título opcional a todo lo ancho */
+	.features-title {
+		margin: auto 0;
+	}
+
+	/* Grid de 4 columnas, responsive */
+	.features-grid {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 20px;
+	}
+
+	/* Tarjeta básica */
+	.feature-card {
+		display: flex;
+		align-items: flex-start;
+		gap: 16px;
+	}
+
+	.feature-img {
+		width: 50px;          /* ajusta a tu gusto (120–160px va bien) */
+		height: 50px;
+		object-fit: cover;
+		border-radius: 10px;
+		flex-shrink: 0;
+	}
+
+	.feature-body {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		min-width: 0;          /* evita overflow en títulos largos */
+	}
+
+	.feature-name {
+		font-size: 1rem;
+		font-weight: 500;
+		margin: 0;
+	}
+
+	.feature-desc {
+		margin: 0;
+		line-height: 1.5;
+		font-size: .75rem;
+		font-weight: 100;
+	}
 }
 
-.features-title, .feature-name, .feature-desc {
-	color: var(--clr-white);
-}
+@media (max-width: 600px) and (orientation: portrait) {
+	.feat-container {
+		/* width: 100%; */
+        margin: 0 auto;
+        display: block;
+	}
 
-@media (max-width: 883px) {
+	.features-title, .feature-name, .feature-desc {
+		color: var(--clr-white);
+	}
+
+	.container-grid {
+		display: grid;
+		gap: 24px;
+		padding: 0 20px 80px;
+	}
     /* Título opcional a todo lo ancho */
 	.features-title {
 		margin: auto 0;
@@ -57,7 +127,23 @@
 	}
 }
 
-@media (min-width: 884px) {
+@media (min-width: 1024px) {
+	.feat-container {
+		width: 1200px;
+        margin: 0 auto;
+        display: block;
+	}
+
+	.features-title, .feature-name, .feature-desc {
+		color: var(--clr-white);
+	}
+
+	.container-grid {
+		display: grid;
+		gap: 24px;
+		padding: 0 20px 80px;
+	}
+
     /* Título opcional a todo lo ancho */
 	.features-title {
 		margin: auto 0;

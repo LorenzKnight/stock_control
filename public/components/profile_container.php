@@ -1,3 +1,6 @@
+<div class="container-landscape">
+	<img src="images/sys-img/rotate_device.gif" alt="Landscape Mode" width="250px">
+</div>
 <div class="container">
 	<h1 id="hi-user"></h1>
 	<div class="data-container flex" id="profile-data">
