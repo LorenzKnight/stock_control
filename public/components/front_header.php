@@ -8,6 +8,14 @@
         <li class="no-redirect"><a href="" class="features-btn">Features</a></li>
         <li class="no-redirect"><a href="" class="pricing-btn">Pricing</a></li>
         <li class="no-redirect"><a href="" class="toggle-link">Sign up</a></li>
+
+		<!-- <li class="no-redirect">
+			<nav class="lang-switch" style="font-size: 9px;">
+				<a href="<?= htmlspecialchars(url_with_lang('en')) ?>">EN</a> |
+				<a href="<?= htmlspecialchars(url_with_lang('es')) ?>">ES</a> |
+				<a href="<?= htmlspecialchars(url_with_lang('sv')) ?>">SV</a>
+			</nav>
+		</li> -->
     </ul>
 
 	<div class="mobile-menu-container">
