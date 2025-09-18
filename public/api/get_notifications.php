@@ -89,7 +89,11 @@ try {
 		}
 
 		$notification["from_user_name"] = trim($user["name"] . " " . $user["surname"]);
-		$notification["from_user_image"] = "images/profile/".$user["image"] ?? "images/profile/NonProfilePic.png";
+		if ($user["image"] === null || $user["image"] === "") {
+			$notification["from_user_image"] = "images/sys-img/NonProfilePic.png";
+		} else {
+			$notification["from_user_image"] = "images/profile/".$user["image"];
+		}
 	}
 
 	// Cargar las notificaciones más recientes no leídas para el usuario
