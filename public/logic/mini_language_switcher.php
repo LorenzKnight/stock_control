@@ -7,7 +7,7 @@ if (!in_array($lang, $supported, true)) { $lang = 'en'; }
 // Textos por idioma
 $i18n = [
 	'en' => [
-		'title'       => 'Inventory Management Software | AllStockControl',
+		'title'       => 'AllStockControl | Inventory Management Software',
 		'description' => 'Real-time stock control with multi-location, users and alerts. Track products, transfers and minimum levels. Try AllStockControl for free.',
 		'h1'          => 'Real-time inventory control for growing teams',
 		'features_h2' => 'Key Features',
@@ -15,7 +15,7 @@ $i18n = [
 		'content_language' => 'en',
 	],
 	'es' => [
-		'title'       => 'Software de control de inventario | AllStockControl',
+		'title'       => 'AllStockControl | Software de control de inventario',
 		'description' => 'Control de stock en tiempo real con multi-sucursal, usuarios y alertas. Registra productos, transferencias y mínimos. Pruébalo gratis.',
 		'h1'          => 'Control de inventario en tiempo real para equipos en crecimiento',
 		'features_h2' => 'Funciones clave',
@@ -23,7 +23,7 @@ $i18n = [
 		'content_language' => 'es',
 	],
 	'sv' => [
-		'title'       => 'Lagerhanteringssystem | AllStockControl',
+		'title'       => 'AllStockControl | Lagerhanteringssystem',
 		'description' => 'Lager i realtid med flera filialer, användare och aviseringar. Spåra produkter, överföringar och miniminivåer. Prova gratis.',
 		'h1'          => 'Lagerkontroll i realtid för växande team',
 		'features_h2' => 'Viktigaste funktionerna',

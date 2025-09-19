@@ -379,7 +379,7 @@ function triggerRealtimeNotification($userId) {
 
 	$notif = $res["data"];
 
-	$userData = json_decode(select_from("users", ["user_id", "name", "surname"], [
+	$userData = json_decode(select_from("users", ["user_id", "name", "surname", "image"], [
 		"user_id" => $notif["from_user_id"] ?? null
 	], [
 		"fetch_first" => true

@@ -5071,82 +5071,82 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	//############################################################# NOTIFICATIONS ##################################################################
 
-	// if (headerMenu) {
-	// 	let currentUserId = 0;
+	if (headerMenu) {
+		let currentUserId = 0;
 
-	// 	let response = await fetch('api/get_my_info.php', {
-	// 		method: 'GET',
-	// 		headers: { Accept: "application/json" }
-	// 	});
+		let response = await fetch('api/get_my_info.php', {
+			method: 'GET',
+			headers: { Accept: "application/json" }
+		});
 
-	// 	let data = await response.json();
-	// 	if (data.success && data.data) {
-	// 		let user = data.data;
-	// 		currentUserId = parseInt(user.user_id) || 0;
-	// 	}
+		let data = await response.json();
+		if (data.success && data.data) {
+			let user = data.data;
+			currentUserId = parseInt(user.user_id) || 0;
+		}
 
-	// 	// const wsProtocol = location.protocol === 'https:' ? 'wss' : 'ws';
-	// 	// const wsUrl = `${wsProtocol}://${location.host}/ws`; // sin puertos; Nginx proxya a 3001
-	// 	// const socket = new WebSocket(wsUrl);
-	// 	const socket = new WebSocket(`ws://${location.hostname}:3001`);
+		// const wsProtocol = location.protocol === 'https:' ? 'wss' : 'ws';
+		// const wsUrl = `${wsProtocol}://${location.host}/ws`; // sin puertos; Nginx proxya a 3001
+		// const socket = new WebSocket(wsUrl);
+		const socket = new WebSocket(`ws://${location.hostname}:3001`);
 
-	// 	socket.addEventListener('open', () => {
-	// 		console.log('✅ WebSocket conected');
-	// 	});
+		socket.addEventListener('open', () => {
+			console.log('✅ WebSocket conected');
+		});
 
-	// 	socket.addEventListener('message', async event => {
-	// 		const data = JSON.parse(event.data);
+		socket.addEventListener('message', async event => {
+			const data = JSON.parse(event.data);
 
-	// 		if (data.type === 'notification') {
-	// 			// console.log('🔔 Notificación recibida:', data);
-	// 			if (data.to_user_id !== currentUserId) return;
+			if (data.type === 'notification') {
+				// console.log('🔔 Notificación recibida:', data);
+				if (data.to_user_id !== currentUserId) return;
 
-	// 			const message = data.message;
-	// 			const notifType = data.notification_type || 'General';
-	// 			const link = data.link;
+				const message = data.message;
+				const notifType = data.notification_type || 'General';
+				const link = data.link;
 
-	// 			// Crear el nodo de notificación
-	// 			const container = document.getElementById('notification-container');
+				// Crear el nodo de notificación
+				const container = document.getElementById('notification-container');
 
-	// 			const box = document.createElement('div');
-	// 			box.classList.add('notification-box');
+				const box = document.createElement('div');
+				box.classList.add('notification-box');
 
-	// 			box.innerHTML = `
-	// 				<div class="notification-title">${notifType}</div>
-	// 				<div class="notification-message">${message}</div>
-	// 			`;
+				box.innerHTML = `
+					<div class="notification-title">${notifType}</div>
+					<div class="notification-message">${message}</div>
+				`;
 
-	// 			if (link) {
-	// 				box.style.cursor = 'pointer';
-	// 				box.addEventListener('click', () => {
-	// 					window.location.href = link;
-	// 				});
-	// 			}
+				if (link) {
+					box.style.cursor = 'pointer';
+					box.addEventListener('click', () => {
+						window.location.href = link;
+					});
+				}
 
-	// 			container.appendChild(box);
+				container.appendChild(box);
 
-	// 			// Forzar reflow para que la transición funcione
-	// 			void box.offsetWidth;
-	// 			box.classList.add('show');
+				// Forzar reflow para que la transición funcione
+				void box.offsetWidth;
+				box.classList.add('show');
 
-	// 			await checkNotifications();
+				await checkNotifications();
 
-	// 			// Eliminar después de 5 segundos
-	// 			setTimeout(() => {
-	// 				box.classList.remove('show');
-	// 				setTimeout(() => container.removeChild(box), 300); // coincide con el transition
-	// 			}, 10000);
-	// 		}
-	// 	});
+				// Eliminar después de 5 segundos
+				setTimeout(() => {
+					box.classList.remove('show');
+					setTimeout(() => container.removeChild(box), 300); // coincide con el transition
+				}, 10000);
+			}
+		});
 
-	// 	socket.addEventListener('close', () => {
-	// 		console.warn('⚠️ WebSocket desconectado');
-	// 	});
+		socket.addEventListener('close', () => {
+			console.warn('⚠️ WebSocket disconnected');
+		});
 
-	// 	socket.addEventListener('error', error => {
-	// 		console.error('❌ Error en WebSocket:', error);
-	// 	});
-	// }
+		socket.addEventListener('error', error => {
+			console.error('❌ Error en WebSocket:', error);
+		});
+	}
 
 	async function checkNotifications() {
 		const notifCount = document.getElementById('notif-count');
@@ -5240,10 +5240,27 @@ document.addEventListener("DOMContentLoaded", async function () {
 								const detailsDiv = document.getElementById('notifications-details');
 								if (detailsDiv) {
 									detailsDiv.innerHTML = `
-										<h3>${notif.notification_type}</h3>
-										<p><strong>De:</strong> ${notif.from_user_name}</p>
-										<p><strong>Fecha:</strong> ${formatFullDateTime(notif.created_at)}</p>
-										<p><strong>Contenido:</strong> ${notif.notification_content}</p>
+									<div>
+										<table class="message-details" id="messageDetails" width="90%" align="center" cellspacing="0" style="margin-top: 15px;">
+											<tr valign="baseline" class="form_height">
+												<td colspan="2" style="border-bottom: 1px solid #ccc; padding-bottom: 5px;" align="center" valign="middle">
+													<h3>${notif.notification_type}</h3>
+												</td>
+											</tr>
+											<tr class="form_height" valign="baseline">
+												<td width="50%" align="left" valign="middle" style="border-bottom: 1px solid #ccc; padding: 10px 0;"><strong>From:</strong> ${notif.from_user_name}</td>
+												<td width="50%" align="right" valign="middle" style="border-bottom: 1px solid #ccc; padding: 10px 0;"><strong>Date: </strong><span id="notif-from-user">${formatFullDateTime(notif.created_at)}</span></td>
+											</tr>
+											<tr valign="baseline">
+												<td width="50%" align="right" valign="middle"><strong>
+													<div style="float: left;">
+														<p><strong>Contenido:</strong> ${notif.notification_content}</p>
+													</div>
+												</strong></td>
+												<td width="50%" align="left" valign="middle"><span id="notif-content"></span></td>
+											</tr>
+										</table>
+									</div>
 									`;
 								}
 							} catch (err) {
