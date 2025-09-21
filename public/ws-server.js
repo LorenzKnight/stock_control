@@ -1,73 +1,83 @@
 // LIVE VERSION
 // Descomentar este bloque para la versión en producción
 
-// const WebSocket = require('ws');
+// // ws-server.js
 // const http = require('http');
-// const fs = require('fs');
+// const WebSocket = require('ws');
 // const express = require('express');
-// const cors = require('cors');
+// const app = express();
 
-// const PORT = 3001;
-// const HTTP_BRIDGE_PORT = 3002;
+// const WS_HOST = '127.0.0.1';
+// const WS_PORT = 3001;
+// const BRIDGE_HOST = '127.0.0.1';
+// const BRIDGE_PORT = 3002;
+// const NOTIFY_TOKEN = process.env.NOTIFY_TOKEN || ''; // setéalo en PM2/systemd
 
+// // --- WebSocket server ---
 // const server = http.createServer();
-// // const server = https.createServer({
-// // 	key: fs.readFileSync('/etc/letsencrypt/live/allstockcontrol.com/privkey.pem'),
-// // 	cert: fs.readFileSync('/etc/letsencrypt/live/allstockcontrol.com/fullchain.pem')
-// // });
-// const wss = new WebSocket.Server({ server });
+// const wss = new WebSocket.Server({ server }); // ws en 3001
 
 // let clients = [];
 
-// wss.on('connection', function connection(ws) {
-// 	clients.push(ws);
+// wss.on('connection', function connection(ws, req) {
+//   // (opcional) valida origen
+//   // const origin = req.headers.origin || '';
+//   // if (!origin.includes('tu-dominio.com')) { ws.close(); return; }
 
-// 	ws.on('close', () => {
-// 		clients = clients.filter(client => client !== ws);
-// 	});
+//   ws.isAlive = true;
+//   ws.on('pong', () => (ws.isAlive = true));
 
-// 	ws.isAlive = true;
-// 	ws.on('pong', () => (ws.isAlive = true));
+//   clients.push(ws);
+//   ws.on('close', () => {
+//     clients = clients.filter(c => c !== ws);
+//   });
 // });
 
 // function broadcastNotification(payload) {
-// 	// Garantiza que el payload sea objeto
-// 	let data = payload;
-// 	if (typeof payload === 'string') {
-// 		try { data = JSON.parse(payload); } catch { data = { message: String(payload) }; }
-// 	}
-// 	const msg = JSON.stringify(data);
-// 	console.log('📤 Enviando a clientes:', msg);
-// 	clients.forEach((client) => {
-// 		if (client.readyState === WebSocket.OPEN) {
-// 			try { client.send(msg); } catch (e) { /* ignore */ }
-// 		}
-// 	});
+//   console.log('📤 Enviando a clientes:', JSON.stringify(payload, null, 2));
+//   clients.forEach(client => {
+//     if (client.readyState === WebSocket.OPEN) {
+//       client.send(JSON.stringify(payload));
+//     }
+//   });
 // }
 
-// server.listen(WS_PORT, '127.0.0.1', () => {
-// 	console.log(`🟢 WebSocket server listening on ws://allstockcontrol.com:${PORT}`);
+// // heartbeat
+// const interval = setInterval(() => {
+//   clients.forEach(ws => {
+//     if (!ws.isAlive) return ws.terminate();
+//     ws.isAlive = false;
+//     ws.ping();
+//   });
+// }, 30000);
+
+// server.listen(WS_PORT, WS_HOST, () => {
+//   console.log(`🟢 WS listening on ws://${WS_HOST}:${WS_PORT}`);
 // });
 
-// // Para que PHP lo llame
-// const app = express();
-// app.use(cors());
+// // --- HTTP bridge (PARA PHP) ---
 // app.use(express.json());
 
 // app.post('/notify', (req, res) => {
-// 	const body = req.body || {};
-// 	console.log('🔔 Notificación recibida desde PHP:', body);
+//   // Seguridad: token simple
+//   if (NOTIFY_TOKEN && req.get('X-Notify-Token') !== NOTIFY_TOKEN) {
+//     return res.status(401).json({ success: false, message: 'Unauthorized' });
+//   }
 
-// 	if (!body.message) {
-// 		return res.status(400).json({ success: false, message: "Falta 'message' en el payload." });
-// 	}
-	
-// 	broadcastNotification(body);
-// 	res.json({ success: true });
+//   if (!req.body || !req.body.message) {
+//     return res.status(400).json({ success: false, message: "Missing 'message'." });
+//   }
+
+//   console.log('🔔 Notificación recibida desde PHP:', req.body);
+//   broadcastNotification(req.body);
+//   res.json({ success: true });
 // });
 
-// app.listen(HTTP_BRIDGE_PORT, '127.0.0.1', () => {
-// 	console.log(`🟢 HTTP bridge listening on http://127.0.0.1:${HTTP_BRIDGE_PORT}/notify`);
+// // (opcional) health
+// app.get('/health', (req, res) => res.json({ ok: true }));
+
+// app.listen(BRIDGE_PORT, BRIDGE_HOST, () => {
+//   console.log(`🟢 Bridge listening on http://${BRIDGE_HOST}:${BRIDGE_PORT}/notify`);
 // });
 
 

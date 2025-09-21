@@ -27,6 +27,12 @@ if (is_file("inc/functions.php")) {
   include("../inc/functions.php");
 }
 
+if (is_file("inc/trigger_rtn.php")) {
+  include("inc/trigger_rtn.php");
+} else {
+  include("../inc/trigger_rtn.php");
+}
+
 if (!defined('DISABLE_SECURITY')) {
   if (is_file("inc/security.php")) {
     include("inc/security.php");

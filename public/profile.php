@@ -14,6 +14,7 @@
 	<script src="http://js.stripe.com/v3/"></script> <!-- Usa HTTP para localhost -->
 	<script defer src="js/subscriptions.js"></script>
 	<script defer src="js/actions.js"></script>
+	<script defer src="js/websocketConnection.js"></script>
 	<script defer src="js/checkPermission.js"></script>
 	<script src="logic/payment_message.php"></script>
 </head>
