@@ -5069,135 +5069,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 	//############################################################# END SEND EMAIL ##################################################################
 
-	//############################################################# NOTIFICATIONS ##################################################################
-	const messageListContainer = document.getElementById('messageList');
-	const searchMessageField = document.getElementById('messageSearchField');
-	if (messageListContainer && searchMessageField) {
-		async function fetchAndRenderNotifications() {
-			try {
-				const searchTerm = searchMessageField.value.trim().toLowerCase();
-
-				const params = new URLSearchParams();
-				if (searchTerm) params.append('search', searchTerm);
-
-				const res = await fetch(`api/get_notifications.php?${params.toString()}`, {
-					method: 'GET',
-					headers: { 'Accept': 'application/json' }
-				});
-				const data = await res.json();
-				
-				messageListContainer.innerHTML = "";
-
-				if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-					data.data.forEach(notif => {
-						const row = document.createElement('tr');
-						row.className = 'form_height';
-						row.setAttribute('data-id', notif.notification_id);
-
-						row.innerHTML = `
-							<td width="20%" align="center" valign="middle">
-								<div class="customers-profile">
-									<img src="${notif.from_user_image}" alt="Profile Pic">
-								</div>
-							</td>
-							<td width="65%" align="left" valign="middle">
-								<p>${notif.is_read == 0 ? `<strong>${notif.from_user_name || 'Notification'}</strong>` : `${notif.from_user_name || 'Notification'}`}</p>
-								<p>${notif.notification_type || ''}</p>
-							</td>
-							<td width="15%" align="center" valign="top">
-								<p>${notif.is_read == 0 ? `<strong>${formatNotificationDate(notif.created_at)}</strong>` : `${formatNotificationDate(notif.created_at)}`}</p>
-							</td>
-						`;
-
-						// Agregar evento al tr
-						row.addEventListener('click', async () => {
-							try {
-								const formData = new URLSearchParams();
-								formData.append('notification_id', notif.notification_id);
-
-								await fetch('api/mark_notification_read.php', {
-									method: 'POST',
-									headers: {
-										'Accept': 'application/json'
-									},
-									body: formData
-								});
-							
-								const nameCell = row.querySelector('td:nth-child(2) p:first-child');
-								if (nameCell && nameCell.innerHTML.includes('<strong>')) {
-									nameCell.innerHTML = notif.from_user_name || 'Notification';
-								}
-
-								const dateCell = row.querySelector('td:nth-child(3) p');
-								if (dateCell && dateCell.innerHTML.includes('<strong>')) {
-									dateCell.innerHTML = formatNotificationDate(notif.created_at);
-								}
-
-								await checkNotifications();
-
-								const detailsDiv = document.getElementById('notifications-details');
-								if (detailsDiv) {
-									detailsDiv.innerHTML = `
-									<div>
-										<table class="message-details" id="messageDetails" width="90%" align="center" cellspacing="0" style="margin-top: 15px;">
-											<tr valign="baseline" class="form_height">
-												<td colspan="2" style="border-bottom: 1px solid #ccc; padding-bottom: 5px;" align="center" valign="middle">
-													<h3>${notif.notification_type}</h3>
-												</td>
-											</tr>
-											<tr class="form_height" valign="baseline">
-												<td width="50%" align="left" valign="middle" style="border-bottom: 1px solid #ccc; padding: 10px 0;"><strong>From:</strong> ${notif.from_user_name}</td>
-												<td width="50%" align="right" valign="middle" style="border-bottom: 1px solid #ccc; padding: 10px 0;"><strong>Date: </strong><span id="notif-from-user">${formatFullDateTime(notif.created_at)}</span></td>
-											</tr>
-											<tr valign="baseline">
-												<td width="50%" align="right" valign="middle"><strong>
-													<div style="float: left;">
-														<p><strong>Contenido:</strong> ${notif.notification_content}</p>
-													</div>
-												</strong></td>
-												<td width="50%" align="left" valign="middle"><span id="notif-content"></span></td>
-											</tr>
-										</table>
-									</div>
-									`;
-								}
-							} catch (err) {
-								console.error("Error marking notification as read:", err);
-							}
-						});
-
-						messageListContainer.appendChild(row);
-					});
-
-					const detailsDiv = document.getElementById('notifications-details');
-					if (detailsDiv && detailsDiv.innerHTML.trim() === "") {
-						detailsDiv.innerHTML = `<p style="text-align:center; opacity: 0.7;">Select a notification</p>`;
-					}
-				} else {
-					messageListContainer.innerHTML = `<p style="text-align:center;">No notifications found.</p>`;
-
-					const detailsDiv = document.getElementById('notifications-details');
-					if (detailsDiv) {
-						detailsDiv.innerHTML = `<p style="text-align:center; opacity: 0.7;">Select a notification</p>`;
-					}
-				}
-			} catch (err) {
-				console.error("Error loading notifications:", err);
-				messageListContainer.innerHTML = `<p style="text-align:center;">Error loading notifications</p>`;
-
-				const detailsDiv = document.getElementById('notifications-details');
-				if (detailsDiv) {
-					detailsDiv.innerHTML = `<p style="text-align:center; opacity: 0.7;">Select a notification</p>`;
-				}
-			}
-		}
-
-		searchMessageField.addEventListener('keyup', fetchAndRenderNotifications);
-		fetchAndRenderNotifications();
-	}
-
-	//############################################################# END NOTIFICATIONS ##################################################################
-
 	//############################################################# FUNCTIONES ##################################################################
 
 	// 📌 scroll to top 
@@ -5288,6 +5159,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			return `${year}/${month}/${day}`;
 		}
 	}
+	window.formatNotificationDate = formatNotificationDate;
 
 	// 📌 formatear fecha y hora completa
 	function formatFullDateTime(dateString) {
@@ -5301,6 +5173,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 		return `${year}-${month}-${day} ${hours}:${minutes}`;
 	}
+  	window.formatFullDateTime = formatFullDateTime;
 
 	function parseDbTimestamp(s) {
 		// intenta ISO-like
