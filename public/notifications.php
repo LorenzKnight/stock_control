@@ -9,7 +9,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="css/styles.css">
 	<script defer src="js/actions.js"></script>
-	<script defer src="js/websocketConnection.js"></script>
+	<script defer src="js/realtimeClient.js"></script>
 	<script defer src="js/checkPermission.js"></script>
 </head>
 
