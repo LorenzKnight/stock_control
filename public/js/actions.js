@@ -2343,10 +2343,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	const container = document.getElementById('product-list');
 	const searchField = document.getElementById('searchField');
-	// let markSelect = document.getElementById('search_product_mark');
-	// let modelSelect = document.getElementById('search_product_model');
-	// let submodelSelect = document.getElementById('search_product_sub_model');
-	// let companySelect = document.getElementById('select-company');
 
 	async function fetchAndRenderProducts() {
 		if (!container) return;
@@ -2378,9 +2374,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 				headers: { 'Accept': 'application/json' }
 			});
 			const data = await res.json();
+
+			const userRes = await fetch(`api/get_my_info.php`, {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			});
+			const userData = await userRes.json();
+
 			container.innerHTML = "";
 
-			if (data.success && data.data.length > 0) {
+			if (data.success && data.data.length > 0 && userData.success && userData.data) {
+				let userCompanyId = userData.data.company_id;
+
 				data.data.forEach(product => {
 					const card = document.createElement('div');
 					card.className = 'product-card';
@@ -2439,7 +2444,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 					const cardMenuBtn = card.querySelector('.product-menu');
 					cardMenuBtn.addEventListener('click', () => {
-						openProductForm(product.product_id);
+						openProductForm(product.product_id, userCompanyId);
 
 						handlePopupClose("product-options", ".formular-frame", []);
 					});
@@ -2502,7 +2507,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
-	async function openProductForm(productId) {
+	async function openProductForm(productId, userCompanyId = null) {
 		scrollToTopIfNeeded();
 	
 		const productOptions = document.getElementById('product-options');
@@ -2511,19 +2516,45 @@ document.addEventListener("DOMContentLoaded", async function () {
 	
 		if (!productId) return;
 
-		try {
-			const res = await fetch(`api/get_products.php?product_id=${productId}`);
-			const data = await res.json();
+		const companySelect = document.getElementById('select-company'); // NEW
+  		const selectedCompany = companySelect?.value || '';
 
-			if (data.success && data.data.length > 0) {
-				const product = data.data.find(p => p.product_id == productId);
-				if (product && productName) {
-					productName.textContent = product.mark_name + ' - ' + product.model_name;
-				}
-			}
+		try {
+			const params = new URLSearchParams({ product_id: String(productId) }); // NEW
+    		if (selectedCompany) params.append('company', selectedCompany);
+
+			const res = await fetch(`api/get_products.php?${params.toString()}`);
+			const data = await res.json();
 
 			if (productOptions && popupContent) {
 				resetProductPopupView();
+
+				const assignBtn = document.getElementById('assignSaleBtn');
+				const requestProductBtn = document.getElementById('requestProductBtn');
+				const editBtn = document.getElementById('editProductBtn');
+				const deleteBtn = document.getElementById('deleteProductBtn');
+
+				let product = undefined;
+				if (data?.success) {
+					if (Array.isArray(data.data)) {
+						const pid = String(productId);
+						product = data.data.find(p => String(p.product_id) === pid);
+					} else if (data.data && typeof data.data === 'object') {
+						product = (String(data.data.product_id) === String(productId))
+							? data.data : undefined;
+					}
+				}
+
+				if (product && productName) {
+					productName.textContent = (product.mark_name || '') + ' - ' + (product.model_name || '');
+				}
+
+				if (product.company_id === userCompanyId) {
+					requestProductBtn.classList.add('hidden');
+				} else {
+					requestProductBtn.classList.remove('hidden');
+				}
+				
 
 				productOptions.style.display = 'block';
 				productOptions.style.opacity = '0';
@@ -2539,9 +2570,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 					popupContent.style.transform = 'scale(1)';
 					popupContent.style.opacity = '1';
 				}, 50);
+				
 		
 				// Botón: Assign to sale
-				const assignBtn = document.getElementById('assignSaleBtn');
 				if (assignBtn) {
 					assignBtn.onclick = () => {
 						// const menuDiv = document.getElementById('product-menu-buttons');
@@ -2556,7 +2587,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}
 
 				// Botón: Receive as initial
-				const requestProductBtn = document.getElementById('requestProductBtn');
 				if (requestProductBtn) {
 					requestProductBtn.onclick = () => {
 						requestProductBtn.setAttribute('data-product-id', productId);
@@ -2606,7 +2636,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}
 				
 				// Botón: Edit product
-				const editBtn = document.getElementById('editProductBtn');
 				if (editBtn) {
 					editBtn.setAttribute('data-product-id', productId);
 					editBtn.onclick = () => {
@@ -2627,7 +2656,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}
 
 				// Botón: Delete product
-				const deleteBtn = document.getElementById('deleteProductBtn');
 				if (deleteBtn) {
 					deleteBtn.onclick = () => {
 
