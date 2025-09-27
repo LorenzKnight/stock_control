@@ -17,12 +17,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 
 			// PRODUCCIÓN (Nginx proxya a ws://
-			// const wsProtocol = location.protocol === 'https:' ? 'wss' : 'ws';
-			// const wsUrl = `${wsProtocol}://${location.host}/ws`; // sin puertos; Nginx proxya a 3001
-			// const socket = new WebSocket(wsUrl);
+			const wsProtocol = location.protocol === 'https:' ? 'wss' : 'ws';
+			const wsUrl = `${wsProtocol}://${location.host}/ws`; // sin puertos; Nginx proxya a 3001
+			const socket = new WebSocket(wsUrl);
 
 			// LOCAL (para desarrollo, sin Nginx)
-			const socket = new WebSocket(`ws://${location.hostname}:3001`);
+			// const socket = new WebSocket(`ws://${location.hostname}:3001`);
 
 			socket.addEventListener('open', () => {
 				console.log('✅ WS connected');
@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 						headers: { 'Accept': 'application/json' }
 					});
 					const data = await res.json();
-					
+
 					messageListContainer.innerHTML = "";
 
 					if (data.success && Array.isArray(data.data) && data.data.length > 0) {
@@ -209,6 +209,109 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 									await checkNotifications();
 
+									// ---- Cargar el producto (si notification_content trae un ID numérico) ----
+									let productHtml = '';
+									let answerProductHtml = '';
+									
+									const prodId = Number(notif.notification_content);
+
+									if (Number.isFinite(prodId)) {
+										try {
+											const prodRes = await fetch(`api/get_products.php?product_id=${prodId}`, {
+												method: 'GET',
+												headers: { 'Accept': 'application/json' }
+											});
+											const prodJson = await prodRes.json();
+
+											if (prodJson.success && Array.isArray(prodJson.data) && prodJson.data.length) {
+												const product = prodJson.data.find(p => String(p.product_id) === String(prodId)) || prodJson.data[0];
+
+												const isDefaultImage = !product.product_image || product.product_image.trim() === "";
+												const productImage = isDefaultImage
+													? "images/sys-img/wooden-box.png"
+													: `images/products/${product.product_image}`;
+												const imageClass = isDefaultImage ? "grayscale-img" : "";
+
+												const minQty = (
+													product.quantity !== null &&
+													product.min_quantity !== null &&
+													!isNaN(product.quantity) &&
+													!isNaN(product.min_quantity) &&
+													Number(product.quantity) <= Number(product.min_quantity)
+												) ? "min-qty" : "";
+
+												productHtml = `
+												<div class="request-position">	
+													<div class="product-card">
+														<div class="product-pic">
+															<img src="${productImage}" alt="${product.product_name}" class="${imageClass}" />
+														</div>
+														<div class="product-desc">
+															<table width="90%" align="center" cellspacing="0">
+																<tr valign="baseline">
+																	<td style="width: 50%; height: 20px;">
+																		<p style="margin: 10px 0 0;">${product.product_name || ''}</p>
+																	</td>
+																	<td style="width: 50%; height: 20px;" align="right">
+																		<p style="margin: 10px 0 0;">Qty: <strong class="${minQty}">${product.quantity ?? ''}</strong></p>
+																	</td>
+																</tr>
+																<tr valign="baseline">
+																	<td colspan="2" style="height: 20px;">
+																		<h3><strong>${(product.mark_name || '') + (product.model_name ? ' - ' + product.model_name : '')}</strong></h3>
+																	</td>
+																</tr>
+																<tr valign="baseline">
+																	<td colspan="2" style="height: 20px;">
+																		${product.submodel_name || ''}
+																	</td>
+																</tr>
+																<tr valign="baseline">
+																	<td style="width: 50%; border-top: 1px solid #CCC;">
+																		<p>Year<br><strong>${product.product_year || ''}</strong></p>
+																	</td>
+																	<td style="width: 50%; border-top: 1px solid #CCC;">
+																		<p>Prise<br><strong>${product.prise ? '$' + product.prise + ' ' + product.currency : ''}</strong></p>
+																	</td>
+																</tr>
+															</table>
+														</div>
+													</div>
+												</div>`;
+
+												answerProductHtml = `
+												<div class="answer-pro-requested">
+													<p><strong>Contenido:</strong> ${notif.notification_content}</p>
+													<table width="100%" align="center" cellspacing="0" style="margin-top: 15px;">
+														<tr valign="baseline">
+															<td colspan="2" align="center">
+																<input class="form-input-style" type="number" name="" id="">
+															</td>
+														</tr>
+														<tr valign="baseline" class="form_height" >
+															<td width="50%" align="left" valign="middle">
+																<button type="button" class="neutral-btn">Cancel</button>
+															</td>
+															<td width="50%" align="right" valign="middle">
+																<input type="submit" class="button-style-agree" value="Create" />
+															</td>
+														</tr>
+													</table>
+												</div>`;
+											}
+										} catch (e) {
+											console.error('Error fetching product by ID:', e);
+										}
+									}
+
+									let notificationContent = '';
+
+									if (notif.notification_type === 'Product Request') {
+										notificationContent = `${productHtml || ''}${answerProductHtml || ''}`;
+									} else if (notif.notification_type === '') {
+
+									}
+
 									const detailsDiv = document.getElementById('notifications-details');
 									if (detailsDiv) {
 										detailsDiv.innerHTML = `
@@ -224,11 +327,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 													<td width="50%" align="right" valign="middle" style="border-bottom: 1px solid #ccc; padding: 10px 0;"><strong>Date: </strong><span id="notif-from-user">${formatFullDateTime(notif.created_at)}</span></td>
 												</tr>
 												<tr valign="baseline">
-													<td width="50%" align="right" valign="middle"><strong>
-														<div style="float: left;">
-															<p><strong>Contenido:</strong> ${notif.notification_content}</p>
-														</div>
-													</strong></td>
+													<td colspan="2" align="center" valign="middle">
+														${notificationContent}
+													</td>
 													<td width="50%" align="left" valign="middle"><span id="notif-content"></span></td>
 												</tr>
 											</table>

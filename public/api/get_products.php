@@ -28,6 +28,7 @@ try {
 	$model		= $_GET["model"]	?? '';
 	$submodel	= $_GET["submodel"]	?? '';
 	$company	= $_GET["company"]	?? '';
+	$productId  = $_GET["product_id"] ?? '';
 
 	$where = [
 		// "RAW" => "quantity < min_quantity",
@@ -43,10 +44,15 @@ try {
 	if (!empty($submodel)) {
 		$where["product_sub_model"] = $submodel;
 	}
-	if (!empty($company)) {
-		$where["company_id"] = $company;
+
+	if (!empty($productId) && is_numeric($productId)) {
+		$where["product_id"] = (int)$productId;
 	} else {
-		$where["company_id"] = $companyId;
+		if (!empty($company)) {
+			$where["company_id"] = $company;
+		} else {
+			$where["company_id"] = $companyId;
+		}
 	}
 
 	if (!empty($search)) {
