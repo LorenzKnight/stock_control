@@ -4,6 +4,8 @@
 			<?php include("components/modal_signup.php"); ?>
 			<div class="positioning" id="container-login-info" style="display: block;">
 				<h1>"Manage your company or business's inventory simply and efficiently.</br> Access from anywhere, on any device."</h1>
+				
+				<h2>"<a href="#" class="toggle-link" style="color: var(--warning-orange); text-decoration: none;">Sign Up</a> - Try it Free!"</h2>
 			</div>
 		</div>
 		<div class="container-left" style="color: var(--clr-white);">

@@ -17,12 +17,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 
 			// PRODUCCIÓN (Nginx proxya a ws://
-			const wsProtocol = location.protocol === 'https:' ? 'wss' : 'ws';
-			const wsUrl = `${wsProtocol}://${location.host}/ws`; // sin puertos; Nginx proxya a 3001
-			const socket = new WebSocket(wsUrl);
+			// const wsProtocol = location.protocol === 'https:' ? 'wss' : 'ws';
+			// const wsUrl = `${wsProtocol}://${location.host}/ws`; // sin puertos; Nginx proxya a 3001
+			// const socket = new WebSocket(wsUrl);
 
 			// LOCAL (para desarrollo, sin Nginx)
-			// const socket = new WebSocket(`ws://${location.hostname}:3001`);
+			const socket = new WebSocket(`ws://${location.hostname}:3001`);
 
 			socket.addEventListener('open', () => {
 				console.log('✅ WS connected');
@@ -281,22 +281,23 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 												answerProductHtml = `
 												<div class="answer-pro-requested">
-													<p><strong>Contenido:</strong> ${notif.notification_content}</p>
-													<table width="100%" align="center" cellspacing="0" style="margin-top: 15px;">
-														<tr valign="baseline">
-															<td colspan="2" align="center">
-																<input class="form-input-style" type="number" name="" id="">
-															</td>
-														</tr>
-														<tr valign="baseline" class="form_height" >
-															<td width="50%" align="left" valign="middle">
-																<button type="button" class="neutral-btn">Cancel</button>
-															</td>
-															<td width="50%" align="right" valign="middle">
-																<input type="submit" class="button-style-agree" value="Create" />
-															</td>
-														</tr>
-													</table>
+													<form method="post" name="formAnswerProdReq" id="formAnswerProdReq">
+														<table width="100%" align="center" cellspacing="0" style="margin: 10px 0 15px;">
+															<tr valign="baseline">
+																<td colspan="2" align="center">
+																	<input class="form-input-style" type="number" name="" id="">
+																</td>
+															</tr>
+															<tr valign="baseline" class="form_height" >
+																<td width="50%" align="left" valign="middle">
+																	<button type="button" class="neutral-btn">Cancel</button>
+																</td>
+																<td width="50%" align="right" valign="middle">
+																	<input type="submit" class="button-style-agree" value="Create" />
+																</td>
+															</tr>
+														</table>
+													</form>
 												</div>`;
 											}
 										} catch (e) {

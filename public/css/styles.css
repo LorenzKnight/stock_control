@@ -44,6 +44,12 @@ body {
         padding: 0 10px;
     }
 
+    .container-right h2,
+    .container-left h2 {
+        font-size: 24px;
+        font-weight: 600;
+    }
+
     .container-right p,
     .container-left p {
         font-size: 12px;
@@ -93,6 +99,12 @@ body {
         padding: 0 10px;
     }
 
+    .container-right h2,
+    .container-left h2 {
+        font-size: 24px;
+        font-weight: 600;
+    }
+
     .container-right p,
     .container-left p {
         font-size: 12px;
@@ -133,6 +145,12 @@ body {
         justify-content: center;
         align-items: center;
         padding: 20px;
+    }
+
+    .container-right h2,
+    .container-left h2 {
+        font-size: 24px;
+        font-weight: 600;
     }
 
     .container-right p,
