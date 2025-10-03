@@ -25,6 +25,10 @@ try {
 	$input = json_decode(file_get_contents('php://input'), true);
 	if (!$input) throw new Exception("No data received.");
 
+	if (empty($input["products"]) || !is_array($input["products"])) {
+        throw new Exception("At least one product is required.");
+    }
+
 	$required = ["customer_id", "price_sum", "initial", "delivery_date", "remaining", "interest", "installments_month", "no_installments", "payment_date", "due"];
 	foreach ($required as $field) {
 		if (!isset($input[$field])) {
@@ -40,8 +44,13 @@ try {
 	$installmentsMonth = (int)$input["installments_month"];
 	$noInstallments = (int)$input["no_installments"];
 	$due = number_format((float)$input["due"], 2, '.', '');
-	$deliveryDate = date('Y-m-d H:i:s', strtotime($input["delivery_date"]));
-	$paymentDate = date('Y-m-d H:i:s', strtotime($input["payment_date"]));
+
+	$delTS = strtotime($input["delivery_date"]);
+    $payTS = strtotime($input["payment_date"]);
+    if ($delTS === false) throw new Exception("Invalid delivery_date.");
+    if ($payTS === false) throw new Exception("Invalid payment_date.");
+    $deliveryDate = date('Y-m-d H:i:s', $delTS);
+    $paymentDate  = date('Y-m-d H:i:s', $payTS);
 
 	$newOrdNo = get_next_increment_value("sales", "ord_no", 10000);
 
@@ -69,18 +78,54 @@ try {
 	}
 	$saleId = $saleInsert["id"];
 
-	foreach ($input["products"] as $product) {
-		$productId = (int)$product["product_id"];
-		$quantity = (int)($product["quantity"] ?? 1);
+	$tolerance = 0.01;
+	$sumFromFront = 0.0;
 
-		$productInfoJson = select_from("products", ["quantity"], ["product_id" => $productId], ["fetch_first" => true]);
+	foreach ($input["products"] as $p) {
+		$qty   = (int)($p["quantity"] ?? 1);
+		if ($qty < 1) $qty = 1;
+
+		// El front debe mandar "total" por línea. Si no viene, fallback a price*qty.
+		$price = (float)($p["price"] ?? 0);
+		$lineTotalFront = isset($p["total"]) ? (float)$p["total"] : ($price * $qty);
+		$sumFromFront += $lineTotalFront;
+	}
+
+	if (abs($sumFromFront - (float)$input["price_sum"]) > $tolerance) {
+		// Puedes cambiar a Exception si quieres bloquear la operación
+		log_activity(
+			$userId,
+			"warning_sum_mismatch",
+			"Mismatch: price_sum={$input["price_sum"]} vs sumLines=$sumFromFront",
+			"sales",
+			$saleId
+		);
+	}
+
+	foreach ($input["products"] as $product) {
+		$productId = (int)($product["product_id"] ?? 0);
+        if ($productId <= 0) throw new Exception("Invalid product_id in products array.");
+
+        $quantity = max(1, (int)($product["quantity"] ?? 1));
+
+		$productInfoJson = select_from(
+			"products", 
+			["product_id", "quantity", "min_quantity", "company_id", "product_name"], 
+			["product_id" => $productId], 
+			["fetch_first" => true]
+		);
 		$productInfo = json_decode($productInfoJson, true);
 
-		if (!$productInfo["success"]) {
+		if (!$productInfo["success"] || empty($productInfo["data"])) {
 			throw new Exception("Error fetching product stock for ID: $productId");
 		}
 
-		$currentStock = (int)($productInfo["data"]["quantity"] ?? 0);
+		$pData = $productInfo["data"];
+
+		$currentStock	= (int)($pData["quantity"] ?? 0);
+		$minQty			= isset($pData["min_quantity"]) ? (int)$pData["min_quantity"] : null;
+		$prodCompany	= $pData["company_id"] ?? $companyId;
+		$productName	= $pData["product_name"] ?? "Unknown Product";
 
 		if ($currentStock < $quantity) {
 			throw new Exception("Insufficient stock for product ID: $productId. Available: $currentStock, Requested: $quantity");
@@ -94,25 +139,71 @@ try {
 		}
 
 		$updateResult = json_decode(update_table("products", $updateData, ["product_id" => $productId]), true);
-
+		
 		if (!$updateResult["success"]) {
 			throw new Exception("Failed to update stock/status for product ID: $productId");
 		}
+
+		$price    = (float)($product["price"] ?? 0);
+		$discount = (float)($product["discount"] ?? 0);
+		if ($discount < 0) $discount = 0;
+
+		$lineTotal = isset($product["total"])
+			? (float)$product["total"]
+			: ($price * $quantity);
 
 		$purchased = [
 			"sales_id"		=> $saleId,
 			"customer_id"	=> (int)$input["customer_id"],
 			"product_id"	=> (int)$product["product_id"],
 			"quantity"		=> (int)($product["quantity"] ?? 1),
-			"price"			=> number_format((float)($product["price"] ?? 0), 2, '.', ''),
-			"discount"		=> number_format((float)($product["discount"] ?? 0), 2, '.', ''),
-			"total"			=> number_format((float)($product["total"] ?? $price), 2, '.', ''),
+			"price"			=> number_format($price, 2, '.', ''),
+			"discount"		=> number_format($discount, 2, '.', ''),
+			"total"			=> number_format($lineTotal, 2, '.', ''),
 			"create_by"		=> $userId
 		];
 
 		$productInsert = json_decode(insert_into("purchased_products", $purchased), true);
 		if (!$productInsert["success"]) {
 			throw new Exception("Error inserting product with ID {$purchased["product_id"]}");
+		}
+
+		if ($minQty !== null && $newStock == $minQty) {
+			$UserData = json_decode(select_from("users", ["user_id"], ["company_id" => $prodCompany]), true);
+
+			if ($UserData["success"] && !empty($UserData["data"])) {
+				foreach ($UserData["data"] as $userRow) {
+					$toUserId = (int)($userRow["user_id"] ?? 0);
+                    if ($toUserId <= 0) continue;
+
+					notify_user(
+						null,
+						$toUserId,
+						"$productName is low on stock (Current: $newStock)",
+						null,
+						"Product Info"
+					);
+
+					triggerRealtimeNotification($toUserId);
+
+					// sendEmail( 
+					// 	$toUserId,
+					// 	"Low Stock Alert: $productName",
+					// 	"<p>The stock for product <strong>$productName</strong> (ID: $productId) has reached its minimum threshold.</p>
+					// 	<p>Current stock: <strong>$newStock</strong></p>
+					// 	<p>Please consider restocking this item.</p>"
+					// );
+
+					// Log activity for each user
+					log_activity(
+						$toUserId,
+						"low_stock_info",
+						"$productName is low on stock (Current: $newStock)",
+						"notifications",
+						$productId
+					);
+				}
+			}
 		}
 	}
 

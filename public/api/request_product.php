@@ -27,12 +27,15 @@ try {
     }
 
     $productId = (int)$_POST["product_id"];
-    $productData = json_decode(select_from("products", ["company_id"], ["product_id" => $productId], ["fetch_first" => true]), true);
+    $productData = json_decode(select_from("products", ["company_id", "product_name"], ["product_id" => $productId], ["fetch_first" => true]), true);
 
     if (!$productData || !$productData["success"] || empty($productData["data"])) {
         throw new Exception("Product not found or invalid product ID.");
     }
-    $companyId = $productData["data"]["company_id"] ?? null;
+    $productInfo = $productData["data"];
+
+    $companyId = $productInfo["company_id"] ?? null;
+    $productName = $productInfo["product_name"] ?? "Unknown Product";
     
     $UserData = json_decode(select_from("users", ["user_id"], ["company_id" => $companyId]), true);
 
@@ -40,7 +43,7 @@ try {
         notify_user(
             $userId,
             $user["user_id"],
-            $productId,
+            "$productName was requested",
             null,
             "Product Request"
         );

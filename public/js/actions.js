@@ -2516,11 +2516,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 	
 		if (!productId) return;
 
-		const companySelect = document.getElementById('select-company'); // NEW
+		const companySelect = document.getElementById('select-company');
   		const selectedCompany = companySelect?.value || '';
 
 		try {
-			const params = new URLSearchParams({ product_id: String(productId) }); // NEW
+			const params = new URLSearchParams({ product_id: String(productId) });
     		if (selectedCompany) params.append('company', selectedCompany);
 
 			const res = await fetch(`api/get_products.php?${params.toString()}`);
@@ -3894,8 +3894,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 			fetchAndRenderProducts(searchProductInput.value, saleMarkSelect.value);
 		});
 
-		await loadMarks();
-		fetchAndRenderProducts();
+		loadMarks().then(() => fetchAndRenderProducts());
+		// fetchAndRenderProducts();
 	}
 
 	function calculatePriceSum() {
@@ -3984,7 +3984,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 							product_id: productId,
 							price: price,
 							quantity: quantity,
-							total: price
+							discount: 0,
+							total: price * quantity
+							// total: Math.max(0, (price - discount)) * quantity
 						};
 					});
 			
@@ -4031,7 +4033,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							}, 1000);
 						}, 3000);
 					} else {
-						alert("Failed: " + result.message);
+						alert("Failed: " + data.message);
 					}
 				} catch (error) {
 					alert("Error: " + error.message);
@@ -4445,8 +4447,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 						fetchAndRenderProducts(searchProductInputForEdit.value, saleMarkSelectForEdit.value);
 					});
 
-					await loadMarks();
-					fetchAndRenderProducts();
+					loadMarks().then(() => fetchAndRenderProducts());
+					// fetchAndRenderProducts();
 				}
 
 				// Llenar campos del formulario
@@ -4556,7 +4558,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 						price: price,
 						quantity: parseInt(quantity),
 						discount: 0,
-						total: total
+						total: price * quantity
+						// total: Math.max(0, (price - discount)) * quantity
 					};
 				});
 
@@ -4588,7 +4591,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 						}, 1000);
 					}, 3000);
 				} else {
-					alert("Failed: " + result.message);
+					alert("Failed: " + data.message);
 				}
 			} catch (error) {
 				alert("Error: " + error.message);

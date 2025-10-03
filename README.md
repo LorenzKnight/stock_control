@@ -23,6 +23,7 @@ make migrate
 1. You can install with Homebrew (if you have it):
 
 brew install node
+composer require phpmailer/phpmailer
 npm install -g ngrok
 ngrok http 8889
 
