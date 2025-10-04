@@ -2374,7 +2374,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				headers: { 'Accept': 'application/json' }
 			});
 			const data = await res.json();
-
+console.log("📦 Productos recibidos:", data);
 			const userRes = await fetch(`api/get_my_info.php`, {
 				method: 'GET',
 				headers: { 'Accept': 'application/json' }
@@ -2389,10 +2389,56 @@ document.addEventListener("DOMContentLoaded", async function () {
 				data.data.forEach(product => {
 					const card = document.createElement('div');
 					card.className = 'product-card';
+
+					if (product.sale_unit_type === 1 || product.sale_unit_type === null) {
+						unitImg = "images/sys-img/papel-box.png";
+						
+						const raw = product?.total_weight;
+						const w = raw == null ? NaN : Number(String(raw).trim().replace(',', '.'));
+
+						if (Number.isFinite(w) && w > 0) {
+							prodDetail = `
+								<tr valign="baseline">
+									<td colspan="6" style="height: 10px;">
+										<table width="100%" align="center" cellspacing="0">
+											<tr valign="baseline">
+												<td colspan="6" align="center" style="height: 10px; border-top: 1px solid #CCC;">
+													<p>Total Weight<br><strong>${product.total_weight ? product.total_weight + ' kg' : ''}</strong></p>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							`;
+						} else {
+							prodDetail = '';
+						}
+					} else {
+						unitImg = "images/sys-img/wooden-box.png";
+						prodDetail = `
+							<tr valign="baseline">
+								<td colspan="6" style="height: 10px;">
+									<table width="100%" align="center" cellspacing="0">
+										<tr valign="baseline">
+											<td style="width: 25%; height: 10px; border-top: 1px solid #CCC;">
+												<p>Units<br><strong>${product.units_per_pack || ''}</strong></p>
+											</td>
+											<td style="width: 40%; height: 10px; border-top: 1px solid #CCC;">
+												<p>Weight/unit<br><strong>${product.weight_per_unit ? product.weight_per_unit + ' kg' : ''}</strong></p>
+											</td>
+											<td style="width: 35%; height: 10px; border-top: 1px solid #CCC;">
+												<p>Total Weight<br><strong>${product.total_weight ? product.total_weight + ' kg' : ''}</strong></p>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						`;
+					}
 					
 					let isDefaultImage = !product.product_image || product.product_image.trim() === "";
 					let productImage = isDefaultImage 
-					? "images/sys-img/wooden-box.png"
+					? unitImg
 					: `images/products/${product.product_image}`;
 
 					let imageClass = isDefaultImage ? "grayscale-img" : "";
@@ -2409,26 +2455,27 @@ document.addEventListener("DOMContentLoaded", async function () {
 					<div class="product-desc">
 						<table width="90%" align="center" cellspacing="0">
 							<tr valign="baseline">
-								<td style="width: 50%; height: 20px;">
+								<td style="width: 50%; height: 10px;">
 									<p style="margin: 10px 0 0;">${product.product_name}</p>
 								</td>
-								<td style="width: 50%; height: 20px;" align="right">
+								<td style="width: 50%; height: 10px;" align="right">
 									<p style="margin: 10px 0 0;">Qty: <strong class="${minQty}">${product.quantity || ''}</strong></p>
 								</td>
 							</tr>
 							<tr valign="baseline">
-								<td colspan="2" style="height: 20px;">
+								<td colspan="6" style="height: 10px;">
 									<h3><strong>${product.mark_name + ' - ' + product.model_name}</strong></h3>
 								</td>
 							</tr>
 							<tr valign="baseline">
-								<td colspan="2" style="height: 20px;">
+								<td colspan="6" style="height: 10px;">
 									${product.submodel_name || ''}
 								</td>
 							</tr>
+							${prodDetail}
 							<tr valign="baseline">
 								<td style="width: 50%; border-top: 1px solid #CCC;">
-									<p>Year<br><strong>${product.product_year || ''}</strong></p>
+									<p>Year<br><strong>${product.product_year == 0 || product.product_year == null ? 'N/E' : product.product_year}</strong></p>
 								</td>
 								<td style="width: 50%; border-top: 1px solid #CCC;">
 									<p>Prise<br><strong>${product.prise ? '$' + product.prise + ' ' + product.currency : ''}</strong></p>

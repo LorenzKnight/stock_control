@@ -141,6 +141,8 @@ CREATE TABLE IF NOT EXISTS products (
 	product_id SERIAL PRIMARY KEY,
 	company_id INTEGER NULL,
 	create_by INT NOT NULL,
+	sale_unit_type INTEGER NULL,
+	units_per_pack INTEGER NULL,
 	product_image VARCHAR(255) NULL,
 	product_name VARCHAR(255) NULL,
 	product_type INTEGER NULL,
@@ -153,6 +155,8 @@ CREATE TABLE IF NOT EXISTS products (
 	prise INTEGER NULL,
 	quantity INTEGER NULL,
 	min_quantity INTEGER NULL,
+	weight_per_unit NUMERIC(10,3) NULL,
+	total_weight NUMERIC(10,3) NULL,
 	status INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

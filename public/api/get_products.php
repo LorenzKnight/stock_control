@@ -64,6 +64,8 @@ try {
 	$products = select_from("products", [
 		"product_id",
 		"company_id",
+		"sale_unit_type",
+		"units_per_pack",
 		"product_name",
 		"product_image",
 		"product_mark",
@@ -76,7 +78,9 @@ try {
 		"currency",
 		"prise",
 		"quantity",
-		"min_quantity"
+		"min_quantity",
+		"weight_per_unit",
+		"total_weight"
 	], $where, [
 		"order_by" => "created_at",
 		"order_direction" => "DESC"
