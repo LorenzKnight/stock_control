@@ -2374,7 +2374,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				headers: { 'Accept': 'application/json' }
 			});
 			const data = await res.json();
-console.log("📦 Productos recibidos:", data);
+			
 			const userRes = await fetch(`api/get_my_info.php`, {
 				method: 'GET',
 				headers: { 'Accept': 'application/json' }

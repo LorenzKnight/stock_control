@@ -46,45 +46,55 @@
 								<table width="100%" align="center" cellspacing="0">
 									<tr valign="baseline" class="form_height">
 										<td width="50%" align="center" valign="middle">
+											<label for="currency">Currency:</label>
 											<select class="form-input-style" name="currency" id="currency" required></select>
 										</td>
 										<td width="50%" align="center" valign="middle">
+											<label for="price_sum">Price Sum:</label>
 											<input class="form-medium-input-style" type="text" name="price_sum" id="price_sum" placeholder="Price sum..." disabled/>
 										</td>
 									</tr>
 									<tr valign="baseline" class="form_height">
 										<td colspan="2" align="center" valign="middle">
+											<label for="initial">Initial:</label>
 											<input class="form-input-style" type="text" name="initial" id="initial" placeholder="Initial..."/>
 										</td>
 									</tr>
 									<tr valign="baseline" class="form_height">
 										<td colspan="2" align="center" valign="middle">
-											<input class="form-input-style" type="date" name="delivery_date" id="delivery_date" placeholder="Enter a delivery date..."/>
+											<label for="payment_date">Payment Date:</label>
+											<input class="form-input-style" type="date" name="payment_date" id="payment_date" placeholder="Enter a Payment date..."/>
 										</td>
 									</tr>
 									<tr valign="baseline" class="form_height">
 										<td colspan="2" align="center" valign="middle">
+											<label for="remaining">Remaining:</label>
 											<input class="form-input-style" type="text" name="remaining" id="remaining" placeholder="Remaining..." disabled/>
 										</td>
 									</tr>
 									<tr valign="baseline" class="form_height">
 										<td width="50%" align="center" valign="middle">
+											<label for="interest">% interest:</label>
 											<input class="form-medium-input-style" type="text" name="interest" id="interest" value="10" placeholder="Enter a percent..."/>
 										</td>
 										<td width="50%" align="center" valign="middle">
+											<label for="total_interest">Total Interest:</label>
 											<input class="form-medium-input-style" type="text" name="total_interest" id="total_interest" placeholder="Total Interest..." disabled/>
 										</td>
 									</tr>
 									<tr valign="baseline" class="form_height">
 										<td width="50%" align="center" valign="middle">
+											<label for="installments_month">Installments:</label>
 											<select class="form-input-style" name="installments_month" id="installments_month"></select>
 										</td>
 										<td width="50%" align="center" valign="middle">
-											<input class="form-medium-input-style" type="date" name="payment_date" id="payment_date" placeholder="Enter a Payment date..."/>
+											<label for="delivery_date">Delivery Date:</label>
+											<input class="form-medium-input-style" type="date" name="delivery_date" id="delivery_date" placeholder="Enter a delivery date..."/>
 										</td>
 									</tr>
 									<tr valign="baseline" class="form_height">
 										<td colspan="2" align="center" valign="middle">
+											<label for="Due">Due:</label>
 											<input class="form-input-style" type="text" name="due" id="due" placeholder="Due..." disabled/>
 										</td>
 									</tr>
