@@ -39,7 +39,7 @@
 					</td>
 					<td colspan="2" align="center" valign="middle">
 						<div class="formular-customers-list">
-							<div class="create-list-holder">
+							<div class="create-list-holder" style="padding: 5px 0 15px;">
 								<button type="button" class="button-style-agree disabled" style="pointer-events: none" disabled>Method of Payment</button>
 							</div>
 							<div class="cat-all-list">

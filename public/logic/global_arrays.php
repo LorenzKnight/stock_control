@@ -124,7 +124,7 @@ class GlobalArrays {
 		// "CNY" => "(CNY) Chinese Yuan",
 		"SEK" => "(SEK) Swedish Krona",
 		// "NZD" => "(NZD) New Zealand Dollar",
-		// "MXN" => "(MXN) Mexican Peso",
+		"MXN" => "(MXN) Mexican Peso",
 		// "SGD" => "(SGD) Singapore Dollar",
 		// "HKD" => "(HKD) Hong Kong Dollar",
 		"NOK" => "(NOK) Norwegian Krone",

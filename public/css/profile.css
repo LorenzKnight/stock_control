@@ -131,32 +131,6 @@
 
 
 
-.drop-area {
-    width: 94%;
-    border: 1px solid #CCC;
-    border-radius: 4px;
-    color: #FFF;
-    font-size: 0.8em;
-    display: flex;
-    text-align: center;
-    flex-direction: column;
-    margin: 0 auto;
-    padding: 180px 1% 20px;
-    position: relative;
-}
-
-.image-preview {
-    max-width: 150px;
-    max-height: 150px;
-    margin: 0 25%;
-    border: 1px solid #FFF;
-    position: absolute;
-    top: 25px;
-    display: block;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
 .pack-container {
     width: 98%;
     height: 520px;

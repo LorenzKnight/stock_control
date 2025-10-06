@@ -56,6 +56,34 @@
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
+						<td colspan="3" align="center" valign="middle">
+							<div class="product-type-selection">
+								<input type="radio" id="edit_unit_type_1" name="edit_unit_type" value="1" checked>
+								<label for="edit_unit_type_1">Single Unit</label>
+							</div>
+						</td>
+						<td colspan="3" align="center" valign="middle">
+							<div class="product-type-selection">
+								<input type="radio" id="edit_unit_type_2" name="edit_unit_type" value="2">
+								<label for="edit_unit_type_2">Multi Pack</label>
+							</div>
+						</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+						<td colspan="2" align="center" valign="middle">
+							<label for="units">Units:</label>
+							<input class="form-small-input-style" type="number" name="edit_units" id="edit_units" placeholder="1 units" title="units" disabled/>
+						</td>
+						<td colspan="2" align="center" valign="middle">
+							<label for="weight_unit">Weight/unit (kg):</label>
+							<input class="form-small-input-style" type="text" name="edit_weight_unit" id="edit_weight_unit" placeholder="Weight/unit" title="Weight/unit"/>
+						</td>
+						<td colspan="2" align="center" valign="middle">
+							<label for="total_weight">Total Weight (kg):</label>
+							<input class="form-small-input-style" type="text" name="edit_total_weight" id="edit_total_weight" placeholder="Total Weight" title="Total Weight" disabled/>
+						</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
 						<td colspan="6" align="center" valign="middle">
 							<label for="edit_product_name">Name:</label>
 							<input class="form-input-style" type="text" name="edit_product_name" id="edit_product_name" placeholder="Product Name..." title="Product name"/>

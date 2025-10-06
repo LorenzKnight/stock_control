@@ -27,7 +27,16 @@ try {
 	}
 	$productId = (int) $_POST["edit_product_id"];
 
+    $unitType		= intval($_POST["edit_unit_type"] ?? 1);
+    $units			= is_numeric($_POST["edit_units"] ?? null) ? intval($_POST["edit_units"]) : 1;
+    $weightUnit		= is_numeric($_POST["edit_weight_unit"] ?? null) ? floatval($_POST["edit_weight_unit"]) : 0;
+    $totalWeight	= $weightUnit * $units;
+
 	$productData = [
+		"sale_unit_type"    => $unitType,
+        "units_per_pack"    => $units,
+        "weight_per_unit"   => $weightUnit,
+        "total_weight"      => $totalWeight,
 		"product_name"      => $_POST["edit_product_name"] ?? "",
         "product_type"      => (int) ($_POST["edit_product_type"] ?? 0),
         "product_mark"      => (int) ($_POST["edit_product_mark"] ?? 0),

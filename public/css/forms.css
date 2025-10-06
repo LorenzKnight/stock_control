@@ -47,6 +47,32 @@
 	}
 }
 
+.drop-area {
+    width: 94%;
+    border: 1px solid #CCC;
+    border-radius: 4px;
+    color: #FFF;
+    font-size: 0.8em;
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    margin: 0 auto;
+    padding: 125px 1% 20px;
+    position: relative;
+}
+
+.image-preview {
+    max-width: 150px;
+    max-height: 150px;
+    margin: 0 25%;
+    border: 1px solid #FFF;
+    position: absolute;
+    top: 10px;
+    display: block;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
 .formular_front a {
     font-size: 12px;
     color: var(--main-bg-dark-blue);
@@ -61,6 +87,33 @@
 .formular-front-frame {
 	width: 100%;
 	display: flex; 
+}
+
+.product-type-selection {
+    width: 90%;
+    height: 40px;
+    margin: 5px auto 0;
+    font-size: 12px;
+    background-color: var(--frm-bg-transparent-grey);
+    border-radius: 5px;
+    border: 1px solid var(--frm-border-semi-transparent);
+    text-align: center;
+    -moz-appearance: inherit; 
+    -o-appearance: inherit;
+    -ms-appearance: inherit;
+    appearance: inherit;
+    -webkit-appearance: inherit;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.product-type-selection:hover {
+    box-shadow: 0px 1px 6px var(--main-bg-color);
+    color: var(--clr-white);
+}
+
+.product-type-selection label :hover {
+    color: var(--clr-white);
 }
 
 form label {
@@ -90,6 +143,21 @@ form label {
 
 .form-medium-input-style {
     width: 80%;
+    margin: 5px 0;
+    padding: 10px;
+    font-size: 12px;
+    border-radius: 5px;
+    border: 1px solid var(--clr-border);
+    text-align: center;
+    -moz-appearance:inherit; 
+    -o-appearance:inherit;
+    -ms-appearance:inherit;
+    appearance:inherit;
+    -webkit-appearance:inherit;
+}
+
+.form-small-input-style {
+    width: 70%;
     margin: 5px 0;
     padding: 10px;
     font-size: 12px;
@@ -143,7 +211,7 @@ form label {
 .formular-frame {
     width: 400px;
     margin: 100px auto;
-    padding: 20px 0 50px;
+    padding: 5px 0 50px;
     background-color: var(--frm-bg-transparent-grey);
     box-shadow: 0 4px 10px 0 rgba(37, 37, 37, 0.388);
     backdrop-filter: blur(5px);

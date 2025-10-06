@@ -23,6 +23,10 @@ try {
 	}
 
     $companyId              = intval($_POST["company_id"] ?? '');
+    $unitType         		= intval($_POST["unit_type"] ?? 1);
+    $units         			= is_numeric($_POST["units"] ?? null) ? intval($_POST["units"]) : 1;
+    $weightUnit         	= is_numeric($_POST["weight_unit"] ?? null) ? floatval($_POST["weight_unit"]) : 0;
+    $totalWeight         	= $weightUnit * $units;
     $productName     		= trim($_POST["product_name"] ?? '');
     $productType     		= intval($_POST["product_type"] ?? 0);
     $productMark     		= intval($_POST["product_mark"] ?? 0);
@@ -57,6 +61,10 @@ try {
     $insertData = [
         "create_by"         => $userId,
         "company_id"        => $companyId,
+        "sale_unit_type"    => $unitType,
+        "units_per_pack"    => $units,
+        "weight_per_unit"   => $weightUnit,
+        "total_weight"      => $totalWeight,
         "product_name"      => $productName,
         "product_type"      => $productType,
         "product_mark"      => $productMark,
@@ -77,11 +85,12 @@ try {
     }
 
     $productRes = json_decode(select_from("products", ["product_id", "quantity"], [
-        "company_id" => $companyId,
-        "product_mark" => $productMark,
-        "product_model" => $productModel,
+        "company_id"        => $companyId,
+        "product_name"      => $productName,
+        "product_mark"      => $productMark,
+        "product_model"     => $productModel,
         "product_sub_model" => $productSubModel,
-        "product_year" => $productYear
+        "product_year"      => $productYear
     ], ["fetch_first" => true]), true);
 
     $existingProduct = $productRes["data"];

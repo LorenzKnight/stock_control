@@ -17,6 +17,34 @@
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
+					<td colspan="3" align="center" valign="middle">
+						<div class="product-type-selection">
+							<input type="radio" id="unit_type_1" name="unit_type" value="1" checked>
+							<label for="unit-type-1">Single Unit</label>
+						</div>
+					</td>
+					<td colspan="3" align="center" valign="middle">
+						<div class="product-type-selection">
+							<input type="radio" id="unit_type_2" name="unit_type" value="2">
+							<label for="unit-type-2">Multi Pack</label>
+						</div>
+					</td>
+				</tr>
+				<tr valign="baseline" class="form_height">
+					<td colspan="2" align="center" valign="middle">
+						<label for="units">Units:</label>
+						<input class="form-small-input-style" type="number" name="units" id="units" placeholder="1 units" title="units" disabled/>
+					</td>
+					<td colspan="2" align="center" valign="middle">
+						<label for="weight_unit">Weight/unit (kg):</label>
+						 <input class="form-small-input-style" type="text" name="weight_unit" id="weight_unit" placeholder="Weight/unit" title="Weight/unit"/>
+					</td>
+					<td colspan="2" align="center" valign="middle">
+						<label for="total_weight">Total Weight (kg):</label>
+						 <input class="form-small-input-style" type="text" name="total_weight" id="total_weight" placeholder="Total Weight" title="Total Weight" disabled/>
+					</td>
+				</tr>
+				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
 						<label for="product_name">Name:</label>
 						<input class="form-input-style" type="text" name="product_name" id="product_name" placeholder="Product Name..." title="Product name"/>

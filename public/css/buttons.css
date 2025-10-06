@@ -306,8 +306,8 @@ select.form-medium-input-style, select.form-input-style {
     font-size: 18px;
     border-radius: 50%;
     position: absolute;
-    left: 10px;
-    top: -10px;
+    left: 9px;
+    top: 3px;
     z-index: 1;
     display: flex;
     justify-content: center;

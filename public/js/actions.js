@@ -1767,6 +1767,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 					initDragAndDrop('drop-product-area', 'product_image', 'product-image-preview');
 
+					initUnitTypeControls(
+						'unit_type_1',      // radio single
+						'unit_type_2',      // radio pack
+						'units',            // input unidades
+						'weight_unit',      // input peso/unidad
+						'total_weight',     // input peso total
+						{ decimals: 3, acceptComma: true, minUnits: 1 }
+					);
+
 					populateProductTypes('product_type', '', '1', true);
 
 					initCategorySelectors('product_mark', 'product_model', 'product_sub_model', 'select-company');
@@ -1780,6 +1789,129 @@ document.addEventListener("DOMContentLoaded", async function () {
 				alert("An error occurred while trying to open the add product form.");
 			}
 		});
+	}
+
+	function el(ref) {
+		if (!ref) return null;
+		return (typeof ref === 'string') ? document.getElementById(ref) : ref;
+	}
+
+	// —— cálculo de peso ——
+	function calculateWeight(unitsInputRef, weightUnitInputRef, totalWeightInputRef, opts = {}) {
+		const unitsInput       = el(unitsInputRef);
+		const weightUnitInput  = el(weightUnitInputRef);
+		const totalWeightInput = el(totalWeightInputRef);
+
+		if (!unitsInput || !weightUnitInput || !totalWeightInput) return;
+
+		const decimals    = opts.decimals ?? 3;
+		const acceptComma = opts.acceptComma ?? true;
+		const minUnits    = opts.minUnits ?? 1;
+
+		// Normaliza visualmente: coma → punto (para que el usuario vea siempre ".")
+		if (acceptComma && weightUnitInput.value.includes(',')) {
+			const pos = weightUnitInput.selectionStart;
+			weightUnitInput.value = weightUnitInput.value.replace(/,/g, '.');
+			if (pos != null) weightUnitInput.setSelectionRange(pos, pos);
+		}
+
+		let units = parseInt(unitsInput.value, 10);
+		if (isNaN(units) || units < minUnits) units = minUnits;
+
+		const raw = String(weightUnitInput.value || '').trim(); // ya con puntos
+		const w = raw === '' ? NaN : Number(raw);
+
+		if (Number.isFinite(w)) {
+			// toFixed usa punto por especificación
+			const val = (w * units).toFixed(decimals);
+			totalWeightInput.value = val;                 // siempre con punto
+			// por si el navegador intentara cambiarlo: refuerza el punto
+			if (totalWeightInput.value.includes(',')) {
+				totalWeightInput.value = totalWeightInput.value.replace(/,/g, '.');
+			}
+		} else {
+			totalWeightInput.value = '';
+		}
+	}
+
+	// —— radios + wiring de eventos ——
+	function initUnitTypeControls(
+		radioUnitRef,        // "Single Unit"
+		radioPackRef,        // "Multi Pack"
+		unitsInputRef,       // unidades
+		weightUnitInputRef,  // peso/unidad
+		totalWeightInputRef, // peso total
+		opts = {}
+	) {
+		const radioUnit   = el(radioUnitRef);
+		const radioPack   = el(radioPackRef);
+		const unitsInput  = el(unitsInputRef);
+		const weightInput = el(weightUnitInputRef);
+		const totalInput  = el(totalWeightInputRef);
+
+		if (!unitsInput || !weightInput || !totalInput) return;
+
+		const minUnits    = opts.minUnits ?? 1;
+		const decimals    = opts.decimals ?? 3;
+		const acceptComma = opts.acceptComma ?? true;
+		const defaultMode  = opts.defaultMode ?? null;
+
+		// Sugerir formato "inglés"
+		weightInput.setAttribute('lang','en');
+		weightInput.setAttribute('inputmode','decimal');
+		totalInput.setAttribute('lang','en');
+		totalInput.setAttribute('inputmode','decimal');
+
+		// 🔒 Forzar siempre punto visual: usa type="text" para evitar localización con coma
+		try { totalInput.type = 'text'; } catch(e) {}
+
+		const applyMode = () => {
+			if (radioPack && radioPack.checked) {
+				unitsInput.disabled = false;
+				// unitsInput.value = '';
+				// let v = parseInt(unitsInput.value, 10);
+				// if (isNaN(v) || v < minUnits) unitsInput.value = minUnits;
+				if (unitsInput.value === '') {
+					unitsInput.value = minUnits;
+				}
+			} else {
+				unitsInput.disabled = true;
+				unitsInput.value = minUnits;
+			}
+			calculateWeight(unitsInput, weightUnitInputRef, totalWeightInputRef, { decimals, acceptComma, minUnits });
+		};
+
+		radioUnit?.addEventListener('change', applyMode);
+		radioPack?.addEventListener('change', applyMode);
+
+		unitsInput.addEventListener('input', () => {
+			let v = parseInt(unitsInput.value, 10);
+			if (isNaN(v) || v < minUnits) v = minUnits;
+			unitsInput.value = v;
+			calculateWeight(unitsInput, weightUnitInputRef, totalWeightInputRef, { decimals, acceptComma, minUnits });
+		});
+
+		weightInput.addEventListener('input', () => {
+			// ✅ Validar: permitir solo números y punto
+			weightInput.value = weightInput.value.replace(/[^0-9.,]/g, '');
+
+			// Normaliza coma→punto y recalcula
+			if (acceptComma && weightInput.value.includes(',')) {
+				const pos = weightInput.selectionStart;
+				weightInput.value = weightInput.value.replace(/,/g, '.');
+				if (pos != null) weightInput.setSelectionRange(pos, pos);
+			}
+			calculateWeight(unitsInput, weightUnitInputRef, totalWeightInputRef, { decimals, acceptComma, minUnits });
+		});
+
+		if (defaultMode === '1') {
+			radioUnit.checked = true;
+		} else if (defaultMode === '2') {
+			radioPack.checked = true;
+		}
+
+		// estado inicial
+		applyMode();
 	}
 
 	
@@ -1812,7 +1944,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				});
 
 				const data = await response.json();
-
+				
 				if (data.needs_confirmation && !isRetry) {
 					showConfirmModal(
 						"Update Product",
@@ -2390,7 +2522,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					const card = document.createElement('div');
 					card.className = 'product-card';
 
-					if (product.sale_unit_type === 1 || product.sale_unit_type === null) {
+					if (product.sale_unit_type === "1" || product.sale_unit_type === null) {
 						unitImg = "images/sys-img/papel-box.png";
 						
 						const raw = product?.total_weight;
@@ -2781,6 +2913,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 				if (!product) return;
 				
 				// Llenar campos del formulario
+				document.getElementById('edit_units').value = product.units_per_pack || '';
+				document.getElementById('edit_weight_unit').value = product.weight_per_unit || '';
+				document.getElementById('edit_total_weight').value = product.total_weight || '';
 				document.getElementById('edit_product_name').value = product.product_name || '';
 				document.getElementById('edit_product_year').value = product.product_year || '';
 				document.getElementById('edit_prise').value = product.prise || '';
@@ -2800,6 +2935,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 						preview.style.display = 'none';
 					}
 				}
+
+				initUnitTypeControls(
+					'edit_unit_type_1',      // radio single
+					'edit_unit_type_2',      // radio pack
+					'edit_units',            // input unidades
+					'edit_weight_unit',      // input peso/unidad
+					'edit_total_weight',     // input peso total
+					{ decimals: 3, acceptComma: true, minUnits: 1, defaultMode: product.sale_unit_type}
+				);
 					
 				await populateProductTypes('edit_product_type', product.product_type, product.company_id, true);
 
