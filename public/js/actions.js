@@ -2725,7 +2725,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}
 
 				if (product && productName) {
-					productName.textContent = (product.mark_name || '') + ' - ' + (product.model_name || '');
+					productName.innerHTML =
+						(product.product_name || 'Unnamed Product') + '<br>' +
+						((product.mark_name || product.model_name)
+							? (product.mark_name || 'undefined') + ' - ' + (product.model_name || 'undefined') 
+							: '');
 				}
 
 				if (product.company_id === userCompanyId) {
