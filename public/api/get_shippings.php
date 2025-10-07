@@ -22,9 +22,9 @@ try {
 
 	// 1️⃣ Traer shippings
 	$shippingsResult = select_from("shippings", [
-		"shippings_id","shipping_no","customer_id","company_id",
-		"shipping_img","shipping_method","destination","delivery_date",
-		"description","status","created_at"
+		"shippings_id", "shipping_no", "customer_id", "company_id",
+		"shipping_img", "shipping_method", "destination", "delivery_date",
+		"description", "status", "created_at"
 	], ["company_id" => $companyId], [
 		"order_by" => "created_at",
 		"order_direction" => "DESC"
@@ -176,6 +176,8 @@ try {
 				"delivery_date"  	=> $shipping["delivery_date"] ? date("Y-m-d", strtotime($shipping["delivery_date"])) : null,
 				"description"    	=> $shipping["description"],
 				"status"         	=> $shipping["status"],
+				"created_at"		=> $shipping["created_at"],
+				"shipping_img"		=> $shipping["shipping_img"],
 				"customer" => [
 					"customer_id"  	=> $shipping["customer_id"],
 					"full_name"    	=> trim(($customer["customer_name"] ?? '') . ' ' . ($customer["customer_surname"] ?? '')),

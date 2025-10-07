@@ -5286,7 +5286,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				${renderLoads(shipping.loads || [])}
 			`;
 
-			shippingSummary.innerHTML = renderShippingSummary(shipping.product_summary || []);
+			shippingSummary.innerHTML = renderShippingSummary(shipping.product_summary || [], shipping);
 		}
 
 		function renderLoads(loads) {
@@ -5314,7 +5314,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							<th align="left">Product</th>
 							<th align="center">Qty</th>
 							<th align="center">Price</th>
-							<th align="center">Total</th>
+							<th align="center">Price/Kg</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -5331,7 +5331,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			`;
 		}
 
-		function renderShippingSummary(summary) {
+		function renderShippingSummary(summary, shippingInfo = {}) {
 			if (!Array.isArray(summary) || summary.length === 0) {
 				return `<p style="text-align: center; margin-top: 10px;">No product summary available</p>`;
 			}
@@ -5341,8 +5341,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const totalPrice = summary.reduce((sum, p) => sum + (p.total_price ?? 0), 0);
 			const totalWeight = summary.reduce((sum, p) => sum + (p.total_weight ?? 0), 0);
 
+			const shippingNumber = shippingInfo.shipping_no || '—';
+			const destination = shippingInfo.destination || '—';
+			const createdAt = shippingInfo.created_at ? new Date(shippingInfo.created_at).toLocaleDateString() : '—';
+			const deliveryDate = shippingInfo.delivery_date || '—';
+			const shippingImage = shippingInfo.shipping_img 
+				? `<img src="../images/shippings-code/${shippingInfo.shipping_img}" alt="Shipping Code" style="width: 50%; margin-top: 10px;">` 
+				: '';
+
 			return `
 				<h3 style="text-align: center; margin: 10px 0;">Summary</h3>
+
 				<table width="100%" cellspacing="0" cellpadding="5" style="font-size: 14px;">
 					<thead>
 						<tr style="background: #f5f5f5;">
@@ -5370,7 +5379,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 							<td align="center">${totalWeight.toFixed(2)} kg</td>
 						</tr>
 					</tfoot>
+					
 				</table>
+				<div style="text-align: center; margin-bottom: 10px;">
+					<p>Destination: ${destination}</p>
+					<p>Created: ${createdAt}</p>
+					<p>Delivery Date: ${deliveryDate}</p>
+					${shippingImage}
+					<p><strong>Shipping #${shippingNumber}</strong></p>
+				</div>
 			`;
 		}
 
