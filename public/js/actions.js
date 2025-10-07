@@ -5228,6 +5228,158 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 	//############################################################# END PAYMENTS ##################################################################
 
+	//############################################################### SHIPPING ####################################################################
+	const shippingListTable = document.getElementById('shippingList');
+	const shippingDetails = document.getElementById('shippingDetails');
+	const searchShippingField = document.getElementById('searchShippingField');
+	const shippingSummary = document.getElementById('shippingSummary');
+
+	if (shippingListTable && searchShippingField) {
+		async function fetchAndRenderShippings() {
+			try {
+				const searchTerm = searchShippingField.value.trim().toLowerCase();
+				const params = new URLSearchParams();
+				if (searchTerm) params.append('search', searchTerm);
+
+				const res = await fetch(`api/get_shippings.php?${params.toString()}`, {
+					method: 'GET',
+					headers: { 'Accept': 'application/json' }
+				});
+				const data = await res.json();
+
+				shippingListTable.innerHTML = '';
+				shippingDetails.innerHTML = '';
+
+				if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+					data.data.forEach(shipping => {
+						const row = document.createElement('tr');
+						row.className = 'form_height clickable-row';
+						row.innerHTML = `
+							<td>
+								<div style="padding: 5px;">
+									<strong>Shipping No:</strong> ${shipping.shipping_no || '—'}<br>
+									<span>${shipping.customer?.full_name || ''}</span><br>
+									<small>${shipping.delivery_date || ''}</small>
+								</div>
+							</td>
+						`;
+
+						row.addEventListener('click', () => renderShippingDetails(shipping));
+						shippingListTable.appendChild(row);
+					});
+				} else {
+					shippingListTable.innerHTML = `<tr><td><p style="text-align:center;">No shippings found.</p></td></tr>`;
+				}
+			} catch (err) {
+				console.error("Error loading shippings:", err);
+				shippingListTable.innerHTML = `<tr><td><p style="text-align:center;">Error loading shippings</p></td></tr>`;
+			}
+		}
+
+		function renderShippingDetails(shipping) {
+			shippingDetails.innerHTML = `
+				<h3 style="margin: 10px;">Shipping #${shipping.shipping_no || ''}</h3>
+				<p style="margin-left: 10px;">Destination: <strong>${shipping.destination || '—'}</strong></p>
+				<p style="margin-left: 10px;">Date: ${shipping.delivery_date || '—'}</p>
+				<p style="margin-left: 10px;">Description: ${shipping.description || '—'}</p>
+				<hr style="margin: 10px 0;">
+				${renderLoads(shipping.loads || [])}
+			`;
+
+			shippingSummary.innerHTML = renderShippingSummary(shipping.product_summary || []);
+		}
+
+		function renderLoads(loads) {
+			if (loads.length === 0) return '<p style="margin-left: 10px;">No loads found.</p>';
+
+			return loads.map(load => `
+				<div style="margin-bottom: 25px; border: 1px solid #ccc; padding: 10px; border-radius: 6px;">
+					<h4>Load #${load.load_no}</h4>
+					<p>Customer: <strong>${load.customer?.full_name || '—'}</strong></p>
+					<p>Total: $${load.price_sum || 0} ${load.currency || ''}</p>
+					<div style="margin-top: 10px;">
+						${renderProducts(load.products || [])}
+					</div>
+				</div>
+			`).join('');
+		}
+
+		function renderProducts(products) {
+			if (products.length === 0) return '<p>No products</p>';
+
+			return `
+				<table width="100%" cellspacing="0" cellpadding="4" style="border-top: 1px solid #ccc; margin-top: 10px;">
+					<thead>
+						<tr style="background: #f9f9f9;">
+							<th align="left">Product</th>
+							<th align="center">Qty</th>
+							<th align="center">Price</th>
+							<th align="center">Total</th>
+						</tr>
+					</thead>
+					<tbody>
+						${products.map(p => `
+							<tr>
+								<td>${p.name || ''} <br><small>${p.mark_name || ''}${p.model_name ? ' - ' + p.model_name : ''}</small></td>
+								<td align="center">${p.quantity ?? 0}</td>
+								<td align="center">$${p.prise ?? 0}</td>
+								<td align="center">$${p.total ?? 0}</td>
+							</tr>
+						`).join('')}
+					</tbody>
+				</table>
+			`;
+		}
+
+		function renderShippingSummary(summary) {
+			if (!Array.isArray(summary) || summary.length === 0) {
+				return `<p style="text-align: center; margin-top: 10px;">No product summary available</p>`;
+			}
+
+			// 🧮 Totales generales
+			const totalQty = summary.reduce((sum, p) => sum + (p.quantity ?? 0), 0);
+			const totalPrice = summary.reduce((sum, p) => sum + (p.total_price ?? 0), 0);
+			const totalWeight = summary.reduce((sum, p) => sum + (p.total_weight ?? 0), 0);
+
+			return `
+				<h3 style="text-align: center; margin: 10px 0;">Summary</h3>
+				<table width="100%" cellspacing="0" cellpadding="5" style="font-size: 14px;">
+					<thead>
+						<tr style="background: #f5f5f5;">
+							<th align="left">Product</th>
+							<th align="center">Qty</th>
+							<th align="center">Total $</th>
+							<th align="center">Weight</th>
+						</tr>
+					</thead>
+					<tbody>
+						${summary.map(p => `
+							<tr>
+								<td>${p.name || ''} <br><small>${p.mark_name || ''}${p.model_name ? ' - ' + p.model_name : ''}</small></td>
+								<td align="center">${p.quantity ?? 0}</td>
+								<td align="center">$${(p.total_price ?? 0).toFixed(2)}</td>
+								<td align="center">${(p.total_weight ?? 0).toFixed(2)} kg</td>
+							</tr>
+						`).join('')}
+					</tbody>
+					<tfoot>
+						<tr style="font-weight: bold; background: #eef;">
+							<td>Total</td>
+							<td align="center">${totalQty}</td>
+							<td align="center">$${totalPrice.toFixed(2)}</td>
+							<td align="center">${totalWeight.toFixed(2)} kg</td>
+						</tr>
+					</tfoot>
+				</table>
+			`;
+		}
+
+		// Inicializar búsqueda
+		searchShippingField.addEventListener('keyup', fetchAndRenderShippings);
+		fetchAndRenderShippings();
+	}
+	//############################################################# END SHIPPING ##################################################################
+
 	//############################################################# SEND EMAIL ##################################################################
 	const contactForm = document.getElementById('contactForm');
 	if (contactForm) {

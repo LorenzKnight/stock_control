@@ -1,0 +1,40 @@
+.shipping-sidebar {
+    width: 25%;
+    height: 650px;
+    background-color: var(--main-bg-color);
+    border-radius: 5px;
+}
+
+.shipping-details {
+    width: 48%;
+    height: 650px;
+    margin: 0 0.5%;
+    padding: 0 0.5%;
+    /* background-color: red; */
+    overflow: auto;
+}
+
+
+.shipping-list tr {
+	cursor: pointer;
+}
+
+.shipping-list tr td {
+	border-bottom: 1px solid var(--main-bg-beige);
+	padding: 5px 0;
+}
+
+.shipping-list tr td p {
+	font-weight: 200;
+	margin: 5px 0;
+}
+
+.shipping-list tr td p strong {
+	font-weight: 600;
+}
+
+.shipping-list tr:hover {
+	background-color: var(--clr-white);
+	/* color: var(--clr-white); */
+	transition: background-color 0.3s ease;
+}

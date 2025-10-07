@@ -412,3 +412,44 @@ CREATE TABLE IF NOT EXISTS notifications (
 	is_read INTEGER DEFAULT 0, -- 0: No leído, 1: Leído
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS shippings (
+	shippings_id SERIAL PRIMARY KEY,
+	shipping_no INTEGER NULL,
+	customer_id INTEGER NULL,
+	company_id INTEGER NULL,
+	shipping_img VARCHAR(255) NULL,
+	shipping_method INTEGER NULL,
+	destination VARCHAR(255) NULL,
+	delivery_date TIMESTAMP NULL,
+	description VARCHAR(255) NULL,
+	status INTEGER NULL,
+	create_by INTEGER NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS loads (
+	load_id SERIAL PRIMARY KEY,
+	shippings_id INTEGER NULL,
+	customer_id INTEGER NULL,
+	company_id INTEGER NULL,
+	load_no INTEGER NULL,
+	currency VARCHAR(10) NULL,
+	price_sum NUMERIC(10,2) NULL,
+	status INTEGER NULL,
+	create_by INTEGER NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS loaded_products (
+	loaded_products_id SERIAL PRIMARY KEY,
+	load_id INTEGER NULL,
+	customer_id INTEGER NULL,
+	product_id INTEGER NULL,
+	quantity INTEGER NULL,
+	price NUMERIC(10,2) NULL,
+	discount NUMERIC(10,2) NULL,
+	total NUMERIC(10,2) NULL,
+	create_by INTEGER NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

@@ -7,9 +7,10 @@
 @import url("buttons.css");
 @import url("message.css");
 @import url("profile.css");
+@import url("sales.css");
 @import url("products.css");
 @import url("customers.css");
-@import url("sales.css");
+@import url("shipping.css");
 @import url("payments.css");
 @import url("notifications.css");
 @import url("forms.css");
