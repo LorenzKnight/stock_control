@@ -76,7 +76,7 @@ try {
 		"product_image",
 		"product_type",
 		"currency",
-		"prise",
+		"price",
 		"quantity",
 		"min_quantity",
 		"weight_per_unit",

@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS products (
 	product_year INTEGER NULL,
 	description TEXT NULL,
 	currency VARCHAR(10) NULL,
-	prise INTEGER NULL,
+	price INTEGER NULL,
 	quantity INTEGER NULL,
 	min_quantity INTEGER NULL,
 	weight_per_unit NUMERIC(10,3) NULL,

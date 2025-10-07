@@ -129,8 +129,8 @@
 							<select class="form-input-style" name="edit_currency" id="edit_currency" disabled></select>
 						</td>
 						<td colspan="3" align="center" valign="middle">
-							<label for="edit_prise">Price:</label>
-							<input class="form-medium-input-style" type="number" name="edit_prise" id="edit_prise" placeholder="Product Prise" title="Product Prise"/>
+							<label for="edit_price">Price:</label>
+							<input class="form-medium-input-style" type="number" name="edit_price" id="edit_price" placeholder="Product Price" title="Product Price"/>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">

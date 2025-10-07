@@ -90,8 +90,8 @@
 						<select class="form-input-style" name="currency" id="currency"></select>
 					</td>
 					<td colspan="3" align="center" valign="middle">
-						<label for="prise">Price:</label>
-						<input class="form-medium-input-style" type="number" name="prise" id="prise" placeholder="Product Prise" title="Product Prise"/>
+						<label for="price">Price:</label>
+						<input class="form-medium-input-style" type="number" name="price" id="price" placeholder="Product Price" title="Product Price"/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">

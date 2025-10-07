@@ -57,7 +57,7 @@ try {
 		foreach ($productsList as $prod) {
 			$productInfo = select_from("products", [
 				"product_image", "product_name", "product_year",
-				"product_mark", "product_model", "product_sub_model", "prise"
+				"product_mark", "product_model", "product_sub_model", "price"
 			], ["product_id" => $prod["product_id"]], ["fetch_first" => true]);
 
 			$product = json_decode($productInfo, true)["data"] ?? [];
@@ -85,7 +85,7 @@ try {
 				"model_name"		=> $modelName,
 				"submodel_name" 	=> $submodelName,
 				"quantity"			=> $prod["quantity"] ?? 1,
-				"prise"				=> $product["prise"] ?? 0,
+				"price"				=> $product["price"] ?? 0,
 				"discount"			=> $prod["discount"] ?? 0,
 				"total"				=> $prod["total"] ?? 0
 			];

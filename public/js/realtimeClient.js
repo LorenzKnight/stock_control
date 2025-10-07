@@ -271,7 +271,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 																		<p>Year<br><strong>${product.product_year || ''}</strong></p>
 																	</td>
 																	<td style="width: 50%; border-top: 1px solid #CCC;">
-																		<p>Prise<br><strong>${product.prise ? '$' + product.prise + ' ' + product.currency : ''}</strong></p>
+																		<p>Price<br><strong>${product.price ? '$' + product.price + ' ' + product.currency : ''}</strong></p>
 																	</td>
 																</tr>
 															</table>

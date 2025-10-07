@@ -33,7 +33,7 @@ try {
     $productModel    		= intval($_POST["product_model"] ?? 0);
     $productSubModel		= intval($_POST["product_sub_model"] ?? 0);
     $productPriceCurrency   = trim($_POST["currency"] ?? '');
-    $productPrise         	= trim($_POST["prise"] ?? '');
+    $productPrice         	= trim($_POST["price"] ?? '');
     $productYear     		= intval($_POST["product_year"] ?? '');
     $productQuantity        = is_numeric($_POST["quantity"] ?? null) ? intval($_POST["quantity"]) : 0;
     $productMinQuantity     = isset($_POST["min_quantity"]) && trim($_POST["min_quantity"]) !== '' ? intval($_POST["min_quantity"]) : 10;
@@ -43,7 +43,7 @@ try {
     if ($productName === '') throw new Exception("Product name is required.");
     if ($productType === 0) throw new Exception("Product type is required.");
     if ($productQuantity < 0) throw new Exception("Quantity must be 0 or more.");
-    if ($productPrise < 0) throw new Exception("Price must be 0 or more.");
+    if ($productPrice < 0) throw new Exception("Price must be 0 or more.");
 
     $imageName = null;
 	try {
@@ -74,7 +74,7 @@ try {
 		"quantity"          => $productQuantity,
         "min_quantity"      => $productMinQuantity,
 		"currency"			=> $productPriceCurrency,
-        "prise"				=> $productPrise,
+        "price"				=> $productPrice,
         "description"       => $description,
         "status"            => 1,
         "created_at"        => date("Y-m-d H:i:s")

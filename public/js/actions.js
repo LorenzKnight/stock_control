@@ -2610,7 +2610,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									<p>Year<br><strong>${product.product_year == 0 || product.product_year == null ? 'N/E' : product.product_year}</strong></p>
 								</td>
 								<td style="width: 50%; border-top: 1px solid #CCC;">
-									<p>Prise<br><strong>${product.prise ? '$' + product.prise + ' ' + product.currency : ''}</strong></p>
+									<p>Price<br><strong>${product.price ? '$' + product.price + ' ' + product.currency : ''}</strong></p>
 								</td>
 							</tr>
 						</table>
@@ -2922,7 +2922,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				document.getElementById('edit_total_weight').value = product.total_weight || '';
 				document.getElementById('edit_product_name').value = product.product_name || '';
 				document.getElementById('edit_product_year').value = product.product_year || '';
-				document.getElementById('edit_prise').value = product.prise || '';
+				document.getElementById('edit_price').value = product.price || '';
 				document.getElementById('edit_quantity').value = product.quantity || '';
 				document.getElementById('edit_min_quantity').value = product.min_quantity || '';
 				document.getElementById('edit_description').value = product.description || '';
@@ -3752,7 +3752,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 										</td>
 										<td width="12%" align="left" valign="middle">
 											<p class="mini-title">Price</p>
-											<strong>${product.prise}</strong>
+											<strong>${product.price}</strong>
 										</td>
 										<td width="20%" align="left" valign="middle">
 											<p class="mini-title">Product No:</p>
@@ -4003,7 +4003,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							</td>
 							<td width="10%" align="center" valign="middle">
 								<div class="opcion-checkbox">
-									<input type="checkbox" id="${uniqueId}" name="product_selection[]" value="${product.product_id}" data-price="${product.prise}" class="product-checkbox" />
+									<input type="checkbox" id="${uniqueId}" name="product_selection[]" value="${product.product_id}" data-price="${product.price}" class="product-checkbox" />
 									<label for="${uniqueId}"></label>
 								</div>
 							</td>
@@ -4539,7 +4539,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 										</td>
 										<td width="10%" align="center" valign="middle">
 											<div class="opcion-checkbox">
-												<input type="checkbox" id="${uniqueId}" name="product_selection[]" value="${product.product_id}" data-price="${product.prise}" class="edit-product-checkbox" />
+												<input type="checkbox" id="${uniqueId}" name="product_selection[]" value="${product.product_id}" data-price="${product.price}" class="edit-product-checkbox" />
 												<label for="${uniqueId}"></label>
 											</div>
 										</td>
@@ -5322,7 +5322,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							<tr>
 								<td>${p.name || ''} <br><small>${p.mark_name || ''}${p.model_name ? ' - ' + p.model_name : ''}</small></td>
 								<td align="center">${p.quantity ?? 0}</td>
-								<td align="center">$${p.prise ?? 0}</td>
+								<td align="center">$${p.price ?? 0}</td>
 								<td align="center">$${p.total ?? 0}</td>
 							</tr>
 						`).join('')}
