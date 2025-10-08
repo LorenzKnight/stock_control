@@ -5264,7 +5264,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							</td>
 						`;
 
-						row.addEventListener('click', () => renderShippingDetails(shipping));
+						row.addEventListener('click', () => renderShippingDetails(shipping, row));
 						shippingListTable.appendChild(row);
 					});
 				} else {
@@ -5276,7 +5276,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		}
 
-		function renderShippingDetails(shipping) {
+		function renderShippingDetails(shipping, clickedRow) {
+			const allRows = shippingListTable.querySelectorAll('.clickable-row');
+			allRows.forEach(row => row.style.backgroundColor = '');
+
+			if (clickedRow) {
+				clickedRow.style.backgroundColor = 'var(--clr-white)';
+			}
+
 			shippingDetails.innerHTML = `
 				<h3 style="margin: 10px;">Shipping #${shipping.shipping_no || ''}</h3>
 				<p style="margin-left: 10px;">Destination: <strong>${shipping.destination || '—'}</strong></p>
@@ -5308,7 +5315,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			if (products.length === 0) return '<p>No products</p>';
 
 			return `
-				<table width="100%" cellspacing="0" cellpadding="4" style="border-top: 1px solid #ccc; margin-top: 10px;">
+				<table width="100%" cellspacing="0" cellpadding="0" style="border-top: 1px solid #ccc; margin-top: 10px;">
 					<thead>
 						<tr style="background: #f9f9f9;">
 							<th align="left">Product</th>
@@ -5352,13 +5359,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 			return `
 				<h3 style="text-align: center; margin: 10px 0;">Summary</h3>
 
-				<table width="100%" cellspacing="0" cellpadding="5" style="font-size: 14px;">
+				<table width="90%" cellspacing="0" cellpadding="5" style="margin: 0 auto;">
 					<thead>
 						<tr style="background: #f5f5f5;">
-							<th align="left">Product</th>
-							<th align="center">Qty</th>
-							<th align="center">Total $</th>
-							<th align="center">Weight</th>
+							<th style="border-bottom: 1px solid #ccc;" align="left">Product</th>
+							<th style="border-bottom: 1px solid #ccc;" align="center">Qty</th>
+							<th style="border-bottom: 1px solid #ccc;" align="center">Total $</th>
+							<th style="border-bottom: 1px solid #ccc;" align="center">Weight</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -5372,11 +5379,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 						`).join('')}
 					</tbody>
 					<tfoot>
-						<tr style="font-weight: bold; background: #eef;">
-							<td>Total</td>
-							<td align="center">${totalQty}</td>
-							<td align="center">$${totalPrice.toFixed(2)}</td>
-							<td align="center">${totalWeight.toFixed(2)} kg</td>
+						<tr style="font-weight: bold;">
+							<td style="border-top: 1px solid #ccc;">Total</td>
+							<td style="border-top: 1px solid #ccc;" align="center">${totalQty}</td>
+							<td style="border-top: 1px solid #ccc;" align="center">$${totalPrice.toFixed(2)}</td>
+							<td style="border-top: 1px solid #ccc;" align="center">${totalWeight.toFixed(2)} kg</td>
 						</tr>
 					</tfoot>
 					
@@ -5386,7 +5393,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					<p>Created: ${createdAt}</p>
 					<p>Delivery Date: ${deliveryDate}</p>
 					${shippingImage}
-					<p><strong>Shipping #${shippingNumber}</strong></p>
+					<p><strong>${shippingNumber}</strong></p>
 				</div>
 			`;
 		}

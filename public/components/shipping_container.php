@@ -7,7 +7,7 @@
 			<table width="100%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td width="15%" align="center" valign="middle">
-						<button type="button" class="button-style-agree" id="add-sale-btn">Create Sale</button>
+						<button type="button" class="button-style-agree" id="add-sale-btn">Create Shipping</button>
 					</td>
 					<td width="85%" align="center" valign="middle">
 						<input type="text" name="searchShippingField" id="searchShippingField" class="big-search-field" placeholder="Search Shipping..." title="Search Shipping">
@@ -27,8 +27,8 @@
 						</td>
 					</tr>
 				</table> -->
-				<div class="notifications-list" id="notificationsList">
-					<table class="shipping-list" id="shippingList" width="90%" align="center" cellspacing="0" style="margin-top: 15px;"></table>
+				<div class="notifications-list">
+					<table class="shipping-list" id="shippingList" width="96%" align="right" cellspacing="0" cellpadding="0" style="margin-top: 15px;"></table>
 				</div>
 			</div>
 			<div class="shipping-details" id="shippingDetails"></div>
