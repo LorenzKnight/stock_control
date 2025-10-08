@@ -3694,9 +3694,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 						} else if (sale.products.length === 1) {
 							const product = sale.products[0];
 
+							let unitImg = '';
+							if (product.sale_unit_type === "1" || product.sale_unit_type === null) {
+								unitImg = "images/sys-img/papel-box.png";
+							} else {
+								unitImg = "images/sys-img/wooden-box.png";
+							}
+
 							let isDefaultImage = !product.image || product.image.trim() === "";
 							const productImg = isDefaultImage
-								? 'images/sys-img/wooden-box.png'
+								? unitImg
 								: `images/products/${product.image}`;
 
 							let imageClass = isDefaultImage ? "grayscale-img" : "";
@@ -3724,12 +3731,20 @@ document.addEventListener("DOMContentLoaded", async function () {
 							`;
 						} else {
 							sale.products.forEach(product => {
-								let isDefaultImage = !product.image || product.image.trim() === "";
+								let unitImg = '';
+
+								if (product.sale_unit_type === "1" || product.sale_unit_type === null) {
+									unitImg = "images/sys-img/papel-box.png";
+								} else {
+									unitImg = "images/sys-img/wooden-box.png";
+								}
+
+								const isDefaultImage = !product.image || product.image.trim() === "";
 								const productImg = isDefaultImage
-									? 'images/sys-img/wooden-box.png'
+									? unitImg
 									: `images/products/${product.image}`;
 						
-								let imageClass = isDefaultImage ? "grayscale-img" : "";
+								const imageClass = isDefaultImage ? "grayscale-img" : "";
 
 								productsHtml += `
 									<tr valign="baseline" class="form_height">
@@ -3779,54 +3794,58 @@ document.addEventListener("DOMContentLoaded", async function () {
 							</tr>
 						</table>
 						<div class="flex" style="width: 100%; margin-top: 5px;">
-							<table width="30%" align="center" cellspacing="0">
-								<tr valign="baseline" class="form_height">
-									<td width="30%" align="left" valign="middle">
-										<div class="sale-profile">
-											<img src="${customerImg}" alt="profile picture">
-										</div>
-									</td>
-									<td width="70%" align="left" valign="middle">
-										<h3><strong>${sale.customer.full_name}</strong></h3>
-										<p class="mini-title">${sale.customer.document_type}:</p>
-										${sale.customer.document_no}<br><br>
-										<p class="mini-title">Phone:</p>
-										${sale.customer.phone}
-									</td>
-								</tr>
-							</table>
-							<table width="40%" style="border-left: 1px solid #999;" align="center" cellspacing="0">
+							<div style="width: 30%;">
+								<table width="100%" align="center" cellspacing="0">
+									<tr valign="baseline" class="form_height">
+										<td width="30%" align="left" valign="middle">
+											<div class="sale-profile">
+												<img src="${customerImg}" alt="profile picture">
+											</div>
+										</td>
+										<td width="70%" align="left" valign="middle">
+											<h3><strong>${sale.customer.full_name}</strong></h3>
+											<p class="mini-title">${sale.customer.document_type}:</p>
+											${sale.customer.document_no}<br><br>
+											<p class="mini-title">Phone:</p>
+											${sale.customer.phone}
+										</td>
+									</tr>
+								</table>
+							</div>
+							<table width="40%" style="border-left: 1px solid var(--clr-border); border-right: 1px solid var(--clr-border);" align="center" cellspacing="0">
 								${productsHtml}
 							</table>
-							<table width="30%" style="border-left: 1px solid #999;" align="center" cellspacing="0">
-								<tr valign="baseline" class="form_height">
-									<td colspan="2" style="padding-left: 7px;" align="left" valign="middle"><strong>Method of Payment</strong></td>
-								</tr>
-								<tr valign="baseline" class="form_height">
-									<td width="35%" align="right">Price :</td><td width="65%" style="padding-left: 5px;">${sale.price_sum}</td>
-								</tr>
-								<tr valign="baseline" class="form_height">
-									<td align="right">Initial :</td><td style="padding-left: 5px;">${sale.initial}</td>
-								</tr>
-								<tr valign="baseline" class="form_height">
-									<td align="right">Delivery date :</td><td style="padding-left: 5px;">${sale.delivery_date}</td>
-								</tr>
-								<tr valign="baseline" class="form_height">
-									<td align="right">Remaining :</td><td style="padding-left: 5px;">${sale.remaining}</td>
-								</tr>
-								<tr valign="baseline" class="form_height">
-									<td align="right">Interest :</td><td style="padding-left: 5px;">${sale.total_interest}</td>
-								</tr>
-								<tr valign="baseline" class="form_height">
-									<td align="right">Installments / month :</td><td style="padding-left: 5px;">${sale.no_installments} / ${sale.payments}</td>
-								</tr>
-								<tr valign="baseline" class="form_height">
-									<td align="right">Payment date :</td><td style="padding-left: 5px;">${paymentDateFormatted}</td>
-								</tr>
-								<tr valign="baseline" class="form_height">
-									<td align="right">Due :</td><td style="padding-left: 5px;">${sale.due}</td>
-								</tr>
-							</table>
+							<div style="width: 30%;">
+								<table width="100%" align="center" cellspacing="0">
+									<tr valign="baseline" class="form_height">
+										<td colspan="2" style="padding-left: 7px;" align="left" valign="middle"><strong>Method of Payment</strong></td>
+									</tr>
+									<tr valign="baseline" class="form_height">
+										<td width="35%" align="right">Price :</td><td width="65%" style="padding-left: 5px;">${sale.price_sum}</td>
+									</tr>
+									<tr valign="baseline" class="form_height">
+										<td align="right">Initial :</td><td style="padding-left: 5px;">${sale.initial}</td>
+									</tr>
+									<tr valign="baseline" class="form_height">
+										<td align="right">Delivery date :</td><td style="padding-left: 5px;">${sale.delivery_date}</td>
+									</tr>
+									<tr valign="baseline" class="form_height">
+										<td align="right">Remaining :</td><td style="padding-left: 5px;">${sale.remaining}</td>
+									</tr>
+									<tr valign="baseline" class="form_height">
+										<td align="right">Interest :</td><td style="padding-left: 5px;">${sale.total_interest}</td>
+									</tr>
+									<tr valign="baseline" class="form_height">
+										<td align="right">Installments / month :</td><td style="padding-left: 5px;">${sale.no_installments} / ${sale.payments}</td>
+									</tr>
+									<tr valign="baseline" class="form_height">
+										<td align="right">Payment date :</td><td style="padding-left: 5px;">${paymentDateFormatted}</td>
+									</tr>
+									<tr valign="baseline" class="form_height">
+										<td align="right">Due :</td><td style="padding-left: 5px;">${sale.due}</td>
+									</tr>
+								</table>
+							</div>
 						</div>`;
 
 						salesContainer.appendChild(row);
@@ -3981,10 +4000,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				if (data.success && data.data.length > 0) {
 					data.data.forEach(product => {
+						let unitImg = '';
+
+						if (product.sale_unit_type === "1" || product.sale_unit_type === null) {
+							unitImg = "images/sys-img/papel-box.png";
+						} else {
+							unitImg = "images/sys-img/wooden-box.png";
+						}
+
 						const uniqueId = `product-${product.product_id}`;
 						const productImg = product.product_image && product.product_image.trim() !== ''
 							? `images/products/${product.product_image}`
-							: `images/sys-img/wooden-box.png`;
+							: unitImg;
 
 						const row = document.createElement('tr');
 						row.className = "productContainer";

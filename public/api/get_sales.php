@@ -56,6 +56,7 @@ try {
 
 		foreach ($productsList as $prod) {
 			$productInfo = select_from("products", [
+				"sale_unit_type", "units_per_pack", "weight_per_unit", "total_weight", 
 				"product_image", "product_name", "product_year",
 				"product_mark", "product_model", "product_sub_model", "price"
 			], ["product_id" => $prod["product_id"]], ["fetch_first" => true]);
@@ -78,6 +79,8 @@ try {
 
 			$productsData[] = [
 				"product_id"        => $prod["product_id"] ?? '',
+				"sale_unit_type"	=> $product["sale_unit_type"] ?? "1",
+				"units_per_pack"	=> $product["units_per_pack"] ?? 1,
 				"name"				=> $product["product_name"] ?? '',
 				"year"				=> $product["product_year"] ?? '',
 				"image"				=> $product["product_image"] ?? '',
@@ -87,6 +90,8 @@ try {
 				"quantity"			=> $prod["quantity"] ?? 1,
 				"price"				=> $product["price"] ?? 0,
 				"discount"			=> $prod["discount"] ?? 0,
+				"weight_per_unit"	=> $product["weight_per_unit"] ?? 0,
+				"total_weight"		=> $product["total_weight"] ?? 0,
 				"total"				=> $prod["total"] ?? 0
 			];
 		}
