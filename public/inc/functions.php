@@ -443,8 +443,8 @@ function delete_image_from_record(array $params): array {
 	];
 }
 
-function get_next_increment_value(string $table, string $field, int $startFrom = 10000): int {
-	$resultJson = select_from($table, [$field], [], [
+function get_next_increment_value(string $table, string $field, int $companyId, int $startFrom = 10000): int {
+	$resultJson = select_from($table, [$field], ['company_id' => $companyId], [
 		"order_by" => $field,
 		"order_direction" => "DESC",
 		"limit" => 1,

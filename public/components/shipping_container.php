@@ -7,7 +7,7 @@
 			<table width="100%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td width="15%" align="center" valign="middle">
-						<button type="button" class="button-style-agree" id="add-sale-btn">Create Shipping</button>
+						<button type="button" class="button-style-agree" id="add-shipping-btn">Create Shipping</button>
 					</td>
 					<td width="85%" align="center" valign="middle">
 						<input type="text" name="searchShippingField" id="searchShippingField" class="big-search-field" placeholder="Search Shipping..." title="Search Shipping">

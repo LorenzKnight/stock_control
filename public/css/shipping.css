@@ -5,6 +5,14 @@
     border-radius: 5px;
 }
 
+.shipping-profile img {
+	/* background-color: #fff; */
+	width: 40px;
+	height: 40px;
+	margin: 2px 0 0;
+	object-fit: cover;
+}
+
 .shipping-details {
     width: 48%;
     height: 650px;
@@ -37,4 +45,23 @@
 	background-color: var(--clr-white);
 	/* color: var(--clr-white); */
 	transition: background-color 0.3s ease;
+}
+
+.shipping-menu {
+    width: 38px;
+    height: 38px;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.shipping-menu img {
+    width: 38px;
+	filter: brightness(0) saturate(0) invert(0);
+    opacity: 1;
+    transition: filter 0.3s ease;
+}
+
+.shipping-menu img:hover {
+	filter: brightness(0) saturate(0) invert(55%) !important;
+	transition: all 0.6s ease;
 }

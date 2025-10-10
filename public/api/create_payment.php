@@ -60,9 +60,9 @@ try {
 
     $sale = $saleRes['data'];
 
-    $newPaymentNo = get_next_increment_value("payments", "payment_no", 20000);
+    $newPaymentNo = get_next_increment_value("payments", "payment_no", $companyId, 20000000);
 
-    $month = get_next_increment_value("payments", "no_installments", 1);
+    $month = get_next_increment_value("payments", "no_installments", $companyId, 1);
     $noInstallments = $month < $sale["installments_month"] ? $month : 0;
     if ($noInstallments && $noInstallments < 1) {
         throw new Exception("All payments were made.");

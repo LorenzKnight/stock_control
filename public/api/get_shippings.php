@@ -171,6 +171,7 @@ try {
 		) {
 			$dataList[] = [
 				"shippings_id"   	=> $shipping["shippings_id"],
+				"company_id"    	=> $shipping["company_id"],
 				"shipping_no"    	=> $shipping["shipping_no"],
 				"destination"    	=> $shipping["destination"],
 				"delivery_date"  	=> $shipping["delivery_date"] ? date("Y-m-d", strtotime($shipping["delivery_date"])) : null,
@@ -178,6 +179,8 @@ try {
 				"status"         	=> $shipping["status"],
 				"created_at"		=> $shipping["created_at"],
 				"shipping_img"		=> $shipping["shipping_img"],
+				"shipping_method"	=> $shipping["shipping_method"],
+				"created_at"		=> $shipping["created_at"],
 				"customer" => [
 					"customer_id"  	=> $shipping["customer_id"],
 					"full_name"    	=> trim(($customer["customer_name"] ?? '') . ' ' . ($customer["customer_surname"] ?? '')),

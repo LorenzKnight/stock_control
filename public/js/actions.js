@@ -5279,15 +5279,27 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				if (data.success && Array.isArray(data.data) && data.data.length > 0) {
 					data.data.forEach(shipping => {
+						const shippingMethod = shipping.shipping_method === '2' 
+							? '<img src="images/sys-img/air-shipping.png" alt="Air Shipping">' 
+							: '<img src="images/sys-img/gnd-shipping.png" alt="Ground Shipping">';
+
 						const row = document.createElement('tr');
 						row.className = 'form_height clickable-row';
 						row.innerHTML = `
+							<td width="20%" align="center" valign="middle">
+								<div class="shipping-profile">
+									${shippingMethod}
+								</div>
+							</td>
 							<td>
 								<div style="padding: 5px;">
-									<strong>Shipping No:</strong> ${shipping.shipping_no || '—'}<br>
+									Shipping No: <strong>${shipping.shipping_no || '—'}</strong><br>
 									<span>${shipping.customer?.full_name || ''}</span><br>
 									<small>${shipping.delivery_date || ''}</small>
 								</div>
+							</td>
+							<td width="15%" align="center" valign="top">
+								${formatNotificationDate(shipping.created_at)}
 							</td>
 						`;
 
@@ -5303,7 +5315,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		}
 
-		function renderShippingDetails(shipping, clickedRow) {
+		async function renderShippingDetails(shipping, clickedRow) {
 			const allRows = shippingListTable.querySelectorAll('.clickable-row');
 			allRows.forEach(row => row.style.backgroundColor = '');
 
@@ -5312,15 +5324,43 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 
 			shippingDetails.innerHTML = `
-				<h3 style="margin: 10px;">Shipping #${shipping.shipping_no || ''}</h3>
-				<p style="margin-left: 10px;">Destination: <strong>${shipping.destination || '—'}</strong></p>
-				<p style="margin-left: 10px;">Date: ${shipping.delivery_date || '—'}</p>
-				<p style="margin-left: 10px;">Description: ${shipping.description || '—'}</p>
-				<hr style="margin: 10px 0;">
+				<table width="100%" style="border-bottom: 1px solid #999; margin-bottom:10px;" align="center" cellspacing="0">
+					<tr valign="baseline" class="form_height">
+						<td width="12%" align="left" valign="middle">
+							<p class="mini-title">Shipping. No:</p>
+							<strong>${shipping.shipping_no}</strong>
+						</td>
+						<td width="85%" align="center" valign="middle"></td>
+						<td width="3%" align="center" valign="middle">
+							<div class="shipping-menu" id="shippingMenuBtn">
+								<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
+							</div>
+						</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+						<td width="100%" align="left" valign="middle">
+							<p class="mini-title">Destination:</p>
+							${shipping.destination || '—'}
+						</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+						<td width="100%" align="left" valign="middle">
+							<p class="mini-title">Description:</p>
+							${shipping.description || '—'}
+						</td>
+					</tr>
+				</table>
 				${renderLoads(shipping.loads || [])}
 			`;
 
 			shippingSummary.innerHTML = renderShippingSummary(shipping.product_summary || [], shipping);
+
+			const shippingMenuBtn = document.getElementById('shippingMenuBtn');
+			shippingMenuBtn.addEventListener('click', () => {
+				openShippingForm(shipping.shippings_id);
+
+				handlePopupClose("shipping-options", ".formular-frame", []);
+			});
 		}
 
 		function renderLoads(loads) {
@@ -5428,6 +5468,263 @@ document.addEventListener("DOMContentLoaded", async function () {
 		// Inicializar búsqueda
 		searchShippingField.addEventListener('keyup', fetchAndRenderShippings);
 		fetchAndRenderShippings();
+	}
+
+	// 📌 script para add shipping popup
+	let addshippingBtn = document.getElementById('add-shipping-btn');
+	if (addshippingBtn) {
+		addshippingBtn.addEventListener('click', async function (e) {
+			scrollToTopIfNeeded();
+			
+			const addShippingForm = document.getElementById('add-shipping-form');
+			const popupContent = addShippingForm.querySelector('.formular-frame');
+
+			if (addShippingForm && popupContent) {
+			    addShippingForm.style.display = 'block';
+			    addShippingForm.style.opacity = '0';
+			    addShippingForm.style.transition = 'opacity 0.5s ease';
+			    setTimeout(() => {
+			        addShippingForm.style.opacity = '1';
+			    }, 10);
+
+			    popupContent.style.transform = 'scale(0.7)';
+			    popupContent.style.opacity = '0';
+			    popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+			    setTimeout(() => {
+			        popupContent.style.transform = 'scale(1)';
+			        popupContent.style.opacity = '1';
+			    }, 50);
+			}
+
+			handlePopupClose("add-shipping-form", ".formular-frame", []);
+		});
+	}
+
+	// 📌 Manejo del formulario de crear miembros
+	let formAddShipping = document.getElementById('formAddShipping');
+	if (formAddShipping) {
+		formAddShipping.addEventListener('submit', async function (e) {
+			e.preventDefault();
+
+			let formData = new FormData(this);
+
+			try {
+				let response = await fetch('api/create_shipping.php', {
+					method: 'POST',
+					headers: { 'Accept': 'application/json' },
+					body: formData
+				});
+
+				let data = await response.json();
+
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				if (data.success) {
+					statusText.innerText = data.message;
+					statusImage.src = data.img_gif;
+					banner.style.display = 'block';
+					banner.style.opacity = '1';
+
+					setTimeout(() => {
+						banner.style.opacity = '0';
+						setTimeout(() => {
+							window.location.href = data.redirect_url;
+						}, 1000);
+					}, 3000);
+				} else {
+					statusText.innerText = "Error: " + data.message;
+					statusImage.src = data.img_gif; 
+					banner.style.display = 'block';
+				}
+			} catch (error) {
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				statusText.innerText = "Error procesando la solicitud.";
+				statusImage.src = data.img_gif;
+				banner.style.display = 'block';
+			}
+		});
+	}
+
+	async function openShippingForm(shippingsId) {
+		scrollToTopIfNeeded();
+	
+		const productOptions = document.getElementById('shipping-options');
+		const popupContent = productOptions.querySelector('.formular-frame');
+		const shippingNo = document.getElementById('shipping-no');
+	
+		if (!shippingsId) return;
+
+		try {
+			const res = await fetch(`api/get_shippings.php`);
+			const data = await res.json();
+
+			if (productOptions && popupContent) {
+				resetProductPopupView();
+
+				const assignBtn = document.getElementById('assignSaleBtn');
+				const requestProductBtn = document.getElementById('requestProductBtn');
+				const editBtn = document.getElementById('editProductBtn');
+				const deleteBtn = document.getElementById('deleteProductBtn');
+
+				let shipping = null;
+				if (data?.success && Array.isArray(data.data)) {
+					const sid = String(shippingsId);
+					shipping = data.data.find(item => String(item.shippings_id) === sid);
+				}
+
+				if (!shipping) {
+					console.warn("Shipping not found for ID:", shippingsId);
+					return;
+				}
+
+				if (shippingNo) {
+					shippingNo.textContent = shipping.shipping_no || 'Unnamed shipping';
+				}
+				
+
+				productOptions.style.display = 'block';
+				productOptions.style.opacity = '0';
+				productOptions.style.transition = 'opacity 0.5s ease';
+				setTimeout(() => {
+					productOptions.style.opacity = '1';
+				}, 10);
+
+				popupContent.style.opacity = '0';
+				popupContent.style.transform = 'scale(0.7)';
+				popupContent.classList.remove('animate-elastic');
+				setTimeout(() => {
+					popupContent.style.transform = 'scale(1)';
+					popupContent.style.opacity = '1';
+				}, 50);
+
+				// Botón: Receive as initial
+				if (requestProductBtn) {
+					requestProductBtn.onclick = () => {
+						requestProductBtn.setAttribute('data-product-id', shippingsId);
+						if (!shippingsId) {
+							alert("Product ID not found.");
+							return;
+						}
+						// console.log("Request sent ", shippingsId);
+						showConfirmModal("Request this Product", "Are you sure you want request this product?", async () => {
+							const frame = document.querySelector('.formular-frame');
+							if (frame) frame.style.display = 'none';
+
+							const formData = new FormData();
+							formData.append("product_id", shippingsId);
+				
+							try {
+								const response = await fetch('api/request_product.php', {
+									method: 'POST',
+									body: formData
+								});
+				
+								const data = await response.json();
+				
+								let banner = document.getElementById('status-message');
+								let statusText = document.getElementById('status-text');
+								let statusImage = document.getElementById('status-image');
+				
+								statusText.innerText = data.message;
+								statusImage.src = data.img_gif;
+								banner.style.display = 'block';
+								banner.style.opacity = '1';
+				
+								if (data.success) {
+									setTimeout(() => {
+										banner.style.opacity = '0';
+										setTimeout(() => {
+											window.location.href = data.redirect_url || window.location.href;
+										}, 1000);
+									}, 3000);
+								}
+							} catch (error) {
+								console.error("Error requesting product:", error);
+								alert("Error requesting product. Check console.");
+							}
+						});
+					};
+				}
+				
+				// // Botón: Edit product
+				// if (editBtn) {
+				// 	editBtn.setAttribute('data-product-id', shippingsId);
+				// 	editBtn.onclick = () => {
+				// 		const menuDiv = document.getElementById('product-menu-buttons');
+				// 		const editDiv = document.getElementById('edit-product-modal');
+
+				// 		const shippingsId = editBtn.getAttribute('data-product-id');
+				// 		if (!shippingsId) return;
+
+				// 		openEditProductForm(shippingsId);
+			
+				// 		animateHeightChange(popupContent, editDiv, () => {
+				// 			fadeOutAndHide(menuDiv, () => {
+				// 				showWithFadeIn(editDiv);
+				// 			});
+				// 		});
+				// 	}
+				// }
+
+				// // Botón: Delete product
+				// if (deleteBtn) {
+				// 	deleteBtn.onclick = () => {
+
+				// 		deleteBtn.setAttribute('data-product-id', shippingsId);
+						
+				// 		if (!shippingsId) {
+				// 			alert("Product ID not found.");
+				// 			return;
+				// 		}
+
+				// 		showConfirmModal("Delete Product", "Are you sure you want to delete this product?", async () => {
+				// 			const frame = document.querySelector('.formular-frame');
+				// 			if (frame) frame.style.display = 'none';
+
+				// 			const formData = new FormData();
+				// 			formData.append("product_id", shippingsId);
+				
+				// 			try {
+				// 				const response = await fetch('api/delete_product.php', {
+				// 					method: 'POST',
+				// 					body: formData
+				// 				});
+				
+				// 				const data = await response.json();
+				
+				// 				let banner = document.getElementById('status-message');
+				// 				let statusText = document.getElementById('status-text');
+				// 				let statusImage = document.getElementById('status-image');
+				
+				// 				statusText.innerText = data.message;
+				// 				statusImage.src = data.img_gif;
+				// 				banner.style.display = 'block';
+				// 				banner.style.opacity = '1';
+				
+				// 				if (data.success) {
+				// 					setTimeout(() => {
+				// 						banner.style.opacity = '0';
+				// 						setTimeout(() => {
+				// 							window.location.href = data.redirect_url || window.location.href;
+				// 						}, 1000);
+				// 					}, 3000);
+				// 				}
+				// 			} catch (error) {
+				// 				console.error("Error deleting product:", error);
+				// 				alert("Error deleting product. Check console.");
+				// 			}
+				// 		});
+				// 	};
+				// }
+			}
+		} catch (error) {
+			console.error("Error loading product info:", error);
+		}
 	}
 	//############################################################# END SHIPPING ##################################################################
 
