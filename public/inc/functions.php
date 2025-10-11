@@ -2,9 +2,10 @@
 function select_from($tableName, array $columns = [], array $whereClause = [], array $options = []) : string
 {
 	global $sql;
+
 	if (!$sql) {
-        return json_encode(["success"=>false, "message"=>"No DB connection"]);
-    }
+		$sql = get_pg_connection();
+	}
 
 	if (empty($tableName)) {
 		return json_encode(["success" => false, "message" => "Table name is required"]);
@@ -171,13 +172,18 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 
 function insert_into($tableName, array $queryData = [], array $options = []) : string
 {
+	global $sql;
+	if (!$sql) {
+		$sql = get_pg_connection();
+	}
+
 	if (empty($queryData)) {
 		return json_encode(["success" => false, "message" => "There is no data to insert"]);
 	}
 
 	$columnNames = implode(', ', array_keys($queryData));
 	
-	$columnValues = array_map(function($value) {
+	$columnValues = array_map(function($value) use ($sql) {
 		if (is_null($value)) return 'NULL';
 		if (is_bool($value)) return $value ? 'TRUE' : 'FALSE';
 		if (is_int($value)) return $value;
@@ -186,7 +192,7 @@ function insert_into($tableName, array $queryData = [], array $options = []) : s
 			// Si es entero (sin punto decimal)
 			return (strpos($value, '.') === false) ? (int)$value : (float)$value;
 		}
-		return "'" . pg_escape_string((string)$value) . "'";
+		return "'" . pg_escape_string($sql, (string)$value) . "'";
 	}, array_values($queryData));
 	
 	$columnValues = implode(', ', $columnValues);
@@ -202,7 +208,7 @@ function insert_into($tableName, array $queryData = [], array $options = []) : s
 		echo "Q: $query<br>\n";
 	}
 
-	$result = pg_query($query);
+	$result = pg_query($sql, $query);
 
 	if (!$result) {
 		return json_encode([
@@ -230,6 +236,12 @@ function insert_into($tableName, array $queryData = [], array $options = []) : s
 
 function update_table($tableName, array $queryData = [], array $whereClause = [], array $options = []) : string
 {
+	global $sql;
+
+	if (!$sql) {
+		$sql = get_pg_connection();
+	}
+
 	if (empty($tableName)) {
 		return json_encode(["success" => false, "message" => "Table name is required", "count" => 0]);
 	}
@@ -251,7 +263,7 @@ function update_table($tableName, array $queryData = [], array $whereClause = []
         } elseif (preg_match('/^\s*([a-zA-Z_]+\s*[\+\-\*\/]\s*\d+)\s*$/', $value)) {
             $setParts[] = "$column = $value";
         } else {
-            $escapedValue = "'" . pg_escape_string((string)$value) . "'";
+            $escapedValue = "'" . pg_escape_string($sql, (string)$value) . "'";
             $setParts[] = "$column = $escapedValue";
         }
 	}
@@ -259,7 +271,7 @@ function update_table($tableName, array $queryData = [], array $whereClause = []
 
 	$whereParts = [];
 	foreach ($whereClause as $column => $value) {
-		$escapedValue = is_numeric($value) ? $value : "'" . pg_escape_string((string)$value) . "'";
+		$escapedValue = is_numeric($value) ? $value : "'" . pg_escape_string($sql, (string)$value) . "'";
 		$whereParts[] = "$column = $escapedValue";
 	}
 	$whereClauseStr = ' WHERE ' . implode(' AND ', $whereParts);
@@ -271,7 +283,7 @@ function update_table($tableName, array $queryData = [], array $whereClause = []
 		$returnQuery = $query;
 	}
 
-	$result = pg_query($query);
+	$result = pg_query($sql, $query);
 
 	if (!$result) {
 		return json_encode([
@@ -294,6 +306,12 @@ function update_table($tableName, array $queryData = [], array $whereClause = []
 
 function delete_from(string $tableName, array $whereClause = [], array $options = []) : string
 {
+	global $sql;
+
+	if (!$sql) {
+		$sql = get_pg_connection();
+	}
+
 	if (empty($tableName)) {
 		return json_encode([
 			"success" => false, 
@@ -312,7 +330,7 @@ function delete_from(string $tableName, array $whereClause = [], array $options 
 
 	$whereParts = [];
 	foreach ($whereClause as $column => $value) {
-		$escapedValue = is_numeric($value) ? $value : "'" . pg_escape_string($value) . "'";
+		$escapedValue = is_numeric($value) ? $value : "'" . pg_escape_string($sql, $value) . "'";
 		$whereParts[] = "$column = $escapedValue";
 	}
 	$whereSQL = implode(' AND ', $whereParts);
@@ -323,7 +341,7 @@ function delete_from(string $tableName, array $whereClause = [], array $options 
 		error_log("Q: {$query}");
 	}
 
-	$result = pg_query($query);
+	$result = pg_query($sql, $query);
 	if (!$result) {
 		return json_encode(["success" => false, "message" => "Query execution failed."]);
 	}
@@ -350,7 +368,7 @@ function log_activity($userId, $actionType, $description, $relatedTable = null, 
 	return insert_into("activity_history", $data);
 }
 
-function notify_user($userId = null, $toUserId, $content, $link = null, $type = 'info') {
+function notify_user($toUserId, $content, $userId = null, $link = null, $type = 'info') {
 	$data = [
 		"from_user_id"			=> $userId,	
 		"to_user_id"			=> $toUserId,
@@ -395,7 +413,14 @@ function handle_uploaded_image(
 	return $imageName;
 }
 
-function delete_image_from_record(array $params): array {
+function delete_image_from_record(array $params): array
+{
+	global $sql;
+
+	if (!$sql) {
+		$sql = get_pg_connection();
+	}
+
 	// Esperados: 'table', 'id_column', 'id_value', 'image_column', 'image_folder'
 
 	$table        = $params['table'] ?? null;
@@ -412,8 +437,9 @@ function delete_image_from_record(array $params): array {
 	}
 
 	// 1. Obtener nombre del archivo de imagen
-	$imageQuery = "SELECT {$imageColumn} FROM {$table} WHERE {$idColumn} = $1 LIMIT 1;";
-	$result = pg_query_params($imageQuery, [$idValue]);
+	// $imageQuery = "SELECT {$imageColumn} FROM {$table} WHERE {$idColumn} = $1 LIMIT 1;";
+	$imageQuery = "SELECT \"$imageColumn\" FROM \"$table\" WHERE \"$idColumn\" = $1 LIMIT 1;";
+	$result = pg_query_params($sql, $imageQuery, [$idValue]);
 
 	if (!$result || pg_num_rows($result) === 0) {
 		return [
@@ -443,7 +469,13 @@ function delete_image_from_record(array $params): array {
 	];
 }
 
-function get_next_increment_value(string $table, string $field, int $companyId, int $startFrom = 10000): int {
+function get_next_increment_value(string $table, string $field, int $companyId, int $startFrom = 10000): int
+{
+	global $sql;
+	if (!$sql) {
+		$sql = get_pg_connection();
+	}
+
 	$resultJson = select_from($table, [$field], ['company_id' => $companyId], [
 		"order_by" => $field,
 		"order_direction" => "DESC",
@@ -452,12 +484,28 @@ function get_next_increment_value(string $table, string $field, int $companyId, 
 	]);
 
 	$result = json_decode($resultJson, true);
-	return isset($result["data"]) && isset($result["data"]["$field"])
-		? ((int)$result["data"]["$field"] + 1)
-		: $startFrom;
+
+	if (
+		is_array($result) &&
+		isset($result["success"]) && $result["success"] &&
+		isset($result["data"]) &&
+		is_array($result["data"]) &&
+		isset($result["data"][$field]) &&
+		is_numeric($result["data"][$field])
+	) {
+		return (int)$result["data"][$field] + 1;
+	}
+
+	return $startFrom;
 }
 
 function check_user_permission($userId, $permissionName) {
+	global $sql;
+
+	if (!$sql) {
+		$sql = get_pg_connection();
+	}
+
 	// Obtener el ID del permiso solicitado
 	$permResponse = select_from(
         "permissions",
@@ -467,9 +515,14 @@ function check_user_permission($userId, $permissionName) {
     );
     $permResult = json_decode($permResponse, true);
 
-    if (!$permResult["success"] || empty($permResult["data"]["permission_id"])) {
-        throw new Exception("Permission not found.");
-    }
+    if (
+		!is_array($permResult) ||
+		!($permResult["success"] ?? false) ||
+		empty($permResult["data"]["permission_id"])
+	) {
+		throw new Exception("Permission '$permissionName' not found.");
+	}
+
     $requestedPermissionId = (int)$permResult["data"]["permission_id"];
 
 	// Obtener el permiso más alto del usuario
@@ -484,9 +537,12 @@ function check_user_permission($userId, $permissionName) {
     );
     $userPermResult = json_decode($userPermResponse, true);
 
-    if (!$userPermResult["success"]) {
-        throw new Exception("Failed to fetch user permissions.");
-    }
+    if (
+		!is_array($userPermResult) ||
+		!($userPermResult["success"] ?? false)
+	) {
+		throw new Exception("Failed to fetch user permissions.");
+	}
 
     $userPermissionId = (int)($userPermResult["data"]["user_permission_id"] ?? 9999);
 
@@ -757,45 +813,40 @@ function check_user_permission($userId, $permissionName) {
 //function to display any type of variable
 function cdebug($var, $name = 'var', $die = false)
 {
-	// Start output buffering
 	ob_start();
-	
-	// Print the variable with the name and preformatting
-	print('<pre style="font-size: 12px; color: #666;">');
-	print('<span style="color: #007BFF;">*' . $name . '*</span><br/>');
-	print_r($var);
-	print('</pre></br>');
-	
-	// Capture the buffer contents
-	$buffer = ob_get_contents();
-	
-	// End and clean the output buffer
-	ob_end_clean();
-	
-	// Get the backtrace for debugging information
-	$backtrace = debug_backtrace();
-	
-	// Generate the backtrace information to print
-	$dieMsg  = '<pre style="font-size: 12px; color: #666; background-color: #F0F0F0; padding: 10px;">';
-	$dieMsg .= '<b>var dump cdebug() called in:</b><br>';
-	$dieMsg .= isset($backtrace[0]['file']) ? '» <span style="color: #666; display: inline-block; width: 12ch;">file</span>: <b>' . $backtrace[0]['file'] . '</b><br>' : '';
-	$dieMsg .= isset($backtrace[0]['line']) ? '» <span style="color: #666; display: inline-block; width: 12ch;">line</span>: <b>' . $backtrace[0]['line'] . '</b><br>' : '';
-	$dieMsg .= isset($backtrace[1]['class']) ? '» <span style="color: #666; display: inline-block; width: 12ch;">class</span>: <b>' . $backtrace[1]['class'] . '</b><br>' : '';
-	$dieMsg .= isset($backtrace[1]['function']) ? '» <span style="color: #666; display: inline-block; width: 12ch;">function</span>: <b>' . $backtrace[1]['function'] . '</b><br>' : '';
-	$dieMsg .= '</pre>';
-	
-	// Print the buffer contents
-	print($buffer);
-	
-	// If $die is true, terminate the script
-	if ($die == true) 
-	{
-		die($dieMsg);
-	} 
-	else 
-	{
-		// Otherwise, print the backtrace information
-		print($dieMsg);
-	}
+
+    echo '<pre style="font-size: 12px; color: #333;">';
+    echo '<span style="color: #007BFF;">*' . htmlspecialchars($name) . '*</span><br/>';
+    print_r($var);
+    echo '</pre><br/>';
+
+    $buffer = ob_get_clean();
+
+    $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+
+    $callerFile = $backtrace[0]['file'] ?? 'unknown file';
+    $callerLine = $backtrace[0]['line'] ?? 'unknown line';
+    $callerClass = $backtrace[1]['class'] ?? '';
+    $callerFunction = $backtrace[1]['function'] ?? '';
+
+    $dieMsg = '<pre style="font-size: 12px; color: #666; background-color: #F8F8F8; padding: 10px; border: 1px solid #ccc;">';
+    $dieMsg .= '<b>cdebug() called from:</b><br>';
+    $dieMsg .= "» <span style='color: #888;'>file</span>: <b>$callerFile</b><br>";
+    $dieMsg .= "» <span style='color: #888;'>line</span>: <b>$callerLine</b><br>";
+    if ($callerClass) {
+        $dieMsg .= "» <span style='color: #888;'>class</span>: <b>$callerClass</b><br>";
+    }
+    if ($callerFunction) {
+        $dieMsg .= "» <span style='color: #888;'>function</span>: <b>$callerFunction</b><br>";
+    }
+    $dieMsg .= '</pre>';
+
+    echo $buffer;
+
+    if ($die) {
+        die($dieMsg);
+    } else {
+        echo $dieMsg;
+    }
 }
 ?>

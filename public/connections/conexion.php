@@ -1,44 +1,50 @@
 <?php
 if (!defined('DISABLE_SESSION') && !defined('IS_STRIPE_WEBHOOK') && session_status() === PHP_SESSION_NONE) {
-  session_start();
+  	session_start();
 }
 
-// $conn_host    = 'host=127.0.0.1'; // live server
-// $conn_port    = ' port=5432';
-// $conn_dbname  = ' dbname=stock_control_db';
-// $conn_user    = ' user=admin';
-// $conn_pass    = ' password=Bohe03++++';
+function get_pg_connection()
+{
+	// $conn_host    = 'host=127.0.0.1'; // live server
+	// $conn_port    = ' port=5432';
+	// $conn_dbname  = ' dbname=stock_control_db';
+	// $conn_user    = ' user=admin';
+	// $conn_pass    = ' password=Bohe03++++';
 
-$conn_host    = 'host=stock_pgdb'; //container's name instead for "localhost"
-$conn_port    = ' port=5432';
-$conn_dbname  = ' dbname=stock_control_db';
-$conn_user    = ' user=admin';
-$conn_pass    = ' password=REMOVED_PASSWORD';
+	$conn_host    = 'host=stock_pgdb'; //container's name instead for "localhost"
+	$conn_port    = ' port=5432';
+	$conn_dbname  = ' dbname=stock_control_db';
+	$conn_user    = ' user=admin';
+	$conn_pass    = ' password=REMOVED_PASSWORD';
 
-$sql = pg_connect($conn_host . $conn_port . $conn_dbname . $conn_user . $conn_pass);
-if ($sql == false) {
-  echo "sql connection error!";
-  exit();
+	global $sql;
+	$sql = pg_connect($conn_host . $conn_port . $conn_dbname . $conn_user . $conn_pass);
+	if ($sql == false) {
+		echo "sql connection error!";
+		exit();
+	}
+
+	return $sql;
 }
 
 if (is_file("inc/functions.php")) {
-  include("inc/functions.php");
+  	include("inc/functions.php");
 } else {
-  include("../inc/functions.php");
+  	include("../inc/functions.php");
 }
 
 if (is_file("inc/trigger_rtn.php")) {
-  include("inc/trigger_rtn.php");
+  	include("inc/trigger_rtn.php");
 } else {
-  include("../inc/trigger_rtn.php");
+  	include("../inc/trigger_rtn.php");
 }
 
 if (!defined('DISABLE_SECURITY')) {
-  if (is_file("inc/security.php")) {
-    include("inc/security.php");
-  } else {
-    include("../inc/security.php");
-  }
+	if (is_file("inc/security.php")) {
+		include("inc/security.php");
+	} else {
+		include("../inc/security.php");
+	}
 }
 
 $dominio = "localhost:8889";

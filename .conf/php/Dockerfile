@@ -1,17 +1,17 @@
-FROM php:7.4-fpm
+FROM php:8.4-fpm
 
 # postgresql
-RUN apt-get update && apt-get install -y libpq-dev && docker-php-ext-install pdo pdo_pgsql pgsql
+RUN apt-get update && apt-get install -y \
+    libpq-dev && \
+    docker-php-ext-install pdo pdo_pgsql pgsql
 
-RUN apt-get update && \
-    apt-get install -y \
+RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
-    libjpeg62-turbo-dev \
-    libmcrypt-dev \
+    libjpeg-dev \
+    libpng-dev \
     libicu-dev \
     libxml2-dev \
     libmagickwand-dev \
-    libpq-dev \
     libedit-dev \
     libgmp-dev \
     libssh2-1-dev \
@@ -28,9 +28,13 @@ RUN apt-get update && \
     zip \
     procps \
     rsyslog \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # ///////////////////////////////////////////////
+
+# Instalar la extensión GD (necesaria para generar QR codes)
+RUN docker-php-ext-configure gd \
+        --with-freetype \
+        --with-jpeg && \
+    docker-php-ext-install gd
 
 WORKDIR /var/www

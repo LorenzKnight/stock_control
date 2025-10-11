@@ -2,6 +2,9 @@
 session_start();
 require_once('../logic/stock_be.php');
 
+global $sql;
+$sql = get_pg_connection();
+
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
@@ -23,8 +26,8 @@ try {
         throw new Exception("Email and password are required.");
     }
 
-    $email = pg_escape_string(trim($_POST["login_email"]));
-    $password = pg_escape_string(trim($_POST["login_password"]));
+    $email = pg_escape_string($sql, trim($_POST["login_email"]));
+    $password = pg_escape_string($sql, trim($_POST["login_password"]));
 
     $whereClause = ["email" => $email];
     $options = ["fetch_first" => true];
@@ -66,4 +69,3 @@ try {
 // Responder con JSON
 echo json_encode($response);
 exit;
-?>

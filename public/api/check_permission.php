@@ -1,6 +1,9 @@
 <?php
 require_once('../logic/stock_be.php');
 
+global $sql;
+$sql = get_pg_connection();
+
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET");
@@ -27,7 +30,7 @@ try {
         throw new Exception("Missing permission parameter.");
     }
 
-    $permissionName = pg_escape_string($_GET["permission"]);
+    $permissionName = pg_escape_string($sql, $_GET["permission"]);
 
     $hasPermission = check_user_permission($userId, $permissionName);
 

@@ -178,8 +178,8 @@ try {
 
 					notify_user(
 						null,
-						$toUserId,
 						"$productName is low on stock (Current: $newStock)",
+						$toUserId,
 						null,
 						"Product Info"
 					);

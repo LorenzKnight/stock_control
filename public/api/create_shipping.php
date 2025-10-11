@@ -53,6 +53,22 @@ try {
 	$insertResponse = insert_into("shippings", $insertShippingData, ["id" => "shippings_id"]);
 	$insertResult = json_decode($insertResponse, true);
 
+	// Generar código QR para el shipping
+	$qrText = (string)$newOrdNo; // El texto que irá en el QR
+	$qrPath = "../images/shippings-code/" . $qrText . ".png"; // Ruta relativa
+	$qrImgName = $qrText . ".png";
+
+	// Asegúrate que la carpeta ../uploads/qr exista y tenga permisos de escritura
+	QRcode::png($qrText, $qrPath, QR_ECLEVEL_L, 4, 2);
+
+	// Actualizar el shipping_img con la ruta al QR generado
+	update_table("shippings", [
+	"shipping_img" => $qrImgName
+	], [
+		"shippings_id" => $insertResult["id"]
+	]);
+
+
 	if (!$insertResult["success"]) {
 		throw new Exception("Error saving customer data.");
 	}

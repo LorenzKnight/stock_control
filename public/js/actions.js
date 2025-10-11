@@ -5500,7 +5500,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
-	// 📌 Manejo del formulario de crear miembros
+	// 📌 Manejo del formulario de crear shipping
 	let formAddShipping = document.getElementById('formAddShipping');
 	if (formAddShipping) {
 		formAddShipping.addEventListener('submit', async function (e) {
