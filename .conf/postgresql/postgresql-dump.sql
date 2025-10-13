@@ -416,13 +416,12 @@ CREATE TABLE IF NOT EXISTS notifications (
 CREATE TABLE IF NOT EXISTS shippings (
 	shippings_id SERIAL PRIMARY KEY,
 	shipping_no INTEGER NULL,
-	customer_id INTEGER NULL,
 	company_id INTEGER NULL,
 	shipping_img VARCHAR(255) NULL,
 	shipping_method INTEGER NULL,
 	destination VARCHAR(255) NULL,
 	delivery_date TIMESTAMP NULL,
-	description VARCHAR(255) NULL,
+	description TEXT NULL,
 	status INTEGER NULL,
 	create_by INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -435,7 +434,14 @@ CREATE TABLE IF NOT EXISTS loads (
 	company_id INTEGER NULL,
 	load_no INTEGER NULL,
 	currency VARCHAR(10) NULL,
+	price_per_kg NUMERIC(10,2) NULL,
+	total_kg NUMERIC(10,3) NULL,
 	price_sum NUMERIC(10,2) NULL,
+	taxes NUMERIC(10,2) NULL,
+	discount NUMERIC(10,2) NULL,
+	price_total NUMERIC(10,2) NULL,
+	destination VARCHAR(255) NULL,
+	comment TEXT NULL,
 	status INTEGER NULL,
 	create_by INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -448,7 +454,6 @@ CREATE TABLE IF NOT EXISTS loaded_products (
 	product_id INTEGER NULL,
 	quantity INTEGER NULL,
 	price NUMERIC(10,2) NULL,
-	discount NUMERIC(10,2) NULL,
 	total NUMERIC(10,2) NULL,
 	create_by INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

@@ -1,6 +1,6 @@
 <div class="bg-popup" id="shipping-options">
-	<div class="formular-frame">
-		<div id="product-menu-buttons">
+	<div id="formular-frame" class="formular-frame">
+		<div id="shipping-menu-buttons">
 			<table width="80%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td style="font-size: 12px;" colspan="6" align="center" valign="middle">
@@ -10,17 +10,17 @@
 				</tr>
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="button-style-agree" id="editProductBtn">Edit Shipping</button>
+						<button type="button" class="button-style-agree" id="editShippingBtn">Edit Shipping</button>
 					</td>
 				</tr>
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="button-style-agree" id="requestProductBtn">Add Load</button>
+						<button type="button" class="button-style-agree" id="addLoadBtn">Add Load</button>
 					</td>
 				</tr>
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="cancel-btn" id="deleteProductBtn">Delete Shipping</button>
+						<button type="button" class="cancel-btn" id="deleteShippingBtn">Delete Shipping</button>
 					</td>
 				</tr>
 				<tr valign="baseline">
@@ -35,7 +35,7 @@
 				<img src="images/sys-img/backward.png" alt="back">
 			</div>
 			<form method="post" name="formEditProduct" id="formEditProduct">
-				<table width="90%" align="center" cellspacing="0">
+				<!-- <table width="90%" align="center" cellspacing="0">
 					<tr valign="baseline">
 						<td style="font-size: 12px;" colspan="6" align="center" valign="middle">
 							<h2>Edit Product</h2>
@@ -143,19 +143,128 @@
 							<input type="submit" class="button-style-agree" value="Update" />
 						</td>
 					</tr>
-				</table> 
+				</table>  -->
 			</form>
 		</div>
-		<div id="receive-as-initial" style="display: none;">
+		<div id="add-shipping-modal" style="display: none;">
 			<div class="back-to-menu-btn">
 				<img src="images/sys-img/backward.png" alt="back">
 			</div>
-			<form method="post" name="formRequestProduct" id="formRequestProduct">
+			<form method="post" name="formAddLoad" id="formAddLoad"> <!-- AQUI -->
 				<table width="80%" align="center" cellspacing="0">
 					<tr valign="baseline">
 						<td style="font-size: 12px;" colspan="6" align="center" valign="middle">
-							<h2>Receive as an initial</h2>
+							<h2>Add Load</h2>
 						</td>      
+					</tr>
+					<tr valign="baseline">
+						<td colspan="2" align="center" valign="middle">
+							<div class="formular-customers-list">
+								<div class="create-list-holder">
+									<input class="form-input-style" type="text" name="search-shipping-customer" id="search-shipping-customer" placeholder="Enter a name or Doc No..." title="Enter a valid name"/>
+								</div>
+								<div class="cat-all-list">
+									<table id="select-shipping-customers-list" cellspacing="0"></table>
+								</div>
+							</div>
+						</td>
+						<td colspan="2" align="center" valign="middle">
+							<div class="formular-customers-list">
+								<div class="create-list-holder">
+									<table width="100%" align="center" cellspacing="0">
+										<tr valign="baseline">
+											<td width="60%" align="center" valign="middle">
+												<input type="text" class="form-medium-input-style" name="search-product-for-shipping" id="search-product-for-shipping" placeholder="Enter Product No..." title="Enter a valid Product No."/>
+											</td>
+											<td width="40%" align="center" valign="middle">
+												<select class="form-input-style" name="search-product-mark-for-shipping" id="search-product-mark-for-shipping"></select>
+											</td>
+										</tr>
+									</table>
+								</div>
+								<div class="cat-all-list">
+									<table id="select-product-list-for-shipping" cellspacing="0"></table>
+								</div>
+							</div>
+						</td>
+						<td colspan="2" align="center" valign="middle">
+							<div class="formular-customers-list">
+								<div class="create-list-holder" style="padding: 5px 0 15px;">
+									<button type="button" class="button-style-agree disabled" style="pointer-events: none" disabled>Load Details</button>
+								</div>
+								<div class="cat-all-list">
+									<table width="100%" align="center" cellspacing="0">
+										<tr valign="baseline" class="form_height">
+											<td width="50%" align="center" valign="middle">
+												<label for="shipping_price">Price/kg:</label>
+												<input class="form-medium-input-style" type="text" name="shipping_price" id="shipping_price" placeholder="Price/kg..."/>
+											</td>
+											<td width="50%" align="center" valign="middle">
+												<label for="total_kg">Total kg:</label>
+												<input class="form-medium-input-style" type="text" name="total_kg" id="total_kg" placeholder="Total kg..." disabled/>
+											</td>
+										</tr>
+										<tr valign="baseline" class="form_height">
+											<td width="50%" align="center" valign="middle">
+												<label for="price_sum">Price Sum:</label>
+												<input class="form-medium-input-style" type="text" name="price_sum" id="price_sum" placeholder="Price sum..." disabled/>
+											</td>
+											<td width="50%" align="center" valign="middle">
+												<label for="discount">Discount:</label>
+												<input class="form-medium-input-style" type="text" name="discount" id="discount" placeholder="Discount..."/>
+											</td>
+										</tr>
+										<tr valign="baseline" class="form_height">
+											<td width="50%" align="center" valign="middle">
+												<label for="taxes">Taxes %:</label>
+												<input class="form-medium-input-style" type="text" name="taxes" id="taxes" placeholder="Taxes %..."/>
+											</td>
+											<td width="50%" align="center" valign="middle">
+												<label for="total">Price Total:</label>
+												<input class="form-medium-input-style" type="text" name="total" id="total" placeholder="Total..." disabled/>
+											</td>
+										</tr>
+										<!-- <tr valign="baseline" class="form_height">
+											<td colspan="2" align="center" valign="middle">
+												<label for="shipping_currency">Currency:</label>
+												<select class="form-input-style" name="shipping_currency" id="shipping_currency" required></select>
+											</td>
+										</tr> -->
+										<tr valign="baseline" class="form_height">
+											<td colspan="2" align="center" valign="middle">
+												<label for="total_usd">Total USD:</label>
+												<input class="form-input-style" type="text" name="total_usd" id="total_usd" placeholder="Total USD..." disabled/>
+											</td>
+										</tr>
+										<tr valign="baseline" class="form_height">
+											<td colspan="2" align="center" valign="middle">
+												<label for="destination">Customer destination:</label>
+												<input class="form-input-style" type="text" name="destination" id="destination" placeholder="Customer destination..."/>
+											</td>
+										</tr>
+										<tr valign="baseline" class="form_height">
+											<td colspan="2" align="center" valign="middle">
+												<label for="comment">Comment:</label>
+												<textarea class="form-input-style" id="comment" name="comment" rows="5" cols="35">
+												</textarea>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+						<td colspan="2" align="center" valign="middle">
+						</td>
+						<td colspan="1" align="center" valign="middle">
+							<button type="button" class="neutral-btn">Cancel</button>
+						</td>
+						<td colspan="1" align="center" valign="middle">
+							<input type="submit" class="button-style-agree" value="Create" />
+						</td>
+						<td colspan="2" align="center" valign="middle">
+						</td>
 					</tr>
 				</table>
 			</form>

@@ -22,7 +22,7 @@ try {
 
 	// 1️⃣ Traer shippings
 	$shippingsResult = select_from("shippings", [
-		"shippings_id", "shipping_no", "customer_id", "company_id",
+		"shippings_id", "shipping_no", "company_id",
 		"shipping_img", "shipping_method", "destination", "delivery_date",
 		"description", "status", "created_at"
 	], ["company_id" => $companyId], [
@@ -39,17 +39,9 @@ try {
 
 	foreach ($parsedShippings["data"] as $shipping) {
 
-		// buscar info del cliente del shipping (opcional)
-		$customerInfo = select_from("customers", [
-			"customer_name","customer_surname","customer_phone",
-			"customer_document_type","customer_document_no","customer_image"
-		], ["customer_id" => $shipping["customer_id"]], ["fetch_first" => true]);
-		$customer = json_decode($customerInfo, true)["data"] ?? [];
-		$customerFullName = strtolower(trim(($customer["customer_name"] ?? '') . ' ' . ($customer["customer_surname"] ?? '')));
-
 		// 2️⃣ Buscar loads asociados a este shipping
 		$loadsQuery = select_from("loads", [
-			"load_id","load_no","customer_id","currency","price_sum","status","created_at"
+			"load_id", "load_no", "customer_id", "currency", "price_sum", "status", "created_at"
 		], [
 			"company_id"   => $companyId,
 			"shippings_id" => $shipping["shippings_id"]
@@ -61,9 +53,14 @@ try {
 		foreach ($parsedLoads as $load) {
 			// cliente de cada load
 			$loadCustomerInfo = select_from("customers", [
-				"customer_name","customer_surname","customer_phone","customer_image"
+				"customer_name", "customer_surname", "customer_phone", "customer_image"
 			], ["customer_id" => $load["customer_id"]], ["fetch_first" => true]);
 			$loadCustomer = json_decode($loadCustomerInfo, true)["data"] ?? [];
+
+			if (!$firstCustomer) {
+				$firstCustomer = $loadCustomer;
+				$customerFullName = strtolower(trim(($loadCustomer["customer_name"] ?? '') . ' ' . ($loadCustomer["customer_surname"] ?? '')));
+			}
 
 			// 3️⃣ Productos dentro de cada load
 			$loadedProductsQuery = select_from("loaded_products", [
@@ -77,7 +74,7 @@ try {
 			foreach ($parsedProducts as $prod) {
 				// info del producto
 				$productInfo = select_from("products", [
-					"product_image","product_name","product_year","product_mark","product_model","product_sub_model","price"
+					"product_image", "product_name", "product_year", "product_mark", "product_model", "product_sub_model", "price", "weight_per_unit"
 				], ["product_id" => $prod["product_id"]], ["fetch_first" => true]);
 				$product = json_decode($productInfo, true)["data"] ?? [];
 
@@ -180,9 +177,7 @@ try {
 				"created_at"		=> $shipping["created_at"],
 				"shipping_img"		=> $shipping["shipping_img"],
 				"shipping_method"	=> $shipping["shipping_method"],
-				"created_at"		=> $shipping["created_at"],
 				"customer" => [
-					"customer_id"  	=> $shipping["customer_id"],
 					"full_name"    	=> trim(($customer["customer_name"] ?? '') . ' ' . ($customer["customer_surname"] ?? '')),
 					"document_no"  	=> $customer["customer_document_no"] ?? '',
 					"phone"        	=> $customer["customer_phone"] ?? '',
