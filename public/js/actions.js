@@ -5927,7 +5927,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			document.getElementById('price_sum').value = priceSum.toFixed(2);
 			document.getElementById('total').value = total.toFixed(2);
 
-			updateTotalUSD("total", "total_usd", "shipping_from_currency", "shipping_to_currency");
+			updateTotalExchange("total", "total_exchanged", "shipping_from_currency", "shipping_to_currency");
 		}
 
 		const shippingPriceInput = document.getElementById('shipping_price');
@@ -5953,13 +5953,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 		if (totalInput) {
 			totalInput.addEventListener("input", () => {
-				updateTotalUSD("total", "total_usd", "shipping_from_currency", "shipping_to_currency");
+				updateTotalExchange("total", "total_exchanged", "shipping_from_currency", "shipping_to_currency");
 			});
 		}
 
 		if (currencySelect) {
 			currencySelect.addEventListener("change", () => {
-				updateTotalUSD("total", "total_usd", "shipping_from_currency", "shipping_to_currency");
+				updateTotalExchange("total", "total_exchanged", "shipping_from_currency", "shipping_to_currency");
 			});
 		}
 
@@ -7326,31 +7326,58 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
-	async function updateTotalUSD(sourceTotalId, targetUsdId, fromCurrencyId, currencyId = null) {
+
+	// 🧠 Cache inicial: cargar desde localStorage (si existe)
+	let exchangeRatesCache = JSON.parse(localStorage.getItem("exchangeRatesCache") || "{}");
+
+	// 💾 Guardar cache actualizado en localStorage
+	function saveExchangeCache() {
+		localStorage.setItem("exchangeRatesCache", JSON.stringify(exchangeRatesCache));
+	}
+
+	async function updateTotalExchange(sourceTotalId, targetUsdId, fromCurrencyId, currencyId = null) {
 		const total = parseFloat(document.getElementById(sourceTotalId)?.value) || 0;
 		const targetField = document.getElementById(targetUsdId);
-
-		// Lee el valor real desde el campo del fromCurrencyId
 		const fromCurrency = document.getElementById(fromCurrencyId)?.value || "USD";
 		const toCurrency = currencyId ? (document.getElementById(currencyId)?.value || "USD") : "USD";
 
 		if (!targetField) return;
 
+		const rateKey = `${fromCurrency}_${toCurrency}`;
+
+		// Si las monedas son iguales, no se necesita conversión
 		if (fromCurrency === toCurrency) {
 			targetField.value = total.toFixed(2);
 			return;
 		}
 
 		try {
-			const res = await fetch(`https://api.frankfurter.app/latest?amount=${total}&from=${fromCurrency}&to=${toCurrency}`);
-			const data = await res.json();
+			let rateInfo = exchangeRatesCache[rateKey];
+			const now = Date.now();
 
-			if (data && data.rates && data.rates[toCurrency]) {
-				targetField.value = data.rates[toCurrency].toFixed(2);
-			} else {
-				console.warn("Conversion API response:", data);
-				targetField.value = "Conversion error";
+			// 1️⃣ Verificar si ya existe en cache y si no está vencida (12 horas)
+			if (!rateInfo || now - rateInfo.timestamp > 12 * 60 * 60 * 1000) {
+				// console.log(`🌐 Obteniendo tasa desde API: ${fromCurrency} → ${toCurrency}`);
+
+				const res = await fetch(`https://api.frankfurter.app/latest?amount=1&from=${fromCurrency}&to=${toCurrency}`);
+				const data = await res.json();
+
+				if (data && data.rates && data.rates[toCurrency]) {
+					const rate = data.rates[toCurrency];
+					rateInfo = { rate, timestamp: now };
+					exchangeRatesCache[rateKey] = rateInfo;
+					saveExchangeCache(); // Guardar en localStorage
+					// console.log(`💾 Tasa guardada: ${fromCurrency} → ${toCurrency} = ${rate}`);
+				} else {
+					console.warn("Conversion API response:", data);
+					targetField.value = "Conversion error";
+					return;
+				}
 			}
+
+			// 2️⃣ Usar la tasa almacenada para calcular la conversión
+			targetField.value = (total * rateInfo.rate).toFixed(2);
+
 		} catch (error) {
 			console.error("Error fetching exchange rate:", error);
 			targetField.value = "Error";
