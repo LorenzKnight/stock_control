@@ -52,6 +52,7 @@ try {
 
 		$parsedLoads = json_decode($loadsQuery, true)["data"] ?? [];
 		$loadsData = [];
+		$firstCustomer = null;
 
 		foreach ($parsedLoads as $load) {
 			// cliente de cada load
@@ -67,7 +68,7 @@ try {
 
 			// 3️⃣ Productos dentro de cada load
 			$loadedProductsQuery = select_from("loaded_products", [
-				"product_id","quantity","price","discount","total"
+				"product_id", "quantity", "price", "total"
 			], ["load_id" => $load["load_id"]]);
 
 			$parsedProducts = json_decode($loadedProductsQuery, true)["data"] ?? [];
@@ -112,7 +113,7 @@ try {
 					"submodel_name"		=> $submodelName,
 					"quantity"			=> $qty,
 					"price"        		=> $product["price"] ?? 0,
-					"discount"     		=> $prod["discount"] ?? 0,
+					// "discount"     		=> $prod["discount"] ?? 0,
 					"total"        		=> $prod["total"] ?? 0,
 					"weight_per_unit"	=> $weightPerUnit,
 					"total_weight"		=> $weightTotal

@@ -452,7 +452,6 @@ CREATE TABLE IF NOT EXISTS loads (
 CREATE TABLE IF NOT EXISTS loaded_products (
 	loaded_products_id SERIAL PRIMARY KEY,
 	load_id INTEGER NULL,
-	customer_id INTEGER NULL,
 	product_id INTEGER NULL,
 	quantity INTEGER NULL,
 	price NUMERIC(10,2) NULL,

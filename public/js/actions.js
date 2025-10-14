@@ -4063,33 +4063,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		}
 
-		// 🔹 Cargar marcas
-		// async function loadMarks() {
-		// 	try {
-		// 		const response = await fetch("api/get_categories.php", {
-		// 			method: "GET",
-		// 			headers: { "Accept": "application/json" }
-		// 		});
-		// 		const data = await response.json();
-
-		// 		saleMarkSelect.innerHTML = `<option value="">All Marks</option>`;
-
-		// 		if (data.success && data.data.length > 0) {
-		// 			data.data.forEach(category => {
-		// 				const option = document.createElement("option");
-		// 				option.value = category.category_id;
-		// 				option.textContent = category.category_name;
-		// 				saleMarkSelect.appendChild(option);
-		// 			});
-		// 		} else {
-		// 			saleMarkSelect.innerHTML += `<option value="">No marks found</option>`;
-		// 		}
-		// 	} catch (error) {
-		// 		console.error("Error loading marks:", error);
-		// 		saleMarkSelect.innerHTML = `<option value="">Error loading marks</option>`;
-		// 	}
-		// }
-
 		searchProductInput.addEventListener('input', () => {
 			fetchAndRenderProducts(searchProductInput.value, saleMarkSelect.value);
 		});
@@ -5964,6 +5937,105 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 
 		handlePopupClose("shipping-options", ".formular-frame", []);
+	}
+
+	const formAddLoad = document.querySelector('#formAddLoad');
+	if (formAddLoad) {
+		formAddLoad.addEventListener('submit', function (e) {
+			e.preventDefault();
+			(async () => {
+				try {
+					const formatDecimal = val => parseFloat((val || '').toString().replace(',', '').trim()) || 0;
+
+					const shippingId = formAddLoad.getAttribute('data-shipping-id');
+					if (!shippingId) throw new Error("Shipping ID not found.");
+
+					const customerId = document.querySelector('input[name="customer_select"]:checked')?.dataset.id;
+					if (!customerId) throw new Error("Select a customer.");
+
+					// Obtener valores del formulario
+					const fromCurrency = document.getElementById('shipping_from_currency')?.value || "USD";
+					const toCurrency = document.getElementById('shipping_to_currency')?.value || "USD";
+					const pricePerKg = formatDecimal(document.getElementById('shipping_price')?.value);
+					const totalKg = formatDecimal(document.getElementById('total_kg')?.value);
+					const discount = formatDecimal(document.getElementById('discount')?.value);
+					const taxes = formatDecimal(document.getElementById('taxes')?.value);
+					const destination = document.getElementById('destination')?.value.trim() || '';
+					const comment = document.getElementById('comment')?.value.trim() || '';
+
+					if (pricePerKg <= 0 || totalKg <= 0) {
+						throw new Error("Price/kg and Total Kg must be greater than 0.");
+					}
+
+					// Productos seleccionados
+					const products = Array.from(document.querySelectorAll('.shipping-product-checkbox:checked')).map(cb => {
+						const productId = cb.value;
+						const price = parseFloat(cb.dataset.price) || 0;
+						const qtyInput = document.getElementById(`qty-${cb.id}`);
+						const quantity = parseInt(qtyInput?.value) || 1;
+
+						return {
+							product_id: parseInt(productId),
+							price: price,
+							quantity: quantity,
+							total: price * quantity
+						};
+					});
+
+					if (products.length === 0) throw new Error("Select at least one product.");
+
+					// Construir payload
+					const payload = {
+						shippings_id: parseInt(shippingId),
+						customer_id: parseInt(customerId),
+						from_currency: fromCurrency,
+						to_currency: toCurrency,
+						price_per_kg: pricePerKg,
+						total_kg: totalKg,
+						discount: discount,
+						taxes: taxes,
+						destination: destination,
+						comment: comment,
+						products: products
+					};
+
+					// Enviar al backend
+					const res = await fetch('api/create_load.php', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify(payload)
+					});
+
+					const data = await res.json();
+
+					// Banner de estado visual
+					let banner = document.getElementById('status-message');
+					let statusText = document.getElementById('status-text');
+					let statusImage = document.getElementById('status-image');
+
+					if (banner && statusText && statusImage) {
+						statusText.innerText = data.message || "Unknown response";
+						statusImage.src = data.img_gif || "../images/sys-img/success.gif";
+						banner.style.display = 'block';
+						banner.style.opacity = '1';
+					}
+
+					if (data.success) {
+						setTimeout(() => {
+							banner.style.opacity = '0';
+							setTimeout(() => {
+								window.location.href = data.redirect_url || window.location.href;
+							}, 1000);
+						}, 3000);
+					} else {
+						alert("❌ Failed: " + (data.message || "Unknown error."));
+					}
+
+				} catch (error) {
+					alert("⚠️ Error: " + error.message);
+				}
+			})();
+		});
 	}
 	//############################################################# END SHIPPING ##################################################################
 

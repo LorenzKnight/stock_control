@@ -52,7 +52,7 @@ try {
     $deliveryDate = date('Y-m-d H:i:s', $delTS);
     $paymentDate  = date('Y-m-d H:i:s', $payTS);
 
-	$newOrdNo = get_next_increment_value("sales", "ord_no", 10000000);
+	$newOrdNo = get_next_increment_value("sales", "ord_no", $companyId, 10000000);
 
 	$saleData = [
 		"ord_no"				=> $newOrdNo,
