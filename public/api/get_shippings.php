@@ -41,7 +41,10 @@ try {
 
 		// 2️⃣ Buscar loads asociados a este shipping
 		$loadsQuery = select_from("loads", [
-			"load_id", "load_no", "customer_id", "currency", "price_sum", "status", "created_at"
+			"load_id", "load_no", "customer_id", "from_currency", "to_currency",
+			"price_per_kg", "total_kg", "price_sum", "taxes", "discount",
+			"price_total", "price_total_exchanged", "destination",
+			"status", "created_at"
 		], [
 			"company_id"   => $companyId,
 			"shippings_id" => $shipping["shippings_id"]
@@ -117,13 +120,21 @@ try {
 			}
 
 			$loadsData[] = [
-				"load_id"      => $load["load_id"],
-				"load_no"      => $load["load_no"],
-				"currency"     => $load["currency"],
-				"price_sum"    => $load["price_sum"],
-				"total_weight" => $loadWeightTotal,
-				"status"       => $load["status"],
-				"created_at"   => $load["created_at"],
+				"load_id"              => $load["load_id"],
+				"load_no"              => $load["load_no"],
+				"from_currency"        => $load["from_currency"],
+				"to_currency"          => $load["to_currency"],
+				"price_per_kg"         => $load["price_per_kg"],
+				"total_kg"             => $load["total_kg"],
+				"price_sum"            => $load["price_sum"],
+				"taxes"                => $load["taxes"],
+				"discount"             => $load["discount"],
+				"price_total"          => $load["price_total"],
+				"price_total_exchanged"=> $load["price_total_exchanged"],
+				"destination"          => $load["destination"],
+				"total_weight"         => $loadWeightTotal,
+				"status"               => $load["status"],
+				"created_at"           => $load["created_at"],
 				"customer" => [
 					"customer_id" => $load["customer_id"],
 					"full_name"   => trim(($loadCustomer["customer_name"] ?? '') . ' ' . ($loadCustomer["customer_surname"] ?? '')),

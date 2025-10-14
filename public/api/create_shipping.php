@@ -59,7 +59,7 @@ try {
 	$qrImgName = $qrText . ".png";
 
 	// Asegúrate que la carpeta ../uploads/qr exista y tenga permisos de escritura
-	QRcode::png($qrText, $qrPath, QR_ECLEVEL_L, 4, 2);
+	QRcode::png($qrText, $qrPath, QR_ECLEVEL_L, 15, 2);
 
 	// Actualizar el shipping_img con la ruta al QR generado
 	update_table("shippings", [

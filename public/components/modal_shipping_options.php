@@ -34,7 +34,7 @@
 			<div class="back-to-menu-btn">
 				<img src="images/sys-img/backward.png" alt="back">
 			</div>
-			<form method="post" name="formEditProduct" id="formEditProduct">
+			<form method="post" name="formEditShipping" id="formEditShipping">
 				<!-- <table width="90%" align="center" cellspacing="0">
 					<tr valign="baseline">
 						<td style="font-size: 12px;" colspan="6" align="center" valign="middle">
@@ -150,7 +150,7 @@
 			<div class="back-to-menu-btn">
 				<img src="images/sys-img/backward.png" alt="back">
 			</div>
-			<form method="post" name="formAddLoad" id="formAddLoad"> <!-- AQUI -->
+			<form method="post" name="formAddLoad" id="formAddLoad">
 				<table width="80%" align="center" cellspacing="0">
 					<tr valign="baseline">
 						<td style="font-size: 12px;" colspan="6" align="center" valign="middle">
@@ -195,6 +195,12 @@
 								<div class="cat-all-list">
 									<table width="100%" align="center" cellspacing="0">
 										<tr valign="baseline" class="form_height">
+											<td colspan="2" align="center" valign="middle">
+												<label for="shipping_from_currency">From currency:</label>
+												<select class="form-input-style" name="shipping_from_currency" id="shipping_from_currency" required></select>
+											</td>
+										</tr>
+										<tr valign="baseline" class="form_height">
 											<td width="50%" align="center" valign="middle">
 												<label for="shipping_price">Price/kg:</label>
 												<input class="form-medium-input-style" type="text" name="shipping_price" id="shipping_price" placeholder="Price/kg..."/>
@@ -224,16 +230,14 @@
 												<input class="form-medium-input-style" type="text" name="total" id="total" placeholder="Total..." disabled/>
 											</td>
 										</tr>
-										<!-- <tr valign="baseline" class="form_height">
-											<td colspan="2" align="center" valign="middle">
-												<label for="shipping_currency">Currency:</label>
-												<select class="form-input-style" name="shipping_currency" id="shipping_currency" required></select>
-											</td>
-										</tr> -->
 										<tr valign="baseline" class="form_height">
-											<td colspan="2" align="center" valign="middle">
-												<label for="total_usd">Total USD:</label>
-												<input class="form-input-style" type="text" name="total_usd" id="total_usd" placeholder="Total USD..." disabled/>
+											<td width="50%" align="center" valign="middle">
+												<label for="shipping_to_currency">To Currency:</label>
+												<select class="form-medium-input-style" name="shipping_to_currency" id="shipping_to_currency" required></select>
+											</td>
+											<td width="50%" align="center" valign="middle">
+												<label for="total_exchanged">Total Exchanged:</label>
+												<input class="form-medium-input-style" type="text" name="total_exchanged" id="total_exchanged" placeholder="Total exchanged..." disabled/>
 											</td>
 										</tr>
 										<tr valign="baseline" class="form_height">

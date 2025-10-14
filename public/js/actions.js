@@ -5652,7 +5652,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 						openAddLoadForm(shippingsId);
 
-						populateCurrencies('shipping_currency');
+						populateCurrencies('shipping_from_currency');
+						populateCurrencies('shipping_to_currency', 'USD');
 			
 						animateHeightChange(popupContent, editDiv, () => {
 							fadeOutAndHide(menuDiv, () => {
@@ -5925,6 +5926,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			document.getElementById('price_sum').value = priceSum.toFixed(2);
 			document.getElementById('total').value = total.toFixed(2);
+
+			updateTotalUSD("total", "total_usd", "shipping_from_currency", "shipping_to_currency");
 		}
 
 		const shippingPriceInput = document.getElementById('shipping_price');
@@ -5939,6 +5942,25 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 		if (taxesInput) {
 			taxesInput.addEventListener('input', updateShippingCalculations);
+		}
+
+		const totalInput = document.getElementById("total");
+		const currencySelect = document.getElementById("shipping_to_currency");
+
+		if (currencySelect && !currencySelect.value) {
+			currencySelect.value = "USD";
+		}
+
+		if (totalInput) {
+			totalInput.addEventListener("input", () => {
+				updateTotalUSD("total", "total_usd", "shipping_from_currency", "shipping_to_currency");
+			});
+		}
+
+		if (currencySelect) {
+			currencySelect.addEventListener("change", () => {
+				updateTotalUSD("total", "total_usd", "shipping_from_currency", "shipping_to_currency");
+			});
 		}
 
 		handlePopupClose("shipping-options", ".formular-frame", []);
@@ -7301,6 +7323,37 @@ document.addEventListener("DOMContentLoaded", async function () {
 		} catch (error) {
 			console.error("Error loading marks:", error);
 			saleMarkSelectId.innerHTML = `<option value="">Error loading marks</option>`;
+		}
+	}
+
+	async function updateTotalUSD(sourceTotalId, targetUsdId, fromCurrencyId, currencyId = null) {
+		const total = parseFloat(document.getElementById(sourceTotalId)?.value) || 0;
+		const targetField = document.getElementById(targetUsdId);
+
+		// Lee el valor real desde el campo del fromCurrencyId
+		const fromCurrency = document.getElementById(fromCurrencyId)?.value || "USD";
+		const toCurrency = currencyId ? (document.getElementById(currencyId)?.value || "USD") : "USD";
+
+		if (!targetField) return;
+
+		if (fromCurrency === toCurrency) {
+			targetField.value = total.toFixed(2);
+			return;
+		}
+
+		try {
+			const res = await fetch(`https://api.frankfurter.app/latest?amount=${total}&from=${fromCurrency}&to=${toCurrency}`);
+			const data = await res.json();
+
+			if (data && data.rates && data.rates[toCurrency]) {
+				targetField.value = data.rates[toCurrency].toFixed(2);
+			} else {
+				console.warn("Conversion API response:", data);
+				targetField.value = "Conversion error";
+			}
+		} catch (error) {
+			console.error("Error fetching exchange rate:", error);
+			targetField.value = "Error";
 		}
 	}
 //############################################################# END FUNCTIONES ##################################################################
