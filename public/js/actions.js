@@ -2706,7 +2706,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const data = await res.json();
 
 			if (productOptions && popupContent) {
-				resetformsPopupView('product-menu-buttons', [
+				resetPopupView(['product-menu-buttons'], [
 					'assign-sale-section',
 					'edit-product-modal',
 					'delete-product-modal'
@@ -3377,7 +3377,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 
 			if (customersOptions && popupContent) {
-				resetMultiplePopupView();
+				resetPopupView(['customers-menu-buttons', 'sale-menu-buttons'], [
+					'edit-customers-modal', 
+					'assign-sale-section', 
+					'edit-sales-modal'
+				]);
 
 				customersOptions.style.display = 'block';
 				customersOptions.style.opacity = '0';
@@ -4238,7 +4242,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 	
 			if (saleOptions && popupContent) {
-				resetMultiplePopupView();
+				resetPopupView(['customers-menu-buttons', 'sale-menu-buttons'], [
+					'edit-customers-modal', 
+					'assign-sale-section', 
+					'edit-sales-modal'
+				]);
 	
 				saleOptions.style.display = 'block';
 				saleOptions.style.opacity = '0';
@@ -4903,7 +4911,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 
 			if (paymentsOptions && popupContent) {
-				resetMultiplePopupView();
+				resetPopupView(['customers-menu-buttons', 'sale-menu-buttons'], [
+					'edit-customers-modal', 
+					'assign-sale-section', 
+					'edit-sales-modal'
+				]);
 
 				paymentsOptions.style.display = 'block';
 				paymentsOptions.style.opacity = '0';
@@ -5516,9 +5528,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const data = await res.json();
 
 			if (productOptions && popupContent) {
-				resetformsPopupView('shipping-menu-buttons', [
-					'add-shipping-modal'
-				]);
+				resetPopupView(['shipping-menu-buttons'], ['add-shipping-modal']);
 
 				const editShippingBtn = document.getElementById('editShippingBtn');
 				const addLoadBtn = document.getElementById('addLoadBtn');
@@ -6223,30 +6233,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 		const [h, min, secMs] = timePart.split(':');
 		const [s2, ms='0'] = (secMs || '0').split('.');
 		return new Date(y, (m-1), d2, Number(h||0), Number(min||0), Number(s2||0), Number(ms||0));
-	}
-
-	// 📌 reset multiple popup view
-	function resetMultiplePopupView() {
-		const allFrames = document.querySelectorAll('.formular-frame, .formular-big-frame');
-		allFrames.forEach(frame => frame.classList.remove('expanded'));
-
-		const menuButtons = document.querySelectorAll('#customers-menu-buttons, #sale-menu-buttons');
-		menuButtons.forEach(menuDiv => {
-			if (menuDiv) {
-				menuDiv.style.display = 'block';
-				menuDiv.style.opacity = '1';
-				menuDiv.style.transform = 'scale(1)';
-			}
-		});
-
-		const sectionsToHide = document.querySelectorAll('#edit-customers-modal, #assign-sale-section, #edit-sales-modal');
-		sectionsToHide.forEach(section => {
-			if (section) {
-				section.style.display = 'none';
-				section.style.opacity = '0';
-				section.style.transform = 'scale(0.8)';
-			}
-		});
 	}
 
 	// 📌 script para recojer los datos de la compania
@@ -7353,17 +7339,21 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	});
 
-	function resetformsPopupView(menuId, sectionIds = []) {
-		const menuDiv = document.getElementById(menuId);
+	function resetPopupView(menuIds = [], sectionIdsToHide = []) {
+		const allFrames = document.querySelectorAll('.formular-frame, .formular-big-frame');
+		allFrames.forEach(frame => frame.classList.remove('expanded'));
 
-		if (menuDiv) {
-			menuDiv.style.display = 'block';
-			menuDiv.style.opacity = '1';
-			menuDiv.style.transform = 'scale(1)';
-		}
+		menuIds.forEach(menuId => {
+			const menuDiv = document.getElementById(menuId);
+			if (menuDiv) {
+				menuDiv.style.display = 'block';
+				menuDiv.style.opacity = '1';
+				menuDiv.style.transform = 'scale(1)';
+			}
+		});
 
-		sectionIds.forEach(id => {
-			const section = document.getElementById(id);
+		sectionIdsToHide.forEach(sectionId => {
+			const section = document.getElementById(sectionId);
 			if (section) {
 				section.style.display = 'none';
 				section.style.opacity = '0';
