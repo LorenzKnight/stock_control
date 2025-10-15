@@ -5334,7 +5334,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				<div class="loads">
 					<h4>Load No.: ${load.load_no}</h4>
 					<p>Customer: <strong>${load.customer?.full_name || '—'}</strong></p>
-					<p class="mini-title">${load.price_total || 0} ${load.from_currency || ''}</p>
+					<p class="mini-title">${load.price_total || 0} ${load.from_currency || ''} (Inc. ${(Number(load.taxes) ?? 0).toFixed(1)}% Taxes)</p>
 					<p style="margin-top:-4px;"><strong>${load.price_total_exchanged || 0} ${load.to_currency || ''}</strong></p>
 					<div style="margin-top: 10px;">
 						${renderProducts(load.products || [])}
