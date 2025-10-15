@@ -454,8 +454,8 @@ CREATE TABLE IF NOT EXISTS loaded_products (
 	load_id INTEGER NULL,
 	product_id INTEGER NULL,
 	quantity INTEGER NULL,
-	price NUMERIC(10,2) NULL,
-	total NUMERIC(10,2) NULL,
+	total_kg NUMERIC(10,3) NULL,
+	total_kg_price NUMERIC(10,3) NULL,
 	create_by INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

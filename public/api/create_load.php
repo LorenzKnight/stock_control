@@ -105,22 +105,21 @@ try {
             if ($productId <= 0) continue;
 
             $quantity = max(1, (int)($p["quantity"] ?? 1));
-            $price    = number_format((float)($p["price"] ?? 0), 2, '.', '');
-            $discount = number_format((float)($p["discount"] ?? 0), 2, '.', '');
-            $total    = number_format((float)($p["total"] ?? $price * $quantity), 2, '.', '');
+            $totalKg       = number_format((float)($p["total_kg"] ?? 0), 3, '.', '');
+            $totalKgPrice  = number_format((float)($p["total_kg_price"] ?? 0), 3, '.', '');
 
             $loadedProduct = [
-                "load_id"   => $loadId,
-                "product_id"=> $productId,
-                "quantity"  => $quantity,
-                "price"     => $price,
-                "total"     => $total,
-                "create_by" => $userId
+                "load_id"           => $loadId,
+                "product_id"        => $productId,
+                "quantity"          => $quantity,
+                "total_kg"          => $totalKg,
+                "total_kg_price"    => $totalKgPrice,
+                "create_by"         => $userId
             ];
 
             $prodInsert = json_decode(insert_into("loaded_products", $loadedProduct), true);
             if (!$prodInsert["success"]) {
-                throw new Exception("Error adding product to load ID: $loadId");
+                throw new Exception("Error adding product (ID: $productId) to load ID: $loadId");
             }
         }
     }

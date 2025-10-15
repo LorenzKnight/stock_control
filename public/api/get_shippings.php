@@ -52,12 +52,15 @@ try {
 
 		$parsedLoads = json_decode($loadsQuery, true)["data"] ?? [];
 		$loadsData = [];
+
 		$firstCustomer = null;
+		$customerFullName = '';
 
 		foreach ($parsedLoads as $load) {
 			// cliente de cada load
 			$loadCustomerInfo = select_from("customers", [
-				"customer_name", "customer_surname", "customer_phone", "customer_image"
+				"customer_name", "customer_surname", "customer_phone",
+				"customer_image", "customer_document_no"
 			], ["customer_id" => $load["customer_id"]], ["fetch_first" => true]);
 			$loadCustomer = json_decode($loadCustomerInfo, true)["data"] ?? [];
 
@@ -68,25 +71,26 @@ try {
 
 			// 3️⃣ Productos dentro de cada load
 			$loadedProductsQuery = select_from("loaded_products", [
-				"product_id", "quantity", "price", "total"
+				"product_id", "quantity", "total_kg", "total_kg_price"
 			], ["load_id" => $load["load_id"]]);
-
 			$parsedProducts = json_decode($loadedProductsQuery, true)["data"] ?? [];
+
 			$productsData = [];
-			$loadWeightTotal = 0;
+			$loadWeightTotal = 0.0;
 
 			foreach ($parsedProducts as $prod) {
 				// info del producto
 				$productInfo = select_from("products", [
-					"product_image", "product_name", "product_year", "product_mark", "product_model", "product_sub_model", "price", "weight_per_unit"
+					"product_image", "product_name", "product_year",
+					"product_mark", "product_model", "product_sub_model",
+					"price", "weight_per_unit", "total_weight"
 				], ["product_id" => $prod["product_id"]], ["fetch_first" => true]);
 				$product = json_decode($productInfo, true)["data"] ?? [];
 
-				$weightPerUnit = (float)($product["weight_per_unit"] ?? 0);
 				$qty = (int)($prod["quantity"] ?? 0);
-				$weightTotal = $weightPerUnit * $qty;
-
-				$loadWeightTotal += $weightTotal;
+				$totalKg      = (float)($prod["total_kg"] ?? 0);
+				$totalKgPrice = (float)($prod["total_kg_price"] ?? 0);
+				$loadWeightTotal += $totalKg;
 
 				// nombres de marca, modelo, submodelo
 				$markName = $modelName = $submodelName = null;
@@ -113,10 +117,9 @@ try {
 					"submodel_name"		=> $submodelName,
 					"quantity"			=> $qty,
 					"price"        		=> $product["price"] ?? 0,
-					// "discount"     		=> $prod["discount"] ?? 0,
-					"total"        		=> $prod["total"] ?? 0,
-					"weight_per_unit"	=> $weightPerUnit,
-					"total_weight"		=> $weightTotal
+					"total_kg"         => $totalKg,
+                    "total_kg_price"   => $totalKgPrice,
+                    "weight_per_unit"  => (float)($product["total_weight"] ?? 0),
 				];
 			}
 
@@ -167,8 +170,8 @@ try {
 				}
 
 				$shippingProductSummary[$key]["quantity"]     += $p["quantity"];
-				$shippingProductSummary[$key]["total_price"]  += $p["total"];
-				$shippingProductSummary[$key]["total_weight"] += $p["total_weight"];
+				$shippingProductSummary[$key]["total_price"]  += $p["total_kg_price"];
+				$shippingProductSummary[$key]["total_weight"] += $p["total_kg"];
 			}
 		}
 
@@ -189,12 +192,6 @@ try {
 				"created_at"		=> $shipping["created_at"],
 				"shipping_img"		=> $shipping["shipping_img"],
 				"shipping_method"	=> $shipping["shipping_method"],
-				"customer" => [
-					"full_name"    	=> trim(($customer["customer_name"] ?? '') . ' ' . ($customer["customer_surname"] ?? '')),
-					"document_no"  	=> $customer["customer_document_no"] ?? '',
-					"phone"        	=> $customer["customer_phone"] ?? '',
-					"image"			=> $customer["customer_image"] ?? ''
-				],
 				"loads"				=> $loadsData,
 				"product_summary"	=> array_values($shippingProductSummary)
 			];

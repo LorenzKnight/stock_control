@@ -5257,7 +5257,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							</td>
 							<td width="65%" align="left" valign="top">
 								<div style="padding: 5px;">
-									Shipping No: <strong>${shipping.shipping_no || '—'}</strong><br>
+									Shipping No.: <strong>${shipping.shipping_no || '—'}</strong><br>
 									<span>${shipping.customer?.full_name || ''}</span><br>
 									<small>${shipping.delivery_date || ''}</small>
 								</div>
@@ -5291,7 +5291,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				<table width="100%" style="border-bottom: 1px solid #999; margin-bottom:10px;" align="center" cellspacing="0">
 					<tr valign="baseline" class="form_height">
 						<td width="12%" align="left" valign="middle">
-							<p class="mini-title">Shipping. No:</p>
+							<p class="mini-title">Shipping. No.:</p>
 							<strong>${shipping.shipping_no}</strong>
 						</td>
 						<td width="85%" align="center" valign="middle"></td>
@@ -5331,10 +5331,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 			if (loads.length === 0) return '<p style="margin-left: 10px;">No loads found.</p>';
 
 			return loads.map(load => `
-				<div style="margin-bottom: 25px; border: 1px solid #ccc; padding: 10px; border-radius: 6px;">
-					<h4>Load #${load.load_no}</h4>
+				<div class="loads">
+					<h4>Load No.: ${load.load_no}</h4>
 					<p>Customer: <strong>${load.customer?.full_name || '—'}</strong></p>
-					<p>Total: $${load.price_sum || 0} ${load.currency || ''}</p>
+					<p class="mini-title">${load.price_total || 0} ${load.from_currency || ''}</p>
+					<p style="margin-top:-4px;"><strong>${load.price_total_exchanged || 0} ${load.to_currency || ''}</strong></p>
 					<div style="margin-top: 10px;">
 						${renderProducts(load.products || [])}
 					</div>
@@ -5346,22 +5347,24 @@ document.addEventListener("DOMContentLoaded", async function () {
 			if (products.length === 0) return '<p>No products</p>';
 
 			return `
-				<table width="100%" cellspacing="0" cellpadding="0" style="border-top: 1px solid #ccc; margin-top: 10px;">
+				<table width="100%" cellspacing="0" cellpadding="0" style="margin-top: 10px;">
 					<thead>
-						<tr style="background: #f9f9f9;">
-							<th align="left">Product</th>
-							<th align="center">Qty</th>
-							<th align="center">Price</th>
-							<th align="center">Price/Kg</th>
+						<tr>
+							<th style="border-bottom: 1px solid var(--clr-light-border); padding-bottom: 5px;" align="left">Product</th>
+							<th style="border-bottom: 1px solid var(--clr-light-border); padding-bottom: 5px;" align="center">Qty</th>
+							<th style="border-bottom: 1px solid var(--clr-light-border); padding-bottom: 5px;" align="center">Weight/Unit</th>
+							<th style="border-bottom: 1px solid var(--clr-light-border); padding-bottom: 5px;" align="center">Weight</th>
+							<th style="border-bottom: 1px solid var(--clr-light-border); padding-bottom: 5px;" align="center">Price/Kg</th>
 						</tr>
 					</thead>
-					<tbody>
-						${products.map(p => `
+					<tbody style="font-size: 11px; color: var(--clr-neutral-dark);">
+						${products.map(p =>`
 							<tr>
-								<td>${p.name || ''} <br><small>${p.mark_name || ''}${p.model_name ? ' - ' + p.model_name : ''}</small></td>
-								<td align="center">${p.quantity ?? 0}</td>
-								<td align="center">$${p.price ?? 0}</td>
-								<td align="center">$${p.total ?? 0}</td>
+								<td style="padding-top: 7px;">${p.name || ''} <br><small>${p.mark_name || ''}${p.model_name ? ' - ' + p.model_name : ''}</small></td>
+								<td style="padding-top: 7px;" align="center">${p.quantity ?? 0}</td>
+								<td style="padding-top: 7px;" align="center">${(p.weight_per_unit ?? 0).toFixed(2)} kg</td>
+								<td style="padding-top: 7px;" align="center">${(p.total_kg ?? 0).toFixed(2)} kg</td>
+								<td style="padding-top: 7px;" align="center">$${(p.total_kg_price ?? 0).toFixed(2)}</td>
 							</tr>
 						`).join('')}
 					</tbody>
@@ -5979,16 +5982,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 					// Productos seleccionados
 					const products = Array.from(document.querySelectorAll('.shipping-product-checkbox:checked')).map(cb => {
-						const productId = cb.value;
-						const price = parseFloat(cb.dataset.price) || 0;
+						const productId = parseInt(cb.value);
+						const weight = parseFloat(cb.dataset.weight) || 0;
 						const qtyInput = document.getElementById(`qty-${cb.id}`);
 						const quantity = parseInt(qtyInput?.value) || 1;
+						const totalKgProduct = weight * quantity;
+						const totalKgPrice = totalKgProduct * pricePerKg;
 
 						return {
 							product_id: parseInt(productId),
-							price: price,
 							quantity: quantity,
-							total: price * quantity
+							total_kg: Number(totalKgProduct.toFixed(3)),
+							total_kg_price: Number(totalKgPrice.toFixed(3))
 						};
 					});
 
