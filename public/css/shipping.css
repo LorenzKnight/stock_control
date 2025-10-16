@@ -1,8 +1,14 @@
 .shipping-sidebar {
     width: 25%;
-    height: 650px;
+    height: 720px;
     background-color: var(--main-bg-color);
     border-radius: 5px;
+}
+
+.shipping-list {
+	width: 99%;
+	height: 599px;
+	overflow-y: auto;
 }
 
 .shipping-profile img {
@@ -16,32 +22,40 @@
 .shipping-details {
     width: 48%;
     height: 650px;
-    margin: 0 0.5%;
+}
+
+.shipping-header {
+	height: 110px;
+	padding: 0 1%;
+}
+
+.loads-list {
+	height: 610px;
+	margin: 0 0.5%;
     padding: 0 0.5%;
-    /* background-color: red; */
-    overflow: auto;
+	overflow: auto;
 }
 
 
-.shipping-list tr {
+.shipping-table tr {
 	cursor: pointer;
 }
 
-.shipping-list tr td {
+.shipping-table tr td {
 	border-bottom: 1px solid var(--main-bg-beige);
 	padding: 5px 0;
 }
 
-.shipping-list tr td p {
+.shipping-table tr td p {
 	font-weight: 200;
 	margin: 5px 0;
 }
 
-.shipping-list tr td p strong {
+.shipping-table tr td p strong {
 	font-weight: 600;
 }
 
-.shipping-list tr:hover {
+.shipping-table tr:hover {
 	background-color: var(--clr-white);
 	/* color: var(--clr-white); */
 	transition: background-color 0.3s ease;

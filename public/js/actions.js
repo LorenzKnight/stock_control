@@ -5220,12 +5220,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 	//############################################################# END PAYMENTS ##################################################################
 
 	//############################################################### SHIPPING ####################################################################
-	const shippingListTable = document.getElementById('shippingList');
+	const shippingTable = document.getElementById('shippingTable');
 	const shippingDetails = document.getElementById('shippingDetails');
 	const searchShippingField = document.getElementById('searchShippingField');
 	const shippingSummary = document.getElementById('shippingSummary');
 
-	if (shippingListTable && searchShippingField) {
+	if (shippingTable && searchShippingField) {
 		async function fetchAndRenderShippings() {
 			try {
 				const searchTerm = (searchShippingField?.value || '').trim().toLowerCase();
@@ -5238,7 +5238,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				});
 				const data = await res.json();
 
-				shippingListTable.innerHTML = '';
+				shippingTable.innerHTML = '';
 				shippingDetails.innerHTML = '';
 
 				if (data.success && Array.isArray(data.data) && data.data.length > 0) {
@@ -5268,19 +5268,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 						`;
 
 						row.addEventListener('click', () => renderShippingDetails(shipping, row));
-						shippingListTable.appendChild(row);
+						shippingTable.appendChild(row);
 					});
 				} else {
-					shippingListTable.innerHTML = `<tr><td><p style="text-align:center;">No shippings found.</p></td></tr>`;
+					shippingTable.innerHTML = `<tr><td><p style="text-align:center;">No shippings found.</p></td></tr>`;
 				}
 			} catch (err) {
 				console.error("Error loading shippings:", err);
-				shippingListTable.innerHTML = `<tr><td><p style="text-align:center;">Error loading shippings</p></td></tr>`;
+				shippingTable.innerHTML = `<tr><td><p style="text-align:center;">Error loading shippings</p></td></tr>`;
 			}
 		}
 
 		async function renderShippingDetails(shipping, clickedRow) {
-			const allRows = shippingListTable.querySelectorAll('.clickable-row');
+			const allRows = shippingTable.querySelectorAll('.clickable-row');
 			allRows.forEach(row => row.style.backgroundColor = '');
 
 			if (clickedRow) {
@@ -5288,33 +5288,37 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 
 			shippingDetails.innerHTML = `
-				<table width="100%" style="border-bottom: 1px solid #999; margin-bottom:10px;" align="center" cellspacing="0">
-					<tr valign="baseline" class="form_height">
-						<td width="12%" align="left" valign="middle">
-							<p class="mini-title">Shipping. No.:</p>
-							<strong>${shipping.shipping_no}</strong>
-						</td>
-						<td width="85%" align="center" valign="middle"></td>
-						<td width="3%" align="center" valign="middle">
-							<div class="shipping-menu" id="shippingMenuBtn">
-								<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
-							</div>
-						</td>
-					</tr>
-					<tr valign="baseline" class="form_height">
-						<td width="100%" align="left" valign="middle">
-							<p class="mini-title">Destination:</p>
-							${shipping.destination || '—'}
-						</td>
-					</tr>
-					<tr valign="baseline" class="form_height">
-						<td width="100%" align="left" valign="middle">
-							<p class="mini-title">Description:</p>
-							${shipping.description || '—'}
-						</td>
-					</tr>
-				</table>
-				${renderLoads(shipping.loads || [])}
+				<div class="shipping-header">
+					<table width="100%" style="border-bottom: 1px solid #999; margin-bottom:10px;" align="center" cellspacing="0">
+						<tr valign="baseline" class="form_height">
+							<td width="12%" align="left" valign="middle">
+								<p class="mini-title">Shipping. No.:</p>
+								<strong>${shipping.shipping_no}</strong>
+							</td>
+							<td width="85%" align="center" valign="middle"></td>
+							<td width="3%" align="center" valign="middle">
+								<div class="shipping-menu" id="shippingMenuBtn">
+									<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
+								</div>
+							</td>
+						</tr>
+						<tr valign="baseline" class="form_height">
+							<td width="100%" align="left" valign="middle">
+								<p class="mini-title">Destination:</p>
+								${shipping.destination || '—'}
+							</td>
+						</tr>
+						<tr valign="baseline" class="form_height">
+							<td width="100%" align="left" valign="middle">
+								<p class="mini-title">Description:</p>
+								${shipping.description || '—'}
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="loads-list">
+					${renderLoads(shipping.loads || [])}
+				</div>
 			`;
 
 			shippingSummary.innerHTML = renderShippingSummary(shipping.product_summary || [], shipping);
@@ -5398,17 +5402,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 						<tr style="background: #f5f5f5;">
 							<th style="border-bottom: 1px solid #ccc;" align="left">Product</th>
 							<th style="border-bottom: 1px solid #ccc;" align="center">Qty</th>
-							<th style="border-bottom: 1px solid #ccc;" align="center">Total $</th>
 							<th style="border-bottom: 1px solid #ccc;" align="center">Weight</th>
+							<th style="border-bottom: 1px solid #ccc;" align="center">Total $</th>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody style="font-size: 11px; color: var(--clr-neutral-dark);">
 						${summary.map(p => `
 							<tr>
 								<td>${p.name || ''} <br><small>${p.mark_name || ''}${p.model_name ? ' - ' + p.model_name : ''}</small></td>
 								<td align="center">${p.quantity ?? 0}</td>
-								<td align="center">$${(p.total_price ?? 0).toFixed(2)}</td>
 								<td align="center">${(p.total_weight ?? 0).toFixed(2)} kg</td>
+								<td align="center">$${(p.total_price ?? 0).toFixed(2)}</td>
 							</tr>
 						`).join('')}
 					</tbody>
@@ -5416,8 +5420,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 						<tr style="font-weight: bold;">
 							<td style="border-top: 1px solid #ccc;">Total</td>
 							<td style="border-top: 1px solid #ccc;" align="center">${totalQty}</td>
-							<td style="border-top: 1px solid #ccc;" align="center">$${totalPrice.toFixed(2)}</td>
 							<td style="border-top: 1px solid #ccc;" align="center">${totalWeight.toFixed(2)} kg</td>
+							<td style="border-top: 1px solid #ccc;" align="center">$${totalPrice.toFixed(2)}</td>
 						</tr>
 					</tfoot>
 					
