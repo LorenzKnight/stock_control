@@ -5511,7 +5511,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const data = await res.json();
 
 			if (productOptions && popupContent) {
-				resetPopupView(['shipping-menu-buttons'], ['add-shipping-modal']);
+				resetPopupView(['shipping-menu-buttons'], ['add-load-modal']);
 
 				const editShippingBtn = document.getElementById('editShippingBtn');
 				const addLoadBtn = document.getElementById('addLoadBtn');
@@ -5602,7 +5602,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					addLoadBtn.setAttribute('data-shipping-id', shippingsId);
 					addLoadBtn.onclick = () => {
 						const menuDiv = document.getElementById('shipping-menu-buttons');
-						const editDiv = document.getElementById('add-shipping-modal');
+						const editDiv = document.getElementById('add-load-modal');
 
 						if (editDiv) {
 							editDiv.style.display = 'none';
@@ -6032,6 +6032,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 			})();
 		});
 	}
+
+	setupBackToMenuButton(
+		'.back-to-shipping-menu-btn', 
+		['edit-shipping-modal', 'add-load-modal'], 
+		'shipping-menu-buttons', 
+		'shipping-options'
+	);
 	//############################################################# END SHIPPING ##################################################################
 
 	//############################################################# SEND EMAIL ##################################################################

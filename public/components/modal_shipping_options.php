@@ -18,6 +18,11 @@
 						<button type="button" class="button-style-agree" id="addLoadBtn">Add Load</button>
 					</td>
 				</tr>
+				<!-- <tr valign="baseline">
+					<td colspan="6" align="center" valign="middle">
+						<button type="button" class="button-style-agree" id="">-</button>
+					</td>
+				</tr> -->
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
 						<button type="button" class="cancel-btn" id="deleteShippingBtn">Delete Shipping</button>
@@ -30,8 +35,8 @@
 				</tr>
 			</table>
 		</div>
-		<div id="edit-product-modal" style="display: none;">
-			<div class="back-to-menu-btn">
+		<div id="edit-shipping-modal" style="display: none;">
+			<div class="back-to-shipping-menu-btn">
 				<img src="images/sys-img/backward.png" alt="back">
 			</div>
 			<form method="post" name="formEditShipping" id="formEditShipping">
@@ -146,8 +151,8 @@
 				</table>  -->
 			</form>
 		</div>
-		<div id="add-shipping-modal" style="display: none;">
-			<div class="back-to-menu-btn">
+		<div id="add-load-modal" style="display: none;">
+			<div class="back-to-shipping-menu-btn">
 				<img src="images/sys-img/backward.png" alt="back">
 			</div>
 			<form method="post" name="formAddLoad" id="formAddLoad">
@@ -274,7 +279,7 @@
 			</form>
 		</div>
 		<div id="assign-sale-section" style="display: none;">
-			<div class="back-to-menu-btn">
+			<div class="back-to-shipping-menu-btn">
 				<img src="images/sys-img/backward.png" alt="back">
 			</div>
 			<form method="post" name="formEditProduct" id="formEditProduct">
