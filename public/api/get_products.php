@@ -77,6 +77,7 @@ try {
 		"product_type",
 		"currency",
 		"price",
+		"purpose",
 		"quantity",
 		"min_quantity",
 		"weight_per_unit",
@@ -116,6 +117,12 @@ try {
 				"category_id" => $product['product_sub_model']
 			], ["fetch_first" => true]);
 			$product["submodel_name"] = json_decode($subRes, true)["data"]["category_name"] ?? null;
+		}
+
+		// Nombre del propósito del producto (convertir número a texto)
+		if (isset($product['purpose'])) {
+			$purposeMap = GlobalArrays::$productPurpose;
+			$product["purpose_text"] = $purposeMap[$product['purpose']] ?? "Unknown";
 		}
 	}
 

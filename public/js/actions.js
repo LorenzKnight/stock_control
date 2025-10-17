@@ -1780,6 +1780,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 					initCategorySelectors('product_mark', 'product_model', 'product_sub_model', 'select-company');
 
+					populateProductPurpose('product_purpose', '1');
+
 					populateCurrencies('currency');
 
 					handlePopupClose("add-product-form", ".formular-frame", []);
@@ -2592,6 +2594,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 								</td>
 								<td style="width: 50%; height: 10px;" align="right">
 									<p style="margin: 10px 0 0;">Qty: <strong class="${minQty}">${product.quantity || ''}</strong></p>
+									<p class="mini-title" style="margin: 0;">${product.purpose_text || ''}</p>
 								</td>
 							</tr>
 							<tr valign="baseline">
@@ -2952,20 +2955,23 @@ document.addEventListener("DOMContentLoaded", async function () {
 					'edit_total_weight',     // input peso total
 					{ decimals: 3, acceptComma: true, minUnits: 1, defaultMode: product.sale_unit_type}
 				);
-					
+				
+				initDragAndDrop('edit-drop-product-area', 'edit_Product_image', 'edit-product-image-preview');
+
 				await populateProductTypes('edit_product_type', product.product_type, product.company_id, true);
 
 				await populateCurrencies('edit_currency', product.currency);
 	
 				await initCategorySelectors('edit_product_mark', 'edit_product_model', 'edit_product_sub_model', 'select-company');
-
-				initDragAndDrop('edit-drop-product-area', 'edit_Product_image', 'edit-product-image-preview');
 				
-				document.getElementById('edit_product_mark').value = product.product_mark;
+				document.getElementById('edit_product_mark').value = product.product_mark || '';
+
 				await loadModels(product.product_mark, 'edit_product_model', product.product_model);
 
 				await loadSubModels(product.product_model, 'edit_product_sub_model', product.product_sub_model);
 
+				await populateProductPurpose('edit_product_purpose', product.purpose);
+				
 				handlePopupClose("product-options", ".formular-frame", []);
 			}
 		} catch (error) {
@@ -3270,40 +3276,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 		} catch (error) {
 			console.error("Error loading document types:", error);
 			select.innerHTML += `<option value="">Error loading document types</option>`;
-		}
-	}
-
-	async function populateCustomerTypes(selectId, selectedValue = '') {
-		const select = document.getElementById(selectId);
-		if (!select) return;
-	
-		select.innerHTML = '';
-	
-		const defaultOption = document.createElement('option');
-		defaultOption.value = '';
-		defaultOption.textContent = 'Select Customer Type';
-		select.appendChild(defaultOption);
-	
-		try {
-			const res = await fetch('api/get_global_array.php?key=customerTypes');
-			const data = await res.json();
-	
-			if (data.success && data.data) {
-				for (const [value, label] of Object.entries(data.data)) {
-					const option = document.createElement('option');
-					option.value = value;
-					option.textContent = label;
-					if (String(value) === String(selectedValue)) {
-						option.selected = true;
-					}
-					select.appendChild(option);
-				}
-			} else {
-				select.innerHTML += `<option value="">No customer types found</option>`;
-			}
-		} catch (error) {
-			console.error("Error loading customer types:", error);
-			select.innerHTML += `<option value="">Error loading customer types</option>`;
 		}
 	}
 
@@ -5343,7 +5315,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 					<div style="margin-top: 10px;">
 						${renderProducts(load.products || [])}
 					</div>
+					<div class="load-menu">
+						<img src="images/sys-img/menu-icon.png" alt="load-menu">
+					</div>
 				</div>
+				
 			`).join('');
 		}
 
@@ -6504,6 +6480,74 @@ document.addEventListener("DOMContentLoaded", async function () {
 				console.error("Error loading submodels:", error);
 			});
 		});
+	}
+
+	async function populateCustomerTypes(selectId, selectedValue = '') {
+		const select = document.getElementById(selectId);
+		if (!select) return;
+	
+		select.innerHTML = '';
+	
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = 'Select Customer Type';
+		select.appendChild(defaultOption);
+	
+		try {
+			const res = await fetch('api/get_global_array.php?key=customerTypes');
+			const data = await res.json();
+	
+			if (data.success && data.data) {
+				for (const [value, label] of Object.entries(data.data)) {
+					const option = document.createElement('option');
+					option.value = value;
+					option.textContent = label;
+					if (String(value) === String(selectedValue)) {
+						option.selected = true;
+					}
+					select.appendChild(option);
+				}
+			} else {
+				select.innerHTML += `<option value="">No customer types found</option>`;
+			}
+		} catch (error) {
+			console.error("Error loading customer types:", error);
+			select.innerHTML += `<option value="">Error loading customer types</option>`;
+		}
+	}
+
+	async function populateProductPurpose(selectId, selectedValue = '') {
+		const select = document.getElementById(selectId);
+		if (!select) return;
+	
+		select.innerHTML = '';
+	
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = 'Select Product Purposes';
+		select.appendChild(defaultOption);
+	
+		try {
+			const res = await fetch('api/get_global_array.php?key=productPurpose');
+			const data = await res.json();
+	
+			if (data.success && data.data) {
+				for (const [value, label] of Object.entries(data.data)) {
+					const option = document.createElement('option');
+					option.value = value;
+					option.textContent = label;
+					if (String(value) === String(selectedValue)) {
+						option.selected = true;
+					}
+					select.appendChild(option);
+				}
+			} else {
+				select.innerHTML += `<option value="">No product purposes found</option>`;
+			}
+		} catch (error) {
+			console.error("Error loading product purposes:", error);
+			select.innerHTML += `<option value="">Error loading product purposes</option>`;
+		}
 	}
 
 	async function populateCompanies(selectId, selectedValue = '') {

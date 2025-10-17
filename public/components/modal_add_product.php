@@ -63,25 +63,29 @@
 				<tr valign="baseline" class="form_height">
 					<td colspan="2" align="center" valign="middle">
 						<label for="product_mark">Mark:</label>
-						<select class="form-input-style" name="product_mark" id="product_mark"></select>
+						<select class="form-medium-input-style" name="product_mark" id="product_mark"></select>
 					</td>
 					<td colspan="2" align="center" valign="middle">
 						<label for="product_model">Model:</label>
-						<select class="form-input-style" name="product_model" id="product_model"></select>
+						<select class="form-medium-input-style" name="product_model" id="product_model"></select>
 					</td>
 					<td colspan="2" align="center" valign="middle">
 						<label for="product_sub_model">Sub-model:</label>
-						<select class="form-input-style" name="product_sub_model" id="product_sub_model"></select>
+						<select class="form-medium-input-style" name="product_sub_model" id="product_sub_model"></select>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
-					<td colspan="3" align="center" valign="middle">
+					<td colspan="2" align="center" valign="middle">
+						<label for="product_purpose">Purpose:</label>
+						<select class="form-medium-input-style" name="product_purpose" id="product_purpose" required></select>
+					</td>
+					<td colspan="2" align="center" valign="middle">
 						<label for="quantity">Quantity:</label>
 						<input class="form-medium-input-style" type="number" name="quantity" id="quantity" placeholder="Quantity" title="Quantity"/>
 					</td>
-					<td colspan="3" align="center" valign="middle">
+					<td colspan="2" align="center" valign="middle">
 						<label for="min_quantity">Min Qty:</label>
-						<input class="form-medium-input-style" type="number" name="min_quantity" id="min_quantity" placeholder="Min Qty = 10" title="Min Quantity"/>
+						<input class="form-small-input-style" type="number" name="min_quantity" id="min_quantity" placeholder="Min Qty = 10" title="Min Quantity"/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">

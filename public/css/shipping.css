@@ -85,4 +85,5 @@
 	border: 1px solid var(--clr-light-border);
 	padding: 0 10px 10px;
 	border-radius: 6px;
+	position: relative;
 }

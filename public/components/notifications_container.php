@@ -8,7 +8,7 @@
 			<div class="notifications-sidebar">
 				<table width="90%" align="center" cellspacing="0" style="margin-top: 15px;">
 					<tr valign="baseline" class="form_height">
-						<td colspan="4" style="border-bottom: 1px solid #ccc; padding-bottom: 5px;" align="center" valign="middle">
+						<td colspan="4" style="border-bottom: 1px solid var(--clr-border); padding-bottom: 5px;" align="center" valign="middle">
 							<input type="text" name="messageSearchField" id="messageSearchField" class="search-field" placeholder="Search Messages...">
 						</td>
 					</tr>

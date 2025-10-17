@@ -21,6 +21,11 @@ class GlobalArrays {
 		2 => "Used"
 	];
 
+	public static $productPurpose = [
+		1 => "Stock",
+		2 => "Export"
+	];
+
 	public static $documentTypes = [
 		1 => "National ID / Cedula",
 		2 => "Passport",

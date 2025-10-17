@@ -298,6 +298,37 @@ select.form-medium-input-style, select.form-input-style {
     transition: filter 0.3s ease;
 }
 
+.load-menu {
+    width: 38px;
+    height: 38px;
+    /* padding: 5px 7px 6px; */
+    background-color: var(--main-bg-beige);
+    color: #FFF;
+    font-size: 18px;
+    border-radius: 50%;
+    position: absolute;
+    right: 6px;
+    top: 6px;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 1.0s ease;
+}
+
+.load-menu:hover {
+    background-color: var(--main-bg-dark-blue);
+    box-shadow: 0 0 4px 3px rgb(47 48 63 / 19%);
+    transition: all 1.0s ease;
+}
+
+.load-menu img {
+    width: 34px;
+    filter: brightness(0) saturate(100%) invert(100%);
+    opacity: 0.9;
+    transition: filter 0.3s ease;
+}
+
 .back-to-menu-btn, .edit-back-to-menu-btn, .back-to-sale-menu-btn {
     width: 38px;
     height: 38px;

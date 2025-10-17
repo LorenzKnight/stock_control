@@ -114,11 +114,15 @@
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
-						<td colspan="3" align="center" valign="middle">
+						<td colspan="2" align="center" valign="middle">
+							<label for="edit_product_purpose">Purpose:</label>
+							<select class="form-medium-input-style" name="edit_product_purpose" id="edit_product_purpose" required></select>
+						</td>
+						<td colspan="2" align="center" valign="middle">
 							<label for="edit_quantity">Quantity:</label>
 							<input class="form-medium-input-style" type="number" name="edit_quantity" id="edit_quantity" placeholder="Quantity" title="Quantity"/>
 						</td>
-						<td colspan="3" align="center" valign="middle">
+						<td colspan="2" align="center" valign="middle">
 							<label for="edit_min_quantity">Min Qty:</label>
 							<input class="form-medium-input-style" type="number" name="edit_min_quantity" id="edit_min_quantity" placeholder="Min Qty = 10" title="Min Quantity"/>
 						</td>
