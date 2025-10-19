@@ -109,7 +109,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	const salesSite = document.getElementById("sales-site");
 	const paymentsSite = document.getElementById("payments-site");
-	const adminSite = document.getElementById("admin-site");
+
+	const systemAdminSite = document.getElementById("system-admin-site");
 
 	const elements = document.getElementsByClassName("isNotLinkedToCompany");
 
@@ -165,14 +166,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 	} else if (grantedPermission === 'export_reports') {
         // console.log("El usuario puede exportar reportes");
         // Habilita solo lo permitido a este nivel
+		if (systemAdminSite) {
+			systemAdminSite.style.display = "none";
+		}
+
 		// if (salesSite) {
 		// 	salesSite.style.display = "none";
 		// }
 		// if (paymentsSite) {
 		// 	paymentsSite.style.display = "none";
-		// }
-		// if (adminSite) {
-		// 	adminSite.style.display = "none";
 		// }
 
 		// if (subscButton) {
@@ -312,14 +314,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 	} else if (grantedPermission === 'delete_data') {
         // console.log("El usuario puede eliminar datos");
         // Habilita solo lo permitido a este nivel
+		if (systemAdminSite) {
+			systemAdminSite.style.display = "none";
+		}
+
 		// if (salesSite) {
 		// 	salesSite.style.display = "none";
 		// }
 		// if (paymentsSite) {
 		// 	paymentsSite.style.display = "none";
-		// }
-		// if (adminSite) {
-		// 	adminSite.style.display = "none";
 		// }
 
 		if (subscButton) {
@@ -469,14 +472,15 @@ document.addEventListener("DOMContentLoaded", async function () {
     } else if (grantedPermission === 'manage_users') {
         // console.log("El usuario puede gestionar usuarios");
         // Habilita solo lo permitido a este nivel
+		if (systemAdminSite) {
+			systemAdminSite.style.display = "none";
+		}
+
 		// if (salesSite) {
 		// 	salesSite.style.display = "none";
 		// }
 		// if (paymentsSite) {
 		// 	paymentsSite.style.display = "none";
-		// }
-		// if (adminSite) {
-		// 	adminSite.style.display = "none";
 		// }
 
 		if (subscButton) {
@@ -626,14 +630,15 @@ document.addEventListener("DOMContentLoaded", async function () {
     } else if (grantedPermission === 'edit_data') {
         // console.log("El usuario puede editar datos");
         // Habilita solo lo permitido a este nivel
+		if (systemAdminSite) {
+			systemAdminSite.style.display = "none";
+		}
+
 		// if (salesSite) {
 		// 	salesSite.style.display = "none";
 		// }
 		if (paymentsSite) {
 			paymentsSite.style.display = "none";
-		}
-		if (adminSite) {
-			adminSite.style.display = "none";
 		}
 
 		if (subscButton) {
@@ -783,14 +788,15 @@ document.addEventListener("DOMContentLoaded", async function () {
     } else if (grantedPermission === 'create_data') {
         // console.log("El usuario puede crear datos");
         // Habilita solo lo permitido a este nivel
+		if (systemAdminSite) {
+			systemAdminSite.style.display = "none";
+		}
+
 		// if (salesSite) {
 		// 	salesSite.style.display = "none";
 		// }
 		if (paymentsSite) {
 			paymentsSite.style.display = "none";
-		}
-		if (adminSite) {
-			adminSite.style.display = "none";
 		}
 
 		if (subscButton) {
@@ -940,14 +946,15 @@ document.addEventListener("DOMContentLoaded", async function () {
     } else if (grantedPermission === 'manage_sales') {
 		// console.log("El usuario puede gestionar ventas");
         // Habilita solo lo permitido a este nivel
+		if (systemAdminSite) {
+			systemAdminSite.style.display = "none";
+		}
+
 		// if (salesSite) {
 		// 	salesSite.style.display = "none";
 		// }
 		if (paymentsSite) {
 			paymentsSite.style.display = "none";
-		}
-		if (adminSite) {
-			adminSite.style.display = "none";
 		}
 
 		if (subscButton) {
@@ -1097,14 +1104,15 @@ document.addEventListener("DOMContentLoaded", async function () {
     } else if (grantedPermission === 'view_dashboard') {
         // console.log("El usuario puede ver el dashboard");
         // Habilita solo lo permitido a este nivel
+		if (systemAdminSite) {
+			systemAdminSite.style.display = "none";
+		}
+
 		if (salesSite) {
 			salesSite.style.display = "none";
 		}
 		if (paymentsSite) {
 			paymentsSite.style.display = "none";
-		}
-		if (adminSite) {
-			adminSite.style.display = "none";
 		}
 
 		if (subscButton) {

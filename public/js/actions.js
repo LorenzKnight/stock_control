@@ -3938,7 +3938,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	const productListTable = document.getElementById('select-product-list');
 
 	if ((searchProductInput || saleMarkSelect) && productListTable) {
-		async function fetchAndRenderProducts(search = "", mark = "") {
+		async function fetchAndRenderProducts(purpose = "", search = "", mark = "") {
 			try {
 				const params = new URLSearchParams();
 				if (search.trim() !== "") {
@@ -3946,6 +3946,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}
 				if (mark && mark !== "") {
 					params.append('mark', mark);
+				}
+				if (purpose && purpose !== "") {
+					params.append('purpose', purpose);
 				}
 
 				const response = await fetch(`api/get_products.php?${params.toString()}`, {
@@ -4040,13 +4043,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 
 		searchProductInput.addEventListener('input', () => {
-			fetchAndRenderProducts(searchProductInput.value, saleMarkSelect.value);
+			fetchAndRenderProducts('1', searchProductInput.value, saleMarkSelect.value);
 		});
 		saleMarkSelect.addEventListener('change', () => {
-			fetchAndRenderProducts(searchProductInput.value, saleMarkSelect.value);
+			fetchAndRenderProducts('1', searchProductInput.value, saleMarkSelect.value);
 		});
 
-		loadMarksForSearch(saleMarkSelect).then(() => fetchAndRenderProducts());
+		loadMarksForSearch(saleMarkSelect).then(() => fetchAndRenderProducts('1'));
 	}
 
 	function calculatePriceSum() {
@@ -5794,7 +5797,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									</div>
 								</td>
 								<td width="75%" valign="middle" style="padding-left:10px;">
-									${product.product_name}<br>
+									${product.product_name} <span class="mini-title">(${product.purpose_text})</span><br>
 									<small>${product.mark_name || ''} - ${product.model_name || ''} ${product.submodel_name || ''}</small>
 								</td>
 								<td width="5%" align="left" valign="middle">

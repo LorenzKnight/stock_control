@@ -35,7 +35,7 @@ try {
     $productPriceCurrency   = trim($_POST["currency"] ?? '');
     $productPrice         	= trim($_POST["price"] ?? '');
     $productYear     		= intval($_POST["product_year"] ?? '');
-    $purpose         		= intval($_POST["product_purpose"] ?? 0);
+    $purpose         		= intval($_POST["product_purpose"] ?? 1);
     $productQuantity        = is_numeric($_POST["quantity"] ?? null) ? intval($_POST["quantity"]) : 0;
     $productMinQuantity     = isset($_POST["min_quantity"]) && trim($_POST["min_quantity"]) !== '' ? intval($_POST["min_quantity"]) : 10;
     $description     		= trim($_POST["description"] ?? '');

@@ -29,6 +29,7 @@ try {
 	$submodel	= $_GET["submodel"]	?? '';
 	$company	= $_GET["company"]	?? '';
 	$productId  = $_GET["product_id"] ?? '';
+	$purpose    = $_GET["purpose"]   ?? '';
 
 	$where = [
 		// "RAW" => "quantity < min_quantity",
@@ -43,6 +44,10 @@ try {
 	}
 	if (!empty($submodel)) {
 		$where["product_sub_model"] = $submodel;
+	}
+
+	if (!empty($purpose)) {
+		$where["purpose"] = $purpose;
 	}
 
 	if (!empty($productId) && is_numeric($productId)) {
@@ -138,4 +143,3 @@ try {
 
 echo json_encode($response);
 exit;
-?>
