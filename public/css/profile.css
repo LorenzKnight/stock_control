@@ -146,7 +146,7 @@
 
 .pack-container {
     width: 98%;
-    height: 520px;
+    height: 455px;
     border-block: 1px solid var(--frm-border-semi-transparent);
     padding: 5px 1% 0;
     overflow: auto;
@@ -160,7 +160,7 @@
 /* ################## Packages styles ################## */
 .packages {
     width: 152px;
-    height: 250px;
+    height: 218px;
     border-radius: 5px;
     border: 1px solid var(--frm-border-semi-transparent);
     margin: 0 8px 10px;
@@ -177,8 +177,8 @@
 }
 
 .pack-img img {
-    width: 120px;
-	height: 120px;
+    width: 90px;
+	height: 90px;
     object-fit: cover;
 }
 

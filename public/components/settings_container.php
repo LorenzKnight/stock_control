@@ -2,10 +2,10 @@
 	<img src="images/sys-img/rotate_device.gif" alt="Landscape Mode" width="250px">
 </div>
 <div class="container">
-	<div class="data-container" style="height: 780px;">
+	<div class="data-container settings-container-height">
 		<h2 style="margin-left: 10px;">Settings</h2>
 		<div class="product-table flex">
-			<div class="notifications-sidebar">
+			<div class="settings-sidebar">
 				<table width="90%" align="center" cellspacing="0" style="margin-top: 15px;">
 					<tr valign="baseline" class="form_height">
 						<td colspan="4" style="border-bottom: 1px solid #ccc; padding-bottom: 5px;" align="center" valign="middle">
@@ -14,7 +14,7 @@
 					</tr>
 				</table>
 				<div class="notifications-list" id="notificationsList">
-					<table class="message-list" id="settingsOptions" width="90%" align="center" cellspacing="0" style="margin-top: 15px;"></table>
+					<table class="settings-options" id="settingsOptions" width="90%" align="center" cellspacing="0" style="margin-top: 15px;"></table>
 				</div>
 			</div>
 			<div class="options-details" id="options-details">

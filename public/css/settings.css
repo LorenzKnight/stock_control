@@ -1,0 +1,40 @@
+.settings-container-height {
+    height: 89.7vh;
+}
+
+.settings-sidebar {
+    width: 25%;
+    height: 82.5vh;
+    background-color: var(--main-bg-color);
+    border-radius: 5px;
+}
+
+.settings-options tr {
+	cursor: pointer;
+}
+
+.settings-options tr td {
+	border-bottom: 1px solid var(--main-bg-beige);
+	padding: 5px 0;
+}
+
+.settings-options tr td p {
+	font-weight: 200;
+	margin: 5px 0;
+}
+
+.settings-options tr td p strong {
+	font-weight: 600;
+}
+
+.settings-options tr:hover {
+	background-color: var(--clr-white);
+	/* color: var(--clr-white); */
+	transition: background-color 0.3s ease;
+}
+
+.options-details {
+    width: 75%;
+    height: 82.5vh;
+    overflow: auto;
+}
