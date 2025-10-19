@@ -1,13 +1,17 @@
+.notifications-container-height {
+    height: 89.7vh;
+}
+
 .notifications-sidebar {
     width: 25%;
-    height: 710px;
+    height: 82.5vh;
     background-color: var(--main-bg-color);
     border-radius: 5px;
 }
 
 .notifications-details {
     width: 75%;
-    height: 710px;
+    height: 82.5vh;
     overflow: auto;
 }
 

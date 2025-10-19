@@ -30,7 +30,7 @@ body {
     }
 
     .container {
-        width: 90%;
+        width: 98%;
         margin: 0 auto;
         display: block;
     }
@@ -173,6 +173,10 @@ body {
         line-height: 2;
         color: var(--main-text-color);
     }
+}
+
+.wide-search-bar-height {
+	height: 38px;
 }
 
 .image-container {

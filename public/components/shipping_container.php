@@ -16,7 +16,7 @@
 			</table>
 		</div>
 	</div> -->
-	<div class="data-container" style="height: 780px;">
+	<div class="data-container shipping-container-height">
 		<h2 style="margin-left: 10px;">Shippings List</h2>
 		<div class="product-table flex">
 			<div class="shipping-sidebar">

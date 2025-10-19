@@ -1,13 +1,17 @@
+.shipping-container-height {
+    height: 89.7vh;
+}
+
 .shipping-sidebar {
     width: 25%;
-    height: 720px;
+	height: 82.5vh;
     background-color: var(--main-bg-color);
     border-radius: 5px;
 }
 
 .shipping-list {
 	width: 99%;
-	height: 599px;
+	height: 68.5vh;
 	overflow-y: auto;
 }
 
@@ -21,7 +25,7 @@
 
 .shipping-details {
     width: 48%;
-    height: 650px;
+	height: 82.5vh;
 }
 
 .shipping-header {

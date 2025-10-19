@@ -2,7 +2,7 @@
 	<img src="images/sys-img/rotate_device.gif" alt="Landscape Mode" width="250px">
 </div>
 <div class="container">
-	<div class="data-container" style="height: 50px;">
+	<div class="data-container wide-search-bar-height">
 		<div class="centralize" style="width: 100%;">
 			<table width="100%" align="center" cellspacing="0">
 				<tr valign="baseline">
@@ -16,7 +16,7 @@
 			</table>
 		</div>
 	</div>
-	<div class="data-container" style="height: 710px;">
+	<div class="data-container payments-container-height">
 		<h2 style="margin-left: 10px;">Payments List</h2>
 		<div class="centralize" style="width: 100%;">
 			<div class="payments-list" id="payments-list"></div>

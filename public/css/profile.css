@@ -1,3 +1,8 @@
+.profile-detail-height {
+    min-height: 250px;
+    height: 31vh;
+}
+
 .box-title {
     position: absolute;
     top: 0;
@@ -5,14 +10,16 @@
 
 .info-box {
     width: 280px;
-    height: 230px;
+    height: 27vh;
+    min-height: 230px;
     margin: 5px 10px;
     padding: 10px;
 }
 
 .small-box {
     width: 180px;
-    height: 230px;
+    height: 27vh;
+    min-height: 217px;
     border-radius: 8px;
     margin: 5px 10px;
     padding: 10px;
@@ -30,8 +37,14 @@
     font-weight: lighter;
 }
 
+.members-container-height {
+    min-height: 423px;
+    height: 49vh;
+}
+
 .members-table {
-    height: 380px;
+    min-height: 363px;
+    height: 42vh;
     padding-top: 5px;
     border-top: 1px solid #CCC;
     overflow: auto;

@@ -3,7 +3,7 @@
 </div>
 <div class="container">
 	<h1 id="hi-user"></h1>
-	<div class="data-container flex" id="profile-data">
+	<div class="data-container flex profile-detail-height" id="profile-data">
 		<div class="info-box">
 			<h1>Welcome to</h1>
 			<h4>Stock Control</h4>
@@ -31,7 +31,7 @@
 			<button class="button-style-neutral" id="add-members-button">Add Members</button>
 		</div>
 	</div>
-	<div class="data-container">
+	<div class="data-container members-container-height">
 		<h2 style="margin-left: 10px;">User List</h2>
 		<div class="members-table" id="child-user-table">Loading users...</div>
 	</div>

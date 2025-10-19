@@ -2,7 +2,7 @@
 	<img src="images/sys-img/rotate_device.gif" alt="Landscape Mode" width="250px">
 </div>
 <div class="container">
-	<div class="data-container" style="height: 780px;">
+	<div class="data-container notifications-container-height">
 		<h2 style="margin-left: 10px;">Notifications</h2>
 		<div class="product-table flex">
 			<div class="notifications-sidebar">
