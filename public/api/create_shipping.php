@@ -29,6 +29,7 @@ try {
 
 	$method			= intval($_POST["shipping_method"] ?? 1);
 	$destination	= trim($_POST["destination"] ?? '');
+	$estimate_date	= trim($_POST["delivery_date"] ?? null);
 	$description	= trim($_POST["description"] ?? '');
 	$status			= intval($_POST["status"] ?? 0);
 
@@ -44,6 +45,7 @@ try {
 		"shipping_img"				=> null,
 		"shipping_method"			=> $method,
 		"destination"				=> $destination,
+		"delivery_date"				=> $estimate_date,
 		"description"				=> $description,
 		"status"					=> $status,
 		"create_by"					=> $userId,

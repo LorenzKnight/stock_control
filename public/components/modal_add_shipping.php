@@ -29,6 +29,12 @@
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
+						<label for="delivery_date">Estimate Arrival Date:</label>
+						<input class="form-input-style" type="date" name="delivery_date" id="delivery_date" placeholder="Enter a Estimate date..."/>
+					</td>
+				</tr>
+				<tr valign="baseline" class="form_height">
+					<td colspan="6" align="center" valign="middle">
 						<label for="description">Description:</label>
 						<textarea class="form-input-style" id="description" name="description" rows="5" cols="35">
 						</textarea>
