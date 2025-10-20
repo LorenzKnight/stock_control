@@ -5347,7 +5347,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 								<td style="padding-top: 7px;" align="center">${p.quantity ?? 0}</td>
 								<td style="padding-top: 7px;" align="center">${(p.weight_per_unit ?? 0).toFixed(2)} kg</td>
 								<td style="padding-top: 7px;" align="center">${(p.total_kg ?? 0).toFixed(2)} kg</td>
-								<td style="padding-top: 7px;" align="center">$${(p.total_kg_price ?? 0).toFixed(2)}</td>
+								<td style="padding-top: 7px;" align="center">$${(p.total_price_exchanged ?? 0).toFixed(2)}</td>
 							</tr>
 						`).join('')}
 					</tbody>
@@ -5362,7 +5362,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			// 🧮 Totales generales
 			const totalQty = summary.reduce((sum, p) => sum + (p.quantity ?? 0), 0);
-			const totalPrice = summary.reduce((sum, p) => sum + (p.total_price ?? 0), 0);
+			const totalOriginal = summary.reduce((sum, p) => sum + (p.total_price ?? 0), 0);
+			const totalConverted = summary.reduce((sum, p) => sum + (p.total_exchanged ?? 0), 0);
 			const totalWeight = summary.reduce((sum, p) => sum + (p.total_weight ?? 0), 0);
 
 			const shippingNumber = shippingInfo.shipping_no || '—';
@@ -5391,7 +5392,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 								<td>${p.name || ''} <br><small>${p.mark_name || ''}${p.model_name ? ' - ' + p.model_name : ''}</small></td>
 								<td align="center">${p.quantity ?? 0}</td>
 								<td align="center">${(p.total_weight ?? 0).toFixed(2)} kg</td>
-								<td align="center">$${(p.total_price ?? 0).toFixed(2)}</td>
+								<td align="center">$${(p.total_exchanged ?? 0).toFixed(2)}</td>
 							</tr>
 						`).join('')}
 					</tbody>
@@ -5400,7 +5401,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							<td style="border-top: 1px solid #ccc;">Total</td>
 							<td style="border-top: 1px solid #ccc;" align="center">${totalQty}</td>
 							<td style="border-top: 1px solid #ccc;" align="center">${totalWeight.toFixed(2)} kg</td>
-							<td style="border-top: 1px solid #ccc;" align="center">$${totalPrice.toFixed(2)}</td>
+							<td style="border-top: 1px solid #ccc;" align="center">$${totalConverted.toFixed(2)}</td>
 						</tr>
 					</tfoot>
 					
@@ -5915,6 +5916,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 		const totalInput = document.getElementById("total");
 		const currencySelect = document.getElementById("shipping_to_currency");
+		const fromCurrencySelect = document.getElementById("shipping_from_currency");
 
 		if (currencySelect && !currencySelect.value) {
 			currencySelect.value = "USD";
@@ -5922,6 +5924,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 		if (totalInput) {
 			totalInput.addEventListener("input", () => {
+				updateTotalExchange("total", "total_exchanged", "shipping_from_currency", "shipping_to_currency");
+			});
+		}
+
+		if (fromCurrencySelect) {
+			fromCurrencySelect.addEventListener("change", () => {
 				updateTotalExchange("total", "total_exchanged", "shipping_from_currency", "shipping_to_currency");
 			});
 		}
@@ -5956,6 +5964,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					const totalKg = formatDecimal(document.getElementById('total_kg')?.value);
 					const discount = formatDecimal(document.getElementById('discount')?.value);
 					const taxes = formatDecimal(document.getElementById('taxes')?.value);
+					const totalExchanged = formatDecimal(document.getElementById('total_exchanged')?.value);
 					const destination = document.getElementById('destination')?.value.trim() || '';
 					const comment = document.getElementById('comment')?.value.trim() || '';
 
@@ -5964,7 +5973,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 					}
 
 					// Productos seleccionados
-					const products = Array.from(document.querySelectorAll('.shipping-product-checkbox:checked')).map(cb => {
+					const productCheckboxes = Array.from(document.querySelectorAll('.shipping-product-checkbox:checked'));
+					const products = await Promise.all(productCheckboxes.map(async cb => {
 						const productId = parseInt(cb.value);
 						const weight = parseFloat(cb.dataset.weight) || 0;
 						const qtyInput = document.getElementById(`qty-${cb.id}`);
@@ -5972,13 +5982,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 						const totalKgProduct = weight * quantity;
 						const totalKgPrice = totalKgProduct * pricePerKg;
 
+						// 💱 Convertir el precio a la moneda destino
+						const totalPriceExchanged = await convertCurrency(totalKgPrice, fromCurrency, toCurrency);
+
 						return {
-							product_id: parseInt(productId),
+							product_id: productId,
 							quantity: quantity,
 							total_kg: Number(totalKgProduct.toFixed(3)),
-							total_kg_price: Number(totalKgPrice.toFixed(3))
+							total_kg_price: Number(totalKgPrice.toFixed(3)),          // precio original (from_currency)
+							total_price_exchanged: Number(totalPriceExchanged.toFixed(3)) // precio convertido (to_currency)
 						};
-					});
+					}));
 
 					if (products.length === 0) throw new Error("Select at least one product.");
 
@@ -5992,6 +6006,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 						total_kg: totalKg,
 						discount: discount,
 						taxes: taxes,
+						price_total_exchanged: totalExchanged,
 						destination: destination,
 						comment: comment,
 						products: products
@@ -7452,13 +7467,30 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 
-	// 🧠 Cache inicial: cargar desde localStorage (si existe)
-	let exchangeRatesCache = JSON.parse(localStorage.getItem("exchangeRatesCache") || "{}");
+	// LOGICA DE CAMBIO DE MONEDAS CON CACHÉ EN LOCALSTORAGE
+	let exchangeRatesCache = {};
 
-	// 💾 Guardar cache actualizado en localStorage
-	function saveExchangeCache() {
-		localStorage.setItem("exchangeRatesCache", JSON.stringify(exchangeRatesCache));
+	// 🔐 Cargar el caché desde localStorage (si existe)
+	function loadExchangeCache() {
+		try {
+			const data = localStorage.getItem("exchangeRatesCache");
+			if (data) exchangeRatesCache = JSON.parse(data);
+		} catch (err) {
+			console.warn("⚠️ No se pudo cargar cache de tasas:", err);
+		}
 	}
+
+	// 💾 Guardar caché en localStorage
+	function saveExchangeCache() {
+		try {
+			localStorage.setItem("exchangeRatesCache", JSON.stringify(exchangeRatesCache));
+		} catch (err) {
+			console.warn("⚠️ No se pudo guardar cache de tasas:", err);
+		}
+	}
+
+	// Cargar cache al inicio
+	loadExchangeCache();
 
 	async function updateTotalExchange(sourceTotalId, targetUsdId, fromCurrencyId, currencyId = null) {
 		const total = parseFloat(document.getElementById(sourceTotalId)?.value) || 0;
@@ -7466,24 +7498,35 @@ document.addEventListener("DOMContentLoaded", async function () {
 		const fromCurrency = document.getElementById(fromCurrencyId)?.value || "USD";
 		const toCurrency = currencyId ? (document.getElementById(currencyId)?.value || "USD") : "USD";
 
-		if (!targetField) return;
+		if (!targetField) return total;
 
-		const rateKey = `${fromCurrency}_${toCurrency}`;
-
-		// Si las monedas son iguales, no se necesita conversión
+		// Si las monedas son iguales
 		if (fromCurrency === toCurrency) {
 			targetField.value = total.toFixed(2);
-			return;
+			return total;
 		}
 
 		try {
-			let rateInfo = exchangeRatesCache[rateKey];
-			const now = Date.now();
+			const converted = await convertCurrency(total, fromCurrency, toCurrency);
+			targetField.value = converted.toFixed(2);
+			return converted; // ⬅️ devuelve también el valor convertido si lo necesitas
+		} catch (error) {
+			console.error("Error updating exchange:", error);
+			targetField.value = "Error";
+			return total;
+		}
+	}
 
-			// 1️⃣ Verificar si ya existe en cache y si no está vencida (12 horas)
-			if (!rateInfo || now - rateInfo.timestamp > 12 * 60 * 60 * 1000) {
-				// console.log(`🌐 Obteniendo tasa desde API: ${fromCurrency} → ${toCurrency}`);
+	async function convertCurrency(amount, fromCurrency, toCurrency) {
+		if (fromCurrency === toCurrency) return amount;
 
+		const rateKey = `${fromCurrency}_${toCurrency}`;
+		const now = Date.now();
+		let rateInfo = exchangeRatesCache[rateKey];
+
+		// Verificar caché (12 horas)
+		if (!rateInfo || now - rateInfo.timestamp > 12 * 60 * 60 * 1000) {
+			try {
 				const res = await fetch(`https://api.frankfurter.app/latest?amount=1&from=${fromCurrency}&to=${toCurrency}`);
 				const data = await res.json();
 
@@ -7492,21 +7535,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 					rateInfo = { rate, timestamp: now };
 					exchangeRatesCache[rateKey] = rateInfo;
 					saveExchangeCache(); // Guardar en localStorage
-					// console.log(`💾 Tasa guardada: ${fromCurrency} → ${toCurrency} = ${rate}`);
 				} else {
-					console.warn("Conversion API response:", data);
-					targetField.value = "Conversion error";
-					return;
+					console.warn("⚠️ Conversion API response:", data);
+					return amount;
 				}
+			} catch (err) {
+				console.error("💥 Error fetching conversion rate:", err);
+				return amount;
 			}
-
-			// 2️⃣ Usar la tasa almacenada para calcular la conversión
-			targetField.value = (total * rateInfo.rate).toFixed(2);
-
-		} catch (error) {
-			console.error("Error fetching exchange rate:", error);
-			targetField.value = "Error";
 		}
+
+		return amount * rateInfo.rate;
 	}
+
+
 //############################################################# END FUNCTIONES ##################################################################
 });

@@ -71,7 +71,8 @@ try {
 
 			// 3️⃣ Productos dentro de cada load
 			$loadedProductsQuery = select_from("loaded_products", [
-				"product_id", "quantity", "total_kg", "total_kg_price"
+				"product_id", "quantity", "total_kg", "from_currency", "total_kg_price",
+				"to_currency", "total_price_exchanged"
 			], ["load_id" => $load["load_id"]]);
 			$parsedProducts = json_decode($loadedProductsQuery, true)["data"] ?? [];
 
@@ -87,10 +88,11 @@ try {
 				], ["product_id" => $prod["product_id"]], ["fetch_first" => true]);
 				$product = json_decode($productInfo, true)["data"] ?? [];
 
-				$qty = (int)($prod["quantity"] ?? 0);
-				$totalKg      = (float)($prod["total_kg"] ?? 0);
-				$totalKgPrice = (float)($prod["total_kg_price"] ?? 0);
-				$loadWeightTotal += $totalKg;
+				$qty				= (int)($prod["quantity"] ?? 0);
+				$totalKg			= (float)($prod["total_kg"] ?? 0);
+				$totalKgPrice		= (float)($prod["total_kg_price"] ?? 0);
+				$totalExchanged		= (float)($prod["total_price_exchanged"] ?? 0);
+				$loadWeightTotal	+= $totalKg;
 
 				// nombres de marca, modelo, submodelo
 				$markName = $modelName = $submodelName = null;
@@ -118,7 +120,10 @@ try {
 					"quantity"			=> $qty,
 					"price"        		=> $product["price"] ?? 0,
 					"total_kg"         => $totalKg,
+					"from_currency"        => $prod["from_currency"] ?? '',
                     "total_kg_price"   => $totalKgPrice,
+					"to_currency"          => $prod["to_currency"] ?? '',
+					"total_price_exchanged"=> $totalExchanged,
                     "weight_per_unit"  => (float)($product["total_weight"] ?? 0),
 				];
 			}
@@ -154,24 +159,27 @@ try {
 
 		foreach ($loadsData as $loadEntry) {
 			foreach ($loadEntry["products"] as $p) {
+				// var_dump($p);
 				$key = $p["product_id"];
 				if (!isset($shippingProductSummary[$key])) {
 					$shippingProductSummary[$key] = [
-						"product_id"     => $p["product_id"],
-						"name"           => $p["name"],
-						"mark_name"      => $p["mark_name"],
-						"model_name"     => $p["model_name"],
-						"submodel_name"  => $p["submodel_name"],
-						"image"          => $p["image"],
-						"quantity"       => 0,
-						"total_price"    => 0,
-						"total_weight"   => 0
+						"product_id"		=> $p["product_id"],
+						"name"				=> $p["name"],
+						"mark_name"			=> $p["mark_name"],
+						"model_name"		=> $p["model_name"],
+						"submodel_name"		=> $p["submodel_name"],
+						"image"				=> $p["image"],
+						"quantity"			=> 0,
+						"total_price"		=> 0.0,
+						"total_exchanged"	=> 0.0,
+						"total_weight"		=> 0
 					];
 				}
 
-				$shippingProductSummary[$key]["quantity"]     += $p["quantity"];
-				$shippingProductSummary[$key]["total_price"]  += $p["total_kg_price"];
-				$shippingProductSummary[$key]["total_weight"] += $p["total_kg"];
+				$shippingProductSummary[$key]["quantity"]			+= (int)$p["quantity"];
+				$shippingProductSummary[$key]["total_price"]		+= (float)$p["total_kg_price"];
+				$shippingProductSummary[$key]["total_exchanged"]	+= (float)$p["total_price_exchanged"];
+				$shippingProductSummary[$key]["total_weight"]		+= (float)$p["total_kg"];
 			}
 		}
 

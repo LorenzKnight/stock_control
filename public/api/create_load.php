@@ -54,17 +54,9 @@ try {
     $priceTotal = $subtotal + $taxAmount;
 
     // 🔄 Calcular conversión de moneda si hay diferencia entre from y to
-    $priceTotalExchanged = $priceTotal;
-    if ($fromCurrency !== $toCurrency) {
-        $convertUrl = "https://api.frankfurter.app/latest?amount={$priceTotal}&from={$fromCurrency}&to={$toCurrency}";
-        $json = @file_get_contents($convertUrl);
-        if ($json) {
-            $data = json_decode($json, true);
-            if (isset($data["rates"][$toCurrency])) {
-                $priceTotalExchanged = number_format($data["rates"][$toCurrency], 2, '.', '');
-            }
-        }
-    }
+    $priceTotalExchanged = isset($input["price_total_exchanged"]) 
+        ? floatval($input["price_total_exchanged"]) 
+        : $priceTotal;
 
     // Crear número de carga
     $newLoadNo = get_next_increment_value("loads", "load_no", $companyId, 40000000);
@@ -106,15 +98,19 @@ try {
 
             $quantity = max(1, (int)($p["quantity"] ?? 1));
             $totalKg       = number_format((float)($p["total_kg"] ?? 0), 3, '.', '');
-            $totalKgPrice  = number_format((float)($p["total_kg_price"] ?? 0), 3, '.', '');
+            $totalKgPrice  = number_format((float)($p["total_kg_price"] ?? 0), 2, '.', '');
+            $convertedPrice = floatval($p["total_price_exchanged"] ?? $totalKgPrice);
 
             $loadedProduct = [
-                "load_id"           => $loadId,
-                "product_id"        => $productId,
-                "quantity"          => $quantity,
-                "total_kg"          => $totalKg,
-                "total_kg_price"    => $totalKgPrice,
-                "create_by"         => $userId
+                "load_id"               => $loadId,
+                "product_id"            => $productId,
+                "quantity"              => $quantity,
+                "total_kg"              => $totalKg,
+                "from_currency"         => $fromCurrency,
+                "total_kg_price"        => $totalKgPrice,
+                "to_currency"           => $toCurrency,
+                "total_price_exchanged" => $convertedPrice,
+                "create_by"             => $userId
             ];
 
             $prodInsert = json_decode(insert_into("loaded_products", $loadedProduct), true);

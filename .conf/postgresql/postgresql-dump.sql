@@ -456,7 +456,20 @@ CREATE TABLE IF NOT EXISTS loaded_products (
 	product_id INTEGER NULL,
 	quantity INTEGER NULL,
 	total_kg NUMERIC(10,3) NULL,
-	total_kg_price NUMERIC(10,3) NULL,
+	from_currency VARCHAR(10) NULL,
+	total_kg_price NUMERIC(10,2) NULL,
+	to_currency VARCHAR(10) NULL,
+	total_price_exchanged NUMERIC(10,2) NULL,
+	create_by INTEGER NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE IF NOT EXISTS settings (
+	settings_id SERIAL PRIMARY KEY,
+	company_id INTEGER NULL,
+	company_currency VARCHAR(10) NULL,
+	
 	create_by INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
