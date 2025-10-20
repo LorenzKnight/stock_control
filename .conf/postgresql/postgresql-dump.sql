@@ -145,6 +145,7 @@ CREATE TABLE IF NOT EXISTS products (
 	units_per_pack INTEGER NULL,
 	product_image VARCHAR(255) NULL,
 	product_name VARCHAR(255) NULL,
+	hs_code VARCHAR(50) NULL,
 	product_type INTEGER NULL,
 	product_mark INTEGER NULL,
 	product_model INTEGER NULL,

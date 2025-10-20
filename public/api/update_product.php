@@ -38,6 +38,7 @@ try {
         "weight_per_unit"   => $weightUnit,
         "total_weight"      => $totalWeight,
 		"product_name"      => $_POST["edit_product_name"] ?? "",
+		"hs_code"           => $_POST["edit_hs_code"] ?? "",
         "product_type"      => (int) ($_POST["edit_product_type"] ?? 0),
         "product_mark"      => (int) ($_POST["edit_product_mark"] ?? 0),
         "product_model"     => (int) ($_POST["edit_product_model"] ?? 0),

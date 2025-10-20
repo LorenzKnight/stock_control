@@ -72,6 +72,7 @@ try {
 		"sale_unit_type",
 		"units_per_pack",
 		"product_name",
+		"hs_code",
 		"product_image",
 		"product_mark",
 		"product_model",

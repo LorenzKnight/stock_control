@@ -45,9 +45,13 @@
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
-					<td colspan="6" align="center" valign="middle">
+					<td colspan="3" align="center" valign="middle">
 						<label for="product_name">Name:</label>
-						<input class="form-input-style" type="text" name="product_name" id="product_name" placeholder="Product Name..." title="Product name"/>
+						<input class="form-medium-input-style" type="text" name="product_name" id="product_name" placeholder="Product Name..." title="Product name"/>
+					</td>
+					<td colspan="3" align="center" valign="middle">
+						<label for="hs_code">Tariff fraction (HS Code):</label>
+						<input class="form-medium-input-style" type="text" name="hs_code" id="hs_code" placeholder="Fraction (HS Code)..." title="fraction (HS Code)"/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">

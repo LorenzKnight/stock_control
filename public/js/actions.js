@@ -2928,6 +2928,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				document.getElementById('edit_weight_unit').value = product.weight_per_unit || '';
 				document.getElementById('edit_total_weight').value = product.total_weight || '';
 				document.getElementById('edit_product_name').value = product.product_name || '';
+				document.getElementById('edit_hs_code').value = product.hs_code || '';
 				document.getElementById('edit_product_year').value = product.product_year || '';
 				document.getElementById('edit_price').value = product.price || '';
 				document.getElementById('edit_quantity').value = product.quantity || '';

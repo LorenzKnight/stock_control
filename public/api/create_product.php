@@ -28,6 +28,7 @@ try {
     $weightUnit         	= is_numeric($_POST["weight_unit"] ?? null) ? floatval($_POST["weight_unit"]) : 0;
     $totalWeight         	= $weightUnit * $units;
     $productName     		= trim($_POST["product_name"] ?? '');
+    $hsCode         		= trim($_POST["hs_code"] ?? '');
     $productType     		= intval($_POST["product_type"] ?? 0);
     $productMark     		= intval($_POST["product_mark"] ?? 0);
     $productModel    		= intval($_POST["product_model"] ?? 0);
@@ -67,6 +68,7 @@ try {
         "weight_per_unit"   => $weightUnit,
         "total_weight"      => $totalWeight,
         "product_name"      => $productName,
+        "hs_code"           => $hsCode,
         "product_type"      => $productType,
         "product_mark"      => $productMark,
         "product_model"     => $productModel,
