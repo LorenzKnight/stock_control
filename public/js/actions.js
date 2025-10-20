@@ -5233,8 +5233,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							<td width="65%" align="left" valign="top">
 								<div style="padding: 5px;">
 									Shipping No.: <strong>${shipping.shipping_no || '—'}</strong><br>
-									<span>${shipping.customer?.full_name || ''}</span><br>
-									<small>${shipping.delivery_date || ''}</small>
+									<p>Status: ${shipping.status || ''}</p>
 								</div>
 							</td>
 							<td width="15%" align="left" valign="top">
@@ -5313,7 +5312,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 				<div class="loads">
 					<h4>Load No.: ${load.load_no}</h4>
 					<p>Customer: <strong>${load.customer?.full_name || '—'}</strong></p>
-					<p class="mini-title">${load.price_total || 0} ${load.from_currency || ''} (Inc. ${(Number(load.taxes) ?? 0).toFixed(1)}% Taxes)</p>
+					<p class="mini-title">
+						${load.price_total || 0} ${load.from_currency || ''} 
+						(Inc. ${(Number(load.taxes) ?? 0).toFixed(1)}% Taxes
+						${load.discount && Number(load.discount) > 0 
+							? ` & ${(Number(load.discount)).toFixed(1)} ${load.from_currency || ''} Disc.` 
+							: ''})
+					</p>
 					<p style="margin-top:-4px;"><strong>${load.price_total_exchanged || 0} ${load.to_currency || ''}</strong></p>
 					<div style="margin-top: 10px;">
 						${renderProducts(load.products || [])}
@@ -5409,7 +5414,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				<div style="text-align: center; margin-bottom: 10px;">
 					<p>Destination: ${destination}</p>
 					<p>Created: ${createdAt}</p>
-					<p>Delivery Date: ${deliveryDate}</p>
+					<p>Estimate Arrival: ${deliveryDate}</p>
 					${shippingImage}
 					<p><strong>${shippingNumber}</strong></p>
 				</div>
