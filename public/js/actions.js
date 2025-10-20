@@ -2591,6 +2591,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							<tr valign="baseline">
 								<td style="width: 50%; height: 10px;">
 									<p style="margin: 10px 0 0;">${product.product_name}</p>
+									<p class="mini-title" style="margin: 0;">${product.hs_code || ''}</p>
 								</td>
 								<td style="width: 50%; height: 10px;" align="right">
 									<p style="margin: 10px 0 0;">Qty: <strong class="${minQty}">${product.quantity || ''}</strong></p>
