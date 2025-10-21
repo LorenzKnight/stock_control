@@ -45,115 +45,65 @@
 				<img src="images/sys-img/backward.png" alt="back">
 			</div>
 			<form method="post" name="formEditShipping" id="formEditShipping">
-				<!-- <table width="90%" align="center" cellspacing="0">
+				<table width="90%" align="center" cellspacing="0">
 					<tr valign="baseline">
-						<td style="font-size: 12px;" colspan="6" align="center" valign="middle">
-							<h2>Edit Product</h2>
+						<td colspan="6" align="center" valign="middle">
+							<h2>Edit Shipping</h2>
 						</td>      
 					</tr>
 					<tr valign="baseline" class="form_height">
-						<td colspan="6" align="center" valign="middle">
-							<div class="drop-area" id="edit-drop-product-area">
-								<img class="image-preview" id="edit-product-image-preview" src="" alt="Product Image Preview">
-								<p>Drop image here or click to select</p>
-								<input type="file" name="edit_Product_image" id="edit_Product_image" accept="image/*" style="display: none;">
-							</div>
-						</td>
-					</tr>
-					<tr valign="baseline" class="form_height">
 						<td colspan="3" align="center" valign="middle">
 							<div class="product-type-selection">
-								<input type="radio" id="edit_unit_type_1" name="edit_unit_type" value="1" checked>
-								<label for="edit_unit_type_1">Single Unit</label>
+								<input type="radio" id="edit_unit_type_1" name="edit_shipping_method" value="1">
+								<label for="edit_shipping-method-1">Ground Shipping</label>
 							</div>
 						</td>
 						<td colspan="3" align="center" valign="middle">
 							<div class="product-type-selection">
-								<input type="radio" id="edit_unit_type_2" name="edit_unit_type" value="2">
-								<label for="edit_unit_type_2">Multi Pack</label>
+								<input type="radio" id="edit_unit_type_2" name="edit_shipping_method" value="2">
+								<label for="edit_shipping-method-2">Air Shipping</label>
 							</div>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
-						<td colspan="2" align="center" valign="middle">
-							<label for="units">Units:</label>
-							<input class="form-small-input-style" type="number" name="edit_units" id="edit_units" placeholder="1 units" title="units" disabled/>
-						</td>
-						<td colspan="2" align="center" valign="middle">
-							<label for="weight_unit">Weight/unit (kg):</label>
-							<input class="form-small-input-style" type="text" name="edit_weight_unit" id="edit_weight_unit" placeholder="Weight/unit" title="Weight/unit"/>
-						</td>
-						<td colspan="2" align="center" valign="middle">
-							<label for="total_weight">Total Weight (kg):</label>
-							<input class="form-small-input-style" type="text" name="edit_total_weight" id="edit_total_weight" placeholder="Total Weight" title="Total Weight" disabled/>
+						<td colspan="6" align="center" valign="middle">
+							<label for="edit_destination">Destination:</label>
+							<input class="form-input-style" type="text" name="edit_destination" id="edit_destination" placeholder="Shipping Destination..." title="Shipping Destination"/>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td colspan="6" align="center" valign="middle">
-							<label for="edit_product_name">Name:</label>
-							<input class="form-input-style" type="text" name="edit_product_name" id="edit_product_name" placeholder="Product Name..." title="Product name"/>
-						</td>
-					</tr>
-					<tr valign="baseline" class="form_height">
-						<td colspan="3" align="center" valign="middle">
-							<label for="edit_product_type">Type:</label>
-							<select class="form-input-style" name="edit_product_type" id="edit_product_type"></select>
-						</td>
-						<td colspan="3" align="center" valign="middle">
-							<label for="edit_product_year">Year:</label>
-							<input class="form-medium-input-style input-year-only" type="number" name="edit_product_year" id="edit_product_year" placeholder="Product Year" title="Product Year"/>
-						</td>
-					</tr>
-					<tr valign="baseline" class="form_height">
-						<td colspan="2" align="center" valign="middle">
-							<label for="edit_product_mark">Mark:</label>
-							<select class="form-input-style" name="edit_product_mark" id="edit_product_mark"></select>
-						</td>
-						<td colspan="2" align="center" valign="middle">
-							<label for="edit_product_model">Model:</label>
-							<select class="form-input-style" name="edit_product_model" id="edit_product_model"></select>
-						</td>
-						<td colspan="2" align="center" valign="middle">
-							<label for="edit_product_sub_model">Sub-model:</label>
-							<select class="form-input-style" name="edit_product_sub_model" id="edit_product_sub_model"></select>
-						</td>
-					</tr>
-					<tr valign="baseline" class="form_height">
-						<td colspan="3" align="center" valign="middle">
-							<label for="edit_quantity">Quantity:</label>
-							<input class="form-medium-input-style" type="number" name="edit_quantity" id="edit_quantity" placeholder="Quantity" title="Quantity"/>
-						</td>
-						<td colspan="3" align="center" valign="middle">
-							<label for="edit_min_quantity">Min Qty:</label>
-							<input class="form-medium-input-style" type="number" name="edit_min_quantity" id="edit_min_quantity" placeholder="Min Qty = 10" title="Min Quantity"/>
-						</td>
-					</tr>
-					<tr valign="baseline" class="form_height">
-						<td colspan="3" align="center" valign="middle">
-							<label for="edit_currency">Currency:</label>
-							<select class="form-input-style" name="edit_currency" id="edit_currency" disabled></select>
-						</td>
-						<td colspan="3" align="center" valign="middle">
-							<label for="edit_price">Price:</label>
-							<input class="form-medium-input-style" type="number" name="edit_price" id="edit_price" placeholder="Product Price" title="Product Price"/>
+							<label for="edit_delivery_date">Estimate Arrival Date:</label>
+							<input class="form-input-style" type="date" name="edit_delivery_date" id="edit_delivery_date" placeholder="Enter a Estimate date..."/>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td colspan="6" align="center" valign="middle">
 							<label for="edit_description">Description:</label>
-							<textarea class="form-input-style" id="edit_description" name="edit_description" rows="2" cols="35">
+							<textarea class="form-input-style" id="edit_description" name="edit_description" rows="5" cols="35">
 							</textarea>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
-						<td colspan="3" align="center" valign="middle">
+						<td colspan="3" style="border-block: 1px solid var(--clr-border); padding: 5px 10px;" align="left" valign="middle">
+							<span style="display: block;">Status</span>
+						</td>
+						<td colspan="3" style="border-block: 1px solid var(--clr-border); padding: 5px 10px;" align="right" valign="middle">
+							<label class="switch">
+								<input type="checkbox" name="edit_status" id="edit_status" value="1" checked>
+								<span class="slider round"></span>
+							</label>
+						</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+						<td colspan="3" align="center" valign="middle" style="padding-top: 10px;">
 							<button type="button" class="neutral-btn">Cancel</button>
 						</td>
-						<td colspan="3" align="center" valign="middle">
+						<td colspan="3" align="center" valign="middle" style="padding-top: 10px;">
 							<input type="submit" class="button-style-agree" value="Update" />
 						</td>
 					</tr>
-				</table>  -->
+				</table>
 			</form>
 		</div>
 		<div id="add-load-modal" style="display: none;">

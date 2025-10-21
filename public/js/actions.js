@@ -2659,37 +2659,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	fetchAndRenderProducts();
 
-
-	function animateHeightChange(container, sectionToShow, callback) {
-		const startHeight = container.offsetHeight + 'px';
-		container.style.height = startHeight;
-	
-		// Ocultar sección destino antes de mostrarla
-		sectionToShow.style.display = 'block';
-		sectionToShow.style.opacity = '0';
-		sectionToShow.style.visibility = 'hidden';
-	
-		// Realizar cambios (esconder lo anterior, mostrar lo nuevo)
-		if (callback) callback();
-	
-		requestAnimationFrame(() => {
-			const desiredHeight = container.scrollHeight;
-			const maxHeight = window.innerHeight * 0.9;
-			const endHeight = Math.min(desiredHeight, maxHeight) + 'px';
-			container.style.height = endHeight;
-	
-			container.addEventListener('transitionend', function handler() {
-				container.style.height = 'auto';
-				// Mostrar suavemente la sección nueva después del estiramiento
-				sectionToShow.style.visibility = 'visible';
-				sectionToShow.style.transition = 'opacity 0.2s ease';
-				sectionToShow.style.opacity = '1';
-	
-				container.removeEventListener('transitionend', handler);
-			});
-		});
-	}
-
 	async function openProductForm(productId, userCompanyId = null) {
 		scrollToTopIfNeeded();
 	
@@ -2777,7 +2746,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					};
 				}
 
-				// Botón: Receive as initial
+				// Botón: Request Product
 				if (requestProductBtn) {
 					requestProductBtn.onclick = () => {
 						requestProductBtn.setAttribute('data-product-id', productId);
@@ -5522,7 +5491,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const data = await res.json();
 
 			if (productOptions && popupContent) {
-				resetPopupView(['shipping-menu-buttons'], ['add-load-modal']);
+				resetPopupView(['shipping-menu-buttons'], [
+					'add-load-modal',
+					'edit-shipping-modal'
+				]);
 
 				const editShippingBtn = document.getElementById('editShippingBtn');
 				const addLoadBtn = document.getElementById('addLoadBtn');
@@ -5561,50 +5533,25 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				// Botón: Receive as initial
 				if (editShippingBtn) {
+					editShippingBtn.setAttribute('data-shipping-id', shippingsId);
 					editShippingBtn.onclick = () => {
-						editShippingBtn.setAttribute('data-product-id', shippingsId);
-				// 		if (!shippingsId) {
-				// 			alert("Product ID not found.");
-				// 			return;
-				// 		}
-				// 		// console.log("Request sent ", shippingsId);
-				// 		showConfirmModal("Request this Product", "Are you sure you want request this product?", async () => {
-				// 			const frame = document.querySelector('.formular-frame');
-				// 			if (frame) frame.style.display = 'none';
+						const menuDiv = document.getElementById('shipping-menu-buttons');
+						const editDiv = document.getElementById('edit-shipping-modal');
 
-				// 			const formData = new FormData();
-				// 			formData.append("product_id", shippingsId);
-				
-				// 			try {
-				// 				const response = await fetch('api/request_product.php', {
-				// 					method: 'POST',
-				// 					body: formData
-				// 				});
-				
-				// 				const data = await response.json();
-				
-				// 				let banner = document.getElementById('status-message');
-				// 				let statusText = document.getElementById('status-text');
-				// 				let statusImage = document.getElementById('status-image');
-				
-				// 				statusText.innerText = data.message;
-				// 				statusImage.src = data.img_gif;
-				// 				banner.style.display = 'block';
-				// 				banner.style.opacity = '1';
-				
-				// 				if (data.success) {
-				// 					setTimeout(() => {
-				// 						banner.style.opacity = '0';
-				// 						setTimeout(() => {
-				// 							window.location.href = data.redirect_url || window.location.href;
-				// 						}, 1000);
-				// 					}, 3000);
-				// 				}
-				// 			} catch (error) {
-				// 				console.error("Error requesting product:", error);
-				// 				alert("Error requesting product. Check console.");
-				// 			}
-				// 		});
+						if (editDiv) {
+							editDiv.style.display = 'none';
+						}
+
+						const shippingsId = editShippingBtn.getAttribute('data-shipping-id');
+						if (!shippingsId) return;
+
+						openEditShippingForm(shippingsId);
+			
+						animateHeightChange(popupContent, editDiv, () => {
+							fadeOutAndHide(menuDiv, () => {
+								showWithFadeIn(editDiv);
+							});
+						});
 					};
 				}
 				
@@ -5613,10 +5560,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 					addLoadBtn.setAttribute('data-shipping-id', shippingsId);
 					addLoadBtn.onclick = () => {
 						const menuDiv = document.getElementById('shipping-menu-buttons');
-						const editDiv = document.getElementById('add-load-modal');
+						const addDiv = document.getElementById('add-load-modal');
 
-						if (editDiv) {
-							editDiv.style.display = 'none';
+						if (addDiv) {
+							addDiv.style.display = 'none';
 						}
 
 						const shippingsId = addLoadBtn.getAttribute('data-shipping-id');
@@ -5632,9 +5579,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 						populateCurrencies('shipping_from_currency');
 						populateCurrencies('shipping_to_currency', 'USD');
 			
-						animateHeightChange(popupContent, editDiv, () => {
+						animateHeightChange(popupContent, addDiv, () => {
 							fadeOutAndHide(menuDiv, () => {
-								showWithFadeIn(editDiv);
+								showWithFadeIn(addDiv);
 							});
 						});
 					}
@@ -5694,6 +5641,119 @@ document.addEventListener("DOMContentLoaded", async function () {
 		} catch (error) {
 			console.error("Error loading product info:", error);
 		}
+	}
+
+	async function openEditShippingForm(shippingsId) {
+		const formEditShipping = document.getElementById('formEditShipping');
+		if (!formEditShipping) return;
+	
+		formEditShipping.setAttribute('data-shipping-id', shippingsId);
+
+		const params = new URLSearchParams();
+		params.append('shippings_id', shippingsId);
+	
+		try {
+			const response = await fetch(`api/get_shippings.php?${params.toString()}`);
+			const data = await response.json();
+	
+			if (data.success && data.data.length > 0) {
+				const shipping = data.data.find(p => p.shippings_id == shippingsId);
+				if (!shipping) return;
+				
+				// Llenar campos del formulario
+				document.getElementById('edit_destination').value = shipping.destination || '';
+				document.getElementById('edit_delivery_date').value = shipping.delivery_date || '';
+				document.getElementById('edit_description').value = shipping.description || '';
+				document.getElementById("edit_status").checked = shipping.status === "1" || shipping.status === 1;
+
+				// ✅ Seleccionar el radio correcto directamente
+				const method = String(shipping.shipping_method || "1");
+				const methodRadio = document.querySelector(`input[name="edit_shipping_method"][value="${method}"]`);
+				if (methodRadio) methodRadio.checked = true;
+
+				// ✅ Iniciar control visual y lógica con solo el radio
+				initShippingMethod("edit_shipping_method", null, {activeClass: 'selected'});
+
+				handlePopupClose("shipping-options", ".formular-frame", []);
+			}
+		} catch (error) {
+			console.error("Error loading product data:", error);
+		}
+	}
+
+	function initShippingMethod(radioName, onChangeCallback, options = {}) {
+		const radios = document.getElementsByName(radioName);
+		if (radios.length === 0) return;
+
+		const activeClass = options.activeClass || 'selected';
+
+		const applySelection = () => {
+			const selected = Array.from(radios).find(r => r.checked);
+			if (!selected) return;
+
+			// Aplicar clase visual si hay etiquetas vinculadas
+			radios.forEach(radio => {
+				const label = document.querySelector(`label[for="${radio.id}"]`);
+				if (label) {
+					label.classList.toggle(activeClass, radio.checked);
+				}
+			});
+
+			// Callback personalizado
+			if (typeof onChangeCallback === 'function') {
+				onChangeCallback(selected.value);
+			}
+		};
+
+		// Eventos
+		radios.forEach(radio => {
+			radio.addEventListener('change', applySelection);
+		});
+
+		// Inicializar estado
+		applySelection();
+	}
+
+	const formEditShipping = document.getElementById('formEditShipping');
+	if (formEditShipping) {
+		formEditShipping.addEventListener('submit', async function (e) {
+			e.preventDefault();
+
+			const formData = new FormData(this);
+			formData.append('edit_shipping_id', formEditShipping.getAttribute('data-shipping-id'));
+
+			try {
+				const response = await fetch('api/update_shipping.php', {
+					method: 'POST',
+					headers: { Accept: 'application/json' },
+					body: formData
+				});
+
+				const data = await response.json();
+
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				if (banner && statusText && statusImage) {
+					statusText.innerText = data.message || "Unknown response";
+					statusImage.src = data.img_gif || "images/sys-img/loading.gif";
+					banner.style.display = 'block';
+					banner.style.opacity = '1';
+				}
+
+				if (data.success) {
+					setTimeout(() => {
+						banner.style.opacity = '0';
+						setTimeout(() => {
+							window.location.href = data.redirect_url || window.location.href;
+						}, 1000);
+					}, 3000);
+				}
+			} catch (error) {
+				console.error("Error updating product:", error);
+			}
+		});
 	}
 
 	async function openAddLoadForm(shippingsId) {
@@ -6149,6 +6209,36 @@ document.addEventListener("DOMContentLoaded", async function () {
 		ids.forEach(id => {
 			const el = document.getElementById(id);
 			if (el) el.value = '';
+		});
+	}
+
+	function animateHeightChange(container, sectionToShow, callback) {
+		const startHeight = container.offsetHeight + 'px';
+		container.style.height = startHeight;
+	
+		// Ocultar sección destino antes de mostrarla
+		sectionToShow.style.display = 'block';
+		sectionToShow.style.opacity = '0';
+		sectionToShow.style.visibility = 'hidden';
+	
+		// Realizar cambios (esconder lo anterior, mostrar lo nuevo)
+		if (callback) callback();
+	
+		requestAnimationFrame(() => {
+			const desiredHeight = container.scrollHeight;
+			const maxHeight = window.innerHeight * 0.9;
+			const endHeight = Math.min(desiredHeight, maxHeight) + 'px';
+			container.style.height = endHeight;
+	
+			container.addEventListener('transitionend', function handler() {
+				container.style.height = 'auto';
+				// Mostrar suavemente la sección nueva después del estiramiento
+				sectionToShow.style.visibility = 'visible';
+				sectionToShow.style.transition = 'opacity 0.2s ease';
+				sectionToShow.style.opacity = '1';
+	
+				container.removeEventListener('transitionend', handler);
+			});
 		});
 	}
 
