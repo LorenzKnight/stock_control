@@ -20,13 +20,13 @@
 					<td colspan="3" align="center" valign="middle">
 						<div class="product-type-selection">
 							<input type="radio" id="unit_type_1" name="unit_type" value="1" checked>
-							<label for="unit-type-1">Single Unit</label>
+							<label for="unit_type_1">Single Unit</label>
 						</div>
 					</td>
 					<td colspan="3" align="center" valign="middle">
 						<div class="product-type-selection">
 							<input type="radio" id="unit_type_2" name="unit_type" value="2">
-							<label for="unit-type-2">Multi Pack</label>
+							<label for="unit_type_2">Multi Pack</label>
 						</div>
 					</td>
 				</tr>

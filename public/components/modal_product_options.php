@@ -8,11 +8,6 @@
 						<p id="product-name"></p>
 					</td>      
 				</tr>
-				<!-- <tr valign="baseline">
-					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="button-style-agree" id="assignSaleBtn">Assign to a sale</button>
-					</td>
-				</tr> -->
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
 						<button type="button" class="button-style-agree" id="requestProductBtn">Request Product</button>
@@ -71,15 +66,15 @@
 					</tr>
 					<tr valign="baseline" class="form_height">
 						<td colspan="2" align="center" valign="middle">
-							<label for="units">Units:</label>
+							<label for="edit_units">Units:</label>
 							<input class="form-small-input-style" type="number" name="edit_units" id="edit_units" placeholder="1 units" title="units" disabled/>
 						</td>
 						<td colspan="2" align="center" valign="middle">
-							<label for="weight_unit">Weight/unit (kg):</label>
+							<label for="edit_weight_unit">Weight/unit (kg):</label>
 							<input class="form-small-input-style" type="text" name="edit_weight_unit" id="edit_weight_unit" placeholder="Weight/unit" title="Weight/unit"/>
 						</td>
 						<td colspan="2" align="center" valign="middle">
-							<label for="total_weight">Total Weight (kg):</label>
+							<label for="edit_total_weight">Total Weight (kg):</label>
 							<input class="form-small-input-style" type="text" name="edit_total_weight" id="edit_total_weight" placeholder="Total Weight" title="Total Weight" disabled/>
 						</td>
 					</tr>
@@ -168,20 +163,6 @@
 					<tr valign="baseline">
 						<td style="font-size: 12px;" colspan="6" align="center" valign="middle">
 							<h2>Receive as an initial</h2>
-						</td>      
-					</tr>
-				</table>
-			</form>
-		</div>
-		<div id="assign-sale-section" style="display: none;">
-			<div class="back-to-menu-btn">
-				<img src="images/sys-img/backward.png" alt="back">
-			</div>
-			<form method="post" name="formEditProduct" id="formEditProduct">
-				<table width="80%" align="center" cellspacing="0">
-					<tr valign="baseline">
-						<td style="font-size: 12px;" colspan="6" align="center" valign="middle">
-							<h2>Assign Product to Sale</h2>
 						</td>      
 					</tr>
 				</table>

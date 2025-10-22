@@ -5245,6 +5245,27 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				handlePopupClose("shipping-options", ".formular-frame", []);
 			});
+
+
+			const loadCards = document.querySelectorAll('.loads');
+			loadCards.forEach((card, index) => {
+				const loadMenuBtn = card.querySelector('.load-menu');
+				if (!loadMenuBtn) return;
+
+				loadMenuBtn.addEventListener('click', () => {
+					const loadData = shipping.loads[index];
+					if (!loadData) return;
+
+					const loadId = loadData.load_id;
+
+					// console.log("Load menu clicked for Load ID:", loadId);
+					// console.log("Full load data:", loadData);
+
+					openLoadForm(loadId);
+
+					handlePopupClose("load-options", ".formular-frame", []);
+				});
+			});
 		}
 
 		function renderLoads(loads) {
@@ -5451,8 +5472,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 	async function openShippingForm(shippingsId) {
 		scrollToTopIfNeeded();
 	
-		const productOptions = document.getElementById('shipping-options');
-		const popupContent = productOptions.querySelector('.formular-frame');
+		const shippingOptions = document.getElementById('shipping-options');
+		const popupContent = shippingOptions.querySelector('.formular-frame');
 		const shippingNo = document.getElementById('shipping-no');
 	
 		if (!shippingsId) return;
@@ -5461,7 +5482,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const res = await fetch(`api/get_shippings.php`);
 			const data = await res.json();
 
-			if (productOptions && popupContent) {
+			if (shippingOptions && popupContent) {
 				resetPopupView(['shipping-menu-buttons'], [
 					'add-load-modal',
 					'edit-shipping-modal'
@@ -5487,11 +5508,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}
 				
 
-				productOptions.style.display = 'block';
-				productOptions.style.opacity = '0';
-				productOptions.style.transition = 'opacity 0.5s ease';
+				shippingOptions.style.display = 'block';
+				shippingOptions.style.opacity = '0';
+				shippingOptions.style.transition = 'opacity 0.5s ease';
 				setTimeout(() => {
-					productOptions.style.opacity = '1';
+					shippingOptions.style.opacity = '1';
 				}, 10);
 
 				popupContent.style.opacity = '0';
@@ -5564,6 +5585,183 @@ document.addEventListener("DOMContentLoaded", async function () {
 						deleteShippingBtn.setAttribute('data-shipping-id', shippingsId);
 						
 						if (!shippingsId) {
+							alert("Shipping ID not found.");
+							return;
+						}
+
+						showConfirmModal("Delete Shipping", "Are you sure you want to delete this Shipping?", async () => {
+							const frame = document.querySelector('.formular-frame');
+							if (frame) frame.style.display = 'none';
+
+							const formData = new FormData();
+							formData.append("shippings_id", shippingsId);
+				
+							try {
+								const response = await fetch('api/delete_shipping.php', {
+									method: 'POST',
+									body: formData
+								});
+				
+								const data = await response.json();
+				
+								let banner = document.getElementById('status-message');
+								let statusText = document.getElementById('status-text');
+								let statusImage = document.getElementById('status-image');
+				
+								statusText.innerText = data.message;
+								statusImage.src = data.img_gif;
+								banner.style.display = 'block';
+								banner.style.opacity = '1';
+				
+								if (data.success) {
+									setTimeout(() => {
+										banner.style.opacity = '0';
+										setTimeout(() => {
+											window.location.href = data.redirect_url || window.location.href;
+										}, 1000);
+									}, 3000);
+								}
+							} catch (error) {
+								console.error("Error deleting shipping:", error);
+								alert("Error deleting shipping. Check console.");
+							}
+						});
+					};
+				}
+			}
+		} catch (error) {
+			console.error("Error loading shipping info:", error);
+		}
+	}
+
+	async function openLoadForm(loadId) {
+		scrollToTopIfNeeded();
+	
+		const loadOptions = document.getElementById('load-options');
+		const popupContent = loadOptions.querySelector('.formular-frame');
+		const loadNo = document.getElementById('load-no');
+	
+		if (!loadId) return;
+
+		try {
+			const res = await fetch(`api/get_shippings.php`);
+			const data = await res.json();
+
+			if (!data?.success || !Array.isArray(data.data)) {
+				throw new Error("No shippings found.");
+			}
+
+			let shipping = null;
+			let foundLoad = null;
+
+			for (const item of data.data) {
+				const match = item.loads.find(ld => String(ld.load_id) === String(loadId));
+				if (match) {
+					shipping = item;
+					foundLoad = match;
+					break;
+				}
+			}
+
+			if (!shipping || !foundLoad) {
+				console.warn("No shipping found for load ID:", loadId);
+				return;
+			}
+
+			// console.log("Found Shipping:", shipping);
+			console.log("Found Load:", foundLoad);
+
+			if (loadOptions && popupContent) {
+				resetPopupView(['load-menu-buttons'], [
+					'edit-load-modal',
+					// 'edit-shipping-modal'
+				]);
+
+				const editLoadBtn = document.getElementById('editLoadBtn');
+				const addLoadBtn = document.getElementById('addLoadBtn');
+				const deleteShippingBtn = document.getElementById('deleteShippingBtn');
+
+				if (loadNo) {
+					loadNo.textContent = 'Load No: ' + foundLoad.load_no || 'Unnamed load';
+				}
+				
+				loadOptions.style.display = 'block';
+				loadOptions.style.opacity = '0';
+				loadOptions.style.transition = 'opacity 0.5s ease';
+				setTimeout(() => {
+					loadOptions.style.opacity = '1';
+				}, 10);
+
+				popupContent.style.opacity = '0';
+				popupContent.style.transform = 'scale(0.7)';
+				popupContent.classList.remove('animate-elastic');
+				setTimeout(() => {
+					popupContent.style.transform = 'scale(1)';
+					popupContent.style.opacity = '1';
+				}, 50);
+
+				// Botón: Receive as initial
+				if (editLoadBtn) {
+					editLoadBtn.setAttribute('data-load-id', loadId);
+					editLoadBtn.onclick = () => {
+						const menuDiv = document.getElementById('load-menu-buttons');
+						const editDiv = document.getElementById('edit-load-modal');
+
+						if (editDiv) {
+							editDiv.style.display = 'none';
+						}
+
+						const shippingsId = editLoadBtn.getAttribute('data-load-id');
+						if (!shippingsId) return;
+
+						// openEditShippingForm(shippingsId); // AQUI
+			
+						animateHeightChange(popupContent, editDiv, () => {
+							fadeOutAndHide(menuDiv, () => {
+								showWithFadeIn(editDiv);
+							});
+						});
+					};
+				}
+				
+				// Botón: Add load to shipping
+				if (addLoadBtn) {
+					addLoadBtn.setAttribute('data-shipping-id', loadId);
+					addLoadBtn.onclick = () => {
+						const menuDiv = document.getElementById('shipping-menu-buttons');
+						const addDiv = document.getElementById('add-load-modal');
+
+						if (addDiv) {
+							addDiv.style.display = 'none';
+						}
+
+						const shippingsId = addLoadBtn.getAttribute('data-shipping-id');
+						if (!shippingsId) return;
+
+						const formFrame = document.getElementById('formular-frame');
+						if (formFrame) {
+							formFrame.classList.add('expanded');
+						}
+
+						openAddLoadForm(shippingsId);
+
+						populateCurrencies('shipping_from_currency');
+						populateCurrencies('shipping_to_currency', 'USD');
+			
+						animateHeightChange(popupContent, addDiv, () => {
+							fadeOutAndHide(menuDiv, () => {
+								showWithFadeIn(addDiv);
+							});
+						});
+					}
+				}
+
+				// Botón: Delete product
+				if (deleteShippingBtn) {
+					deleteShippingBtn.onclick = () => {
+						deleteShippingBtn.setAttribute('data-shipping-id', loadId);
+						
+						if (!loadId) {
 							alert("Shipping ID not found.");
 							return;
 						}
@@ -6093,6 +6291,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 		['edit-shipping-modal', 'add-load-modal'], 
 		'shipping-menu-buttons', 
 		'shipping-options'
+	);
+
+	setupBackToMenuButton(
+		'.back-to-load-menu-btn', 
+		['edit-load-modal', 'add-load-modal'], 
+		'load-menu-buttons', 
+		'load-options'
 	);
 	//############################################################# END SHIPPING ##################################################################
 

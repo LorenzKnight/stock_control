@@ -1,36 +1,26 @@
-<div class="bg-popup" id="shipping-options">
+<div class="bg-popup" id="load-options">
 	<div id="formular-frame" class="formular-frame">
-		<div id="shipping-menu-buttons">
+		<div id="load-menu-buttons">
 			<table width="80%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td style="font-size: 12px;" colspan="6" align="center" valign="middle">
-						<h2>Shipping Options</h2>
-						<p id="shipping-no"></p>
+						<h2>Load Options</h2>
+						<p id="load-no"></p>
 					</td>      
 				</tr>
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="button-style-agree" id="editShippingBtn">Edit Shipping</button>
+						<button type="button" class="button-style-agree" id="editLoadBtn">Edit Load</button>
 					</td>
 				</tr>
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="button-style-agree" id="addLoadBtn">Add Load</button>
+						<button type="button" class="button-style-agree" id="">Print Products Labels</button>
 					</td>
 				</tr>
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="button-style-agree" id="">Generate Delivery Note</button>
-					</td>
-				</tr>
-				<tr valign="baseline">
-					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="button-style-agree" id="">Print Label</button>
-					</td>
-				</tr>
-				<tr valign="baseline">
-					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="cancel-btn" id="deleteShippingBtn">Delete Shipping</button>
+						<button type="button" class="cancel-btn" id="deleteShippingBtn">Delete Load</button>
 					</td>
 				</tr>
 				<tr valign="baseline">
@@ -40,8 +30,8 @@
 				</tr>
 			</table>
 		</div>
-		<div id="edit-shipping-modal" style="display: none;">
-			<div class="back-to-shipping-menu-btn">
+		<div id="edit-load-modal" style="display: none;">
+			<div class="back-to-load-menu-btn">
 				<img src="images/sys-img/backward.png" alt="back">
 			</div>
 			<form method="post" name="formEditShipping" id="formEditShipping">
@@ -107,7 +97,7 @@
 			</form>
 		</div>
 		<div id="add-load-modal" style="display: none;">
-			<div class="back-to-shipping-menu-btn">
+			<div class="back-to-load-menu-btn">
 				<img src="images/sys-img/backward.png" alt="back">
 			</div>
 			<form method="post" name="formAddLoad" id="formAddLoad">
