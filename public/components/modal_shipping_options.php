@@ -55,13 +55,13 @@
 						<td colspan="3" align="center" valign="middle">
 							<div class="product-type-selection">
 								<input type="radio" id="edit_unit_type_1" name="edit_shipping_method" value="1">
-								<label for="edit_shipping-method-1">Ground Shipping</label>
+								<label for="edit_unit_type_1">Ground Shipping</label>
 							</div>
 						</td>
 						<td colspan="3" align="center" valign="middle">
 							<div class="product-type-selection">
 								<input type="radio" id="edit_unit_type_2" name="edit_shipping_method" value="2">
-								<label for="edit_shipping-method-2">Air Shipping</label>
+								<label for="edit_unit_type_2">Air Shipping</label>
 							</div>
 						</td>
 					</tr>

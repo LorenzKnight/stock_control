@@ -11,13 +11,13 @@
 					<td colspan="3" align="center" valign="middle">
 						<div class="product-type-selection">
 							<input type="radio" id="unit_type_1" name="shipping_method" value="1" checked>
-							<label for="shipping-method-1">Ground Shipping</label>
+							<label for="unit_type_1">Ground Shipping</label>
 						</div>
 					</td>
 					<td colspan="3" align="center" valign="middle">
 						<div class="product-type-selection">
 							<input type="radio" id="unit_type_2" name="shipping_method" value="2">
-							<label for="shipping-method-2">Air Shipping</label>
+							<label for="unit_type_2">Air Shipping</label>
 						</div>
 					</td>
 				</tr>

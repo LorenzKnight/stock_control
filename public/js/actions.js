@@ -2685,7 +2685,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 					'delete-product-modal'
 				]);
 
-				const assignBtn = document.getElementById('assignSaleBtn');
 				const requestProductBtn = document.getElementById('requestProductBtn');
 				const editBtn = document.getElementById('editProductBtn');
 				const deleteBtn = document.getElementById('deleteProductBtn');
@@ -2731,20 +2730,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 					popupContent.style.opacity = '1';
 				}, 50);
 				
-		
-				// Botón: Assign to sale
-				if (assignBtn) {
-					assignBtn.onclick = () => {
-						// const menuDiv = document.getElementById('product-menu-buttons');
-						// const assignDiv = document.getElementById('assign-sale-section');
-				
-						// animateHeightChange(popupContent, assignDiv, () => {
-						// 	fadeOutAndHide(menuDiv, () => {
-						// 		showWithFadeIn(assignDiv);
-						// 	});
-						// });
-					};
-				}
 
 				// Botón: Request Product
 				if (requestProductBtn) {
@@ -2818,7 +2803,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				// Botón: Delete product
 				if (deleteBtn) {
 					deleteBtn.onclick = () => {
-
 						deleteBtn.setAttribute('data-product-id', productId);
 						
 						if (!productId) {
@@ -4209,19 +4193,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 					popupContent.style.opacity = '1';
 				}, 50);
 	
-				// const assignBtn = document.getElementById('assignCustomerSaleBtn');
-				// if (assignBtn) {
-				// 	assignBtn.onclick = () => {
-				// 		const menuDiv = document.getElementById('product-menu-buttons');
-				// 		const assignDiv = document.getElementById('assign-sale-section');
-	
-				// 		animateHeightChange(popupContent, assignDiv, () => {
-				// 			fadeOutAndHide(menuDiv, () => {
-				// 				showWithFadeIn(assignDiv);
-				// 			});
-				// 		});
-				// 	};
-				// }
 
 				// Botón: Edit Sale
 				const editBtn = document.getElementById('editSaleBtn');
@@ -5590,56 +5561,55 @@ document.addEventListener("DOMContentLoaded", async function () {
 				// Botón: Delete product
 				if (deleteShippingBtn) {
 					deleteShippingBtn.onclick = () => {
-
-				// 		deleteShippingBtn.setAttribute('data-product-id', shippingsId);
+						deleteShippingBtn.setAttribute('data-shipping-id', shippingsId);
 						
-				// 		if (!shippingsId) {
-				// 			alert("Product ID not found.");
-				// 			return;
-				// 		}
+						if (!shippingsId) {
+							alert("Shipping ID not found.");
+							return;
+						}
 
-				// 		showConfirmModal("Delete Product", "Are you sure you want to delete this product?", async () => {
-				// 			const frame = document.querySelector('.formular-frame');
-				// 			if (frame) frame.style.display = 'none';
+						showConfirmModal("Delete Shipping", "Are you sure you want to delete this Shipping?", async () => {
+							const frame = document.querySelector('.formular-frame');
+							if (frame) frame.style.display = 'none';
 
-				// 			const formData = new FormData();
-				// 			formData.append("product_id", shippingsId);
+							const formData = new FormData();
+							formData.append("shippings_id", shippingsId);
 				
-				// 			try {
-				// 				const response = await fetch('api/delete_product.php', {
-				// 					method: 'POST',
-				// 					body: formData
-				// 				});
+							try {
+								const response = await fetch('api/delete_shipping.php', {
+									method: 'POST',
+									body: formData
+								});
 				
-				// 				const data = await response.json();
+								const data = await response.json();
 				
-				// 				let banner = document.getElementById('status-message');
-				// 				let statusText = document.getElementById('status-text');
-				// 				let statusImage = document.getElementById('status-image');
+								let banner = document.getElementById('status-message');
+								let statusText = document.getElementById('status-text');
+								let statusImage = document.getElementById('status-image');
 				
-				// 				statusText.innerText = data.message;
-				// 				statusImage.src = data.img_gif;
-				// 				banner.style.display = 'block';
-				// 				banner.style.opacity = '1';
+								statusText.innerText = data.message;
+								statusImage.src = data.img_gif;
+								banner.style.display = 'block';
+								banner.style.opacity = '1';
 				
-				// 				if (data.success) {
-				// 					setTimeout(() => {
-				// 						banner.style.opacity = '0';
-				// 						setTimeout(() => {
-				// 							window.location.href = data.redirect_url || window.location.href;
-				// 						}, 1000);
-				// 					}, 3000);
-				// 				}
-				// 			} catch (error) {
-				// 				console.error("Error deleting product:", error);
-				// 				alert("Error deleting product. Check console.");
-				// 			}
-				// 		});
+								if (data.success) {
+									setTimeout(() => {
+										banner.style.opacity = '0';
+										setTimeout(() => {
+											window.location.href = data.redirect_url || window.location.href;
+										}, 1000);
+									}, 3000);
+								}
+							} catch (error) {
+								console.error("Error deleting shipping:", error);
+								alert("Error deleting shipping. Check console.");
+							}
+						});
 					};
 				}
 			}
 		} catch (error) {
-			console.error("Error loading product info:", error);
+			console.error("Error loading shipping info:", error);
 		}
 	}
 

@@ -53,7 +53,7 @@ try {
 
 	log_activity(
 		$userId,
-		"delete_product",
+		"delete product",
 		"User deleted a product (ID: {$productId}).",
 		"products",
 		$productId
@@ -72,4 +72,3 @@ try {
 
 echo json_encode($response);
 exit;
-?>

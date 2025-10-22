@@ -65,7 +65,7 @@ try {
 
     log_activity(
         $_SESSION["sc_UserId"] ?? null,
-        "delete_sale",
+        "delete sale",
         "Sale ID $saleId and associated products deleted.",
         "sales",
         $saleId
@@ -83,4 +83,3 @@ try {
 
 echo json_encode($response);
 exit;
-?>
