@@ -1,5 +1,5 @@
 <div class="bg-popup" id="load-options">
-	<div id="formular-frame" class="formular-frame">
+	<div id="formular-frame-2" class="formular-frame">
 		<div id="load-menu-buttons">
 			<table width="80%" align="center" cellspacing="0">
 				<tr valign="baseline">
@@ -20,7 +20,7 @@
 				</tr>
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="cancel-btn" id="deleteShippingBtn">Delete Load</button>
+						<button type="button" class="cancel-btn" id="deleteLoadBtn">Delete Load</button>
 					</td>
 				</tr>
 				<tr valign="baseline">
@@ -34,77 +34,11 @@
 			<div class="back-to-load-menu-btn">
 				<img src="images/sys-img/backward.png" alt="back">
 			</div>
-			<form method="post" name="formEditShipping" id="formEditShipping">
-				<table width="90%" align="center" cellspacing="0">
-					<tr valign="baseline">
-						<td colspan="6" align="center" valign="middle">
-							<h2>Edit Shipping</h2>
-						</td>      
-					</tr>
-					<tr valign="baseline" class="form_height">
-						<td colspan="3" align="center" valign="middle">
-							<div class="product-type-selection">
-								<input type="radio" id="edit_unit_type_1" name="edit_shipping_method" value="1">
-								<label for="edit_unit_type_1">Ground Shipping</label>
-							</div>
-						</td>
-						<td colspan="3" align="center" valign="middle">
-							<div class="product-type-selection">
-								<input type="radio" id="edit_unit_type_2" name="edit_shipping_method" value="2">
-								<label for="edit_unit_type_2">Air Shipping</label>
-							</div>
-						</td>
-					</tr>
-					<tr valign="baseline" class="form_height">
-						<td colspan="6" align="center" valign="middle">
-							<label for="edit_destination">Destination:</label>
-							<input class="form-input-style" type="text" name="edit_destination" id="edit_destination" placeholder="Shipping Destination..." title="Shipping Destination"/>
-						</td>
-					</tr>
-					<tr valign="baseline" class="form_height">
-						<td colspan="6" align="center" valign="middle">
-							<label for="edit_delivery_date">Estimate Arrival Date:</label>
-							<input class="form-input-style" type="date" name="edit_delivery_date" id="edit_delivery_date" placeholder="Enter a Estimate date..."/>
-						</td>
-					</tr>
-					<tr valign="baseline" class="form_height">
-						<td colspan="6" align="center" valign="middle">
-							<label for="edit_description">Description:</label>
-							<textarea class="form-input-style" id="edit_description" name="edit_description" rows="5" cols="35">
-							</textarea>
-						</td>
-					</tr>
-					<tr valign="baseline" class="form_height">
-						<td colspan="3" style="border-block: 1px solid var(--clr-border); padding: 5px 10px;" align="left" valign="middle">
-							<span style="display: block;">Status</span>
-						</td>
-						<td colspan="3" style="border-block: 1px solid var(--clr-border); padding: 5px 10px;" align="right" valign="middle">
-							<label class="switch">
-								<input type="checkbox" name="edit_status" id="edit_status" value="1" checked>
-								<span class="slider round"></span>
-							</label>
-						</td>
-					</tr>
-					<tr valign="baseline" class="form_height">
-						<td colspan="3" align="center" valign="middle" style="padding-top: 10px;">
-							<button type="button" class="neutral-btn">Cancel</button>
-						</td>
-						<td colspan="3" align="center" valign="middle" style="padding-top: 10px;">
-							<input type="submit" class="button-style-agree" value="Update" />
-						</td>
-					</tr>
-				</table>
-			</form>
-		</div>
-		<div id="add-load-modal" style="display: none;">
-			<div class="back-to-load-menu-btn">
-				<img src="images/sys-img/backward.png" alt="back">
-			</div>
-			<form method="post" name="formAddLoad" id="formAddLoad">
+			<form method="post" name="formEditLoad" id="formEditLoad">
 				<table width="80%" align="center" cellspacing="0">
 					<tr valign="baseline">
 						<td style="font-size: 12px;" colspan="6" align="center" valign="middle">
-							<h2>Add Load</h2>
+							<h2>Edit Load</h2>
 						</td>      
 					</tr>
 					<tr valign="baseline">

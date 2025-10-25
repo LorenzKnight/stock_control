@@ -5256,12 +5256,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					const loadData = shipping.loads[index];
 					if (!loadData) return;
 
-					const loadId = loadData.load_id;
-
-					// console.log("Load menu clicked for Load ID:", loadId);
-					// console.log("Full load data:", loadData);
-
-					openLoadForm(loadId);
+					openLoadForm(loadData.load_id);
 
 					handlePopupClose("load-options", ".formular-frame", []);
 				});
@@ -5678,8 +5673,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				]);
 
 				const editLoadBtn = document.getElementById('editLoadBtn');
-				const addLoadBtn = document.getElementById('addLoadBtn');
-				const deleteShippingBtn = document.getElementById('deleteShippingBtn');
+				const deleteLoadBtn = document.getElementById('deleteLoadBtn');
 
 				if (loadNo) {
 					loadNo.textContent = 'Load No: ' + foundLoad.load_no || 'Unnamed load';
@@ -5700,7 +5694,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					popupContent.style.opacity = '1';
 				}, 50);
 
-				// Botón: Receive as initial
+				// Botón: Edit Load
 				if (editLoadBtn) {
 					editLoadBtn.setAttribute('data-load-id', loadId);
 					editLoadBtn.onclick = () => {
@@ -5714,6 +5708,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 						const shippingsId = editLoadBtn.getAttribute('data-load-id');
 						if (!shippingsId) return;
 
+						const formFrame2 = document.getElementById('formular-frame-2');
+						if (formFrame2) {
+							formFrame2.classList.add('expanded');
+						}
+
 						// openEditShippingForm(shippingsId); // AQUI
 			
 						animateHeightChange(popupContent, editDiv, () => {
@@ -5723,43 +5722,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 						});
 					};
 				}
-				
-				// Botón: Add load to shipping
-				if (addLoadBtn) {
-					addLoadBtn.setAttribute('data-shipping-id', loadId);
-					addLoadBtn.onclick = () => {
-						const menuDiv = document.getElementById('shipping-menu-buttons');
-						const addDiv = document.getElementById('add-load-modal');
 
-						if (addDiv) {
-							addDiv.style.display = 'none';
-						}
-
-						const shippingsId = addLoadBtn.getAttribute('data-shipping-id');
-						if (!shippingsId) return;
-
-						const formFrame = document.getElementById('formular-frame');
-						if (formFrame) {
-							formFrame.classList.add('expanded');
-						}
-
-						openAddLoadForm(shippingsId);
-
-						populateCurrencies('shipping_from_currency');
-						populateCurrencies('shipping_to_currency', 'USD');
-			
-						animateHeightChange(popupContent, addDiv, () => {
-							fadeOutAndHide(menuDiv, () => {
-								showWithFadeIn(addDiv);
-							});
-						});
-					}
-				}
-
-				// Botón: Delete product
-				if (deleteShippingBtn) {
-					deleteShippingBtn.onclick = () => {
-						deleteShippingBtn.setAttribute('data-shipping-id', loadId);
+				// Botón: Delete Load
+				if (deleteLoadBtn) {
+					deleteLoadBtn.onclick = () => {
+						deleteLoadBtn.setAttribute('data-shipping-id', loadId);
 						
 						if (!loadId) {
 							alert("Shipping ID not found.");
@@ -6295,7 +6262,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	setupBackToMenuButton(
 		'.back-to-load-menu-btn', 
-		['edit-load-modal', 'add-load-modal'], 
+		['edit-load-modal'], 
 		'load-menu-buttons', 
 		'load-options'
 	);
@@ -7641,6 +7608,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 				const formFrame = document.getElementById('formular-frame');
 				if (formFrame) {
 					formFrame.classList.remove('expanded');
+				}
+
+				const formFrame2 = document.getElementById('formular-frame-2');
+				if (formFrame2) {
+					formFrame2.classList.remove('expanded');
 				}
 			});
 		});

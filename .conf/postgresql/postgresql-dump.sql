@@ -486,3 +486,12 @@ CREATE TABLE IF NOT EXISTS access_rights (
 	can_edit INTEGER DEFAULT 0,
 	can_delete INTEGER DEFAULT 0
 );
+
+CREATE TABLE IF NOT EXISTS service_rights (
+	right_id SERIAL PRIMARY KEY,
+	user_id INTEGER NULL,
+	service_name VARCHAR(50) NULL,
+	can_access INTEGER DEFAULT 0
+	create_by INTEGER NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

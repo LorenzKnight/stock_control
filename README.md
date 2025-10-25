@@ -94,6 +94,9 @@ pm2 start ws-server.js --name allstock-ws
 ## test enviroment for "webSocket"
 http://localhost:8000/public/test-environment/frontend-test.html
 
+## "Token"
+composer require firebase/php-jwt
+
 ## Main page - localhost
 http://localhost:8889/
 
