@@ -1,31 +1,10 @@
 <?php
-// if (!defined('SKIP_SESSION') && session_status() === PHP_SESSION_NONE) {
-//     session_start();
-// }
-
-// $currentUrl = $_SERVER['REQUEST_URI'];
-// $scriptName = $_SERVER['SCRIPT_NAME'];
-
-// // Lista de páginas que NO deben redirigir al usuario si no está logeado (paginas pernmitidas)
-// $allowedPages = ["/", "/login.php", "/api/login.php", "/api/signup.php", "/api/success.php", "/api/cancel.php"];
-
-// if (
-//     !defined('IS_STRIPE_WEBHOOK') &&
-//     !isset($_SESSION['sc_UserId']) &&
-//     !in_array($currentUrl, $allowedPages) &&
-//     !in_array($scriptName, $allowedPages)
-// ) {
-//     header("Location: /");
-//     exit();
-// } else {
-//     // echo "<h3 style='color: red; text-align: center;'>Obs. The security module is active!</h3>";
-//     // echo $_SESSION['sc_UserId'];
-// }
-
-
-
 if (!defined('SKIP_SESSION') && session_status() === PHP_SESSION_NONE) {
     session_start();
+}
+
+if (preg_match('#^/api/#i', $_SERVER['REQUEST_URI'] ?? '')) {
+    return;
 }
 
 // No filtrar los webhooks de Stripe
@@ -56,10 +35,8 @@ $allowed = [
     // '/forgot-password', '/forgot-password.php',
 ];
 
-// Si NO está logueado y la ruta no está permitida, redirige
 $loggedIn = !empty($_SESSION['sc_UserId']);
 if (!$loggedIn && !in_array($path, $allowed, true)) {
     header('Location: /');
     exit;
 }
-?>

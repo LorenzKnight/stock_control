@@ -63,6 +63,24 @@ try {
 
     $jwt = JWT::encode($payload, JWT_SECRET_KEY, 'HS256');
 
+    $expiresAtISO = date('Y-m-d H:i:s', $expiresAt);
+
+    $insertResponse = insert_into("user_tokens", [
+        "user_id"   => $user["user_id"],
+        "token"     => $jwt,
+        "status"    => "active",
+        "created_at"=> date('Y-m-d H:i:s'),
+        "expires_at"=> $expiresAtISO
+    ]);
+
+    $insertData = json_decode($insertResponse, true);
+
+    // Validar resultado
+    if (empty($insertData["success"]) || !$insertData["success"]) {
+        $errorMsg = $insertData["message"] ?? "Error saving token to database.";
+        throw new Exception($errorMsg);
+    }
+
     $_SESSION["sc_UserId"] = $user["user_id"];
     $_SESSION["sc_Mail"] = $user["email"];
     $_SESSION["sc_Nivel"] = $user["rank"];

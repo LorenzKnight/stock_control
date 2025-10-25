@@ -1,16 +1,30 @@
 <?php
-require_once('../logic/stock_be.php');
+$allowed_origins = [
+    "http://localhost:3000",            // entorno local React
+    "https://www.allstockcontrol.com"   // dominio real
+];
 
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+
+if (in_array($origin, $allowed_origins)) {
+    header("Access-Control-Allow-Origin: $origin");
+    header("Access-Control-Allow-Credentials: true");
+} else {
+    // bloquea orígenes no autorizados
+    header("Access-Control-Allow-Origin: https://www.allstockcontrol.com");
+}
+
+header("Access-Control-Allow-Headers: Content-Type, Authorization, Accept");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Content-Type: application/json");
 
-if (empty($_SESSION["sc_UserId"])) {
-    $response = [
-        "success" => false,
-        "message" => "User data not found",
-        "data" => []
-    ];
+// Manejar preflight (OPTIONS)
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
     exit;
 }
+
+require_once('../logic/stock_be.php');
 
 $response = [
     "success" => false,
@@ -20,7 +34,24 @@ $response = [
 
 try {
     $userId = $_SESSION["sc_UserId"] ?? null;
-    if (!$userId) throw new Exception("User session not found.");
+
+    if (!$userId) {
+        $headers = getallheaders();
+        $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? null;
+
+        if ($authHeader && strpos($authHeader, 'Bearer ') === 0) {
+            $token = trim(substr($authHeader, 7));
+
+            // 🔹 Aquí verificas tu token (ajústalo a tu lógica de login.php)
+            // Si tu token guarda el user_id en base64 o JWT, aquí lo validas
+            // Ejemplo simple (ajústalo a tu sistema real):
+            $userId = verifyAuthToken($token); // función que devuelve el user_id o null
+        }
+    }
+
+    if (empty($userId)) {
+        throw new Exception("User not authenticated.");
+    }
 
     $userDataResponse = select_from("users", [
         "user_id",
@@ -83,4 +114,3 @@ try {
 
 echo json_encode($response);
 exit;
-?>

@@ -26,6 +26,15 @@ CREATE TABLE IF NOT EXISTS users (
 -- 	(1, 'John', 'Doe', 'john.doe@gmail.com', null, 'john_doe', 123456, null, 0, '1984-09-03 00:00:00', '2022-10-18 00:00:00', 1, null, 1),
 -- 	(1, 'Lorenzo', 'Knight', 'lorenzo.knight@gmail.com', 763199480, 'john_doe', 123456, null, 0, '1984-09-03 00:00:00', '2022-10-18 00:00:00', 1, null, 1);
 
+CREATE TABLE IF NOT EXISTS user_tokens (
+    token_id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    token TEXT NOT NULL,
+    status VARCHAR(20) DEFAULT 'active',  -- active | revoked | expired
+    created_at TIMESTAMP DEFAULT NOW(),
+    expires_at TIMESTAMP DEFAULT (NOW() + INTERVAL '30 days')  -- duración del token
+);
+
 CREATE TABLE IF NOT EXISTS packages (
 	package_id SERIAL PRIMARY KEY,
 	package_name VARCHAR(255) NULL,

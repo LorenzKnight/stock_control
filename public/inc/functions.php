@@ -1,4 +1,7 @@
 <?php
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+
 function select_from($tableName, array $columns = [], array $whereClause = [], array $options = []) : string
 {
 	global $sql;
@@ -547,6 +550,102 @@ function check_user_permission($userId, $permissionName) {
     $userPermissionId = (int)($userPermResult["data"]["user_permission_id"] ?? 9999);
 
 	return $userPermissionId <= $requestedPermissionId;
+}
+
+function verifyAuthToken($token)
+{
+	global $sql;
+
+	if (!$sql) {
+		$sql = get_pg_connection();
+	}
+
+	if (empty($token)) {
+		return null;
+	}
+
+	try {
+		// ✅ Intentar decodificar el JWT directamente
+		$decoded = JWT::decode($token, new Key(JWT_SECRET_KEY, 'HS256'));
+
+		// Verificar expiración
+		if (!empty($decoded->exp) && $decoded->exp < time()) {
+			invalidateExpiredToken($token);
+			return null;
+		}
+
+		// Si tiene user_id válido, devolvemos directamente
+		if (!empty($decoded->user_id)) {
+			return $decoded->user_id;
+		}
+
+	} catch (Exception $e) {
+		error_log("JWT verification failed: " . $e->getMessage());
+		// No salimos todavía — intentamos verificar con la BD como respaldo
+	}
+
+	// ✅ Fallback: buscar en la base de datos (por si el token fue guardado manualmente)
+	try {
+		$queryResponse = select_from("user_tokens", ["user_id"], [
+			"token" => $token,
+			"status" => "active",
+			"RAW" => "\"expires_at\" > NOW()"
+		], ["fetch_first" => true]);
+
+		$result = json_decode($queryResponse, true);
+
+		if (!empty($result["success"]) && !empty($result["data"]["user_id"])) {
+			return $result["data"]["user_id"];
+		}
+
+		invalidateExpiredToken($token);
+		return null;
+
+	} catch (Exception $e) {
+		error_log("DB token verification failed: " . $e->getMessage());
+		return null;
+	}
+}
+
+function invalidateExpiredToken($token)
+{
+	global $sql;
+
+	if (!$sql) {
+		$sql = get_pg_connection();
+	}
+
+	if (empty($token)) {
+		return json_encode([
+			"success" => false,
+			"message" => "Token is required",
+			"count"   => 0
+		]);
+	}
+
+	try {
+		// Actualizar el estado del token a 'expired' cuando ya haya pasado su fecha de expiración
+		$response = update_table("user_tokens", 
+			[
+				"status" => "expired"
+			],
+			[
+				"token" => $token,
+				"RAW" => "\"expires_at\" <= NOW()" // 🔥 condición extra: vencido
+			],
+			[
+				"echo_query" => false
+			]
+		);
+
+		return $response; // Devuelve el JSON estándar de update_table()
+	} catch (Exception $e) {
+		return json_encode([
+			"success" => false,
+			"message" => "Error invalidating token: " . $e->getMessage(),
+			"count"   => 0
+		]);
+	}
 }
 
 // use PHPMailer\PHPMailer\PHPMailer;
