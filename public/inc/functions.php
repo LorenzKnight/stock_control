@@ -552,7 +552,51 @@ function check_user_permission($userId, $permissionName) {
 	return $userPermissionId <= $requestedPermissionId;
 }
 
-function verifyAuthToken($token)
+function requireAuth() {
+    $authData = getAuthenticatedUserId();
+    if (!$authData) {
+        http_response_code(401);
+        echo json_encode([
+            "success" => false,
+            "message" => "Unauthorized access."
+        ]);
+        exit;
+    }
+
+	if (!is_array($authData)) {
+        $authData = [
+            "user_id" => $authData,
+            "company_id" => null
+        ];
+    }
+
+    return $authData;
+}
+
+function getAuthenticatedUserId() {
+    if (!empty($_SESSION["sc_UserId"])) {
+        return [
+            "user_id" => $_SESSION["sc_UserId"],
+            "company_id" => $_SESSION["sc_CompanyId"] ?? null
+        ];
+    }
+
+    $headers = getallheaders();
+    $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? null;
+
+    if ($authHeader && strpos($authHeader, 'Bearer ') === 0) {
+        $token = trim(substr($authHeader, 7));
+
+		$userData = verifyAuthToken($token, true);
+		if (!empty($userData["user_id"])) {
+			return $userData;
+		}
+    }
+
+    return null;
+}
+
+function verifyAuthToken($token, $returnData = false)
 {
 	global $sql;
 
@@ -574,11 +618,15 @@ function verifyAuthToken($token)
 			return null;
 		}
 
-		// Si tiene user_id válido, devolvemos directamente
-		if (!empty($decoded->user_id)) {
-			return $decoded->user_id;
-		}
+		if ($returnData) {
+            return [
+                "user_id" => $decoded->user_id ?? null,
+                "email" => $decoded->email ?? null,
+                "company_id" => $decoded->company_id ?? null
+            ];
+        }
 
+        return $decoded->user_id ?? null;
 	} catch (Exception $e) {
 		error_log("JWT verification failed: " . $e->getMessage());
 		// No salimos todavía — intentamos verificar con la BD como respaldo
@@ -595,12 +643,13 @@ function verifyAuthToken($token)
 		$result = json_decode($queryResponse, true);
 
 		if (!empty($result["success"]) && !empty($result["data"]["user_id"])) {
-			return $result["data"]["user_id"];
+			return $returnData
+                ? ["user_id" => $result["data"]["user_id"], "company_id" => null]
+                : $result["data"]["user_id"];
 		}
 
 		invalidateExpiredToken($token);
 		return null;
-
 	} catch (Exception $e) {
 		error_log("DB token verification failed: " . $e->getMessage());
 		return null;

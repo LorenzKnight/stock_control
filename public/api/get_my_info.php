@@ -9,25 +9,8 @@ $response = [
 ];
 
 try {
-    $userId = $_SESSION["sc_UserId"] ?? null;
-
-    if (!$userId) {
-        $headers = getallheaders();
-        $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? null;
-
-        if ($authHeader && strpos($authHeader, 'Bearer ') === 0) {
-            $token = trim(substr($authHeader, 7));
-
-            // 🔹 Aquí verificas tu token (ajústalo a tu lógica de login.php)
-            // Si tu token guarda el user_id en base64 o JWT, aquí lo validas
-            // Ejemplo simple (ajústalo a tu sistema real):
-            $userId = verifyAuthToken($token); // función que devuelve el user_id o null
-        }
-    }
-
-    if (empty($userId)) {
-        throw new Exception("User not authenticated.");
-    }
+    $authUser = requireAuth();
+    $userId = $authUser["user_id"];
 
     $userDataResponse = select_from("users", [
         "user_id",

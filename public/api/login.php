@@ -35,7 +35,7 @@ try {
     $whereClause = ["email" => $email];
     $options = ["fetch_first" => true];
 
-    $userResponse = select_from("users", ["user_id", "email", "rank", "password"], $whereClause, $options);
+    $userResponse = select_from("users", ["user_id", "email", "rank", "password", "company_id", "status"], $whereClause, $options);
     $userData = json_decode($userResponse, true);
 
     if (!$userData["success"] || empty($userData["data"])) {
@@ -53,12 +53,13 @@ try {
     $expiresAt = $issuedAt + JWT_EXPIRATION; // por defecto: 24h
 
     $payload = [
-        "iss" => JWT_ISSUER,
-        "iat" => $issuedAt,
-        "exp" => $expiresAt,
-        "user_id" => $user["user_id"],
-        "email" => $user["email"],
-        "rank" => $user["rank"]
+        "iss"		 => JWT_ISSUER,
+        "iat"		 => $issuedAt,
+        "exp"		 => $expiresAt,
+        "user_id"	 => $user["user_id"],
+        "email"		 => $user["email"],
+        "rank"		 => $user["rank"],
+		"company_id" => $user["company_id"] ?? null
     ];
 
     $jwt = JWT::encode($payload, JWT_SECRET_KEY, 'HS256');
@@ -96,6 +97,7 @@ try {
     $_SESSION["sc_UserId"] = $user["user_id"];
     $_SESSION["sc_Mail"] = $user["email"];
     $_SESSION["sc_Nivel"] = $user["rank"];
+	$_SESSION["sc_CompanyId"] = $user["company_id"] ?? null;
 
     $isMobile = isset($_POST["app_login"]) && $_POST["app_login"] === "true";
 

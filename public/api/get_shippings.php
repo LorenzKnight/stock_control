@@ -1,5 +1,7 @@
 <?php
+require_once ('../inc/cors.php');
 require_once('../logic/stock_be.php');
+
 header("Content-Type: application/json");
 
 $response = [
@@ -9,12 +11,18 @@ $response = [
 ];
 
 try {
-	$userId = $_SESSION["sc_UserId"] ?? null;
-	if (!$userId) throw new Exception("User session not found.");
+	$authUser = requireAuth();
+	$userId = $authUser["user_id"] ?? null;
+	$companyId = $authUser["company_id"] ?? null;
 
-	// obtener company_id del usuario
-	$userInfo = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
-	$companyId = json_decode($userInfo, true)["data"]["company_id"] ?? null;
+	// 🔹 Permitir acceso por parámetro "company" (modo lectura pública)
+	if (empty($companyId)) {
+		$companyId = $_GET["company"] ?? null;
+	}
+
+	if (empty($companyId)) {
+		throw new Exception("Company ID is required or user not authenticated.");
+	}
 
 	$search = $_GET["search"] ?? '';
 	$filterBySearch = !empty($search);
@@ -187,7 +195,8 @@ try {
 		if (
 			!$filterBySearch ||
 			strpos(strtolower((string)$shipping["shipping_no"]), $searchLower) !== false ||
-			strpos($customerFullName, $searchLower) !== false
+			strpos($customerFullName, $searchLower) !== false ||
+			strtolower((string)$shipping["shippings_id"]) === $searchLower
 		) {
 			$dataList[] = [
 				"shippings_id"   	=> $shipping["shippings_id"],
