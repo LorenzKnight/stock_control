@@ -477,6 +477,17 @@ CREATE TABLE IF NOT EXISTS loaded_products (
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE shipping_tracking ( -- PENDIENTE
+    id SERIAL PRIMARY KEY,
+    shipping_id INT NOT NULL REFERENCES shippings(id),
+    checkpoint_name VARCHAR(255),
+    status VARCHAR(100),
+    scanned_by VARCHAR(255),
+    latitude DECIMAL(10,6),
+    longitude DECIMAL(10,6),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 
 CREATE TABLE IF NOT EXISTS settings (
 	settings_id SERIAL PRIMARY KEY,

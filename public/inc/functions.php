@@ -648,6 +648,45 @@ function invalidateExpiredToken($token)
 	}
 }
 
+
+// 🌍 Obtener IP
+function getUserIP() {
+	if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+		return $_SERVER['HTTP_CLIENT_IP'];
+	} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+		return explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0];
+	} else {
+		return $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+	}
+}
+
+// 📱 Detectar dispositivo (muy simple, puedes mejorarlo después con una librería)
+function getDeviceType() {
+	$agent = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
+	if (strpos($agent, 'mobile') !== false) return 'Mobile';
+	if (strpos($agent, 'tablet') !== false) return 'Tablet';
+	if (strpos($agent, 'windows') !== false) return 'Windows PC';
+	if (strpos($agent, 'mac') !== false) return 'Mac';
+	if (strpos($agent, 'linux') !== false) return 'Linux';
+	return 'Unknown';
+}
+
+// 📍 Obtener ubicación aproximada (por IP)
+function getLocationByIP($ip) {
+	try {
+		$data = @file_get_contents("http://ip-api.com/json/{$ip}?fields=country,regionName,city");
+		if ($data) {
+			$json = json_decode($data, true);
+			if (!empty($json['country'])) {
+				return "{$json['city']}, {$json['regionName']}, {$json['country']}";
+			}
+		}
+	} catch (Exception $e) {
+		// No hacemos nada si falla
+	}
+	return 'Unknown';
+}
+
 // use PHPMailer\PHPMailer\PHPMailer;
 // use PHPMailer\PHPMailer\Exception;
 
