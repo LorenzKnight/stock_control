@@ -1,4 +1,7 @@
-<?php require_once('logic/stock_be.php'); ?>
+<?php 
+require_once('logic/stock_be.php'); 
+enforce_service_right("shipping_access");
+?>
 
 <!DOCTYPE html>
 <html class="no-js" lang="sw">

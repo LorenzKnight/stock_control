@@ -736,265 +736,41 @@ function getLocationByIP($ip) {
 	return 'Unknown';
 }
 
-// use PHPMailer\PHPMailer\PHPMailer;
-// use PHPMailer\PHPMailer\Exception;
+function enforce_service_right($serviceName) {
+    $authUser = requireAuth(); // obtiene el usuario logueado
+    $userId = $authUser["user_id"] ?? null;
 
-// /**
-//  * Lee la config SMTP desde variables de entorno (o defaults).
-//  */
-// function get_smtp_config(): array {
-//     return [
-//         'host'       => getenv('SMTP_HOST') ?: 'smtp.example.com',
-//         'port'       => (int)(getenv('SMTP_PORT') ?: 587),
-//         'username'   => getenv('SMTP_USER') ?: '',
-//         'password'   => getenv('SMTP_PASS') ?: '',
-//         'secure'     => getenv('SMTP_SECURE') ?: 'tls', // 'tls' | 'ssl' | ''
-//         'from_email' => getenv('MAIL_FROM') ?: 'no-reply@allstockcontrol.com',
-//         'from_name'  => getenv('MAIL_FROM_NAME') ?: 'AllStockControl',
-//         'reply_to'   => getenv('MAIL_REPLY_TO') ?: '', // opcional
-//     ];
-// }
+    if (empty($userId)) {
+        http_response_code(401);
+        echo json_encode(["success" => false, "message" => "Not authenticated"]);
+        exit;
+    }
 
-// /**
-//  * Convierte destinatarios flexibles a una lista de [email, name].
-//  * Acepta: user_id (int/string numérica), email (string) o array mixto.
-//  */
-// function resolve_recipients($to): array {
-//     $out = [];
+    $rightsResponse = select_from(
+        "service_rights",
+        ["can_access"],
+        [
+            "user_id" => $userId,
+            "service_name" => $serviceName
+        ],
+        ["fetch_first" => true]
+    );
 
-//     $push = function($email, $name = '') use (&$out) {
-//         $email = trim((string)$email);
-//         if ($email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
-//             $out[] = [$email, trim((string)$name)];
-//         }
-//     };
+    $data = json_decode($rightsResponse, true);
 
-//     $resolveUserId = function($userId) use ($push) {
-//         $uid = (int)$userId;
-//         if ($uid <= 0) return;
-//         $res = json_decode(select_from("users", ["email","full_name"], ["user_id" => $uid], ["fetch_first" => true]), true);
-//         if ($res && !empty($res["success"]) && !empty($res["data"]["email"])) {
-//             $push($res["data"]["email"], $res["data"]["full_name"] ?? '');
-//         }
-//     };
+    // Verifica acceso
+    if (
+        empty($data["success"]) ||
+        empty($data["data"]) ||
+        empty($data["data"]["can_access"]) ||
+        $data["data"]["can_access"] != 1
+    ) {
+        header("Location: /profile.php");
+        exit;
+    }
 
-//     if (is_array($to)) {
-//         foreach ($to as $t) {
-//             if (is_numeric($t))       $resolveUserId($t);
-//             elseif (is_array($t))     $push($t[0] ?? '', $t[1] ?? '');
-//             elseif (is_string($t)) {
-//                 if (ctype_digit($t))  $resolveUserId($t);
-//                 else                  $push($t, '');
-//             }
-//         }
-//     } else {
-//         if (is_numeric($to))        $resolveUserId($to);
-//         elseif (is_string($to))    $push($to, '');
-//     }
-
-//     return $out;
-// }
-
-// /**
-//  * Envuelve tu contenido HTML en una plantilla simple, con branding opcional.
-//  */
-// function wrap_email_html(string $subject, string $contentHtml, array $brand = []): string {
-//     $appName = $brand['app_name'] ?? 'AllStockControl';
-//     $logoUrl = $brand['logo_url'] ?? ''; // si tienes un logo público
-//     $year    = date('Y');
-
-//     $logoHtml = $logoUrl ? "<img src=\"$logoUrl\" alt=\"$appName\" height=\"32\" style=\"display:block;\">" : "<strong>$appName</strong>";
-
-//     return <<<HTML
-// 		<!doctype html>
-// 		<html lang="es">
-// 		<head>
-// 		<meta charset="utf-8">
-// 		<meta name="x-apple-disable-message-reformatting">
-// 		<meta name="viewport" content="width=device-width, initial-scale=1">
-// 		<title>{$subject}</title>
-// 		</head>
-// 		<body style="margin:0;background:#f6f7fb;">
-// 		<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f6f7fb;">
-// 			<tr>
-// 			<td align="center" style="padding:24px;">
-// 				<table width="600" cellpadding="0" cellspacing="0" role="presentation" style="max-width:600px;background:#ffffff;border-radius:12px;overflow:hidden;">
-// 				<tr>
-// 					<td style="background:#111827;color:#ffffff;padding:16px 20px;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial;sans-serif;">
-// 					$logoHtml
-// 					</td>
-// 				</tr>
-// 				<tr>
-// 					<td style="padding:20px 20px 8px 20px;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,sans-serif;font-size:18px;color:#111827;font-weight:600;">
-// 					{$subject}
-// 					</td>
-// 				</tr>
-// 				<tr>
-// 					<td style="padding:0 20px 16px 20px;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,sans-serif;font-size:14px;color:#111827;line-height:1.6;">
-// 					{$contentHtml}
-// 					</td>
-// 				</tr>
-// 				<tr>
-// 					<td style="padding:16px 20px 24px 20px;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,sans-serif;font-size:12px;color:#6b7280;">
-// 					© {$year} {$appName}. Todos los derechos reservados.
-// 					</td>
-// 				</tr>
-// 				</table>
-// 			</td>
-// 			</tr>
-// 		</table>
-// 		</body>
-// 		</html>
-// 	HTML;
-// }
-
-// /**
-//  * Genera texto alternativo a partir del HTML (simple).
-//  */
-// function html_to_text(string $html): string {
-//     // Quita scripts/estilos y tags, decodifica entidades.
-//     $text = preg_replace('#<(script|style)\b[^>]*>.*?</\1>#is', '', $html);
-//     $text = strip_tags($text);
-//     $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-//     // Normaliza espacios
-//     $text = preg_replace('/[ \t]+/', ' ', $text);
-//     $text = preg_replace('/\R{3,}/', "\n\n", $text);
-//     return trim($text);
-// }
-
-// /**
-//  * Envía email (multi-uso).
-//  *
-//  * @param int|string|array $to   user_id, email, o array de ellos. También admite [[email, name], ...]
-//  * @param string           $subject
-//  * @param string           $htmlBody  HTML "contenido" (se envuelve en plantilla)
-//  * @param array            $opts  [
-//  *   'brand'       => ['app_name' => '...', 'logo_url' => '...'],
-//  *   'from_email'  => '...', 'from_name' => '...',
-//  *   'reply_to'    => '...',
-//  *   'cc'          => [ ... mismos formatos que $to ... ],
-//  *   'bcc'         => [ ... ],
-//  *   'attachments' => [ ['path'=>'/tmp/file.pdf','name'=>'Factura.pdf'] , ... ],
-//  *   'priority'    => 1|3|5, // 1=High, 3=Normal, 5=Low
-//  *   'company_id'  => 123,   // opcional para log/branding por empresa
-//  * ]
-//  * @return array           ['success'=>bool,'message'=>string]
-//  */
-// function sendEmail($to, string $subject, string $htmlBody, array $opts = []): array {
-//     $cfg = get_smtp_config();
-
-//     $brand       = $opts['brand'] ?? [];
-//     $fromEmail   = $opts['from_email'] ?? $cfg['from_email'];
-//     $fromName    = $opts['from_name']  ?? $cfg['from_name'];
-//     $replyTo     = $opts['reply_to']   ?? ($cfg['reply_to'] ?: null);
-//     $ccList      = $opts['cc']         ?? [];
-//     $bccList     = $opts['bcc']        ?? [];
-//     $attachments = $opts['attachments']?? [];
-//     $priority    = (int)($opts['priority'] ?? 3);
-
-//     $recipients  = resolve_recipients($to);
-//     if (empty($recipients)) {
-//         return ['success' => false, 'message' => 'No valid recipients'];
-//     }
-
-//     $wrappedHtml = wrap_email_html($subject, $htmlBody, $brand);
-//     $altText     = html_to_text($htmlBody);
-
-//     // Preferir PHPMailer si está instalado
-//     if (class_exists('\PHPMailer\PHPMailer\PHPMailer')) {
-//         try {
-//             $mail = new PHPMailer(true);
-//             $mail->isSMTP();
-//             $mail->Host       = $cfg['host'];
-//             $mail->Port       = $cfg['port'];
-//             $mail->SMTPAuth   = !empty($cfg['username']);
-//             if ($mail->SMTPAuth) {
-//                 $mail->Username = $cfg['username'];
-//                 $mail->Password = $cfg['password'];
-//             }
-//             if (!empty($cfg['secure'])) {
-//                 $mail->SMTPSecure = $cfg['secure']; // 'tls' o 'ssl'
-//             }
-
-//             $mail->CharSet = 'UTF-8';
-//             $mail->setFrom($fromEmail, $fromName);
-//             if ($replyTo) $mail->addReplyTo($replyTo);
-
-//             foreach ($recipients as [$email, $name]) {
-//                 $mail->addAddress($email, $name ?: '');
-//             }
-//             foreach (resolve_recipients($ccList) as [$email, $name]) {
-//                 $mail->addCC($email, $name ?: '');
-//             }
-//             foreach (resolve_recipients($bccList) as [$email, $name]) {
-//                 $mail->addBCC($email, $name ?: '');
-//             }
-//             foreach ($attachments as $att) {
-//                 if (!empty($att['path'])) {
-//                     $mail->addAttachment($att['path'], $att['name'] ?? '');
-//                 }
-//             }
-
-//             // Prioridad (X-Priority)
-//             if (in_array($priority, [1,3,5], true)) {
-//                 $mail->Priority = $priority;
-//             }
-
-//             $mail->Subject = $subject;
-//             $mail->isHTML(true);
-//             $mail->Body    = $wrappedHtml;
-//             $mail->AltBody = $altText;
-
-//             $mail->send();
-
-//             if (function_exists('log_activity')) {
-//                 $actor = $_SESSION['sc_UserId'] ?? null;
-//                 log_activity($actor, 'send_email', "Email sent: {$subject}", 'emails', null);
-//             }
-
-//             return ['success' => true, 'message' => 'Email sent'];
-//         } catch (Exception $e) {
-//             if (function_exists('log_activity')) {
-//                 $actor = $_SESSION['sc_UserId'] ?? null;
-//                 log_activity($actor, 'send_email_error', "Mailer error: ".$e->getMessage(), 'emails', null);
-//             }
-//             return ['success' => false, 'message' => 'Mailer error: '.$e->getMessage()];
-//         }
-//     }
-
-//     // Fallback nativo: mail()
-//     try {
-//         $headers  = "MIME-Version: 1.0\r\n";
-//         $headers .= "Content-type: text/html; charset=UTF-8\r\n";
-//         $headers .= "From: {$fromName} <{$fromEmail}>\r\n";
-//         if ($replyTo) $headers .= "Reply-To: {$replyTo}\r\n";
-
-//         // CC/BCC en mail() se agregan en headers
-//         $ccResolved  = resolve_recipients($ccList);
-//         $bccResolved = resolve_recipients($bccList);
-//         if (!empty($ccResolved))  $headers .= "Cc: ".implode(',', array_column($ccResolved, 0))."\r\n";
-//         if (!empty($bccResolved)) $headers .= "Bcc: ".implode(',', array_column($bccResolved, 0))."\r\n";
-
-//         // Solo enviamos a la primera dirección en 'To' con mail(), puedes iterar si quieres
-//         $toHeader = implode(',', array_map(fn($r) => $r[0], $recipients));
-//         $ok = @mail($toHeader, "=?UTF-8?B?".base64_encode($subject)."?=", $wrappedHtml, $headers);
-
-//         if ($ok) {
-//             if (function_exists('log_activity')) {
-//                 $actor = $_SESSION['sc_UserId'] ?? null;
-//                 log_activity($actor, 'send_email', "Email sent (mail()): {$subject}", 'emails', null);
-//             }
-//             return ['success' => true, 'message' => 'Email sent (mail())'];
-//         }
-//         return ['success' => false, 'message' => 'mail() failed'];
-//     } catch (\Throwable $t) {
-//         if (function_exists('log_activity')) {
-//             $actor = $_SESSION['sc_UserId'] ?? null;
-//             log_activity($actor, 'send_email_error', "mail() error: ".$t->getMessage(), 'emails', null);
-//         }
-//         return ['success' => false, 'message' => 'mail() error: '.$t->getMessage()];
-//     }
-// }
+    return true;
+}
 
 
 //function to display any type of variable

@@ -477,9 +477,9 @@ CREATE TABLE IF NOT EXISTS loaded_products (
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE shipping_tracking ( -- PENDIENTE
-    id SERIAL PRIMARY KEY,
-    shipping_id INT NOT NULL REFERENCES shippings(id),
+CREATE TABLE shipping_tracking (
+    tracking_id SERIAL PRIMARY KEY,
+    shipping_id INTEGER NULL,
     checkpoint_name VARCHAR(255),
     status VARCHAR(100),
     scanned_by VARCHAR(255),
@@ -489,7 +489,7 @@ CREATE TABLE shipping_tracking ( -- PENDIENTE
 );
 
 
-CREATE TABLE IF NOT EXISTS settings (
+CREATE TABLE IF NOT EXISTS settings ( -- PENDIENTE
 	settings_id SERIAL PRIMARY KEY,
 	company_id INTEGER NULL,
 	company_currency VARCHAR(10) NULL,
@@ -499,7 +499,7 @@ CREATE TABLE IF NOT EXISTS settings (
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS access_rights (
+CREATE TABLE IF NOT EXISTS access_rights ( -- PENDIENTE
 	access_right_id SERIAL PRIMARY KEY,
 	user_id INTEGER NULL,
 	role_id INTEGER NULL,
@@ -514,7 +514,7 @@ CREATE TABLE IF NOT EXISTS service_rights (
 	right_id SERIAL PRIMARY KEY,
 	user_id INTEGER NULL,
 	service_name VARCHAR(50) NULL,
-	can_access INTEGER DEFAULT 0
+	can_access INTEGER DEFAULT 0,
 	create_by INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

@@ -10,7 +10,7 @@
 				<li>Sales</li>
 				<li>Products</li>
 				<li>Customers</li>
-				<li>Shipping</li>
+				<li class="hidden" id="shipping-seccion">Shipping</li>
 				<li>Payments</li>
 				<li class="no-redirect" id="notification-site">
 					<img src="images/sys-img/notif.png" alt="Notification" id="notification-icon" class="notification-icon">
