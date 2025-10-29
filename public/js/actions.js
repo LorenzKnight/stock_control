@@ -710,6 +710,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				populatePackages('packs');
 
+				populateExtraServices('extra_pack');
+
 				// handlePopupClose("subsc-form", ".formular-medium-frame", []);
 
 				subsCancelBtn.classList.add('hidden');
@@ -1146,6 +1148,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}, 50);
 
 				populatePackages('packs');
+
+				populateExtraServices('extra_pack');
 
 				handlePopupClose("subsc-form", ".formular-medium-frame", []);
 			}
@@ -7432,9 +7436,55 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
+	async function populateExtraServices(selectId, selectedValue = '') {
+		const select = document.getElementById(selectId);
+		if (!select) return;
+
+		select.style.display = "block";
+		select.innerHTML = '';
+
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = 'Select Extra Service';
+		select.appendChild(defaultOption);
+
+		try {
+			const res = await fetch('api/get_extra_services.php?status=1');
+			const data = await res.json();
+
+			if (!data.success || !Array.isArray(data.data) || data.data.length === 0) {
+				select.style.display = "none";
+				return;
+			}
+
+			let serviceNames = [];
+			let totalPrice = 0;
+
+			data.data.forEach(service => {
+				if (service.service_name) serviceNames.push(service.service_name);
+				if (service.service_price) totalPrice += parseFloat(service.service_price);
+			});
+
+			const option = document.createElement('option');
+			option.value = totalPrice.toFixed(2);
+			option.textContent = serviceNames.join(', ');
+
+			if (String(option.value) === String(selectedValue)) {
+				option.selected = true;
+			}
+
+			select.appendChild(option);
+
+		} catch (error) {
+			console.error("Error loading extra services:", error);
+			select.style.display = "none";
+		}
+	}
+
 	// 📌 recoje el valor del select del formulario subscripcion
 	let estimated = document.getElementById('estimated');
 	let estimatedInput = document.getElementById('estimated_cost');
+	let extraPackSelect = document.getElementById('extra_pack');
 	let packUpdateBtn = document.getElementById('packUpgradeBtn'); 
 
 	async function updateEstimatedCost() {
@@ -7442,6 +7492,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (!selectedRadio || !estimated || !estimatedInput) return;
 
 		const selectedValue = parseInt(selectedRadio.value);
+		const extraValue = parseFloat(extraPackSelect?.value || 0);
 
 		try {
 			const res = await fetch('api/get_packages.php');
@@ -7451,7 +7502,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 				const pkg = data.packages.find(p => parseInt(p.package_id) === selectedValue);
 
 				if (pkg) {
-					const totalCost = pkg.package_price ?? 0;
+					const baseCost = parseFloat(pkg.package_price ?? 0);
+					const totalCost = baseCost + extraValue;
+
 					estimated.innerHTML = `Estimated cost: <strong>$ ${totalCost}</strong>`;
 					estimatedInput.value = totalCost;
 
@@ -7473,6 +7526,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 		document.querySelectorAll('input[name="packs"]').forEach(radio => {
 			radio.addEventListener('change', updateEstimatedCost);
 		});
+	}
+
+	if (extraPackSelect) {
+		extraPackSelect.addEventListener('change', updateEstimatedCost);
 	}
 
 	// Drag & Drop + click

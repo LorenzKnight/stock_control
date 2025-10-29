@@ -1,15 +1,36 @@
 <?php
+if (strpos($_SERVER['HTTP_HOST'] ?? '', 'localhost') !== false) {
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+}
+
 require_once __DIR__ .'/../connections/conexion.php';
 require_once __DIR__ .'/../logic/global_arrays.php';
 require_once __DIR__ .'/../logic/qr_builder.php';
 
-if (is_file(__DIR__ . '/../../../vendor/autoload.php')) {
-    require_once __DIR__ . '/../../../vendor/autoload.php';
-} elseif (is_file(__DIR__ . '/../../vendor/autoload.php')) {
-    require_once __DIR__ . '/../../vendor/autoload.php';
-} else {
-    throw new Exception("vendor/autoload.php not found.");
+$possiblePaths = [
+    __DIR__ . '/../../vendor/autoload.php',     // estructura normal (root/vendor)
+    __DIR__ . '/../../../vendor/autoload.php',  // si se ejecuta desde subcarpetas adicionales
+    __DIR__ . '/vendor/autoload.php'            // fallback directo
+];
+
+$autoloadFound = false;
+foreach ($possiblePaths as $path) {
+    if (file_exists($path)) {
+        require_once $path;
+        $autoloadFound = true;
+        break;
+    }
+}
+
+if (!$autoloadFound) {
+    throw new Exception("❌ vendor/autoload.php not found in any known path.");
 }
 
 require_once __DIR__ .'/../inc/jwt_config.php';
+
+if (strpos($_SERVER['HTTP_HOST'] ?? '', 'localhost') !== false) {
+    error_log("✅ stock_be.php loaded successfully with autoload.");
+}
 ?>

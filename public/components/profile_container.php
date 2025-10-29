@@ -15,7 +15,7 @@
 			<button class="button-style-neutral" id="edit-my-data">Update Info</button>
 		</div>
 		<div class="small-box">
-			<h2 class="box-title">Membership</h2>
+			<h2 class="box-title">Selected Pack</h2>
 			<div id="subsc"></div>
 			<button class="button-style-neutral" id="subsc-button">Subscription</button>
 		</div>

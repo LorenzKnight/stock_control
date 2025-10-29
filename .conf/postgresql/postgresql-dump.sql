@@ -518,3 +518,13 @@ CREATE TABLE IF NOT EXISTS service_rights (
 	create_by INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS extra_services (
+	service_id SERIAL PRIMARY KEY,
+	user_id INTEGER NULL,
+	service_name VARCHAR(50) NULL,
+	service_price INTEGER NULL,
+	status INTEGER NULL,
+	create_by INTEGER NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
