@@ -18,26 +18,22 @@ $response = [
 ];
 
 try {
-    // ✅ Solo método GET permitido
     if ($_SERVER["REQUEST_METHOD"] !== "GET") {
         throw new Exception("Method not allowed.");
     }
 
-    // ✅ Verificar usuario en sesión
     if (empty($_SESSION["sc_UserId"])) {
         throw new Exception("No user is logged in.");
     }
 
     $userId = $_SESSION["sc_UserId"];
 
-    // ✅ Verificar parámetro de servicio
     if (empty($_GET["service_name"])) {
         throw new Exception("Missing 'service_name' parameter.");
     }
 
     $serviceName = pg_escape_string($sql, $_GET["service_name"]);
 
-    // ✅ Consultar permisos
     $rightsResponse = select_from(
         "service_rights",
         ["can_access"],
@@ -50,7 +46,6 @@ try {
 
     $data = json_decode($rightsResponse, true);
 
-    // ✅ Evaluar resultado
     if (
         !empty($data["success"]) &&
         $data["success"] &&

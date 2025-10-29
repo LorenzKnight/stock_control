@@ -730,7 +730,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const spot = document.getElementById("spot");
 			
 			if (data.success && typeof data.count !== 'undefined') {
-				spot.innerHTML = data.count !== "" ? data.count : "0";
+				// 👇 Sumar +1 para incluir al dueño del plan
+				const totalMembers = parseInt(data.count || 0) + 1;
+				spot.innerHTML = totalMembers;
+			} else {
+				spot.innerHTML = "1"; // al menos el dueño
 			}
 		} catch (error) {
 			console.error("Error fetching data:", error);
@@ -1562,7 +1566,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 				const rawAllowed = userInfo.success ? userInfo.data.package_info.members_limit : null;
 				const allowedMembers = rawAllowed !== null && rawAllowed !== "" ? parseInt(rawAllowed) : null;
 	
-				if (allowedMembers === null || currentMemberCount >= allowedMembers) {
+				const totalMembersWithOwner = currentMemberCount + 1;
+
+				if (allowedMembers === null || totalMembersWithOwner >= allowedMembers) {
 					const allowedTitle = (allowedMembers === null) ? "You have 0 member slots" : "Maximum allowed members reached";
 					const allowedText = "If you want to have the ability to add more members, upgrade your membership.";
 					showAlertModal(allowedTitle, allowedText);
@@ -1735,10 +1741,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 				const userInfoRes = await fetch('api/get_my_info.php');
 				const userInfo = await userInfoRes.json();
 				const rawAllowed = userInfo.success ? userInfo.data.package_info.products_limit : null;
-				const allowedProducts = rawAllowed !== null && rawAllowed !== "" ? parseInt(rawAllowed) : null;
+				const allowedProducts = rawAllowed !== "" ? parseInt(rawAllowed) : null;
 
-				if (allowedProducts === null || productsCount >= allowedProducts) {
-					const allowedTitle = (allowedProducts === null) ? "You have 0 product slots" : "Maximum allowed products reached";
+				if (allowedProducts !== null && productsCount >= allowedProducts) {
+					const allowedTitle = "Maximum allowed products reached";
 					const allowedText = "If you want to have the ability to add more products, upgrade your pack.";
 					showAlertModal(allowedTitle, allowedText);
 					return;
@@ -7376,8 +7382,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 						<div class="pack-details">
 							<ul>
 								<li>${pkg.members_limit} members</li>
+								<li>max ${pkg.admins_limit} admin</li>
 								<li>${pkg.branch_affiliate_limit} affiliate</li>
-								<li>${pkg.products_limit} products</li>
 							</ul>
 						</div>
 						<div class="pack-price"><strong>$ ${pkg.package_price != null ? pkg.package_price : 'free'}</strong></div>
