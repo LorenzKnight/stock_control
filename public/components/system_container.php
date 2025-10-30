@@ -17,7 +17,7 @@
 			<div class="system-content">
 				<div class="system-sidebar-2"></div>
 				<div class="system-details" id="system-details">
-					
+					get_extra_services.php
 				</div>
 			</div>
 		</div>

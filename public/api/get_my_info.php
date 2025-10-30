@@ -62,6 +62,33 @@ try {
         $userInfo["package_info"] = null;
     }
    
+    // 🔑 Obtener información de tokens del usuario
+    $tokensResponse = select_from(
+        "user_tokens",
+        [
+            "token_id",
+            "token",
+            "status",
+            "ip_address",
+            "device_type",
+            "location",
+            "created_at",
+            "expires_at"
+        ],
+        [
+            "user_id" => $userId,
+            "status"  => "active"
+        ],
+        ["order_by" => "created_at", "order_direction" => "DESC"]
+    );
+    $tokensData = json_decode($tokensResponse, true);
+
+    if ($tokensData["success"] && !empty($tokensData["data"])) {
+        $userInfo["tokens"] = array_values($tokensData["data"]);
+    } else {
+        $userInfo["tokens"] = [];
+    }
+
     $response = [
         "success" => true,
         "message" => "User data retrieved successfully.",
