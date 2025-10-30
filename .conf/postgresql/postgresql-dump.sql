@@ -482,7 +482,7 @@ CREATE TABLE shipping_tracking (
     shipping_id INTEGER NULL,
     checkpoint_name VARCHAR(255),
     status VARCHAR(100),
-    scanned_by VARCHAR(255),
+    scanned_by INTEGER NULL,
     latitude DECIMAL(10,6),
     longitude DECIMAL(10,6),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
