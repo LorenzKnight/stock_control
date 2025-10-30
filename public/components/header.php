@@ -23,7 +23,7 @@
 					<div id="profileDropdown" style="display: none;">
 						<ul>
 							<li class="no-redirect"><a href="profile.php" id="my-name"></a></li>
-							<li id="system-admin-site"><a href="#">System Admin</a></li>
+							<li id="system-admin-site"><a href="#">System_admin</a></li>
 							<!-- <li id="reports-site"><a href="#">Reports</a></li> -->
 							<li><a href="#">Settings</a></li>
 							<li class="no-redirect"><a href="#" class="logout-button">Log Out</a></li>
