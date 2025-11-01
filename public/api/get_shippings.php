@@ -191,6 +191,8 @@ try {
 			}
 		}
 
+		$statusText = GlobalArrays::$shippingStatus[$shipping["status"]] ?? "Unknown";
+
 		// Filtrar por search
 		if (
 			!$filterBySearch ||
@@ -206,6 +208,7 @@ try {
 				"delivery_date"  	=> $shipping["delivery_date"] ? date("Y-m-d", strtotime($shipping["delivery_date"])) : null,
 				"description"    	=> $shipping["description"],
 				"status"         	=> $shipping["status"],
+				"status_text"     	=> $statusText,
 				"created_at"		=> $shipping["created_at"],
 				"shipping_img"		=> $shipping["shipping_img"],
 				"shipping_method"	=> $shipping["shipping_method"],

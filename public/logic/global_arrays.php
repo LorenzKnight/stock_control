@@ -118,6 +118,13 @@ class GlobalArrays {
 		3 => "Cancelled"
 	];
 
+	public static $shippingStatus = [
+		0 => "Cancelled",
+		1 => "Pending",
+		2 => "In transit",
+		3 => "Delivered"
+	];
+
 	public static $currencies = [
 		"USD" => "(USD) United States Dollar",
 		"EUR" => "(EUR) Euro",

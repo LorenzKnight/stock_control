@@ -5174,6 +5174,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 							? '<img src="images/sys-img/air-shipping.png" alt="Air Shipping">' 
 							: '<img src="images/sys-img/gnd-shipping.png" alt="Ground Shipping">';
 
+						let statusColor = '';
+						switch (parseInt(shipping.status)) {
+							case 0: statusColor = 'red'; break;          // Cancelled
+							case 1: statusColor = 'orange'; break;       // Pending
+							case 2: statusColor = 'green'; break;        // In transit
+							case 3: statusColor = 'deepskyblue'; break;  // Delivered
+							default: statusColor = 'gray'; break;
+						}
+
 						const row = document.createElement('tr');
 						row.className = 'form_height clickable-row';
 						row.innerHTML = `
@@ -5185,7 +5194,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							<td width="65%" align="left" valign="top">
 								<div style="padding: 5px;">
 									Shipping No.: <strong>${shipping.shipping_no || '—'}</strong><br>
-									<p>Status: ${shipping.status || ''}</p>
+									<p>Status: <strong style="color:${statusColor};">${shipping.status_text || ''}</strong></p>
 								</div>
 							</td>
 							<td width="15%" align="left" valign="top">
