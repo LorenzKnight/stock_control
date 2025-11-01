@@ -7,6 +7,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<link rel="icon" type="image/png" href="images/sys-img/asc-favicon.png" />
 	<title><?= htmlspecialchars($t['title']) ?></title>
 	<meta name="description" content="<?= htmlspecialchars($t['description']) ?>">
 	<meta http-equiv="Content-Language" content="<?= htmlspecialchars($t['content_language']) ?>">

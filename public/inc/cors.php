@@ -1,9 +1,10 @@
 <?php
 $allowed_origins = [
-    "http://localhost:3000",            // local sin HTTPS
-    "https://localhost:3000",           // local con HTTPS 
-    "https://192.168.0.97:3000",        // red local con HTTPS
-    "https://www.allstockcontrol.com"   // dominio real
+    "http://localhost:3000",             // local sin HTTPS
+    "https://localhost:3000",            // local con HTTPS 
+    "https://192.168.0.97:3000",         // red local con HTTPS
+    "https://www.allstockcontrol.com",   // dominio real
+    "https://mobile.allstockcontrol.com" // mobile HTTPS
 ];
 
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';

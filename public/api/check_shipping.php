@@ -56,16 +56,23 @@ try {
         throw new Exception("Shipping already delivered.");
     }
 
-    // 🧭 Verificar si este usuario ya escaneó este envío
-    $exists = json_decode(select_from(
-        "shipping_tracking",
-        ["tracking_id"],
-        ["shipping_id" => $shippingId, "scanned_by" => $userId],
-        ["fetch_first" => true]
-    ), true);
+    $testMode = isset($_POST["test_mode"]) && $_POST["test_mode"] === "check_only";
 
-    if ($exists["success"] && !empty($exists["data"])) {
-        throw new Exception("Already checked by this user.");
+    if ($testMode) {
+        // 🧭 Verificar si este usuario ya escaneó este envío
+        $exists = json_decode(select_from(
+            "shipping_tracking",
+            ["tracking_id"],
+            ["shipping_id" => $shippingId, "scanned_by" => $userId],
+            ["fetch_first" => true]
+        ), true);
+
+        if ($exists["success"] && !empty($exists["data"])) {
+            throw new Exception("Already checked by this user.");
+        }
+
+        echo json_encode(["success" => true, "message" => "User can check this shipping."]);
+        exit;
     }
 
     // 🧩 Insertar nuevo checkpoint
@@ -90,7 +97,7 @@ try {
     }
 
     // 📝 Registrar actividad
-    log_activity($userId, "check_shipping", "Checkpoint added by user", "shippings", $shippingId);
+    log_activity($userId, "check_shipping", "Shipping checked at $checkpointName", "shippings", $shippingId);
 
     $response = [
         "success"    => true,
