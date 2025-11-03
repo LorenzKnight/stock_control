@@ -45,10 +45,10 @@
 						<td colspan="2" align="center" valign="middle">
 							<div class="formular-customers-list">
 								<div class="create-list-holder">
-									<input class="form-input-style" type="text" name="search-shipping-customer" id="search-shipping-customer" placeholder="Enter a name or Doc No..." title="Enter a valid name"/>
+									<input class="form-input-style" type="text" name="search-edit-shipping-customer" id="search-edit-shipping-customer" placeholder="Enter a name or Doc No..." title="Enter a valid name"/>
 								</div>
 								<div class="cat-all-list">
-									<table id="select-shipping-customers-list" cellspacing="0"></table>
+									<table id="select-edit-shipping-customers-list" cellspacing="0"></table>
 								</div>
 							</div>
 						</td>
@@ -58,16 +58,16 @@
 									<table width="100%" align="center" cellspacing="0">
 										<tr valign="baseline">
 											<td width="60%" align="center" valign="middle">
-												<input type="text" class="form-medium-input-style" name="search-product-for-shipping" id="search-product-for-shipping" placeholder="Enter Product No..." title="Enter a valid Product No."/>
+												<input type="text" class="form-medium-input-style" name="search-edit-product-for-shipping" id="search-edit-product-for-shipping" placeholder="Enter Product No..." title="Enter a valid Product No."/>
 											</td>
 											<td width="40%" align="center" valign="middle">
-												<select class="form-input-style" name="search-product-mark-for-shipping" id="search-product-mark-for-shipping"></select>
+												<select class="form-input-style" name="search-edit-product-mark-for-shipping" id="search-edit-product-mark-for-shipping"></select>
 											</td>
 										</tr>
 									</table>
 								</div>
 								<div class="cat-all-list">
-									<table id="select-product-list-for-shipping" cellspacing="0"></table>
+									<table id="edit-select-product-list-for-shipping" cellspacing="0"></table>
 								</div>
 							</div>
 						</td>
@@ -80,60 +80,60 @@
 									<table width="100%" align="center" cellspacing="0">
 										<tr valign="baseline" class="form_height">
 											<td colspan="2" align="center" valign="middle">
-												<label for="shipping_from_currency">From currency:</label>
-												<select class="form-input-style" name="shipping_from_currency" id="shipping_from_currency" required></select>
+												<label for="edit_shipping_from_currency">From currency:</label>
+												<select class="form-input-style" name="edit_shipping_from_currency" id="edit_shipping_from_currency" required></select>
 											</td>
 										</tr>
 										<tr valign="baseline" class="form_height">
 											<td width="50%" align="center" valign="middle">
-												<label for="shipping_price">Price/kg:</label>
-												<input class="form-medium-input-style" type="text" name="shipping_price" id="shipping_price" placeholder="Price/kg..."/>
+												<label for="edit_shipping_price">Price/kg:</label>
+												<input class="form-medium-input-style" type="text" name="edit_shipping_price" id="edit_shipping_price" placeholder="Price/kg..."/>
 											</td>
 											<td width="50%" align="center" valign="middle">
-												<label for="total_kg">Total kg:</label>
-												<input class="form-medium-input-style" type="text" name="total_kg" id="total_kg" placeholder="Total kg..." disabled/>
+												<label for="edit_total_kg">Total kg:</label>
+												<input class="form-medium-input-style" type="text" name="edit_total_kg" id="edit_total_kg" placeholder="Total kg..." disabled/>
 											</td>
 										</tr>
 										<tr valign="baseline" class="form_height">
 											<td width="50%" align="center" valign="middle">
-												<label for="price_sum">Price Sum:</label>
-												<input class="form-medium-input-style" type="text" name="price_sum" id="price_sum" placeholder="Price sum..." disabled/>
+												<label for="edit_price_sum">Price Sum:</label>
+												<input class="form-medium-input-style" type="text" name="edit_price_sum" id="edit_price_sum" placeholder="Price sum..." disabled/>
 											</td>
 											<td width="50%" align="center" valign="middle">
-												<label for="discount">Discount:</label>
-												<input class="form-medium-input-style" type="text" name="discount" id="discount" placeholder="Discount..."/>
+												<label for="edit_discount">Discount:</label>
+												<input class="form-medium-input-style" type="text" name="edit_discount" id="edit_discount" placeholder="Discount..."/>
 											</td>
 										</tr>
 										<tr valign="baseline" class="form_height">
 											<td width="50%" align="center" valign="middle">
-												<label for="taxes">Taxes %:</label>
-												<input class="form-medium-input-style" type="text" name="taxes" id="taxes" placeholder="Taxes %..."/>
+												<label for="edit_taxes">Taxes %:</label>
+												<input class="form-medium-input-style" type="text" name="edit_taxes" id="edit_taxes" placeholder="Taxes %..."/>
 											</td>
 											<td width="50%" align="center" valign="middle">
-												<label for="total">Price Total:</label>
-												<input class="form-medium-input-style" type="text" name="total" id="total" placeholder="Total..." disabled/>
+												<label for="edit_total">Price Total:</label>
+												<input class="form-medium-input-style" type="text" name="edit_total" id="edit_total" placeholder="Total..." disabled/>
 											</td>
 										</tr>
 										<tr valign="baseline" class="form_height">
 											<td width="50%" align="center" valign="middle">
-												<label for="shipping_to_currency">To Currency:</label>
-												<select class="form-medium-input-style" name="shipping_to_currency" id="shipping_to_currency" required></select>
+												<label for="edit_shipping_to_currency">To Currency:</label>
+												<select class="form-medium-input-style" name="edit_shipping_to_currency" id="edit_shipping_to_currency" required></select>
 											</td>
 											<td width="50%" align="center" valign="middle">
-												<label for="total_exchanged">Total Exchanged:</label>
-												<input class="form-medium-input-style" type="text" name="total_exchanged" id="total_exchanged" placeholder="Total exchanged..." disabled/>
-											</td>
-										</tr>
-										<tr valign="baseline" class="form_height">
-											<td colspan="2" align="center" valign="middle">
-												<label for="destination">Customer destination:</label>
-												<input class="form-input-style" type="text" name="destination" id="destination" placeholder="Customer destination..."/>
+												<label for="edit_total_exchanged">Total Exchanged:</label>
+												<input class="form-medium-input-style" type="text" name="edit_total_exchanged" id="edit_total_exchanged" placeholder="Total exchanged..." disabled/>
 											</td>
 										</tr>
 										<tr valign="baseline" class="form_height">
 											<td colspan="2" align="center" valign="middle">
-												<label for="comment">Comment:</label>
-												<textarea class="form-input-style" id="comment" name="comment" rows="5" cols="35">
+												<label for="edit_load_destination">Customer destination:</label>
+												<input class="form-input-style" type="text" name="edit_load_destination" id="edit_load_destination" placeholder="Customer destination..."/>
+											</td>
+										</tr>
+										<tr valign="baseline" class="form_height">
+											<td colspan="2" align="center" valign="middle">
+												<label for="edit_comment">Comment:</label>
+												<textarea class="form-input-style" id="edit_comment" name="edit_comment" rows="5" cols="35">
 												</textarea>
 											</td>
 										</tr>
@@ -149,7 +149,7 @@
 							<button type="button" class="neutral-btn">Cancel</button>
 						</td>
 						<td colspan="1" align="center" valign="middle">
-							<input type="submit" class="button-style-agree" value="Create" />
+							<input type="submit" class="button-style-agree" value="Update" />
 						</td>
 						<td colspan="2" align="center" valign="middle">
 						</td>

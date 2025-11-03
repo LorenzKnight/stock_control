@@ -5683,7 +5683,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 
 			// console.log("Found Shipping:", shipping);
-			console.log("Found Load:", foundLoad);
+			// console.log("Found Load:", foundLoad);
 
 			if (loadOptions && popupContent) {
 				resetPopupView(['load-menu-buttons'], [
@@ -5732,7 +5732,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							formFrame2.classList.add('expanded');
 						}
 
-						// openEditShippingForm(shippingsId); // AQUI
+						openEditLoadForm(shippingsId);
 			
 						animateHeightChange(popupContent, editDiv, () => {
 							fadeOutAndHide(menuDiv, () => {
@@ -6168,6 +6168,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	if (formAddLoad) {
 		formAddLoad.addEventListener('submit', function (e) {
 			e.preventDefault();
+
 			(async () => {
 				try {
 					const formatDecimal = val => parseFloat((val || '').toString().replace(',', '').trim()) || 0;
@@ -6267,6 +6268,370 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				} catch (error) {
 					alert("⚠️ Error: " + error.message);
+				}
+			})();
+		});
+	}
+
+	async function openEditLoadForm(loadId) {
+		const formEditLoad = document.getElementById('formEditLoad');
+		if (!formEditLoad) return;
+
+		formEditLoad.setAttribute('data-load-id', loadId);
+
+		try {
+			const response = await fetch(`api/get_load.php?load_id=${loadId}`, {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			});
+			const data = await response.json();
+
+			if (!data.success || !data.data) {
+				console.warn("Load not found or invalid response.");
+				return;
+			}
+
+			const load = data.data;
+
+			// Inicializar selección de clientes
+			const searchEditCustomerInput = document.getElementById('search-edit-shipping-customer');
+			const editCustomerListTable = document.getElementById('select-edit-shipping-customers-list');
+
+			if (searchEditCustomerInput && editCustomerListTable) {
+				async function fetchAndRenderCustomersForShipping(search = '') {
+					try {
+						const params = new URLSearchParams();
+						if (search.trim() !== '') params.append('search', search.trim());
+
+						const response = await fetch(`api/get_customers.php?${params.toString()}`);
+						const customerData = await response.json();
+						editCustomerListTable.innerHTML = '';
+
+						if (customerData.success && customerData.data.length > 0) {
+							customerData.data.forEach(customer => {
+								const uniqueId = `shipping-customer-${customer.customer_id}`;
+								const profileImg = customer.image && customer.image.trim() !== '' 
+									? `images/customers/${customer.image}` 
+									: `images/sys-img/NonProfilePic.png`;
+
+								const row = document.createElement('tr');
+								row.className = 'categoryContainer';
+								row.innerHTML = `
+									<td width='10%' align='center' valign='middle'>
+										<div class='customers-profile'>
+											<img src='${profileImg}' alt=''>
+										</div>
+									</td>
+									<td width='80%' valign='middle' style='padding-left:10px;'>
+										<strong>${customer.full_name}</strong>
+										<p class='mini-title' style='color: #000;'>${customer.document_type}: <strong>${customer.document_no}</strong></p>
+									</td>
+									<td width='10%' align='center' valign='middle'>
+										<div class='opcion-radio'>
+											<input type='radio' id='${uniqueId}' name='customer_select' class='category-radio' data-id='${customer.customer_id}' />
+											<label for='${uniqueId}'></label>
+										</div>
+									</td>
+								`;
+								editCustomerListTable.appendChild(row);
+
+								if (String(customer.customer_id) === String(load.customer.customer_id)) {
+									const customerRadio = document.getElementById(uniqueId);
+									if (customerRadio) customerRadio.checked = true;
+								}
+							});
+						} else {
+							editCustomerListTable.innerHTML = `
+								<tr><td colspan='3' style='text-align:center; padding: 10px;'>No customers found.</td></tr>
+							`;
+						}
+					} catch (error) {
+						console.error('Error loading customers:', error);
+						editCustomerListTable.innerHTML = `
+							<tr><td colspan='3' style='text-align:center; padding: 10px;'>Error loading customers</td></tr>
+						`;
+					}
+				}
+
+				searchEditCustomerInput.addEventListener('input', () => {
+					fetchAndRenderCustomersForShipping(searchEditCustomerInput.value);
+				});
+
+				await fetchAndRenderCustomersForShipping();
+			}
+
+			// Cargar productos para shipping
+			const searchEditProductInput = document.getElementById('search-edit-product-for-shipping');
+			const editMarkSelect = document.getElementById('search-edit-product-mark-for-shipping');
+			const editShippingProductListTable = document.getElementById('edit-select-product-list-for-shipping');
+
+			if ((searchEditProductInput || editShippingMarkSelect) && editShippingProductListTable) {
+				async function fetchAndRenderProductsForShipping(search = "", mark = "") {
+					try {
+						const params = new URLSearchParams();
+						if (search.trim() !== "") params.append('search', search.trim());
+						if (mark) params.append('mark', mark);
+
+						const response = await fetch(`api/get_products.php?${params.toString()}`);
+						const productData = await response.json();
+						editShippingProductListTable.innerHTML = "";
+
+						if (productData.success && productData.data.length > 0) {
+							productData.data.forEach(product => {
+								const uniqueId = `edit-product-${product.product_id}`;
+								const productImg = product.product_image && product.product_image.trim() !== ''
+									? `images/products/${product.product_image}`
+									: `images/sys-img/wooden-box.png`;
+
+								const row = document.createElement('tr');
+								row.className = "productContainer";
+								row.innerHTML = `
+									<td width="10%" align="center" valign="middle">
+										<div class="list-icon">
+											<img src="${productImg}" alt="product image" width="32" height="32">
+										</div>
+									</td>
+									<td width="75%" valign="middle" style="padding-left:10px;">
+										${product.product_name} <span class="mini-title">(${product.purpose_text})</span><br>
+										<small>${product.mark_name || ''} - ${product.model_name || ''} ${product.submodel_name || ''}</small>
+									</td>
+									<td width="5%" align="left" valign="middle">
+										<input type="number" id="qty-${uniqueId}" class="form-mini-input-style" value="1" min="1" disabled />
+									</td>
+									<td width="10%" align="center" valign="middle">
+										<div class="opcion-checkbox">
+											<input type="checkbox" id="${uniqueId}" name="product_selection[]" value="${product.product_id}" data-price="${product.price}" data-weight="${product.total_weight}" class="shipping-product-checkbox" />
+											<label for="${uniqueId}"></label>
+										</div>
+									</td>
+								`;
+								editShippingProductListTable.appendChild(row);
+
+								const checkbox = document.getElementById(uniqueId);
+								const quantityInput = document.getElementById(`qty-${uniqueId}`);
+								
+								// ✅ marcar los productos que ya están en este load
+								const selectedProduct = load.products.find(p => p.product_id === product.product_id);
+								if (selectedProduct) {
+									checkbox.checked = true;
+									quantityInput.disabled = false;
+									quantityInput.value = selectedProduct.quantity;
+								}
+
+								checkbox.addEventListener('change', function () {
+									quantityInput.disabled = !this.checked;
+									if (!this.checked) quantityInput.value = 1;
+									sumByWeight();
+								});
+
+								quantityInput.addEventListener('input', function () {
+									if (parseInt(this.value) <= 0 || isNaN(parseInt(this.value))) {
+										this.value = 1;
+									}
+									sumByWeight();
+								});
+
+								document.getElementById(uniqueId).addEventListener('change', sumByWeight);
+							});
+						} else {
+							editShippingProductListTable.innerHTML = `
+								<tr><td colspan="3" style="text-align:center; padding: 10px;">No products found.</td></tr>
+							`;
+						}
+					} catch (error) {
+						console.error("Error loading products:", error);
+						editShippingProductListTable.innerHTML = `
+							<tr><td colspan="3" style="text-align:center; padding: 10px;">Error loading products</td></tr>
+						`;
+					}
+				}
+
+				searchEditProductInput.addEventListener('input', () => {
+					fetchAndRenderProductsForShipping(searchEditProductInput.value, editMarkSelect.value);
+				});
+				editMarkSelect.addEventListener('change', () => {
+					fetchAndRenderProductsForShipping(searchEditProductInput.value, editMarkSelect.value);
+				});
+
+				await loadMarksForSearch(editMarkSelect);
+            	await fetchAndRenderProductsForShipping();
+			}
+
+			populateCurrencies('edit_shipping_from_currency', load.from_currency);
+			populateCurrencies('edit_shipping_to_currency', load.to_currency);
+
+			document.getElementById('edit_shipping_price').value = load.price_per_kg;
+			document.getElementById('edit_total_kg').value = load.total_kg;
+			document.getElementById('edit_price_sum').value = load.price_sum;
+			document.getElementById('edit_discount').value = load.discount;
+			document.getElementById('edit_taxes').value = load.taxes;
+			document.getElementById('edit_total').value = load.price_total;
+			document.getElementById('edit_total_exchanged').value = load.price_total_exchanged;
+			document.getElementById('edit_load_destination').value = load.destination || '';
+			document.getElementById('edit_comment').value = load.comment || '';
+
+			// Llenar campos del formulario
+			function sumByWeight() {
+				const checkboxes = document.querySelectorAll('.shipping-product-checkbox:checked');
+				let total = 0;
+			
+				checkboxes.forEach(cb => {
+					const weight = parseFloat(cb.getAttribute('data-weight')) || 0;
+					const qtyInput = document.getElementById(`qty-${cb.id}`);
+					const quantity = parseInt(qtyInput.value) || 1;
+					total += weight * quantity;
+				});
+			
+				document.getElementById('edit_total_kg').value = total.toFixed(2);
+
+				updateShippingCalculations();
+			}
+
+			function updateShippingCalculations() {
+				const totalKg = parseFloat(document.getElementById('edit_total_kg').value.replace(/,/g, '')) || 0;
+				const pricePerKg = parseFloat(document.getElementById('edit_shipping_price').value.replace(/,/g, '')) || 0;
+				const discount = parseFloat(document.getElementById('edit_discount').value.replace(/,/g, '')) || 0;
+				const taxPercent = parseFloat(document.getElementById('edit_taxes').value.replace(/,/g, '')) || 0;
+
+				const priceSum = totalKg * pricePerKg;
+				const subtotal = priceSum - discount;
+				const taxAmount = (subtotal * taxPercent) / 100;
+				const total = subtotal + taxAmount;
+
+				document.getElementById('edit_price_sum').value = priceSum.toFixed(2);
+				document.getElementById('edit_total').value = total.toFixed(2);
+
+				updateTotalExchange("edit_total", "edit_total_exchanged", "edit_shipping_from_currency", "edit_shipping_to_currency");
+			}
+
+			// Inputs reactivos
+			['edit_shipping_price', 'edit_discount', 'edit_taxes', 'edit_total_kg'].forEach(id => {
+				const el = document.getElementById(id);
+				if (el) el.addEventListener('input', updateShippingCalculations);
+			});
+
+			['edit_shipping_from_currency', 'edit_shipping_to_currency'].forEach(id => {
+				const el = document.getElementById(id);
+				if (el) el.addEventListener('change', () => {
+					updateTotalExchange(
+						"edit_total",
+						"edit_total_exchanged",
+						"edit_shipping_from_currency",
+						"edit_shipping_to_currency"
+					);
+				});
+			});
+
+			handlePopupClose("shipping-options", ".formular-frame", []);
+		} catch (error) {
+			console.error("Error loading shipping data:", error);
+		}
+	}
+
+	const formEditLoad = document.querySelector('#formEditLoad');
+	if (formEditLoad) {
+		formEditLoad.addEventListener('submit', function (e) {
+			e.preventDefault();
+
+			(async () => {
+				try {
+					const formatDecimal = val => parseFloat((val || '').toString().replace(',', '').trim()) || 0;
+					
+					const loadId = formEditLoad.getAttribute('data-load-id');
+					if (!loadId) throw new Error("Load ID not found.");
+
+					const customerId = document.querySelector('input[name="customer_select"]:checked')?.dataset.id;
+					if (!customerId) throw new Error("Please select a customer.");
+
+					// Obtener valores del formulario
+					const fromCurrency = document.getElementById('edit_shipping_from_currency')?.value || "USD";
+					const toCurrency = document.getElementById('edit_shipping_to_currency')?.value || "USD";
+					const pricePerKg = formatDecimal(document.getElementById('edit_shipping_price')?.value);
+					const totalKg = formatDecimal(document.getElementById('edit_total_kg')?.value);
+					const discount = formatDecimal(document.getElementById('edit_discount')?.value);
+					const taxes = formatDecimal(document.getElementById('edit_taxes')?.value);
+					const totalExchanged = formatDecimal(document.getElementById('edit_total_exchanged')?.value);
+					const destination = document.getElementById('edit_load_destination')?.value.trim() || '';
+					const comment = document.getElementById('edit_comment')?.value.trim() || '';
+
+					if (pricePerKg <= 0 || totalKg <= 0) {
+						throw new Error("Price/kg and Total Kg must be greater than 0.");
+					}
+
+					// Obtener productos seleccionados
+					const productCheckboxes = Array.from(document.querySelectorAll('.shipping-product-checkbox:checked'));
+					const products = await Promise.all(productCheckboxes.map(async cb => {
+						const productId = parseInt(cb.value);
+						const weight = parseFloat(cb.dataset.weight) || 0;
+						const qtyInput = document.getElementById(`qty-${cb.id}`);
+						const quantity = parseInt(qtyInput?.value) || 1;
+						const totalKgProduct = weight * quantity;
+						const totalKgPrice = totalKgProduct * pricePerKg;
+
+						const totalPriceExchanged = await convertCurrency(totalKgPrice, fromCurrency, toCurrency);
+
+						return {
+							product_id: productId,
+							quantity: quantity,
+							total_kg: Number(totalKgProduct.toFixed(3)),
+							total_kg_price: Number(totalKgPrice.toFixed(3)),
+							total_price_exchanged: Number(totalPriceExchanged.toFixed(3))
+						};
+					}));
+
+					if (products.length === 0) throw new Error("Select at least one product.");
+
+					// Construir payload
+					const payload = {
+						load_id: parseInt(loadId),
+						customer_id: parseInt(customerId),
+						from_currency: fromCurrency,
+						to_currency: toCurrency,
+						price_per_kg: pricePerKg,
+						total_kg: totalKg,
+						discount: discount,
+						taxes: taxes,
+						price_total_exchanged: totalExchanged,
+						destination: destination,
+						comment: comment,
+						products: products
+					};
+
+					// Enviar al backend
+					const res = await fetch('api/update_load.php', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify(payload)
+					});
+
+					const data = await res.json();
+					console.log("📡 API Update Response:", data);
+
+					let banner = document.getElementById('status-message');
+					let statusText = document.getElementById('status-text');
+					let statusImage = document.getElementById('status-image');
+
+					if (banner && statusText && statusImage) {
+						statusText.innerText = data.message || "Unknown response";
+						statusImage.src = data.img_gif || "../images/sys-img/success.gif";
+						banner.style.display = 'block';
+						banner.style.opacity = '1';
+					}
+
+					if (data.success) {
+						setTimeout(() => {
+							banner.style.opacity = '0';
+							setTimeout(() => {
+								window.location.href = data.redirect_url || window.location.href;
+							}, 1000);
+						}, 3000);
+					} else {
+						alert("❌ Failed: " + (data.message || "Unknown error."));
+					}
+
+				} catch (error) {
+					alert("⚠️ Error: " + error.message);
+					console.error(error);
 				}
 			})();
 		});
