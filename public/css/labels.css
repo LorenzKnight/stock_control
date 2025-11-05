@@ -1,0 +1,56 @@
+@page {
+    margin: 0;
+    size: 77mm 60mm;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.label {
+    width: 80mm;
+    height: 60mm;
+    padding: 4mm;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.header {
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 3mm;
+}
+
+.qr {
+    text-align: center;
+}
+
+.qr img {
+    width: 100px;
+    height: 100px;
+}
+
+.info {
+    font-size: 12px;
+    line-height: 1.4;
+    text-align: center;
+}
+
+.prom {
+    margin: 10px;
+    font-size: 10px;
+    line-height: 1.4;
+    text-align: center;
+}
+
+.loads {
+    font-size: 10px;
+    margin-top: 2mm;
+}

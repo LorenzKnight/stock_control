@@ -18,14 +18,14 @@
 						<button type="button" class="button-style-agree" id="addLoadBtn">Add Load</button>
 					</td>
 				</tr>
-				<tr valign="baseline">
+				<!-- <tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
 						<button type="button" class="button-style-agree" id="">Generate Delivery Note</button>
 					</td>
-				</tr>
+				</tr> -->
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="button-style-agree" id="">Print Label</button>
+						<button type="button" class="button-style-agree" id="printShippingLabelBtn">Print Label</button>
 					</td>
 				</tr>
 				<tr valign="baseline">

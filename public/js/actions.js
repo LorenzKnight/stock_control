@@ -5504,6 +5504,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				const editShippingBtn = document.getElementById('editShippingBtn');
 				const addLoadBtn = document.getElementById('addLoadBtn');
+				const printLabelBtn = document.getElementById('printShippingLabelBtn');
 				const deleteShippingBtn = document.getElementById('deleteShippingBtn');
 
 				let shipping = null;
@@ -5591,6 +5592,21 @@ document.addEventListener("DOMContentLoaded", async function () {
 							});
 						});
 					}
+				}
+
+				if (printLabelBtn) {
+					printLabelBtn.onclick = () => {
+						printLabelBtn.setAttribute('data-shipping-id', shippingsId);
+
+						const id = printLabelBtn.getAttribute('data-shipping-id');
+						if (!id) {
+							alert("❌ Missing shipping ID.");
+							return;
+						}
+
+						const url = `shipping_label.php?shipping_id=${encodeURIComponent(id)}`;
+						window.open(url, '_blank', 'width=800,height=600');
+					};
 				}
 
 				// Botón: Delete product
