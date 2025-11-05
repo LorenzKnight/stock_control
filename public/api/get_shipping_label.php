@@ -29,31 +29,36 @@ try {
         "delivery_date", "description", "status", "created_at"
     ], ["shippings_id" => $shippingId], ["fetch_first" => true]);
 
-    $shippingData = json_decode($shippingQuery, true)['data'] ?? null;
-
-    if (!$shippingData) {
-        echo json_encode(["error" => "Shipping not found."]);
-        exit;
+    $shippingResult = json_decode($shippingQuery, true);
+    if (empty($shippingResult["success"]) || empty($shippingResult["data"])) {
+        throw new Exception("Shipping not found.");
     }
 
-    // Cargar loads asociados
-    $loads = json_decode(select_from("loads", [
-        "load_id",
-        "load_no",
-        "customer_id",
-        "total_kg",
-        "price_total_exchanged",
-        "destination"
-    ], ["shippings_id" => $shippingId]), true)['data'] ?? [];
+    $shippingData = $shippingResult["data"];
+    $companyId = $shippingData["company_id"] ?? null;
+    if (!$companyId) {
+        throw new Exception("Shipping has no company assigned.");
+    }
 
-    $loadsData = $loadsResponse["success"] ? ($loadsResponse["data"] ?? []) : [];
+    $companyQuery = select_from("companies", [
+        "company_id",
+        "company_name",
+        "organization_no",
+        "company_address",
+        "country_code",
+        "company_phone",
+        "company_logo"
+    ], ["company_id" => $companyId], ["fetch_first" => true]);
+
+    $companyResult = json_decode($companyQuery, true);
+    $companyData = $companyResult["success"] ? ($companyResult["data"] ?? null) : null;
 
 	$response = [
 		"success" => true,
 		"message" => "Shipping and loads loaded successfully.",
 		"data"    => [
-			"shipping" => $shippingData,
-			"loads"    => $loadsData
+			"shipping"  => $shippingData,
+            "company"   => $companyData
 		]
 	];
 } catch (Exception $e) {

@@ -18,16 +18,22 @@ document.addEventListener("DOMContentLoaded", async function () {
 				return;
 			}
 
-			const { shipping, loads } = result.data;
+			const { shipping, company } = result.data;
 			const date = shipping.created_at ? shipping.created_at.substring(0, 10) : "N/A";
 			const destination = shipping.destination || "N/A";
 			const shippingImg = shipping.shipping_img
 				? `../images/shippings-code/${shipping.shipping_img}`
 				: "../images/sys-img/no-qr.png";
 
+			const companyLogo = company && company.company_logo
+				? `../images/company-logos/${company.company_logo}`
+				: "../images/sys-img/no-logo.png";
+
 			// Renderizar contenido dinámico
 			labelContainer.innerHTML = `
-				<div class="header">AllStockControl Shipping</div>
+				<div class="header">
+					${company.company_name}
+				</div>
 				<div class="qr">
 					<img src="${shippingImg}" alt="QR Code">
 				</div>
@@ -36,11 +42,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					<strong>Destination:</strong> ${destination}<br>
 					<strong>Date:</strong> ${date}<br>
 				</div>
-				${loads && loads.length > 0 ? `
-				<div class="loads">
-					<strong>Loads:</strong><br>
-					${loads.map(load => `• ${load.load_no} — ${load.destination}`).join("<br>")}
-				</div>` : ""}
+				
 				<div class="prom">powered by: www.allstockcontrol.com</div>
 			`;
 

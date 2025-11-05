@@ -28,6 +28,13 @@ body {
     padding-bottom: 3mm;
 }
 
+.company-logo {
+    height: 30px;
+    border-radius: 50%;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
 .qr {
     text-align: center;
 }
