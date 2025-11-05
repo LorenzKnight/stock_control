@@ -59,14 +59,14 @@ try {
         : $priceTotal;
 
     // Crear número de carga
-    $newLoadNo = get_next_increment_value("loads", "load_no", $companyId, 40000000);
+    $newLoadNo = get_next_increment_value("loads", "load_no", $companyId, $companyId."40000");
 
     // Construir datos para insertar
     $loadData = [
         "shippings_id"           => $shippingsId,
         "customer_id"            => $customerId,
         "company_id"             => $companyId,
-        "load_no"                => $companyId.$newLoadNo,
+        "load_no"                => $newLoadNo,
         "from_currency"          => $fromCurrency,
         "to_currency"            => $toCurrency,
         "price_per_kg"           => $pricePerKg,

@@ -429,7 +429,7 @@ CREATE TABLE IF NOT EXISTS notifications (
 
 CREATE TABLE IF NOT EXISTS shippings (
 	shippings_id SERIAL PRIMARY KEY,
-	shipping_no INTEGER NULL,
+	shipping_no VARCHAR(30) NULL,
 	company_id INTEGER NULL,
 	shipping_img VARCHAR(255) NULL,
 	shipping_method INTEGER NULL,
@@ -446,7 +446,7 @@ CREATE TABLE IF NOT EXISTS loads (
 	shippings_id INTEGER NULL,
 	customer_id INTEGER NULL,
 	company_id INTEGER NULL,
-	load_no INTEGER NULL,
+	load_no VARCHAR(30) NULL,
 	from_currency VARCHAR(10) NULL,
 	price_per_kg NUMERIC(10,2) NULL,
 	total_kg NUMERIC(10,3) NULL,

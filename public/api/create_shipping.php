@@ -33,14 +33,14 @@ try {
 	$description	= trim($_POST["description"] ?? '');
 	$status			= intval($_POST["status"] ?? 0);
 
-	$newOrdNo = get_next_increment_value("shippings", "shipping_no", $companyId, 30000000);
+	$newOrdNo = get_next_increment_value("shippings", "shipping_no", $companyId, $companyId."30000");
 
 	if ($destination === '') {
 		throw new Exception("Destination is required.");
 	}
 
 	$insertShippingData = [
-		"shipping_no"				=> $companyId.$newOrdNo,
+		"shipping_no"				=> $newOrdNo,
 		"company_id"				=> $companyId,
 		"shipping_img"				=> null,
 		"shipping_method"			=> $method,
