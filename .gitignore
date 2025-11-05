@@ -1,1 +1,13 @@
-player_ex/
+# Ignorar todo el contenido de las carpetas
+/public/images/company-logos/*
+/public/images/customers/*
+/public/images/products/*
+/public/images/profile/*
+/public/images/shippings-code/*
+
+# Pero no ignorar los marcadores
+!/public/images/company-logos/.gitkeep
+!/public/images/customers/.gitkeep
+!/public/images/products/.gitkeep
+!/public/images/profile/.gitkeep
+!/public/images/shippings-code/.gitkeep
