@@ -191,6 +191,19 @@ try {
 			}
 		}
 
+		// 🆕 3️⃣ Tracking asociado al shipping
+		$trackingQuery = select_from("shipping_tracking", [
+			"tracking_id", "checkpoint_name", "status", "scanned_by",
+			"latitude", "longitude", "created_at"
+		], ["shipping_id" => $shipping["shippings_id"]], [
+			"order_by" => "created_at",
+			"order_direction" => "DESC",
+			"fetch_first" => true
+		]);
+
+		$parsedTracking = json_decode($trackingQuery, true);
+		$latestTracking = $parsedTracking["data"] ?? null;
+
 		$statusText = GlobalArrays::$shippingStatus[$shipping["status"]] ?? "Unknown";
 
 		// Filtrar por search
@@ -213,6 +226,7 @@ try {
 				"shipping_img"		=> $shipping["shipping_img"],
 				"shipping_method"	=> $shipping["shipping_method"],
 				"loads"				=> $loadsData,
+				"tracking"			=> $latestTracking,
 				"product_summary"	=> array_values($shippingProductSummary)
 			];
 		}

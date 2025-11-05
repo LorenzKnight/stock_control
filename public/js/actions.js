@@ -5183,6 +5183,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 							default: statusColor = 'gray'; break;
 						}
 
+						let shippingTracking = shipping.tracking.checkpoint_name;
+
 						const row = document.createElement('tr');
 						row.className = 'form_height clickable-row';
 						row.innerHTML = `
@@ -5192,9 +5194,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 								</div>
 							</td>
 							<td width="65%" align="left" valign="top">
-								<div style="padding: 5px;">
+								<div style="padding: 0 5px;">
 									Shipping No.: <strong>${shipping.shipping_no || '—'}</strong><br>
 									<p>Status: <strong style="color:${statusColor};">${shipping.status_text || ''}</strong></p>
+									<p class="mini-title">${shippingTracking || ''}</p>
 								</div>
 							</td>
 							<td width="15%" align="left" valign="top">
