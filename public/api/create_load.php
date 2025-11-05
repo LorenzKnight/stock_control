@@ -66,7 +66,7 @@ try {
         "shippings_id"           => $shippingsId,
         "customer_id"            => $customerId,
         "company_id"             => $companyId,
-        "load_no"                => $newLoadNo,
+        "load_no"                => $companyId.$newLoadNo,
         "from_currency"          => $fromCurrency,
         "to_currency"            => $toCurrency,
         "price_per_kg"           => $pricePerKg,

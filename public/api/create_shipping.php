@@ -40,7 +40,7 @@ try {
 	}
 
 	$insertShippingData = [
-		"shipping_no"				=> $newOrdNo,
+		"shipping_no"				=> $companyId.$newOrdNo,
 		"company_id"				=> $companyId,
 		"shipping_img"				=> null,
 		"shipping_method"			=> $method,
