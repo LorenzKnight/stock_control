@@ -226,6 +226,7 @@ try {
 				"shipping_img"		=> $shipping["shipping_img"],
 				"shipping_method"	=> $shipping["shipping_method"],
 				"loads"				=> $loadsData,
+				"loadsQty"			=> count($loadsData),
 				"tracking"			=> $latestTracking,
 				"product_summary"	=> array_values($shippingProductSummary)
 			];
