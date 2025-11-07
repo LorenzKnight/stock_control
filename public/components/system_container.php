@@ -6,20 +6,9 @@
 		<h2 style="margin-left: 10px;">System Admin</h2>
 		<div class="product-table flex">
 			<div class="system-sidebar">
-				<div class="system-menu">
-					<ul>
-						<li>User Overview</li>
-						<li>Service Rights</li>
-						<li>Extra Service</li>
-					</ul>
-				</div>
+				<?php include("components/sys_admin_menu.php"); ?>
 			</div>
-			<div class="system-content">
-				<div class="system-sidebar-2"></div>
-				<div class="system-details" id="system-details">
-					get_extra_services.php
-				</div>
-			</div>
+			<div class="system-content" id="system-content"></div>
 		</div>
 	</div>
 </div>

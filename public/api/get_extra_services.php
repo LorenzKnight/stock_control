@@ -11,23 +11,20 @@ $response = [
 ];
 
 try {
-    // 🔐 Verificar sesión
-    $userId = $_SESSION["sc_UserId"] ?? null;
-    if (!$userId) throw new Exception("User session not found.");
+    $paramUserId = $_GET["user_id"] ?? null;
 
-    // 🔎 Obtener el usuario padre si existe
-    $userData = json_decode(select_from("users", ["parent_user"], ["user_id" => $userId], ["fetch_first" => true]), true);
-    if (!$userData["success"] || empty($userData["data"])) {
-        throw new Exception("No user data found.");
+    if ($paramUserId) {
+        $where = ["user_id" => intval($paramUserId)];
+    } else {
+        // fallback: usar usuario actual
+        $userId = $_SESSION["sc_UserId"] ?? null;
+
+        if (!$userId) {
+            throw new Exception("Missing user_id parameter or invalid session.");
+        }
+        
+        $where = ["user_id" => intval($userId)];
     }
-
-    $userInfo = $userData["data"];
-    $altUser = empty($userInfo["parent_user"] ?? null) ? $userId : $userInfo["parent_user"];
-
-    // 🔸 Condiciones base
-    $where = [
-        "user_id" => $altUser
-    ];
 
     // 🔍 Filtro opcional por status
     $status = $_GET["status"] ?? '';
@@ -54,9 +51,9 @@ try {
         ]
     );
 
-    $extraServicesData = json_decode($extraServicesResponse, true);
+    $extraServicesData = json_decode($extraServicesResponse, true) ?? [];
 
-    if ($extraServicesData["success"] && !empty($extraServicesData["data"])) {
+    if (!empty($extraServicesData["success"]) && !empty($extraServicesData["data"])) {
         $response = [
             "success"   => true,
             "message"   => "Extra services loaded successfully.",

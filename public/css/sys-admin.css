@@ -26,6 +26,13 @@
 .system-menu ul li:hover {
     background-color: var(--main-bg-dark-blue);
 	color: white;
+    border-radius: 6px;
+}
+
+.system-menu li.active {
+  background-color: var(--main-bg-dark-blue); /* Azul o el color que prefieras */
+  color: white;
+  border-radius: 6px;
 }
 
 .system-content {
@@ -35,15 +42,30 @@
     overflow: auto;
 }
 
-.system-sidebar-2 {
+/* #### service #### */
+.service-sidebar,
+.overview-sidebar
+{
     width: 30%;
     height: 82.5vh;
-    /* background-color: var(--main-bg-color); */
     border-right: 1px solid var(--clr-border);
 }
 
-.system-details {
+.service-list {
+	width: 99%;
+	height: 68.5vh;
+	overflow-y: auto;
+}
+
+.service-details {
     width: 70%;
     height: 82.5vh;
     overflow: auto;
+}
+
+/* #### overview #### */
+.overview-list {
+	width: 99%;
+	height: 68.5vh;
+	overflow-y: auto;
 }

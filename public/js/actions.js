@@ -6671,6 +6671,275 @@ document.addEventListener("DOMContentLoaded", async function () {
 	);
 	//############################################################# END SHIPPING ##################################################################
 
+	//############################################################# EXTRA SERVICES ##################################################################
+	const sysMenuItems = document.querySelectorAll(".system-menu li");
+	const systemContent = document.getElementById("system-content");
+
+	// Recuperar última sección seleccionada
+	const savedSection = localStorage.getItem("activeSection");
+
+	sysMenuItems.forEach(i => i.classList.remove("active"));
+
+	sysMenuItems.forEach(item => {
+		item.addEventListener("click", async () => {
+			const section = item.getAttribute("data-section");
+			localStorage.setItem("activeSection", section);
+
+			sysMenuItems.forEach(i => i.classList.remove("active"));
+			item.classList.add("active");
+
+			// document.getElementById("system-details")?.innerHTML = "";
+
+			try {
+				const response = await fetch(`sys-admin/${section}.php`);
+				const html = await response.text();
+				systemContent.innerHTML = html;
+
+				if (section === "user-overview") {
+					loadAllUsers('searchUserOverviewField', 'userOverviewTable', 'user-overview');
+				}
+
+				if (section === "service-rights") {
+					// loadAllUsers('searchServiceRightsField', 'serviceRightsTable', 'service-rights');
+				}
+
+				if (section === "extra-service") {
+					loadAllUsers('searchUserField', 'userTable', 'extra-service');
+				}
+			} catch (err) {
+				systemContent.innerHTML = `<p style="color:red;">Error loading section: ${err.message}</p>`;
+			}
+		});
+
+		// Restaurar activo al cargar
+		if (savedSection && item.getAttribute("data-section") === savedSection) {
+			item.classList.add("active");
+			fetch(`sys-admin/${savedSection}.php`)
+				.then(res => res.text())
+				.then(html => {
+					systemContent.innerHTML = html
+				
+					if (savedSection === "user-overview") {
+						loadAllUsers('searchUserOverviewField', 'userOverviewTable', 'user-overview');
+					}
+
+					if (savedSection === "service-rights") {
+						// loadAllUsers('searchServiceRightsField', 'serviceRightsTable', 'service-rights');
+					}
+
+					if (savedSection === "extra-service") {
+						loadAllUsers('searchUserField', 'userTable', 'extra-service');
+					}
+				})
+				.catch(err => {
+					systemContent.innerHTML = `<p style="color:red;">Error restoring section: ${err.message}</p>`;
+				});
+		}
+	});
+	
+	function loadAllUsers(searchField, userTable, sectionType = "user-overview") {
+		const searchUserField = document.getElementById(searchField);
+		const userListTable = document.getElementById(userTable);
+
+		if (searchUserField && userListTable) {
+			async function fetchAndRenderUsers(search = "") {
+				try {
+					const params = new URLSearchParams();
+					if (search.trim() !== "") {
+						params.append('search', search.trim());
+					}
+
+					const response = await fetch(`api/get_all_users_info.php?${params.toString()}`, {
+						method: 'GET',
+						headers: { 'Accept': 'application/json' }
+					});
+					const data = await response.json();
+					userListTable.innerHTML = "";
+
+					if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+						data.data.forEach(user => {
+							const uniqueId = `user-${user.user_id}`;
+							const row = document.createElement('tr');
+							row.className = "usersRow";
+
+							const profileImg = user.image && user.image.trim() !== ""
+								? `images/profile/${user.image}`
+								: `images/sys-img/NonProfilePic.png`;
+
+							row.innerHTML = `
+								<td width="10%" align="center" valign="middle">
+									<div class="customers-profile">
+										<img src="${profileImg}" alt="">
+									</div>
+								</td>
+								<td width="80%" valign="middle" style="padding-left:10px;">
+									<strong>${user.full_name || 'Unknown'}</strong>
+									<p class="mini-title">${user.email}</p>
+								</td>
+								<td width="10%" align="center" valign="middle">
+									<div class="opcion-radio">
+										<input type="radio" id="${uniqueId}" name="user_select" class="category-radio" data-id="${user.user_id}" />
+										<label for="${uniqueId}"></label>
+									</div>
+								</td>
+							`;
+							userListTable.appendChild(row);
+						});
+
+						// ✅ Escuchar clics en los radios
+						const radios = userListTable.querySelectorAll('input[name="user_select"]');
+						radios.forEach(radio => {
+							radio.addEventListener("change", (e) => handleUserSelect(e, sectionType));
+						});
+					} else {
+						userListTable.innerHTML = `
+							<tr><td colspan="3" style="text-align:center; padding: 10px;">No customers found.</td></tr>
+						`;
+					}
+				} catch (error) {
+					console.error("Error loading customers:", error);
+					userListTable.innerHTML = `
+						<tr><td colspan="3" style="text-align:center; padding: 10px;">Error loading customers</td></tr>
+					`;
+				}
+			}
+
+			searchUserField.addEventListener('input', () => {
+				fetchAndRenderUsers(searchUserField.value);
+			});
+
+			fetchAndRenderUsers();
+		}
+	}
+
+	async function handleUserSelect(e, sectionType) {
+		const selectedUserId = e.target.getAttribute("data-id"); // AQUI
+// console.log(selectedUserId);
+		let detailsContainerId = "";
+		switch (sectionType) {
+			case "extra-service":
+				detailsContainerId = "service-details";
+				break;
+			case "service-rights":
+				detailsContainerId = "rights-details";
+				break;
+			case "user-overview":
+				detailsContainerId = "overview-details";
+				break;
+			default:
+				console.warn("Unknown section type:", sectionType);
+				return;
+		}
+
+		const detailsContainer = document.getElementById(detailsContainerId);
+		if (!detailsContainer) {
+			console.warn(`⚠️ Container #${detailsContainerId} not found.`);
+			return;
+		}
+
+		let endpoint = "";
+		let sectionTitle = "";
+
+		// 🔹 Decide qué endpoint usar según la sección actual
+		switch (sectionType) {
+			case "extra-service":
+				endpoint = "api/get_extra_services.php";
+				sectionTitle = "Extra Services";
+				break;
+			case "service-rights":
+				endpoint = "api/get_user_permissions.php";
+				sectionTitle = "Service Rights";
+				break;
+			case "user-overview":
+				endpoint = "api/get_user_overview.php";
+				sectionTitle = "User Overview";
+				break;
+			default:
+				console.warn("No endpoint defined for section:", sectionType);
+				return;
+		}
+
+		try {
+			const response = await fetch(`${endpoint}?user_id=${selectedUserId}`);
+			const result = await response.json();
+
+			if (result.success && Array.isArray(result.data) && result.data.length > 0) {
+				let html = '';
+				if (sectionType === "extra-service") {
+					html += `
+						<div class="section-toolbar">
+							<button id="btnAddService" class="btn-primary">➕ New Service</button>
+						</div>
+						<table class="data-table" width="100%" cellspacing="0" cellpadding="5">
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>Price</th>
+									<th>Status</th>
+									<th>Created</th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								${result.data.map(service => `
+									<tr data-id="${service.service_id}">
+										<td>${service.service_name}</td>
+										<td>${service.service_price}</td>
+										<td>${service.status == 1 ? "Active" : "Inactive"}</td>
+										<td>${service.created_at}</td>
+										<td>
+											<button class="btn-edit" data-id="${service.service_id}">✏️</button>
+											<button class="btn-delete" data-id="${service.service_id}">🗑️</button>
+										</td>
+									</tr>
+								`).join('')}
+							</tbody>
+						</table>
+					`;
+				}
+				else if (sectionType === "user-overview") {
+					html += `
+						<table class="data-table" width="100%" cellspacing="0" cellpadding="5">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Name</th>
+									<th>Email</th>
+									<th>Rank</th>
+									<th>Status</th>
+								</tr>
+							</thead>
+							<tbody>
+								${result.data.map(user => `
+									<tr>
+										<td>${user.user_id}</td>
+										<td>${user.full_name}</td>
+										<td>${user.email}</td>
+										<td>${user.rank}</td>
+										<td>${user.status == 1 ? "Active" : "Inactive"}</td>
+									</tr>
+								`).join('')}
+							</tbody>
+						</table>
+					`;
+				}
+				else {
+					// Fallback para depuración o secciones futuras
+					html += `<pre>${JSON.stringify(result.data, null, 2)}</pre>`;
+				}
+
+				detailsContainer.innerHTML = html;
+			} else {
+				detailsContainer.innerHTML = `<p style="color:gray;">No data found for this user in ${sectionTitle}.</p>`;
+			}
+
+		} catch (err) {
+			console.error(`Error loading ${sectionTitle}:`, err);
+			detailsContainer.innerHTML = `<p style="color:red;">Error loading ${sectionTitle}: ${err.message}</p>`;
+		}
+	}
+	//############################################################# EXTRA SERVICES ##################################################################
+
 	//############################################################# SEND EMAIL ##################################################################
 	const contactForm = document.getElementById('contactForm');
 	if (contactForm) {
