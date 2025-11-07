@@ -6760,7 +6760,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 						data.data.forEach(user => {
 							const uniqueId = `user-${user.user_id}`;
 							const row = document.createElement('tr');
-							row.className = "usersRow";
+							row.className = "users-row";
 
 							const profileImg = user.image && user.image.trim() !== ""
 								? `images/profile/${user.image}`
@@ -6813,8 +6813,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	async function handleUserSelect(e, sectionType) {
-		const selectedUserId = e.target.getAttribute("data-id"); // AQUI
-// console.log(selectedUserId);
+		const selectedUserId = e.target.getAttribute("data-id");
+
+		localStorage.setItem("selectedUserId", selectedUserId);
+		localStorage.setItem("selectedSectionType", sectionType);
+		
 		let detailsContainerId = "";
 		switch (sectionType) {
 			case "extra-service":
@@ -6863,39 +6866,56 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const response = await fetch(`${endpoint}?user_id=${selectedUserId}`);
 			const result = await response.json();
 
-			if (result.success && Array.isArray(result.data) && result.data.length > 0) {
+			
 				let html = '';
+
 				if (sectionType === "extra-service") {
 					html += `
-						<div class="section-toolbar">
-							<button id="btnAddService" class="btn-primary">➕ New Service</button>
-						</div>
-						<table class="data-table" width="100%" cellspacing="0" cellpadding="5">
-							<thead>
+						<div class="section-header">
+							<table style="border-bottom:1px solid var(--clr-border); padding: 5px 0;" width="100%" cellspacing="0">
 								<tr>
-									<th>Name</th>
-									<th>Price</th>
-									<th>Status</th>
-									<th>Created</th>
-									<th>Actions</th>
+									<td width="75%" align="center" valign="middle"></td>
+									<td width="25%" align="right" valign="middle">
+										<button class="button-style-agree" id="btnAddService">New Service</button>
+									</td>
 								</tr>
-							</thead>
-							<tbody>
-								${result.data.map(service => `
-									<tr data-id="${service.service_id}">
-										<td>${service.service_name}</td>
-										<td>${service.service_price}</td>
-										<td>${service.status == 1 ? "Active" : "Inactive"}</td>
-										<td>${service.created_at}</td>
-										<td>
-											<button class="btn-edit" data-id="${service.service_id}">✏️</button>
-											<button class="btn-delete" data-id="${service.service_id}">🗑️</button>
-										</td>
-									</tr>
-								`).join('')}
-							</tbody>
-						</table>
+							</table>
+						</div>
 					`;
+
+					if (result.success && Array.isArray(result.data) && result.data.length > 0) {
+						html += `
+							<div class="service-table">
+								<table width="100%" align="center" cellspacing="0">
+									${result.data.map(service => `
+										<tr data-id="${service.service_id}" valign="baseline" class="form_height">
+											<td width="20%" align="center" valign="middle">
+												${service.service_name}
+											</td>
+											<td width="20%" align="center" valign="middle">
+												${service.service_price}
+											</td>
+											<td width="20%" align="center" valign="middle">
+												${service.status == 1 ? "Active" : "Inactive"}
+											</td>
+											<td width="20%" align="center" valign="middle">
+												${service.created_at}
+											</td>
+											<td width="20%" align="center" valign="middle">
+												<button class="btn-edit" data-id="${service.service_id}">✏️</button>
+												<button class="btn-delete" data-id="${service.service_id}">🗑️</button>
+											</td>
+										</tr>
+									`).join('')}
+								</table>
+							</div>
+						`;
+					} else {
+						// 🩶 Si no hay servicios, mostrar un mensaje de vacío
+						html += `
+							<p style="color:gray; margin-top:10px;">No extra services found for this user.</p>
+						`;
+					}
 				}
 				else if (sectionType === "user-overview") {
 					html += `
@@ -6923,20 +6943,71 @@ document.addEventListener("DOMContentLoaded", async function () {
 						</table>
 					`;
 				}
+				else if (result.success) {
+					html += `<pre>${JSON.stringify(result.data, null, 2)}</pre>`;
+				}
 				else {
 					// Fallback para depuración o secciones futuras
 					html += `<pre>${JSON.stringify(result.data, null, 2)}</pre>`;
 				}
 
 				detailsContainer.innerHTML = html;
-			} else {
-				detailsContainer.innerHTML = `<p style="color:gray;">No data found for this user in ${sectionTitle}.</p>`;
-			}
 
+				if (sectionType === "extra-service") {
+					const btnAdd = document.getElementById("btnAddService");
+					if (btnAdd) {
+						btnAdd.addEventListener("click", async () => {
+							// Aquí mostrarías tu formulario modal o sección para crear un servicio
+							// Ejemplo simple de simulación:
+							const serviceName = prompt("Service name:");
+							const servicePrice = prompt("Service price:");
+
+							if (!serviceName || !servicePrice) return;
+
+							// 📨 Enviar al backend
+							const createResponse = await fetch("api/create_extra_service.php", {
+								method: "POST",
+								headers: { "Content-Type": "application/json" },
+								body: JSON.stringify({
+									user_id: selectedUserId,
+									service_name: serviceName,
+									service_price: servicePrice
+								})
+							});
+							const createResult = await createResponse.json();
+
+							if (createResult.success) {
+								alert("✅ Service created successfully!");
+								await refreshSelectedUserView(); // 🔁 Recargar sin perder vista
+							} else {
+								alert("❌ Error creating service: " + createResult.message);
+							}
+						});
+					}
+				}
+			// } else {
+			// 	detailsContainer.innerHTML = `<p style="color:gray;">No data found for this user in ${sectionTitle}.</p>`;
+			// }
 		} catch (err) {
 			console.error(`Error loading ${sectionTitle}:`, err);
 			detailsContainer.innerHTML = `<p style="color:red;">Error loading ${sectionTitle}: ${err.message}</p>`;
 		}
+	}
+
+	async function refreshSelectedUserView() {
+		const userId = localStorage.getItem("selectedUserId");
+		const sectionType = localStorage.getItem("selectedSectionType");
+
+		if (!userId || !sectionType) return;
+
+		// Crear un evento ficticio para reusar handleUserSelect()
+		const fakeEvent = {
+			target: {
+				getAttribute: () => userId
+			}
+		};
+
+		await handleUserSelect(fakeEvent, sectionType);
 	}
 	//############################################################# EXTRA SERVICES ##################################################################
 

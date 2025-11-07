@@ -1,4 +1,5 @@
 <?php
+require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
@@ -11,20 +12,16 @@ $response = [
 ];
 
 try {
-    $paramUserId = $_GET["user_id"] ?? null;
+    $authUser = requireAuth();
+    $authUserId = $authUser["user_id"] ?? null;
 
-    if ($paramUserId) {
-        $where = ["user_id" => intval($paramUserId)];
-    } else {
-        // fallback: usar usuario actual
-        $userId = $_SESSION["sc_UserId"] ?? null;
-
-        if (!$userId) {
-            throw new Exception("Missing user_id parameter or invalid session.");
-        }
-        
-        $where = ["user_id" => intval($userId)];
+    if (empty($authUserId)) {
+        throw new Exception("Unauthorized access: invalid or missing token.");
     }
+
+    $paramUserId = $_GET["user_id"] ?? $authUserId;
+
+    $where = ["user_id" => intval($paramUserId)];
 
     // 🔍 Filtro opcional por status
     $status = $_GET["status"] ?? '';
