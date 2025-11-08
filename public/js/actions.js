@@ -5764,22 +5764,22 @@ document.addEventListener("DOMContentLoaded", async function () {
 				// Botón: Delete Load
 				if (deleteLoadBtn) {
 					deleteLoadBtn.onclick = () => {
-						deleteLoadBtn.setAttribute('data-shipping-id', loadId);
+						deleteLoadBtn.setAttribute('data-load-id', loadId);
 						
 						if (!loadId) {
 							alert("Shipping ID not found.");
 							return;
 						}
 
-						showConfirmModal("Delete Shipping", "Are you sure you want to delete this Shipping?", async () => {
+						showConfirmModal("Delete Load", "Are you sure you want to delete this Load?", async () => {
 							const frame = document.querySelector('.formular-frame');
 							if (frame) frame.style.display = 'none';
 
 							const formData = new FormData();
-							formData.append("shippings_id", shippingsId);
+							formData.append("load_id", loadId);
 				
 							try {
-								const response = await fetch('api/delete_shipping.php', {
+								const response = await fetch('api/delete_load.php', {
 									method: 'POST',
 									body: formData
 								});
@@ -5804,15 +5804,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 									}, 3000);
 								}
 							} catch (error) {
-								console.error("Error deleting shipping:", error);
-								alert("Error deleting shipping. Check console.");
+								console.error("Error deleting load:", error);
+								alert("Error deleting load. Check console.");
 							}
 						});
 					};
 				}
 			}
 		} catch (error) {
-			console.error("Error loading shipping info:", error);
+			console.error("Error loading load info:", error);
 		}
 	}
 
