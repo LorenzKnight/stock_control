@@ -18,7 +18,7 @@
 
 <body>
 	<?php // include("components/modal_shipping_options.php"); ?>
-	<?php // include("components/modal_add_shipping.php"); ?>
+	<?php include("components/modal_add_service.php"); ?>
 	<?php include("components/message.php"); ?>
 	<?php include("components/header.php"); ?>
 	<?php include("components/system_container.php"); ?>

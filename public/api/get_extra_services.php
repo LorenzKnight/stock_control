@@ -44,7 +44,7 @@ try {
         $where,
         [
             "order_by" => "service_id",
-            "order_direction" => "ASC"
+            "order_direction" => "DESC"
         ]
     );
 

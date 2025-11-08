@@ -6866,132 +6866,211 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const response = await fetch(`${endpoint}?user_id=${selectedUserId}`);
 			const result = await response.json();
 
-			
-				let html = '';
+			let html = '';
 
-				if (sectionType === "extra-service") {
+			if (sectionType === "extra-service") {
+				html += `
+					<div class="section-header">
+						<table style="border-bottom:1px solid var(--clr-border); padding: 5px 0;" width="100%" cellspacing="0">
+							<tr>
+								<td width="75%" align="center" valign="middle"></td>
+								<td width="25%" align="right" valign="middle">
+									<button class="button-style-agree" id="add-service-btn">New Service</button>
+								</td>
+							</tr>
+						</table>
+					</div>
+				`;
+
+				if (result.success && Array.isArray(result.data) && result.data.length > 0) {
 					html += `
-						<div class="section-header">
-							<table style="border-bottom:1px solid var(--clr-border); padding: 5px 0;" width="100%" cellspacing="0">
-								<tr>
-									<td width="75%" align="center" valign="middle"></td>
-									<td width="25%" align="right" valign="middle">
-										<button class="button-style-agree" id="btnAddService">New Service</button>
-									</td>
-								</tr>
-							</table>
-						</div>
-					`;
+						${result.data.map(service => {
+							const date = new Date(service.created_at);
+							const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 
-					if (result.success && Array.isArray(result.data) && result.data.length > 0) {
-						html += `
-							<div class="service-table">
-								<table width="100%" align="center" cellspacing="0">
-									${result.data.map(service => `
+							return`
+								<div class="service-table">
+									<table width="100%" align="center" cellspacing="0">
 										<tr data-id="${service.service_id}" valign="baseline" class="form_height">
-											<td width="20%" align="center" valign="middle">
+											<td width="50%" align="left" valign="middle" style="padding-left:15px;">
 												${service.service_name}
 											</td>
 											<td width="20%" align="center" valign="middle">
-												${service.service_price}
+												$ ${service.service_price}
 											</td>
-											<td width="20%" align="center" valign="middle">
+											<td width="10%" align="center" valign="middle">
 												${service.status == 1 ? "Active" : "Inactive"}
 											</td>
-											<td width="20%" align="center" valign="middle">
-												${service.created_at}
+											<td width="15%" align="center" valign="middle">
+												${formattedDate}
 											</td>
-											<td width="20%" align="center" valign="middle">
-												<button class="btn-edit" data-id="${service.service_id}">✏️</button>
-												<button class="btn-delete" data-id="${service.service_id}">🗑️</button>
+											<td width="5%" align="center" valign="middle">
+												<div class="service-menu">
+													<img src="images/sys-img/hamburger-menu-icon.png" data-id="${service.service_id}" alt="menu">
+												</div>
 											</td>
 										</tr>
-									`).join('')}
-								</table>
-							</div>
-						`;
-					} else {
-						// 🩶 Si no hay servicios, mostrar un mensaje de vacío
-						html += `
-							<p style="color:gray; margin-top:10px;">No extra services found for this user.</p>
-						`;
-					}
-				}
-				else if (sectionType === "user-overview") {
+									</table>
+								</div>
+							`;
+						}).join('')}
+					`;
+				} else {
+					// 🩶 Si no hay servicios, mostrar un mensaje de vacío
 					html += `
-						<table class="data-table" width="100%" cellspacing="0" cellpadding="5">
-							<thead>
-								<tr>
-									<th>ID</th>
-									<th>Name</th>
-									<th>Email</th>
-									<th>Rank</th>
-									<th>Status</th>
-								</tr>
-							</thead>
-							<tbody>
-								${result.data.map(user => `
-									<tr>
-										<td>${user.user_id}</td>
-										<td>${user.full_name}</td>
-										<td>${user.email}</td>
-										<td>${user.rank}</td>
-										<td>${user.status == 1 ? "Active" : "Inactive"}</td>
-									</tr>
-								`).join('')}
-							</tbody>
-						</table>
+						<p style="color:gray; margin-top:10px;">No extra services found for this user.</p>
 					`;
 				}
-				else if (result.success) {
-					html += `<pre>${JSON.stringify(result.data, null, 2)}</pre>`;
+			}
+			else if (sectionType === "user-overview") {
+				html += `
+					<table class="data-table" width="100%" cellspacing="0" cellpadding="5">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Name</th>
+								<th>Email</th>
+								<th>Rank</th>
+								<th>Status</th>
+							</tr>
+						</thead>
+						<tbody>
+							${result.data.map(user => `
+								<tr>
+									<td>${user.user_id}</td>
+									<td>${user.full_name}</td>
+									<td>${user.email}</td>
+									<td>${user.rank}</td>
+									<td>${user.status == 1 ? "Active" : "Inactive"}</td>
+								</tr>
+							`).join('')}
+						</tbody>
+					</table>
+				`;
+			}
+			else if (result.success) {
+				html += `<pre>${JSON.stringify(result.data, null, 2)}</pre>`;
+			}
+			else {
+				// Fallback para depuración o secciones futuras
+				html += `<pre>${JSON.stringify(result.data, null, 2)}</pre>`;
+			}
+
+			detailsContainer.innerHTML = html;
+
+			if (sectionType === "extra-service") {
+				// 📌 script para add services popup
+				const addServiceBtn = document.getElementById("add-service-btn");
+				if (addServiceBtn) {
+					addServiceBtn.addEventListener("click", async () => {
+						scrollToTopIfNeeded();
+
+						const selectedUserId = localStorage.getItem("selectedUserId");
+
+						if (!selectedUserId) {
+							console.error("⚠️ No user selected. Cannot create service.");
+							alert("Please select a user first.");
+							return;
+						}
+
+						const addServicesForm = document.getElementById('add-services-form');
+						const popupContent = addServicesForm.querySelector('.formular-frame');
+
+						document.getElementById("service_user_id").value = selectedUserId;
+
+						if (addServicesForm && popupContent) {
+						    addServicesForm.style.display = 'block';
+						    addServicesForm.style.opacity = '0';
+						    addServicesForm.style.transition = 'opacity 0.5s ease';
+						    setTimeout(() => {
+						        addServicesForm.style.opacity = '1';
+						    }, 10);
+
+						    popupContent.style.transform = 'scale(0.7)';
+						    popupContent.style.opacity = '0';
+						    popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+						    setTimeout(() => {
+						        popupContent.style.transform = 'scale(1)';
+						        popupContent.style.opacity = '1';
+						    }, 50);
+						}
+					});
 				}
-				else {
-					// Fallback para depuración o secciones futuras
-					html += `<pre>${JSON.stringify(result.data, null, 2)}</pre>`;
-				}
-
-				detailsContainer.innerHTML = html;
-
-				if (sectionType === "extra-service") {
-					const btnAdd = document.getElementById("btnAddService");
-					if (btnAdd) {
-						btnAdd.addEventListener("click", async () => {
-							// Aquí mostrarías tu formulario modal o sección para crear un servicio
-							// Ejemplo simple de simulación:
-							const serviceName = prompt("Service name:");
-							const servicePrice = prompt("Service price:");
-
-							if (!serviceName || !servicePrice) return;
-
-							// 📨 Enviar al backend
-							const createResponse = await fetch("api/create_extra_service.php", {
-								method: "POST",
-								headers: { "Content-Type": "application/json" },
-								body: JSON.stringify({
-									user_id: selectedUserId,
-									service_name: serviceName,
-									service_price: servicePrice
-								})
-							});
-							const createResult = await createResponse.json();
-
-							if (createResult.success) {
-								alert("✅ Service created successfully!");
-								await refreshSelectedUserView(); // 🔁 Recargar sin perder vista
-							} else {
-								alert("❌ Error creating service: " + createResult.message);
-							}
-						});
-					}
-				}
-			// } else {
-			// 	detailsContainer.innerHTML = `<p style="color:gray;">No data found for this user in ${sectionTitle}.</p>`;
-			// }
+			}
 		} catch (err) {
 			console.error(`Error loading ${sectionTitle}:`, err);
 			detailsContainer.innerHTML = `<p style="color:red;">Error loading ${sectionTitle}: ${err.message}</p>`;
 		}
+	}
+
+	let formAddServices = document.getElementById('formAddServices');
+	if (formAddServices) {
+		formAddServices.addEventListener("submit", async function(e) {
+			e.preventDefault();
+
+			let formData = new FormData(this);
+			let serviceName = formData.get('service_name').trim();
+			let servicePrice = formData.get('service_price').trim();
+			let userId = formData.get('user_id');
+
+			let banner = document.getElementById('status-message');
+			let statusText = document.getElementById('status-text');
+			let statusImage = document.getElementById('status-image');
+
+			// 🧩 Validaciones básicas
+			if (!userId) {
+				statusText.innerText = "Error: No user selected.";
+				statusImage.src = data.img_gif;
+				banner.style.display = 'block';
+				return;
+			}
+
+			if (!serviceName || !servicePrice) {
+				statusText.innerText = "Error: Please fill all fields.";
+				statusImage.src = data.img_gif;
+				banner.style.display = 'block';
+				return;
+			}
+
+			try {
+				let response = await fetch('api/create_extra_service.php', {
+					method: 'POST',
+					headers: { 'Accept': 'application/json' },
+					body: formData
+				});
+
+				let data = await response.json();
+
+				if (data.success) {
+					statusText.innerText = data.message || "Service created successfully!";
+					statusImage.src = data.img_gif;
+					banner.style.display = 'block';
+					banner.style.opacity = '1';
+
+					formAddServices.reset();
+					document.getElementById('add-services-form').style.display = 'none';
+
+					setTimeout(() => {
+						banner.style.opacity = '0';
+						setTimeout(async () => {
+							await refreshSelectedUserView(); // 🔁 Recargar la lista de servicios
+						}, 1000);
+					}, 2000);
+				} else {
+					statusText.innerText = "Error: " + (data.message || "Could not create service.");
+					statusImage.src = data.img_gif;
+					banner.style.display = 'block';
+				}
+			} catch (error) {
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				statusText.innerText = "Error procesando la solicitud.";
+				statusImage.src = data.img_gif;
+				banner.style.display = 'block';
+			}
+		});
 	}
 
 	async function refreshSelectedUserView() {
