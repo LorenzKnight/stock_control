@@ -5165,49 +5165,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 				});
 				const data = await res.json();
 
-				shippingTable.innerHTML = '';
-				shippingDetails.innerHTML = '';
-
-				if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-					data.data.forEach(shipping => {
-						const shippingMethod = shipping.shipping_method === '2' 
-							? '<img src="images/sys-img/air-shipping.png" alt="Air Shipping">' 
-							: '<img src="images/sys-img/gnd-shipping.png" alt="Ground Shipping">';
-
-						let statusColor = '';
-						switch (parseInt(shipping.status)) {
-							case 0: statusColor = 'red'; break;          // Cancelled
-							case 1: statusColor = 'orange'; break;       // Pending
-							case 2: statusColor = 'green'; break;        // In transit
-							case 3: statusColor = 'deepskyblue'; break;  // Delivered
-							default: statusColor = 'gray'; break;
-						}
-
-						let shippingTracking = shipping.tracking.checkpoint_name;
-
-						const row = document.createElement('tr');
-						row.className = 'form_height clickable-row';
-						row.innerHTML = `
-							<td width="20%" align="center" valign="middle">
-								<div class="shipping-profile">
-									${shippingMethod}
-								</div>
-							</td>
-							<td width="65%" align="left" valign="top">
-								<div style="padding: 0 5px;">
-									Shipping No.: <strong>${shipping.shipping_no || '—'}</strong><br>
-									<p>Status: <strong style="color:${statusColor};">${shipping.status_text || ''}</strong></p>
-									<p class="mini-title">${shippingTracking || ''}</p>
-								</div>
-							</td>
-							<td width="15%" align="left" valign="top">
-								${formatNotificationDate(shipping.created_at)}
-							</td>
-						`;
-
-						row.addEventListener('click', () => renderShippingDetails(shipping, row));
-						shippingTable.appendChild(row);
-					});
+				if (data.success) {
+					renderShippingsTable(data.data);
 				} else {
 					shippingTable.innerHTML = `<tr><td><p style="text-align:center;">No shippings found.</p></td></tr>`;
 				}
@@ -5217,193 +5176,278 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		}
 
-		async function renderShippingDetails(shipping, clickedRow) {
-			const allRows = shippingTable.querySelectorAll('.clickable-row');
-			allRows.forEach(row => row.style.backgroundColor = '');
-
-			if (clickedRow) {
-				clickedRow.style.backgroundColor = 'var(--clr-white)';
-			}
-
-			shippingDetails.innerHTML = `
-				<div class="shipping-header">
-					<table width="100%" style="border-bottom: 1px solid #999; margin-bottom:10px;" align="center" cellspacing="0">
-						<tr valign="baseline" class="form_height">
-							<td width="12%" align="left" valign="middle">
-								<p class="mini-title">Shipping. No.:</p>
-								<strong>${shipping.shipping_no}</strong>
-							</td>
-							<td width="85%" align="center" valign="middle"></td>
-							<td width="3%" align="center" valign="middle">
-								<div class="shipping-menu" id="shippingMenuBtn">
-									<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
-								</div>
-							</td>
-						</tr>
-						<tr valign="baseline" class="form_height">
-							<td width="100%" align="left" valign="middle">
-								<p class="mini-title">Destination:</p>
-								${shipping.destination || '—'}
-							</td>
-						</tr>
-						<tr valign="baseline" class="form_height">
-							<td width="100%" align="left" valign="middle">
-								<p class="mini-title">Description:</p>
-								${shipping.description || '—'}
-							</td>
-						</tr>
-					</table>
-				</div>
-				<div class="loads-list">
-					${renderLoads(shipping.loads || [])}
-				</div>
-			`;
-
-			shippingSummary.innerHTML = renderShippingSummary(shipping.product_summary || [], shipping);
-
-			const shippingMenuBtn = document.getElementById('shippingMenuBtn');
-			shippingMenuBtn.addEventListener('click', () => {
-				openShippingForm(shipping.shippings_id);
-
-				handlePopupClose("shipping-options", ".formular-frame", []);
-			});
-
-
-			const loadCards = document.querySelectorAll('.loads');
-			loadCards.forEach((card, index) => {
-				const loadMenuBtn = card.querySelector('.load-menu');
-				if (!loadMenuBtn) return;
-
-				loadMenuBtn.addEventListener('click', () => {
-					const loadData = shipping.loads[index];
-					if (!loadData) return;
-
-					openLoadForm(loadData.load_id);
-
-					handlePopupClose("load-options", ".formular-frame", []);
-				});
-			});
-		}
-
-		function renderLoads(loads) {
-			if (loads.length === 0) return '<p style="margin-left: 10px;">No loads found.</p>';
-
-			return loads.map(load => `
-				<div class="loads">
-					<h4>Load No.: ${load.load_no}</h4>
-					<p>Customer: <strong>${load.customer?.full_name || '—'}</strong></p>
-					<p class="mini-title">
-						${load.price_total || 0} ${load.from_currency || ''} 
-						(Inc. ${(Number(load.taxes) ?? 0).toFixed(1)}% Taxes
-						${load.discount && Number(load.discount) > 0 
-							? ` & ${(Number(load.discount)).toFixed(1)} ${load.from_currency || ''} Disc.` 
-							: ''})
-					</p>
-					<p style="margin-top:-4px;"><strong>${load.price_total_exchanged || 0} ${load.to_currency || ''}</strong></p>
-					<div style="margin-top: 10px;">
-						${renderProducts(load.products || [])}
-					</div>
-					<div class="load-menu">
-						<img src="images/sys-img/menu-icon.png" alt="load-menu">
-					</div>
-				</div>
-				
-			`).join('');
-		}
-
-		function renderProducts(products) {
-			if (products.length === 0) return '<p>No products</p>';
-
-			return `
-				<table width="100%" cellspacing="0" cellpadding="0" style="margin-top: 10px;">
-					<thead>
-						<tr>
-							<th style="border-bottom: 1px solid var(--clr-light-border); padding-bottom: 5px;" align="left">Product</th>
-							<th style="border-bottom: 1px solid var(--clr-light-border); padding-bottom: 5px;" align="center">Qty</th>
-							<th style="border-bottom: 1px solid var(--clr-light-border); padding-bottom: 5px;" align="center">Weight/Unit</th>
-							<th style="border-bottom: 1px solid var(--clr-light-border); padding-bottom: 5px;" align="center">Weight</th>
-							<th style="border-bottom: 1px solid var(--clr-light-border); padding-bottom: 5px;" align="center">Price/Kg</th>
-						</tr>
-					</thead>
-					<tbody style="font-size: 11px; color: var(--clr-neutral-dark);">
-						${products.map(p =>`
-							<tr>
-								<td style="padding-top: 7px;">${p.name || ''} <br><small>${p.mark_name || ''}${p.model_name ? ' - ' + p.model_name : ''}</small></td>
-								<td style="padding-top: 7px;" align="center">${p.quantity ?? 0}</td>
-								<td style="padding-top: 7px;" align="center">${(p.weight_per_unit ?? 0).toFixed(2)} kg</td>
-								<td style="padding-top: 7px;" align="center">${(p.total_kg ?? 0).toFixed(2)} kg</td>
-								<td style="padding-top: 7px;" align="center">$${(p.total_price_exchanged ?? 0).toFixed(2)}</td>
-							</tr>
-						`).join('')}
-					</tbody>
-				</table>
-			`;
-		}
-
-		function renderShippingSummary(summary, shippingInfo = {}) {
-			if (!Array.isArray(summary) || summary.length === 0) {
-				return `<p style="text-align: center; margin-top: 10px;">No product summary available</p>`;
-			}
-
-			// 🧮 Totales generales
-			const totalQty = summary.reduce((sum, p) => sum + (p.quantity ?? 0), 0);
-			const totalOriginal = summary.reduce((sum, p) => sum + (p.total_price ?? 0), 0);
-			const totalConverted = summary.reduce((sum, p) => sum + (p.total_exchanged ?? 0), 0);
-			const totalWeight = summary.reduce((sum, p) => sum + (p.total_weight ?? 0), 0);
-
-			const shippingNumber = shippingInfo.shipping_no || '—';
-			const destination = shippingInfo.destination || '—';
-			const createdAt = shippingInfo.created_at ? new Date(shippingInfo.created_at).toLocaleDateString() : '—';
-			const deliveryDate = shippingInfo.delivery_date || '—';
-			const shippingImage = shippingInfo.shipping_img 
-				? `<img src="../images/shippings-code/${shippingInfo.shipping_img}" alt="Shipping Code" style="width: 50%; margin-top: 10px;">` 
-				: '';
-
-			return `
-				<h3 style="text-align: center; margin: 10px 0;">Summary</h3>
-
-				<table width="90%" cellspacing="0" cellpadding="5" style="margin: 0 auto;">
-					<thead>
-						<tr style="background: #f5f5f5;">
-							<th style="border-bottom: 1px solid #ccc;" align="left">Product</th>
-							<th style="border-bottom: 1px solid #ccc;" align="center">Qty</th>
-							<th style="border-bottom: 1px solid #ccc;" align="center">Weight</th>
-							<th style="border-bottom: 1px solid #ccc;" align="center">Total $</th>
-						</tr>
-					</thead>
-					<tbody style="font-size: 11px; color: var(--clr-neutral-dark);">
-						${summary.map(p => `
-							<tr>
-								<td>${p.name || ''} <br><small>${p.mark_name || ''}${p.model_name ? ' - ' + p.model_name : ''}</small></td>
-								<td align="center">${p.quantity ?? 0}</td>
-								<td align="center">${(p.total_weight ?? 0).toFixed(2)} kg</td>
-								<td align="center">$${(p.total_exchanged ?? 0).toFixed(2)}</td>
-							</tr>
-						`).join('')}
-					</tbody>
-					<tfoot>
-						<tr style="font-weight: bold;">
-							<td style="border-top: 1px solid #ccc;">Total</td>
-							<td style="border-top: 1px solid #ccc;" align="center">${totalQty}</td>
-							<td style="border-top: 1px solid #ccc;" align="center">${totalWeight.toFixed(2)} kg</td>
-							<td style="border-top: 1px solid #ccc;" align="center">$${totalConverted.toFixed(2)}</td>
-						</tr>
-					</tfoot>
-					
-				</table>
-				<div style="text-align: center; margin-bottom: 10px;">
-					<p>Destination: ${destination}</p>
-					<p>Created: ${createdAt}</p>
-					<p>Estimate Arrival: ${deliveryDate}</p>
-					${shippingImage}
-					<p><strong>${shippingNumber}</strong></p>
-				</div>
-			`;
-		}
-
 		// Inicializar búsqueda
-		searchShippingField.addEventListener('keyup', fetchAndRenderShippings);
 		fetchAndRenderShippings();
+		searchShippingField.addEventListener('keyup', fetchAndRenderShippings);
+	}
+
+	// 🔹 Función para renderizar la tabla de shippings (reutilizable)
+	function renderShippingsTable(shippings, selectedId = null) {
+		shippingTable.innerHTML = '';
+		shippingDetails.innerHTML = '';
+
+		if (!Array.isArray(shippings) || shippings.length === 0) {
+			shippingTable.innerHTML = `<tr><td><p style="text-align:center;">No shippings found.</p></td></tr>`;
+			return;
+		}
+
+		shippings.forEach(shipping => {
+			const shippingMethod = shipping.shipping_method === '2'
+				? '<img src="images/sys-img/air-shipping.png" alt="Air Shipping">'
+				: '<img src="images/sys-img/gnd-shipping.png" alt="Ground Shipping">';
+
+			let statusColor = '';
+			switch (parseInt(shipping.status)) {
+				case 0: statusColor = 'red'; break;
+				case 1: statusColor = 'orange'; break;
+				case 2: statusColor = 'green'; break;
+				case 3: statusColor = 'deepskyblue'; break;
+				default: statusColor = 'gray'; break;
+			}
+
+			const shippingTracking = shipping.tracking?.checkpoint_name || '';
+
+			const row = document.createElement('tr');
+			row.className = 'form_height clickable-row';
+			row.setAttribute('data-id', shipping.shippings_id);
+			row.innerHTML = `
+				<td width="20%" align="center" valign="middle">
+					<div class="shipping-profile">${shippingMethod}</div>
+				</td>
+				<td width="65%" align="left" valign="top">
+					<div style="padding: 0 5px;">
+						Shipping No.: <strong>${shipping.shipping_no || '—'}</strong><br>
+						<p>Status: <strong style="color:${statusColor};">${shipping.status_text || ''}</strong></p>
+						<p class="mini-title">${shippingTracking}</p>
+					</div>
+				</td>
+				<td width="15%" align="left" valign="top">
+					${formatNotificationDate(shipping.created_at)}
+				</td>
+			`;
+
+			row.addEventListener('click', () => {
+				localStorage.setItem("selectedShippingId", shipping.shippings_id);
+				renderShippingDetails(shipping, row)
+			});
+			shippingTable.appendChild(row);
+
+			// 🧠 Si hay un shipping seleccionado, mostrarlo automáticamente
+			if (String(shipping.shippings_id) === String(selectedId)) {
+				renderShippingDetails(shipping, row);
+				row.style.backgroundColor = 'var(--clr-white)';
+			}
+		});
+	}
+		
+	async function renderShippingDetails(shipping, clickedRow) {
+		const allRows = shippingTable.querySelectorAll('.clickable-row');
+		allRows.forEach(row => row.style.backgroundColor = '');
+
+		if (clickedRow) {
+			clickedRow.style.backgroundColor = 'var(--clr-white)';
+		}
+
+		shippingDetails.innerHTML = `
+			<div class="shipping-header">
+				<table width="100%" style="border-bottom: 1px solid #999; margin-bottom:10px;" align="center" cellspacing="0">
+					<tr valign="baseline" class="form_height">
+						<td width="12%" align="left" valign="middle">
+							<p class="mini-title">Shipping. No.:</p>
+							<strong>${shipping.shipping_no}</strong>
+						</td>
+						<td width="85%" align="center" valign="middle"></td>
+						<td width="3%" align="center" valign="middle">
+							<div class="shipping-menu" id="shippingMenuBtn">
+								<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
+							</div>
+						</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+						<td width="100%" align="left" valign="middle">
+							<p class="mini-title">Destination:</p>
+							${shipping.destination || '—'}
+						</td>
+					</tr>
+					<tr valign="baseline" class="form_height">
+						<td width="100%" align="left" valign="middle">
+							<p class="mini-title">Description:</p>
+							${shipping.description || '—'}
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="loads-list">
+				${renderLoads(shipping.loads || [])}
+			</div>
+		`;
+
+		shippingSummary.innerHTML = renderShippingSummary(shipping.product_summary || [], shipping);
+
+		const shippingMenuBtn = document.getElementById('shippingMenuBtn');
+		shippingMenuBtn.addEventListener('click', () => {
+			openShippingForm(shipping.shippings_id);
+
+			handlePopupClose("shipping-options", ".formular-frame", []);
+		});
+
+
+		const loadCards = document.querySelectorAll('.loads');
+		loadCards.forEach((card, index) => {
+			const loadMenuBtn = card.querySelector('.load-menu');
+			if (!loadMenuBtn) return;
+
+			loadMenuBtn.addEventListener('click', () => {
+				const loadData = shipping.loads[index];
+				if (!loadData) return;
+
+				openLoadForm(loadData.load_id);
+
+				handlePopupClose("load-options", ".formular-frame", []);
+			});
+		});
+	}
+
+	// 🔁 Función para refrescar el shipping seleccionado después de editar/agregar
+	async function refreshSelectedShipping() {
+		try {
+			const selectedShippingId = localStorage.getItem("selectedShippingId");
+			if (!selectedShippingId) return;
+
+			const res = await fetch(`api/get_shippings.php`, {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			});
+			const data = await res.json();
+
+			if (data.success) {
+				renderShippingsTable(data.data, selectedShippingId);
+
+				const shipping = data.data.find(s => String(s.shippings_id) === String(selectedShippingId));
+				if (shipping) {
+					const row = document.querySelector(`.clickable-row[data-id="${selectedShippingId}"]`);
+					renderShippingDetails(shipping, row);
+				}
+			}
+		} catch (err) {
+			console.error("Error refreshing selected shipping:", err);
+		}
+	}
+		
+	function renderLoads(loads) {
+		if (loads.length === 0) return '<p style="margin-left: 10px;">No loads found.</p>';
+
+		return loads.map(load => `
+			<div class="loads">
+				<h4>Load No.: ${load.load_no}</h4>
+				<p>Customer: <strong>${load.customer?.full_name || '—'}</strong></p>
+				<p class="mini-title">
+					${load.price_total || 0} ${load.from_currency || ''} 
+					(Inc. ${(Number(load.taxes) ?? 0).toFixed(1)}% Taxes
+					${load.discount && Number(load.discount) > 0 
+						? ` & ${(Number(load.discount)).toFixed(1)} ${load.from_currency || ''} Disc.` 
+						: ''})
+				</p>
+				<p style="margin-top:-4px;"><strong>${load.price_total_exchanged || 0} ${load.to_currency || ''}</strong></p>
+				<div style="margin-top: 10px;">
+					${renderProducts(load.products || [])}
+				</div>
+				<div class="load-menu">
+					<img src="images/sys-img/menu-icon.png" alt="load-menu">
+				</div>
+			</div>
+			
+		`).join('');
+	}
+
+	function renderProducts(products) {
+		if (products.length === 0) return '<p>No products</p>';
+
+		return `
+			<table width="100%" cellspacing="0" cellpadding="0" style="margin-top: 10px;">
+				<thead>
+					<tr>
+						<th style="border-bottom: 1px solid var(--clr-light-border); padding-bottom: 5px;" align="left">Product</th>
+						<th style="border-bottom: 1px solid var(--clr-light-border); padding-bottom: 5px;" align="center">Qty</th>
+						<th style="border-bottom: 1px solid var(--clr-light-border); padding-bottom: 5px;" align="center">Weight/Unit</th>
+						<th style="border-bottom: 1px solid var(--clr-light-border); padding-bottom: 5px;" align="center">Weight</th>
+						<th style="border-bottom: 1px solid var(--clr-light-border); padding-bottom: 5px;" align="center">Price/Kg</th>
+					</tr>
+				</thead>
+				<tbody style="font-size: 11px; color: var(--clr-neutral-dark);">
+					${products.map(p =>`
+						<tr>
+							<td style="padding-top: 7px;">${p.name || ''} <br><small>${p.mark_name || ''}${p.model_name ? ' - ' + p.model_name : ''}</small></td>
+							<td style="padding-top: 7px;" align="center">${p.quantity ?? 0}</td>
+							<td style="padding-top: 7px;" align="center">${(p.weight_per_unit ?? 0).toFixed(2)} kg</td>
+							<td style="padding-top: 7px;" align="center">${(p.total_kg ?? 0).toFixed(2)} kg</td>
+							<td style="padding-top: 7px;" align="center">$${(p.total_price_exchanged ?? 0).toFixed(2)}</td>
+						</tr>
+					`).join('')}
+				</tbody>
+			</table>
+		`;
+	}
+
+	function renderShippingSummary(summary, shippingInfo = {}) {
+		if (!Array.isArray(summary) || summary.length === 0) {
+			return `<p style="text-align: center; margin-top: 10px;">No product summary available</p>`;
+		}
+
+		// 🧮 Totales generales
+		const totalQty = summary.reduce((sum, p) => sum + (p.quantity ?? 0), 0);
+		const totalOriginal = summary.reduce((sum, p) => sum + (p.total_price ?? 0), 0);
+		const totalConverted = summary.reduce((sum, p) => sum + (p.total_exchanged ?? 0), 0);
+		const totalWeight = summary.reduce((sum, p) => sum + (p.total_weight ?? 0), 0);
+
+		const shippingNumber = shippingInfo.shipping_no || '—';
+		const destination = shippingInfo.destination || '—';
+		const createdAt = shippingInfo.created_at ? new Date(shippingInfo.created_at).toLocaleDateString() : '—';
+		const deliveryDate = shippingInfo.delivery_date || '—';
+		const shippingImage = shippingInfo.shipping_img 
+			? `<img src="../images/shippings-code/${shippingInfo.shipping_img}" alt="Shipping Code" style="width: 50%; margin-top: 10px;">` 
+			: '';
+
+		return `
+			<h3 style="text-align: center; margin: 10px 0;">Summary</h3>
+
+			<table width="90%" cellspacing="0" cellpadding="5" style="margin: 0 auto;">
+				<thead>
+					<tr style="background: #f5f5f5;">
+						<th style="border-bottom: 1px solid #ccc;" align="left">Product</th>
+						<th style="border-bottom: 1px solid #ccc;" align="center">Qty</th>
+						<th style="border-bottom: 1px solid #ccc;" align="center">Weight</th>
+						<th style="border-bottom: 1px solid #ccc;" align="center">Total $</th>
+					</tr>
+				</thead>
+				<tbody style="font-size: 11px; color: var(--clr-neutral-dark);">
+					${summary.map(p => `
+						<tr>
+							<td>${p.name || ''} <br><small>${p.mark_name || ''}${p.model_name ? ' - ' + p.model_name : ''}</small></td>
+							<td align="center">${p.quantity ?? 0}</td>
+							<td align="center">${(p.total_weight ?? 0).toFixed(2)} kg</td>
+							<td align="center">$${(p.total_exchanged ?? 0).toFixed(2)}</td>
+						</tr>
+					`).join('')}
+				</tbody>
+				<tfoot>
+					<tr style="font-weight: bold;">
+						<td style="border-top: 1px solid #ccc;">Total</td>
+						<td style="border-top: 1px solid #ccc;" align="center">${totalQty}</td>
+						<td style="border-top: 1px solid #ccc;" align="center">${totalWeight.toFixed(2)} kg</td>
+						<td style="border-top: 1px solid #ccc;" align="center">$${totalConverted.toFixed(2)}</td>
+					</tr>
+				</tfoot>
+				
+			</table>
+			<div style="text-align: center; margin-bottom: 10px;">
+				<p>Destination: ${destination}</p>
+				<p>Created: ${createdAt}</p>
+				<p>Estimate Arrival: ${deliveryDate}</p>
+				${shippingImage}
+				<p><strong>${shippingNumber}</strong></p>
+			</div>
+		`;
 	}
 
 	// 📌 script para add shipping popup
@@ -5799,7 +5843,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 									setTimeout(() => {
 										banner.style.opacity = '0';
 										setTimeout(() => {
-											window.location.href = data.redirect_url || window.location.href;
+											const loadOptions = document.getElementById('load-options');
+											if (loadOptions) fadeOutAndHide(loadOptions);
+
+											const shippingOptions = document.getElementById('shipping-options');
+											if (shippingOptions) fadeOutAndHide(shippingOptions);
+
+											refreshSelectedShipping();
 										}, 1000);
 									}, 3000);
 								}
@@ -5919,7 +5969,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 					setTimeout(() => {
 						banner.style.opacity = '0';
 						setTimeout(() => {
-							window.location.href = data.redirect_url || window.location.href;
+							formEditShipping.reset();
+							
+							const editShippingModal = document.getElementById('edit-shipping-modal');
+							if (editShippingModal) fadeOutAndHide(editShippingModal);
+
+							const shippingOptions = document.getElementById('shipping-options');
+							if (shippingOptions) fadeOutAndHide(shippingOptions);
+
+							refreshSelectedShipping();
 						}, 1000);
 					}, 3000);
 				}
@@ -6278,7 +6336,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 						setTimeout(() => {
 							banner.style.opacity = '0';
 							setTimeout(() => {
-								window.location.href = data.redirect_url || window.location.href;
+								formAddLoad.reset();
+
+								const addLoadModal = document.getElementById('add-load-modal');
+								if (addLoadModal) fadeOutAndHide(addLoadModal);
+
+								const shippingOptions = document.getElementById('shipping-options');
+								if (shippingOptions) fadeOutAndHide(shippingOptions);
+
+								refreshSelectedShipping();
 							}, 1000);
 						}, 3000);
 					} else {
@@ -8501,23 +8567,37 @@ document.addEventListener("DOMContentLoaded", async function () {
 		setTimeout(() => {
 			element.style.opacity = '0';
 			element.style.transform = 'scale(0.8)';
+
 			setTimeout(() => {
 				element.style.display = 'none';
+				element.style.removeProperty('opacity');
+				element.style.removeProperty('transform');
+				element.style.removeProperty('transition');
+				element.style.removeProperty('height');
 				if (callback) callback();
 			}, 400);
 		}, 10);
 	}
 	
 	function showWithFadeIn(element) {
+		if (!element) return;
+
+		element.style.removeProperty('opacity');
+		element.style.removeProperty('transform');
+		element.style.removeProperty('transition');
+
 		element.style.display = 'block';
 		element.style.opacity = '0';
 		element.style.transform = 'scale(0.8)';
-		element.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-	
-		setTimeout(() => {
+
+		void element.offsetWidth;
+		element.getBoundingClientRect();
+
+		requestAnimationFrame(() => {
+			element.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
 			element.style.opacity = '1';
 			element.style.transform = 'scale(1)';
-		}, 50);
+		});
 	}
 
 	function activateTab(activeTab, inactiveTab, showSection, hideSection) {
