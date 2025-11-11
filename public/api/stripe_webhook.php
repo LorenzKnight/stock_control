@@ -34,6 +34,7 @@ if ($event->type === 'checkout.session.completed') {
     $subscriptionId = $session->subscription ?? null;
     $subscId = $session->metadata->subsc_id ?? null;
     $amountTotal = $session->amount_total / 100; // Stripe da el monto en centavos
+    $extraPack = $session->metadata->extra_pack ?? null;
     
     if ($userId && $subscriptionId) {
         if (!empty($subscId) && is_numeric($subscId)) {
@@ -83,6 +84,25 @@ if ($event->type === 'checkout.session.completed') {
             "subscriptions",
             $userId
         );
+
+        // ---------------------------------------
+        // 🆕 Si el usuario pagó un servicio extra
+        // ---------------------------------------
+        if (!empty($extraPack)) {
+            $extraUpdate = update_table("extra_services", [
+                "status" => 0
+            ], [
+                "user_id" => $userId
+            ]);
+
+            log_activity(
+                $userId,
+                "webhook_extra_pack",
+                "Servicio extra '$extraPack' actualizado a status=0 tras pago exitoso.",
+                "extra_services",
+                $userId
+            );
+        }
     }
 }
 
