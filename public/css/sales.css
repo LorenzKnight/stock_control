@@ -66,6 +66,28 @@
 	background: linear-gradient(to bottom, rgba(255, 255, 255, 0.641), rgba(255, 255, 255, 0));
 }
 
+
+/* para la logica de seleccionar usuario con clic en cualquierparte del div */
+/* .sales-customer-row input[type="radio"] {
+	display: none;
+} */
+
+.sales-customer-row:hover,
+.sales-product-row:hover
+{
+	background-color: var(--frm-bg-transparent-grey);
+	transition: all 0.7s ease;
+}
+
+.sales-customer-row.selected-customer {
+	background-color: var(--frm-bg-transparent-grey);
+	transition: all 0.7s ease;
+}
+/* hasta aqui */
+
+
+
+
 .tab-active {
 	font-weight: 400;
 	color: #fff !important;

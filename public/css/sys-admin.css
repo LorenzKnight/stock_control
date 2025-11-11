@@ -87,6 +87,17 @@
 	transition: background-color 0.3s ease;
 }
 
+/* para la logica de seleccionar usuario con clic en cualquierparte del div */
+.users-row input[type="radio"] {
+	display: none;
+}
+
+.users-row.selected-user {
+	background-color: var(--main-bg-color);
+	transition: background-color 0.2s ease;
+}
+/* hasta aqui */
+
 
 .service-details {
     width: 70%;

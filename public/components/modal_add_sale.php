@@ -94,7 +94,7 @@
 									</tr>
 									<tr valign="baseline" class="form_height">
 										<td colspan="2" align="center" valign="middle">
-											<label for="Due">Due:</label>
+											<label for="due">Due:</label>
 											<input class="form-input-style" type="text" name="due" id="due" placeholder="Due..." disabled/>
 										</td>
 									</tr>

@@ -80,42 +80,51 @@
 									<table width="100%" align="center" cellspacing="0">
 										<tr valign="baseline" class="form_height">
 											<td colspan="2" align="center" valign="middle">
+												<label for="edit_price_sum">Price Sum:</label>
 												<input class="form-input-style" type="text" name="edit_price_sum" id="edit_price_sum" placeholder="Price sum..." disabled/>
 											</td>
 										</tr>
 										<tr valign="baseline" class="form_height">
 											<td colspan="2" align="center" valign="middle">
+												<label for="edit_initial">Initial:</label>
 												<input class="form-input-style" type="text" name="edit_initial" id="edit_initial" placeholder="Initial..."/>
 											</td>
 										</tr>
 										<tr valign="baseline" class="form_height">
 											<td colspan="2" align="center" valign="middle">
-												<input class="form-input-style" type="date" name="edit_delivery_date" id="edit_delivery_date" placeholder="Enter a delivery date..."/>
+												<label for="edit_payment_date">Payment Date:</label>
+												<input class="form-input-style" type="date" name="edit_payment_date" id="edit_payment_date" placeholder="Enter a Payment date..."/>
 											</td>
 										</tr>
 										<tr valign="baseline" class="form_height">
 											<td colspan="2" align="center" valign="middle">
+												<label for="edit_remaining">Remaining:</label>
 												<input class="form-input-style" type="text" name="edit_remaining" id="edit_remaining" placeholder="Remaining..." disabled/>
 											</td>
 										</tr>
 										<tr valign="baseline" class="form_height">
 											<td width="50%" align="center" valign="middle">
+												<label for="edit_interest">% interest:</label>
 												<input class="form-medium-input-style" type="text" name="edit_interest" id="edit_interest" value="10" placeholder="Enter a percent..."/>
 											</td>
 											<td width="50%" align="center" valign="middle">
+												<label for="edit_total_interest">Total Interest:</label>
 												<input class="form-medium-input-style" type="text" name="edit_total_interest" id="edit_total_interest" placeholder="Total Interest..." disabled/>
 											</td>
 										</tr>
 										<tr valign="baseline" class="form_height">
 											<td width="50%" align="center" valign="middle">
+												<label for="edit_installments_month">Installments:</label>
 												<select class="form-input-style" name="edit_installments_month" id="edit_installments_month"></select>
 											</td>
 											<td width="50%" align="center" valign="middle">
-												<input class="form-medium-input-style" type="date" name="edit_payment_date" id="edit_payment_date" placeholder="Enter a Payment date..."/>
+												<label for="edit_delivery_date">Delivery Date:</label>
+												<input class="form-medium-input-style" type="date" name="edit_delivery_date" id="edit_delivery_date" placeholder="Enter a delivery date..."/>
 											</td>
 										</tr>
 										<tr valign="baseline" class="form_height">
 											<td colspan="2" align="center" valign="middle">
+												<label for="edit_due">Due:</label>
 												<input class="form-input-style" type="text" name="edit_due" id="edit_due" placeholder="Due..." disabled/>
 											</td>
 										</tr>
@@ -131,7 +140,7 @@
 							<button type="button" class="neutral-btn">Cancel</button>
 						</td>
 						<td colspan="1" align="center" valign="middle">
-							<input type="submit" class="button-style-agree" value="Save" />
+							<input type="submit" class="button-style-agree" value="Update" />
 						</td>
 						<td colspan="2" align="center" valign="middle">
 						</td>

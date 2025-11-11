@@ -3853,7 +3853,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					data.data.forEach(customer => {
 						const uniqueId = `customer-${customer.customer_id}`;
 						const row = document.createElement('tr');
-						row.className = "categoryContainer";
+						row.className = "sales-customer-row";
 
 						const profileImg = customer.image && customer.image.trim() !== ""
 							? `images/customers/${customer.image}`
@@ -3876,6 +3876,25 @@ document.addEventListener("DOMContentLoaded", async function () {
 								</div>
 							</td>
 						`;
+
+						// 🟢 Seleccionar al hacer clic en toda la fila
+						row.addEventListener('click', () => {
+							const radio = row.querySelector('input[type="radio"]');
+							if (!radio.disabled) {
+								radio.checked = true;
+
+								// Desmarcar visualmente otros clientes
+								document.querySelectorAll('.sales-customer-row').forEach(r => r.classList.remove('selected-customer'));
+
+								// Marcar visualmente este
+								row.classList.add('selected-customer');
+
+								// Simular evento de selección (por si tienes una función para manejarlo)
+								if (typeof handleCustomerSelect === "function") {
+									handleCustomerSelect({ target: radio });
+								}
+							}
+						});
 						customerListTable.appendChild(row);
 					});
 				} else {
@@ -3939,7 +3958,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							: unitImg;
 
 						const row = document.createElement('tr');
-						row.className = "productContainer";
+						row.className = "sales-product-row";
 						row.innerHTML = `
 							<td width="10%" align="center" valign="middle">
 								<div class="list-icon">
@@ -4361,7 +4380,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									const profileImg = customer.image && customer.image.trim() !== '' ? `images/customers/${customer.image}` : `images/sys-img/NonProfilePic.png`;
 
 									const row = document.createElement('tr');
-									row.className = 'categoryContainer';
+									row.className = 'sales-customer-row';
 									row.innerHTML = `
 										<td width='10%' align='center' valign='middle'>
 											<div class='customers-profile'>
@@ -4437,7 +4456,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 										: `images/sys-img/wooden-box.png`;
 
 									const row = document.createElement('tr');
-									row.className = "productContainer";
+									row.className = "sales-product-row";
 									row.innerHTML = `
 										<td width="10%" align="center" valign="middle">
 											<div class="list-icon">
@@ -6849,6 +6868,23 @@ document.addEventListener("DOMContentLoaded", async function () {
 									</div>
 								</td>
 							`;
+
+							row.addEventListener("click", () => {
+								const radio = row.querySelector('input[type="radio"]');
+								if (!radio.disabled) {
+									radio.checked = true;
+
+									// Quitar selección visual de las demás filas
+									document.querySelectorAll('.users-row').forEach(r => r.classList.remove('selected-user'));
+
+									// Agregar selección visual a esta fila
+									row.classList.add('selected-user');
+
+									// Ejecutar el cambio como si se hubiera hecho clic directamente en el radio
+									handleUserSelect({ target: radio }, sectionType);
+								}
+							});
+
 							userListTable.appendChild(row);
 						});
 
