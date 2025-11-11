@@ -92,12 +92,13 @@ if ($event->type === 'checkout.session.completed') {
             $extraUpdate = update_table("extra_services", [
                 "status" => 0
             ], [
-                "user_id" => $userId
+                "user_id" => $userId,
+                "status" => 1
             ]);
 
             log_activity(
                 $userId,
-                "webhook_extra_pack",
+                "webhook extra pack",
                 "Servicio extra '$extraPack' actualizado a status=0 tras pago exitoso.",
                 "extra_services",
                 $userId

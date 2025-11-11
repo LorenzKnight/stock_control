@@ -25,6 +25,7 @@ try {
 	}
 
 	$selectedPackId = intval($_POST['packs']);
+    $extraPack = $_POST['extra_pack'] ?? null;
 
     $selectedPack = json_decode(select_from("packages", ["package_name"], ["package_id" => $selectedPackId], ["fetch_first" => true]), true);
 	if (!$selectedPack["success"]) throw new Exception("Package data not found.");
@@ -81,7 +82,8 @@ try {
 					'user_id'        => $userId,
 					'package_id'     => $selectedPackId,
 					'cost'           => $unitAmount / 100,
-					'subsc_id'       => $subscId // importante para actualizar desde el webhook
+					'subsc_id'       => $subscId, // importante para actualizar desde el webhook
+                    'extra_pack'     => $extraPack 
 				]
 			]);
 
@@ -108,7 +110,8 @@ try {
             'metadata' => [
                 'user_id'    => $userId,
                 'package_id' => $selectedPackId,
-                'cost'       => $unitAmount / 100
+                'cost'       => $unitAmount / 100,
+                'extra_pack' => $extraPack
             ]
         ]);
 
