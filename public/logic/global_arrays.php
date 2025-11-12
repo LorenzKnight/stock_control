@@ -1,21 +1,5 @@
 <?php
 class GlobalArrays {
-	// public static $vehicleTypes = [
-	// 	1  => "Motorcycle",
-	// 	2  => "Car",
-	// 	3  => "SUV",
-	// 	4  => "Pickup Truck",
-	// 	5  => "Van",
-	// 	6  => "Minibus",
-	// 	7  => "Bus",
-	// 	8  => "Light Truck",
-	// 	9  => "Medium Truck",
-	// 	10 => "Heavy Truck",
-	// 	11 => "Trailer Truck / Articulated Lorry",
-	// 	12 => "Construction Vehicle",
-	// 	13 => "Agricultural Vehicle"
-	// ];
-
 	public static $productTypes = [
 		1 => "New",
 		2 => "Used"
@@ -152,6 +136,19 @@ class GlobalArrays {
 		// "THB" => "(THB) Thai Baht",
 		// "IDR" => "(IDR) Indonesian Rupiah",
 		"DOP" => "(DOP) Dominican Peso"
+	];
+
+	public static $serviceRights = [
+		"shipping_access"	=> "Shipping Access",
+		// "dashboard_access"	=> "Access Dashboard",
+		// "user_management"	=> "Manage Users",
+		// "view_reports"		=> "View Reports",
+		// "edit_settings"		=> "Edit Settings",
+		// "inventory_control"	=> "Manage Inventory",
+		// "process_orders"	=> "Process Orders",
+		// "customer_support"	=> "Customer Support",
+		// "marketing_tools"	=> "Marketing Tools",
+		// "financial_control"	=> "Financial Management"
 	];
 }
 ?>

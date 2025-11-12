@@ -26,7 +26,8 @@ try {
         'currencies',
         'countryPhoneCodes',
         'productPurpose',
-        'shippingStatus'
+        'shippingStatus',
+        'serviceRights'
     ]; // Agrega más si lo necesitas
 
     if (!in_array($key, $allowedKeys)) {

@@ -11,7 +11,7 @@
 				</tr>
                 <tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<input class="form-input-style" type="text" name="service_name" id="service_name" placeholder="Name the service." title="Name the service."/>
+						<select class="form-input-style" name="service_name" id="service_name"></select>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
@@ -20,7 +20,7 @@
 					</td>
 					<td width="50%" style="border-block: 1px solid var(--clr-border); padding: 5px 10px;" align="right" valign="middle">
 						<label class="switch">
-							<input type="checkbox" name="right_status" id="right_status" value="1" checked>
+							<input type="checkbox" name="can_access" id="can_access" value="1" checked>
 							<span class="slider round"></span>
 						</label>
 					</td>

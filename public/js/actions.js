@@ -7156,6 +7156,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 						        popupContent.style.transform = 'scale(1)';
 						        popupContent.style.opacity = '1';
 						    }, 50);
+
+							populateServicesRight("service_name");
+
+							handlePopupClose("add-rights-form", ".formular-frame", []);
 						}
 					});
 				}
@@ -7195,6 +7199,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 						        popupContent.style.transform = 'scale(1)';
 						        popupContent.style.opacity = '1';
 						    }, 50);
+
+							handlePopupClose("add-services-form", ".formular-frame", []);
 						}
 					});
 				}
@@ -7203,6 +7209,72 @@ document.addEventListener("DOMContentLoaded", async function () {
 			console.error(`Error loading ${sectionTitle}:`, err);
 			detailsContainer.innerHTML = `<p style="color:red;">Error loading ${sectionTitle}: ${err.message}</p>`;
 		}
+	}
+
+	let formAddRights = document.getElementById('formAddRights');
+	if (formAddRights) {
+		formAddRights.addEventListener("submit", async function(e) {
+			e.preventDefault();
+
+			let formData = new FormData(this);
+			let serviceName = formData.get('service_name').trim();
+			let userId = formData.get('user_id');
+
+			let banner = document.getElementById('status-message');
+			let statusText = document.getElementById('status-text');
+			let statusImage = document.getElementById('status-image');
+
+			// 🧩 Validaciones básicas
+			if (!userId) {
+				statusText.innerText = "Error: No user selected.";
+				statusImage.src = "../images/sys-img/loading1.gif";
+				banner.style.display = 'block';
+				return;
+			}
+
+			if (!serviceName) {
+				statusText.innerText = "Error: Please enter the service name.";
+				statusImage.src = "../images/sys-img/loading1.gif";
+				banner.style.display = 'block';
+				return;
+			}
+
+			try {
+				let response = await fetch('api/create_user_right.php', {
+					method: 'POST',
+					headers: { 'Accept': 'application/json' },
+					body: formData
+				});
+
+				let data = await response.json();
+
+				if (data.success) {
+					statusText.innerText = data.message || "Right created successfully!";
+					statusImage.src = data.img_gif || "../images/sys-img/loading1.gif";
+					banner.style.display = 'block';
+					banner.style.opacity = '1';
+
+					formAddRights.reset();
+					document.getElementById('add-rights-form').style.display = 'none';
+
+					setTimeout(() => {
+						banner.style.opacity = '0';
+						setTimeout(async () => {
+							await refreshSelectedUserView(); // 🔁 Recargar lista de rights
+						}, 1000);
+					}, 2000);
+				} else {
+					statusText.innerText = "Error: " + (data.message || "Could not create right.");
+					statusImage.src = data.img_gif || "../images/sys-img/loading1.gif";
+					banner.style.display = 'block';
+				}
+			} catch (error) {
+				console.error("❌ Error in formAddRights:", error);
+				statusText.innerText = "Error processing the request.";
+				statusImage.src = "../images/sys-img/loading1.gif";
+				banner.style.display = 'block';
+			}
+		});
 	}
 
 	let formAddServices = document.getElementById('formAddServices');
@@ -7873,6 +7945,42 @@ document.addEventListener("DOMContentLoaded", async function () {
 		} catch (error) {
 			console.error("Error loading companies:", error);
 			select.innerHTML += `<option value="">Error loading companies</option>`;
+		}
+	}
+
+	async function populateServicesRight(selectId, selectedValue = '') {
+		const select = document.getElementById(selectId);
+		if (!select) return;
+
+		select.innerHTML = '';
+
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = 'Select Service Right';
+		select.appendChild(defaultOption);
+
+		try {
+			const res = await fetch('api/get_global_array.php?key=serviceRights');
+			const data = await res.json();
+
+			if (data.success && data.data) {
+				for (const [value, label] of Object.entries(data.data)) {
+					const option = document.createElement('option');
+					option.value = value;
+					option.textContent = label;
+
+					if (String(value) === String(selectedValue)) {
+						option.selected = true;
+					}
+
+					select.appendChild(option);
+				}
+			} else {
+				select.innerHTML += `<option value="">No service rights found</option>`;
+			}
+		} catch (error) {
+			console.error("Error loading service rights:", error);
+			select.innerHTML += `<option value="">Error loading service rights</option>`;
 		}
 	}
 
