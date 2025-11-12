@@ -6785,7 +6785,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}
 
 				if (section === "service-rights") {
-					// loadAllUsers('searchServiceRightsField', 'serviceRightsTable', 'service-rights');
+					loadAllUsers('searchServiceRightsField', 'serviceRightsTable', 'service-rights');
 				}
 
 				if (section === "extra-service") {
@@ -6809,7 +6809,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					}
 
 					if (savedSection === "service-rights") {
-						// loadAllUsers('searchServiceRightsField', 'serviceRightsTable', 'service-rights');
+						loadAllUsers('searchServiceRightsField', 'serviceRightsTable', 'service-rights');
 					}
 
 					if (savedSection === "extra-service") {
@@ -6947,17 +6947,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 		// 🔹 Decide qué endpoint usar según la sección actual
 		switch (sectionType) {
+			case "user-overview":
+				endpoint = "api/get_user_overview.php"; // hacer este endpoint
+				sectionTitle = "User Overview";
+				break;
+			case "service-rights":
+				endpoint = "api/get_user_rights.php";
+				sectionTitle = "Service Rights";
+				break;
 			case "extra-service":
 				endpoint = "api/get_extra_services.php";
 				sectionTitle = "Extra Services";
-				break;
-			case "service-rights":
-				endpoint = "api/get_user_permissions.php";
-				sectionTitle = "Service Rights";
-				break;
-			case "user-overview":
-				endpoint = "api/get_user_overview.php";
-				sectionTitle = "User Overview";
 				break;
 			default:
 				console.warn("No endpoint defined for section:", sectionType);
@@ -6970,61 +6970,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			let html = '';
 
-			if (sectionType === "extra-service") {
-				html += `
-					<div class="section-header">
-						<table style="border-bottom:1px solid var(--clr-border); padding: 5px 0;" width="100%" cellspacing="0">
-							<tr>
-								<td width="75%" align="center" valign="middle"></td>
-								<td width="25%" align="right" valign="middle">
-									<button class="button-style-agree" id="add-service-btn">New Service</button>
-								</td>
-							</tr>
-						</table>
-					</div>
-				`;
-
-				if (result.success && Array.isArray(result.data) && result.data.length > 0) {
-					html += `
-						${result.data.map(service => {
-							const date = new Date(service.created_at);
-							const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-
-							return`
-								<div class="service-table">
-									<table width="100%" align="center" cellspacing="0">
-										<tr data-id="${service.service_id}" valign="baseline" class="form_height">
-											<td width="50%" align="left" valign="middle" style="padding-left:15px;">
-												${service.service_name}
-											</td>
-											<td width="20%" align="center" valign="middle">
-												$ ${service.service_price}
-											</td>
-											<td width="10%" align="center" valign="middle">
-												${service.status == 1 ? "Active" : "Inactive"}
-											</td>
-											<td width="15%" align="center" valign="middle">
-												${formattedDate}
-											</td>
-											<td width="5%" align="center" valign="middle">
-												<div class="service-menu">
-													<img src="images/sys-img/hamburger-menu-icon.png" data-id="${service.service_id}" alt="menu">
-												</div>
-											</td>
-										</tr>
-									</table>
-								</div>
-							`;
-						}).join('')}
-					`;
-				} else {
-					// 🩶 Si no hay servicios, mostrar un mensaje de vacío
-					html += `
-						<p style="color:gray; margin-top:10px;">No extra services found for this user.</p>
-					`;
-				}
-			}
-			else if (sectionType === "user-overview") {
+			if (sectionType === "user-overview") {
 				html += `
 					<table class="data-table" width="100%" cellspacing="0" cellpadding="5">
 						<thead>
@@ -7050,6 +6996,122 @@ document.addEventListener("DOMContentLoaded", async function () {
 					</table>
 				`;
 			}
+			else if (sectionType === "service-rights") {
+				html += `
+					<div class="section-header">
+						<table style="border-bottom:1px solid var(--clr-border); padding: 5px 0;" width="100%" cellspacing="0">
+							<tr>
+								<td width="75%" align="center" valign="middle"></td>
+								<td width="25%" align="right" valign="middle">
+									<button class="button-style-agree" id="add-right-btn">New Right</button>
+								</td>
+							</tr>
+						</table>
+					</div>
+				`;
+
+				if (result.success && Array.isArray(result.data) && result.data.length > 0) {
+					html += `
+						${result.data.map(right => {
+							const date = new Date(right.created_at);
+							const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+
+							return`
+								<div class="sys-admin-table">
+									<table width="100%" align="center" cellspacing="0">
+										<tr data-id="${right.service_id}" valign="baseline" class="form_height">
+											<td width="70%" align="left" valign="middle" style="padding-left:15px;">
+												${right.service_name}
+											</td>
+											<td width="10%" align="center" valign="middle">
+												${right.can_access == 1 ? "Active" : "Inactive"}
+											</td>
+											<td width="15%" align="center" valign="middle">
+												${formattedDate}
+											</td>
+											<td width="5%" align="center" valign="middle">
+												<div class="sys-admin-menu">
+													<img src="images/sys-img/hamburger-menu-icon.png" data-id="${right.service_id}" alt="menu">
+												</div>
+											</td>
+										</tr>
+									</table>
+								</div>
+							`;
+						}).join('')}
+					`;
+				} else {
+					html += `
+						<table width="100%" align="center" cellspacing="0">
+							<tr valign="baseline" class="form_height">
+								<td width="100%" align="center" valign="middle">
+									<p style="color:gray; margin-top:10px;">No rights found for this user.</p>
+								</td>
+							</tr>
+						</table>
+					`;
+				}
+			}
+			else if (sectionType === "extra-service") {
+				html += `
+					<div class="section-header">
+						<table style="border-bottom:1px solid var(--clr-border); padding: 5px 0;" width="100%" cellspacing="0">
+							<tr>
+								<td width="75%" align="center" valign="middle"></td>
+								<td width="25%" align="right" valign="middle">
+									<button class="button-style-agree" id="add-service-btn">New Service</button>
+								</td>
+							</tr>
+						</table>
+					</div>
+				`;
+
+				if (result.success && Array.isArray(result.data) && result.data.length > 0) {
+					html += `
+						${result.data.map(service => {
+							const date = new Date(service.created_at);
+							const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+
+							return`
+								<div class="sys-admin-table">
+									<table width="100%" align="center" cellspacing="0">
+										<tr data-id="${service.service_id}" valign="baseline" class="form_height">
+											<td width="50%" align="left" valign="middle" style="padding-left:15px;">
+												${service.service_name}
+											</td>
+											<td width="20%" align="center" valign="middle">
+												$ ${service.service_price}
+											</td>
+											<td width="10%" align="center" valign="middle">
+												${service.status == 1 ? "Active" : "Inactive"}
+											</td>
+											<td width="15%" align="center" valign="middle">
+												${formattedDate}
+											</td>
+											<td width="5%" align="center" valign="middle">
+												<div class="sys-admin-menu">
+													<img src="images/sys-img/hamburger-menu-icon.png" data-id="${service.service_id}" alt="menu">
+												</div>
+											</td>
+										</tr>
+									</table>
+								</div>
+							`;
+						}).join('')}
+					`;
+				} else {
+					// 🩶 Si no hay servicios, mostrar un mensaje de vacío
+					html += `
+						<table width="100%" align="center" cellspacing="0">
+							<tr valign="baseline" class="form_height">
+								<td width="100%" align="center" valign="middle">
+									<p style="color:gray; margin-top:10px;">No extra services found for this user.</p>
+								</td>
+							</tr>
+						</table>
+					`;
+				}
+			}
 			else if (result.success) {
 				html += `<pre>${JSON.stringify(result.data, null, 2)}</pre>`;
 			}
@@ -7060,7 +7122,45 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			detailsContainer.innerHTML = html;
 
-			if (sectionType === "extra-service") {
+			if (sectionType === "service-rights") {
+				const addRightBtn = document.getElementById("add-right-btn");
+				if (addRightBtn) {
+					addRightBtn.addEventListener("click", async () => {
+						scrollToTopIfNeeded();
+
+						const selectedUserId = localStorage.getItem("selectedUserId");
+						
+						if (!selectedUserId) {
+							console.error("⚠️ No user selected. Cannot create right.");
+							alert("Please select a user first.");
+							return;
+						}
+
+						const addRightsForm = document.getElementById('add-rights-form');
+						const popupContent = addRightsForm.querySelector('.formular-frame');
+
+						document.getElementById("right_user_id").value = selectedUserId;
+
+						if (addRightsForm && popupContent) {
+						    addRightsForm.style.display = 'block';
+						    addRightsForm.style.opacity = '0';
+						    addRightsForm.style.transition = 'opacity 0.5s ease';
+						    setTimeout(() => {
+						        addRightsForm.style.opacity = '1';
+						    }, 10);
+
+						    popupContent.style.transform = 'scale(0.7)';
+						    popupContent.style.opacity = '0';
+						    popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+						    setTimeout(() => {
+						        popupContent.style.transform = 'scale(1)';
+						        popupContent.style.opacity = '1';
+						    }, 50);
+						}
+					});
+				}
+			}
+			else if (sectionType === "extra-service") {
 				// 📌 script para add services popup
 				const addServiceBtn = document.getElementById("add-service-btn");
 				if (addServiceBtn) {

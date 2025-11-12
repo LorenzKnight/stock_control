@@ -4,6 +4,6 @@
         <li data-section="service-rights">Service Rights</li>
         <li data-section="extra-service">Extra Service</li>
 
-        <li data-section="log-history">Log History</li>
+        <!-- <li data-section="log-history">Log History</li> -->
     </ul>
 </div>

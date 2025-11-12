@@ -50,15 +50,17 @@
 }
 
 /* #### service #### */
-.service-sidebar,
-.overview-sidebar
+.overview-sidebar,
+.rights-sidebar,
+.service-sidebar
 {
     width: 30%;
     height: 82.5vh;
     border-right: 1px solid var(--clr-border);
 }
-
-.service-list {
+.rights-list,
+.service-list
+{
 	width: 100%;
 	height: 68.5vh;
 	overflow-y: auto;
@@ -98,14 +100,15 @@
 }
 /* hasta aqui */
 
-
-.service-details {
+.rights-details,
+.service-details
+{
     width: 70%;
     height: 82.5vh;
     overflow: auto;
 }
 
-.service-table  {
+.sys-admin-table  {
 	width: 98%;
 	height: 20px;
 	background-color: var(--main-bg-color);
@@ -117,37 +120,37 @@
 	align-items: center;
 }
 
-.service-table:hover {
+.sys-admin-table:hover {
 	background-color: var(--clr-neutral);
 	color: var(--clr-white);
 	transition: all 1.0s ease;
 }
 
-.service-menu {
+.sys-admin-menu {
     width: 38px;
     height: 38px;
 	border-radius: 5px;
 	cursor: pointer;
 }
 
-.service-menu img {
+.sys-admin-menu img {
     width: 38px;
 	filter: brightness(0) saturate(0) invert(0);
     opacity: 1;
     transition: filter 0.3s ease;
 }
 
-.service-table:hover .service-menu img {
+.sys-admin-table:hover .sys-admin-menu img {
     filter: brightness(0) saturate(100%) invert(100%);
     transition: all 1.0s ease;
 }
 
-.service-menu img:hover {
+.sys-admin-menu img:hover {
 	filter: brightness(0) saturate(0) invert(55%) !important;
 	transition: all 0.6s ease;
 }
 
-/* .service-row:hover .mini-title {
+/* .sys-admin-row:hover .mini-title {
 	color: #fff;
 	transition: all 2.0s ease !important;
 } */
