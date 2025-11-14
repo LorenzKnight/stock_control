@@ -7030,8 +7030,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 												${formattedDate}
 											</td>
 											<td width="5%" align="center" valign="middle">
-												<div class="sys-admin-menu">
-													<img src="images/sys-img/hamburger-menu-icon.png" data-id="${right.service_id}" alt="menu">
+												<div class="rights-menu" data-id="${right.right_id}">
+													<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
 												</div>
 											</td>
 										</tr>
@@ -7089,8 +7089,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 												${formattedDate}
 											</td>
 											<td width="5%" align="center" valign="middle">
-												<div class="sys-admin-menu">
-													<img src="images/sys-img/hamburger-menu-icon.png" data-id="${service.service_id}" alt="menu">
+												<div class="extra-services-menu" data-id="${service.service_id}">
+													<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
 												</div>
 											</td>
 										</tr>
@@ -7100,7 +7100,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 						}).join('')}
 					`;
 				} else {
-					// 🩶 Si no hay servicios, mostrar un mensaje de vacío
 					html += `
 						<table width="100%" align="center" cellspacing="0">
 							<tr valign="baseline" class="form_height">
@@ -7163,6 +7162,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 						}
 					});
 				}
+
+				const rightsMenus = document.querySelectorAll('.rights-menu');
+				rightsMenus.forEach(menu => {
+					menu.addEventListener('click', (e) => {
+						const rightId = e.currentTarget.dataset.id;
+						openRightsMenu(rightId);
+
+						handlePopupClose("rights-options", ".formular-frame", []);
+					});
+				});
 			}
 			else if (sectionType === "extra-service") {
 				// 📌 script para add services popup
@@ -7204,6 +7213,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 						}
 					});
 				}
+
+				const extraServicesMenus = document.querySelectorAll('.extra-services-menu');
+				extraServicesMenus.forEach(menu => {
+					menu.addEventListener('click', (e) => {
+						const serviceId = e.currentTarget.dataset.id;
+						console.log('Extra service menu clicked for service ID:', serviceId);
+					});
+				});
 			}
 		} catch (err) {
 			console.error(`Error loading ${sectionTitle}:`, err);
@@ -7347,6 +7364,124 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
+	async function openRightsMenu(rightId) {
+		scrollToTopIfNeeded();
+		
+		const rightsOptions = document.getElementById('rights-options');
+		const popupContent = rightsOptions.querySelector('.formular-frame');
+		
+		if (!rightId) return;
+
+		try {
+			const res = await fetch(`api/get_user_rights.php?right_id=${rightId}`);
+			const data = await res.json();
+
+			if (data.success && data.data.length > 0) {
+
+			}
+
+			if (rightsOptions && popupContent) {
+				resetPopupView(['rights-menu-buttons'], [
+					'edit-right-modal', 
+					// 'assign-sale-section', 
+					// 'edit-sales-modal'
+				]);
+
+				rightsOptions.style.display = 'block';
+				rightsOptions.style.opacity = '0';
+				rightsOptions.style.transition = 'opacity 0.5s ease';
+				setTimeout(() => {
+					rightsOptions.style.opacity = '1';
+				}, 10);
+
+				popupContent.style.opacity = '0';
+				popupContent.style.transform = 'scale(0.7)';
+				popupContent.classList.remove('animate-elastic');
+				setTimeout(() => {
+					popupContent.style.transform = 'scale(1)';
+					popupContent.style.opacity = '1';
+				}, 50);
+
+				// Botón: Edit Customer
+				const editBtn = document.getElementById('editRightBtn');
+				if (editBtn) {
+
+					editBtn.setAttribute('data-right-id', rightId);
+
+					editBtn.onclick = () => {
+						const menuDiv = document.getElementById('rights-menu-buttons');
+						const editDiv = document.getElementById('edit-right-modal');
+
+						const rightId = editBtn.getAttribute('data-right-id');
+						if (!rightId) return;
+
+						openEditCustomerForm(rightId);
+			
+						animateHeightChange(popupContent, editDiv, () => {
+							fadeOutAndHide(menuDiv, () => {
+								showWithFadeIn(editDiv);
+							});
+						});
+					}
+				}
+
+				// // Botón: Delete Customer
+				// const deleteBtn = document.getElementById('deletePaymentBtn');
+				// if (deleteBtn) {
+				// 	deleteBtn.onclick = () => {
+
+				// 		deleteBtn.setAttribute('data-payment-id', paymentId);
+						
+				// 		if (!paymentId) {
+				// 			alert("Payment ID not found.");
+				// 			return;
+				// 		}
+
+				// 		showConfirmModal("Delete Customer", "Are you sure you want to delete this Payment?", async () => {
+				// 			const frame = document.querySelector('.formular-frame');
+				// 			if (frame) frame.style.display = 'none';
+
+				// 			const formData = new FormData();
+				// 			formData.append("payment_id", paymentId);
+				
+				// 			try {
+				// 				const response = await fetch('api/delete_payment.php', {
+				// 					method: 'POST',
+				// 					body: formData
+				// 				});
+				
+				// 				const data = await response.json();
+				
+				// 				let banner = document.getElementById('status-message');
+				// 				let statusText = document.getElementById('status-text');
+				// 				let statusImage = document.getElementById('status-image');
+				
+				// 				statusText.innerText = data.message;
+				// 				statusImage.src = data.img_gif;
+				// 				banner.style.display = 'block';
+				// 				banner.style.opacity = '1';
+				
+				// 				if (data.success) {
+				// 					setTimeout(() => {
+				// 						banner.style.opacity = '0';
+				// 						setTimeout(() => {
+				// 							window.location.href = data.redirect_url || window.location.href;
+				// 						}, 1000);
+				// 					}, 3000);
+				// 				}
+				// 			} catch (error) {
+				// 				console.error("Error deleting product:", error);
+				// 				alert("Error deleting product. Check console.");
+				// 			}
+				// 		});
+				// 	};
+				// }
+			}
+		} catch (error) {
+			console.error("Error loading product info:", error);
+		}
+	}
+
 	async function refreshSelectedUserView() {
 		const userId = localStorage.getItem("selectedUserId");
 		const sectionType = localStorage.getItem("selectedSectionType");
@@ -7362,6 +7497,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 		await handleUserSelect(fakeEvent, sectionType);
 	}
+
+	setupBackToMenuButton(
+		'.edit-back-to-right-menu-btn',
+		['edit-right-modal'/*, 'assign-customers-sale-section'*/],
+		'rights-menu-buttons',
+		'rights-options'
+	);
 	//############################################################# EXTRA SERVICES ##################################################################
 
 	//############################################################# SEND EMAIL ##################################################################

@@ -22,11 +22,19 @@ try {
 
     // 📥 Si se envía un user_id en GET, se usa ese; si no, el del token
     $paramUserId = $_GET["user_id"] ?? $authUserId;
-    $where = ["user_id" => intval($paramUserId)];
+    $rightId = isset($_GET['right_id']) ? (int)$_GET['right_id'] : null;
+    $canAccess = isset($_GET["can_access"]) ? $_GET["can_access"] : '';
 
-    // 🔍 Filtro opcional por acceso (can_access)
-    if (isset($_GET["can_access"]) && $_GET["can_access"] !== '') {
-        $where["can_access"] = intval($_GET["can_access"]);
+    $where = [];
+
+    if (!empty($rightId)) {
+        $where["right_id"] = $rightId;
+    } else {
+        $where = ["user_id" => intval($paramUserId)];
+
+        if ($canAccess !== '') {
+            $where["can_access"] = intval($canAccess);
+        }
     }
 
     // 📋 Consultar derechos de servicio
