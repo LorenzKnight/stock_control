@@ -7402,7 +7402,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					popupContent.style.opacity = '1';
 				}, 50);
 
-				// Botón: Edit Customer
+				// Botón: Edit Rights
 				const editBtn = document.getElementById('editRightBtn');
 				if (editBtn) {
 
@@ -7415,7 +7415,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 						const rightId = editBtn.getAttribute('data-right-id');
 						if (!rightId) return;
 
-						openEditCustomerForm(rightId);
+						openEditRightForm(rightId);
 			
 						animateHeightChange(popupContent, editDiv, () => {
 							fadeOutAndHide(menuDiv, () => {
@@ -7479,6 +7479,32 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		} catch (error) {
 			console.error("Error loading product info:", error);
+		}
+	}
+
+	async function openEditRightForm(rightId) {
+		const formEditRight = document.getElementById('formEditRight');
+		if (!formEditRight) return;
+	
+		formEditRight.setAttribute('data-right-id', rightId);
+	
+		try {
+			const response = await fetch(`api/get_user_rights.php?right_id=${rightId}`);
+			const data = await response.json();
+	
+			if (data.success && data.data.length > 0) {
+				const right = data.data.find(c => c.right_id == rightId);
+				if (!right) return;
+	
+				// Llenar campos del formulario
+				document.getElementById("edit_can_access").checked = right.can_access === "1" || right.can_access === 1;
+	
+				populateServicesRight("edit_service_name", right.service_name);
+
+				handlePopupClose("rights-options", ".formular-frame", []);
+			}
+		} catch (error) {
+			console.error("Error loading right data:", error);
 		}
 	}
 
