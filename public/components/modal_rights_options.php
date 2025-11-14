@@ -29,7 +29,7 @@
 			<div class="edit-back-to-right-menu-btn">
 				<img src="images/sys-img/backward.png" alt="back">
 			</div>
-			<form method="post" name="formEditRight" id="formEditRight">
+			<form method="post" name="formEditRight" id="formEditRight" data-right-id="">
 			    <table width="80%" align="center" cellspacing="0">
 					<tr valign="baseline">
 						<td colspan="6" align="center" valign="middle">

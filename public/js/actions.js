@@ -7508,6 +7508,67 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
+	let formEditRight = document.getElementById('formEditRight');
+	if (formEditRight) {
+		formEditRight.addEventListener("submit", async function(e) {
+			e.preventDefault();
+
+			let formData = new FormData(this);
+			let rightId = formEditRight.getAttribute('data-right-id');
+			formData.append('edit_right_id', rightId);
+
+			let banner = document.getElementById('status-message');
+			let statusText = document.getElementById('status-text');
+			let statusImage = document.getElementById('status-image');
+
+			if (!rightId) {
+				console.error("⚠️ Missing right ID for update.");
+				alert("No right selected for update.");
+				return;
+			}
+
+			try {
+				let response = await fetch('api/update_right.php', {
+					method: 'POST',
+					headers: { Accept: 'application/json' },
+					body: formData
+				});
+
+				let data = await response.json();
+
+				if (data.success) {
+					statusText.innerText = data.message || "Unknown response";
+					statusImage.src = data.img_gif || "../images/sys-img/loading.gif";
+					banner.style.display = 'block';
+					banner.style.opacity = '1';
+				
+					formEditRight.reset();
+					document.getElementById('edit-right-modal').style.display = 'none';
+					document.getElementById('rights-options').style.display = 'none';
+
+					setTimeout(async () => {
+						banner.style.opacity = '0';
+						setTimeout(async () => {
+							await refreshSelectedUserView();
+						}, 1000);
+					}, 2000);
+				} else {
+					statusText.innerText = "Error: " + (data.message || "Could not update service.");
+					statusImage.src = data.img_gif || "../images/sys-img/error.gif";;
+					banner.style.display = 'block';
+				}
+			} catch (error) {
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				statusText.innerText = "Error updating right.";
+				statusImage.src = "../images/sys-img/error.gif";
+				banner.style.display = 'block';
+			}
+		});
+	}
+
 	async function refreshSelectedUserView() {
 		const userId = localStorage.getItem("selectedUserId");
 		const sectionType = localStorage.getItem("selectedSectionType");

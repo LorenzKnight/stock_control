@@ -47,7 +47,7 @@ try {
     // 📝 Registrar actividad
     log_activity(
         $creatorId,
-        "create_user_right",
+        "create user right",
         "Created user right '{$serviceName}' with can_access={$canAccess}",
         "service_rights",
         $insertResult["insert_id"] ?? null
