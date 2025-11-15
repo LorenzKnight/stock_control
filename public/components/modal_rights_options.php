@@ -15,7 +15,7 @@
 				</tr>
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="cancel-btn" id="deletePaymentBtn">Delete Right</button>
+						<button type="button" class="cancel-btn" id="deleteRightBtn">Delete Right</button>
 					</td>
 				</tr>
 				<tr valign="baseline">

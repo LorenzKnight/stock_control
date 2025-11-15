@@ -7425,57 +7425,56 @@ document.addEventListener("DOMContentLoaded", async function () {
 					}
 				}
 
-				// // Botón: Delete Customer
-				// const deleteBtn = document.getElementById('deletePaymentBtn');
-				// if (deleteBtn) {
-				// 	deleteBtn.onclick = () => {
-
-				// 		deleteBtn.setAttribute('data-payment-id', paymentId);
+				// Botón: Delete Rights
+				const deleteBtn = document.getElementById('deleteRightBtn');
+				if (deleteBtn) {
+					deleteBtn.onclick = () => {
+						deleteBtn.setAttribute('data-right-id', rightId);
 						
-				// 		if (!paymentId) {
-				// 			alert("Payment ID not found.");
-				// 			return;
-				// 		}
+						if (!rightId) {
+							alert("Right ID not found.");
+							return;
+						}
 
-				// 		showConfirmModal("Delete Customer", "Are you sure you want to delete this Payment?", async () => {
-				// 			const frame = document.querySelector('.formular-frame');
-				// 			if (frame) frame.style.display = 'none';
+						showConfirmModal("Delete Right", "Are you sure you want to delete this Right?", async () => {
+							const frame = document.querySelector('.formular-frame');
+							if (frame) frame.style.display = 'none';
 
-				// 			const formData = new FormData();
-				// 			formData.append("payment_id", paymentId);
+							const formData = new FormData();
+							formData.append("right_id", rightId);
 				
-				// 			try {
-				// 				const response = await fetch('api/delete_payment.php', {
-				// 					method: 'POST',
-				// 					body: formData
-				// 				});
+							try {
+								const response = await fetch('api/delete_right.php', {
+									method: 'POST',
+									body: formData
+								});
 				
-				// 				const data = await response.json();
+								const data = await response.json();
 				
-				// 				let banner = document.getElementById('status-message');
-				// 				let statusText = document.getElementById('status-text');
-				// 				let statusImage = document.getElementById('status-image');
+								let banner = document.getElementById('status-message');
+								let statusText = document.getElementById('status-text');
+								let statusImage = document.getElementById('status-image');
 				
-				// 				statusText.innerText = data.message;
-				// 				statusImage.src = data.img_gif;
-				// 				banner.style.display = 'block';
-				// 				banner.style.opacity = '1';
+								statusText.innerText = data.message;
+								statusImage.src = data.img_gif;
+								banner.style.display = 'block';
+								banner.style.opacity = '1';
 				
-				// 				if (data.success) {
-				// 					setTimeout(() => {
-				// 						banner.style.opacity = '0';
-				// 						setTimeout(() => {
-				// 							window.location.href = data.redirect_url || window.location.href;
-				// 						}, 1000);
-				// 					}, 3000);
-				// 				}
-				// 			} catch (error) {
-				// 				console.error("Error deleting product:", error);
-				// 				alert("Error deleting product. Check console.");
-				// 			}
-				// 		});
-				// 	};
-				// }
+								if (data.success) {
+									setTimeout(async () => {
+										banner.style.opacity = '0';
+										setTimeout(async () => {
+											await refreshSelectedUserView();
+										}, 1000);
+									}, 3000);
+								}
+							} catch (error) {
+								console.error("Error deleting product:", error);
+								alert("Error deleting product. Check console.");
+							}
+						});
+					};
+				}
 			}
 		} catch (error) {
 			console.error("Error loading product info:", error);
