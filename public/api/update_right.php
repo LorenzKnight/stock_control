@@ -12,26 +12,21 @@ $response = [
 ];
 
 try {
-    // 🚫 Solo permitir POST
     if ($_SERVER["REQUEST_METHOD"] !== "POST") {
         throw new Exception("Method not allowed");
     }
 
-    // 🔒 Autenticación JWT obligatoria
     $authUser = requireAuth();
     $editorId = $authUser["user_id"] ?? null;
     if (!$editorId) throw new Exception("Unauthorized access.");
 
-    // 🧩 Datos del formulario
     $rightId     = intval($_POST["edit_right_id"] ?? 0);
     $serviceName = trim($_POST["edit_service_name"] ?? "");
     $canAccess   = isset($_POST["edit_can_access"]) && $_POST["edit_can_access"] == 1 ? 1 : 0;
 
-    // 🧠 Validaciones
     if ($rightId <= 0) throw new Exception("Invalid or missing right ID.");
     if (empty($serviceName)) throw new Exception("Service name is required.");
 
-    // ⚙️ Verificar que el registro exista antes de actualizar
     $check = json_decode(select_from(
         "service_rights",
         ["right_id"],
@@ -43,7 +38,25 @@ try {
         throw new Exception("Service right not found or already deleted.");
     }
 
-    // 🧭 Actualizar derecho
+    $userId = intval($check["data"]["user_id"]);
+
+    $duplicateCheck = json_decode(select_from(
+        "service_rights",
+        ["right_id"],
+        [
+            "user_id" => $userId,
+            "service_name" => $serviceName
+        ]
+    ), true);
+
+    if (!empty($duplicateCheck["success"]) && !empty($duplicateCheck["data"])) {
+        foreach ($duplicateCheck["data"] as $dup) {
+            if (intval($dup["right_id"]) !== $rightId) {
+                throw new Exception("This user already has a right with the same service name.");
+            }
+        }
+    }
+
     $update = update_table("service_rights", [
         "service_name" => $serviceName,
         "can_access"   => $canAccess
@@ -56,7 +69,6 @@ try {
         throw new Exception("Failed to update user right. Please try again.");
     }
 
-    // 📝 Registrar actividad
     log_activity(
         $editorId,
         "update user right",

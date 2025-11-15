@@ -12,25 +12,34 @@ $response = [
 ];
 
 try {
-    // 🚫 Solo permitir POST
     if ($_SERVER["REQUEST_METHOD"] !== "POST") {
         throw new Exception("Method not allowed");
     }
 
-    // 🔒 Autenticación por token JWT
     $authUser = requireAuth();
     $creatorId = $authUser["user_id"];
+    if (!$creatorId) throw new Exception("Unauthorized access.");
 
-    // 🧩 Recibir datos del formulario
     $userId = intval($_POST["user_id"] ?? 0);
     $serviceName = trim($_POST["service_name"] ?? "");
     $canAccess = isset($_POST["can_access"]) && $_POST["can_access"] == 1 ? 1 : 0;
 
-    // 🧠 Validaciones
     if ($userId <= 0) throw new Exception("Invalid or missing user ID.");
     if (empty($serviceName)) throw new Exception("Service name is required.");
 
-    // 🧭 Insertar nuevo derecho (service_right)
+    $duplicateCheck = json_decode(select_from(
+        "service_rights",
+        ["right_id"],
+        [
+            "user_id"      => $userId,
+            "service_name" => $serviceName
+        ]
+    ), true);
+
+    if (!empty($duplicateCheck["success"]) && !empty($duplicateCheck["data"])) {
+        throw new Exception("This user already has a right with the same service name.");
+    }
+
     $insert = insert_into("service_rights", [
         "user_id"      => $userId,
         "service_name" => $serviceName,
@@ -44,7 +53,6 @@ try {
         throw new Exception("Failed to create user right. Please try again.");
     }
 
-    // 📝 Registrar actividad
     log_activity(
         $creatorId,
         "create user right",
