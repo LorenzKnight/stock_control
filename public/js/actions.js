@@ -7635,22 +7635,22 @@ document.addEventListener("DOMContentLoaded", async function () {
 				const deleteBtn = document.getElementById('deleteExtraServiceBtn');
 				if (deleteBtn) {
 					deleteBtn.onclick = () => {
-						deleteBtn.setAttribute('data-extra-service-id', rightId);
+						deleteBtn.setAttribute('data-extra-service-id', serviceId);
 						
-						if (!rightId) {
-							alert("Right ID not found.");
+						if (!serviceId) {
+							alert("Service ID not found.");
 							return;
 						}
 
-						showConfirmModal("Delete Right", "Are you sure you want to delete this Right?", async () => {
+						showConfirmModal("Delete Extra Services", "Are you sure you want to delete this Extra Service?", async () => {
 							const frame = document.querySelector('.formular-frame');
 							if (frame) frame.style.display = 'none';
 
 							const formData = new FormData();
-							formData.append("right_id", rightId);
+							formData.append("service_id", serviceId);
 				
 							try {
-								const response = await fetch('api/delete_right.php', {
+								const response = await fetch('api/delete_extra_service.php', {
 									method: 'POST',
 									body: formData
 								});
@@ -7675,15 +7675,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 									}, 3000);
 								}
 							} catch (error) {
-								console.error("Error deleting product:", error);
-								alert("Error deleting product. Check console.");
+								console.error("Error deleting service:", error);
+								alert("Error deleting service. Check console.");
 							}
 						});
 					};
 				}
 			}
 		} catch (error) {
-			console.error("Error loading product info:", error);
+			console.error("Error loading service info:", error);
 		}
 	}
 
