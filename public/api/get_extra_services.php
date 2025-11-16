@@ -20,13 +20,19 @@ try {
     }
 
     $paramUserId = $_GET["user_id"] ?? $authUserId;
+    $serviceId = isset($_GET['service_id']) ? (int)$_GET['service_id'] : null;
+    $status = isset($_GET["status"]) ? $_GET["status"] : '';
 
-    $where = ["user_id" => intval($paramUserId)];
+    $where = [];
 
-    // 🔍 Filtro opcional por status
-    $status = $_GET["status"] ?? '';
-    if ($status !== '') {
-        $where["status"] = intval($status);
+    if (!empty($serviceId)) {
+        $where["service_id"] = $serviceId;
+    } else {
+        $where = ["user_id" => intval($paramUserId)];
+
+        if ($status !== '') {
+            $where["status"] = intval($status);
+        }
     }
 
     // 📦 Consultar servicios extra

@@ -7218,7 +7218,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 				extraServicesMenus.forEach(menu => {
 					menu.addEventListener('click', (e) => {
 						const serviceId = e.currentTarget.dataset.id;
-						console.log('Extra service menu clicked for service ID:', serviceId);
+						openExtraServicesMenu(serviceId);
+
+						handlePopupClose("extra-services-options", ".formular-frame", []);
 					});
 				});
 			}
@@ -7500,7 +7502,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	
 				populateServicesRight("edit_service_name", right.service_name);
 
-				handlePopupClose("rights-options", ".formular-frame", []);
+				// handlePopupClose("rights-options", ".formular-frame", []);
 			}
 		} catch (error) {
 			console.error("Error loading right data:", error);
@@ -7568,6 +7570,210 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
+	async function openExtraServicesMenu(serviceId) {
+		scrollToTopIfNeeded();
+
+		const extraServicesOptions = document.getElementById('extra-services-options');
+		const popupContent = extraServicesOptions.querySelector('.formular-frame');
+		
+		if (!serviceId) return;
+
+		try {
+			const res = await fetch(`api/get_extra_services.php?service_id=${serviceId}`);
+			const data = await res.json();
+
+			if (data.success && data.data.length > 0) {
+
+			}
+
+			if (extraServicesOptions && popupContent) {
+				resetPopupView(['extra-services-menu-buttons'], [
+					'edit-extra-services-modal', 
+					// 'assign-sale-section', 
+					// 'edit-sales-modal'
+				]);
+
+				extraServicesOptions.style.display = 'block';
+				extraServicesOptions.style.opacity = '0';
+				extraServicesOptions.style.transition = 'opacity 0.5s ease';
+				setTimeout(() => {
+					extraServicesOptions.style.opacity = '1';
+				}, 10);
+
+				popupContent.style.opacity = '0';
+				popupContent.style.transform = 'scale(0.7)';
+				popupContent.classList.remove('animate-elastic');
+				setTimeout(() => {
+					popupContent.style.transform = 'scale(1)';
+					popupContent.style.opacity = '1';
+				}, 50);
+
+				// Botón: Edit Extra Services
+				const editBtn = document.getElementById('editExtraServiceBtn');
+				if (editBtn) {
+
+					editBtn.setAttribute('data-extra-service-id', serviceId);
+
+					editBtn.onclick = () => {
+						const menuDiv = document.getElementById('extra-services-menu-buttons');
+						const editDiv = document.getElementById('edit-extra-services-modal');
+
+						const serviceId = editBtn.getAttribute('data-extra-service-id');
+						if (!serviceId) return;
+
+						openEditServiceForm(serviceId);
+			
+						animateHeightChange(popupContent, editDiv, () => {
+							fadeOutAndHide(menuDiv, () => {
+								showWithFadeIn(editDiv);
+							});
+						});
+					}
+				}
+
+				// Botón: Delete Rights
+				const deleteBtn = document.getElementById('deleteExtraServiceBtn');
+				if (deleteBtn) {
+					deleteBtn.onclick = () => {
+						deleteBtn.setAttribute('data-extra-service-id', rightId);
+						
+						if (!rightId) {
+							alert("Right ID not found.");
+							return;
+						}
+
+						showConfirmModal("Delete Right", "Are you sure you want to delete this Right?", async () => {
+							const frame = document.querySelector('.formular-frame');
+							if (frame) frame.style.display = 'none';
+
+							const formData = new FormData();
+							formData.append("right_id", rightId);
+				
+							try {
+								const response = await fetch('api/delete_right.php', {
+									method: 'POST',
+									body: formData
+								});
+				
+								const data = await response.json();
+				
+								let banner = document.getElementById('status-message');
+								let statusText = document.getElementById('status-text');
+								let statusImage = document.getElementById('status-image');
+				
+								statusText.innerText = data.message;
+								statusImage.src = data.img_gif;
+								banner.style.display = 'block';
+								banner.style.opacity = '1';
+				
+								if (data.success) {
+									setTimeout(async () => {
+										banner.style.opacity = '0';
+										setTimeout(async () => {
+											await refreshSelectedUserView();
+										}, 1000);
+									}, 3000);
+								}
+							} catch (error) {
+								console.error("Error deleting product:", error);
+								alert("Error deleting product. Check console.");
+							}
+						});
+					};
+				}
+			}
+		} catch (error) {
+			console.error("Error loading product info:", error);
+		}
+	}
+
+	async function openEditServiceForm(serviceId) {
+		const formEditExtraServices = document.getElementById('formEditExtraServices');
+		if (!formEditExtraServices) return;
+	
+		formEditExtraServices.setAttribute('data-extra-service-id', serviceId);
+	
+		try {
+			const response = await fetch(`api/get_extra_services.php?service_id=${serviceId}`);
+			const data = await response.json();
+
+			if (data.success && data.data.length > 0) {
+				const services = data.data.find(c => c.service_id == serviceId);
+				if (!serviceId) return;
+	
+				// Llenar campos del formulario
+				document.getElementById("edit_extra_service_name").value = services.service_name || "";
+				document.getElementById("edit_extra_service_price").value = services.service_price || "";
+				document.getElementById("edit_service_status").checked = services.status === "1" || services.status === 1;
+	
+				// handlePopupClose("rights-options", ".formular-frame", []);
+			}
+		} catch (error) {
+			console.error("Error loading services data:", error);
+		}
+	}
+
+	let formEditExtraServices = document.getElementById('formEditExtraServices');
+	if (formEditExtraServices) {
+		formEditExtraServices.addEventListener("submit", async function(e) {
+			e.preventDefault();
+
+			let formData = new FormData(this);
+			let serviceId = formEditExtraServices.getAttribute('data-extra-service-id');
+			formData.append('edit_service_id', serviceId);
+
+			let banner = document.getElementById('status-message');
+			let statusText = document.getElementById('status-text');
+			let statusImage = document.getElementById('status-image');
+
+			if (!serviceId) {
+				console.error("⚠️ Missing service ID for update.");
+				alert("No right selected for update.");
+				return;
+			}
+
+			try {
+				let response = await fetch('api/update_extra_service.php', {
+					method: 'POST',
+					headers: { Accept: 'application/json' },
+					body: formData
+				});
+
+				let data = await response.json();
+
+				if (data.success) {
+					statusText.innerText = data.message || "Unknown response";
+					statusImage.src = data.img_gif || "../images/sys-img/loading.gif";
+					banner.style.display = 'block';
+					banner.style.opacity = '1';
+				
+					formEditExtraServices.reset();
+					document.getElementById('edit-extra-services-modal').style.display = 'none';
+					document.getElementById('extra-services-options').style.display = 'none';
+
+					setTimeout(async () => {
+						banner.style.opacity = '0';
+						setTimeout(async () => {
+							await refreshSelectedUserView();
+						}, 1000);
+					}, 2000);
+				} else {
+					statusText.innerText = "Error: " + (data.message || "Could not update service.");
+					statusImage.src = data.img_gif || "../images/sys-img/error.gif";;
+					banner.style.display = 'block';
+				}
+			} catch (error) {
+				let banner = document.getElementById('status-message');
+				let statusText = document.getElementById('status-text');
+				let statusImage = document.getElementById('status-image');
+
+				statusText.innerText = "Error updating right.";
+				statusImage.src = "../images/sys-img/error.gif";
+				banner.style.display = 'block';
+			}
+		});
+	}
+
 	async function refreshSelectedUserView() {
 		const userId = localStorage.getItem("selectedUserId");
 		const sectionType = localStorage.getItem("selectedSectionType");
@@ -7589,6 +7795,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 		['edit-right-modal'/*, 'assign-customers-sale-section'*/],
 		'rights-menu-buttons',
 		'rights-options'
+	);
+	setupBackToMenuButton(
+		'.edit-back-to-services-menu-btn',
+		['edit-extra-services-modal'],
+		'extra-services-menu-buttons',
+		'extra-services-options'
 	);
 	//############################################################# EXTRA SERVICES ##################################################################
 

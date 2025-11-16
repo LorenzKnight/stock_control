@@ -11,11 +11,13 @@
 				</tr>
                 <tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
+						<label for="service_name">Extra Service Name:</label>
 						<input class="form-input-style" type="text" name="service_name" id="service_name" placeholder="Name the service." title="Name the service."/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
+						<label for="service_price">Extra Service Price:</label>
 						<input class="form-input-style" type="text" name="service_price" id="service_price" placeholder="Enter a amount..." title="Enter a amount" required/>
 					</td>
 				</tr>
