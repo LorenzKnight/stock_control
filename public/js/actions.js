@@ -7259,7 +7259,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 
 			try {
-				let response = await fetch('api/create_user_right.php', {
+				let response = await fetch('api/create_right.php', {
 					method: 'POST',
 					headers: { 'Accept': 'application/json' },
 					body: formData

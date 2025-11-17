@@ -29,7 +29,7 @@ try {
 
     $check = json_decode(select_from(
         "service_rights",
-        ["right_id"],
+        ["right_id", "user_id", "service_name"],
         ["right_id" => $rightId],
         ["fetch_first" => true]
     ), true);
@@ -76,6 +76,66 @@ try {
         "service_rights",
         $rightId
     );
+
+    // 👥 Buscar colaboradores que dependen del usuario principal
+    $collaborators = json_decode(select_from(
+        "users",
+        ["user_id"],
+        ["parent_user" => $userId]
+    ), true);
+
+    if (!empty($collaborators["success"]) && !empty($collaborators["data"])) {
+        foreach ($collaborators["data"] as $col) {
+            $collabId = intval($col["user_id"]);
+            if ($collabId <= 0) continue;
+
+            // 🔍 Verificar si el colaborador ya tiene ese right
+            $collabRight = json_decode(select_from(
+                "service_rights",
+                ["right_id"],
+                [
+                    "user_id"      => $collabId,
+                    "service_name" => $serviceName
+                ],
+                ["fetch_first" => true]
+            ), true);
+
+            if (!empty($collabRight["success"]) && !empty($collabRight["data"])) {
+                // 🛠 Actualizar el derecho existente
+                update_table("service_rights", [
+                    "service_name" => $serviceName,
+                    "can_access" => $canAccess
+                ], [
+                    "right_id" => intval($collabRight["data"]["right_id"])
+                ]);
+
+                log_activity(
+                    $editorId,
+                    "update collaborator right",
+                    "Updated collaborator right '{$serviceName}' (user_id={$collabId}) — can_access={$canAccess}",
+                    "service_rights",
+                    intval($collabRight["data"]["right_id"])
+                );
+            } else {
+                // ➕ Si no existe, crearlo
+                insert_into("service_rights", [
+                    "user_id"      => $collabId,
+                    "service_name" => $serviceName,
+                    "can_access"   => $canAccess,
+                    "create_by"    => $editorId,
+                    "created_at"   => date("Y-m-d H:i:s")
+                ]);
+
+                log_activity(
+                    $editorId,
+                    "auto-create collaborator right",
+                    "Created new right '{$serviceName}' for collaborator (user_id={$collabId}) — can_access={$canAccess}",
+                    "service_rights",
+                    null
+                );
+            }
+        }
+    }
 
     $response = [
         "success" => true,

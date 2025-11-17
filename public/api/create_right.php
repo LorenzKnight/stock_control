@@ -61,6 +61,47 @@ try {
         $insertResult["insert_id"] ?? null
     );
 
+    $collaborators = json_decode(select_from(
+        "users",
+        ["user_id"],
+        ["parent_user" => $userId]
+    ), true);
+
+    if (!empty($collaborators["success"]) && !empty($collaborators["data"])) {
+        foreach ($collaborators["data"] as $col) {
+            $collabId = intval($col["user_id"]);
+            if ($collabId <= 0) continue;
+
+            $exists = json_decode(select_from(
+                "service_rights",
+                ["right_id"],
+                [
+                    "user_id"      => $collabId,
+                    "service_name" => $serviceName
+                ],
+                ["fetch_first" => true]
+            ), true);
+
+            if (empty($exists["success"]) || empty($exists["data"])) {
+                insert_into("service_rights", [
+                    "user_id"      => $collabId,
+                    "service_name" => $serviceName,
+                    "can_access"   => $canAccess,
+                    "create_by"    => $creatorId,
+                    "created_at"   => date("Y-m-d H:i:s")
+                ]);
+
+                log_activity(
+                    $creatorId,
+                    "auto-clone user right",
+                    "Cloned right '{$serviceName}' for collaborator (user_id={$collabId}) from parent user {$userId}",
+                    "service_rights",
+                    null
+                );
+            }
+        }
+    }
+
     $response = [
         "success" => true,
         "message" => "User right created successfully.",
