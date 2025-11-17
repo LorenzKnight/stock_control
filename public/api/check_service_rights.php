@@ -1,4 +1,5 @@
 <?php
+require_once ('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 global $sql;
@@ -22,11 +23,12 @@ try {
         throw new Exception("Method not allowed.");
     }
 
-    if (empty($_SESSION["sc_UserId"])) {
-        throw new Exception("No user is logged in.");
-    }
+    $authUser = requireAuth();
+	$userId = $authUser["user_id"] ?? null;
 
-    $userId = $_SESSION["sc_UserId"];
+    if (!$userId) {
+		throw new Exception("Unauthorized access. User not found or invalid token.");
+	}
 
     if (empty($_GET["service_name"])) {
         throw new Exception("Missing 'service_name' parameter.");
