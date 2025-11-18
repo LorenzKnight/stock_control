@@ -1,4 +1,5 @@
 <?php
+require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 global $sql;
@@ -20,11 +21,12 @@ try {
         throw new Exception("Method not allowed.");
     }
 
-    if (empty($_SESSION["sc_UserId"])) {
-        throw new Exception("No user is logged in.");
-    }
+    $authUser = requireAuth();
+    $userId = $authUser["user_id"] ?? null;
 
-    $userId = $_SESSION["sc_UserId"];
+    if (!$userId) {
+        throw new Exception("Unauthorized access. Invalid or missing token.");
+    }
 
     if (empty($_GET["permission"])) {
         throw new Exception("Missing permission parameter.");
@@ -37,7 +39,9 @@ try {
     $response = [
         "success" => true,
         "has_permission" => $hasPermission,
-        "message" => $hasPermission ? "User has permission." : "User does not have permission."
+        "message" => $hasPermission
+            ? "User has permission."
+            : "User does not have permission."
     ];
 } catch (Exception $e) {
     $response["message"] = $e->getMessage();
@@ -45,4 +49,3 @@ try {
 
 echo json_encode($response);
 exit;
-?>
