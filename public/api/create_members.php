@@ -1,4 +1,5 @@
 <?php
+require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
@@ -14,15 +15,16 @@ $response = [
 ];
 
 try {
-	$userId = $_SESSION["sc_UserId"] ?? null;
-	if (!$userId) throw new Exception("User not logged in.");
+	if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+		throw new Exception("Method not allowed");
+	}
+
+	$authUser = requireAuth();
+    $userId = $authUser["user_id"] ?? null;
+    if (!$userId) throw new Exception("Unauthorized access.");
 
 	if (!check_user_permission($userId, 'manage_users')) {
 		throw new Exception("Access denied. You do not have permission to create data.");
-	}
-
-	if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-		throw new Exception("Method not allowed");
 	}
 
 	$userData = json_decode(select_from("users", ["parent_user"], ["user_id" => $userId], ["fetch_first" => true]), true);
@@ -77,6 +79,27 @@ try {
 		throw new Exception("Error inserting into database.");
 	}
 
+	$newUserId = intval($insertResult["id"]);
+
+	$rightsResponse = json_decode(select_from(
+		"service_rights",
+		["service_name", "can_access"],
+		["user_id" => $altUser]
+	), true);
+
+	if (!empty($rightsResponse["success"]) && !empty($rightsResponse["data"])) {
+		
+		foreach ($rightsResponse["data"] as $right) {
+			insert_into("service_rights", [
+				"user_id"      => $newUserId,
+				"service_name" => $right["service_name"],
+				"can_access"   => intval($right["can_access"]),
+				"create_by"    => $userId,
+				"created_at"   => date("Y-m-d H:i:s")
+			]);
+		}
+	}
+
 	$response = [
 		"success" => true,
 		"message" => "Data received successfully",
@@ -94,4 +117,3 @@ try {
 
 echo json_encode($response);
 exit;
-?>
