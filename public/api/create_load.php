@@ -13,7 +13,7 @@ try {
     $userId = $_SESSION["sc_UserId"] ?? null;
     if (!$userId) throw new Exception("User session not found.");
 
-    if (!check_user_permission($userId, 'manage_sales')) {
+    if (!check_user_permission($userId, 'sales_handler')) {
         throw new Exception("Access denied. You do not have permission to create loads.");
     }
 

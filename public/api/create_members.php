@@ -23,7 +23,7 @@ try {
     $userId = $authUser["user_id"] ?? null;
     if (!$userId) throw new Exception("Unauthorized access.");
 
-	if (!check_user_permission($userId, 'manage_users')) {
+	if (!check_user_permission($userId, 'data_controller')) {
 		throw new Exception("Access denied. You do not have permission to create data.");
 	}
 

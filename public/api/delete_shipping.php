@@ -18,7 +18,7 @@ try {
     if (!$userId) throw new Exception("User session not found.");
 
     // 🔒 Verificar permisos
-    if (!check_user_permission($userId, 'export_reports')) {
+    if (!check_user_permission($userId, 'platform_admin')) {
         throw new Exception("Access denied. You do not have permission to delete data.");
     }
 

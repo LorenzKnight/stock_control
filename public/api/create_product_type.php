@@ -18,7 +18,7 @@ try {
 	$userId = $_SESSION["sc_UserId"] ?? null;
 	if (!$userId) throw new Exception("User session not found.");
 
-	if (!function_exists('check_user_permission') || !check_user_permission($userId, 'create_data')) {
+	if (!function_exists('check_user_permission') || !check_user_permission($userId, 'process_handler')) {
 		throw new Exception("Access denied. You do not have permission to create data.");
 	}
 

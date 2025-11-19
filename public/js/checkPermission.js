@@ -178,19 +178,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
     // Ahora simular un "switch" usando if-else:
-    if (grantedPermission === 'manage_all') {
+    if (grantedPermission === 'root_access') {
         // console.log("El usuario tiene acceso total");
         // Aquí habilitas TODO
-    } else if (grantedPermission === 'manage_intern_admin') {
+    } else if (grantedPermission === 'system_admin') {
         // console.log("El usuario tiene acceso de administrador interno");
         // Habilita lo que este permiso permite
-	} else if (grantedPermission === 'export_reports') {
+	} else if (grantedPermission === 'platform_admin') {
         // console.log("El usuario puede exportar reportes");
         // Habilita solo lo permitido a este nivel
 		if (systemAdminSite) {
 			systemAdminSite.style.display = "none";
 		}
-	} else if (grantedPermission === 'delete_data') {
+	} else if (grantedPermission === 'ops_controller') {
         // console.log("El usuario puede eliminar datos");
         // Habilita solo lo permitido a este nivel
 		if (systemAdminSite) {
@@ -241,7 +241,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			deletePaymentBtn.title = "You don't have permission to delete payments.";
 			deletePaymentBtn.classList.add('button-ghost');
 		}
-    } else if (grantedPermission === 'manage_users') {
+    } else if (grantedPermission === 'data_controller') {
         // console.log("El usuario puede gestionar usuarios");
         // Habilita solo lo permitido a este nivel
 		if (systemAdminSite) {
@@ -292,7 +292,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			deletePaymentBtn.title = "You don't have permission to delete payments.";
 			deletePaymentBtn.classList.add('button-ghost');
 		}
-    } else if (grantedPermission === 'edit_data') {
+    } else if (grantedPermission === 'data_handler') {
         // console.log("El usuario puede editar datos");
         // Habilita solo lo permitido a este nivel
 		if (systemAdminSite) {
@@ -387,7 +387,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			deletePaymentBtn.title = "You don't have permission to delete payments.";
 			deletePaymentBtn.classList.add('button-ghost');
 		}
-    } else if (grantedPermission === 'create_data') {
+    } else if (grantedPermission === 'process_handler') {
         // console.log("El usuario puede crear datos");
         // Habilita solo lo permitido a este nivel
 		if (systemAdminSite) {
@@ -502,7 +502,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			deletePaymentBtn.title = "You don't have permission to delete payments.";
 			deletePaymentBtn.classList.add('button-ghost');
 		}
-    } else if (grantedPermission === 'manage_sales') {
+    } else if (grantedPermission === 'sales_handler') {
 		// console.log("El usuario puede gestionar ventas");
         // Habilita solo lo permitido a este nivel
 		if (systemAdminSite) {
@@ -617,7 +617,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			deletePaymentBtn.title = "You don't have permission to delete payments.";
 			deletePaymentBtn.classList.add('button-ghost');
 		}
-    } else if (grantedPermission === 'view_dashboard') {
+    } else if (grantedPermission === 'read_advanced') {
         // console.log("El usuario puede ver el dashboard");
         // Habilita solo lo permitido a este nivel
 		if (systemAdminSite) {

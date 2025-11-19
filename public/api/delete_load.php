@@ -26,7 +26,7 @@ try {
     $userId = $authUser["user_id"];
 
     // 🔒 Verificar permisos (usa el permiso adecuado de tu sistema)
-    if (!check_user_permission($userId, 'export_reports')) {
+    if (!check_user_permission($userId, 'platform_admin')) {
         throw new Exception("Access denied. You do not have permission to delete loads.");
     }
 
