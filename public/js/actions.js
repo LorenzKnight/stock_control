@@ -6756,7 +6756,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	);
 	//############################################################# END SHIPPING ##################################################################
 
-	//############################################################# EXTRA SERVICES ##################################################################
+	//############################################################# SYS-ADMIN ##################################################################
 	const sysMenuItems = document.querySelectorAll(".system-menu li");
 	const systemContent = document.getElementById("system-content");
 
@@ -7802,7 +7802,154 @@ document.addEventListener("DOMContentLoaded", async function () {
 		'extra-services-menu-buttons',
 		'extra-services-options'
 	);
-	//############################################################# EXTRA SERVICES ##################################################################
+	//############################################################# END SYS-ADMIN ##################################################################
+
+	//############################################################# SETTINGS ##################################################################
+	const settingsMenuItems = document.querySelectorAll(".settings-menu li");
+	const settingsContent = document.getElementById("settings-content");
+
+	const savedSettingSection = localStorage.getItem("activeSettingSection");
+
+	settingsMenuItems.forEach(i => i.classList.remove("active"));
+
+	settingsMenuItems.forEach(item => {
+		item.addEventListener("click", async () => {
+			const section = item.getAttribute("data-section");
+			localStorage.setItem("activeSettingSection", section);
+
+			settingsMenuItems.forEach(i => i.classList.remove("active"));
+			item.classList.add("active");
+
+			try {
+				const response = await fetch(`settings/${section}.php`);
+				const html = await response.text();
+				settingsContent.innerHTML = html;
+
+				if (section === "general") {
+					console.log("General settings loaded.");
+				}
+
+				if (section === "co-workers-rights") {
+					loadCoWorkers('searchCoWorkerField', 'coWorkerTable', 'co-workers-rights');
+				}
+			} catch (err) {
+				settingsContent.innerHTML = `<p style="color:red;">Error loading section: ${err.message}</p>`;
+			}
+		});
+
+		if (savedSettingSection && item.getAttribute("data-section") === savedSettingSection) {
+			item.classList.add("active");
+			fetch(`settings/${savedSettingSection}.html`)
+				.then(response => response.text())
+				.then(html => {
+					settingsContent.innerHTML = html;
+
+					if (section === "general") {
+						console.log("General settings loaded.");
+					}
+
+					if (section === "co-workers-rights") {
+						loadCoWorkers('searchCoWorkerField', 'coWorkerTable', 'co-workers-rights');
+					}
+				})
+				.catch(err => {
+					settingsContent.innerHTML = `<p style="color:red;">Error loading section: ${err.message}</p>`;
+				});
+		}
+	});
+
+	function loadCoWorkers(searchField, userTable, sectionType = "general") {
+		const searchUserField = document.getElementById(searchField);
+		const userListTable = document.getElementById(userTable);
+
+		if (searchUserField && userListTable) {
+			async function fetchAndRenderUsers(search = "") {
+				try {
+					const params = new URLSearchParams();
+					if (search.trim() !== "") {
+						params.append('search', search.trim());
+					}
+
+					const response = await fetch(`api/get_users.php?${params.toString()}`, {
+						method: 'GET',
+						headers: { 'Accept': 'application/json' }
+					});
+					const data = await response.json();
+					userListTable.innerHTML = "";
+
+					if (data.success && Array.isArray(data.users) && data.users.length > 0) {
+						data.users.forEach(user => {
+							const uniqueId = `user-${user.user_id}`;
+							const row = document.createElement('tr');
+							row.className = "co-worker-row";
+
+							const profileImg = user.image && user.image.trim() !== ""
+								? `images/profile/${user.image}`
+								: `images/sys-img/NonProfilePic.png`;
+
+							row.innerHTML = `
+								<td width="10%" align="center" valign="middle">
+									<div class="customers-profile">
+										<img src="${profileImg}" alt="">
+									</div>
+								</td>
+								<td width="80%" valign="middle" style="padding-left:10px;">
+									<strong>${user.full_name || 'Unknown'}</strong>
+									<p class="mini-title">${user.email}</p>
+								</td>
+								<td width="10%" align="center" valign="middle">
+									<div class="opcion-radio">
+										<input type="radio" id="${uniqueId}" name="co_worker_select" class="category-radio" data-id="${user.user_id}" />
+										<label for="${uniqueId}"></label>
+									</div>
+								</td>
+							`;
+
+							row.addEventListener("click", () => {
+								const radio = row.querySelector('input[type="radio"]');
+								if (!radio.disabled) {
+									radio.checked = true;
+
+									// Quitar selección visual de las demás filas
+									document.querySelectorAll('.co-worker-row').forEach(r => r.classList.remove('selected-co-worker'));
+
+									// Agregar selección visual a esta fila
+									row.classList.add('selected-co-worker');
+
+									// Ejecutar el cambio como si se hubiera hecho clic directamente en el radio
+									handleUserSelect({ target: radio }, sectionType);
+								}
+							});
+
+							userListTable.appendChild(row);
+						});
+
+						// ✅ Escuchar clics en los radios
+						const radios = userListTable.querySelectorAll('input[name="co_worker_select"]');
+						radios.forEach(radio => {
+							radio.addEventListener("change", (e) => handleUserSelect(e, sectionType));
+						});
+					} else {
+						userListTable.innerHTML = `
+							<tr><td colspan="3" style="text-align:center; padding: 10px;">No customers found.</td></tr>
+						`;
+					}
+				} catch (error) {
+					console.error("Error loading customers:", error);
+					userListTable.innerHTML = `
+						<tr><td colspan="3" style="text-align:center; padding: 10px;">Error loading customers</td></tr>
+					`;
+				}
+			}
+
+			searchUserField.addEventListener('input', () => {
+				fetchAndRenderUsers(searchUserField.value);
+			});
+
+			fetchAndRenderUsers();
+		}
+	}
+	//############################################################# END SETTINGS ##################################################################
 
 	//############################################################# SEND EMAIL ##################################################################
 	const contactForm = document.getElementById('contactForm');

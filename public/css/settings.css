@@ -66,8 +66,49 @@
 	transition: background-color 0.3s ease;
 }
 
-.options-details {
+.settings-content {
     width: 75%;
     height: 82.5vh;
     overflow: auto;
 }
+
+.co-worker-details
+{
+    width: 70%;
+    height: 82.5vh;
+    overflow: auto;
+}
+
+.co-worker-table tr {
+	cursor: pointer;
+}
+
+.co-worker-table tr td {
+	border-bottom: 1px solid var(--main-bg-beige);
+	padding: 5px 0;
+}
+
+.co-worker-table tr td p {
+	font-weight: 200;
+	margin: 5px 0;
+}
+
+.co-worker-table tr td p strong {
+	font-weight: 600;
+}
+
+.co-worker-table tr:hover {
+	background-color: var(--main-bg-color);
+	transition: background-color 0.3s ease;
+}
+
+/* para la logica de seleccionar usuario con clic en cualquierparte del div */
+.co-worker-row input[type="radio"] {
+	display: none;
+}
+
+.co-worker-row.selected-co-worker {
+	background-color: var(--main-bg-color);
+	transition: background-color 0.2s ease;
+}
+/* hasta aqui */

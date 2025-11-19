@@ -1,10 +1,8 @@
 <?php
+require_once ('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET");
-header("Access-Control-Allow-Headers: Content-Type, Accept");
 
 $response = [
     "success" => false,
@@ -15,20 +13,26 @@ $response = [
 ];
 
 try {
-    if (!isset($_SESSION["sc_UserId"])) {
-        throw new Exception("No user is logged in.");
+    if ($_SERVER["REQUEST_METHOD"] !== "GET") {
+        throw new Exception("Method not allowed.");
     }
 
-    $userId = $_SESSION["sc_UserId"] ?? null;
-	if (!$userId) throw new Exception("User session not found.");
+    $authUser = requireAuth();
+	$userId = $authUser["user_id"] ?? null;
+
+    if (!$userId) {
+        throw new Exception("Unauthorized access. User not found or invalid token.");
+    }
 
     $userData = json_decode(select_from("users", ["parent_user"], ["user_id" => $userId], ["fetch_first" => true]), true);
-	if (!$userData["success"] || empty($userData["data"])) {
-        throw new Exception("No user data found.");
+	if (!is_array($userData) || !$userData["success"] || empty($userData["data"])) {
+        throw new Exception("Error fetching user data.");
     }
 	$userInfo = $userData["data"];
 
 	$altUser = empty($userInfo["parent_user"] ?? null) ? $userId : $userInfo["parent_user"];
+
+    $search = $_GET["search"] ?? '';
 
     $where = [
         "parent_user" => $altUser
@@ -37,6 +41,15 @@ try {
 	$selectCompany = $_GET["select_company"] ?? null;
 	if ($selectCompany !== null && $selectCompany !== '') {
 		$where["company_id"] = $selectCompany;
+	}
+
+    if (!empty($search)) {
+		$where["OR"] = [
+			"name ILIKE"     => "%{$search}%",
+			"surname ILIKE"  => "%{$search}%",
+			"email ILIKE"    => "%{$search}%",
+			"username ILIKE" => "%{$search}%"
+		];
 	}
 
     // Obtener todos los usuarios
@@ -81,6 +94,7 @@ try {
     if ($users["success"] && !empty($users["data"])) {
         foreach ($users["data"] as &$user) {
             $user["rank_text"] = isset($ranks[$user["rank"]]) ? $ranks[$user["rank"]] : "Unknown role";
+            $user["full_name"]      = trim(($user["name"] ?? '') . ' ' . ($user["surname"] ?? ''));
         }
 
         $response["success"] = true;
@@ -98,4 +112,3 @@ try {
 // Responder con JSON
 echo json_encode($response);
 exit;
-?>

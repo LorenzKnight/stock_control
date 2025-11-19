@@ -1,6 +1,6 @@
 <div class="settings-menu">
     <ul>
-        <li data-section="company-settings">Company Settings</li>
+        <li data-section="general">General</li>
         <li data-section="co-workers-rights">co-Workers Rights</li>
 
         <!-- company general settings,

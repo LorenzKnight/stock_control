@@ -8,9 +8,7 @@
 			<div class="settings-sidebar">
 				<?php include("components/settings_menu.php"); ?>
 			</div>
-			<div class="options-details" id="options-details">
-				
-			</div>
+			<div class="settings-content" id="settings-content"></div>
 		</div>
 	</div>
 </div>
