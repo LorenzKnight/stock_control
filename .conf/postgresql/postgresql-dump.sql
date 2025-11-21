@@ -498,15 +498,14 @@ CREATE TABLE IF NOT EXISTS settings ( -- PENDIENTE
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS access_rights ( -- PENDIENTE
+CREATE TABLE IF NOT EXISTS access_rights (
 	access_right_id SERIAL PRIMARY KEY,
 	user_id INTEGER NULL,
 	role_id INTEGER NULL,
-	section_name VARCHAR(50) NULL,
-	can_view INTEGER DEFAULT 0,
-	can_create INTEGER DEFAULT 0,
-	can_edit INTEGER DEFAULT 0,
-	can_delete INTEGER DEFAULT 0
+	access_name VARCHAR(50) NULL,
+	can_access INTEGER DEFAULT 0,
+	create_by INTEGER NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS service_rights (

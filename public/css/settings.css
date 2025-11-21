@@ -67,8 +67,9 @@
 }
 
 .settings-content {
-    width: 75%;
+    width: 80%;
     height: 82.5vh;
+    display: flex;
     overflow: auto;
 }
 
@@ -112,3 +113,23 @@
 	transition: background-color 0.2s ease;
 }
 /* hasta aqui */
+
+.access-rights-form {
+    width: 80%;
+    height: 80vh;
+    margin: 10px auto 0;
+    border-radius: 10px;
+    position: relative;
+    box-shadow: 0 .15rem 0.37rem 0 rgba(58,59,69,.15)!important;
+}
+
+.access-rights-buttons {
+    width: 150px;
+    padding: 10px 50px;
+    border-radius: 30px;
+    box-shadow: 0 .15rem 0.67rem 0 rgba(58,59,69,.15)!important;
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+}

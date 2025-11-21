@@ -81,10 +81,11 @@ try {
 		}
 	}
 
-	$response["success"] = true;
-	$response["data"] = $parsed["data"];
-	$response["message"] = "Users loaded.";
-
+	$response = [
+		"success" => true,
+		"message" => "Users loaded.",
+		"data" => $parsed["data"]
+	];
 } catch (Exception $e) {
 	$response["message"] = $e->getMessage();
 }

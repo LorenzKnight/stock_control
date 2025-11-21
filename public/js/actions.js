@@ -7839,16 +7839,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 		if (savedSettingSection && item.getAttribute("data-section") === savedSettingSection) {
 			item.classList.add("active");
-			fetch(`settings/${savedSettingSection}.html`)
+			fetch(`settings/${savedSettingSection}.php`)
 				.then(response => response.text())
 				.then(html => {
 					settingsContent.innerHTML = html;
 
-					if (section === "general") {
+					if (savedSettingSection === "general") {
 						console.log("General settings loaded.");
 					}
 
-					if (section === "co-workers-rights") {
+					if (savedSettingSection === "co-workers-rights") {
 						loadCoWorkers('searchCoWorkerField', 'coWorkerTable', 'co-workers-rights');
 					}
 				})
@@ -7917,7 +7917,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									row.classList.add('selected-co-worker');
 
 									// Ejecutar el cambio como si se hubiera hecho clic directamente en el radio
-									handleUserSelect({ target: radio }, sectionType);
+									handleCoWorkerSelect({ target: radio }, sectionType);
 								}
 							});
 
@@ -7948,6 +7948,201 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			fetchAndRenderUsers();
 		}
+	}
+
+	async function handleCoWorkerSelect(e, sectionType) {
+		const selectedUserId = e.target.getAttribute("data-id");
+		
+		localStorage.setItem("selectedUserId", selectedUserId);
+		localStorage.setItem("selectedSectionType", sectionType);
+
+		let detailsContainerId = "";
+		switch (sectionType) {
+			case "general":
+				detailsContainerId = "general-details";
+				break;
+			case "co-workers-rights":
+				detailsContainerId = "co-worker-details";
+				break;
+			default:
+				console.warn("Unknown section type:", sectionType);
+				return;
+		}
+
+		const detailsContainer = document.getElementById(detailsContainerId);
+		if (!detailsContainer) {
+			console.warn(`⚠️ Container #${detailsContainerId} not found.`);
+			return;
+		}
+
+		let endpoint = "";
+		let sectionTitle = "";
+
+		// 🔹 Decide qué endpoint usar según la sección actual
+		switch (sectionType) {
+			case "general":
+				endpoint = "api/get_general_config.php"; // hacer este endpoint
+				sectionTitle = "Genaral Overview";
+				break;
+			case "co-workers-rights":
+				endpoint = "api/get_co_workers_rights.php";
+				sectionTitle = "Co-Worker Rights";
+				break;
+			default:
+				console.warn("No endpoint defined for section:", sectionType);
+				return;
+		}
+
+		try {
+			const response = await fetch(`${endpoint}?user_id=${selectedUserId}`);
+			const result = await response.json();
+
+			let html = '';
+
+			if (sectionType === "general") {
+				// Construir HTML para overview general
+			}
+			else if (sectionType === "co-workers-rights") {
+				const hasShippingAccess = result.data?.shipping_access === true ? "checked" : "";
+				const hasSaleAccess = result.data?.sale_access === true ? "checked" : "";
+
+				html += `
+					<div class="access-rights-form">
+						<form method="post" name="formAddAccessRights" id="formAddAccessRights">
+							<input type="hidden" name="user_id" id="user_id" value="${selectedUserId}">
+
+							<table style="margin: 0 auto 50px" width="95%" cellspacing="0">
+								<tr valign="baseline" class="form_height">
+									<td colspan="6" style="border-bottom: 1px solid var(--clr-border);" align="center" valign="middle">
+										<h3 style="margin-bottom: 10px;">${sectionTitle}</h3>
+									</td>
+								</tr>
+								<tr valign="baseline" class="form_height">
+									<td width="50%" style="border-bottom: 1px solid var(--clr-light-border); padding: 5px 10px;" align="left" valign="middle">
+										<span style="display: block;">Shipping Access</span>
+									</td>
+									<td width="50%" style="border-bottom: 1px solid var(--clr-light-border); padding: 5px 10px;" align="right" valign="middle">
+										<label class="switch">
+											<input type="checkbox" name="shipping_access" id="shipping_access" value="1" ${hasShippingAccess}>
+											<span class="slider round"></span>
+										</label>
+									</td>
+								</tr>
+								<tr valign="baseline" class="form_height">
+									<td width="50%" style="border-bottom: 1px solid var(--clr-light-border); padding: 5px 10px;" align="left" valign="middle">
+										<span style="display: block;">Sale Access</span>
+									</td>
+									<td width="50%" style="border-bottom: 1px solid var(--clr-light-border); padding: 5px 10px;" align="right" valign="middle">
+										<label class="switch">
+											<input type="checkbox" name="sale_access" id="sale_access" value="1" ${hasSaleAccess}>
+											<span class="slider round"></span>
+										</label>
+									</td>
+								</tr>
+							</table>
+							<div class="access-rights-buttons" style="margin-top: 15px; text-align: center;">
+								<button type="submit" class="button-style-agree" style="width: 150px;">Update Rights</button>
+							</div>
+						</form>
+					</div>
+				`;
+			}
+			else if (result.success) {
+				html += `<pre>${JSON.stringify(result.data, null, 2)}</pre>`;
+			}
+			else {
+				// Fallback para depuración o secciones futuras
+				html += `<pre>${JSON.stringify(result.data, null, 2)}</pre>`;
+			}
+
+			detailsContainer.innerHTML = html;
+
+			attachAccessRightsFormHandler();
+		} catch (err) {
+			console.error(`Error loading ${sectionTitle}:`, err);
+			detailsContainer.innerHTML = `<p style="color:red;">Error loading ${sectionTitle}: ${err.message}</p>`;
+		}
+	}
+
+	function attachAccessRightsFormHandler() {
+		let formAddAccessRights = document.getElementById('formAddAccessRights');
+		if (!formAddAccessRights) return;
+		
+		formAddAccessRights.addEventListener("submit", async function(e) {
+			e.preventDefault();
+
+			let formData = new FormData(this);
+			
+			let userId = formData.get('user_id');
+
+			let permissionCheckboxes = formAddAccessRights.querySelectorAll('input[type="checkbox"]');
+
+			permissionCheckboxes.forEach(checkbox => {
+				let name = checkbox.name;
+				let value = checkbox.checked ? "1" : "0";
+				formData.set(name, value);
+			});
+
+			let banner = document.getElementById('status-message');
+			let statusText = document.getElementById('status-text');
+			let statusImage = document.getElementById('status-image');
+
+			if (!userId) {
+				statusText.innerText = "Error: No user selected.";
+				statusImage.src = "../images/sys-img/loading1.gif";
+				banner.style.display = 'block';
+				return;
+			}
+
+			try {
+				let response = await fetch('api/update_co_workers_rights.php', {
+					method: 'POST',
+					headers: { 'Accept': 'application/json' },
+					body: formData
+				});
+
+				let data = await response.json();
+
+				if (data.success) {
+					statusText.innerText = data.message || "Right created successfully!";
+					statusImage.src = data.img_gif || "../images/sys-img/loading1.gif";
+					banner.style.display = 'block';
+					banner.style.opacity = '1';
+
+					setTimeout(() => {
+						banner.style.opacity = '0';
+						setTimeout(async () => {
+							await refreshSelectedCoWorkerView();
+						}, 1000);
+					}, 2000);
+				} else {
+					statusText.innerText = "Error: " + (data.message || "Could not create right.");
+					statusImage.src = data.img_gif || "../images/sys-img/loading1.gif";
+					banner.style.display = 'block';
+				}
+			} catch (error) {
+				console.error("❌ Error in formAddRights:", error);
+				statusText.innerText = "Error processing the request.";
+				statusImage.src = "../images/sys-img/loading1.gif";
+				banner.style.display = 'block';
+			}
+		});
+	}
+
+	async function refreshSelectedCoWorkerView() {
+		const userId = localStorage.getItem("selectedUserId");
+		const sectionType = localStorage.getItem("selectedSectionType");
+
+		if (!userId || !sectionType) return;
+
+		// Crear un evento ficticio para reusar handleCoWorkerSelect()
+		const fakeEvent = {
+			target: {
+				getAttribute: () => userId
+			}
+		};
+
+		await handleCoWorkerSelect(fakeEvent, sectionType);
 	}
 	//############################################################# END SETTINGS ##################################################################
 
