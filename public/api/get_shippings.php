@@ -28,12 +28,22 @@ try {
 	$filterBySearch = !empty($search);
 	$searchLower = strtolower($search);
 
+	$status = $_GET["status"] ?? '';
+
+	$where = [
+		"company_id" => $companyId
+	];
+
+	if (!empty($status)) {
+		$where["status"] = $status;
+	}
+
 	// 1️⃣ Traer shippings
 	$shippingsResult = select_from("shippings", [
 		"shippings_id", "shipping_no", "company_id",
 		"shipping_img", "shipping_method", "destination", "delivery_date",
 		"description", "status", "created_at"
-	], ["company_id" => $companyId], [
+	], $where, [
 		"order_by" => "created_at",
 		"order_direction" => "DESC"
 	]);
@@ -118,47 +128,47 @@ try {
 				}
 
 				$productsData[] = [
-					"product_id"   		=> $prod["product_id"] ?? '',
-					"name"         		=> $product["product_name"] ?? '',
-					"year"         		=> $product["product_year"] ?? '',
-					"image"        		=> $product["product_image"] ?? '',
-					"mark_name"    		=> $markName,
-					"model_name"   		=> $modelName,
-					"submodel_name"		=> $submodelName,
-					"quantity"			=> $qty,
-					"price"        		=> $product["price"] ?? 0,
-					"total_kg"         => $totalKg,
-					"from_currency"        => $prod["from_currency"] ?? '',
-                    "total_kg_price"   => $totalKgPrice,
-					"to_currency"          => $prod["to_currency"] ?? '',
-					"total_price_exchanged"=> $totalExchanged,
-                    "weight_per_unit"  => (float)($product["total_weight"] ?? 0),
+					"product_id"   			=> $prod["product_id"] ?? '',
+					"name"         			=> $product["product_name"] ?? '',
+					"year"         			=> $product["product_year"] ?? '',
+					"image"        			=> $product["product_image"] ?? '',
+					"mark_name"    			=> $markName,
+					"model_name"   			=> $modelName,
+					"submodel_name"			=> $submodelName,
+					"quantity"				=> $qty,
+					"price"        			=> $product["price"] ?? 0,
+					"total_kg"         		=> $totalKg,
+					"from_currency"        	=> $prod["from_currency"] ?? '',
+                    "total_kg_price"   		=> $totalKgPrice,
+					"to_currency"          	=> $prod["to_currency"] ?? '',
+					"total_price_exchanged"	=> $totalExchanged,
+                    "weight_per_unit"  		=> (float)($product["total_weight"] ?? 0),
 				];
 			}
 
 			$loadsData[] = [
-				"load_id"              => $load["load_id"],
-				"load_no"              => $load["load_no"],
-				"from_currency"        => $load["from_currency"],
-				"to_currency"          => $load["to_currency"],
-				"price_per_kg"         => $load["price_per_kg"],
-				"total_kg"             => $load["total_kg"],
-				"price_sum"            => $load["price_sum"],
-				"taxes"                => $load["taxes"],
-				"discount"             => $load["discount"],
-				"price_total"          => $load["price_total"],
-				"price_total_exchanged"=> $load["price_total_exchanged"],
-				"destination"          => $load["destination"],
-				"total_weight"         => $loadWeightTotal,
-				"status"               => $load["status"],
-				"created_at"           => $load["created_at"],
+				"load_id"              	=> $load["load_id"],
+				"load_no"              	=> $load["load_no"],
+				"from_currency"        	=> $load["from_currency"],
+				"to_currency"          	=> $load["to_currency"],
+				"price_per_kg"         	=> $load["price_per_kg"],
+				"total_kg"             	=> $load["total_kg"],
+				"price_sum"            	=> $load["price_sum"],
+				"taxes"                	=> $load["taxes"],
+				"discount"             	=> $load["discount"],
+				"price_total"          	=> $load["price_total"],
+				"price_total_exchanged"	=> $load["price_total_exchanged"],
+				"destination"          	=> $load["destination"],
+				"total_weight"         	=> $loadWeightTotal,
+				"status"               	=> $load["status"],
+				"created_at"           	=> $load["created_at"],
 				"customer" => [
 					"customer_id" => $load["customer_id"],
 					"full_name"   => trim(($loadCustomer["customer_name"] ?? '') . ' ' . ($loadCustomer["customer_surname"] ?? '')),
 					"phone"       => $loadCustomer["customer_phone"] ?? '',
 					"image"       => $loadCustomer["customer_image"] ?? ''
 				],
-				"products" => $productsData
+				"products"				=> $productsData
 			];
 		}
 
@@ -233,10 +243,11 @@ try {
 		}
 	}
 
-	$response["success"] = true;
-	$response["data"] = $dataList;
-	$response["message"] = "Shippings loaded successfully.";
-
+	$response = [
+		"success"	=> true,
+		"message"	=> "Shippings loaded successfully.",
+		"data"		=> $dataList
+	];
 } catch (Exception $e) {
 	$response["message"] = $e->getMessage();
 }

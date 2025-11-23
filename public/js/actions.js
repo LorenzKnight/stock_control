@@ -8011,10 +8011,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 						<form method="post" name="formAddAccessRights" id="formAddAccessRights">
 							<input type="hidden" name="user_id" id="user_id" value="${selectedUserId}">
 
-							<table style="margin: 0 auto 50px" width="95%" cellspacing="0">
+							<table style="margin: 0px auto 50px" width="95%" cellspacing="0">
 								<tr valign="baseline" class="form_height">
 									<td colspan="6" style="border-bottom: 1px solid var(--clr-border);" align="center" valign="middle">
-										<h3 style="margin-bottom: 10px;">${sectionTitle}</h3>
+										<h2 style="margin: 20px 0 10px;">${sectionTitle}</h2>
 									</td>
 								</tr>
 								<tr valign="baseline" class="form_height">
@@ -8037,6 +8037,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 											<input type="checkbox" name="sale_access" id="sale_access" value="1" ${hasSaleAccess}>
 											<span class="slider round"></span>
 										</label>
+									</td>
+								</tr>
+								<tr valign="baseline" class="form_height">
+									<td colspan="6" style="border-bottom: 1px solid var(--clr-border);" align="center" valign="middle">
+										<h4 style="margin-bottom: 10px;">Mobile</h4>
 									</td>
 								</tr>
 							</table>
@@ -8067,7 +8072,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	function attachAccessRightsFormHandler() {
 		let formAddAccessRights = document.getElementById('formAddAccessRights');
 		if (!formAddAccessRights) return;
-		
+
 		formAddAccessRights.addEventListener("submit", async function(e) {
 			e.preventDefault();
 
