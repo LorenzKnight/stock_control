@@ -208,11 +208,11 @@ try {
 		], ["shipping_id" => $shipping["shippings_id"]], [
 			"order_by" => "created_at",
 			"order_direction" => "DESC",
-			"fetch_first" => true
+			// "fetch_first" => true
 		]);
 
 		$parsedTracking = json_decode($trackingQuery, true);
-		$latestTracking = $parsedTracking["data"] ?? null;
+		$latestTracking = $parsedTracking["data"][0] ?? null;
 
 		$statusText = GlobalArrays::$shippingStatus[$shipping["status"]] ?? "Unknown";
 
@@ -237,6 +237,7 @@ try {
 				"shipping_method"	=> $shipping["shipping_method"],
 				"loads"				=> $loadsData,
 				"loadsQty"			=> count($loadsData),
+				"all_tracking"		=> $parsedTracking["data"] ?? [],
 				"tracking"			=> $latestTracking,
 				"product_summary"	=> array_values($shippingProductSummary)
 			];

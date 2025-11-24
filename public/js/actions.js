@@ -5267,15 +5267,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 			clickedRow.style.backgroundColor = 'var(--clr-white)';
 		}
 
+		const shippingTracking = shipping.tracking?.checkpoint_name || 'No tracking available yet';
+
 		shippingDetails.innerHTML = `
 			<div class="shipping-header">
 				<table width="100%" style="border-bottom: 1px solid #999; margin-bottom:10px;" align="center" cellspacing="0">
 					<tr valign="baseline" class="form_height">
-						<td width="12%" align="left" valign="middle">
-							<p class="mini-title">Shipping. No.:</p>
+						<td width="47%" align="left" valign="middle">
+							<p class="mini-title">Shipping No.:</p>
 							<strong>${shipping.shipping_no}</strong>
 						</td>
-						<td width="85%" align="center" valign="middle"></td>
+						<td width="50%" align="center" valign="middle"></td>
 						<td width="3%" align="center" valign="middle">
 							<div class="shipping-menu" id="shippingMenuBtn">
 								<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
@@ -5283,13 +5285,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
-						<td width="100%" align="left" valign="middle">
+						<td width="47%" align="left" valign="middle">
 							<p class="mini-title">Destination:</p>
 							${shipping.destination || '—'}
 						</td>
+						<td width="50%" align="left" valign="middle">
+							<p class="mini-title">Tracking Status:</p>
+							${shippingTracking}
+						</td>
+						<td width="3%" align="center" valign="middle"></td>
 					</tr>
 					<tr valign="baseline" class="form_height">
-						<td width="100%" align="left" valign="middle">
+						<td colspan="6" align="left" valign="middle">
 							<p class="mini-title">Description:</p>
 							${shipping.description || '—'}
 						</td>
