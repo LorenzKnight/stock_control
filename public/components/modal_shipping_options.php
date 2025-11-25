@@ -28,11 +28,11 @@
 						<button type="button" class="button-style-agree" id="printShippingLabelBtn">Print Label</button>
 					</td>
 				</tr>
-				<tr valign="baseline">
+				<!-- <tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
 						<button type="button" class="button-style-agree" id="">Shipping Tracking</button>
 					</td>
-				</tr>
+				</tr> -->
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
 						<button type="button" class="cancel-btn" id="deleteShippingBtn">Delete Shipping</button>

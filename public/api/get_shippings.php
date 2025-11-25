@@ -207,8 +207,7 @@ try {
 			"latitude", "longitude", "created_at"
 		], ["shipping_id" => $shipping["shippings_id"]], [
 			"order_by" => "created_at",
-			"order_direction" => "DESC",
-			// "fetch_first" => true
+			"order_direction" => "DESC"
 		]);
 
 		$parsedTracking = json_decode($trackingQuery, true);

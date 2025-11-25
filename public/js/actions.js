@@ -5267,7 +5267,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 			clickedRow.style.backgroundColor = 'var(--clr-white)';
 		}
 
-		const shippingTracking = shipping.tracking?.checkpoint_name || 'No tracking available yet';
+		const shippingTracking = shipping.tracking?.checkpoint_name || "";
+		const hasTracking = shippingTracking.trim() !== "";
 
 		shippingDetails.innerHTML = `
 			<div class="shipping-header">
@@ -5291,7 +5292,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 						</td>
 						<td width="50%" align="left" valign="middle">
 							<p class="mini-title">Tracking Status:</p>
-							${shippingTracking}
+							${hasTracking 
+								? `<span class="tracking-btn" id="openTrackingBtn">${shippingTracking}</span>` 
+								: `<span>${shippingTracking || "No tracking available yet"}</span>`
+							}
 						</td>
 						<td width="3%" align="center" valign="middle"></td>
 					</tr>
@@ -5332,6 +5336,37 @@ document.addEventListener("DOMContentLoaded", async function () {
 				handlePopupClose("load-options", ".formular-frame", []);
 			});
 		});
+
+		const openTrackingBtn = document.getElementById('openTrackingBtn');
+		if (openTrackingBtn) {
+			openTrackingBtn.addEventListener('click', () => {
+				scrollToTopIfNeeded();
+				
+				openTrackingInfo(shipping.shippings_id);
+
+				const trackingInfo = document.getElementById('tracking-info');
+				const popupContent = trackingInfo.querySelector('.formular-frame');
+
+				if (trackingInfo && popupContent) {
+					trackingInfo.style.display = 'block';
+					trackingInfo.style.opacity = '0';
+					trackingInfo.style.transition = 'opacity 0.5s ease';
+					setTimeout(() => {
+						trackingInfo.style.opacity = '1';
+					}, 10);
+
+					popupContent.style.transform = 'scale(0.7)';
+					popupContent.style.opacity = '0';
+					popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+					setTimeout(() => {
+						popupContent.style.transform = 'scale(1)';
+						popupContent.style.opacity = '1';
+					}, 50);
+				}
+
+				handlePopupClose("tracking-info", ".formular-frame", []);
+			});
+		}
 	}
 
 	// 🔁 Función para refrescar el shipping seleccionado después de editar/agregar
@@ -5474,6 +5509,114 @@ document.addEventListener("DOMContentLoaded", async function () {
 				<p><strong>${shippingNumber}</strong></p>
 			</div>
 		`;
+	}
+
+	async function openTrackingInfo(shippings_id) {
+		try {
+			let response = await fetch(`api/get_shippings.php?shipping_id=${shippings_id}`, {
+				method: "GET",
+				headers: { "Accept": "application/json" }
+			});
+
+			let data = await response.json();
+
+			if (!data.success || !data.data || data.data.length === 0) {
+				console.warn("No tracking history available.");
+				return;
+			}
+
+			// tomamos el shipping encontrado
+			const shipping = data.data.find(s => s.shippings_id == shippings_id);
+
+			if (!shipping) {
+				console.warn("Shipping not found.");
+				return;
+			}
+			
+			const trackingHistory = (shipping.all_tracking || []).slice().reverse();
+
+			let trackingHTML = "";
+
+			if (trackingHistory.length === 0) {
+				trackingHTML = "<p>No tracking history available.</p>";
+			} else {
+				trackingHTML = trackingHistory.map((t, index) => {
+					const isLatest = index === trackingHistory.length - 1; 
+                	const dotColor = isLatest ? "var(--agree-green)" : "var(--clr-neutral-dark)";
+                	const lineColor = "var(--clr-neutral-dark)";
+
+					return`
+					<tr valign="baseline">
+						<td width="10%" style="position: relative; padding: 5px 0 0;" align="center" valign="middle">
+							<!-- Dot -->
+							${
+								isLatest
+                                    ? `<div style="
+											width: 12px;
+											height: 12px;
+											background:${dotColor};
+											border-radius: 50%;
+											margin: 0 auto;
+											position: relative;
+											top: -3px;
+											z-index: 2;
+										"></div>`
+									: `<div style="
+											width: 12px;
+											height: 12px;
+											background:${dotColor};
+											border-radius: 50%;
+											margin: 0 auto;
+											position: relative;
+											top: 2px;
+											z-index: 2;
+										"></div>`
+							}
+
+                            <!-- Line below (only if not last item) -->
+                            ${
+                                index < trackingHistory.length - 1
+                                    ? `<div style="
+                                            width: 2px;
+                                            height: 8px;
+                                            background:${lineColor};
+                                            margin: 0 auto;
+                                            position: relative;
+                                            top: 8px;
+                                            z-index: 1;
+                                       "></div>`
+                                    : ""
+                            }
+						</td>
+						<td width="65%" style="padding: 10px 0;" valign="middle">${t.checkpoint_name}</td>
+						<td width="25%" style="padding: 10px 0;" valign="middle">${formatFullDateTime(t.created_at)}</td>
+					</tr>
+				`}).join("");
+			}
+
+			document.getElementById("tracking-info-body").innerHTML = `
+				<table class="tracking-table" cellspacing="0" cellpadding="0">
+					<thead>
+						<tr valign="baseline">
+							<th colspan="6" style="text-align: center; padding-bottom: 10px; font-size: 14px;">
+								Tracking History
+							</th>
+						</tr>
+						<tr valign="baseline">
+							<th width="10%" style="border-bottom: 1px solid var(--clr-neutral-dark);" align="left"></th>
+							<th width="65%" style="border-bottom: 1px solid var(--clr-neutral-dark);" align="left">Location</th>
+							<th width="25%" style="border-bottom: 1px solid var(--clr-neutral-dark);" align="left">Date</th>
+						</tr>
+					</thead>
+					<tbody>
+						${trackingHTML}
+					</tbody>
+				</table>
+			`;
+
+		} catch (error) {
+			console.error("Error loading tracking:", error);
+		}
 	}
 
 	// 📌 script para add shipping popup
@@ -8349,15 +8492,20 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	// 📌 formatear fecha y hora completa
 	function formatFullDateTime(dateString) {
+		const monthsAbbr = [
+			"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+			"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+		];
+
 		const date = new Date(dateString);
 
 		const year = date.getFullYear();
-		const month = String(date.getMonth() + 1).padStart(2, '0'); // meses van de 0 a 11
+		const month = monthsAbbr[date.getMonth()];
 		const day = String(date.getDate()).padStart(2, '0');
 		const hours = String(date.getHours()).padStart(2, '0');
 		const minutes = String(date.getMinutes()).padStart(2, '0');
 
-		return `${year}-${month}-${day} ${hours}:${minutes}`;
+		return `${year} ${month} ${day} ${hours}:${minutes}`;
 	}
   	window.formatFullDateTime = formatFullDateTime;
 
