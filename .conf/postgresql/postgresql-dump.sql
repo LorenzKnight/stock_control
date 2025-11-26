@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS user_tokens (
     status VARCHAR(20) DEFAULT 'active',  -- active | revoked | expired
 	ip_address VARCHAR(45) NULL,
 	device_type VARCHAR(100) NULL,
+	device_name VARCHAR(150) NULL,
 	location VARCHAR(150) NULL,
     created_at TIMESTAMP DEFAULT NOW(),
     expires_at TIMESTAMP DEFAULT (NOW() + INTERVAL '30 days')  -- duración del token

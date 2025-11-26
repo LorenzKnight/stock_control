@@ -711,13 +711,40 @@ function getUserIP() {
 
 // 📱 Detectar dispositivo (muy simple, puedes mejorarlo después con una librería)
 function getDeviceType() {
-	$agent = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
-	if (strpos($agent, 'mobile') !== false) return 'Mobile';
-	if (strpos($agent, 'tablet') !== false) return 'Tablet';
-	if (strpos($agent, 'windows') !== false) return 'Windows PC';
-	if (strpos($agent, 'mac') !== false) return 'Mac';
-	if (strpos($agent, 'linux') !== false) return 'Linux';
-	return 'Unknown';
+    $agent = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
+	$appClient = strtolower($_SERVER['HTTP_X_APP_CLIENT'] ?? '');
+
+	if ($appClient === 'mobile') {
+        return 'mobile';
+    }
+
+    if (preg_match('/mobile|android|iphone|ipad/', $agent)) {
+		return 'mobile';
+	}
+    
+	return 'desktop';
+}
+
+function getDeviceName() {
+    $agent = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
+
+    // 📱 Mobile
+    if (strpos($agent, 'iphone') !== false) return 'iPhone';
+    if (strpos($agent, 'ipad') !== false) return 'iPad';
+    if (strpos($agent, 'android') !== false) return 'Android';
+
+    // 💻 Desktop
+    if (strpos($agent, 'macintosh') !== false || strpos($agent, 'mac os') !== false) {
+        return 'Mac';
+    }
+    if (strpos($agent, 'windows nt') !== false) {
+        return 'Windows';
+    }
+    if (strpos($agent, 'linux') !== false) {
+        return 'Linux';
+    }
+
+    return 'Unknown';
 }
 
 // 📍 Obtener ubicación aproximada (por IP)

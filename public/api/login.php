@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 use Firebase\JWT\JWT;
@@ -9,9 +10,6 @@ global $sql;
 $sql = get_pg_connection();
 
 header("Content-Type: application/json");
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST");
-header("Access-Control-Allow-Headers: Content-Type, Accept");
 
 $response = [
     "success" => false,
@@ -32,10 +30,11 @@ try {
     $email = pg_escape_string($sql, trim($_POST["login_email"]));
     $password = pg_escape_string($sql, trim($_POST["login_password"]));
 
-    $whereClause = ["email" => $email];
-    $options = ["fetch_first" => true];
-
-    $userResponse = select_from("users", ["user_id", "email", "rank", "password", "company_id", "status"], $whereClause, $options);
+    $userResponse = select_from("users", 
+        ["user_id", "email", "rank", "password", "company_id", "status"], 
+        ["email" => $email], 
+        ["fetch_first" => true]
+    );
     $userData = json_decode($userResponse, true);
 
     if (!$userData["success"] || empty($userData["data"])) {
@@ -65,14 +64,20 @@ try {
     $jwt = JWT::encode($payload, JWT_SECRET_KEY, 'HS256');
     $expiresAtISO = date('Y-m-d H:i:s', $expiresAt);
 
+    $deviceType = getDeviceType();
+    $deviceName = getDeviceName();
+
     update_table(
         "user_tokens",
         ["status" => "revoked"],
-        ["user_id" => $user["user_id"], "status" => "active"]
+        [
+            "user_id"     => $user["user_id"],
+            "device_type" => $deviceType,
+            "status"      => "active"
+        ]
     );
 
     $user_ip = getUserIP();
-    $user_device = getDeviceType();
     $user_location = getLocationByIP($user_ip);
 
     $insertResponse = insert_into("user_tokens", [
@@ -80,7 +85,8 @@ try {
 		"token"         => $jwt,
 		"status"        => "active",
 		"ip_address"    => $user_ip,
-		"device_type"   => $user_device,
+		"device_type"   => $deviceType,
+        "device_name"   => $deviceName,
 		"location"      => $user_location,
 		"created_at"    => date('Y-m-d H:i:s'),
 		"expires_at"    => $expiresAtISO
@@ -106,7 +112,6 @@ try {
         "message" => "Logging in....",
         "token" => $jwt,
         "img_gif" => "../images/sys-img/loading1.gif",
-        // "redirect_url" => "../profile.php"
         "redirect_url" => $isMobile ? "" : "../profile.php"
     ];
 

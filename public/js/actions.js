@@ -5603,9 +5603,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 							</th>
 						</tr>
 						<tr valign="baseline">
-							<th width="10%" style="border-bottom: 1px solid var(--clr-neutral-dark);" align="left"></th>
-							<th width="65%" style="border-bottom: 1px solid var(--clr-neutral-dark);" align="left">Location</th>
-							<th width="25%" style="border-bottom: 1px solid var(--clr-neutral-dark);" align="left">Date</th>
+							<th width="10%" style="padding-bottom: 10px; border-bottom: 1px solid var(--clr-neutral-dark);" align="left"></th>
+							<th width="65%" style="padding-bottom: 10px; border-bottom: 1px solid var(--clr-neutral-dark);" align="left">Location</th>
+							<th width="25%" style="padding-bottom: 10px; border-bottom: 1px solid var(--clr-neutral-dark);" align="left">Date</th>
 						</tr>
 					</thead>
 					<tbody>

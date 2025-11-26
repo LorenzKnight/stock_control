@@ -17,7 +17,7 @@ if (in_array($origin, $allowed_origins)) {
     header("Access-Control-Allow-Origin: https://www.allstockcontrol.com");
 }
 
-header("Access-Control-Allow-Headers: Content-Type, Authorization, Accept");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, Accept, X-App-Client");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Content-Type: application/json");
 
