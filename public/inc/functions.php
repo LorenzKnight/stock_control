@@ -554,23 +554,50 @@ function check_user_permission($userId, $permissionName) {
 
 function requireAuth() {
     $authData = getAuthenticatedUserId();
-    if (!$authData) {
+
+    if (!$authData || empty($authData["user_id"])) {
         http_response_code(401);
         echo json_encode([
             "success" => false,
-            "message" => "Unauthorized access."
+            "reason" => "NO_TOKEN"
         ]);
         exit;
     }
 
-	if (!is_array($authData)) {
-        $authData = [
-            "user_id" => $authData,
-            "company_id" => null
-        ];
+	// 🔐 token puede venir por sesión o JWT
+    $headers = function_exists('getallheaders')
+		? getallheaders()
+		: $_SERVER;
+
+    $token = null;
+
+    if (!empty($headers['Authorization'])) {
+        $token = str_replace('Bearer ', '', $headers['Authorization']);
     }
 
-    return $authData;
+    // ✅ Si hay token, validar en DB
+    if ($token) {
+        $check = select_from("user_tokens", ["status"], [
+            "token" => $token,
+            "status" => "active"
+        ], ["fetch_first" => true]);
+
+        $tokenData = json_decode($check, true);
+
+        if (!$tokenData["success"]) {
+            http_response_code(401);
+            echo json_encode([
+                "success" => false,
+                "reason" => "TOKEN_REVOKED"
+            ]);
+            exit;
+        }
+    }
+
+    return [
+        "user_id"    => $authData["user_id"],
+        "company_id" => $authData["company_id"] ?? null
+    ];
 }
 
 function getAuthenticatedUserId() {
@@ -581,7 +608,10 @@ function getAuthenticatedUserId() {
         ];
     }
 
-    $headers = getallheaders();
+    $headers = function_exists('getallheaders')
+		? getallheaders()
+		: $_SERVER;
+		
     $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? null;
 
     if ($authHeader && strpos($authHeader, 'Bearer ') === 0) {
@@ -656,7 +686,7 @@ function verifyAuthToken($token, $returnData = false)
 	}
 }
 
-function invalidateExpiredToken($token)
+function invalidateExpiredToken($token, $force = false)
 {
 	global $sql;
 
@@ -672,19 +702,16 @@ function invalidateExpiredToken($token)
 		]);
 	}
 
+	$where = $force
+        ? ["token" => $token]
+        : ["token" => $token, "RAW" => "\"expires_at\" <= NOW()"];
+
 	try {
 		// Actualizar el estado del token a 'expired' cuando ya haya pasado su fecha de expiración
 		$response = update_table("user_tokens", 
-			[
-				"status" => "expired"
-			],
-			[
-				"token" => $token,
-				"RAW" => "\"expires_at\" <= NOW()" // 🔥 condición extra: vencido
-			],
-			[
-				"echo_query" => false
-			]
+			["status" => "expired"],
+			$where,
+			["echo_query" => false]
 		);
 
 		return $response; // Devuelve el JSON estándar de update_table()
