@@ -64,6 +64,13 @@ try {
     $jwt = JWT::encode($payload, JWT_SECRET_KEY, 'HS256');
     $expiresAtISO = date('Y-m-d H:i:s', $expiresAt);
 
+    // 🔄 Refresh token (30 días)
+    $refreshToken = bin2hex(random_bytes(64)); // ultra seguro
+    $refreshExpiresAt = date(
+        'Y-m-d H:i:s',
+        time() + (60 * 60 * 24 * 30)
+    );
+
     $deviceType = getDeviceType();
     $deviceName = getDeviceName();
 
@@ -81,15 +88,17 @@ try {
     $user_location = getLocationByIP($user_ip);
 
     $insertResponse = insert_into("user_tokens", [
-		"user_id"       => $user["user_id"],
-		"token"         => $jwt,
-		"status"        => "active",
-		"ip_address"    => $user_ip,
-		"device_type"   => $deviceType,
-        "device_name"   => $deviceName,
-		"location"      => $user_location,
-		"created_at"    => date('Y-m-d H:i:s'),
-		"expires_at"    => $expiresAtISO
+		"user_id"               => $user["user_id"],
+		"token"                 => $jwt,
+        "refresh_token"         => $refreshToken,
+		"status"                => "active",
+		"ip_address"            => $user_ip,
+		"device_type"           => $deviceType,
+        "device_name"           => $deviceName,
+		"location"              => $user_location,
+		"created_at"            => date('Y-m-d H:i:s'),
+		"expires_at"            => $expiresAtISO,
+        "refresh_expires_at"    => $refreshExpiresAt
     ]);
 
     $insertData = json_decode($insertResponse, true);
@@ -111,6 +120,7 @@ try {
         "success" => true,
         "message" => "Logging in....",
         "token" => $jwt,
+        "refresh_token" => $refreshToken,
         "img_gif" => "../images/sys-img/loading1.gif",
         "redirect_url" => $isMobile ? "" : "../profile.php"
     ];

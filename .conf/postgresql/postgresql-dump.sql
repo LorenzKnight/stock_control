@@ -429,6 +429,22 @@ CREATE TABLE IF NOT EXISTS notifications (
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS push_subscriptions (
+	subscription_id SERIAL PRIMARY KEY,
+	user_id INTEGER NULL REFERENCES users(user_id) ON DELETE CASCADE,
+
+	endpoint TEXT NOT NULL,
+	p256dh TEXT NOT NULL,
+	auth TEXT NOT NULL,
+
+	device_type VARCHAR(50) NULL,      -- mobile | desktop
+	device_name VARCHAR(100) NULL,     -- iPhone, Chrome, Edge, etc
+	user_agent TEXT NULL,
+
+	is_active BOOLEAN DEFAULT TRUE,
+	created_at TIMESTAMP DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS shippings (
 	shippings_id SERIAL PRIMARY KEY,
 	shipping_no VARCHAR(30) NULL,
