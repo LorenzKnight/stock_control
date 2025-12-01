@@ -826,36 +826,71 @@ function enforce_service_right($serviceName) {
     return true;
 }
 
-function sendShippingStatusPush($shippingId, $newStatus) {
-    // 🔹 Buscar usuarios relacionados al shipping
-    $usersQuery = select_from(
+function sendShippingStatusPush($shippingId, $newStatus)
+{
+    // 1️⃣ Obtener company_id del shipping
+    $shippingQuery = select_from(
         "shippings",
         ["company_id"],
         ["shippings_id" => $shippingId],
         ["fetch_first" => true]
     );
 
-    $companyData = json_decode($usersQuery, true)["data"] ?? null;
-    if (!$companyData) return;
+    $shippingData = json_decode($shippingQuery, true)["data"] ?? null;
+    if (!$shippingData) return;
 
-    // 🔹 Buscar dispositivos suscritos
+    $companyId = $shippingData["company_id"];
+
+    // 2️⃣ Obtener usuarios válidos (misma company, rank ≤ 4)
+    $usersQuery = select_from(
+        "users",
+        ["user_id"],
+        [
+            "company_id" => $companyId,
+            "RAW" => "\"rank\" <= 4"
+        ]
+    );
+
+    $usersData = json_decode($usersQuery, true);
+    if (!$usersData["success"] || empty($usersData["data"])) return;
+
+    $userIds = array_column($usersData["data"], "user_id");
+    if (empty($userIds)) return;
+
+    // 3️⃣ Obtener suscripciones activas SOLO de esos usuarios
     $subsQuery = select_from(
         "push_subscriptions",
         ["endpoint", "p256dh", "auth"],
         [
-            "is_active" => true
+            "is_active" => true,
+            "RAW" => "\"user_id\" IN (" . implode(",", array_map("intval", $userIds)) . ")"
         ]
     );
 
     $subs = json_decode($subsQuery, true)["data"] ?? [];
+    if (empty($subs)) return;
 
+    // 4️⃣ Mensaje según estado
+    switch ((int)$newStatus) {
+		case 2:
+			$statusText = "en tránsito";
+			break;
+		case 3:
+			$statusText = "entregado";
+			break;
+		default:
+			$statusText = "actualizado";
+			break;
+	}
+
+    // 5️⃣ Enviar push
     foreach ($subs as $sub) {
         sendPush(
             $sub,
             [
-                "title" => "📦 Shipping en tránsito",
-                "body"  => "El envío #$shippingId ahora está en tránsito",
-                "url"   => "/shipping/$shippingId"
+                "title" => "📦 Estado del envío",
+                "body"  => "El envío #{$shippingId} ahora está {$statusText}",
+                "url"   => "/shipping/{$shippingId}"
             ]
         );
     }
