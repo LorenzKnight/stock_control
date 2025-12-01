@@ -611,7 +611,7 @@ function getAuthenticatedUserId() {
     $headers = function_exists('getallheaders')
 		? getallheaders()
 		: $_SERVER;
-		
+
     $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? null;
 
     if ($authHeader && strpos($authHeader, 'Bearer ') === 0) {
@@ -824,6 +824,81 @@ function enforce_service_right($serviceName) {
     }
 
     return true;
+}
+
+function sendShippingStatusPush($shippingId, $newStatus) {
+    // 🔹 Buscar usuarios relacionados al shipping
+    $usersQuery = select_from(
+        "shippings",
+        ["company_id"],
+        ["shippings_id" => $shippingId],
+        ["fetch_first" => true]
+    );
+
+    $companyData = json_decode($usersQuery, true)["data"] ?? null;
+    if (!$companyData) return;
+
+    // 🔹 Buscar dispositivos suscritos
+    $subsQuery = select_from(
+        "push_subscriptions",
+        ["endpoint", "p256dh", "auth"],
+        [
+            "is_active" => true
+        ]
+    );
+
+    $subs = json_decode($subsQuery, true)["data"] ?? [];
+
+    foreach ($subs as $sub) {
+        sendPush(
+            $sub,
+            [
+                "title" => "📦 Shipping en tránsito",
+                "body"  => "El envío #$shippingId ahora está en tránsito",
+                "url"   => "/shipping/$shippingId"
+            ]
+        );
+    }
+}
+
+use Minishlink\WebPush\WebPush;
+use Minishlink\WebPush\Subscription;
+
+function sendPush(array $subscriptionData, array $payload)
+{
+    $auth = [
+        'VAPID' => [
+            'subject' => VAPID_SUBJECT,
+            'publicKey' => VAPID_PUBLIC_KEY,
+            'privateKey' => VAPID_PRIVATE_KEY,
+        ]
+    ];
+
+    $webPush = new WebPush($auth);
+
+    $subscription = Subscription::create([
+        'endpoint' => $subscriptionData['endpoint'],
+        'keys' => [
+            'p256dh' => $subscriptionData['p256dh'],
+            'auth'   => $subscriptionData['auth'],
+        ],
+    ]);
+
+    $report = $webPush->sendOneNotification(
+        $subscription,
+        json_encode($payload)
+    );
+
+    // 🧹 Si el push falló permanentemente → desactivar suscripción
+    if (!$report->isSuccess() && $report->isSubscriptionExpired()) {
+        update_table(
+            "push_subscriptions",
+            ["is_active" => false],
+            ["endpoint" => $subscriptionData["endpoint"]]
+        );
+    }
+
+    return $report->isSuccess();
 }
 
 

@@ -94,6 +94,8 @@ try {
     // 🚚 Actualizar estado del envío si está pendiente
     if ($currentStatus < 2) {
         update_table("shippings", ["status" => 2], ["shippings_id" => $shippingId]);
+
+        sendShippingStatusPush($shippingId, 2);
     }
 
     // 📝 Registrar actividad
