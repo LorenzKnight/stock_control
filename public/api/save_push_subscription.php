@@ -57,12 +57,14 @@ try {
         "device_type" => $deviceType,
         "device_name" => $deviceName,
         "user_agent"  => $userAgent,
-        "is_active"   => true
+        "is_active"   => 1
+    ], [
+        "echo_query" => true
     ]);
 
     $insertData = json_decode($insertResult, true);
 
-    if (!$insertData["success"]) {
+    if (empty($insertData) || empty($insertData["success"])) {
         throw new Exception("ERROR_SAVING_SUBSCRIPTION");
     }
 
