@@ -889,7 +889,7 @@ function sendShippingStatusPush($shippingId, $newStatus)
         sendPush(
             $sub,
             [
-                "title" => "📦 Shipping status",
+                "title" => "Shipping status 📦",
                 "body"  => "The shipment #{$shippingNo} is now {$statusText}",
                 "url"   => "/shipping-status"
             ]
