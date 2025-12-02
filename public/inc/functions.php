@@ -831,7 +831,7 @@ function sendShippingStatusPush($shippingId, $newStatus)
     // 1️⃣ Obtener company_id del shipping
     $shippingQuery = select_from(
         "shippings",
-        ["company_id"],
+        ["company_id", "shipping_no"],
         ["shippings_id" => $shippingId],
         ["fetch_first" => true]
     );
@@ -839,7 +839,8 @@ function sendShippingStatusPush($shippingId, $newStatus)
     $shippingData = json_decode($shippingQuery, true)["data"] ?? null;
     if (!$shippingData) return;
 
-    $companyId = $shippingData["company_id"];
+    $companyId	= $shippingData["company_id"];
+	$shippingNo	= $shippingData["shipping_no"];
 
     // 2️⃣ Obtener usuarios válidos (misma company, rank ≤ 4)
     $usersQuery = select_from(
@@ -873,13 +874,13 @@ function sendShippingStatusPush($shippingId, $newStatus)
     // 4️⃣ Mensaje según estado
     switch ((int)$newStatus) {
 		case 2:
-			$statusText = "en tránsito";
+			$statusText = "in transit";
 			break;
 		case 3:
-			$statusText = "entregado";
+			$statusText = "delivered";
 			break;
 		default:
-			$statusText = "actualizado";
+			$statusText = "updated";
 			break;
 	}
 
@@ -888,9 +889,9 @@ function sendShippingStatusPush($shippingId, $newStatus)
         sendPush(
             $sub,
             [
-                "title" => "📦 Estado del envío",
-                "body"  => "El envío #{$shippingId} ahora está {$statusText}",
-                "url"   => "/shipping/{$shippingId}"
+                "title" => "📦 Shipping status",
+                "body"  => "The shipment #{$shippingNo} is now {$statusText}",
+                "url"   => "/shipping-status"
             ]
         );
     }

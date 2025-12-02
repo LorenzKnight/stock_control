@@ -432,16 +432,13 @@ CREATE TABLE IF NOT EXISTS notifications (
 CREATE TABLE IF NOT EXISTS push_subscriptions (
 	subscription_id SERIAL PRIMARY KEY,
 	user_id INTEGER NULL REFERENCES users(user_id) ON DELETE CASCADE,
-
 	endpoint TEXT NOT NULL,
 	p256dh TEXT NOT NULL,
 	auth TEXT NOT NULL,
-
-	device_type VARCHAR(50) NULL,      -- mobile | desktop
-	device_name VARCHAR(100) NULL,     -- iPhone, Chrome, Edge, etc
+	device_type VARCHAR(100) NULL,      -- mobile | desktop
+	device_name VARCHAR(255) NULL,     -- iPhone, Chrome, Edge, etc
 	user_agent TEXT NULL,
-
-	is_active BOOLEAN DEFAULT TRUE,
+	is_active INTEGER NULL,
 	created_at TIMESTAMP DEFAULT NOW()
 );
 

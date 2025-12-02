@@ -65,7 +65,7 @@ try {
     $insertData = json_decode($insertResult, true);
 
     if (empty($insertData) || empty($insertData["success"])) {
-        throw new Exception("ERROR_SAVING_SUBSCRIPTION");
+        throw new Exception($insertData["message"] ?? "DB_INSERT_FAILED");
     }
 
     $response = [
