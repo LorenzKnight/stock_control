@@ -17,6 +17,7 @@ try {
     // 🔒 Autenticación con token JWT
     $authUser = requireAuth();
     $userId = $authUser["user_id"];
+    $companyId = $authUser["company_id"] ?? null;
 
     // 🔍 Validar shipping_id recibido
     $shippingId = intval($_POST["shipping_id"] ?? 0);
@@ -93,10 +94,53 @@ try {
 
     // 🚚 Actualizar estado del envío si está pendiente
     if ($currentStatus < 2) {
-        update_table("shippings", ["status" => 2], ["shippings_id" => $shippingId]);
+		// ✅ Actualizar estado
+		update_table(
+			"shippings",
+			["status" => 2],
+			["shippings_id" => $shippingId]
+		);
 
-        sendShippingStatusPush($shippingId, 2);
-    }
+		// ✅ Validar company_id desde el token
+		if (empty($companyId)) {
+			throw new Exception("Company ID not found for user.");
+		}
+
+		// 🔎 1️⃣ Usuarios de la empresa con rank <= 4
+		$rankUsersQuery = select_from(
+			"users",
+			["user_id"],
+			[
+				"company_id" => $companyId,
+				"RAW" => "\"rank\" <= 4"
+			]
+		);
+
+		$rankUsers = json_decode($rankUsersQuery, true)["data"] ?? [];
+
+		// 🔎 2️⃣ Usuarios con permiso explícito
+		$rightsUsersQuery = select_from(
+			"service_rights",
+			["user_id"],
+			[
+				"service_name" => "shipping_status_notice",
+				"can_access"   => 1
+			]
+		);
+
+		$rightsUsers = json_decode($rightsUsersQuery, true)["data"] ?? [];
+
+		// 🔗 3️⃣ Unificar user_ids (sin duplicados)
+		$allowedUserIds = array_unique(array_merge(
+			array_column($rankUsers, "user_id"),
+			array_column($rightsUsers, "user_id")
+		));
+
+		// 🔔 4️⃣ Enviar push SOLO a usuarios autorizados
+		if (!empty($allowedUserIds)) {
+			sendShippingStatusPush($shippingId, 2, $allowedUserIds, $userId);
+		}
+	}
 
     // 📝 Registrar actividad
     log_activity($userId, "check_shipping", "Shipping checked at $checkpointName", "shippings", $shippingId);

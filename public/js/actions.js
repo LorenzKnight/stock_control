@@ -8155,6 +8155,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			else if (sectionType === "co-workers-rights") {
 				const hasShippingAccess = result.data?.shipping_access === true ? "checked" : "";
 				const hasSaleAccess = result.data?.sale_access === true ? "checked" : "";
+				const hasShippingStatusNotice =result.data?.shipping_status_notice === true ? "checked" : "";
 
 				html += `
 					<div class="access-rights-form">
@@ -8192,6 +8193,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 								<tr valign="baseline" class="form_height">
 									<td colspan="6" style="border-bottom: 1px solid var(--clr-border);" align="center" valign="middle">
 										<h4 style="margin-bottom: 10px;">Mobile</h4>
+									</td>
+								</tr>
+								<tr valign="baseline" class="form_height">
+									<td width="50%" style="border-bottom: 1px solid var(--clr-light-border); padding: 5px 10px;" align="left" valign="middle">
+										<span style="display: block;">Shipping Status Notice</span>
+									</td>
+									<td width="50%" style="border-bottom: 1px solid var(--clr-light-border); padding: 5px 10px;" align="right" valign="middle">
+										<label class="switch">
+											<input type="checkbox" name="shipping_status_notice" id="shipping_status_notice" value="1" ${hasShippingStatusNotice}>
+											<span class="slider round"></span>
+										</label>
 									</td>
 								</tr>
 							</table>

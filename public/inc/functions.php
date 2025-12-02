@@ -826,12 +826,30 @@ function enforce_service_right($serviceName) {
     return true;
 }
 
-function sendShippingStatusPush($shippingId, $newStatus)
+function sendShippingStatusPush(
+	$shippingId, 
+	$newStatus, 
+	array $allowedUserIds = [],
+    ?int $excludeUserId = null)
 {
+	// ✅ Si no hay usuarios permitidos → nada que hacer
+    if (empty($allowedUserIds)) {
+        return;
+    }
+
+    // ✅ Excluir al usuario que hizo el scan
+    if ($excludeUserId !== null) {
+        $allowedUserIds = array_diff($allowedUserIds, [(int)$excludeUserId]);
+    }
+
+    if (empty($allowedUserIds)) {
+        return;
+    }
+
     // 1️⃣ Obtener company_id del shipping
     $shippingQuery = select_from(
         "shippings",
-        ["company_id", "shipping_no"],
+        ["shipping_no"],
         ["shippings_id" => $shippingId],
         ["fetch_first" => true]
     );
@@ -839,24 +857,7 @@ function sendShippingStatusPush($shippingId, $newStatus)
     $shippingData = json_decode($shippingQuery, true)["data"] ?? null;
     if (!$shippingData) return;
 
-    $companyId	= $shippingData["company_id"];
 	$shippingNo	= $shippingData["shipping_no"];
-
-    // 2️⃣ Obtener usuarios válidos (misma company, rank ≤ 4)
-    $usersQuery = select_from(
-        "users",
-        ["user_id"],
-        [
-            "company_id" => $companyId,
-            "RAW" => "\"rank\" <= 4"
-        ]
-    );
-
-    $usersData = json_decode($usersQuery, true);
-    if (!$usersData["success"] || empty($usersData["data"])) return;
-
-    $userIds = array_column($usersData["data"], "user_id");
-    if (empty($userIds)) return;
 
     // 3️⃣ Obtener suscripciones activas SOLO de esos usuarios
     $subsQuery = select_from(
@@ -864,7 +865,7 @@ function sendShippingStatusPush($shippingId, $newStatus)
         ["endpoint", "p256dh", "auth"],
         [
             "is_active" => true,
-            "RAW" => "\"user_id\" IN (" . implode(",", array_map("intval", $userIds)) . ")"
+			"RAW" => "\"user_id\" IN (" . implode(",", array_map("intval", $allowedUserIds)) . ")"
         ]
     );
 

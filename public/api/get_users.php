@@ -97,11 +97,13 @@ try {
             $user["full_name"]      = trim(($user["name"] ?? '') . ' ' . ($user["surname"] ?? ''));
         }
 
-        $response["success"] = true;
-        $response["message"] = "Users retrieved successfully";
-        $response["count"] = $users["count"];
-        $response["users"] = $users["data"];
-        $response["ranks"] = $ranks;
+        $response = [
+            "success"   => true,
+            "message"   => "Users retrieved successfully",
+            "count"     => $users["count"],
+            "users"     => $users["data"],
+            "ranks"     => $ranks
+        ];
     } else {
         throw new Exception("No users found.");
     }
