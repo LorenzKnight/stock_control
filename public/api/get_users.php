@@ -94,7 +94,7 @@ try {
     if ($users["success"] && !empty($users["data"])) {
         foreach ($users["data"] as &$user) {
             $user["rank_text"] = isset($ranks[$user["rank"]]) ? $ranks[$user["rank"]] : "Unknown role";
-            $user["full_name"]      = trim(($user["name"] ?? '') . ' ' . ($user["surname"] ?? ''));
+            $user["full_name"] = trim(($user["name"] ?? '') . ' ' . ($user["surname"] ?? ''));
         }
 
         $response = [

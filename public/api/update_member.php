@@ -1,4 +1,5 @@
 <?php
+require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
@@ -15,11 +16,48 @@ try {
         throw new Exception("Method not allowed");
     }
 
-    $userId = $_SESSION["sc_UserId"] ?? null;
-    if (!$userId) throw new Exception("User session not found.");
+    $authUser = requireAuth();
+    $userId = $authUser["user_id"] ?? null;
+    if (!$userId) throw new Exception("User not authenticated.");
 
     $targetUserId = intval($_POST["edit_user_id"] ?? 0);
     if ($targetUserId <= 0) throw new Exception("Invalid user ID.");
+
+    if ($targetUserId === $userId) {
+        throw new Exception("You cannot change your own status.");
+    }
+
+    if (isset($_POST["toggle_only"]) && isset($_POST["status"])) {
+        $status = intval($_POST["status"]);
+        if (!in_array($status, [0,1])) {
+            throw new Exception("Invalid status value.");
+        }
+
+        $updateResponse = update_table(
+            "users",
+            ["status" => $status],
+            ["user_id" => $targetUserId]
+        );
+
+        $updateResult = json_decode($updateResponse, true);
+        if (!$updateResult["success"]) {
+            throw new Exception("Status update failed.");
+        }
+
+        log_activity(
+            $userId,
+            "toggle_user_status",
+            "User status changed (ID: $targetUserId)",
+            "users",
+            $targetUserId
+        );
+
+        echo json_encode([
+            "success" => true,
+            "message" => "User status updated"
+        ]);
+        exit;
+    }
 
     $name           = trim($_POST["edit_name"] ?? '');
     $surname        = trim($_POST["edit_surname"] ?? '');
@@ -83,4 +121,3 @@ try {
 
 echo json_encode($response);
 exit;
-?>
