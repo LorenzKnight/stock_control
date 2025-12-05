@@ -88,3 +88,26 @@ function triggerRealtimeNotification($userId) {
 		error_log("✅ WS bridge OK ($httpCode): $result");
 	}
 }
+
+
+function sendForceLogout($userId) {
+    // $url = "http://127.0.0.1:3002/notify";
+	$url = 'http://host.docker.internal:3002/notify';
+
+    $payload = [
+        "message" => "force_logout",
+        "user_id" => $userId
+    ];
+
+    $options = [
+        "http" => [
+            "header"  => "Content-Type: application/json\r\n",
+            "method"  => "POST",
+            "content" => json_encode($payload),
+            "timeout" => 1
+        ]
+    ];
+
+    $context  = stream_context_create($options);
+    @file_get_contents($url, false, $context);
+}

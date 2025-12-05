@@ -44,6 +44,10 @@ try {
             throw new Exception("Status update failed.");
         }
 
+        if ($status == 0) {
+            sendForceLogout($targetUserId);
+        }
+
         log_activity(
             $userId,
             "toggle_user_status",

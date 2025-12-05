@@ -31,7 +31,7 @@ try {
     $password = pg_escape_string($sql, trim($_POST["login_password"]));
 
     $userResponse = select_from("users", 
-        ["user_id", "email", "rank", "password", "company_id", "status"], 
+        ["user_id", "email", "rank", "password", "company_id", "status", "status_by_admin"], 
         ["email" => $email], 
         ["fetch_first" => true]
     );
@@ -46,6 +46,16 @@ try {
 
     if (!password_verify($password, $hashedPassword)) {
         throw new Exception("Contraseña incorrecta.");
+    }
+
+    // 🚫 Bloquear acceso si el usuario está inactivo
+    if (intval($user["status"]) === 0) {
+        throw new Exception("Your account is inactive. Contact your administrator.");
+    }
+
+    // 🚫 Bloquear acceso si un administrador lo ha desactivado (status_by_admin = 0)
+    if (intval($user["status_by_admin"]) === 0) {
+        throw new Exception("Your account has been disabled by the system. Please contact support.");
     }
 
     $issuedAt = time();
