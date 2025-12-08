@@ -24,6 +24,56 @@ try {
         throw new Exception("Unauthorized access. User not found or invalid token.");
     }
 
+    if (isset($_GET["id"]) && $_GET["id"] !== "") {
+
+        $targetId = intval($_GET["id"]);
+
+        $userResponse = select_from(
+            "users",
+            [
+                "user_id",
+                "name",
+                "surname",
+                "email",
+                "phone",
+                "image",
+                "rank",
+                "status",
+                "signup_date"
+            ],
+            ["user_id" => $targetId],
+            ["fetch_first" => true]
+        );
+
+        $parsed = json_decode($userResponse, true);
+
+        if (!$parsed["success"] || empty($parsed["data"])) {
+            throw new Exception("User not found.");
+        }
+
+        // Obtener nombre del rol
+        $rolesResponse = select_from("roles", ["role_id", "role_name"], [], []);
+        $rolesData = json_decode($rolesResponse, true);
+
+        $ranks = [];
+        if ($rolesData["success"] && !empty($rolesData["data"])) {
+            foreach ($rolesData["data"] as $role) {
+                $ranks[$role["role_id"]] = $role["role_name"];
+            }
+        }
+
+        $user = $parsed["data"];
+        $user["rank_text"] = $ranks[$user["rank"]] ?? "Unknown role";
+        $user["full_name"] = trim(($user["name"] ?? '') . ' ' . ($user["surname"] ?? ''));
+
+        echo json_encode([
+            "success" => true,
+            "message" => "Single user loaded",
+            "user"    => $user
+        ]);
+        exit;
+    }
+
     $userData = json_decode(select_from("users", ["parent_user"], ["user_id" => $userId], ["fetch_first" => true]), true);
 	if (!is_array($userData) || !$userData["success"] || empty($userData["data"])) {
         throw new Exception("Error fetching user data.");
