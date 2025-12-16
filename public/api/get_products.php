@@ -70,6 +70,15 @@ try {
 
 		$product = $parsed["data"];
 
+		if ($product["company_id"] != $companyId) {
+			echo json_encode([
+				"success" => true,
+				"message" => "Product not found in this company.",
+				"product" => null
+			]);
+			exit;
+		}
+
 		// Añadir nombres de categorías
 		if (!empty($product['product_mark'])) {
 			$markRes = select_from("category", ["category_name"], [
