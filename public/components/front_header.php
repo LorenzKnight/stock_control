@@ -4,10 +4,26 @@
 
 <div class="floating-header">
     <ul class="menu">
-        <li class="no-redirect"><a href="" class="start-btn">Start</a></li>
-        <li class="no-redirect"><a href="" class="features-btn">Features</a></li>
-        <li class="no-redirect"><a href="" class="pricing-btn">Pricing</a></li>
-        <li class="no-redirect"><a href="" class="toggle-link">Sign up</a></li>
+        <li class="no-redirect">
+			<a href="" class="start-btn">
+				<?= htmlspecialchars($t['nav_start']) ?>
+			</a>
+		</li>
+        <li class="no-redirect">
+			<a href="" class="features-btn">
+				<?= htmlspecialchars($t['nav_features']) ?>
+			</a>
+		</li>
+        <li class="no-redirect">
+			<a href="" class="pricing-btn">
+				<?= htmlspecialchars($t['nav_pricing']) ?>
+			</a>
+		</li>
+        <li class="no-redirect">
+			<a href="" class="toggle-link">
+				<?= htmlspecialchars($t['nav_signup']) ?>
+			</a>
+		</li>
 
 		<!-- <li class="no-redirect">
 			<nav class="lang-switch" style="font-size: 9px;">
@@ -28,10 +44,26 @@
 	</div>
 	<div class="mobile-menu hidden" id="mobile-menu">
 		<ul class="mobile-menu-list">
-			<li class="no-redirect"><a href="" class="start-btn">Start</a></li>
-			<li class="no-redirect"><a href="" class="features-btn">Features</a></li>
-			<li class="no-redirect"><a href="" class="pricing-btn">Pricing</a></li>
-			<li class="no-redirect"><a href="" class="toggle-link">Sign up</a></li>
+			<li class="no-redirect">
+				<a href="" class="start-btn">
+					<?= htmlspecialchars($t['nav_start']) ?>
+				</a>
+			</li>
+			<li class="no-redirect">
+				<a href="" class="features-btn">
+					<?= htmlspecialchars($t['nav_features']) ?>
+				</a>
+			</li>
+			<li class="no-redirect">
+				<a href="" class="pricing-btn">
+					<?= htmlspecialchars($t['nav_pricing']) ?>
+				</a>
+			</li>
+			<li class="no-redirect">
+				<a href="" class="toggle-link">
+					<?= htmlspecialchars($t['nav_signup']) ?>
+				</a>
+			</li>
 		</ul>
 	</div>
 </div>

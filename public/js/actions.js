@@ -513,7 +513,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (formSignupInfo) formSignupInfo.style.display = isMobile ? "none" : "block";
 		
 		document.querySelectorAll(".toggle-link, .close-link").forEach(a => {
-			a.textContent = "Log In";
+			a.textContent = window.i18n.login;
 			a.classList.remove("toggle-link");
 			a.classList.add("close-link");
 		});
@@ -526,7 +526,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (formLoginInfo)  formLoginInfo.style.display = "block";
 		
 		document.querySelectorAll(".toggle-link, .close-link").forEach(a => {
-			a.textContent = "Sign up";
+			a.textContent = window.i18n.signup;
 			a.classList.remove("close-link");
 			a.classList.add("toggle-link");
 		});

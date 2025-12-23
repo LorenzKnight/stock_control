@@ -18,6 +18,10 @@ if ($path !== '/' && substr($path, -1) === '/') {
     $path = rtrim($path, '/');
 }
 
+if (preg_match('#^/(es|en|sv)(/|$)#i', $path)) {
+    return;
+}
+
 // Deja pasar estáticos
 if (preg_match('#^/(css|js|images|img|fonts|uploads|vendor)/#i', $path)) {
     return;

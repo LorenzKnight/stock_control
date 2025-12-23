@@ -26,6 +26,19 @@ body {
     font-size: 12px;
 }
 
+.alt-h1 {
+    display: block !important;
+    font-size: 52px !important;
+    margin-block-start: 0.67em !important;
+    margin-block-end: 0.67em !important;
+    margin-inline-start: 0px !important;
+    margin-inline-end: 0px !important;
+    font-weight: bold !important;
+    line-height: 1.2 !important;
+    unicode-bidi: isolate !important;
+    color: var(--clr-white) !important;
+}
+
 @media (orientation: landscape) and (max-height: 500px) {
     .container-landscape {
         display: none;

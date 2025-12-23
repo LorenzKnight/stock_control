@@ -3,15 +3,20 @@
 		<div class="container-right" style="color: var(--clr-white);">
 			<?php include("components/modal_signup.php"); ?>
 			<div class="positioning" id="container-login-info" style="display: block;">
-				<h1>"Manage your company or business's inventory simply and efficiently.</br> Access from anywhere, on any device."</h1>
+				<h1><?= htmlspecialchars($t['home_main_h1']) ?></h1>
+				 <h2><?= htmlspecialchars($t['home_main_subtitle']) ?></h2>
 				
-				<h2>"<a href="#" class="toggle-link" style="color: var(--warning-orange); text-decoration: none;">Sign Up</a> - Try it Free!"</h2>
+				 <p>
+					<a href="#" class="toggle-link" style="color: var(--warning-orange); text-decoration: none;">
+						<?= htmlspecialchars($t['home_cta']) ?>
+					</a>
+				</p>
 			</div>
 		</div>
 		<div class="container-left" style="color: var(--clr-white);">
 			<?php include("components/modal_login.php"); ?>
 			<div class="positioning" id="container-signup-info" style="display: none;">
-				<h1>"Don't have an account yet? Sign up and start organizing your inventory quickly, securely, and from any device."</h1>
+				<p class="alt-h1"><?= htmlspecialchars($t['signup_message']) ?></p>
 			</div>
 		</div>
 	</div>
