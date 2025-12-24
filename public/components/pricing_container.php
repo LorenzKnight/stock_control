@@ -1,21 +1,15 @@
 <div id="pricing-container">
 	<div class="container">
 		<div class="title">
-			<p class="pricing-title">Which package suits your needs?</p>
+			<p class="pricing-title"><?= htmlspecialchars($t['pricing_title_main']) ?></p>
 		</div>
 		<div class="subtitle">
-			<p>
-				At All Stock Control, we aim to make inventory management as simple, clear, and efficient as possible. 
-				Our goal is to help you maintain full control of your products with ease, 
-				no matter what type of business you run. You can track stock in and out, generate reports, 
-				and organize your warehouse from anywhere and any device—saving time and avoiding mistakes. 
-				We offer a flexible monthly payment plan that fits your needs. And if you pay by card, you can cancel anytime.
-			</p>
+			<p><?= htmlspecialchars($t['pricing_subtitle']) ?></p>
 		</div>
 	</div>
 
 	<div class="title">
-		<p class="pricing-title">Choose the number of employees</p>
+		<p class="pricing-title"><?= htmlspecialchars($t['pricing_employees_title']) ?></p>
 	</div>
 	<div class="opcions-packages">
 		<div class="packs-selection">
