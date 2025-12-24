@@ -1,5 +1,5 @@
 <div class="floating-logo">
-    <img src="images/sys-img/asc-logo.png" alt="Logo" class="asc-logo">
+    <img src="/images/sys-img/asc-logo.png" alt="Logo" class="asc-logo">
 </div>
 
 <div class="floating-header">
@@ -36,7 +36,7 @@
 
 	<div class="mobile-menu-container">
 		<div class="mobile-logo">
-			<img src="images/sys-img/asc-logo.png" alt="Logo" id="mobile-header-asc-logo">
+			<img src="/images/sys-img/asc-logo.png" alt="Logo" id="mobile-header-asc-logo">
 		</div>
 		<ul class="menu-hamburger" id="menu-hamburger">
 			<li class="no-redirect"><a href="#" id="home-btn-mobile"><img src="images/sys-img/hamburger-menu-icon.png"></a></li>
