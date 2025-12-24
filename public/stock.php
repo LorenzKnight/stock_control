@@ -37,6 +37,16 @@
 			login:  "<?= htmlspecialchars($t['toggle_login']) ?>"
 		};
 	</script>
+	
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-0WS3W1169B"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'G-0WS3W1169B');
+	</script>
 
 	<script defer src="/js/actions.js"></script>
 	<script defer src="/js/styleEffects.js"></script>
