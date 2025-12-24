@@ -74,16 +74,15 @@ body {
         color: var(--main-text-color);
     }
 
-    .title-and-subtitle {
+    .title, .subtitle {
         text-align: center;
         margin: 50px 0;
     }
 
-    .title-and-subtitle p {
-        font-size: 16px;
-        font-weight: 300;
-        line-height: 2;
-        color: var(--main-text-color);
+    .title h2 {
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 1.5;
     }
 }
 
@@ -129,17 +128,22 @@ body {
         color: var(--main-text-color);
     }
 
-    .title-and-subtitle {
+    .title, .subtitle{
         text-align: center;
         margin: 50px 0;
         padding: 0 15px;
     }
 
-    .title-and-subtitle p {
-        font-size: 14px;
+    .title h2 {
+        font-size: 18px;
         font-weight: 300;
         line-height: 1.5;
-        color: var(--main-text-color);
+    }
+
+    .subtitle p {
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 2;
     }
 }
 
@@ -177,16 +181,21 @@ body {
         color: var(--main-text-color);
     }
 
-    .title-and-subtitle {
+    .title, .subtitle {
         text-align: center;
         margin: 50px 0;
     }
 
-    .title-and-subtitle p {
+    .title h2 {
+        font-size: 24px;
+        font-weight: 500;
+        line-height: 2;
+    }
+
+    .subtitle p {
         font-size: 16px;
         font-weight: 300;
         line-height: 2;
-        color: var(--main-text-color);
     }
 }
 

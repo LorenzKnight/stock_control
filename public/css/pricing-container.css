@@ -57,6 +57,12 @@
 		margin-right: 0;
 	}
 
+    .pricing-title {
+		font-size: 24px !important;
+		font-weight: 600 !important;
+		margin: auto 0;
+	}
+
     .pricing-header {
         height: 180px;
         background-color: var(--main-bg-dark-blue);
@@ -271,6 +277,12 @@
 
 	.pricing-card:last-child {
 		margin-right: 0;
+	}
+
+    .pricing-title {
+		font-size: 24px !important;
+		font-weight: 600 !important;
+		margin: auto 0;
 	}
 
     .pricing-header {

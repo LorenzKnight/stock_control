@@ -1,7 +1,9 @@
 <div id="pricing-container">
-	<div class="container flex">
-		<div class="title-and-subtitle">
-			<h1>Which package suits your needs?</h1>
+	<div class="container">
+		<div class="title">
+			<p class="pricing-title">Which package suits your needs?</p>
+		</div>
+		<div class="subtitle">
 			<p>
 				At All Stock Control, we aim to make inventory management as simple, clear, and efficient as possible. 
 				Our goal is to help you maintain full control of your products with ease, 
@@ -12,8 +14,8 @@
 		</div>
 	</div>
 
-	<div class="title-and-subtitle">
-		<h1>Choose the number of employees</h1>
+	<div class="title">
+		<p class="pricing-title">Choose the number of employees</p>
 	</div>
 	<div class="opcions-packages">
 		<div class="packs-selection">

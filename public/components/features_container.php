@@ -1,87 +1,87 @@
 <div id="features-container" style="background-color: var(--main-bg-dark-blue);">
 	<div class="feat-container container-grid">
-		<div class="title-and-subtitle">
-			<h1 class="features-title">Features</h1>
+		<div class="title">
+			<h2 class="features-title"><?= htmlspecialchars($t['features_title']) ?></h2>
 		</div>
 
 		<div class="features-grid">
 			<article class="feature-card">
 				<img src="images/sys-img/icon-members.png" alt="" class="feature-img">
 				<div class="feature-body">
-					<h3 class="feature-name">Plans based on team size</h3>
-					<p class="feature-desc">Packages with limits on members, admins, branches, and products.</p>
+					<h3 class="feature-name"><?= htmlspecialchars($t['feature_plan_title']) ?></h3>
+					<p class="feature-desc"><?= htmlspecialchars($t['feature_plan_desc']) ?></p>
 				</div>
 			</article>
 
 			<article class="feature-card">
 				<img src="images/sys-img/multi-branch.png" alt="" class="feature-img">
 				<div class="feature-body">
-					<h3 class="feature-name">Multi-branch/affiliate</h3>
-					<p class="feature-desc">Manage inventory by branch/affiliate and separate stock by location.</p>
+					<h3 class="feature-name"><?= htmlspecialchars($t['feature_multibranch_title']) ?></h3>
+					<p class="feature-desc"><?= htmlspecialchars($t['feature_multibranch_desc']) ?></p>
 				</div>
 			</article>
 
 			<article class="feature-card">
 				<img src="images/sys-img/users-permitions.png" alt="" class="feature-img">
 				<div class="feature-body">
-					<h3 class="feature-name">Users and Permissions (Admins / Members)</h3>
-					<p class="feature-desc">Role-based access control for operations and configuration.</p>
+					<h3 class="feature-name"><?= htmlspecialchars($t['feature_roles_title']) ?></h3>
+					<p class="feature-desc"><?= htmlspecialchars($t['feature_roles_desc']) ?></p>
 				</div>
 			</article>
 
 			<article class="feature-card">
 				<img src="images/sys-img/product-catalog.png" alt="" class="feature-img">
 				<div class="feature-body">
-					<h3 class="feature-name">Product catalog</h3>
-					<p class="feature-desc">Name, description, image, and organization into categories and subcategories.</p>
+					<h3 class="feature-name"><?= htmlspecialchars($t['feature_catalog_title']) ?></h3>
+					<p class="feature-desc"><?= htmlspecialchars($t['feature_catalog_desc']) ?></p>
 				</div>
 			</article>
 
 			<article class="feature-card">
 				<img src="images/sys-img/search-filtering.png" alt="" class="feature-img">
 				<div class="feature-body">
-					<h3 class="feature-name">Quick search and filtering</h3>
-					<p class="feature-desc">Find products and packages without friction.</p>
+					<h3 class="feature-name"><?= htmlspecialchars($t['feature_search_title']) ?></h3>
+					<p class="feature-desc"><?= htmlspecialchars($t['feature_search_desc']) ?></p>
 				</div>
 			</article>
 
 			<article class="feature-card">
 				<img src="images/sys-img/stock-movements.png" alt="" class="feature-img">
 				<div class="feature-body">
-					<h3 class="feature-name">Stock movements</h3>
-					<p class="feature-desc">Inputs, outputs, and adjustments to maintain accurate levels.</p>
+					<h3 class="feature-name"><?= htmlspecialchars($t['feature_stock_title']) ?></h3>
+					<p class="feature-desc"><?= htmlspecialchars($t['feature_stock_desc']) ?></p>
 				</div>
 			</article>
 
 			<article class="feature-card">
 				<img src="images/sys-img/inter-branch.png" alt="" class="feature-img">
 				<div class="feature-body">
-					<h3 class="feature-name">Inter-Branch Transfers</h3>
-					<p class="feature-desc">Move inventory between locations without losing track.</p>
+					<h3 class="feature-name"><?= htmlspecialchars($t['feature_transfers_title']) ?></h3>
+					<p class="feature-desc"><?= htmlspecialchars($t['feature_transfers_desc']) ?></p>
 				</div>
 			</article>
 
 			<article class="feature-card">
 				<img src="images/sys-img/minimun-stock.png" alt="" class="feature-img">
 				<div class="feature-body">
-					<h3 class="feature-name">Minimum stock</h3>
-					<p class="feature-desc">Define low stock thresholds to act on time.</p>
+					<h3 class="feature-name"><?= htmlspecialchars($t['feature_min_stock_title']) ?></h3>
+					<p class="feature-desc"><?= htmlspecialchars($t['feature_min_stock_desc']) ?></p>
 				</div>
 			</article>
 
 			<article class="feature-card">
 				<img src="images/sys-img/cloud-access.png" alt="" class="feature-img">
 				<div class="feature-body">
-					<h3 class="feature-name">Cloud access</h3>
-					<p class="feature-desc">Use AllstockControl from any device, without facilities.</p>
+					<h3 class="feature-name"><?= htmlspecialchars($t['feature_cloud_title']) ?></h3>
+					<p class="feature-desc"><?= htmlspecialchars($t['feature_cloud_desc']) ?></p>
 				</div>
 			</article>
 
 			<article class="feature-card">
 				<img src="images/sys-img/responsive.png" alt="" class="feature-img">
 				<div class="feature-body">
-					<h3 class="feature-name">Responsive interface</h3>
-					<p class="feature-desc">Design designed for desktop and mobile, fast and clear.</p>
+					<h3 class="feature-name"><?= htmlspecialchars($t['feature_responsive_title']) ?></h3>
+					<p class="feature-desc"><?= htmlspecialchars($t['feature_responsive_desc']) ?></p>
 				</div>
 			</article>
 
@@ -95,16 +95,3 @@
 		</div>
 	</div>
 </div>
-
-<!-- 
-- Planes según tamaño del equipo
-- Multi-sucursal / afiliados
-- Usuarios y permisos (Admins / Members)
-- Catálogo de productos
-- Búsqueda y filtrado rápido
-- Movimientos de stock
-- Transferencias entre sucursales
-- Mínimos de stock
-- Acceso en la nube
-- Interfaz responsive
--->

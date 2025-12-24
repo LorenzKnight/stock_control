@@ -82,6 +82,8 @@
     /* Título opcional a todo lo ancho */
 	.features-title {
 		margin: auto 0;
+		font-size: 24px !important;
+		font-weight: 600 !important;
 	}
 
 	/* Grid de 4 columnas, responsive */
@@ -146,6 +148,8 @@
 
     /* Título opcional a todo lo ancho */
 	.features-title {
+		font-size: 24px !important;
+		font-weight: 600 !important;
 		margin: auto 0;
 	}
 
