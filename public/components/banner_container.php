@@ -11,6 +11,7 @@
 						<?= htmlspecialchars($t['home_cta']) ?>
 					</a>
 				</p>
+				<small class="cta-note"><?= htmlspecialchars($t['cta_note']) ?></small>
 			</div>
 		</div>
 		<div class="container-left" style="color: var(--clr-white);">

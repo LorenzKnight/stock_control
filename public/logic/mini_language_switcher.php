@@ -40,6 +40,7 @@ $i18n = [
 		'home_main_h1'		 => 'Inventory management software for small businesses',
 		'home_main_subtitle' => 'Manage your stock in real time without spreadsheets or complex systems. Control your inventory from any device.',
 		'home_cta'			 => 'Try inventory software for free',
+		'cta_note'			 => 'No credit card required · Cancel anytime',
 		'signup_message'	 => 'Create your free account and start managing your company inventory easily and securely.',
 
 		// descriptions container
@@ -111,10 +112,11 @@ $i18n = [
 		'toggle_login'  => 'Iniciar sesión',
 
 		// banner
-		'home_main_h1' => 'Software de control de inventario para pequeñas empresas',
+		'home_main_h1'		 => 'Software de control de inventario para pequeñas empresas',
 		'home_main_subtitle' => 'Gestiona tu stock en tiempo real, sin Excel y sin sistemas complicados. Controla tu inventario desde cualquier dispositivo.',
-		'home_cta' => 'Probar el software de inventario gratis',
-		'signup_message' => 'Crea tu cuenta gratis y empieza a controlar el inventario de tu empresa de forma simple y segura.',
+		'home_cta'			 => 'Probar el software de inventario gratis',
+		'cta_note'			 => 'No se requiere tarjeta de crédito · Cancela cuando quieras',
+		'signup_message'	 => 'Crea tu cuenta gratis y empieza a controlar el inventario de tu empresa de forma simple y segura.',
 	
 		// descriptions container
 		'desc_1_title' => 'Control de inventario en la nube, desde cualquier lugar',
@@ -185,10 +187,11 @@ $i18n = [
 		'toggle_login'  => 'Logga in',
 
 		// banner
-		'home_main_h1' => 'Lagerhanteringssystem för småföretag',
+		'home_main_h1'		 => 'Lagerhanteringssystem för småföretag',
 		'home_main_subtitle' => 'Hantera ditt lager i realtid utan kalkylblad eller krångliga system. Full kontroll från valfri enhet.',
-		'home_cta'	   => 'Testa lagerhanteringssystemet gratis',
-		'signup_message' => 'Skapa ett gratis konto och börja kontrollera företagets lager enkelt och säkert.',
+		'home_cta'			 => 'Testa lagerhanteringssystemet gratis',
+		'cta_note'			 => 'Inget kreditkort krävs · Avsluta när som helst',
+		'signup_message'	 => 'Skapa ett gratis konto och börja kontrollera företagets lager enkelt och säkert.',
 
 		// descriptions container
 		'desc_1_title' => 'Molnbaserad lagerkontroll – var du än är',
