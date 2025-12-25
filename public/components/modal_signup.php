@@ -4,55 +4,97 @@
 			<table width="80%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td style="font-size: 12px;" colspan="6" align="center" valign="middle">
-						<h2>Come on, Join us!</h2>
-						<p>let's start the control here</p>
+						<h2><?= htmlspecialchars($t['signup_title']) ?></h2>
+						<p><?= htmlspecialchars($t['signup_subtitle']) ?></p>
 					</td>      
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<label for="name">Name:</label>
-						<input class="form-input-style" type="text" name="name" id="name" placeholder="Enter your name..." title="Enter a valid name" required/>
+						<label for="name"><?= htmlspecialchars($t['signup_name_label']) ?></label>
+						<input class="form-input-style"
+							type="text"
+							name="name"
+							id="name"
+							placeholder="<?= htmlspecialchars($t['signup_name_ph']) ?>"
+							title="<?= htmlspecialchars($t['signup_name_title']) ?>"
+							required
+						/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<label for="surname">Surname:</label>
-						<input class="form-input-style" type="text" name="surname" id="surname" placeholder="Enter your surname..." title="Enter a valid surname" required/>
+						<label for="surname"><?= htmlspecialchars($t['signup_surname_label']) ?></label>
+						<input class="form-input-style"
+							type="text"
+							name="surname"
+							id="surname"
+							placeholder="<?= htmlspecialchars($t['signup_surname_ph']) ?>"
+							title="<?= htmlspecialchars($t['signup_surname_title']) ?>"
+							required
+						/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<label for="fecha">Birthdate:</label>
-						<input class="form-input-style" type="date" name="birthday" id="birthday" placeholder="" title="" required/>
+						<label for="birthday"><?= htmlspecialchars($t['signup_birth_label']) ?></label>
+						<input class="form-input-style"
+							type="date"
+							name="birthday"
+							id="birthday"
+							required
+						/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<label for="email">E-Mail:</label>
-						<input class="form-input-style" type="email" name="email" id="email" placeholder="Enter your E-Mail..." title="Enter a valid email" required/>
+						<label for="email"><?= htmlspecialchars($t['signup_email_label']) ?></label>
+						<input class="form-input-style"
+							type="email"
+							name="email"
+							id="email"
+							placeholder="<?= htmlspecialchars($t['signup_email_ph']) ?>"
+							title="<?= htmlspecialchars($t['signup_email_title']) ?>"
+							required
+						/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<label for="password">Password:</label>
-						<input class="form-input-style" type="password" name="password" id="password" placeholder="Enter a Password..." required/>
+						<label for="password"><?= htmlspecialchars($t['signup_password_label']) ?></label>
+						<input class="form-input-style"
+							type="password"
+							name="password"
+							id="password"
+							placeholder="<?= htmlspecialchars($t['signup_password_ph']) ?>"
+							required
+						/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<label for="password">Repeat Password:</label>
-						<input class="form-input-style" type="password" id="confirm_password" placeholder="Repeat your Password..." required/>
+						<label for="confirm_password"><?= htmlspecialchars($t['signup_repeat_label']) ?></label>
+						<input class="form-input-style"
+							type="password"
+							id="confirm_password"
+							placeholder="<?= htmlspecialchars($t['signup_repeat_ph']) ?>"
+							required
+						/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<input type="submit" class="button-style-agree" value="Sign up" />
+						<input type="submit"
+							class="button-style-agree"
+							value="<?= htmlspecialchars($t['signup_submit']) ?>"
+						/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
 						</br>
-						<a href="#" class="close-link">Do you have an existing account?</a>
+						<a href="#" class="close-link">
+							<?= htmlspecialchars($t['signup_have_account']) ?>
+						</a>
 					</td>
 				</tr>
 			</table>

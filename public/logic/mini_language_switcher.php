@@ -93,6 +93,40 @@ $i18n = [
 		'pricing_title_main' => 'Flexible inventory management plans for small businesses',
 		'pricing_subtitle'   => 'AllStockControl helps small businesses manage inventory in a simple, clear, and efficient way. Track stock movements, organize products, and generate reports from anywhere. Choose a flexible monthly plan with no long-term commitment and cancel anytime.',
 		'pricing_employees_title' => 'Choose the number of employees',
+
+		// login form
+		'login_title'       => 'Start session here',
+		'login_email_ph'    => 'Enter your email address',
+		'login_email_title' => 'Enter a valid email',
+		'login_password_ph' => 'Enter your password',
+		'login_submit'      => 'Log in',
+
+		// signup form
+		'signup_title'        => 'Create your free account',
+		'signup_subtitle'     => 'Start controlling your inventory in minutes',
+
+		'signup_name_label'   => 'Name',
+		'signup_name_ph'      => 'Enter your name',
+		'signup_name_title'   => 'Enter a valid name',
+
+		'signup_surname_label'=> 'Surname',
+		'signup_surname_ph'   => 'Enter your surname',
+		'signup_surname_title'=> 'Enter a valid surname',
+
+		'signup_birth_label'  => 'Birthdate',
+
+		'signup_email_label'  => 'Email',
+		'signup_email_ph'     => 'Enter your email address',
+		'signup_email_title'  => 'Enter a valid email',
+
+		'signup_password_label' => 'Password',
+		'signup_password_ph'    => 'Create a secure password',
+
+		'signup_repeat_label' => 'Repeat password',
+		'signup_repeat_ph'    => 'Repeat your password',
+
+		'signup_submit'       => 'Create account',
+		'signup_have_account' => 'Already have an account?',
 	],
 	'es' => [
 		'title'       => 'Software de control de inventario para pequeñas empresas | AllStockControl',
@@ -168,6 +202,40 @@ $i18n = [
 		'pricing_title_main' => 'Planes flexibles de control de inventario para pequeñas empresas',
 		'pricing_subtitle'   => 'AllStockControl ayuda a pequeñas empresas a gestionar su inventario de forma simple, clara y eficiente. Controla entradas y salidas de stock, organiza tus productos y genera reportes desde cualquier lugar. Elige un plan mensual flexible, sin contratos largos y con cancelación en cualquier momento.',
 		'pricing_employees_title' => 'Selecciona la cantidad de empleados',
+
+		// login form
+		'login_title'       => 'Inicia sesión aquí',
+		'login_email_ph'    => 'Introduce tu correo electrónico',
+		'login_email_title' => 'Introduce un correo válido',
+		'login_password_ph' => 'Introduce tu contraseña',
+		'login_submit'      => 'Iniciar sesión',
+
+		// signup form
+		'signup_title'        => 'Crea tu cuenta gratis',
+		'signup_subtitle'     => 'Empieza a controlar tu inventario en minutos',
+
+		'signup_name_label'   => 'Nombre',
+		'signup_name_ph'      => 'Introduce tu nombre',
+		'signup_name_title'   => 'Introduce un nombre válido',
+
+		'signup_surname_label'=> 'Apellido',
+		'signup_surname_ph'   => 'Introduce tu apellido',
+		'signup_surname_title'=> 'Introduce un apellido válido',
+
+		'signup_birth_label'  => 'Fecha de nacimiento',
+
+		'signup_email_label'  => 'Correo electrónico',
+		'signup_email_ph'     => 'Introduce tu correo electrónico',
+		'signup_email_title'  => 'Introduce un correo válido',
+
+		'signup_password_label' => 'Contraseña',
+		'signup_password_ph'    => 'Crea una contraseña segura',
+
+		'signup_repeat_label' => 'Repetir contraseña',
+		'signup_repeat_ph'    => 'Repite tu contraseña',
+
+		'signup_submit'       => 'Crear cuenta',
+		'signup_have_account' => '¿Ya tienes una cuenta?',
 	],
 	'sv' => [
 		'title'       => 'Lagerhanteringssystem för småföretag | AllStockControl',
@@ -243,6 +311,40 @@ $i18n = [
 		'pricing_title_main' => 'Flexibla lagerhanteringsplaner för småföretag',
 		'pricing_subtitle'   => 'AllStockControl hjälper småföretag att hantera sitt lager på ett enkelt, tydligt och effektivt sätt. Följ lagertransaktioner, organisera produkter och skapa rapporter var du än är. Välj ett flexibelt månadsabonnemang utan bindningstid.',
 		'pricing_employees_title' => 'Välj antal anställda',
+
+		// login form
+		'login_title'       => 'Logga in här',
+		'login_email_ph'    => 'Ange din e-postadress',
+		'login_email_title' => 'Ange en giltig e-post',
+		'login_password_ph' => 'Ange ditt lösenord',
+		'login_submit'      => 'Logga in',
+
+		// signup form
+		'signup_title'        => 'Skapa ett gratis konto',
+		'signup_subtitle'     => 'Börja kontrollera ditt lager på några minuter',
+
+		'signup_name_label'   => 'Förnamn',
+		'signup_name_ph'      => 'Ange ditt namn',
+		'signup_name_title'   => 'Ange ett giltigt namn',
+
+		'signup_surname_label'=> 'Efternamn',
+		'signup_surname_ph'   => 'Ange ditt efternamn',
+		'signup_surname_title'=> 'Ange ett giltigt efternamn',
+
+		'signup_birth_label'  => 'Födelsedatum',
+
+		'signup_email_label'  => 'E-post',
+		'signup_email_ph'     => 'Ange din e-postadress',
+		'signup_email_title'  => 'Ange en giltig e-post',
+
+		'signup_password_label' => 'Lösenord',
+		'signup_password_ph'    => 'Skapa ett säkert lösenord',
+
+		'signup_repeat_label' => 'Upprepa lösenord',
+		'signup_repeat_ph'    => 'Upprepa ditt lösenord',
+
+		'signup_submit'       => 'Skapa konto',
+		'signup_have_account' => 'Har du redan ett konto?',
 	],
 ];
 
