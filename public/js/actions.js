@@ -342,7 +342,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 		const params = new URLSearchParams();
 		if (threshold) params.append('min_members', String(threshold));
-		params.append('limit', '4');
+		params.append('limit', '3');
 		params.append('sort', 'package_price');
 		params.append('dir', 'ASC');
 
@@ -384,7 +384,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			.replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 
 			const colorVarByIndex = (i) => {
-				const vars = ['--basic-green','--plus-turquoise','--max-blue','--ultra-purple'];
+				const vars = ['--plus-turquoise','--max-blue','--ultra-purple'];
 				return vars[i % vars.length];
 			};
 
@@ -419,10 +419,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 			return `
 			<div class="pricing-card">
 				<div class="pricing-header">
-					<h1 style="color: var(${cvar});">${esc(pkg.name)}</h1>
-					${pkg.price != null ? `<h1>€${esc(pkg.price)} / month</h1>` : ''}
-					${pkg.members != null ? `<p>${esc(pkg.members)} members</p>` : '<p>Unlimited members</p>'}
-					${pkg.duration != null ? `<p>${esc(pkg.duration)} days</p>` : ''}
+					<div class="pricing-price" style="color: var(${cvar});">${esc(pkg.name)}</div>
+					${pkg.price != null ? `<div class="pricing-price">$${esc(pkg.price)}</div>` : '<h2>Contact us for a tailored plan</h2>'}
+					${pkg.price != null ? `<h2>per month and employees</h2>` : ''}
 				</div>
 				<div class="pricing-header-comp" style="background-color: var(${cvar});"></div>
 				<div class="pricing-content">
@@ -431,11 +430,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 					</div>
 					<h2>Includes:</h2>
 					<ul>
-						${pkg.members  != null ? `<li>Max ${esc(pkg.members)} Members</li>` : '<li>Unlimited Members</li>'}
-						${pkg.admins   != null ? `<li>Max ${esc(pkg.admins)} Admins</li>` : ''}
-						${pkg.branches != null ? `<li>Max ${esc(pkg.branches)} Branch / Affiliate</li>` : ''}
-						<!-- ${pkg.products != null ? `<li>Max ${esc(pkg.products)} Products</li>` : ''} -->
-						${pkg.duration != null ? `<li>Duration: ${esc(pkg.duration)} days</li>` : ''}
+						${pkg.members  != null ? `<li>Max ${esc(pkg.members)} Members</li>` : '<li>Max Members: As agreed</li>'}
+						${pkg.admins   != null ? `<li>Max ${esc(pkg.admins)} Admins</li>` : '<li>Max Admins: As agreed</li>'}
+						${pkg.branches != null ? `<li>Max ${esc(pkg.branches)} Branch / Affiliate</li>` : '<li>MAx Branches: As agreed</li>'}
+						${pkg.products == null ? `<li>Max Products: As agreed</li>` : ''}
+						${pkg.products == null ? `<li>Shipping tracking service</li>` : ''}
 					</ul>
 				</div>
 				<!-- <button class="access-btn" data-package-id="${esc(pkg.id)}">Select</button> -->

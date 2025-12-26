@@ -18,12 +18,12 @@
 		</div>
 		<div class="packs-selection">
 			<input type="radio" id="group-pack-2" name="group-pack" value="15">
-			<label for="group-pack-2">15 - 30</label>
+			<label for="group-pack-2">20+</label>
 		</div>
-		<div class="packs-selection">
+		<!-- <div class="packs-selection">
 			<input type="radio" id="group-pack-3" name="group-pack" value="35">
 			<label for="group-pack-3">35 - 50</label>
-		</div>
+		</div> -->
 	</div>
 
 	<div class="pricing-container">
