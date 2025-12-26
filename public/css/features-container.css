@@ -65,7 +65,7 @@
 
 @media (max-width: 600px) and (orientation: portrait) {
 	.feat-container {
-		/* width: 100%; */
+		width: 90%;
         margin: 0 auto;
         display: block;
 	}
@@ -77,7 +77,7 @@
 	.container-grid {
 		display: grid;
 		gap: 24px;
-		padding: 0 20px 80px;
+		padding: 0 15px 80px;
 	}
     /* Título opcional a todo lo ancho */
 	.features-title {
@@ -90,14 +90,16 @@
 	.features-grid {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
-		gap: 20px;
+		gap: 24px;
+		width: 100%;
+		box-sizing: border-box;
 	}
 
 	/* Tarjeta básica */
 	.feature-card {
-		display: flex;
-		align-items: flex-start;
-		gap: 16px;
+		width: 100%;
+		max-width: 100%;
+		box-sizing: border-box;
 	}
 
 	.feature-img {
