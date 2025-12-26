@@ -33,8 +33,21 @@
 		window.APP_LANG_FROM_URL = <?= in_array(substr(trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'), 0, 2), ['en','es','sv'], true) ? 'true' : 'false' ?>;
 
 		window.i18n = {
+			// toggles
 			signup: "<?= htmlspecialchars($t['toggle_signup']) ?>",
-			login:  "<?= htmlspecialchars($t['toggle_login']) ?>"
+			login:  "<?= htmlspecialchars($t['toggle_login']) ?>",
+
+			// pricing
+			contact: "<?= htmlspecialchars($t['pricing_contact']) ?>",
+			perMonth: "<?= htmlspecialchars($t['pricing_per_month']) ?>",
+			includes: "<?= htmlspecialchars($t['pricing_includes']) ?>",
+			maxMembers: "<?= htmlspecialchars($t['pricing_max_members']) ?>",
+			maxAdmins: "<?= htmlspecialchars($t['pricing_max_admins']) ?>",
+			maxBranches: "<?= htmlspecialchars($t['pricing_max_branches']) ?>",
+			maxProducts: "<?= htmlspecialchars($t['pricing_max_products']) ?>",
+			asAgreed: "<?= htmlspecialchars($t['pricing_as_agreed']) ?>",
+			shipping: "<?= htmlspecialchars($t['pricing_shipping']) ?>",
+			priority: "<?= htmlspecialchars($t['pricing_priority']) ?>"
 		};
 	</script>
 	

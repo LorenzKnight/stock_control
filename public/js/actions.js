@@ -414,31 +414,66 @@ document.addEventListener("DOMContentLoaded", async function () {
 				return;
 			}
 
+			const t = window.i18n || {};
+			
 			const html = list.map((pkg, i) => {
-			const cvar = colorVarByIndex(i);
-			return `
-			<div class="pricing-card">
-				<div class="pricing-header">
-					<div class="pricing-price" style="color: var(${cvar});">${esc(pkg.name)}</div>
-					${pkg.price != null ? `<div class="pricing-price">$${esc(pkg.price)}</div>` : '<h2>Contact us for a tailored plan</h2>'}
-					${pkg.price != null ? `<h2>per month and employees</h2>` : ''}
-				</div>
-				<div class="pricing-header-comp" style="background-color: var(${cvar});"></div>
-				<div class="pricing-content">
-					<div class="pricing-desc">
-						${pkg.desc ? `<p class="pkg-desc">${esc(pkg.desc)}</p>` : ''}
+				const cvar = colorVarByIndex(i);
+
+				return `
+				<div class="pricing-card">
+					<div class="pricing-header">
+						<div class="pricing-price" style="color: var(${cvar});">
+							${esc(pkg.name)}
+						</div>
+						${pkg.price != null 
+							? `<div class="pricing-price">$${esc(pkg.price)}</div>` 
+							: `<h2>${esc(t.contact)}</h2>`
+						}
+						${pkg.price != null 
+							? `<h2>${esc(t.perMonth)}</h2>` 
+							: ''
+						}
 					</div>
-					<h2>Includes:</h2>
-					<ul>
-						${pkg.members  != null ? `<li>Max ${esc(pkg.members)} Members</li>` : '<li>Max Members: As agreed</li>'}
-						${pkg.admins   != null ? `<li>Max ${esc(pkg.admins)} Admins</li>` : '<li>Max Admins: As agreed</li>'}
-						${pkg.branches != null ? `<li>Max ${esc(pkg.branches)} Branch / Affiliate</li>` : '<li>MAx Branches: As agreed</li>'}
-						${pkg.products == null ? `<li>Max Products: As agreed</li>` : ''}
-						${pkg.products == null ? `<li>Shipping tracking service</li>` : ''}
-					</ul>
-				</div>
-				<!-- <button class="access-btn" data-package-id="${esc(pkg.id)}">Select</button> -->
-			</div>`;
+					<div class="pricing-header-comp" style="background-color: var(${cvar});"></div>
+					<div class="pricing-content">
+						<div class="pricing-desc">
+							${pkg.desc ? `<p class="pkg-desc">${esc(pkg.desc)}</p>` : ''}
+						</div>
+						<h2>${esc(t.includes)}</h2>
+						<ul>
+							${pkg.members != null
+								? `<li>${esc(t.maxMembers)}: ${esc(pkg.members)}</li>`
+								: `<li>${esc(t.maxMembers)}: ${esc(t.asAgreed)}</li>`
+							}
+
+							${pkg.admins != null
+								? `<li>${esc(t.maxAdmins)}: ${esc(pkg.admins)}</li>`
+								: `<li>${esc(t.maxAdmins)}: ${esc(t.asAgreed)}</li>`
+							}
+
+							${pkg.branches != null
+								? `<li>${esc(t.maxBranches)}: ${esc(pkg.branches)}</li>`
+								: `<li>${esc(t.maxBranches)}: ${esc(t.asAgreed)}</li>`
+							}
+
+							${pkg.products == null
+								? `<li>${esc(t.maxProducts)}: ${esc(t.asAgreed)}</li>`
+								: ''
+							}
+
+							${pkg.products == null
+								? `<li>${esc(t.shipping)}</li>`
+								: ''
+							}
+
+							${pkg.members >= 10 || pkg.products == null
+								? `<li>${esc(t.priority)}</li>`
+								: ''
+							}
+						</ul>
+					</div>
+					<!-- <button class="access-btn" data-package-id="${esc(pkg.id)}">Select</button> -->
+				</div>`;
 			}).join('');
 
 			container.innerHTML = html;

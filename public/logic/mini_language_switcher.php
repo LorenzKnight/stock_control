@@ -127,6 +127,18 @@ $i18n = [
 
 		'signup_submit'       => 'Create account',
 		'signup_have_account' => 'Already have an account?',
+
+		// Pricing features
+		'pricing_contact'      => 'Contact us for a custom plan',
+		'pricing_per_month'    => 'per month and employees',
+		'pricing_includes'     => 'Includes:',
+		'pricing_max_members'  => 'Max users',
+		'pricing_max_admins'   => 'Max admins',
+		'pricing_max_branches' => 'Max branches',
+		'pricing_max_products' => 'Max products',
+		'pricing_as_agreed'    => 'As agreed',
+		'pricing_shipping'     => 'Shipment tracking service',
+		'pricing_priority'     => 'Priority support',
 	],
 	'es' => [
 		'title'       => 'Software de control de inventario para pequeñas empresas | AllStockControl',
@@ -236,6 +248,18 @@ $i18n = [
 
 		'signup_submit'       => 'Crear cuenta',
 		'signup_have_account' => '¿Ya tienes una cuenta?',
+
+		// Pricing features
+		'pricing_contact'        => 'Contáctanos para un plan a medida',
+		'pricing_per_month'      => 'por mes y empleados',
+		'pricing_includes'       => 'Incluye:',
+		'pricing_max_members'    => 'Máx. usuarios',
+		'pricing_max_admins'     => 'Máx. administradores',
+		'pricing_max_branches'   => 'Máx. sucursales',
+		'pricing_max_products'   => 'Máx. productos',
+		'pricing_as_agreed'      => 'Según acuerdo',
+		'pricing_shipping'       => 'Servicio de seguimiento de envíos',
+		'pricing_priority'       => 'Soporte prioritario',
 	],
 	'sv' => [
 		'title'       => 'Lagerhanteringssystem för småföretag | AllStockControl',
@@ -345,6 +369,18 @@ $i18n = [
 
 		'signup_submit'       => 'Skapa konto',
 		'signup_have_account' => 'Har du redan ett konto?',
+
+		// Pricing features
+		'pricing_contact'      => 'Kontakta oss för ett skräddarsytt paket',
+		'pricing_per_month'    => 'per månad och anställda',
+		'pricing_includes'     => 'Ingår:',
+		'pricing_max_members'  => 'Max användare',
+		'pricing_max_admins'   => 'Max administratörer',
+		'pricing_max_branches' => 'Max filialer',
+		'pricing_max_products' => 'Max produkter',
+		'pricing_as_agreed'    => 'Enligt överenskommelse',
+		'pricing_shipping'     => 'Spårning av leveranser',
+		'pricing_priority'     => 'Prioriterad support',
 	],
 ];
 
