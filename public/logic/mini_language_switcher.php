@@ -139,6 +139,14 @@ $i18n = [
 		'pricing_as_agreed'    => 'As agreed',
 		'pricing_shipping'     => 'Shipment tracking service',
 		'pricing_priority'     => 'Priority support',
+
+		// footer
+		'footer_rights'        => 'All rights reserved.',
+		'footer_contact_title' => 'Contact us',
+		'footer_name'          => 'Your name',
+		'footer_email'         => 'Your email',
+		'footer_message'       => 'Your message',
+		'footer_send'          => 'Send',
 	],
 	'es' => [
 		'title'       => 'Software de control de inventario para pequeñas empresas | AllStockControl',
@@ -260,6 +268,14 @@ $i18n = [
 		'pricing_as_agreed'      => 'Según acuerdo',
 		'pricing_shipping'       => 'Servicio de seguimiento de envíos',
 		'pricing_priority'       => 'Soporte prioritario',
+
+		// footer
+		'footer_rights'        => 'Todos los derechos reservados.',
+		'footer_contact_title' => 'Contáctanos',
+		'footer_name'          => 'Tu nombre',
+		'footer_email'         => 'Tu correo electrónico',
+		'footer_message'       => 'Tu mensaje',
+		'footer_send'          => 'Enviar',
 	],
 	'sv' => [
 		'title'       => 'Lagerhanteringssystem för småföretag | AllStockControl',
@@ -381,6 +397,14 @@ $i18n = [
 		'pricing_as_agreed'    => 'Enligt överenskommelse',
 		'pricing_shipping'     => 'Spårning av leveranser',
 		'pricing_priority'     => 'Prioriterad support',
+
+		// footer
+		'footer_rights'        => 'Alla rättigheter förbehållna.',
+		'footer_contact_title' => 'Kontakta oss',
+		'footer_name'          => 'Ditt namn',
+		'footer_email'         => 'Din e-postadress',
+		'footer_message'       => 'Ditt meddelande',
+		'footer_send'          => 'Skicka',
 	],
 ];
 

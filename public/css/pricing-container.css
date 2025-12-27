@@ -111,12 +111,12 @@
     .pricing-content ul {
         padding: 0;
         margin: 0;
-        width: 70%;
+        width: 85%;
     }
     .pricing-content ul li {
         font-size: 13px;
         font-weight: 300;
-        margin: 6px 0;
+        margin: 6px auto;
         color: var(--main-text-color);
         text-align: left;
     }

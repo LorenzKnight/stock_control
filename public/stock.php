@@ -18,6 +18,7 @@
 	<link rel="alternate" hreflang="es" href="<?= htmlspecialchars(url_with_lang('es')) ?>" />
 	<link rel="alternate" hreflang="sv" href="<?= htmlspecialchars(url_with_lang('sv')) ?>" />
 	<link rel="alternate" hreflang="x-default" href="<?= htmlspecialchars(url_with_lang('en')) ?>" />
+	<link rel="canonical" href="https://www.allstockcontrol.com/" />
 
 	<!-- ✅ Open Graph básico -->
 	<meta property="og:type" content="website">
