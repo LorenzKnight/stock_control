@@ -2,8 +2,13 @@ footer {
     background-color: var(--main-bg-dark-blue);
     color: white;
     margin-top: 20px;
-    padding: 20px;
     text-align: center;
+}
+
+.footer-content {
+    background-color: var(--main-box-shadow);
+    margin: 0 auto;
+    padding: 10px;
 }
 
 .contact-us {
@@ -80,4 +85,38 @@ footer {
 .contact-us.expanded form {
     display: flex;
     opacity: 1;
+}
+
+/* SEO Links Section */
+.footer-seo {
+	text-align: center;
+    padding: 15px 10px 30px;
+}
+
+.footer-seo h3 {
+	font-size: 14px;
+    /* font-weight: 600; */
+	margin-bottom: 10px;
+	color: #ccc;
+}
+
+.footer-seo ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 12px;
+}
+
+.footer-seo ul li a {
+	font-size: 13px;
+	color: #aaa;
+	text-decoration: none;
+}
+
+.footer-seo ul li a:hover {
+	color: #fff;
+	text-decoration: underline;
 }

@@ -1,4 +1,35 @@
 <footer class="footer">
+	<!-- <div class="footer-seo">
+		<h3><?= htmlspecialchars($t['footer_seo_title']) ?></h3>
+		<ul>
+			<li>
+				<a href="<?= htmlspecialchars(url_with_lang($lang)) ?>">
+					<?= htmlspecialchars($t['footer_seo_inventory']) ?>
+				</a>
+			</li>
+			<li>
+				<a href="<?= htmlspecialchars(url_with_lang($lang)) ?>#features">
+					<?= htmlspecialchars($t['footer_seo_smallbiz']) ?>
+				</a>
+			</li>
+			<li>
+				<a href="<?= htmlspecialchars(url_with_lang($lang)) ?>#features">
+					<?= htmlspecialchars($t['footer_seo_cloud']) ?>
+				</a>
+			</li>
+			<li>
+				<a href="<?= htmlspecialchars(url_with_lang($lang)) ?>#features">
+					<?= htmlspecialchars($t['footer_seo_multilocation']) ?>
+				</a>
+			</li>
+			<li>
+				<a href="<?= htmlspecialchars(url_with_lang($lang)) ?>#pricing">
+					<?= htmlspecialchars($t['footer_seo_pricing']) ?>
+				</a>
+			</li>
+		</ul>
+	</div> -->
+	
 	<div class="footer-content">
 		<p>
 			&copy; <?php echo date("Y"); ?> AllStockControl.

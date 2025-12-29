@@ -939,6 +939,82 @@ function sendPush(array $subscriptionData, array $payload)
 }
 
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+function sendSystemEmail($to, string $subject, string $htmlContent): bool
+{
+	if (!is_string($to) && !is_array($to)) {
+        throw new InvalidArgumentException('$to must be string or array');
+    }
+
+    $mail = new PHPMailer(true);
+
+    try {
+        // 🔐 CONFIGURACIÓN SMTP
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.yourprovider.com'; // ej: smtp.gmail.com
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'no-reply@allstockcontrol.com';
+        $mail->Password   = 'SMTP_PASSWORD';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
+
+        // 📧 REMITENTE
+        $mail->setFrom('no-reply@allstockcontrol.com', 'AllStockControl');
+
+        // 👥 DESTINATARIOS
+        if (is_array($to)) {
+            foreach ($to as $email) {
+                $mail->addAddress($email);
+            }
+        } else {
+            $mail->addAddress($to);
+        }
+
+        // 📨 CONTENIDO
+        $mail->isHTML(true);
+        $mail->CharSet = 'UTF-8';
+        $mail->Subject = $subject;
+        $mail->Body    = buildEmailTemplate($htmlContent);
+        $mail->AltBody = strip_tags($htmlContent);
+
+        $mail->send();
+        return true;
+
+    } catch (Exception $e) {
+        error_log("Email error: {$mail->ErrorInfo}");
+        return false;
+    }
+}
+
+function buildEmailTemplate(string $content): string
+{
+    return "
+    <!DOCTYPE html>
+    <html lang='en'>
+    <head>
+        <meta charset='UTF-8'>
+        <style>
+            body { font-family: Arial, sans-serif; background:#f5f5f5; }
+            .box { background:#fff; padding:30px; max-width:600px; margin:auto; }
+            .footer { font-size:12px; color:#777; text-align:center; margin-top:20px; }
+        </style>
+    </head>
+    <body>
+        <div class='box'>
+            <img src='https://allstockcontrol.com/sys-img/asc-logo.png' width='180' alt='AllStockControl'>
+            <hr>
+            <p>{$content}</p>
+        </div>
+        <div class='footer'>
+            © " . date('Y') . " AllStockControl · support@allstockcontrol.com
+        </div>
+    </body>
+    </html>
+    ";
+}
+
 //function to display any type of variable
 function cdebug($var, $name = 'var', $die = false)
 {

@@ -147,6 +147,14 @@ $i18n = [
 		'footer_email'         => 'Your email',
 		'footer_message'       => 'Your message',
 		'footer_send'          => 'Send',
+
+		// footer seo links
+		'footer_seo_title'        => 'Inventory Management Solutions',
+		'footer_seo_inventory'   => 'Inventory management software',
+		'footer_seo_smallbiz'    => 'Inventory software for small businesses',
+		'footer_seo_cloud'       => 'Cloud-based inventory system',
+		'footer_seo_multilocation'=> 'Multi-location stock control',
+		'footer_seo_pricing'     => 'Inventory software pricing',
 	],
 	'es' => [
 		'title'       => 'Software de control de inventario para pequeñas empresas | AllStockControl',
@@ -276,6 +284,14 @@ $i18n = [
 		'footer_email'         => 'Tu correo electrónico',
 		'footer_message'       => 'Tu mensaje',
 		'footer_send'          => 'Enviar',
+
+		// footer seo links
+		'footer_seo_title'        => 'Soluciones de control de inventario',
+		'footer_seo_inventory'   => 'Software de control de inventario',
+		'footer_seo_smallbiz'    => 'Software de inventario para pequeñas empresas',
+		'footer_seo_cloud'       => 'Sistema de inventario en la nube',
+		'footer_seo_multilocation'=> 'Control de stock multi-sucursal',
+		'footer_seo_pricing'     => 'Precios del software de inventario',
 	],
 	'sv' => [
 		'title'       => 'Lagerhanteringssystem för småföretag | AllStockControl',
@@ -405,6 +421,14 @@ $i18n = [
 		'footer_email'         => 'Din e-postadress',
 		'footer_message'       => 'Ditt meddelande',
 		'footer_send'          => 'Skicka',
+
+		// footer seo links
+		'footer_seo_title'        => 'Lagerhanteringslösningar',
+		'footer_seo_inventory'   => 'Lagerhanteringssystem',
+		'footer_seo_smallbiz'    => 'Lagerhantering för småföretag',
+		'footer_seo_cloud'       => 'Molnbaserat lagerhanteringssystem',
+		'footer_seo_multilocation'=> 'Lagerhantering för flera platser',
+		'footer_seo_pricing'     => 'Priser för lagerhanteringssystem',
 	],
 ];
 
