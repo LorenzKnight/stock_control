@@ -9441,6 +9441,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
+
+	const DISABLED_PACKAGES = [7];
+
 	async function populatePackages(containerId, selectedValue = '') {
 		const packageList = document.getElementById(containerId);
 		if (!packageList) return;
@@ -9476,7 +9479,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 				data.packages.forEach(pkg => {
 					const uniqueId = `package-${pkg.package_id}`;
 					const pkgId = parseInt(pkg.package_id);
-					const isAvailable = pkgId > currentPackId;
+					const isDisabledByConfig = DISABLED_PACKAGES.includes(pkgId);
+					const isAvailable = pkgId > currentPackId && !isDisabledByConfig;
 
 					const container = document.createElement('div');
 					container.className = 'packages';
@@ -9486,7 +9490,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 						container.style.opacity = '0.3';
 						container.style.pointerEvents = 'none';
 						container.style.backgroundColor = '#f2f2f2'; // estilo visual para desactivado
+
+						if (isDisabledByConfig) {
+							container.title = 'This package is temporarily unavailable';
+						}
 					}
+
+					const priceText = isDisabledByConfig
+						? 'Custom plan' 
+						: (pkg.package_price != null ? `$ ${pkg.package_price}` : 'free');
 
 					container.innerHTML = `
 						<div class="pack-img">
@@ -9495,12 +9507,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 						<div class="pack-name"><strong>${pkg.package_name}</strong></div>
 						<div class="pack-details">
 							<ul>
-								<li>${pkg.members_limit} members</li>
-								<li>max ${pkg.admins_limit} admin</li>
-								<li>${pkg.branch_affiliate_limit} affiliate</li>
+								<li>Members: ${pkg.members_limit ? pkg.members_limit : 'undefinited'}</li>
+								<li>Max admin: ${pkg.admins_limit ? pkg.admins_limit : 'undefinited'}</li>
+								<li>Affiliate: ${pkg.branch_affiliate_limit ? pkg.branch_affiliate_limit : 'undefinited'}</li>
 							</ul>
 						</div>
-						<div class="pack-price"><strong>$ ${pkg.package_price != null ? pkg.package_price : 'free'}</strong></div>
+						<div class="pack-price">
+							<strong>${priceText}</strong>
+						</div>
 						<div class="opcion-radio">
 							<input type="radio" id="${uniqueId}" name="packs" class="category-radio"
 								value="${pkg.package_id}"
