@@ -9487,12 +9487,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 					container.dataset.radioId = uniqueId;
 
 					if (!isAvailable) {
-						container.style.opacity = '0.3';
 						container.style.pointerEvents = 'none';
-						container.style.backgroundColor = '#f2f2f2'; // estilo visual para desactivado
 
 						if (isDisabledByConfig) {
 							container.title = 'This package is temporarily unavailable';
+							container.style.opacity = '0.7';
+							container.style.backgroundColor = '#5cb2cfff';
+						} else {
+							container.style.opacity = '0.3';
+							container.style.backgroundColor = '#f2f2f2'; // estilo visual para desactivado
 						}
 					}
 
