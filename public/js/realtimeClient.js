@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const socket = new WebSocket(`ws://${location.hostname}:3001`);
 
 			socket.addEventListener('open', () => {
-				console.log('✅ WS connected');
+				console.log('📡 WS connected ✅');
 			});
 
 			socket.addEventListener('close', () => {

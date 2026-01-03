@@ -100,6 +100,7 @@
 }
 /* hasta aqui */
 
+.overview-details,
 .rights-details,
 .service-details
 {
@@ -160,8 +161,80 @@
 
 
 /* #### overview #### */
+.overview-header {
+	width: 96%;
+	height: 50px;
+	background-color: var(--main-bg-beige);
+	margin: 0 auto;
+	border-radius: 6px;
+	display: flex;
+	padding: 0 1%;
+}
+
+.overview-profile-pic {
+    background-color: var(--clr-white);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin: 10px 10px 0;
+    position: relative;
+}
+
+.overview-profile-pic img {
+    background-color: var(--clr-white);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
 .overview-list {
 	width: 99%;
 	height: 68.5vh;
 	overflow-y: auto;
+}
+
+.subsc-section {
+	width: 96%;
+	height: 200px;
+	margin: 30px auto 0;
+	border-radius: 6px;
+	padding: 10px 1%;
+	background-color: var(--main-bg-color);
+}
+
+.collab-section {
+	width: 96%;
+	margin: 20px auto 0;
+	border-radius: 6px;
+	padding: 10px 1%;
+	background-color: var(--main-bg-color);
+	/* box-shadow: 0px 2px 6px var(--main-box-light-shadow); */
+}
+
+.overview-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 10px;
+}
+
+.overview-table thead {
+	background-color: var(--main-bg-beige);
+}
+
+.overview-table th, .overview-table td {
+	text-align: left;
+	padding: 8px;
+	border-bottom: 1px solid var(--main-bg-beige);
+	font-size: 12px;
+}
+
+.overview-table tbody tr:last-child th,
+.overview-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.overview-table tbody tr:hover {
+	background-color: var(--clr-white);
+	transition: background-color 0.3s ease;
 }

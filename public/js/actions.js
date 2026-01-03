@@ -7106,14 +7106,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 		
 		let detailsContainerId = "";
 		switch (sectionType) {
+			case "user-overview":
+				detailsContainerId = "overview-details";
+				break;
 			case "extra-service":
 				detailsContainerId = "service-details";
 				break;
 			case "service-rights":
 				detailsContainerId = "rights-details";
-				break;
-			case "user-overview":
-				detailsContainerId = "overview-details";
 				break;
 			default:
 				console.warn("Unknown section type:", sectionType);
@@ -7132,7 +7132,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		// 🔹 Decide qué endpoint usar según la sección actual
 		switch (sectionType) {
 			case "user-overview":
-				endpoint = "api/get_user_overview.php"; // hacer este endpoint
+				endpoint = "api/get_user_overview.php";
 				sectionTitle = "User Overview";
 				break;
 			case "service-rights":
@@ -7151,33 +7151,83 @@ document.addEventListener("DOMContentLoaded", async function () {
 		try {
 			const response = await fetch(`${endpoint}?user_id=${selectedUserId}`);
 			const result = await response.json();
-
+		// console.log("📡 API Response:", result);
 			let html = '';
 
 			if (sectionType === "user-overview") {
+				const users = Array.isArray(result.data) ? result.data : [];
+				const collaborators = Array.isArray(result.collaborators)
+				? result.collaborators
+				: [];
+
 				html += `
-					<table class="data-table" width="100%" cellspacing="0" cellpadding="5">
-						<thead>
-							<tr>
-								<th>ID</th>
-								<th>Name</th>
-								<th>Email</th>
-								<th>Rank</th>
-								<th>Status</th>
-							</tr>
-						</thead>
-						<tbody>
-							${result.data.map(user => `
-								<tr>
-									<td>${user.user_id}</td>
-									<td>${user.full_name}</td>
-									<td>${user.email}</td>
-									<td>${user.rank}</td>
-									<td>${user.status == 1 ? "Active" : "Inactive"}</td>
-								</tr>
-							`).join('')}
-						</tbody>
-					</table>
+					<div class="overview-header">
+						${users.map(user => {
+							let borderColor = Number(user.status) === 1 ? "#8cda8a" : "#fbadad";	
+
+							return `
+								<div class="overview-profile-pic" style="border: 2px solid ${borderColor};">
+									<img src="${user.image && user.image.trim() !== '' ? `images/profile/${user.image}` : 'images/sys-img/NonProfilePic.png'}" alt="Profile Picture">
+								</div>
+								<table class="overview-header-table" style="margin-top: 0;" width="80%" cellspacing="0" cellpadding="0">
+									<tbody>
+											<tr>
+												<td>
+													<div class="mini-title">ID:</div>
+													${user.user_id}
+												</td>
+												<td>
+													<div class="mini-title">Name:</div>
+													${user.full_name}</td>
+												<td>
+													<div class="mini-title">Email:</div>
+													${user.email}</td>
+												<td>
+													<div class="mini-title">Rank:</div>
+													${user.rank_text ?? user.rank}
+												</td>
+											</tr>
+									</tbody>
+								</table>
+							`;
+						}).join('')}
+					</div>
+
+					<div class="subsc-section">
+					</div>
+
+					<div class="collab-section">
+						<h3>Collaborators (${collaborators.length})</h3>
+
+						${
+							collaborators.length
+								? `
+									<table class="overview-table" width="100%" cellspacing="0" cellpadding="5">
+										<thead>
+											<tr>
+												<th>ID</th>
+												<th>Name</th>
+												<th>Email</th>
+												<th>Rank</th>
+												<th>Status</th>
+											</tr>
+										</thead>
+										<tbody>
+											${collaborators.map(c => `
+												<tr>
+													<td>${c.user_id}</td>
+													<td>${c.full_name}</td>
+													<td>${c.email}</td>
+													<td>${c.rank_text ?? c.rank}</td>
+													<td>${Number(c.status) === 1 ? "Active" : "Inactive"}</td>
+												</tr>
+											`).join('')}
+										</tbody>
+									</table>
+								`
+								: `<p class="no-data">No collaborators assigned.</p>`
+						}
+					</div>
 				`;
 			}
 			else if (sectionType === "service-rights") {
@@ -7305,7 +7355,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			detailsContainer.innerHTML = html;
 
-			if (sectionType === "service-rights") {
+			if (sectionType === "user-overview") {
+
+			}
+			else if (sectionType === "service-rights") {
 				const addRightBtn = document.getElementById("add-right-btn");
 				if (addRightBtn) {
 					addRightBtn.addEventListener("click", async () => {
