@@ -152,7 +152,6 @@ try {
         "message"        => "User overview loaded",
         "count"          => 1,
         "data"           => [$user],
-        
         "meta"  => [
             "subscription"   => $subscription,
             "package"        => $package,
