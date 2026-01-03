@@ -7156,8 +7156,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			if (sectionType === "user-overview") {
 				const users = Array.isArray(result.data) ? result.data : [];
-				const collaborators = Array.isArray(result.collaborators)
-				? result.collaborators
+				const collaborators = Array.isArray(result.meta.collaborators)
+				? result.meta.collaborators
 				: [];
 
 				html += `

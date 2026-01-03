@@ -32,6 +32,22 @@ try {
         throw new Exception("User ID required");
     }
 
+    // 🎭 Rol
+    $rolesMap = [];
+
+    $rolesRes = json_decode(select_from(
+        "roles",
+        ["role_id", "role_name"],
+        [],
+        ["fetch_all" => true]
+    ), true);
+
+    if (!empty($rolesRes["success"]) && !empty($rolesRes["data"])) {
+        foreach ($rolesRes["data"] as $role) {
+            $rolesMap[$role["role_id"]] = $role["role_name"];
+        }
+    }
+
     // 👤 Usuario
     $userRes = json_decode(select_from(
         "users",
@@ -56,16 +72,7 @@ try {
 
     $user = $userRes["data"];
     $user["full_name"] = trim(($user["name"] ?? '') . ' ' . ($user["surname"] ?? ''));
-
-    // 🎭 Rol
-    $roleRes = json_decode(select_from(
-        "roles",
-        ["role_name"],
-        ["role_id" => $user["rank"]],
-        ["fetch_first" => true]
-    ), true);
-
-    $user["rank_text"] = $roleRes["data"]["role_name"] ?? "Unknown";
+    $user["rank_text"] = $rolesMap[$user["rank"]] ?? "Unknown";
 
     // 👥 Colaboradores (usuarios hijos)
     $collabRes = json_decode(select_from(
@@ -96,6 +103,9 @@ try {
             $collab["full_name"] = trim(
                 ($collab["name"] ?? '') . ' ' . ($collab["surname"] ?? '')
             );
+
+            $collab["rank_text"] = $rolesMap[$collab["rank"]] ?? "Unknown";
+
             $collaborators[] = $collab;
         }
     }
@@ -142,10 +152,11 @@ try {
         "message"        => "User overview loaded",
         "count"          => 1,
         "data"           => [$user],
-        "subscription"   => $subscription,
-        "package"        => $package,
-        "collaborators"  => $collaborators,
+        
         "meta"  => [
+            "subscription"   => $subscription,
+            "package"        => $package,
+            "collaborators"  => $collaborators,
             "impersonation"  => [
                 "token"      => $impersonationToken,
                 "expires_in" => 300
