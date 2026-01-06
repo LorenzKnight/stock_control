@@ -7,7 +7,7 @@
 		</tr>
 	</table>
 	<div class="overview-list">
-		<table class="user-table" id="userOverviewTable" width="96%" cellspacing="0" cellpadding="0"></table>
+		<table class="user-table" id="userOverviewTable" width="98%" cellspacing="0" cellpadding="0"></table>
 	</div>
 </div>
 <div class="overview-details" id="overview-details">

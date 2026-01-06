@@ -7,7 +7,7 @@
 		</tr>
 	</table>
 	<div class="rights-list">
-		<table class="user-table" id="serviceRightsTable" width="90%" align="center" cellspacing="0" cellpadding="0"></table>
+		<table class="user-table" id="serviceRightsTable" width="98%" cellspacing="0" cellpadding="0"></table>
 	</div>
 </div>
 <div class="rights-details" id="rights-details">

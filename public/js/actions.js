@@ -7151,7 +7151,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		try {
 			const response = await fetch(`${endpoint}?user_id=${selectedUserId}`);
 			const result = await response.json();
-		console.log("📡 API Response:", result);
+		// console.log("📡 API Response:", result);
 			let html = '';
 
 			if (sectionType === "user-overview") {
@@ -7257,6 +7257,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 												<th>Company</th>
 												<th>Created</th>
 												<th>Status</th>
+												<th></th>
 											</tr>
 										</thead>
 										<tbody>
@@ -7272,6 +7273,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 													</td>
 													<td>${a.created_at ?? '-'}</td>
 													<td>${Number(a.status) === 1 ? 'Active' : 'Inactive'}</td>
+													<td>
+														<div class="overview-aff-menu" data-id="${a.company_id}">
+															<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
+														</div>
+													</td>
 												</tr>
 											`).join('')}
 										</tbody>
@@ -7295,6 +7301,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 												<th>Email</th>
 												<th>Rank</th>
 												<th>Status</th>
+												<th></th>
 											</tr>
 										</thead>
 										<tbody>
@@ -7305,6 +7312,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 													<td>${c.email}</td>
 													<td>${c.rank_text ?? c.rank}</td>
 													<td>${Number(c.status) === 1 ? "Active" : "Inactive"}</td>
+													<td>
+														<div class="overview-collab-menu" data-id="${c.user_id}">
+															<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
+														</div>
+													</td>
 												</tr>
 											`).join('')}
 										</tbody>

@@ -58,10 +58,12 @@
     height: 82.5vh;
     border-right: 1px solid var(--clr-border);
 }
+
+.overview-list,
 .rights-list,
 .service-list
 {
-	width: 100%;
+	width: 99%;
 	height: 68.5vh;
 	overflow-y: auto;
 }
@@ -127,6 +129,8 @@
 	transition: all 1.0s ease;
 }
 
+.overview-aff-menu,
+.overview-collab-menu,
 .extra-services-menu,
 .rights-menu
 {
@@ -136,6 +140,8 @@
 	cursor: pointer;
 }
 
+.overview-aff-menu img,
+.overview-collab-menu img,
 .extra-services-menu img,
 .rights-menu img
 {
@@ -188,11 +194,11 @@
     object-fit: cover;
 }
 
-.overview-list {
+/* .overview-list {
 	width: 99%;
 	height: 68.5vh;
 	overflow-y: auto;
-}
+} */
 
 .subsc-section {
 	width: 96%;
