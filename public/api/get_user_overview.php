@@ -74,6 +74,31 @@ try {
     $user["full_name"] = trim(($user["name"] ?? '') . ' ' . ($user["surname"] ?? ''));
     $user["rank_text"] = $rolesMap[$user["rank"]] ?? "Unknown";
 
+    // 🏢 Affiliates / Companies del usuario
+	$affiliateRes = json_decode(select_from(
+		"companies",
+		[
+			"company_id",
+			"company_name",
+			"company_logo",
+			"created_at"
+		],
+		["user_id" => $targetId], // o owner_user_id
+		[
+			"order_by" => "company_id",
+			"order_direction" => "ASC",
+			"fetch_all" => true
+		]
+	), true);
+
+	$affiliates = [];
+
+	if (!empty($affiliateRes["success"]) && !empty($affiliateRes["data"])) {
+		foreach ($affiliateRes["data"] as $company) {
+			$affiliates[] = $company;
+		}
+	}
+
     // 👥 Colaboradores (usuarios hijos)
     $collabRes = json_decode(select_from(
         "users",
@@ -131,7 +156,15 @@ try {
     if ($subscription) {
         $pkgRes = json_decode(select_from(
             "packages",
-            ["package_name", "package_price"],
+            [
+                "package_name",
+                "package_image",
+                "package_price",
+                "members_limit",
+                "admins_limit",
+                "branch_affiliate_limit",
+                "products_limit"
+            ],
             ["package_id" => $subscription["package_id"]],
             ["fetch_first" => true]
         ), true);
@@ -155,6 +188,7 @@ try {
         "meta"  => [
             "subscription"   => $subscription,
             "package"        => $package,
+            "affiliate"      => $affiliates,
             "collaborators"  => $collaborators,
             "impersonation"  => [
                 "token"      => $impersonationToken,

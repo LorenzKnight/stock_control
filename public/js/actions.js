@@ -7151,13 +7151,26 @@ document.addEventListener("DOMContentLoaded", async function () {
 		try {
 			const response = await fetch(`${endpoint}?user_id=${selectedUserId}`);
 			const result = await response.json();
-		// console.log("📡 API Response:", result);
+		console.log("📡 API Response:", result);
 			let html = '';
 
 			if (sectionType === "user-overview") {
 				const users = Array.isArray(result.data) ? result.data : [];
+
+				const pkg = result.meta?.package ?? null;
+				const hasPackage = pkg && Object.keys(pkg).length > 0;
+
+				let priceText = 'Free';
+				if (pkg && pkg.package_price) {
+					priceText = `${pkg.package_price} €`;
+				}
+
 				const collaborators = Array.isArray(result.meta.collaborators)
 				? result.meta.collaborators
+				: [];
+
+				const affiliates = Array.isArray(result.meta?.affiliate)
+				? result.meta.affiliate
 				: [];
 
 				html += `
@@ -7194,6 +7207,78 @@ document.addEventListener("DOMContentLoaded", async function () {
 					</div>
 
 					<div class="subsc-section">
+						${
+							hasPackage
+								? `
+									<div class="pack-card">
+										<div class="overview-pack-img">
+											<img src="images/sys-img/${pkg.package_image}" alt="Package Image">
+										</div>
+										<div class="overview-pack-name"><strong>${pkg.package_name}</strong></div>
+										<div class="overview-pack-details">
+											<ul>
+												<li>Members: ${pkg.members_limit ? pkg.members_limit : 'undefinited'}</li>
+												<li>Max admin: ${pkg.admins_limit ? pkg.admins_limit : 'undefinited'}</li>
+												<li>Affiliate: ${pkg.branch_affiliate_limit ? pkg.branch_affiliate_limit : 'undefinited'}</li>
+											</ul>
+										</div>
+										<div class="overview-pack-price">
+											<strong>${priceText}</strong>
+										</div>
+									</div>
+									<div class="subsc-info">
+
+									</div>
+								`
+								: `
+									<div class="pack-card no-package">
+										<div class="no-package-icon">📦 (Try Pack)</div>
+										<div class="no-package-title">
+											<strong>No active subscription</strong>
+										</div>
+										<div class="no-package-text">
+											This user does not have an active package.
+										</div>
+									</div>
+								`
+						}
+					</div>
+
+					<div class="affiliate-section">
+						<h3>Affiliates (${affiliates.length})</h3>
+
+						${
+							affiliates.length
+								? `
+									<table class="overview-table" width="100%" cellspacing="0" cellpadding="5">
+										<thead>
+											<tr>
+												<th>ID</th>
+												<th>Company</th>
+												<th>Created</th>
+												<th>Status</th>
+											</tr>
+										</thead>
+										<tbody>
+											${affiliates.map(a => `
+												<tr>
+													<td>${a.company_id}</td>
+													<td>
+														${a.company_logo
+															? `<img src="images/company/${a.company_logo}" style="width:30px;vertical-align:middle;margin-right:6px;">`
+															: ''
+														}
+														${a.company_name}
+													</td>
+													<td>${a.created_at ?? '-'}</td>
+													<td>${Number(a.status) === 1 ? 'Active' : 'Inactive'}</td>
+												</tr>
+											`).join('')}
+										</tbody>
+									</table>
+								`
+								: `<p class="no-data">No affiliates assigned.</p>`
+						}
 					</div>
 
 					<div class="collab-section">
