@@ -7254,6 +7254,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 										<thead>
 											<tr>
 												<th>ID</th>
+												<th>Logo</th>
 												<th>Company</th>
 												<th>Created</th>
 												<th>Status</th>
@@ -7261,25 +7262,30 @@ document.addEventListener("DOMContentLoaded", async function () {
 											</tr>
 										</thead>
 										<tbody>
-											${affiliates.map(a => `
-												<tr>
-													<td>${a.company_id}</td>
-													<td>
-														${a.company_logo
-															? `<img src="images/company/${a.company_logo}" style="width:30px;vertical-align:middle;margin-right:6px;">`
-															: ''
-														}
-														${a.company_name}
-													</td>
-													<td>${a.created_at ?? '-'}</td>
-													<td>${Number(a.status) === 1 ? 'Active' : 'Inactive'}</td>
-													<td>
-														<div class="overview-aff-menu" data-id="${a.company_id}">
-															<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
-														</div>
-													</td>
-												</tr>
-											`).join('')}
+											${affiliates.map(a => {
+												const companyLogo = a.company_logo && a.company_logo.trim() !== ""
+													? `images/company-logos/${a.company_logo}`
+													: `images/sys-img/NonCompanyPic.png`;
+
+												return `
+													<tr>
+														<td>${a.company_id}</td>
+														<td>
+															<div class="customers-profile">
+																<img src="${companyLogo}" alt="">
+															</div>
+														</td>
+														<td>${a.company_name}</td>
+														<td>${formatFullDateTime(a.created_at) ?? '-'}</td>
+														<td>${Number(a.status) === 1 ? 'Active' : 'Inactive'}</td>
+														<td>
+															<div class="overview-aff-menu" data-id="${a.company_id}">
+																<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
+															</div>
+														</td>
+													</tr>
+												`;
+											}).join('')}
 										</tbody>
 									</table>
 								`
