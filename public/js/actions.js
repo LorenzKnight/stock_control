@@ -7035,9 +7035,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 								? `images/profile/${user.image}`
 								: `images/sys-img/NonProfilePic.png`;
 
+							let borderColor = Number(user.status) === 1 ? "#8cda8a" : "#fbadad";
+
 							row.innerHTML = `
 								<td width="10%" align="center" valign="middle">
-									<div class="customers-profile">
+									<div class="customers-profile" style="border: 2px solid ${borderColor};">
 										<img src="${profileImg}" alt="">
 									</div>
 								</td>
@@ -7271,7 +7273,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 													<tr>
 														<td>${a.company_id}</td>
 														<td>
-															<div class="customers-profile">
+															<div class="affiliate-profile">
 																<img src="${companyLogo}" alt="">
 															</div>
 														</td>
@@ -7303,28 +7305,40 @@ document.addEventListener("DOMContentLoaded", async function () {
 										<thead>
 											<tr>
 												<th>ID</th>
+												<th></th>
 												<th>Name</th>
 												<th>Email</th>
 												<th>Rank</th>
-												<th>Status</th>
 												<th></th>
 											</tr>
 										</thead>
 										<tbody>
-											${collaborators.map(c => `
-												<tr>
-													<td>${c.user_id}</td>
-													<td>${c.full_name}</td>
-													<td>${c.email}</td>
-													<td>${c.rank_text ?? c.rank}</td>
-													<td>${Number(c.status) === 1 ? "Active" : "Inactive"}</td>
-													<td>
-														<div class="overview-collab-menu" data-id="${c.user_id}">
-															<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
-														</div>
-													</td>
-												</tr>
-											`).join('')}
+											${collaborators.map(c => {
+												const collaboratorImg = c.image && c.image.trim() !== ""
+													? `images/profile/${c.image}`
+													: `images/sys-img/NonProfilePic.png`;
+
+												let borderColor = Number(c.status) === 1 ? "#8cda8a" : "#fbadad";
+
+												return `
+													<tr>
+														<td>${c.user_id}</td>
+														<td>
+															<div class="customers-profile" style="border: 2px solid ${borderColor};">
+																<img src="${collaboratorImg}" alt="">
+															</div>
+														</td>
+														<td>${c.full_name}</td>
+														<td>${c.email}</td>
+														<td>${c.rank_text ?? c.rank}</td>
+														<td>
+															<div class="overview-collab-menu" data-id="${c.user_id}">
+																<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
+															</div>
+														</td>
+													</tr>
+												`;
+											}).join('')}
 										</tbody>
 									</table>
 								`
