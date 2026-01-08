@@ -2633,13 +2633,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 					<div class="product-desc">
 						<table width="90%" align="center" cellspacing="0">
 							<tr valign="baseline">
-								<td style="width: 50%; height: 10px;">
-									<p style="margin: 10px 0 0;">${product.product_name}</p>
-									<p class="mini-title" style="margin: 0;">${product.hs_code || ''}</p>
-								</td>
-								<td style="width: 50%; height: 10px;" align="right">
-									<p style="margin: 10px 0 0;">Qty: <strong class="${minQty}">${product.quantity || ''}</strong></p>
-									<p class="mini-title" style="margin: 0;">${product.purpose_text || ''}</p>
+								<td colspan="6" style="height: 10px;">
+									<table width="100%" align="center" cellspacing="0">
+										<tr valign="baseline">
+											<td style="width: 60%; height: 10px;">
+												<p style="margin: 10px 0 0;">${product.product_name}</p>
+												<p class="mini-title" style="margin: 0;">${product.hs_code || ''}</p>
+											</td>
+											<td style="width: 40%; height: 10px;" align="right">
+												<p style="margin: 10px 0 0;">Qty: <strong class="${minQty}">${product.quantity || ''}</strong></p>
+												<p class="mini-title" style="margin: 0;">${product.purpose_text || ''}</p>
+											</td>
+										</tr>
+									</table>
 								</td>
 							</tr>
 							<tr valign="baseline">

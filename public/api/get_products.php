@@ -4,6 +4,58 @@ require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
 
+function mapProductRelations(array $product, int $companyId): ?array
+{
+	// Seguridad por compañía
+	if (($product["company_id"] ?? null) != $companyId) {
+		return null;
+	}
+
+	// Marca
+	if (!empty($product['product_mark'])) {
+		$res = json_decode(select_from(
+			"category",
+			["category_name"],
+			["category_id" => $product['product_mark']],
+			["fetch_first" => true]
+		), true);
+
+		$product["mark_name"] = $res["data"]["category_name"] ?? null;
+	}
+
+	// Modelo
+	if (!empty($product['product_model'])) {
+		$res = json_decode(select_from(
+			"category",
+			["category_name"],
+			["category_id" => $product['product_model']],
+			["fetch_first" => true]
+		), true);
+
+		$product["model_name"] = $res["data"]["category_name"] ?? null;
+	}
+
+	// Submodelo
+	if (!empty($product['product_sub_model'])) {
+		$res = json_decode(select_from(
+			"category",
+			["category_name"],
+			["category_id" => $product['product_sub_model']],
+			["fetch_first" => true]
+		), true);
+
+		$product["submodel_name"] = $res["data"]["category_name"] ?? null;
+	}
+
+	// Propósito
+	if (isset($product['purpose'])) {
+		$purposeMap = GlobalArrays::$productPurpose;
+		$product["purpose_text"] = $purposeMap[$product['purpose']] ?? "Unknown";
+	}
+
+	return $product;
+}
+
 $response = [
 	"success" => false,
 	"message" => "No products found",
@@ -34,7 +86,7 @@ try {
 	}
 
 	$userInfo = $userData["data"];
-	$companyId = $userInfo["company_id"];
+	$companyId = (int)$userInfo["company_id"];
 
 	// Leer filtros desde la URL
 	$search     = $_GET["search"]     ?? '';
@@ -68,43 +120,15 @@ try {
 			exit;
 		}
 
-		$product = $parsed["data"];
+		$product = mapProductRelations($parsed["data"], $companyId);
 
-		if ($product["company_id"] != $companyId) {
+		if (!$product) {
 			echo json_encode([
 				"success" => true,
 				"message" => "Product not found in this company.",
 				"product" => null
 			]);
 			exit;
-		}
-
-		// Añadir nombres de categorías
-		if (!empty($product['product_mark'])) {
-			$markRes = select_from("category", ["category_name"], [
-				"category_id" => $product['product_mark']
-			], ["fetch_first" => true]);
-			$product["mark_name"] = json_decode($markRes, true)["data"]["category_name"] ?? null;
-		}
-
-		if (!empty($product['product_model'])) {
-			$modelRes = select_from("category", ["category_name"], [
-				"category_id" => $product['product_model']
-			], ["fetch_first" => true]);
-			$product["model_name"] = json_decode($modelRes, true)["data"]["category_name"] ?? null;
-		}
-
-		if (!empty($product['product_sub_model'])) {
-			$subRes = select_from("category", ["category_name"], [
-				"category_id" => $product['product_sub_model']
-			], ["fetch_first" => true]);
-			$product["submodel_name"] = json_decode($subRes, true)["data"]["category_name"] ?? null;
-		}
-
-		// Propósito
-		if (isset($product['purpose'])) {
-			$purposeMap = GlobalArrays::$productPurpose;
-			$product["purpose_text"] = $purposeMap[$product['purpose']] ?? "Unknown";
 		}
 
 		echo json_encode([
@@ -142,18 +166,26 @@ try {
 	}
 
 	// Listado completo
-	$products = select_from("products", ["*"], $where, [
+	$productsQuery = select_from("products", ["*"], $where, [
 		"order_by" => "created_at",
 		"order_direction" => "DESC"
 	]);
 
-	$parsed = json_decode($products, true);
+	$parsed = json_decode($productsQuery, true);
 
 	if (!$parsed["success"]) {
 		throw new Exception("Error loading products.");
 	}
 
-	$productsData = $parsed["data"] ?? [];
+	$productsData = [];
+
+	foreach ($parsed["data"] ?? [] as $product) {
+		$enriched = mapProductRelations($product, $companyId);
+
+		if ($enriched) {
+			$productsData[] = $enriched;
+		}
+	}
 
 	$response = [
 		"success" => true,
