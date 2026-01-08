@@ -7259,7 +7259,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 												<th>Logo</th>
 												<th>Company</th>
 												<th>Created</th>
-												<th>Status</th>
 												<th></th>
 											</tr>
 										</thead>
@@ -7279,8 +7278,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 														</td>
 														<td>${a.company_name}</td>
 														<td>${formatFullDateTime(a.created_at) ?? '-'}</td>
-														<td>${Number(a.status) === 1 ? 'Active' : 'Inactive'}</td>
-														<td>
+														<td width="5%">
 															<div class="overview-aff-menu" data-id="${a.company_id}">
 																<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
 															</div>
@@ -7331,7 +7329,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 														<td>${c.full_name}</td>
 														<td>${c.email}</td>
 														<td>${c.rank_text ?? c.rank}</td>
-														<td>
+														<td width="5%">
 															<div class="overview-collab-menu" data-id="${c.user_id}">
 																<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
 															</div>
@@ -8237,13 +8235,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 							const row = document.createElement('tr');
 							row.className = "co-worker-row";
 
+							let borderColor = Number(user.status) === 1 ? "#8cda8a" : "#fbadad";
+
 							const profileImg = user.image && user.image.trim() !== ""
 								? `images/profile/${user.image}`
 								: `images/sys-img/NonProfilePic.png`;
 
 							row.innerHTML = `
 								<td width="10%" align="center" valign="middle">
-									<div class="customers-profile">
+									<div class="customers-profile" style="border: 2px solid ${borderColor};">
 										<img src="${profileImg}" alt="">
 									</div>
 								</td>
