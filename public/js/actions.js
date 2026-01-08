@@ -141,6 +141,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	});
 
+	let homeSite = document.getElementById('home-site');
+	if (homeSite) {
+		homeSite.addEventListener('click', function () {
+			window.location.href = "profile.php";
+		});
+	}
+
 	let notificationSite = document.getElementById('notification-site');
 	if (notificationSite) {
 		notificationSite.addEventListener('click', function () {
