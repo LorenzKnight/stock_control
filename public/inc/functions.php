@@ -19,7 +19,6 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 	: ($columns === ['*']
 		? '*'
 		: implode(', ', array_map(function($col) {
-			// Detectar funciones agregadas y alias
 			if (preg_match('/\b(COUNT|SUM|AVG|MIN|MAX)\s*\(/i', $col) || stripos($col, ' as ') !== false) {
 				return $col;
 			}
@@ -49,7 +48,6 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 		}
 
 		if (stripos($column, 'CAST(') === 0 || stripos($column, '(') !== false) {
-			// No escapamos expresiones tipo CAST(...) o funciones
 			$colFormatted = $column;
 		} else {
 			$colFormatted = (strpos($column, '.') === false) ? "\"$column\"" : $column;
@@ -58,7 +56,6 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 		if (is_array($value) && isset($value['condition'])) {
 			$condition = strtoupper($value['condition']);
 			if (in_array($condition, ['IS NULL', 'IS NOT NULL'])) {
-				// No necesitamos un valor si es IS NULL o IS NOT NULL
 				$whereParts[] = "$colFormatted {$condition}";
 			} else {
 				$escapedVal = is_numeric($value['value'])
