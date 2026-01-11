@@ -7,7 +7,7 @@
 		</tr>
 	</table>
 	<div class="affiliate-list">
-		<table class="co-worker-table" id="affiliateTable" width="98%" align="center" cellspacing="0" cellpadding="0"></table>
+		<table class="co-worker-table" id="affiliateTable" width="98%" cellspacing="0" cellpadding="0"></table>
 	</div>
 </div>
 <div class="general-details" id="general-details"></div>
