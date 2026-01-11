@@ -472,7 +472,7 @@ CREATE TABLE IF NOT EXISTS loaded_products (
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE shipping_tracking (
+CREATE TABLE IF NOT EXISTS shipping_tracking (
     tracking_id SERIAL PRIMARY KEY,
     shipping_id INTEGER NULL,
     checkpoint_name VARCHAR(255),
@@ -484,13 +484,12 @@ CREATE TABLE shipping_tracking (
 );
 
 
-CREATE TABLE IF NOT EXISTS settings ( -- PENDIENTE
+CREATE TABLE IF NOT EXISTS settings (
 	settings_id SERIAL PRIMARY KEY,
 	company_id INTEGER NULL,
-	company_currency VARCHAR(10) NULL,
+	company_currency VARCHAR(50) NULL,
 	chipping_kg_price NUMERIC(10,2) NULL,
-
-	create_by INTEGER NULL,
+	created_by INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

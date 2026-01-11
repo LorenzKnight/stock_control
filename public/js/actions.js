@@ -8416,7 +8416,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 				} catch (error) {
 					console.error("Error loading customers:", error);
 					userListTable.innerHTML = `
-						<tr><td colspan="3" style="text-align:center; padding: 10px;">Error loading customers</td></tr>
+						<tr>
+							<td colspan="3" style="text-align:center; padding: 10px;">
+								Error loading customers
+							</td>
+						</tr>
 					`;
 				}
 			}
@@ -8430,9 +8434,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	async function handleSettingsSelect(e, sectionType) {
-		const selectedUserId = e.target.getAttribute("data-id");
-		
-		localStorage.setItem("selectedUserId", selectedUserId);
+		const selectedId = e.target.getAttribute("data-id");
+
+		localStorage.setItem("selectedUserId", selectedId);
 		localStorage.setItem("selectedSectionType", sectionType);
 
 		let detailsContainerId = "";
@@ -8460,8 +8464,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 		// 🔹 Decide qué endpoint usar según la sección actual
 		switch (sectionType) {
 			case "general":
-				endpoint = "api/get_general_config.php"; // hacer este endpoint
-				sectionTitle = "Genaral Overview";
+				endpoint = "api/get_general_config.php";
+				sectionTitle = "General Overview";
 				break;
 			case "co-workers-rights":
 				endpoint = "api/get_co_workers_rights.php";
@@ -8473,23 +8477,40 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 
 		try {
-			const response = await fetch(`${endpoint}?user_id=${selectedUserId}`);
-			const result = await response.json();
+			let result = null;
+
+			if (sectionType === "general") {
+				const res = await fetch(`${endpoint}?company_id=${selectedId}`);
+				result = await res.json();
+			}
+			else if (sectionType === "co-workers-rights") {
+				const res = await fetch(`${endpoint}?user_id=${selectedId}`);
+				result = await res.json();
+			}
 
 			let html = '';
 
 			if (sectionType === "general") {
 				// Construir HTML para overview general
+				html += `
+					<div class="general-form">
+						<form method="post" name="formGeneralOverview" id="formGeneralOverview">
+							<input type="hidden" name="company_id" id="company_id" value="${selectedId}">
+						</form>
+					</div>
+				`;
 			}
 			else if (sectionType === "co-workers-rights") {
-				const hasShippingAccess = result.data?.shipping_access === true ? "checked" : "";
-				const hasSaleAccess = result.data?.sale_access === true ? "checked" : "";
-				const hasShippingStatusNotice =result.data?.shipping_status_notice === true ? "checked" : "";
+				const data = result.data || {};
+
+				const hasShippingAccess = data?.shipping_access === true ? "checked" : "";
+				const hasSaleAccess = data?.sale_access === true ? "checked" : "";
+				const hasShippingStatusNotice = data?.shipping_status_notice === true ? "checked" : "";
 
 				html += `
 					<div class="access-rights-form">
 						<form method="post" name="formAddAccessRights" id="formAddAccessRights">
-							<input type="hidden" name="user_id" id="user_id" value="${selectedUserId}">
+							<input type="hidden" name="user_id" id="user_id" value="${selectedId}">
 
 							<table style="margin: 0px auto 50px" width="95%" cellspacing="0">
 								<tr valign="baseline" class="form_height">
@@ -8503,7 +8524,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									</td>
 									<td width="50%" style="border-bottom: 1px solid var(--clr-light-border); padding: 5px 10px;" align="right" valign="middle">
 										<label class="switch">
-											<input type="checkbox" name="shipping_access" id="shipping_access" value="1" ${hasShippingAccess}>
+											<input type="checkbox" name="shipping_access" value="1" ${hasShippingAccess}>
 											<span class="slider round"></span>
 										</label>
 									</td>
@@ -8514,7 +8535,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									</td>
 									<td width="50%" style="border-bottom: 1px solid var(--clr-light-border); padding: 5px 10px;" align="right" valign="middle">
 										<label class="switch">
-											<input type="checkbox" name="sale_access" id="sale_access" value="1" ${hasSaleAccess}>
+											<input type="checkbox" name="sale_access" value="1" ${hasSaleAccess}>
 											<span class="slider round"></span>
 										</label>
 									</td>
@@ -8530,7 +8551,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									</td>
 									<td width="50%" style="border-bottom: 1px solid var(--clr-light-border); padding: 5px 10px;" align="right" valign="middle">
 										<label class="switch">
-											<input type="checkbox" name="shipping_status_notice" id="shipping_status_notice" value="1" ${hasShippingStatusNotice}>
+											<input type="checkbox" name="shipping_status_notice" value="1" ${hasShippingStatusNotice}>
 											<span class="slider round"></span>
 										</label>
 									</td>
@@ -8542,9 +8563,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 						</form>
 					</div>
 				`;
-			}
-			else if (result.success) {
-				html += `<pre>${JSON.stringify(result.data, null, 2)}</pre>`;
 			}
 			else {
 				// Fallback para depuración o secciones futuras
@@ -8631,14 +8649,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 		if (!userId || !sectionType) return;
 
-		// Crear un evento ficticio para reusar handleCoWorkerSelect()
+		// Crear un evento ficticio para reusar handleSettingsSelect()
 		const fakeEvent = {
 			target: {
 				getAttribute: () => userId
 			}
 		};
 
-		await handleCoWorkerSelect(fakeEvent, sectionType);
+		await handleSettingsSelect(fakeEvent, sectionType);
 	}
 	//############################################################# END SETTINGS ##################################################################
 
