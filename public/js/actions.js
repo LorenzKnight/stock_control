@@ -8191,7 +8191,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				settingsContent.innerHTML = html;
 
 				if (section === "general") {
-					console.log("General settings loaded.");
+					loadCompanies('searchAffiliateField', 'affiliateTable', 'general');
 				}
 
 				if (section === "co-workers-rights") {
@@ -8210,7 +8210,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					settingsContent.innerHTML = html;
 
 					if (savedSettingSection === "general") {
-						console.log("General settings loaded.");
+						loadCompanies('searchAffiliateField', 'affiliateTable', 'general');
 					}
 
 					if (savedSettingSection === "co-workers-rights") {
@@ -8222,6 +8222,114 @@ document.addEventListener("DOMContentLoaded", async function () {
 				});
 		}
 	});
+
+	function loadCompanies(searchField, companyTable, sectionType = "general") {
+		const searchCompanyField = document.getElementById(searchField);
+		const companyListTable  = document.getElementById(companyTable);
+
+		if (searchCompanyField && companyListTable) {
+
+			async function fetchAndRenderCompanies(search = "") {
+				try {
+					const params = new URLSearchParams();
+
+					if (search.trim() !== "") {
+						params.append('search', search.trim());
+					}
+
+					const response = await fetch(`api/get_company_info.php?${params.toString()}`, {
+						method: 'GET',
+						headers: { 'Accept': 'application/json' }
+					});
+
+					const data = await response.json();
+					companyListTable.innerHTML = "";
+
+					if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+
+						data.data.forEach(company => {
+							const uniqueId = `company-${company.company_id}`;
+							const row = document.createElement('tr');
+							row.className = "company-row";
+
+							const logoImg = company.company_logo && company.company_logo.trim() !== ""
+								? `images/company-logos/${company.company_logo}`
+								: `images/sys-img/NonCompanyPic.png`;
+
+							row.innerHTML = `
+								<td width="10%" align="center" valign="middle">
+									<div class="affiliate-profile">
+										<img src="${logoImg}" alt="">
+									</div>
+								</td>
+								<td width="80%" valign="middle" style="padding-left:10px;">
+									<strong>${company.company_name || 'Unknown company'}</strong>
+									<p class="mini-title">${company.organization_no ?? ''}</p>
+								</td>
+								<td width="10%" align="center" valign="middle">
+									<div class="opcion-radio">
+										<input type="radio" id="${uniqueId}" name="company_select" class="category-radio" data-id="${company.company_id}" />
+										<label for="${uniqueId}"></label>
+									</div>
+								</td>
+							`;
+
+							// Click en la fila = seleccionar radio
+							row.addEventListener("click", () => {
+								const radio = row.querySelector('input[type="radio"]');
+								if (!radio.disabled) {
+									radio.checked = true;
+
+									// Quitar selección previa
+									document.querySelectorAll('.company-row').forEach(r => r.classList.remove('selected-company'));
+
+									// Marcar selección actual
+									row.classList.add('selected-company');
+
+									handleSettingsSelect({ target: radio }, sectionType);
+								}
+							});
+
+							companyListTable.appendChild(row);
+						});
+
+						// Listener directo en radios
+						const radios = companyListTable.querySelectorAll('input[name="company_select"]');
+						radios.forEach(radio => {
+							radio.addEventListener("change", (e) => handleSettingsSelect(e, sectionType));
+						});
+
+					} else {
+						companyListTable.innerHTML = `
+							<tr>
+								<td colspan="3" style="text-align:center; padding:10px;">
+									No companies found.
+								</td>
+							</tr>
+						`;
+					}
+
+				} catch (error) {
+					console.error("Error loading companies:", error);
+					companyListTable.innerHTML = `
+						<tr>
+							<td colspan="3" style="text-align:center; padding:10px;">
+								Error loading companies.
+							</td>
+						</tr>
+					`;
+				}
+			}
+
+			// Buscar mientras se escribe
+			searchCompanyField.addEventListener('input', () => {
+				fetchAndRenderCompanies(searchCompanyField.value);
+			});
+
+			// Carga inicial
+			fetchAndRenderCompanies();
+		}
+	}
 
 	function loadCoWorkers(searchField, userTable, sectionType = "general") {
 		const searchUserField = document.getElementById(searchField);
@@ -8284,7 +8392,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									row.classList.add('selected-co-worker');
 
 									// Ejecutar el cambio como si se hubiera hecho clic directamente en el radio
-									handleCoWorkerSelect({ target: radio }, sectionType);
+									handleSettingsSelect({ target: radio }, sectionType);
 								}
 							});
 
@@ -8294,11 +8402,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 						// ✅ Escuchar clics en los radios
 						const radios = userListTable.querySelectorAll('input[name="co_worker_select"]');
 						radios.forEach(radio => {
-							radio.addEventListener("change", (e) => handleUserSelect(e, sectionType));
+							radio.addEventListener("change", (e) => handleSettingsSelect(e, sectionType));
 						});
 					} else {
 						userListTable.innerHTML = `
-							<tr><td colspan="3" style="text-align:center; padding: 10px;">No customers found.</td></tr>
+							<tr>
+								<td colspan="3" style="text-align:center; padding: 10px;">
+									No customers found.
+								</td>
+							</tr>
 						`;
 					}
 				} catch (error) {
@@ -8317,7 +8429,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
-	async function handleCoWorkerSelect(e, sectionType) {
+	async function handleSettingsSelect(e, sectionType) {
 		const selectedUserId = e.target.getAttribute("data-id");
 		
 		localStorage.setItem("selectedUserId", selectedUserId);

@@ -1,4 +1,4 @@
-<div class="service-sidebar">
+<div class="co-workers-sidebar">
 	<table width="90%" align="center" cellspacing="0">
 		<tr valign="baseline" class="form_height">
 			<td colspan="4" style="border-bottom: 1px solid var(--clr-border); padding-bottom: 10px;" align="center" valign="middle">
@@ -6,7 +6,7 @@
 			</td>
 		</tr>
 	</table>
-	<div class="service-list">
+	<div class="co-workers-list">
 		<table class="co-worker-table" id="coWorkerTable" width="98%" align="center" cellspacing="0" cellpadding="0"></table>
 	</div>
 </div>

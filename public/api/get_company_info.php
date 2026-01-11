@@ -1,4 +1,5 @@
 <?php
+require_once ('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
@@ -11,8 +12,16 @@ $response = [
 ];
 
 try {
-    $userId = $_SESSION["sc_UserId"] ?? null;
-    if (!$userId) throw new Exception("User session not found.");
+    if ($_SERVER["REQUEST_METHOD"] !== "GET") {
+        throw new Exception("Method not allowed.");
+    }
+
+    $authUser = requireAuth();
+	$userId = $authUser["user_id"] ?? null;
+
+    if (!$userId) {
+        throw new Exception("Unauthorized access. User not found or invalid token.");
+    }
 
     $userData = json_decode(select_from("users", ["parent_user"], ["user_id" => $userId], ["fetch_first" => true]), true);
     if (!$userData["success"] || empty($userData["data"])) {

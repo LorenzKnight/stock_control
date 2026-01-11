@@ -50,6 +50,8 @@
 }
 
 /* #### service #### */
+.general-sidebar,
+.co-workers-sidebar,
 .overview-sidebar,
 .rights-sidebar,
 .service-sidebar
@@ -59,6 +61,8 @@
     border-right: 1px solid var(--clr-border);
 }
 
+.affiliate-list,
+.co-workers-list,
 .overview-list,
 .rights-list,
 .service-list

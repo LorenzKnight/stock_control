@@ -73,6 +73,14 @@
     overflow: auto;
 }
 
+.general-details
+{
+    width: 70%;
+    height: 82.5vh;
+    overflow: auto;
+}
+
+
 .co-worker-details
 {
     width: 70%;
@@ -104,10 +112,12 @@
 }
 
 /* para la logica de seleccionar usuario con clic en cualquierparte del div */
+.company-row input[type="radio"],
 .co-worker-row input[type="radio"] {
 	display: none;
 }
 
+.company-row.selected-company,
 .co-worker-row.selected-co-worker {
 	background-color: var(--main-bg-color);
 	transition: background-color 0.2s ease;
