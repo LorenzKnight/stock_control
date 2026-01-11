@@ -35,23 +35,38 @@ try {
 		"user_id" => $altUser
 	];
 
+    $search        = $_GET["search"] ?? '';
     $selectCompany = $_GET["select_company"] ?? '';
+
     if (!empty($selectCompany)) {
         $where["company_id"] = $selectCompany;
     }
     
-    $companyResponse = select_from("companies", [
-        "company_id",
-        "company_name",
-        "organization_no",
-        "company_address",
-        "country_code",
-        "company_phone",
-        "company_logo"
-    ], $where, [
-        "order_by" => "company_id",
-        "oder_direction" => "ASC"
-    ]);
+    if (!empty($search)) {
+		$where["OR"] = [
+			"company_name ILIKE"    => "%{$search}%",
+			"company_address ILIKE" => "%{$search}%"
+		];
+	}
+
+    $companyResponse = select_from(
+        "companies", 
+        [
+            "company_id",
+            "company_name",
+            "organization_no",
+            "company_address",
+            "country_code",
+            "company_phone",
+            "company_logo"
+        ], 
+        $where, 
+        [
+            "order_by"          => "company_id",
+            "oder_direction"    => "ASC",
+            "fetch_all"         => true
+        ]
+    );
 
     $companyData = json_decode($companyResponse, true);
 
@@ -69,4 +84,3 @@ try {
 
 echo json_encode($response);
 exit;
-?>
