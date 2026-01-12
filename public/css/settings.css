@@ -123,7 +123,7 @@
 	transition: background-color 0.2s ease;
 }
 /* hasta aqui */
-
+.general-form,
 .access-rights-form {
     width: 80%;
     height: 80vh;

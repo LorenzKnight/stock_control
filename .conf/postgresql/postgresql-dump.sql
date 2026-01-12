@@ -488,7 +488,7 @@ CREATE TABLE IF NOT EXISTS settings (
 	settings_id SERIAL PRIMARY KEY,
 	company_id INTEGER NULL,
 	company_currency VARCHAR(50) NULL,
-	chipping_kg_price NUMERIC(10,2) NULL,
+	shipping_kg_price NUMERIC(10,2) NULL,
 	created_by INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

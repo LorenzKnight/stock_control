@@ -70,14 +70,7 @@ try {
 	// ⚙️ Obtener configuración general por empresa
 	$configRaw = select_from(
 		"settings",
-		[
-			"settings_id",
-			"company_id",
-			"company_currency",
-			"chipping_kg_price",
-			"created_by",
-			"created_at"
-		],
+		["*"],
 		["company_id" => $targetCompanyId],
 		["fetch_first" => true]
 	);

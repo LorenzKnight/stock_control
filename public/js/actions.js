@@ -8491,11 +8491,43 @@ document.addEventListener("DOMContentLoaded", async function () {
 			let html = '';
 
 			if (sectionType === "general") {
-				// Construir HTML para overview general
+				const data = result.data || {};
+				// console.log("General Data:", data);
+
+				const companyCurrency = data.company_currency || "N/A";
+				const shippingKgPrice = data.shipping_kg_price || "N/A";
+
 				html += `
 					<div class="general-form">
 						<form method="post" name="formGeneralOverview" id="formGeneralOverview">
 							<input type="hidden" name="company_id" id="company_id" value="${selectedId}">
+						
+							<table style="margin: 0px auto 50px" width="95%" cellspacing="0">
+								<tr valign="baseline" class="form_height">
+									<td colspan="6" style="border-bottom: 1px solid var(--clr-border);" align="center" valign="middle">
+										<h2 style="margin: 20px 0 10px;">${sectionTitle}</h2>
+									</td>
+								</tr>
+								<tr valign="baseline" class="form_height">
+									<td width="50%" style="border-bottom: 1px solid var(--clr-light-border); padding: 5px 10px;" align="left" valign="middle">
+										<span style="display: block;">Company Currency</span>
+									</td>
+									<td width="50%" style="border-bottom: 1px solid var(--clr-light-border); padding: 5px 10px;" align="right" valign="middle">
+										<input class="form-input-style" type="text" name="company_currency" value="${companyCurrency}" readonly>
+									</td>
+								</tr>
+								<tr valign="baseline" class="form_height">
+									<td width="50%" style="border-bottom: 1px solid var(--clr-light-border); padding: 5px 10px;" align="left" valign="middle">
+										<span style="display: block;">Shipping Price/kg</span>
+									</td>
+									<td width="50%" style="border-bottom: 1px solid var(--clr-light-border); padding: 5px 10px;" align="right" valign="middle">
+										<input class="form-input-style" type="text" name="shipping_kg_price" value="${shippingKgPrice}" readonly>
+									</td>
+								</tr>
+							</table>
+							<div class="access-rights-buttons" style="margin-top: 15px; text-align: center;">
+								<button type="submit" class="button-style-agree" style="width: 150px;">Update Settings</button>
+							</div>
 						</form>
 					</div>
 				`;
