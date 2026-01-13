@@ -8494,8 +8494,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 				const data = result.data || {};
 				// console.log("General Data:", data);
 
-				const companyCurrency = data.company_currency || "N/A";
-				const shippingKgPrice = data.shipping_kg_price || "N/A";
+				const companyCurrency = data.company_currency || "";
+				const shippingKgPrice = data.shipping_kg_price || "";
 
 				html += `
 					<div class="general-form">
@@ -8509,11 +8509,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 									</td>
 								</tr>
 								<tr valign="baseline" class="form_height">
+									<td colspan="6" style="border-bottom: 1px solid var(--clr-border);" align="center" valign="middle">
+										<h4 style="margin-bottom: 10px;">Regional</h4>
+									</td>
+								</tr>
+								<tr valign="baseline" class="form_height">
 									<td width="50%" style="border-bottom: 1px solid var(--clr-light-border); padding: 5px 10px;" align="left" valign="middle">
 										<span style="display: block;">Company Currency</span>
 									</td>
 									<td width="50%" style="border-bottom: 1px solid var(--clr-light-border); padding: 5px 10px;" align="right" valign="middle">
-										<input class="form-input-style" type="text" name="company_currency" value="${companyCurrency}" readonly>
+										<input class="form-input-style" type="text" name="company_currency" value="${companyCurrency}" placeholder="e.g., USD">
 									</td>
 								</tr>
 								<tr valign="baseline" class="form_height">
@@ -8521,7 +8526,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 										<span style="display: block;">Shipping Price/kg</span>
 									</td>
 									<td width="50%" style="border-bottom: 1px solid var(--clr-light-border); padding: 5px 10px;" align="right" valign="middle">
-										<input class="form-input-style" type="text" name="shipping_kg_price" value="${shippingKgPrice}" readonly>
+										<input class="form-input-style" type="text" name="shipping_kg_price" value="${shippingKgPrice}" placeholder="e.g., 5.00">
 									</td>
 								</tr>
 							</table>
@@ -8603,12 +8608,94 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			detailsContainer.innerHTML = html;
 
-			attachAccessRightsFormHandler();
+			switch (sectionType) {
+				case "general":
+					attachGeneralSettingsFormHandler();
+					break;
+
+				case "co-workers-rights":
+					attachAccessRightsFormHandler();
+					break;
+			}
 		} catch (err) {
 			console.error(`Error loading ${sectionTitle}:`, err);
 			detailsContainer.innerHTML = `<p style="color:red;">Error loading ${sectionTitle}: ${err.message}</p>`;
 		}
 	}
+
+	function attachGeneralSettingsFormHandler() {
+		const form = document.getElementById('formGeneralOverview');
+		if (!form) return;
+
+		form.addEventListener("submit", async function (e) {
+			e.preventDefault();
+
+			const formData = new FormData(form);
+			const companyId = formData.get('company_id');
+
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
+
+			if (!companyId) {
+				statusText.innerText = "Error: No company selected.";
+				statusImage.src = "../images/sys-img/loading1.gif";
+				banner.style.display = 'block';
+				banner.style.opacity = '1';
+				return;
+			}
+
+			try {
+				const response = await fetch('api/update_general_config.php', {
+					method: 'POST',
+					headers: { 'Accept': 'application/json' },
+					body: formData
+				});
+
+				const data = await response.json();
+
+				if (data.success) {
+					statusText.innerText = data.message || "Settings updated successfully.";
+					statusImage.src = data.img_gif || "../images/sys-img/loading1.gif";
+					banner.style.display = 'block';
+					banner.style.opacity = '1';
+
+					setTimeout(() => {
+						banner.style.opacity = '0';
+						setTimeout(async () => {
+							await refreshSelectedGeneralView();
+						}, 1000);
+					}, 2000);
+				} else {
+					statusText.innerText = data.message || "Error updating settings.";
+					statusImage.src = "../images/sys-img/loading1.gif";
+					banner.style.display = 'block';
+					banner.style.opacity = '1';
+				}
+			} catch (err) {
+				statusText.innerText = "Error processing the request.";
+				statusImage.src = "../images/sys-img/loading1.gif";
+				banner.style.display = 'block';
+				banner.style.opacity = '1';
+			}
+		});
+	}
+
+	async function refreshSelectedGeneralView() {
+		const companyId = localStorage.getItem("selectedUserId");
+		const sectionType = "general";
+
+		if (!companyId) return;
+
+		const fakeEvent = {
+			target: {
+				getAttribute: () => companyId
+			}
+		};
+
+		await handleSettingsSelect(fakeEvent, sectionType);
+	}
+
 
 	function attachAccessRightsFormHandler() {
 		let formAddAccessRights = document.getElementById('formAddAccessRights');
