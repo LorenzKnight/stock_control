@@ -8489,12 +8489,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 
 			let html = '';
+			let companyCurrency = "";
 
 			if (sectionType === "general") {
 				const data = result.data || {};
-				// console.log("General Data:", data);
 
-				const companyCurrency = data.company_currency || "";
+				companyCurrency = data.company_currency || "";
 				const shippingKgPrice = data.shipping_kg_price || "";
 
 				html += `
@@ -8518,7 +8518,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 										<span style="display: block;">Company Currency</span>
 									</td>
 									<td width="50%" style="border-bottom: 1px solid var(--clr-light-border); padding: 5px 10px;" align="right" valign="middle">
-										<input class="form-input-style" type="text" name="company_currency" value="${companyCurrency}" placeholder="e.g., USD">
+										<select class="form-input-style" id="company_currency" name="company_currency"></select>
 									</td>
 								</tr>
 								<tr valign="baseline" class="form_height">
@@ -8607,6 +8607,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 
 			detailsContainer.innerHTML = html;
+
+			if (sectionType === "general") {
+				await populateCurrencies('company_currency', companyCurrency);
+			}
 
 			switch (sectionType) {
 				case "general":
