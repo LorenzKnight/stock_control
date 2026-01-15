@@ -1,4 +1,5 @@
 <?php
+require_once ('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
@@ -15,8 +16,12 @@ try {
 		throw new Exception("Method not allowed");
 	}
 
-	$userId = $_SESSION["sc_UserId"] ?? null;
-	if (!$userId) throw new Exception("User session not found.");
+	$authUser = requireAuth();
+	$userId = $authUser["user_id"] ?? null;
+	
+	if (!$userId) {
+        throw new Exception("Unauthorized access.");
+    }
 
 	if (!check_user_permission($userId, 'process_handler')) {
 		throw new Exception("Access denied. You do not have permission to create data.");
@@ -25,7 +30,7 @@ try {
 	$userInfo = json_decode(select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]), true);
 	$userData = $userInfo["data"];
 
-	$companyId		= $userData["company_id"] ?? null;
+	$companyId		= intval($_POST["shipping_company_id"] ?? $userData["company_id"]);
 
 	$method			= intval($_POST["shipping_method"] ?? 1);
 	$destination	= trim($_POST["destination"] ?? '');

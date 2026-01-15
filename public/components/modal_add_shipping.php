@@ -8,6 +8,12 @@
 					</td>      
 				</tr>
 				<tr valign="baseline" class="form_height">
+					<td colspan="6" align="center" valign="middle">
+						<label for="company_id">Company:</label>
+						<select class="form-input-style" name="shipping_company_id" id="shipping_company_id"></select>
+					</td>
+				</tr>
+				<tr valign="baseline" class="form_height">
 					<td colspan="3" align="center" valign="middle">
 						<div class="product-type-selection">
 							<input type="radio" id="unit_type_1" name="shipping_method" value="1" checked>

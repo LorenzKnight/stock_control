@@ -130,6 +130,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	const paymentsSite = document.getElementById("payments-site");
 
 	const shippingSeccion = document.getElementById("shipping-seccion");
+	const shippingCompanyId = document.getElementById("shipping_company_id");
 
 	const systemAdminSite = document.getElementById("system-admin-site");
 
@@ -218,6 +219,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 			inputCompanyPhone.disabled = true;
 		}
 
+		if (shippingCompanyId) {
+			shippingCompanyId.disabled = true;
+		}
+
 		if (deleteSaleBtn) {
 			deleteSaleBtn.disabled = true;
 			deleteSaleBtn.title = "You don't have permission to delete sales.";
@@ -253,6 +258,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             subscButton.title = "You don't have permission to delete data.";
             subscButton.classList.add('button-ghost');
         }
+
         if (addAffBtn) {
             addAffBtn.disabled = true;
             addAffBtn.title = "You don't have permission to edit data.";
@@ -262,11 +268,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (companyLogoDropArea) {
 			companyLogoDropArea.style.pointerEvents = "none";
 		}
+
 		if (inputCompanyName && inputOrganizationNo && inputCompanyAddress && inputCompanyPhone) {
 			inputCompanyName.disabled = true;
 			inputOrganizationNo.disabled = true;
 			inputCompanyAddress.disabled = true;
 			inputCompanyPhone.disabled = true;
+		}
+
+		if (shippingCompanyId) {
+			shippingCompanyId.disabled = true;
 		}
 
 		if (deleteSaleBtn) {
@@ -308,6 +319,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             subscButton.title = "You don't have permission to delete data.";
             subscButton.classList.add('button-ghost');
         }
+
         if (addAffBtn) {
             addAffBtn.disabled = true;
             addAffBtn.title = "You don't have permission to edit data.";
@@ -317,11 +329,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (companyLogoDropArea) {
 			companyLogoDropArea.style.pointerEvents = "none";
 		}
+
 		if (inputCompanyName && inputOrganizationNo && inputCompanyAddress && inputCompanyPhone) {
 			inputCompanyName.disabled = true;
 			inputOrganizationNo.disabled = true;
 			inputCompanyAddress.disabled = true;
 			inputCompanyPhone.disabled = true;
+		}
+
+		if (shippingCompanyId) {
+			shippingCompanyId.disabled = true;
 		}
 
 		if (addMembersButton) {
@@ -403,6 +420,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             subscButton.title = "You don't have permission to delete data.";
             subscButton.classList.add('button-ghost');
         }
+
         if (addAffBtn) {
             addAffBtn.disabled = true;
             addAffBtn.title = "You don't have permission to edit data.";
@@ -412,11 +430,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (companyLogoDropArea) {
 			companyLogoDropArea.style.pointerEvents = "none";
 		}
+
 		if (inputCompanyName && inputOrganizationNo && inputCompanyAddress && inputCompanyPhone) {
 			inputCompanyName.disabled = true;
 			inputOrganizationNo.disabled = true;
 			inputCompanyAddress.disabled = true;
 			inputCompanyPhone.disabled = true;
+		}
+
+		if (shippingCompanyId) {
+			shippingCompanyId.disabled = true;
 		}
 
 		if (addMembersButton) {
@@ -518,6 +541,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             subscButton.title = "You don't have permission to delete data.";
             subscButton.classList.add('button-ghost');
         }
+
         if (addAffBtn) {
             addAffBtn.disabled = true;
             addAffBtn.title = "You don't have permission to edit data.";
@@ -527,11 +551,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (companyLogoDropArea) {
 			companyLogoDropArea.style.pointerEvents = "none";
 		}
+
 		if (inputCompanyName && inputOrganizationNo && inputCompanyAddress && inputCompanyPhone) {
 			inputCompanyName.disabled = true;
 			inputOrganizationNo.disabled = true;
 			inputCompanyAddress.disabled = true;
 			inputCompanyPhone.disabled = true;
+		}
+
+		if (shippingCompanyId) {
+			shippingCompanyId.disabled = true;
 		}
 
 		if (addMembersButton) {
@@ -627,6 +656,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (salesSite) {
 			salesSite.style.display = "none";
 		}
+
 		if (paymentsSite) {
 			paymentsSite.style.display = "none";
 		}
@@ -636,6 +666,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             subscButton.title = "You don't have permission to delete data.";
             subscButton.classList.add('button-ghost');
         }
+
         if (addAffBtn) {
             addAffBtn.disabled = true;
             addAffBtn.title = "You don't have permission to edit data.";
@@ -645,11 +676,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (companyLogoDropArea) {
 			companyLogoDropArea.style.pointerEvents = "none";
 		}
+
 		if (inputCompanyName && inputOrganizationNo && inputCompanyAddress && inputCompanyPhone) {
 			inputCompanyName.disabled = true;
 			inputOrganizationNo.disabled = true;
 			inputCompanyAddress.disabled = true;
 			inputCompanyPhone.disabled = true;
+		}
+
+		if (shippingCompanyId) {
+			shippingCompanyId.disabled = true;
 		}
 
 		if (addMembersButton) {

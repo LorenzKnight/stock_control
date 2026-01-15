@@ -5666,6 +5666,22 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
+	// 🔹 Función para obtener configuraciones generales de la compañía
+	async function getCompanySettings(companyId) {
+		try {
+			const res = await fetch(`api/get_general_config.php?company_id=${companyId}`);
+			const result = await res.json();
+
+			if (result && result.data) {
+				return result.data;
+			}
+			return {};
+		} catch (err) {
+			console.error('Error loading company settings:', err);
+			return {};
+		}
+	}
+
 	// 📌 script para add shipping popup
 	let addshippingBtn = document.getElementById('add-shipping-btn');
 	if (addshippingBtn) {
@@ -5691,6 +5707,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 			        popupContent.style.opacity = '1';
 			    }, 50);
 			}
+
+			populateCompanies('shipping_company_id');
 
 			handlePopupClose("add-shipping-form", ".formular-frame", []);
 		});
@@ -5781,6 +5799,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 					return;
 				}
 
+				if (shipping?.company_id) {
+					localStorage.setItem('selectedCompanyId', shipping.company_id);
+				}
+
+				// console.log("Opening shipping options for Shipping ID:", shippingsId, shipping);
+
 				if (shippingNo) {
 					shippingNo.textContent = shipping.shipping_no || 'Unnamed shipping';
 				}
@@ -5828,7 +5852,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				// Botón: Add load to shipping
 				if (addLoadBtn) {
 					addLoadBtn.setAttribute('data-shipping-id', shippingsId);
-					addLoadBtn.onclick = () => {
+					addLoadBtn.onclick = async () => {
 						const menuDiv = document.getElementById('shipping-menu-buttons');
 						const addDiv = document.getElementById('add-load-modal');
 
@@ -5846,7 +5870,23 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 						openAddLoadForm(shippingsId);
 
-						populateCurrencies('shipping_from_currency');
+						const companyId = localStorage.getItem('selectedCompanyId');
+						let companyCurrency = '';
+						let shippingKgPrice = '';
+
+						if (companyId) {
+							const settings = await getCompanySettings(companyId);
+							companyCurrency = settings.company_currency || '';
+							shippingKgPrice = settings.shipping_kg_price || '';
+						
+							populateCurrencies('shipping_from_currency', companyCurrency);
+
+							const shippingPrice = document.getElementById('shipping_price');
+							if (shippingPrice && shippingKgPrice !== null) {
+								shippingPrice.value = shippingKgPrice || '';
+							}
+						}
+
 						populateCurrencies('shipping_to_currency', 'USD');
 			
 						animateHeightChange(popupContent, addDiv, () => {
