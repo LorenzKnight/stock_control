@@ -368,7 +368,7 @@ function log_activity($userId, $actionType, $description, $relatedTable = null, 
 	return insert_into("activity_history", $data);
 }
 
-function notify_user($toUserId, $content, $userId = null, $link = null, $type = 'info') {
+function notify_user($userId = null, $toUserId, $content = null, $link = null, $type = 'info') {
 	$data = [
 		"from_user_id"			=> $userId,	
 		"to_user_id"			=> $toUserId,

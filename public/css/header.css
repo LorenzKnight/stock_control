@@ -142,3 +142,11 @@ nav ul.menu li:hover {
 #profileDropdown ul li :hover {
 	color: #666;
 }
+
+.turn-off {
+    color: var(--warning-orange) !important;
+}
+
+.turn-off:hover {
+    color: var(--cancel-dark-red) !important;
+}

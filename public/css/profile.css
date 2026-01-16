@@ -1,6 +1,6 @@
 .profile-detail-height {
-    min-height: 250px;
-    height: 31vh;
+    min-height: 240px;
+    height: 29vh;
 }
 
 .box-title {
@@ -10,15 +10,15 @@
 
 .info-box {
     width: 280px;
-    height: 27vh;
-    min-height: 230px;
+    height: 25vh;
+    min-height: 217px;
     margin: 5px 10px;
     padding: 10px;
 }
 
 .small-box {
     width: 180px;
-    height: 27vh;
+    height: 25vh;
     min-height: 217px;
     border-radius: 8px;
     margin: 5px 10px;
@@ -39,12 +39,12 @@
 
 .members-container-height {
     min-height: 423px;
-    height: 49vh;
+    height: 51vh;
 }
 
 .members-table {
     min-height: 363px;
-    height: 42vh;
+    height: 45vh;
     padding-top: 5px;
     border-top: 1px solid #CCC;
     overflow: auto;

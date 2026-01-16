@@ -1,5 +1,7 @@
 <?php
+require_once ('../inc/cors.php');
 require_once('../logic/stock_be.php');
+
 header("Content-Type: application/json");
 
 $response = [
@@ -10,8 +12,12 @@ $response = [
 ];
 
 try {
-	$userId = $_SESSION["sc_UserId"] ?? null;
-	if (!$userId) throw new Exception("User session not found.");
+	$authUser = requireAuth();
+	$userId = $authUser["user_id"] ?? null;
+
+	if (!$userId) {
+		throw new Exception("Unauthorized access. User not found or invalid token.");
+	}
 
 	if (!check_user_permission($userId, 'sales_handler')) {
 		throw new Exception("Access denied. You do not have permission to create data.");
@@ -178,9 +184,9 @@ try {
 
 					notify_user(
 						null,
-						"$productName is low on stock (Current: $newStock)",
 						$toUserId,
-						null,
+						"$productName is low on stock (Current: $newStock)",
+						$productId,
 						"Product Info"
 					);
 

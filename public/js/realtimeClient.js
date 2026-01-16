@@ -209,13 +209,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 									await checkNotifications();
 
-									// ---- Cargar el producto (si notification_content trae un ID numérico) ----
+									// ---- Cargar el producto (si notification_link trae un ID numérico) ----
 									let productHtml = '';
 									let answerProductHtml = '';
 									
-									const prodId = Number(notif.notification_content);
+									// const prodId = Number(notif.notification_link);
 
-									if (Number.isFinite(prodId)) {
+									const rawLink = notif.notification_link;
+									const prodId = rawLink !== null && rawLink !== undefined && rawLink !== ''
+										? Number(rawLink)
+										: NaN;
+
+									if (Number.isInteger(prodId) && prodId > 0) {
 										try {
 											const prodRes = await fetch(`api/get_products.php?product_id=${prodId}`, {
 												method: 'GET',
@@ -226,11 +231,58 @@ document.addEventListener("DOMContentLoaded", async function () {
 											if (prodJson.success && Array.isArray(prodJson.data) && prodJson.data.length) {
 												const product = prodJson.data.find(p => String(p.product_id) === String(prodId)) || prodJson.data[0];
 
-												const isDefaultImage = !product.product_image || product.product_image.trim() === "";
-												const productImage = isDefaultImage
-													? "images/sys-img/wooden-box.png"
-													: `images/products/${product.product_image}`;
-												const imageClass = isDefaultImage ? "grayscale-img" : "";
+												if (product.sale_unit_type === "1" || product.sale_unit_type === null) {
+													unitImg = "images/sys-img/papel-box.png";
+													
+													const raw = product?.total_weight;
+													const w = raw == null ? NaN : Number(String(raw).trim().replace(',', '.'));
+
+													if (Number.isFinite(w) && w > 0) {
+														prodDetail = `
+															<tr valign="baseline">
+																<td colspan="6" style="height: 10px;">
+																	<table width="100%" align="center" cellspacing="0">
+																		<tr valign="baseline">
+																			<td colspan="6" align="center" style="height: 10px; border-top: 1px solid #CCC;">
+																				<p>Total Weight<br><strong>${product.total_weight ? product.total_weight + ' kg' : ''}</strong></p>
+																			</td>
+																		</tr>
+																	</table>
+																</td>
+															</tr>
+														`;
+													} else {
+														prodDetail = '';
+													}
+												} else {
+													unitImg = "images/sys-img/wooden-box.png";
+													prodDetail = `
+														<tr valign="baseline">
+															<td colspan="6" style="height: 10px;">
+																<table width="100%" align="center" cellspacing="0">
+																	<tr valign="baseline">
+																		<td style="width: 25%; height: 10px; border-top: 1px solid #CCC;">
+																			<p>Units<br><strong>${product.units_per_pack || ''}</strong></p>
+																		</td>
+																		<td style="width: 40%; height: 10px; border-top: 1px solid #CCC;">
+																			<p>Weight/unit<br><strong>${product.weight_per_unit ? product.weight_per_unit + ' kg' : ''}</strong></p>
+																		</td>
+																		<td style="width: 35%; height: 10px; border-top: 1px solid #CCC;">
+																			<p>Total Weight<br><strong>${product.total_weight ? product.total_weight + ' kg' : ''}</strong></p>
+																		</td>
+																	</tr>
+																</table>
+															</td>
+														</tr>
+													`;
+												}
+
+												let isDefaultImage = !product.product_image || product.product_image.trim() === "";
+												let productImage = isDefaultImage 
+												? unitImg
+												: `images/products/${product.product_image}`;
+
+												let imageClass = isDefaultImage ? "grayscale-img" : "";
 
 												const minQty = (
 													product.quantity !== null &&
@@ -242,11 +294,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 												productHtml = `
 												<div class="request-position">	
-													<div class="product-card">
-														<div class="product-pic">
+													<div class="notification-detail-card">
+														<div class="notification-product-pic">
 															<img src="${productImage}" alt="${product.product_name}" class="${imageClass}" />
 														</div>
-														<div class="product-desc">
+														<div class="notification-product-desc">
 															<table width="90%" align="center" cellspacing="0">
 																<tr valign="baseline">
 																	<td style="width: 50%; height: 20px;">
@@ -266,6 +318,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 																		${product.submodel_name || ''}
 																	</td>
 																</tr>
+																${prodDetail}
 																<tr valign="baseline">
 																	<td style="width: 50%; border-top: 1px solid #CCC;">
 																		<p>Year<br><strong>${product.product_year || ''}</strong></p>
@@ -299,6 +352,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 														</table>
 													</form>
 												</div>`;
+
+												updateStockHtml = `
+												`;
 											}
 										} catch (e) {
 											console.error('Error fetching product by ID:', e);
@@ -309,8 +365,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 									if (notif.notification_type === 'Product Request') {
 										notificationContent = `${productHtml || ''}${answerProductHtml || ''}`;
-									} else if (notif.notification_type === '') {
-
+									}
+									else if (notif.notification_type === 'Product Info') {
+										notificationContent = `${productHtml || ''}`;
 									}
 
 									const detailsDiv = document.getElementById('notifications-details');

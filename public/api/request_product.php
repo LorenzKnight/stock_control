@@ -42,9 +42,9 @@ try {
     foreach ($UserData["data"] as $user) {
         notify_user(
             $userId,
-            "$productName was requested",
             $user["user_id"],
-            null,
+            "$productName was requested",
+            $productId,
             "Product Request"
         );
 
