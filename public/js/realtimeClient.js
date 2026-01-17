@@ -16,20 +16,29 @@ document.addEventListener("DOMContentLoaded", async function () {
 				currentUserId = parseInt(user.user_id, 10) || 0;
 			}
 
-			// PRODUCCIÓN (Nginx proxya a ws://
-			// const wsProtocol = location.protocol === 'https:' ? 'wss' : 'ws';
-			// const wsUrl = `${wsProtocol}://${location.host}/ws`; // sin puertos; Nginx proxya a 3001
-			// const socket = new WebSocket(wsUrl);
+			let socket;
 
-			// LOCAL (para desarrollo, sin Nginx)
-			const socket = new WebSocket(`ws://${location.hostname}:3001`);
+			const isLocal =
+			location.hostname === 'localhost' ||
+			location.hostname === '127.0.0.1';
+
+			if (!isLocal) {
+				// 🟢 PRODUCCIÓN (Nginx → WebSocket proxy)
+				const wsProtocol = location.protocol === 'https:' ? 'wss' : 'ws';
+				const wsUrl = `${wsProtocol}://${location.host}/ws`; // sin puertos; Nginx proxya a 3001
+				socket = new WebSocket(wsUrl);
+			}
+			else {
+				// 🟡 LOCAL (Node WS directo)
+				socket = new WebSocket(`ws://${location.hostname}:3001`);
+			}
 
 			socket.addEventListener('open', () => {
 				console.log('📡 WS connected ✅');
 			});
 
 			socket.addEventListener('close', () => {
-				console.warn('⚠️ WS disconnected');
+				console.warn('📡 WS disconnected ⚠️');
 			});
 
 			socket.addEventListener('error', error => {
@@ -210,10 +219,22 @@ document.addEventListener("DOMContentLoaded", async function () {
 									await checkNotifications();
 
 									// ---- Cargar el producto (si notification_link trae un ID numérico) ----
+									let message = '';
 									let productHtml = '';
 									let answerProductHtml = '';
+									let updateStockHtml = '';
 									
-									// const prodId = Number(notif.notification_link);
+									const msgInfo = notif.notification_content;
+
+									if (msgInfo && msgInfo.trim() !== '') {
+										message = `
+											<div class="notification-message-info">
+												<p>${msgInfo}</p>
+											</div>
+										`;
+									} else {
+										message = '';
+									}
 
 									const rawLink = notif.notification_link;
 									const prodId = rawLink !== null && rawLink !== undefined && rawLink !== ''
@@ -354,7 +375,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 												</div>`;
 
 												updateStockHtml = `
-												`;
+												<div class="update-stock-section">
+
+												</div>`;
 											}
 										} catch (e) {
 											console.error('Error fetching product by ID:', e);
@@ -364,7 +387,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									let notificationContent = '';
 
 									if (notif.notification_type === 'Product Request') {
-										notificationContent = `${productHtml || ''}${answerProductHtml || ''}`;
+										notificationContent = `${message || ''} ${productHtml || ''}${answerProductHtml || ''}`;
 									}
 									else if (notif.notification_type === 'Product Info') {
 										notificationContent = `${productHtml || ''}`;

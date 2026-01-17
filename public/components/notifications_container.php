@@ -6,7 +6,7 @@
 		<h2 style="margin-left: 10px;">Notifications</h2>
 		<div class="product-table flex">
 			<div class="notifications-sidebar">
-				<table width="90%" align="center" cellspacing="0" style="margin-top: 15px;">
+				<table width="95%" align="center" cellspacing="0" style="margin-top: 15px;">
 					<tr valign="baseline" class="form_height">
 						<td colspan="4" style="border-bottom: 1px solid var(--clr-border); padding-bottom: 5px;" align="center" valign="middle">
 							<input type="text" name="messageSearchField" id="messageSearchField" class="search-field" placeholder="Search Messages...">
@@ -14,7 +14,7 @@
 					</tr>
 				</table>
 				<div class="notifications-list" id="notificationsList">
-					<table class="message-list" id="messageList" width="90%" align="center" cellspacing="0" style="margin-top: 15px;"></table>
+					<table class="message-list" id="messageList" width="96%" cellspacing="0" cellpadding="0"></table>
 				</div>
 			</div>
 			<div class="notifications-details" id="notifications-details"></div>

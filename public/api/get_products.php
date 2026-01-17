@@ -7,7 +7,7 @@ header("Content-Type: application/json");
 function mapProductRelations(array $product, int $companyId): ?array
 {
 	// Seguridad por compañía
-	if (($product["company_id"] ?? null) != $companyId) {
+	if ((int)($product["company_id"] ?? null) !== $companyId) {
 		return null;
 	}
 
@@ -76,7 +76,7 @@ try {
 	// Obtener datos del usuario
 	$userData = json_decode(select_from(
 		"users",
-		["parent_user", "company_id"],
+		["company_id"],
 		["user_id" => $userId],
 		["fetch_first" => true]
 	), true);
@@ -98,6 +98,10 @@ try {
 	$purpose    = $_GET["purpose"]    ?? '';
 	$barcode    = $_GET["barcode"]    ?? '';
 
+	$companyFilter = (!empty($company) && is_numeric($company))
+		? (int)$company
+		: $companyId;
+
 	/*
 	-------------------------------------------------------------------
 	🔎 BÚSQUEDA POR CÓDIGO DE BARRAS (modo individual)
@@ -106,7 +110,8 @@ try {
 	if (!empty($barcode)) {
 
 		$productQuery = select_from("products", ["*"], [
-			"hs_code" => $barcode   // CAMBIA A "barcode" si tu DB lo maneja así
+			"hs_code" => $barcode,   // CAMBIA A "barcode" si tu DB lo maneja así
+			"company_id"=> $companyFilter
 		], ["fetch_first" => true]);
 
 		$parsed = json_decode($productQuery, true);
@@ -120,7 +125,7 @@ try {
 			exit;
 		}
 
-		$product = mapProductRelations($parsed["data"], $companyId);
+		$product = mapProductRelations($parsed["data"], $companyFilter);
 
 		if (!$product) {
 			echo json_encode([
@@ -133,7 +138,7 @@ try {
 
 		echo json_encode([
 			"success" => true,
-			"message" => "Product found.",
+			"message" => $product ? "Product found." : "Product not found in this company.",
 			"product" => $product
 		]);
 		exit;
@@ -147,15 +152,15 @@ try {
 
 	$where = [];
 
-	if (!empty($mark))       $where["product_mark"] = $mark;
-	if (!empty($model))      $where["product_model"] = $model;
+	if (!empty($mark))       $where["product_mark"]		 = $mark;
+	if (!empty($model))      $where["product_model"]	 = $model;
 	if (!empty($submodel))   $where["product_sub_model"] = $submodel;
-	if (!empty($purpose))    $where["purpose"] = $purpose;
+	if (!empty($purpose))    $where["purpose"]			 = $purpose;
 
 	if (!empty($productId) && is_numeric($productId)) {
 		$where["product_id"] = (int)$productId;
 	} else {
-		$where["company_id"] = !empty($company) ? $company : $companyId;
+		$where["company_id"] = $companyFilter;
 	}
 
 	if (!empty($search)) {
@@ -180,7 +185,7 @@ try {
 	$productsData = [];
 
 	foreach ($parsed["data"] ?? [] as $product) {
-		$enriched = mapProductRelations($product, $companyId);
+		$enriched = mapProductRelations($product, $companyFilter);
 
 		if ($enriched) {
 			$productsData[] = $enriched;

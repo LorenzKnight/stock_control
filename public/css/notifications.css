@@ -15,6 +15,16 @@
     overflow: auto;
 }
 
+.notification-message-info {
+    background-color: var(--main-bg-color);
+    border-radius: 5px;
+    /* border-bottom: 1px solid var(--clr-light-border); */
+    padding: 5px;
+    margin-top: 5px;
+    font-size: 12px;
+    color: var(--clr-neutral-dark);
+}
+
 .notification-detail-card {
     width: 500px;
     background-color: var(--main-bg-color);
