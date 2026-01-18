@@ -174,7 +174,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					if (data.success && Array.isArray(data.data) && data.data.length > 0) {
 						data.data.forEach(notif => {
 							const row = document.createElement('tr');
-							row.className = 'form_height';
+							row.className = 'form_height notification-row';
 							row.setAttribute('data-id', notif.notification_id);
 
 							row.innerHTML = `
@@ -183,17 +183,24 @@ document.addEventListener("DOMContentLoaded", async function () {
 										<img src="${notif.from_user_image}" alt="Profile Pic">
 									</div>
 								</td>
-								<td width="65%" align="left" valign="middle">
+								<td width="60%" align="left" valign="middle">
 									<p>${notif.is_read == 0 ? `<strong>${notif.from_user_name || 'Notification'}</strong>` : `${notif.from_user_name || 'Notification'}`}</p>
 									<p>${notif.notification_type || ''}</p>
 								</td>
-								<td width="15%" align="center" valign="top">
+								<td width="20%" align="center" valign="top">
 									<p>${notif.is_read == 0 ? `<strong>${formatNotificationDate(notif.created_at)}</strong>` : `${formatNotificationDate(notif.created_at)}`}</p>
 								</td>
 							`;
 
 							// Agregar evento al tr
 							row.addEventListener('click', async () => {
+								document
+									.querySelectorAll('.notification-row.notification-selected')
+									.forEach(el => el.classList.remove('notification-selected'));
+
+								// ✅ Marcar esta como seleccionada
+								row.classList.add('notification-selected');
+
 								try {
 									const formData = new URLSearchParams();
 									formData.append('notification_id', notif.notification_id);
@@ -387,10 +394,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 									let notificationContent = '';
 
 									if (notif.notification_type === 'Product Request') {
-										notificationContent = `${message || ''} ${productHtml || ''}${answerProductHtml || ''}`;
+										notificationContent = `${message || ''} ${productHtml || ''} ${answerProductHtml || ''}`;
 									}
 									else if (notif.notification_type === 'Product Info') {
-										notificationContent = `${productHtml || ''}`;
+										notificationContent = `${message || ''} ${productHtml || ''}`;
 									}
 
 									const detailsDiv = document.getElementById('notifications-details');

@@ -131,8 +131,12 @@
 
 .message-list tr:hover {
 	background-color: var(--clr-white);
-	/* color: var(--clr-white); */
 	transition: background-color 0.3s ease;
+}
+
+.message-list tr.notification-selected {
+	background-color: var(--clr-white);
+	transition: background-color 0.2s ease;
 }
 
 .warning-message {
