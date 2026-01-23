@@ -8823,6 +8823,342 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 	//############################################################# END SETTINGS ##################################################################
 
+	//############################################################# DIRECT MESSAGE ##################################################################
+	// 📌 script para direct message popup
+	let startDirectMessageBtn = document.getElementById('startDirectMessage');
+	if (startDirectMessageBtn) {
+		startDirectMessageBtn.addEventListener('click', async function (e) {
+			e.preventDefault();
+
+			scrollToTopIfNeeded();
+
+			const editCompanyForm = document.getElementById('add-direct-message-form');
+			const popupContent = editCompanyForm.querySelector('.formular-frame');
+
+			if (editCompanyForm && popupContent) {
+				editCompanyForm.style.display = 'block';
+				editCompanyForm.style.opacity = '0';
+				editCompanyForm.style.transition = 'opacity 0.5s ease';
+				setTimeout(() => {
+					editCompanyForm.style.opacity = '1';
+				}, 10);
+
+				popupContent.style.transform = 'scale(0.7)';
+				popupContent.style.opacity = '0';
+				popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+				setTimeout(() => {
+					popupContent.style.transform = 'scale(1)';
+					popupContent.style.opacity = '1';
+				}, 50);
+			
+				initDMUsersList();
+
+				handlePopupClose("add-direct-message-form", ".formular-frame", []);
+			}
+		});
+	}
+
+	window.selectedDMUserId = null;
+	function initDMUsersList() {
+		const searchUserInput = document.getElementById('search-dm-users');
+		const userListTable = document.getElementById('select-dm-users-list');
+		const CURRENT_USER_ID = window.currentUserId || null;
+
+		if (!searchUserInput || !userListTable) return;
+
+		async function fetchAndRenderUsers(search = "") {
+			try {
+				const params = new URLSearchParams();
+				params.append('include_parent', '1');
+
+				if (search.trim() !== "") {
+					params.append('search', search.trim());
+				}
+
+				const response = await fetch(`api/get_users.php?${params.toString()}`, {
+					headers: { 'Accept': 'application/json' }
+				});
+
+				const data = await response.json();
+				userListTable.innerHTML = "";
+
+				if (data.success && Array.isArray(data.users) && data.users.length > 0) {
+					data.users.forEach(user => {
+
+						if (CURRENT_USER_ID && Number(user.user_id) === Number(CURRENT_USER_ID)) return;
+
+						const row = document.createElement('tr');
+						row.className = "dm-user-row";
+
+						const profileImg = user.image
+							? `images/profile/${user.image}`
+							: `images/sys-img/NonProfilePic.png`;
+
+						row.innerHTML = `
+							<td width="10%" align="center">
+								<div class="message-user-profile-pic">
+									<img src="${profileImg}">
+								</div>
+							</td>
+							<td width="80%" valign="middle" style="padding-left:10px;">
+								<P><strong>${user.full_name || user.username}</strong></P>
+								<p>${user.email || ''}</p>
+							</td>
+							<td width="10%" align="center">
+								<input type="radio" name="user_select" data-id="${user.user_id}">
+							</td>
+						`;
+
+						row.addEventListener('click', () => {
+							document.querySelectorAll('.dm-user-row')
+								.forEach(r => r.classList.remove('selected-dm-user'));
+							row.classList.add('selected-dm-user');
+
+							window.selectedDMUserId = Number(user.user_id);
+							console.log("Selected DM User ID:", window.selectedDMUserId);
+						});
+
+						userListTable.appendChild(row);
+					});
+				} else {
+					userListTable.innerHTML = `
+						<tr><td colspan="3" align="center">No users found</td></tr>
+					`;
+				}
+			} catch (e) {
+				console.error("Error loading DM users:", e);
+			}
+		}
+
+		searchUserInput.addEventListener('input', () => {
+			fetchAndRenderUsers(searchUserInput.value);
+		});
+
+		fetchAndRenderUsers();
+	}
+
+	const dmForm = document.getElementById('formDirectMessage');
+	if (dmForm) {
+		dmForm.addEventListener('submit', function (e) {
+			e.preventDefault();
+
+			if (!window.selectedDMUserId) {
+				alert("Please select a user first.");
+				return;
+			}
+
+			const targetUserId = window.selectedDMUserId;
+
+			// Cerrar popup
+			const popup = document.getElementById('add-direct-message-form');
+			if (popup) popup.style.display = 'none';
+
+			// 👉 Inicializar vista de chat
+			(async () => {
+				try {
+					const res = await fetch('api/get_notifications.php', {
+						method: 'GET',
+						headers: { 'Accept': 'application/json' }
+					});
+
+					const data = await res.json();
+					if (!data.success) throw new Error('Cannot load notifications');
+
+					// 🔎 Buscar chat existente
+					const existingChat = data.data.find(n =>
+						n.notification_type === 'Direct Message' &&
+						(
+							Number(n.from_user_id) === targetUserId ||
+							Number(n.to_user_id) === targetUserId
+						)
+					);
+
+					if (existingChat) {
+						// ✅ Chat ya existe → reutilizar
+						localStorage.setItem('activeDMUserId', targetUserId);
+						localStorage.setItem('activeDMNotificationId', existingChat.notification_id);
+						localStorage.setItem('dmAutoSelect', '1');
+					} else {
+						// 🆕 Chat nuevo → sin notification_id aún
+						localStorage.setItem('activeDMUserId', targetUserId);
+						localStorage.removeItem('activeDMNotificationId');
+						localStorage.setItem('dmAutoSelect', '1');
+					}
+
+					if (typeof window.fetchAndRenderNotifications === 'function') {
+						await window.fetchAndRenderNotifications();
+					}
+
+					openDirectMessageChat();
+					
+				} catch (e) {
+					console.error('Error resolving DM chat:', e);
+				} finally {
+					window.selectedDMUserId = null;
+				}
+			})();
+		});
+	}
+
+	async function openDirectMessageChat() {
+		const toUserId = Number(localStorage.getItem('activeDMUserId'));
+		const notifId  = Number(localStorage.getItem('activeDMNotificationId')) || null;
+
+		if (!toUserId) return;
+
+		const detailsDiv = document.getElementById('notifications-details');
+		if (!detailsDiv) return;
+
+		// Vista base (sin nombre aún)
+		detailsDiv.innerHTML = `
+		<div>
+			<table class="message-details" width="90%" align="center" cellspacing="0" style="margin-top:15px;">
+				<tr valign="baseline" id="dm-header">
+					<td colspan="3" style="border-bottom: 1px solid #ccc; padding:10px;">
+						<strong>Loading...</strong>
+					</td>
+				</tr>
+				<tr valign="baseline">
+					<td colspan="3" align="center" valign="middle">
+						<div class="message-content-box" id="dm-messages-box">
+							<p style="opacity:.6; text-align:center;">Start the conversation</p>
+						</div>
+					</td>
+				</tr>
+				<tr valign="baseline">
+					<td colspan="3" align="center" valign="middle">
+						<input 
+							type="text"
+							id="replyMessageField"
+							class="form-input-style"
+							placeholder="Message..."
+						/>
+					</td>
+				</tr>
+			</table>
+		</div>
+		`;
+
+		attachDMInputHandler();
+
+		try {
+			const res = await fetch(`api/get_notifications.php`, {
+				headers: { 'Accept': 'application/json' }
+			});
+
+			const data = await res.json();
+			if (!data.success) return;
+
+			let resolvedNotifId = notifId;
+
+	
+			const header = document.getElementById('dm-header');
+			if (!header) return;
+
+			// 🆕 CHAT NUEVO (sin notificación aún)
+			if (!resolvedNotifId) {
+				const userRes = await fetch(`api/get_users.php?id=${toUserId}`, {
+					headers: { 'Accept': 'application/json' }
+				});
+				const userData = await userRes.json();
+
+				if (userData.success && userData.user) {
+					const u = userData.user;
+
+					const img = u.image
+						? `images/profile/${u.image}`
+						: `images/sys-img/NonProfilePic.png`;
+
+					header.innerHTML = `
+						<td width="5%" align="center" valign="middle" style="border-bottom: 1px solid #ccc;">
+							<div class="message-user-profile-pic">
+								<img src="${img}" alt="Profile Pic">
+							</div>
+						</td>
+						<td width="45%" align="left" valign="middle" style="border-bottom: 1px solid #ccc; padding: 10px 0; padding-left: 10px;">
+							<strong>${u.full_name || u.username}</strong>
+						</td>
+						<td width="50%" align="right" valign="middle" style="border-bottom: 1px solid #ccc; padding: 10px 0;"></td>
+					`;
+				} else {
+					// fallback mínimo si no hay preview
+					header.innerHTML = `
+						<td colspan="3" style="border-bottom:1px solid #ccc; padding:10px;">
+							<strong>Direct Message</strong>
+						</td>
+					`;
+				}
+
+				return;
+			}
+
+			const notif = Array.isArray(data.data)
+				? data.data.find(n => Number(n.notification_id) === Number(resolvedNotifId))
+				: null;
+
+			if (!notif) return;
+
+			header.innerHTML = `
+				<td width="5%" align="center" valign="middle" style="border-bottom: 1px solid #ccc;">
+					<div class="message-user-profile-pic">
+						<img src="${notif.from_user_image}" alt="Profile Pic">
+					</div>
+				</td>
+				<td width="45%" align="left" valign="middle" style="border-bottom: 1px solid #ccc; padding: 10px 0; padding-left: 10px;">
+					<strong>${notif.from_user_name}</strong>
+				</td>
+				<td width="50%" align="right" valign="middle" style="border-bottom: 1px solid #ccc; padding: 10px 0;"></td>
+			`;
+
+			// // 🔹 Historial (si existe)
+			// const historyRes = await fetch(
+			// 	`api/get_direct_messages.php?notification_id=${notifId}`,
+			// 	{ headers: { 'Accept': 'application/json' } }
+			// );
+
+			// const history = await historyRes.json();
+			// if (history.success && Array.isArray(history.messages)) {
+			// 	renderDMHistory(history.messages);
+			// }
+
+		} catch (e) {
+			console.error('Error loading DM chat:', e);
+		}
+	}
+	window.openDirectMessageChat = openDirectMessageChat;
+
+	function attachDMInputHandler() {
+		const input = document.getElementById('replyMessageField');
+		if (!input) return;
+
+		input.addEventListener('keydown', e => {
+			if (e.key === 'Enter' && input.value.trim() !== '') {
+				e.preventDefault();
+				sendDirectMessage(input.value.trim());
+				input.value = '';
+			}
+		});
+	}
+
+	function sendDirectMessage(message) {
+		const toUserId = Number(localStorage.getItem('activeDMUserId'));
+
+		console.log('➡️ Sending DM:', {
+			toUserId,
+			message,
+			socketReady: window.socket?.readyState
+		});
+
+		if (!toUserId || !window.socket) return;
+
+		window.socket.send(JSON.stringify({
+			type: 'direct_message',
+			to_user_id: toUserId,
+			message
+		}));
+	}
+	//############################################################# END DIRECT MESSAGE ##################################################################
+
 	//############################################################# SEND EMAIL ##################################################################
 	const contactForm = document.getElementById('contactForm');
 	if (contactForm) {

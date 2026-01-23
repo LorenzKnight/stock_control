@@ -32,6 +32,7 @@ try {
             "users",
             [
                 "user_id",
+                "parent_user",
                 "name",
                 "surname",
                 "email",
@@ -83,10 +84,20 @@ try {
 	$altUser = empty($userInfo["parent_user"] ?? null) ? $userId : $userInfo["parent_user"];
 
     $search = $_GET["search"] ?? '';
+    $includeParent = isset($_GET["include_parent"]) && $_GET["include_parent"] == 1;
 
-    $where = [
-        "parent_user" => $altUser
-	];
+    if ($includeParent) {
+        $where = [
+            "OR" => [
+                "parent_user" => $altUser,
+                "user_id"     => $altUser
+            ]
+        ];
+    } else {
+        $where = [
+            "parent_user" => $altUser
+        ];
+    }
 
 	$selectCompany = $_GET["select_company"] ?? null;
 	if ($selectCompany !== null && $selectCompany !== '') {
@@ -107,6 +118,7 @@ try {
     "users",
     [
         "user_id",
+        "parent_user",
         "name",
         "surname",
         "email",

@@ -14,27 +14,39 @@ document.addEventListener("DOMContentLoaded", async function () {
 			if (data.success && data.data) {
 				let user = data.data;
 				currentUserId = parseInt(user.user_id, 10) || 0;
+				window.currentUserId = currentUserId;
 			}
 
-			let socket;
-
 			const isLocal =
-			location.hostname === 'localhost' ||
-			location.hostname === '127.0.0.1';
+				location.hostname === 'localhost' ||
+				location.hostname === '127.0.0.1';
 
 			if (!isLocal) {
 				// 🟢 PRODUCCIÓN (Nginx → WebSocket proxy)
 				const wsProtocol = location.protocol === 'https:' ? 'wss' : 'ws';
 				const wsUrl = `${wsProtocol}://${location.host}/ws`; // sin puertos; Nginx proxya a 3001
-				socket = new WebSocket(wsUrl);
+				window.socket = new WebSocket(wsUrl);
 			}
 			else {
 				// 🟡 LOCAL (Node WS directo)
-				socket = new WebSocket(`ws://${location.hostname}:3001`);
+				window.socket = new WebSocket(`ws://${location.hostname}:3001`);
 			}
+
+			const socket = window.socket;
+			// console.log('🌐 WS instance created:', socket);
 
 			socket.addEventListener('open', () => {
 				console.log('📡 WS connected ✅');
+
+				if (currentUserId && Number(currentUserId) > 0) {
+					const payload = {
+						type: 'identify',
+						user_id: currentUserId
+					};
+					// console.log('🆔 Sending WS identify:', payload);
+
+					socket.send(JSON.stringify(payload));
+				}
 			});
 
 			socket.addEventListener('close', () => {
@@ -62,6 +74,27 @@ document.addEventListener("DOMContentLoaded", async function () {
 					return;
 				}
 
+				/* =====================================================
+				💬 DIRECT MESSAGE
+				===================================================== */
+				if (data.type === 'direct_message') {
+					console.log('💬 Direct message recibido:', data);
+
+					const box = document.getElementById('dm-messages-box');
+					if (!box) return;
+
+					const msg = document.createElement('div');
+					msg.className = 'dm-message incoming';
+					msg.textContent = data.message;
+
+					box.appendChild(msg);
+					box.scrollTop = box.scrollHeight;
+					return; // ⬅️ IMPORTANTE: no sigue al flujo de notification
+				}
+
+				/* =====================================================
+				🔔 NOTIFICATIONS
+				===================================================== */
 				if (data.type !== 'notification') return;
 
 				const me = Number(currentUserId);
@@ -192,8 +225,39 @@ document.addEventListener("DOMContentLoaded", async function () {
 								</td>
 							`;
 
+							const activeNotifId = Number(localStorage.getItem('activeDMNotificationId'));
+							const activeDMUserId = Number(localStorage.getItem('activeDMUserId'));
+							const dmAutoSelect = localStorage.getItem('dmAutoSelect') === '1';
+							const dmManualSelect = localStorage.getItem('dmManualSelect') === '1';
+							const me = Number(window.currentUserId);
+
+							// Caso 1: ya hay notificación activa (flujo normal)
+							if (
+								dmManualSelect &&
+								!dmAutoSelect &&
+								activeNotifId &&
+								Number(notif.notification_id) === activeNotifId
+							) {
+								row.classList.add('notification-selected');
+							}
+
+							if (dmAutoSelect && notif.notification_type === 'Direct Message') {
+								const otherUserId =
+									Number(notif.from_user_id) === me
+										? Number(notif.to_user_id)
+										: Number(notif.from_user_id);
+
+								if (Number(otherUserId) === activeDMUserId) {
+									row.classList.add('notification-selected');
+									localStorage.setItem('activeDMNotificationId', notif.notification_id);
+									localStorage.removeItem('dmAutoSelect'); // 🔥 SOLO UNA VEZ
+								}
+							}
+
 							// Agregar evento al tr
 							row.addEventListener('click', async () => {
+								localStorage.setItem('dmManualSelect', '1');
+								
 								document
 									.querySelectorAll('.notification-row.notification-selected')
 									.forEach(el => el.classList.remove('notification-selected'));
@@ -396,8 +460,27 @@ document.addEventListener("DOMContentLoaded", async function () {
 									if (notif.notification_type === 'Product Request') {
 										notificationContent = `${message || ''} ${productHtml || ''} ${answerProductHtml || ''}`;
 									}
-									else if (notif.notification_type === 'Product Info') {
-										notificationContent = `${message || ''} ${productHtml || ''}`;
+									else if (notif.notification_type === 'Stock Update') {
+										notificationContent = `${message || ''} ${productHtml || ''} ${updateStockHtml || ''}`;
+									}
+									else if (notif.notification_type === 'Direct Message') {
+										const me = Number(window.currentUserId);
+
+										const otherUserId =
+											Number(notif.from_user_id) === me
+												? Number(notif.to_user_id)
+												: Number(notif.from_user_id);
+
+										if (!otherUserId) return;
+
+										localStorage.setItem('activeDMUserId', otherUserId);
+										localStorage.setItem('activeDMNotificationId', notif.notification_id);
+
+										if (typeof window.openDirectMessageChat === 'function') {
+											window.openDirectMessageChat();
+										}
+
+										return;
 									}
 
 									const detailsDiv = document.getElementById('notifications-details');
@@ -418,12 +501,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 													<td colspan="2" align="center" valign="middle">
 														${notificationContent}
 													</td>
-													<td width="50%" align="left" valign="middle"><span id="notif-content"></span></td>
 												</tr>
 											</table>
 										</div>
 										`;
 									}
+									
 								} catch (err) {
 									console.error("Error marking notification as read:", err);
 								}
