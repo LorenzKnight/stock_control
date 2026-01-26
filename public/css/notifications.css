@@ -131,3 +131,27 @@
     background-color: var(--main-bg-color);
     border-radius: 5px;
 }
+
+
+
+
+.dm-message {
+	padding: 8px 12px;
+	margin: 6px;
+	border-radius: 8px;
+	max-width: 70%;
+}
+
+.dm-me {
+	background: #DCF8C6;
+	margin-left: auto;
+}
+
+.pending {
+	opacity: 0.6;
+}
+
+.error {
+	background: #ffd6d6;
+	color: #900;
+}

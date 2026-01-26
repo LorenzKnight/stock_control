@@ -45,7 +45,8 @@ try {
             $user["user_id"],
             "$productName was requested",
             $productId,
-            "Product Request"
+            "Product Request",
+            0
         );
 
         triggerRealtimeNotification($user["user_id"]);

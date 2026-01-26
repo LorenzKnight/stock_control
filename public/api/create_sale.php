@@ -187,7 +187,8 @@ try {
 						$toUserId,
 						"$productName is low on stock (Current: $newStock)",
 						$productId,
-						"Stock Update"
+						"Stock Update",
+						0
 					);
 
 					triggerRealtimeNotification($toUserId);

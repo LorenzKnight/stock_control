@@ -8990,7 +8990,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					}
 
 					openDirectMessageChat();
-					
+
 				} catch (e) {
 					console.error('Error resolving DM chat:', e);
 				} finally {
@@ -9112,7 +9112,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			// // 🔹 Historial (si existe)
 			// const historyRes = await fetch(
-			// 	`api/get_direct_messages.php?notification_id=${notifId}`,
+			// 	`api/get_chat_messages.php?notification_id=${notifId}`,
 			// 	{ headers: { 'Accept': 'application/json' } }
 			// );
 
@@ -9129,33 +9129,68 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	function attachDMInputHandler() {
 		const input = document.getElementById('replyMessageField');
-		if (!input) return;
+		const messagesBox = document.getElementById('dm-messages-box');
 
-		input.addEventListener('keydown', e => {
-			if (e.key === 'Enter' && input.value.trim() !== '') {
-				e.preventDefault();
-				sendDirectMessage(input.value.trim());
-				input.value = '';
+		if (!input || !messagesBox) return;
+
+		input.addEventListener('keydown', async (e) => {
+			if (e.key !== 'Enter') return;
+			e.preventDefault();
+
+			const message = input.value.trim();
+			if (!message) return;
+
+			const chatId   = Number(localStorage.getItem('activeChatId')) || null;
+			const toUserId = Number(localStorage.getItem('activeDMUserId'));
+
+			if (!toUserId) return;
+
+			// UI optimista (opcional pero recomendado)
+			const tempMsg = document.createElement('div');
+			tempMsg.className = 'dm-message dm-me pending';
+			tempMsg.innerText = message;
+			messagesBox.appendChild(tempMsg);
+			messagesBox.scrollTop = messagesBox.scrollHeight;
+
+			input.value = '';
+
+			try {
+				const formData = new FormData();
+				if (chatId > 0) formData.append('chat_id', chatId);
+				formData.append('to_user_id', toUserId);
+				formData.append('message', message);
+
+				const res = await fetch('api/create_chat_message.php', {
+					method: 'POST',
+					headers: { 'Accept': 'application/json' },
+					body: formData
+				});
+
+				const data = await res.json();
+
+				if (!data.success) {
+					tempMsg.classList.remove('pending');
+					tempMsg.classList.add('error');
+					tempMsg.innerText = '❌ ' + data.message;
+					return;
+				}
+
+				// Confirmar mensaje
+				tempMsg.classList.remove('pending');
+				tempMsg.dataset.messageId = data.message_id;
+
+				// Guardar chat_id si fue creado ahora
+				if (!chatId && data.chat_id) {
+					localStorage.setItem('activeChatId', data.chat_id);
+				}
+
+			} catch (err) {
+				tempMsg.classList.remove('pending');
+				tempMsg.classList.add('error');
+				tempMsg.innerText = '❌ Error sending message';
+				console.error(err);
 			}
 		});
-	}
-
-	function sendDirectMessage(message) {
-		const toUserId = Number(localStorage.getItem('activeDMUserId'));
-
-		console.log('➡️ Sending DM:', {
-			toUserId,
-			message,
-			socketReady: window.socket?.readyState
-		});
-
-		if (!toUserId || !window.socket) return;
-
-		window.socket.send(JSON.stringify({
-			type: 'direct_message',
-			to_user_id: toUserId,
-			message
-		}));
 	}
 	//############################################################# END DIRECT MESSAGE ##################################################################
 

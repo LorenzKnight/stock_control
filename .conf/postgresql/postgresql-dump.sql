@@ -409,6 +409,46 @@ CREATE TABLE IF NOT EXISTS notifications (
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- CHAT STRUCTURE
+CREATE TABLE IF NOT EXISTS chats (
+	chat_id SERIAL PRIMARY KEY,
+	chat_type VARCHAR(20) NOT NULL DEFAULT 'direct', -- direct | group
+	created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+	updated_at TIMESTAMP NULL
+);
+
+CREATE TABLE IF NOT EXISTS chat_participants (
+	chat_p_id SERIAL PRIMARY KEY,
+	chat_id INT NOT NULL,
+	user_id INT NOT NULL,
+	joined_at TIMESTAMP NOT NULL DEFAULT NOW(),
+	last_read_at TIMESTAMP NULL,
+	CONSTRAINT fk_cp_chat
+		FOREIGN KEY (chat_id) REFERENCES chats(chat_id)
+		ON DELETE CASCADE,
+	CONSTRAINT fk_cp_user
+		FOREIGN KEY (user_id) REFERENCES users(user_id)
+		ON DELETE CASCADE,
+	UNIQUE (chat_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS chat_messages (
+	message_id SERIAL PRIMARY KEY,
+	chat_id INT NOT NULL,
+	from_user_id INT NOT NULL,
+	message TEXT NOT NULL,
+	message_type VARCHAR(20) DEFAULT 'text', -- text | image | system
+	created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+	CONSTRAINT fk_msg_chat
+		FOREIGN KEY (chat_id) REFERENCES chats(chat_id)
+		ON DELETE CASCADE,
+	CONSTRAINT fk_msg_user
+		FOREIGN KEY (from_user_id) REFERENCES users(user_id)
+		ON DELETE CASCADE
+);
+-- END CHAT STRUCTURE
+
+
 CREATE TABLE IF NOT EXISTS push_subscriptions (
 	subscription_id SERIAL PRIMARY KEY,
 	user_id INTEGER NULL REFERENCES users(user_id) ON DELETE CASCADE,

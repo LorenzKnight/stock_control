@@ -368,13 +368,14 @@ function log_activity($userId, $actionType, $description, $relatedTable = null, 
 	return insert_into("activity_history", $data);
 }
 
-function notify_user($userId = null, $toUserId, $content = null, $link = null, $type = 'info') {
+function notify_user($userId = null, $toUserId, $content = null, $link = null, $type = 'info', $is_read = 0) {
 	$data = [
 		"from_user_id"			=> $userId,	
 		"to_user_id"			=> $toUserId,
 		"notification_content"	=> $content,
 		"notification_link"		=> $link,
 		"notification_type"		=> $type,
+		"is_read"				=> (int)$is_read,
 		"created_at"			=> date("Y-m-d H:i:s")
 	];
 	insert_into("notifications", $data);
