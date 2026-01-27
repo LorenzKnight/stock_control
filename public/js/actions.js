@@ -9050,7 +9050,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			if (!data.success) return;
 
 			let resolvedNotifId = notifId;
-
 	
 			const header = document.getElementById('dm-header');
 			if (!header) return;
@@ -9088,15 +9087,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 						</td>
 					`;
 				}
-
-				return;
 			}
 
 			const notif = Array.isArray(data.data)
 				? data.data.find(n => Number(n.notification_id) === Number(resolvedNotifId))
 				: null;
 
-			if (!notif) return;
+			if (!notif) {
+				console.warn(
+					'[DM] Notification not found, fallback to chat_id from storage',
+					{ notifId, activeChatId: localStorage.getItem('activeChatId') }
+				);
+			}
 
 			header.innerHTML = `
 				<td width="5%" align="center" valign="middle" style="border-bottom: 1px solid #ccc;">
@@ -9110,16 +9112,39 @@ document.addEventListener("DOMContentLoaded", async function () {
 				<td width="50%" align="right" valign="middle" style="border-bottom: 1px solid #ccc; padding: 10px 0;"></td>
 			`;
 
-			// // 🔹 Historial (si existe)
-			// const historyRes = await fetch(
-			// 	`api/get_chat_messages.php?notification_id=${notifId}`,
-			// 	{ headers: { 'Accept': 'application/json' } }
-			// );
+			// 🔹 Cargar historial del chat (si existe chat_id)
+			let chatId = null;
 
-			// const history = await historyRes.json();
-			// if (history.success && Array.isArray(history.messages)) {
-			// 	renderDMHistory(history.messages);
-			// }
+			// 1️⃣ Prioridad: notification_link
+			if (notif && notif.notification_link) {
+				chatId = Number(notif.notification_link);
+				localStorage.setItem('activeChatId', chatId);
+			}
+
+			// 2️⃣ Fallback: localStorage
+			if (!chatId) {
+				chatId = Number(localStorage.getItem('activeChatId')) || null;
+			}
+
+			if (!chatId) {
+				console.error('[DM] No chatId available, cannot load messages');
+				return;
+			}
+
+			try {
+				const historyRes = await fetch(
+					`api/get_chat_messages.php?chat_id=${chatId}`,
+					{ headers: { 'Accept': 'application/json' } }
+				);
+
+				const history = await historyRes.json();
+				console.log('DM History:', history);
+				if (history.success && Array.isArray(history.messages)) {
+					renderDMHistory(history.messages);
+				}
+			} catch (e) {
+				console.error('Error loading chat history:', e);
+			}
 
 		} catch (e) {
 			console.error('Error loading DM chat:', e);
@@ -9191,6 +9216,27 @@ document.addEventListener("DOMContentLoaded", async function () {
 				console.error(err);
 			}
 		});
+	}
+
+	function renderDMHistory(messages) {
+		const box = document.getElementById('dm-messages-box');
+		if (!box) return;
+
+		box.innerHTML = "";
+
+		const me = Number(window.currentUserId);
+
+		messages.forEach(m => {
+			const msg = document.createElement('div');
+
+			const isMine = Number(m.from_user_id) === me;
+			msg.className = `dm-message ${isMine ? 'dm-me' : 'dm-other'}`;
+			msg.innerText = m.message;
+
+			box.appendChild(msg);
+		});
+
+		box.scrollTop = box.scrollHeight;
 	}
 	//############################################################# END DIRECT MESSAGE ##################################################################
 
