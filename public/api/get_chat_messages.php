@@ -42,21 +42,34 @@ try {
      * 2️⃣ Obtener mensajes del chat
      */
     $messages = json_decode(select_from(
-        "chat_messages",
-        [
-            "message_id",
-            "from_user_id",
-            "message",
-            "created_at"
-        ],
-        [
-            "chat_id" => $chatId
-        ],
-        [
-            "order_by" => "created_at",
-            "order_direction" => "asc"
-        ]
-    ), true);
+		"chat_messages",
+		[
+			"message_id",
+			"from_user_id",
+			"message",
+			"created_at",
+
+			// 🔹 is_read SIN romper arquitectura
+			"(
+				SELECT
+					CASE
+						WHEN chat_messages.created_at <= cp.last_read_at THEN 1
+						ELSE 0
+					END
+				FROM chat_participants cp
+				WHERE cp.chat_id = chat_messages.chat_id
+				AND cp.user_id != chat_messages.from_user_id
+				LIMIT 1
+			) AS is_read"
+		],
+		[
+			"chat_id" => $chatId
+		],
+		[
+			"order_by" => "created_at",
+			"order_direction" => "asc"
+		]
+	), true);
 
     /**
      * 3️⃣ Marcar chat como leído (solo este usuario)

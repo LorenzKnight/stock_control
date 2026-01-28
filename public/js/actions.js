@@ -9144,6 +9144,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 				console.log('DM History:', history);
 				if (history.success && Array.isArray(history.messages)) {
 					renderDMHistory(history.messages);
+
+					updateReadStatus(chatId);
+
+					if (!window.dmReadInterval) {
+						window.dmReadInterval = setInterval(() => {
+							const activeChatId = Number(localStorage.getItem('activeChatId'));
+							if (activeChatId) {
+								updateReadStatus(activeChatId);
+							}
+						}, 5000);
+					}
 				}
 			} catch (e) {
 				console.error('Error loading chat history:', e);
@@ -9171,9 +9182,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 		// UI optimista
 		const tempMsg = document.createElement('div');
 		tempMsg.className = 'dm-message dm-me pending';
+		tempMsg.dataset.createdAt = new Date().toISOString();
 		tempMsg.innerHTML = `
 			<div class="dm-text">${message}</div>
-			<div class="dm-time">${formatTime(new Date())}</div>
+			<div class="dm-meta">
+				<span class="dm-time">${formatTime(new Date())}</span>
+				<span class="dm-status">✔</span>
+			</div>
 		`;
 		messagesBox.appendChild(tempMsg);
 		messagesBox.scrollTop = messagesBox.scrollHeight;
@@ -9197,12 +9212,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 			if (!data.success) {
 				tempMsg.classList.remove('pending');
 				tempMsg.classList.add('error');
-				tempMsg.innerText = '❌ ' + data.message;
+				tempMsg.querySelector('.dm-status').innerText = '❌';
 				return;
 			}
 
 			tempMsg.classList.remove('pending');
+			tempMsg.classList.add('confirmed');
 			tempMsg.dataset.messageId = data.message_id;
+
+			const status = tempMsg.querySelector('.dm-status');
+			if (status) status.innerText = '✔✔';
 
 			if (!chatId && data.chat_id) {
 				localStorage.setItem('activeChatId', data.chat_id);
@@ -9221,6 +9240,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 		const sendBtn = document.getElementById('sendMessageBtn');
 
 		if (!input) return;
+
+		if (input.dataset.bound === '1') return;
+		input.dataset.bound = '1';
 
 		// ⌨️ Enter
 		input.addEventListener('keydown', (e) => {
@@ -9266,9 +9288,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const isMine = Number(m.from_user_id) === me;
 
 			msg.className = `dm-message ${isMine ? 'dm-me' : 'dm-other'}`;
+
+			msg.dataset.createdAt = m.created_at;
 			msg.innerHTML = `
 				<div class="dm-text">${m.message}</div>
-				<div class="dm-time">${formatTime(m.created_at)}</div>
+				<div class="dm-meta">
+					<span class="dm-time">${formatTime(m.created_at)}</span>
+					${isMine ? `
+						<span class="dm-status ${m.is_read ? 'read' : ''}">
+							${m.is_read ? '✔✔' : '✔'}
+						</span>` : ``}
+				</div>
 			`;
 
 			box.appendChild(msg);
@@ -9300,6 +9330,28 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (sameDay(d, yesterday)) return 'Yesterday';
 
 		return d.toLocaleDateString();
+	}
+
+	function updateReadStatus(chatId) {
+		fetch(`api/get_chat_read_status.php?chat_id=${chatId}`)
+			.then(res => res.json())
+			.then(data => {
+				if (!data.success || !data.last_read_at) return;
+
+				const readAt = new Date(data.last_read_at);
+
+				document.querySelectorAll('.dm-message.dm-me').forEach(msg => {
+					const msgTime = new Date(msg.dataset.createdAt);
+					const status = msg.querySelector('.dm-status');
+
+					if (!status) return;
+
+					if (msgTime <= readAt) {
+						status.innerText = '✔✔';
+						status.classList.add('read'); // azul
+					}
+				});
+			});
 	}
 	//############################################################# END DIRECT MESSAGE ##################################################################
 

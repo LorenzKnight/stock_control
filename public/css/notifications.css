@@ -187,6 +187,37 @@
 	color: #444;
 }
 
+.dm-meta {
+	display: flex;
+	justify-content: flex-end;
+	gap: 6px;
+	font-size: 11px;
+	opacity: 0.7;
+	margin-top: 4px;
+}
+
+.dm-status {
+	font-size: 11px;
+	margin-left: 6px;
+	color: #888;
+}
+
+.dm-status.read {
+	color: #1da1f2;
+}
+
+.dm-message.pending .dm-status {
+	opacity: 0.5;
+}
+
+.dm-message.confirmed .dm-status {
+	opacity: 1;
+}
+
+.dm-message.error .dm-status {
+	color: #900;
+}
+
 .dm-text {
 	white-space: pre-wrap;
 	word-break: break-word;
