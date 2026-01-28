@@ -73,6 +73,10 @@
 }
 
 
+
+
+
+/* ############################### CHAT ############################### */
 .send-message {
 	width: 30px;
 	height: 30px;
@@ -125,26 +129,73 @@
 }
 
 .message-content-box {
-    height: 571px;
+    height: 63vh;
     margin-block: 10px;
     padding: 10px;
     background-color: var(--main-bg-color);
-    border-radius: 5px;
+    border-radius: 7px;
+
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
-
+.message-reply-box {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 10px;
+}
 
 
 .dm-message {
+	display: inline-flex;
+	align-items: flex-end;   /* texto + hora alineados abajo */
+	gap: 6px;
+	width: fit-content;
+	max-width: 50%;
 	padding: 8px 12px;
 	margin: 6px;
-	border-radius: 8px;
-	max-width: 70%;
+	border-radius: 10px;
+	word-wrap: break-word;
 }
 
 .dm-me {
-	background: #DCF8C6;
+	background: #c6e2f8;
 	margin-left: auto;
+	text-align: left;
+	border-bottom-right-radius: 2px;
+}
+
+.dm-other {
+	background: #d0d0d0;
+	margin-right: auto;
+	text-align: left;
+	border-bottom-left-radius: 2px;
+}
+
+.dm-day-divider {
+	align-self: center;
+	margin: 12px 0;
+	padding: 4px 12px;
+	font-size: 12px;
+	background: rgba(0,0,0,0.1);
+	border-radius: 12px;
+	color: #444;
+}
+
+.dm-text {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.dm-time {
+	align-self: flex-end;
+	font-size: 9px;
+	opacity: 0.6;
 }
 
 .pending {
@@ -155,3 +206,5 @@
 	background: #ffd6d6;
 	color: #900;
 }
+
+/* ############################### END CHAT ############################### */

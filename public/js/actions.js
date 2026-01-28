@@ -9027,12 +9027,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 				</tr>
 				<tr valign="baseline">
 					<td colspan="3" align="center" valign="middle">
-						<input 
-							type="text"
-							id="replyMessageField"
-							class="form-input-style"
-							placeholder="Message..."
-						/>
+						<div class="message-reply-box">
+							<input 
+								type="text"
+								id="replyMessageField"
+								class="form-input-style"
+								placeholder="Message..."
+							/>
+							<button id="sendMessageBtn" class="button-style-agree" style="margin-left:10px; width: 80px;">Send</button>
+						</div>
 					</td>
 				</tr>
 			</table>
@@ -9152,70 +9155,88 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 	window.openDirectMessageChat = openDirectMessageChat;
 
-	function attachDMInputHandler() {
+	async function sendDMMessage() {
 		const input = document.getElementById('replyMessageField');
 		const messagesBox = document.getElementById('dm-messages-box');
 
 		if (!input || !messagesBox) return;
 
-		input.addEventListener('keydown', async (e) => {
-			if (e.key !== 'Enter') return;
-			e.preventDefault();
+		const message = input.value.trim();
+		if (!message) return;
 
-			const message = input.value.trim();
-			if (!message) return;
+		const chatId   = Number(localStorage.getItem('activeChatId')) || null;
+		const toUserId = Number(localStorage.getItem('activeDMUserId'));
+		if (!toUserId) return;
 
-			const chatId   = Number(localStorage.getItem('activeChatId')) || null;
-			const toUserId = Number(localStorage.getItem('activeDMUserId'));
+		// UI optimista
+		const tempMsg = document.createElement('div');
+		tempMsg.className = 'dm-message dm-me pending';
+		tempMsg.innerHTML = `
+			<div class="dm-text">${message}</div>
+			<div class="dm-time">${formatTime(new Date())}</div>
+		`;
+		messagesBox.appendChild(tempMsg);
+		messagesBox.scrollTop = messagesBox.scrollHeight;
 
-			if (!toUserId) return;
+		input.value = '';
 
-			// UI optimista (opcional pero recomendado)
-			const tempMsg = document.createElement('div');
-			tempMsg.className = 'dm-message dm-me pending';
-			tempMsg.innerText = message;
-			messagesBox.appendChild(tempMsg);
-			messagesBox.scrollTop = messagesBox.scrollHeight;
+		try {
+			const formData = new FormData();
+			if (chatId > 0) formData.append('chat_id', chatId);
+			formData.append('to_user_id', toUserId);
+			formData.append('message', message);
 
-			input.value = '';
+			const res = await fetch('api/create_chat_message.php', {
+				method: 'POST',
+				headers: { 'Accept': 'application/json' },
+				body: formData
+			});
 
-			try {
-				const formData = new FormData();
-				if (chatId > 0) formData.append('chat_id', chatId);
-				formData.append('to_user_id', toUserId);
-				formData.append('message', message);
+			const data = await res.json();
 
-				const res = await fetch('api/create_chat_message.php', {
-					method: 'POST',
-					headers: { 'Accept': 'application/json' },
-					body: formData
-				});
-
-				const data = await res.json();
-
-				if (!data.success) {
-					tempMsg.classList.remove('pending');
-					tempMsg.classList.add('error');
-					tempMsg.innerText = '❌ ' + data.message;
-					return;
-				}
-
-				// Confirmar mensaje
-				tempMsg.classList.remove('pending');
-				tempMsg.dataset.messageId = data.message_id;
-
-				// Guardar chat_id si fue creado ahora
-				if (!chatId && data.chat_id) {
-					localStorage.setItem('activeChatId', data.chat_id);
-				}
-
-			} catch (err) {
+			if (!data.success) {
 				tempMsg.classList.remove('pending');
 				tempMsg.classList.add('error');
-				tempMsg.innerText = '❌ Error sending message';
-				console.error(err);
+				tempMsg.innerText = '❌ ' + data.message;
+				return;
+			}
+
+			tempMsg.classList.remove('pending');
+			tempMsg.dataset.messageId = data.message_id;
+
+			if (!chatId && data.chat_id) {
+				localStorage.setItem('activeChatId', data.chat_id);
+			}
+
+		} catch (err) {
+			tempMsg.classList.remove('pending');
+			tempMsg.classList.add('error');
+			tempMsg.innerText = '❌ Error sending message';
+			console.error(err);
+		}
+	}
+
+	function attachDMInputHandler() {
+		const input = document.getElementById('replyMessageField');
+		const sendBtn = document.getElementById('sendMessageBtn');
+
+		if (!input) return;
+
+		// ⌨️ Enter
+		input.addEventListener('keydown', (e) => {
+			if (e.key === 'Enter') {
+				e.preventDefault();
+				sendDMMessage();
 			}
 		});
+
+		// 🖱️ Botón Send
+		if (sendBtn) {
+			sendBtn.addEventListener('click', (e) => {
+				e.preventDefault();
+				sendDMMessage();
+			});
+		}
 	}
 
 	function renderDMHistory(messages) {
@@ -9225,18 +9246,60 @@ document.addEventListener("DOMContentLoaded", async function () {
 		box.innerHTML = "";
 
 		const me = Number(window.currentUserId);
+		let lastDay = null;
 
 		messages.forEach(m => {
-			const msg = document.createElement('div');
+			const msgDate = new Date(m.created_at);
+			const dayKey = msgDate.toDateString();
 
+			// 🗓️ Separador de fecha
+			if (dayKey !== lastDay) {
+				const dayDivider = document.createElement('div');
+				dayDivider.className = 'dm-day-divider';
+				dayDivider.innerText = formatDayLabel(m.created_at);
+				box.appendChild(dayDivider);
+				lastDay = dayKey;
+			}
+
+			// 💬 Mensaje
+			const msg = document.createElement('div');
 			const isMine = Number(m.from_user_id) === me;
+
 			msg.className = `dm-message ${isMine ? 'dm-me' : 'dm-other'}`;
-			msg.innerText = m.message;
+			msg.innerHTML = `
+				<div class="dm-text">${m.message}</div>
+				<div class="dm-time">${formatTime(m.created_at)}</div>
+			`;
 
 			box.appendChild(msg);
 		});
 
 		box.scrollTop = box.scrollHeight;
+	}
+
+	function formatTime(dateStr) {
+		const d = new Date(dateStr);
+		return d.toLocaleTimeString([], {
+			hour: '2-digit',
+			minute: '2-digit'
+		});
+	}
+
+	function formatDayLabel(dateStr) {
+		const d = new Date(dateStr);
+		const today = new Date();
+		const yesterday = new Date();
+		yesterday.setDate(today.getDate() - 1);
+
+		const sameDay = (a, b) =>
+			a.getFullYear() === b.getFullYear() &&
+			a.getMonth() === b.getMonth() &&
+			a.getDate() === b.getDate();
+
+		if (sameDay(d, today)) return 'Today';
+		if (sameDay(d, yesterday)) return 'Yesterday';
+
+		return d.toLocaleDateString();
 	}
 	//############################################################# END DIRECT MESSAGE ##################################################################
 
