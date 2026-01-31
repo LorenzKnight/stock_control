@@ -79,22 +79,22 @@ try {
     $verifyLink = "https://allstockcontrol.com/api/verify_email.php?token={$verifyToken}";
 
     $emailContent = "
-    Hola <strong>{$data['name']}</strong>,<br><br>
+    Hi <strong>{$data['name']}</strong>,<br><br>
 
-    Gracias por registrarte en <strong>AllStockControl</strong>.<br><br>
+    Thank you for registering at <strong>AllStockControl</strong>.<br><br>
 
-    Para activar tu cuenta, haz clic aquí:<br><br>
+    To activate your account, click here:<br><br>
 
     <a href='{$verifyLink}'
         style='display:inline-block; padding:12px 22px;
         background:#2e86de; color:#fff;
         text-decoration:none; border-radius:4px;
     '>
-        Verificar mi cuenta
+        Verify my account
     </a>
 
     <br><br>
-    Este enlace es válido por 24 horas.
+    <p class='info'>This link is valid for 24 hours.</p>
     ";
 
     if (!sendSystemEmail("no-reply@allstockcontrol.com", $data["email"], "Verifica tu cuenta", $emailContent)) {

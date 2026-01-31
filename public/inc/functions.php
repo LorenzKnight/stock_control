@@ -1035,16 +1035,22 @@ function buildEmailTemplate(string $content): string
         <meta charset='UTF-8'>
         <style>
             body { font-family: Arial, sans-serif; background:#f5f5f5; }
-            .box { background:#fff; padding:30px; max-width:800px; margin:auto; }
+			.box { background:#fff; padding:30px; max-width:750px; margin:auto; }
+			.header { text-align: left; border-bottom: 1px solid #eee; }
 			.logo { text-align:center; width:70px; filter: brightness(0) saturate(105%) invert(11%) sepia(87%) saturate(6795%) hue-rotate(195deg) brightness(82%) contrast(105%); }
-            .footer { font-size:12px; color:#777; text-align:center; margin-top:20px; }
-        </style>
+			.content { height:70vh; font-size:14px; padding-top:20px; }
+			.info { font-size:12px; color:#777; margin-top:10px; }
+			.footer { font-size:12px; color:#777; text-align:center; margin-top:20px; }
+		</style>
     </head>
     <body>
         <div class='box'>
-            <img class='logo' src='https://allstockcontrol.com/images/sys-img/asc-logo.png' alt='AllStockControl'>
-            <hr>
-            $content
+			<div class='header'>
+				<img class='logo' src='https://allstockcontrol.com/images/sys-img/asc-logo.png' alt='AllStockControl'>
+			</div>
+			<div class='content'>
+            	$content
+			</div>
         </div>
         <div class='footer'>
             © " . date('Y') . " AllStockControl · support@allstockcontrol.com
