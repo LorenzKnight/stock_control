@@ -25,7 +25,7 @@ try {
 		if (empty($_POST[$field])) {
 			throw new Exception("The $field field is required.");
 		}
-		$data[$field] = htmlspecialchars(trim($_POST[$field]));
+		$data[$field] = trim($_POST[$field]);
 	}
 
     $data["status"] = 1;
@@ -47,9 +47,60 @@ try {
     $insertResponse = insert_into("users", $data, ["id" => "user_id"]);
     $insertResult = json_decode($insertResponse, true);
 
-    if (!$insertResult["success"]) {
+    if (!$insertResult["success"] || empty($insertResult["id"])) {
         throw new Exception("Error inserting into database.");
     }
+
+
+    $userId = (int)$insertResult["id"];
+    $verifyToken = bin2hex(random_bytes(32));
+    $user_ip = getUserIP();
+    $user_location = getLocationByIP($user_ip);
+    $deviceType = getDeviceType();
+    $deviceName = getDeviceName();
+
+    $tokenInsertResponse = insert_into("user_tokens", [
+        "user_id"       => $userId,
+        "token"         => $verifyToken,
+        "status"        => "active",
+        "ip_address"    => $user_ip,
+        "device_type"   => $deviceType,
+        "device_name"   => $deviceName,
+        "location"      => $user_location,
+        "expires_at"    => date("Y-m-d H:i:s", strtotime("+24 hours"))
+    ]);
+
+    $tokenInsertResult = json_decode($tokenInsertResponse, true);
+
+    if (!$tokenInsertResult["success"]) {
+        throw new Exception("Error inserting verification token: " . ($tokenInsertResult["message"] ?? 'unknown'));
+    }
+
+    $verifyLink = "https://allstockcontrol.com/api/verify_email.php?token={$verifyToken}";
+
+    $emailContent = "
+    Hola <strong>{$data['name']}</strong>,<br><br>
+
+    Gracias por registrarte en <strong>AllStockControl</strong>.<br><br>
+
+    Para activar tu cuenta, haz clic aquí:<br><br>
+
+    <a href='{$verifyLink}'
+        style='display:inline-block; padding:12px 22px;
+        background:#2e86de; color:#fff;
+        text-decoration:none; border-radius:4px;
+    '>
+        Verificar mi cuenta
+    </a>
+
+    <br><br>
+    Este enlace es válido por 24 horas.
+    ";
+
+    if (!sendSystemEmail("no-reply@allstockcontrol.com", $data["email"], "Verifica tu cuenta", $emailContent)) {
+        throw new Exception("User created but verification email failed.");
+    }
+
 
     $response = [
         "success" => true,
@@ -70,4 +121,3 @@ try {
 // Responder con JSON
 echo json_encode($response);
 exit;
-?>

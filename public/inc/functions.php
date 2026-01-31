@@ -368,7 +368,7 @@ function log_activity($userId, $actionType, $description, $relatedTable = null, 
 	return insert_into("activity_history", $data);
 }
 
-function notify_user($userId = null, $toUserId, $content = null, $link = null, $type = 'info', $is_read = 0) {
+function notify_user($toUserId, $userId = null, $content = null, $link = null, $type = 'info', $is_read = 0) {
 	$data = [
 		"from_user_id"			=> $userId,	
 		"to_user_id"			=> $toUserId,
@@ -903,9 +903,9 @@ function sendPush(array $subscriptionData, array $payload)
 {
     $auth = [
         'VAPID' => [
-            'subject' => VAPID_SUBJECT,
-            'publicKey' => VAPID_PUBLIC_KEY,
-            'privateKey' => VAPID_PRIVATE_KEY,
+            'subject' => $_ENV['VAPID_SUBJECT'],
+            'publicKey' => $_ENV['VAPID_PUBLIC_KEY'],
+            'privateKey' => $_ENV['VAPID_PRIVATE_KEY'],
         ]
     ];
 
@@ -938,36 +938,76 @@ function sendPush(array $subscriptionData, array $payload)
 
 
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 
-function sendSystemEmail($to, string $subject, string $htmlContent): bool
+function sendSystemEmail(string $from, $to, string $subject, string $htmlContent): bool
 {
-	if (!is_string($to) && !is_array($to)) {
+    if (!is_string($to) && !is_array($to)) {
         throw new InvalidArgumentException('$to must be string or array');
+    }
+
+    // 🔎 Validar variables necesarias
+    $requiredEnv = [
+        'SMTP_HOST',
+        'SMTP_PORT',
+        'SMTP_USER',
+        'SMTP_PASS',
+        'SMTP_FROM_NAME',
+        'SMTP_ALLOWED_DOMAIN'
+    ];
+
+    foreach ($requiredEnv as $key) {
+        if (empty($_ENV[$key])) {
+            error_log("Missing env variable: $key");
+            return false;
+        }
+    }
+
+    // 🔒 Validar FROM (inline)
+    if (!filter_var($from, FILTER_VALIDATE_EMAIL)) {
+        error_log("Invalid FROM email: $from");
+        return false;
+    }
+
+    $allowedDomain = $_ENV['SMTP_ALLOWED_DOMAIN'];
+
+    if (substr($from, -strlen('@' . $allowedDomain)) !== '@' . $allowedDomain) {
+		error_log("FROM domain not allowed: $from");
+		return false;
+	}
+
+    if (!empty($_ENV['SMTP_ALLOWED_FROM'])) {
+        $allowedFrom = array_map(
+            'trim',
+            explode(',', $_ENV['SMTP_ALLOWED_FROM'])
+        );
+
+        if (!in_array($from, $allowedFrom, true)) {
+            error_log("FROM not whitelisted: $from");
+            return false;
+        }
     }
 
     $mail = new PHPMailer(true);
 
     try {
-        // 🔐 CONFIGURACIÓN SMTP
+        // 🔐 SMTP (login fijo)
         $mail->isSMTP();
-        $mail->Host       = 'smtp.yourprovider.com'; // ej: smtp.gmail.com
+        $mail->Host       = $_ENV['SMTP_HOST'];
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'no-reply@allstockcontrol.com';
-        $mail->Password   = 'SMTP_PASSWORD';
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
+        $mail->Username   = $_ENV['SMTP_USER'];
+        $mail->Password   = $_ENV['SMTP_PASS'];
+        $mail->Port       = (int) $_ENV['SMTP_PORT'];
 
-        // 📧 REMITENTE
-        $mail->setFrom('no-reply@allstockcontrol.com', 'AllStockControl');
+        $mail->SMTPSecure = ($_ENV['SMTP_SECURE'] === 'ssl')
+            ? PHPMailer::ENCRYPTION_SMTPS
+            : PHPMailer::ENCRYPTION_STARTTLS;
+
+        // 📧 FROM dinámico
+        $mail->setFrom($from, $_ENV['SMTP_FROM_NAME']);
 
         // 👥 DESTINATARIOS
-        if (is_array($to)) {
-            foreach ($to as $email) {
-                $mail->addAddress($email);
-            }
-        } else {
-            $mail->addAddress($to);
+        foreach ((array) $to as $email) {
+            $mail->addAddress($email);
         }
 
         // 📨 CONTENIDO
@@ -980,8 +1020,8 @@ function sendSystemEmail($to, string $subject, string $htmlContent): bool
         $mail->send();
         return true;
 
-    } catch (Exception $e) {
-        error_log("Email error: {$mail->ErrorInfo}");
+    } catch (\Throwable $e) {
+        error_log("Email error: " . $e->getMessage());
         return false;
     }
 }
@@ -995,15 +1035,16 @@ function buildEmailTemplate(string $content): string
         <meta charset='UTF-8'>
         <style>
             body { font-family: Arial, sans-serif; background:#f5f5f5; }
-            .box { background:#fff; padding:30px; max-width:600px; margin:auto; }
+            .box { background:#fff; padding:30px; max-width:800px; margin:auto; }
+			.logo { text-align:center; width:70px; filter: brightness(0) saturate(105%) invert(11%) sepia(87%) saturate(6795%) hue-rotate(195deg) brightness(82%) contrast(105%); }
             .footer { font-size:12px; color:#777; text-align:center; margin-top:20px; }
         </style>
     </head>
     <body>
         <div class='box'>
-            <img src='https://allstockcontrol.com/sys-img/asc-logo.png' width='180' alt='AllStockControl'>
+            <img class='logo' src='https://allstockcontrol.com/images/sys-img/asc-logo.png' alt='AllStockControl'>
             <hr>
-            <p>{$content}</p>
+            $content
         </div>
         <div class='footer'>
             © " . date('Y') . " AllStockControl · support@allstockcontrol.com

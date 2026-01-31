@@ -183,8 +183,8 @@ try {
                     if ($toUserId <= 0) continue;
 
 					notify_user(
-						null,
 						$toUserId,
+						null,
 						"$productName is low on stock (Current: $newStock)",
 						$productId,
 						"Stock Update",

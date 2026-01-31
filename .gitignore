@@ -4,6 +4,8 @@
 /public/images/products/*
 /public/images/profile/*
 /public/images/shippings-code/*
+.env
+.env.*
 
 # Pero no ignorar los marcadores
 !/public/images/company-logos/.gitkeep

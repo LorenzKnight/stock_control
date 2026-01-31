@@ -2,7 +2,7 @@
 if (!defined('DISABLE_SESSION') && !defined('IS_STRIPE_WEBHOOK') && session_status() === PHP_SESSION_NONE) {
   	session_start();
 }
-
+// var_dump($_ENV['APP_ENV']);
 function get_pg_connection()
 {
 	// $conn_host    = 'host=127.0.0.1'; // live server

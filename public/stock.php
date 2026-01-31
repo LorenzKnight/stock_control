@@ -67,6 +67,14 @@
 </head>
 
 <body>
+	<?php 
+		// sendSystemEmail(
+		// 	"no-reply@allstockcontrol.com",
+		// 	"joellorenzo.k@gmail.com",
+		// 	"Verifica tu cuenta",
+		// 	"Este es un correo de prueba para verificar tu cuenta en AllStockControl."
+		// );
+	?>
 	<?php include("components/message.php"); ?>
 	<?php include("components/front_header.php"); ?>
 	<?php include("components/banner_container.php"); ?>

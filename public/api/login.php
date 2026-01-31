@@ -31,7 +31,7 @@ try {
     $password = pg_escape_string($sql, trim($_POST["login_password"]));
 
     $userResponse = select_from("users", 
-        ["user_id", "email", "rank", "password", "company_id", "status", "status_by_admin"], 
+        ["user_id", "email", "verified", "rank", "password", "company_id", "status", "status_by_admin"], 
         ["email" => $email], 
         ["fetch_first" => true]
     );
@@ -46,6 +46,10 @@ try {
 
     if (!password_verify($password, $hashedPassword)) {
         throw new Exception("Contraseña incorrecta.");
+    }
+
+    if (intval($user["verified"]) !== 1) {
+        throw new Exception("Please verify your email before logging in.");
     }
 
     // 🚫 Bloquear acceso si el usuario está inactivo

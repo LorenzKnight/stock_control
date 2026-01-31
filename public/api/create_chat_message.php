@@ -112,8 +112,8 @@ try {
 			pg_query($sql, "COMMIT");
 
 			notify_user(
-				$userId,
 				$toUserId,
+				$userId,
 				null,
 				$chatId,
 				'Direct Message',
