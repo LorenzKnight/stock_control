@@ -109,6 +109,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		const closeBtn = document.getElementById('closeContactForm');
 		if (closeBtn) {
 			closeBtn.addEventListener('click', function (e) {
+				e.preventDefault();
 				e.stopPropagation();
 				contactBox.classList.remove('expanded');
 				const form = contactBox.querySelector('form');

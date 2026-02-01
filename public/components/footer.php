@@ -40,7 +40,7 @@
 		<img src="../images/sys-img/email.gif" alt="e-mail" class="">
 		
 		<form id="contactForm" method="POST">
-			<button id="closeContactForm" class="close-btn">&times;</button>
+			<button type="button" id="closeContactForm" class="close-btn">&times;</button>
 			<table width="100%" align="center" cellspacing="0">
 				<tr valign="baseline" class="form_height">
 					<td colspan="2" align="center" valign="middle">
