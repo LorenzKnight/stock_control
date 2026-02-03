@@ -8915,7 +8915,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							row.classList.add('selected-dm-user');
 
 							window.selectedDMUserId = Number(user.user_id);
-							console.log("Selected DM User ID:", window.selectedDMUserId);
+							// console.log("Selected DM User ID:", window.selectedDMUserId);
 						});
 
 						userListTable.appendChild(row);
@@ -9105,7 +9105,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			if (!notif) {
 				console.warn(
-					'[DM] Notification not found, fallback to chat_id from storage',
+					// '[DM] Notification not found, fallback to chat_id from storage',
 					{ notifId, activeChatId: localStorage.getItem('activeChatId') }
 				);
 			}
@@ -9145,7 +9145,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				);
 
 				const history = await historyRes.json();
-				console.log('DM History:', history);
+				// console.log('DM History:', history);
 				if (history.success && Array.isArray(history.messages)) {
 					renderDMHistory(history.messages);
 
