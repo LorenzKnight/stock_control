@@ -9006,6 +9006,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 		if (!toUserId) return;
 
+		const prevChatUser = Number(localStorage.getItem('activeDMChatUserId'));
+
+		if (prevChatUser !== toUserId) {
+			localStorage.removeItem('activeChatId');
+			localStorage.setItem('activeDMChatUserId', toUserId);
+		}
+
 		const detailsDiv = document.getElementById('notifications-details');
 		if (!detailsDiv) return;
 
@@ -9103,17 +9110,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 				);
 			}
 
-			header.innerHTML = `
-				<td width="5%" align="center" valign="middle" style="border-bottom: 1px solid #ccc;">
-					<div class="message-user-profile-pic">
-						<img src="${notif.from_user_image}" alt="Profile Pic">
-					</div>
-				</td>
-				<td width="45%" align="left" valign="middle" style="border-bottom: 1px solid #ccc; padding: 10px 0; padding-left: 10px;">
-					<strong>${notif.from_user_name}</strong>
-				</td>
-				<td width="50%" align="right" valign="middle" style="border-bottom: 1px solid #ccc; padding: 10px 0;"></td>
-			`;
+			if (notif) {
+				header.innerHTML = `
+					<td width="5%" align="center" valign="middle" style="border-bottom: 1px solid #ccc;">
+						<div class="message-user-profile-pic">
+							<img src="${notif.from_user_image}" alt="Profile Pic">
+						</div>
+					</td>
+					<td width="45%" align="left" valign="middle" style="border-bottom: 1px solid #ccc; padding: 10px 0; padding-left: 10px;">
+						<strong>${notif.from_user_name}</strong>
+					</td>
+					<td width="50%" align="right" valign="middle" style="border-bottom: 1px solid #ccc; padding: 10px 0;"></td>
+				`;
+			}
 
 			// 🔹 Cargar historial del chat (si existe chat_id)
 			let chatId = null;
@@ -9127,11 +9136,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			// 2️⃣ Fallback: localStorage
 			if (!chatId) {
 				chatId = Number(localStorage.getItem('activeChatId')) || null;
-			}
-
-			if (!chatId) {
-				console.error('[DM] No chatId available, cannot load messages');
-				return;
 			}
 
 			try {
@@ -9227,6 +9231,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 				localStorage.setItem('activeChatId', data.chat_id);
 			}
 
+			if (typeof window.fetchAndRenderNotifications === 'function') {
+				console.log('Refreshing notifications for DM...');
+				await window.fetchAndRenderNotifications();
+			}
 		} catch (err) {
 			tempMsg.classList.remove('pending');
 			tempMsg.classList.add('error');

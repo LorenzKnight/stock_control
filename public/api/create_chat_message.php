@@ -50,6 +50,22 @@ try {
 		}
 	}
 
+	if ($chatId > 0) {
+		$validChat = json_decode(select_from(
+			"chat_participants",
+			["chat_id"],
+			[
+				"chat_id" => $chatId,
+				"user_id IN" => [$userId, $toUserId]
+			],
+			["fetch_all" => true]
+		), true);
+
+		if (empty($validChat["success"]) || $validChat["count"] < 2) {
+			$chatId = 0; // fuerza creación
+		}
+	}
+
 	if ($chatId === 0 && $toUserId === 0) {
 		throw new Exception("Invalid chat. Recipient user is missing.");
 	}
@@ -122,13 +138,15 @@ try {
 
 			// 📩 Notificación para el emisor (YA leída)
 			notify_user(
-				$toUserId,
 				$userId,
+				$toUserId,
 				"Direct message started with user ID {$toUserId} by {$userId}.",
 				$chatId,
 				'Direct Message',
 				1
 			);
+
+			// triggerRealtimeNotification($toUserId);
 		}
 	}
 
@@ -162,6 +180,7 @@ try {
 
 	$messageId = $insertMessage["id"] ?? null;
 
+	// 📩 Actualizacion de Notificación
 	$notif = json_decode(select_from(
 		"notifications",
 		["notification_id", "to_user_id"],
@@ -189,6 +208,9 @@ try {
 			);
 		}
 	}
+
+	// ⚡ Push realtime (WebSocket)
+	triggerRealtimeNotification($toUserId);
 
 	$updateRead = json_decode(update_table(
         "chat_participants",

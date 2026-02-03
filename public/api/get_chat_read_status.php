@@ -22,7 +22,10 @@ try {
         ["last_read_at"],
         [
             "chat_id" => $chatId,
-            "user_id !=" => $userId
+            "user_id" => [
+                "condition" => "!=",
+                "value" => $userId
+            ]
         ],
         ["fetch_first" => true]
     ), true);
