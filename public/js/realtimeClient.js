@@ -207,7 +207,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 								</td>
 								<td width="60%" align="left" valign="middle">
 									<p>${notif.is_read == 0 ? `<strong>${notif.from_user_name || 'Notification'}</strong>` : `${notif.from_user_name || 'Notification'}`}</p>
-									<p>${notif.notification_type == 'Direct Message' ? notif.notification_content : notif.notification_type || ''}</p>
+									<p>
+										${notif.notification_type == 'Direct Message' ? 
+											(
+												notif.notification_content.length > 20
+												? notif.notification_content.slice(0, 20) + '…'
+												: notif.notification_content
+											)
+										: notif.notification_type || ''}
+									</p>
 								</td>
 								<td width="20%" align="center" valign="top">
 									<p>${notif.is_read == 0 ? `<strong>${formatNotificationDate(notif.created_at)}</strong>` : `${formatNotificationDate(notif.created_at)}`}</p>
