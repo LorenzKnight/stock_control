@@ -1060,6 +1060,42 @@ function buildEmailTemplate(string $content): string
     ";
 }
 
+function tooManyEmailsFromIP(string $ip): bool
+{
+    $maxAttempts = 3;
+    $windowSeconds = 3600; // 1 hora
+    $dir = __DIR__ . '/rate_limits';
+
+    if (!is_dir($dir)) {
+        mkdir($dir, 0755, true);
+    }
+
+    $key = md5($ip);
+    $file = "$dir/$key.json";
+    $now = time();
+
+    $attempts = [];
+
+    if (file_exists($file)) {
+        $attempts = json_decode(file_get_contents($file), true) ?? [];
+        // limpiar intentos viejos
+        $attempts = array_filter(
+            $attempts,
+            fn($t) => ($now - $t) <= $windowSeconds
+        );
+    }
+
+    if (count($attempts) >= $maxAttempts) {
+        return true; // 🚫 bloquear
+    }
+
+    // registrar intento
+    $attempts[] = $now;
+    file_put_contents($file, json_encode($attempts));
+
+    return false; // ✅ permitir
+}
+
 //function to display any type of variable
 function cdebug($var, $name = 'var', $die = false)
 {

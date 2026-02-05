@@ -9399,6 +9399,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 					body: formData
 				});
 
+				if (response.status === 204 || response.status === 429) {
+					let banner = document.getElementById('status-message');
+					let statusText = document.getElementById('status-text');
+					let statusImage = document.getElementById('status-image');
+
+					statusText.innerText = "Please try again later.";
+					statusImage.src = '../images/sys-img/error.gif';
+					banner.style.display = 'block';
+					banner.style.opacity = '1';
+					return;
+				}
+
 				const data = await response.json();
 
 				let banner = document.getElementById('status-message');

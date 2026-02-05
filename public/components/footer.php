@@ -88,6 +88,8 @@
 					</td>
 				</tr>
 			</table>
+			<!-- Honeypot field for spam prevention -->
+			<input type="text" name="company" style="display:none">
 		</form>
 	</div>
 </footer>

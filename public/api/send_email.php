@@ -1,4 +1,5 @@
 <?php
+require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 header('Content-Type: application/json');
@@ -24,6 +25,19 @@ if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || $message === '
         "message" => "Please complete all fields correctly.",
         "img_gif" => "../images/sys-img/error.gif"
     ]);
+    exit;
+}
+
+// 🕳️ Honeypot anti-spam
+if (!empty($_POST['company'])) {
+    http_response_code(204); // silencioso para bots
+    exit;
+}
+
+$user_ip = getUserIP();
+
+if (tooManyEmailsFromIP($user_ip, 'contact_form')) {
+    http_response_code(429); // Too Many Requests
     exit;
 }
 

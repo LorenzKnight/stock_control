@@ -44,6 +44,12 @@ try {
         throw new Exception("The email is already registered.");
     }
 
+    $user_ip = getUserIP();
+
+    if (tooManyEmailsFromIP($user_ip)) {
+        throw new Exception("Too many attempts. Please try later.");
+    }
+
     $insertResponse = insert_into("users", $data, ["id" => "user_id"]);
     $insertResult = json_decode($insertResponse, true);
 
@@ -51,10 +57,9 @@ try {
         throw new Exception("Error inserting into database.");
     }
 
-
     $userId = (int)$insertResult["id"];
     $verifyToken = bin2hex(random_bytes(32));
-    $user_ip = getUserIP();
+    
     $user_location = getLocationByIP($user_ip);
     $deviceType = getDeviceType();
     $deviceName = getDeviceName();
