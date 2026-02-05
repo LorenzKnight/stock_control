@@ -9232,7 +9232,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 
 			if (typeof window.fetchAndRenderNotifications === 'function') {
-				console.log('Refreshing notifications for DM...');
 				await window.fetchAndRenderNotifications();
 			}
 		} catch (err) {
@@ -9319,7 +9318,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 	window.DM = window.DM || {};
 	
 	window.DM.refreshChat = async function (chatId) {
-		console.log('[DM] Refreshing chat:', chatId);
 		if (!chatId) return;
 
 		try {

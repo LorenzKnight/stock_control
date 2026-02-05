@@ -33,7 +33,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 
 			const socket = window.socket;
-			// console.log('🌐 WS instance created:', socket);
 
 			socket.addEventListener('open', () => {
 				console.log('📡 WS connected ✅');
@@ -43,7 +42,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 						type: 'identify',
 						user_id: currentUserId
 					};
-					// console.log('🆔 Sending WS identify:', payload);
 
 					socket.send(JSON.stringify(payload));
 				}
@@ -81,17 +79,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				if (data.type === 'direct_message') {
 					console.log('💬 Direct message recibido:', data);
 
-					// const box = document.getElementById('dm-messages-box');
-					// if (!box) return;
-
-					// const msg = document.createElement('div');
-					// msg.className = 'dm-message incoming';
-					// msg.textContent = data.message;
-
-					// box.appendChild(msg);
-					// box.scrollTop = box.scrollHeight;
-					// return; // ⬅️ IMPORTANTE: no sigue al flujo de notification
-
 					const activeChatId = Number(localStorage.getItem('activeChatId'));
 
 					// 👉 SOLO refrescar si estoy viendo ese chat
@@ -106,13 +93,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				🔔 NOTIFICATIONS
 				===================================================== */
 				if (data.type === 'notification') {
-					// // 🔄 refrescar lista de notificaciones
-					// if (typeof window.fetchAndRenderNotifications === 'function') {
-					// 	window.fetchAndRenderNotifications();
-					// }
-
-					// if (data.type !== 'notification') return;
-
 					const me = Number(currentUserId);
 
 					let matchesMe = Number.isFinite(Number(data.to_user_id)) && Number(data.to_user_id) === me;
@@ -124,7 +104,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 						matchesMe = true;
 					}
 
-					// console.log('[WS] incoming notification', data, { me, matchesMe });
 					if (!matchesMe) return;
 
 					await checkNotifications();
@@ -139,11 +118,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 					const box = document.createElement('div');
 					box.classList.add('notification-box');
-
-					// box.innerHTML = `
-					// 	<div class="notification-title">${notifType}</div>
-					// 	<div class="notification-message">${message}</div>
-					// `;
 
 					const titleEl = document.createElement('div');
 					titleEl.className = 'notification-title';
@@ -167,9 +141,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 					// Forzar reflow para que la transición funcione
 					void box.offsetWidth;
 					box.classList.add('show');
-
-					// await checkNotifications();
-					// refetchMessages(); 
 
 					// Eliminar después de 5 segundos
 					setTimeout(() => {
@@ -237,7 +208,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 								</td>
 								<td width="60%" align="left" valign="middle">
 									<p>${notif.is_read == 0 ? `<strong>${notif.from_user_name || 'Notification'}</strong>` : `${notif.from_user_name || 'Notification'}`}</p>
-									<p>${notif.notification_type || ''}</p>
+									<p>${notif.notification_type == 'Direct Message' ? notif.notification_content : notif.notification_type || ''}</p>
 								</td>
 								<td width="20%" align="center" valign="top">
 									<p>${notif.is_read == 0 ? `<strong>${formatNotificationDate(notif.created_at)}</strong>` : `${formatNotificationDate(notif.created_at)}`}</p>

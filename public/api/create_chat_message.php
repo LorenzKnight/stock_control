@@ -202,7 +202,7 @@ try {
 			update_table(
 				"notifications",
 				[
-					"notification_content"	=> $isMine ? null : $shortMessage,
+					"notification_content"	=> $isMine ? "You: {$shortMessage}" : $shortMessage,
 					"is_read"				=> $isMine ? 1 : 0,
 					"created_at"			=> date("Y-m-d H:i:s")
 				],
