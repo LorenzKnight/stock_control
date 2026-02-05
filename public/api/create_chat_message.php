@@ -28,6 +28,11 @@ try {
 	$toUserId = intval($_POST["to_user_id"] ?? 0);
 	$message  = trim($_POST["message"] ?? "");
 
+	$max = 40;
+	$shortMessage = (mb_strlen($message) > $max)
+		? mb_substr($message, 0, $max) . '...'
+		: $message;
+
 	if ($message === "") {
 		throw new Exception("Message is required.");
 	}
@@ -130,8 +135,8 @@ try {
 			notify_user(
 				$toUserId,
 				$userId,
+				$shortMessage,
 				null,
-				$chatId,
 				'Direct Message',
 				0
 			);
@@ -140,13 +145,11 @@ try {
 			notify_user(
 				$userId,
 				$toUserId,
+				$shortMessage,
 				"Direct message started with user ID {$toUserId} by {$userId}.",
-				$chatId,
 				'Direct Message',
 				1
 			);
-
-			// triggerRealtimeNotification($toUserId);
 		}
 	}
 
@@ -199,8 +202,9 @@ try {
 			update_table(
 				"notifications",
 				[
-					"is_read"      => $isMine ? 1 : 0,
-					"created_at"   => date("Y-m-d H:i:s")
+					"notification_content"	=> $isMine ? null : $shortMessage,
+					"is_read"				=> $isMine ? 1 : 0,
+					"created_at"			=> date("Y-m-d H:i:s")
 				],
 				[
 					"notification_id" => $n["notification_id"]
@@ -208,6 +212,14 @@ try {
 			);
 		}
 	}
+
+	// 1️⃣ Evento realtime para el chat
+	triggerRealtimeDirectMessage(
+		$chatId,
+		$userId,
+		$toUserId,
+		$message
+	);
 
 	// ⚡ Push realtime (WebSocket)
 	triggerRealtimeNotification($toUserId);

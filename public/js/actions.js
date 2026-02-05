@@ -9315,6 +9315,29 @@ document.addEventListener("DOMContentLoaded", async function () {
 		box.scrollTop = box.scrollHeight;
 	}
 
+
+	window.DM = window.DM || {};
+	
+	window.DM.refreshChat = async function (chatId) {
+		console.log('[DM] Refreshing chat:', chatId);
+		if (!chatId) return;
+
+		try {
+			const res = await fetch(`api/get_chat_messages.php?chat_id=${chatId}`, {
+				headers: { 'Accept': 'application/json' }
+			});
+			const data = await res.json();
+
+			if (!data.success || !Array.isArray(data.messages)) return;
+
+			renderDMHistory(data.messages);
+			updateReadStatus(chatId);
+
+		} catch (e) {
+			console.error('[DM] refreshChat error:', e);
+		}
+	};
+
 	function formatTime(dateStr) {
 		const d = new Date(dateStr);
 		return d.toLocaleTimeString([], {

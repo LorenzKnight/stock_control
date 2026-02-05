@@ -77,89 +77,108 @@ document.addEventListener("DOMContentLoaded", async function () {
 				/* =====================================================
 				💬 DIRECT MESSAGE
 				===================================================== */
+				// console.log('[WS] Mensaje recibido:', data);
 				if (data.type === 'direct_message') {
 					console.log('💬 Direct message recibido:', data);
 
-					const box = document.getElementById('dm-messages-box');
-					if (!box) return;
+					// const box = document.getElementById('dm-messages-box');
+					// if (!box) return;
 
-					const msg = document.createElement('div');
-					msg.className = 'dm-message incoming';
-					msg.textContent = data.message;
+					// const msg = document.createElement('div');
+					// msg.className = 'dm-message incoming';
+					// msg.textContent = data.message;
 
-					box.appendChild(msg);
-					box.scrollTop = box.scrollHeight;
-					return; // ⬅️ IMPORTANTE: no sigue al flujo de notification
+					// box.appendChild(msg);
+					// box.scrollTop = box.scrollHeight;
+					// return; // ⬅️ IMPORTANTE: no sigue al flujo de notification
+
+					const activeChatId = Number(localStorage.getItem('activeChatId'));
+
+					// 👉 SOLO refrescar si estoy viendo ese chat
+					if (activeChatId && Number(data.chat_id) === activeChatId) {
+						window.DM?.refreshChat(activeChatId);
+					}
+
+					return;
 				}
 
 				/* =====================================================
 				🔔 NOTIFICATIONS
 				===================================================== */
-				if (data.type !== 'notification') return;
+				if (data.type === 'notification') {
+					// // 🔄 refrescar lista de notificaciones
+					// if (typeof window.fetchAndRenderNotifications === 'function') {
+					// 	window.fetchAndRenderNotifications();
+					// }
 
-				const me = Number(currentUserId);
+					// if (data.type !== 'notification') return;
 
-				let matchesMe = Number.isFinite(Number(data.to_user_id)) && Number(data.to_user_id) === me;
+					const me = Number(currentUserId);
 
-				if (!matchesMe && Array.isArray(data.to_user_id)) {
-					matchesMe = data.to_user_id.map(Number).includes(me);
-				}
-				if (!matchesMe && (data.to_user_id === null || data.to_user_id === 'all')) {
-					matchesMe = true;
-				}
+					let matchesMe = Number.isFinite(Number(data.to_user_id)) && Number(data.to_user_id) === me;
 
-				// console.log('[WS] incoming notification', data, { me, matchesMe });
-				if (!matchesMe) return;
+					if (!matchesMe && Array.isArray(data.to_user_id)) {
+						matchesMe = data.to_user_id.map(Number).includes(me);
+					}
+					if (!matchesMe && (data.to_user_id === null || data.to_user_id === 'all')) {
+						matchesMe = true;
+					}
 
-				const message = data.message;
-				const notifType = data.notification_type || 'General';
-				const link = data.link;
+					// console.log('[WS] incoming notification', data, { me, matchesMe });
+					if (!matchesMe) return;
 
-				const container = document.getElementById('notification-container');
-				if (!container) {
-					console.warn('[WS] #notification-container no encontrado');
+					await checkNotifications();
+					refetchMessages(); 
+
+					const message = data.message;
+					const notifType = data.notification_type || 'General';
+					const link = data.link;
+
+					const container = document.getElementById('notification-container');
+					if (!container) return;
+
+					const box = document.createElement('div');
+					box.classList.add('notification-box');
+
+					// box.innerHTML = `
+					// 	<div class="notification-title">${notifType}</div>
+					// 	<div class="notification-message">${message}</div>
+					// `;
+
+					const titleEl = document.createElement('div');
+					titleEl.className = 'notification-title';
+					titleEl.textContent = notifType;
+
+					const msgEl = document.createElement('div');
+					msgEl.className = 'notification-message';
+					msgEl.textContent = message;
+
+					box.append(titleEl, msgEl);
+
+					if (link) {
+						box.style.cursor = 'pointer';
+						box.addEventListener('click', () => {
+							window.location.href = link;
+						});
+					}
+
+					container.appendChild(box);
+
+					// Forzar reflow para que la transición funcione
+					void box.offsetWidth;
+					box.classList.add('show');
+
+					// await checkNotifications();
+					// refetchMessages(); 
+
+					// Eliminar después de 5 segundos
+					setTimeout(() => {
+						box.classList.remove('show');
+						setTimeout(() => container.removeChild(box), 300); // coincide con el transition
+					}, 10000);
+
 					return;
 				}
-
-				const box = document.createElement('div');
-				box.classList.add('notification-box');
-
-				// box.innerHTML = `
-				// 	<div class="notification-title">${notifType}</div>
-				// 	<div class="notification-message">${message}</div>
-				// `;
-
-				const titleEl = document.createElement('div');
-				titleEl.className = 'notification-title';
-				titleEl.textContent = notifType;
-
-				const msgEl = document.createElement('div');
-				msgEl.className = 'notification-message';
-				msgEl.textContent = message;
-
-				box.append(titleEl, msgEl);
-
-				if (link) {
-					box.style.cursor = 'pointer';
-					box.addEventListener('click', () => {
-						window.location.href = link;
-					});
-				}
-
-				container.appendChild(box);
-
-				// Forzar reflow para que la transición funcione
-				void box.offsetWidth;
-				box.classList.add('show');
-
-				await checkNotifications();
-				refetchMessages(); 
-
-				// Eliminar después de 5 segundos
-				setTimeout(() => {
-					box.classList.remove('show');
-					setTimeout(() => container.removeChild(box), 300); // coincide con el transition
-				}, 10000);
 			});
 		}
 

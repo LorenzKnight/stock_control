@@ -1,9 +1,45 @@
 <?php
-// Llama a esta función para enviar una notificación en tiempo real a un usuario específico
-// Asegúrate de que el servidor WebSocket esté en funcionamiento y accesible
-function triggerRealtimeNotification($userId) {
+function isLocalEnv(): bool
+{
+	$env = getenv('APP_ENV') ?: 'production';
+	return strtolower($env) === 'local';
+}
+
+function isProductionEnv(): bool
+{
+	return !isLocalEnv();
+}
+
+function getWsBridgeUrl(): string
+{
+	if (isLocalEnv()) {
+		return 'http://127.0.0.1:3002/notify';
+	}
+
+	// Producción (backend → ws bridge local)
+	return 'http://127.0.0.1:3002/notify';
+}
+
+function getNotifyHeaders(): array
+{
 	$headers = ['Content-Type: application/json'];
 
+	if (isProductionEnv()) {
+		$token = getenv('NOTIFY_TOKEN');
+		if ($token) {
+			$headers[] = 'X-Notify-Token: ' . $token;
+		}
+	}
+
+	return $headers;
+}
+
+
+
+// Llama a esta función para enviar una notificación en tiempo real a un usuario específico
+// Asegúrate de que el servidor WebSocket esté en funcionamiento y accesible
+function triggerRealtimeNotification(int $userId): void
+{
 	$res = json_decode(select_from("notifications", ["*"], [
 		"to_user_id" => $userId,
 		"is_read" => 0
@@ -47,67 +83,106 @@ function triggerRealtimeNotification($userId) {
 		"link" => $notif["notification_link"] ?? null
 	];
 
-	// LOCAL (dev) 
-	if (file_exists('/.dockerenv') || getenv('USE_DOCKER_BRIDGE') === '1') {
-		$url = 'http://host.docker.internal:3002/notify';
-		// $url = 'https://www.allstockcontrol.com/notify';
-	} else {
-		$hostname = $_SERVER['HTTP_HOST'] ?? 'localhost';
-		$hostname = explode(':', $hostname)[0];
-		$url = "http://{$hostname}:3002/notify";
-	}
-
-	// Recomendado en producción: llamar al bridge local (127.0.0.1:3002)
-	// if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
-	// 	// Prod detrás de Nginx SSL
-	// 	$url = 'http://127.0.0.1:3002/notify';
-
-	// 	// Si tu ws-server exige token:
-	// 	$notifyToken = getenv('NOTIFY_TOKEN');
-	// 	if (!empty($notifyToken)) {
-	// 		$headers[] = 'X-Notify-Token: ' . $notifyToken;
-	// 	}
-	// } else {
-	// 	// Local/dev
-	// 	$url = 'http://127.0.0.1:3002/notify';
-	// }
+	$url     = getWsBridgeUrl();
+	$headers = getNotifyHeaders();
 
 	$ch = curl_init($url);
-	curl_setopt($ch, CURLOPT_POST, true);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+	curl_setopt_array($ch, [
+        CURLOPT_POST           => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER     => $headers,
+        CURLOPT_POSTFIELDS     => json_encode($payload),
+        CURLOPT_TIMEOUT        => 2,
+    ]);
 	$result		= curl_exec($ch);
 	$httpCode	= curl_getinfo($ch, CURLINFO_HTTP_CODE);
 	$error		= curl_error($ch);
 	curl_close($ch);
 
 	if ($result === false || $httpCode >= 400) {
-		error_log("❌ WS bridge error $httpCode: $error | url=$url | payload=" . json_encode($payload));
-	} else {
-		error_log("✅ WS bridge OK ($httpCode): $result");
-	}
+        if (isProductionEnv()) {
+            error_log(
+                "❌ WS notification error $httpCode: $error | payload=" .
+                json_encode($payload)
+            );
+        }
+    }
+}
+
+function triggerRealtimeDirectMessage(
+	int $chatId,
+	int $fromUserId,
+	int $toUserId,
+	string $message
+): void {
+	$payload = [
+		"type"         => "direct_message",
+		"chat_id"      => $chatId,
+		"from_user_id" => $fromUserId,
+		"to_user_id"   => $toUserId,
+		"message"      => $message
+	];
+
+	$url     = getWsBridgeUrl();
+	$headers = getNotifyHeaders();
+
+	$ch = curl_init($url);
+	curl_setopt_array($ch, [
+        CURLOPT_POST           => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER     => $headers,
+        CURLOPT_POSTFIELDS     => json_encode($payload),
+        CURLOPT_TIMEOUT        => 2,
+    ]);
+	$result		= curl_exec($ch);
+	$httpCode	= curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	$error		= curl_error($ch);
+	curl_close($ch);
+
+	if ($result === false || $httpCode >= 400) {
+        if (isProductionEnv()) {
+            error_log(
+                "❌ WS direct_message error $httpCode: $error | payload=" .
+                json_encode($payload)
+            );
+        }
+    }
 }
 
 
-function sendForceLogout($userId) {
-    // $url = "http://127.0.0.1:3002/notify";
-	$url = 'http://host.docker.internal:3002/notify';
+function sendForceLogout(int $userId): void
+{
+    if ($userId <= 0) {
+		return;
+	}
 
-    $payload = [
-        "message" => "force_logout",
-        "user_id" => $userId
-    ];
+	$payload = [
+		"type"    => "force_logout",
+		"user_id" => $userId
+	];
 
-    $options = [
-        "http" => [
-            "header"  => "Content-Type: application/json\r\n",
-            "method"  => "POST",
-            "content" => json_encode($payload),
-            "timeout" => 1
-        ]
-    ];
+	$url     = getWsBridgeUrl();
+	$headers = getNotifyHeaders();
 
-    $context  = stream_context_create($options);
-    @file_get_contents($url, false, $context);
+	$ch = curl_init($url);
+	curl_setopt_array($ch, [
+		CURLOPT_POST           => true,
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_HTTPHEADER     => $headers,
+		CURLOPT_POSTFIELDS     => json_encode($payload),
+		CURLOPT_TIMEOUT        => 1,
+	]);
+
+	$result   = curl_exec($ch);
+	$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	$error    = curl_error($ch);
+
+	curl_close($ch);
+
+	if (($result === false || $httpCode >= 400) && isProductionEnv()) {
+		error_log(
+			"❌ WS force_logout error $httpCode: $error | payload=" .
+			json_encode($payload)
+		);
+	}
 }
