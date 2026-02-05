@@ -75,9 +75,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 				/* =====================================================
 				💬 DIRECT MESSAGE
 				===================================================== */
-				// console.log('[WS] Mensaje recibido:', data);
 				if (data.type === 'direct_message') {
-					console.log('💬 Direct message recibido:', data);
+					// console.log('💬 Direct message recibido:', data);
 
 					const activeChatId = Number(localStorage.getItem('activeChatId'));
 
