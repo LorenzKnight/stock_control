@@ -208,12 +208,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 								<td width="60%" align="left" valign="middle">
 									<p>${notif.is_read == 0 ? `<strong>${notif.from_user_name || 'Notification'}</strong>` : `${notif.from_user_name || 'Notification'}`}</p>
 									<p>
-										${notif.notification_type == 'Direct Message' ? 
-											(
-												notif.notification_content.length > 20
-												? notif.notification_content.slice(0, 20) + '…'
-												: notif.notification_content
-											)
+										${notif.notification_type == 'Direct Message'
+											? (
+												(notif.notification_content || '').length > 20
+													? (notif.notification_content || '').slice(0, 20) + '…'
+													: (notif.notification_content || '')
+												)
 										: notif.notification_type || ''}
 									</p>
 								</td>
