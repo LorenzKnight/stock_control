@@ -1,8 +1,8 @@
 <?php
 function isLocalEnv(): bool
 {
-	$env = getenv('APP_ENV') ?: 'production';
-	return strtolower($env) === 'local';
+	$env = strtolower(getenv('APP_ENV') ?: 'production');
+    return in_array($env, ['local', 'dev', 'development'], true);
 }
 
 function isProductionEnv(): bool

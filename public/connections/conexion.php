@@ -5,20 +5,36 @@ if (!defined('DISABLE_SESSION') && !defined('IS_STRIPE_WEBHOOK') && session_stat
 
 function get_pg_connection()
 {
-	// $conn_host    = 'host=127.0.0.1'; // live server
-	// $conn_port    = ' port=5432';
-	// $conn_dbname  = ' dbname=stock_control_db';
-	// $conn_user    = ' user=admin';
-	// $conn_pass    = ' password=Bohe03++++';
+	if (isProductionEnv()) {
+        $host = $_ENV['DB_HOST_PROD'];
+        $port = $_ENV['DB_PORT_PROD'];
+        $name = $_ENV['DB_NAME_PROD'];
+        $user = $_ENV['DB_USER_PROD'];
+        $pass = $_ENV['DB_PASSWORD_PROD'];
+    } else {
+        $host = $_ENV['DB_HOST_LOCAL'];
+        $port = $_ENV['DB_PORT_LOCAL'];
+        $name = $_ENV['DB_NAME_LOCAL'];
+        $user = $_ENV['DB_USER_LOCAL'];
+        $pass = $_ENV['DB_PASSWORD_LOCAL'];
+    }
 
-	$conn_host    = 'host=stock_pgdb'; //container's name instead for "localhost"
-	$conn_port    = ' port=5432';
-	$conn_dbname  = ' dbname=stock_control_db';
-	$conn_user    = ' user=admin';
-	$conn_pass    = ' password=REMOVED_PASSWORD';
+	if (!$name || !$user || !$pass) {
+        error_log('❌ DB credentials missing');
+        die('Database configuration error');
+    }
+
+	$connString = sprintf(
+        "host=%s port=%s dbname=%s user=%s password=%s",
+        $host,
+        $port,
+        $name,
+        $user,
+        $pass
+    );
 
 	global $sql;
-	$sql = pg_connect($conn_host . $conn_port . $conn_dbname . $conn_user . $conn_pass);
+	$sql = pg_connect($connString);
 	if ($sql == false) {
 		echo "sql connection error!";
 		exit();
