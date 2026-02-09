@@ -1,10 +1,8 @@
 <?php
+require_once ('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET");
-header("Access-Control-Allow-Headers: Content-Type, Accept");
 
 $response = [
     "success"   => false,
@@ -14,9 +12,11 @@ $response = [
 ];
 
 try {
-    $userId = $_SESSION['sc_UserId'] ?? null;
+    $authUser = requireAuth();
+	$userId = $authUser["user_id"] ?? null;
+
     if (!$userId) {
-        throw new Exception("Unauthorized: No user session found.");
+        throw new Exception("Unauthorized access. User not found or invalid token.");
     }
 
 	$search = strtolower(trim($_GET["search"] ?? ""));

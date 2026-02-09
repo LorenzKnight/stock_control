@@ -427,7 +427,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 														<table width="100%" align="center" cellspacing="0" style="margin: 10px 0 15px;">
 															<tr valign="baseline">
 																<td colspan="2" align="center">
-																	<input class="form-input-style" type="number" name="" id="">
+																	<input class="form-input-style" type="number" name="quantity" required placeholder="Quantity" min="1">
+																	<input type="hidden" name="product_id" value="${product.product_id}">
+																	<input type="hidden" name="notification_id" value="${notif.notification_id}">
 																</td>
 															</tr>
 															<tr valign="baseline" class="form_height" >
@@ -435,7 +437,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 																	<button type="button" class="neutral-btn">Cancel</button>
 																</td>
 																<td width="50%" align="right" valign="middle">
-																	<input type="submit" class="button-style-agree" value="Create" />
+																	<input type="submit" class="button-style-agree" value="Send" />
 																</td>
 															</tr>
 														</table>
@@ -455,7 +457,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									let notificationContent = '';
 
 									if (notif.notification_type === 'Product Request') {
-										notificationContent = `${message || ''} ${productHtml || ''} ${answerProductHtml || ''}`;
+										notificationContent = `${message || ''} ${productHtml || ''} ${notif.notification_link !== 0 ? answerProductHtml : ''}`;
 									}
 									else if (notif.notification_type === 'Stock Update') {
 										notificationContent = `${message || ''} ${productHtml || ''} ${updateStockHtml || ''}`;
@@ -504,6 +506,54 @@ document.addEventListener("DOMContentLoaded", async function () {
 										`;
 									}
 									
+									const formAnswerProdReq = document.getElementById('formAnswerProdReq');
+									if (formAnswerProdReq) {
+										formAnswerProdReq.addEventListener('submit', async function (e) {
+											e.preventDefault();
+
+											const formData = new FormData(this);
+											
+											try {
+												const response = await fetch('api/answer_product_request.php', {
+													method: 'POST',
+													headers: { Accept: 'application/json' },
+													body: formData
+												});
+
+												const data = await response.json();
+
+												const banner = document.getElementById('status-message');
+												const statusText = document.getElementById('status-text');
+												const statusImage = document.getElementById('status-image');
+
+												statusText.innerText = data.message || 'No message';
+												statusImage.src = data.img_gif || '../images/sys-img/info.gif';
+												banner.style.display = 'block';
+												banner.style.opacity = '1';
+
+												if (data.success) {
+													setTimeout(() => {
+														banner.style.opacity = '0';
+														setTimeout(() => {
+															window.location.reload();
+														}, 800);
+													}, 2500);
+												}
+
+											} catch (error) {
+												console.error('Error submitting product answer:', error);
+
+												const banner = document.getElementById('status-message');
+												const statusText = document.getElementById('status-text');
+												const statusImage = document.getElementById('status-image');
+
+												statusText.innerText = 'Error processing the request.';
+												statusImage.src = '../images/sys-img/error.gif';
+												banner.style.display = 'block';
+												banner.style.opacity = '1';
+											}
+										});
+									}
 								} catch (err) {
 									console.error("Error marking notification as read:", err);
 								}
