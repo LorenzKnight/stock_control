@@ -405,6 +405,7 @@ CREATE TABLE IF NOT EXISTS notifications (
 	notification_type VARCHAR(50) NULL, -- Ej: 'message', 'alert', 'reminder'
 	notification_content TEXT NULL,
 	notification_link VARCHAR(255) NULL, -- Enlace relacionado con la notificación
+	handled INTEGER DEFAULT 0, -- 0: No manejada, 1: Manejada
 	is_read INTEGER DEFAULT 0, -- 0: No leído, 1: Leído
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

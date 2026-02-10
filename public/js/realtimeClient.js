@@ -457,7 +457,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									let notificationContent = '';
 
 									if (notif.notification_type === 'Product Request') {
-										notificationContent = `${message || ''} ${productHtml || ''} ${notif.notification_link !== 0 ? answerProductHtml : ''}`;
+										notificationContent = `${message || ''} ${productHtml || ''} ${Number(notif.handled) === 0 ? answerProductHtml : 'Handled'}`;
 									}
 									else if (notif.notification_type === 'Stock Update') {
 										notificationContent = `${message || ''} ${productHtml || ''} ${updateStockHtml || ''}`;

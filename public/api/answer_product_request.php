@@ -18,10 +18,14 @@ try {
 
     $authUser = requireAuth();
     $userId = intval($authUser["user_id"] ?? 0);
+	$companyId = intval($authUser["company_id"] ?? null);
 
     if (!$userId) {
 		throw new Exception("Unauthorized access. User not found or invalid token.");
     }
+	if (!$companyId) {
+		throw new Exception("User company not found.");
+	}
 
     $quantity       = intval($_POST["quantity"] ?? 0);
     $productId      = intval($_POST["product_id"] ?? 0);
@@ -43,7 +47,9 @@ try {
 			"notification_id",
 			"from_user_id",
 			"to_user_id",
-			"notification_type"
+			"notification_type",
+			"notification_link",
+			"created_at"
 		],
 		[
 			"notification_id" => $notificationId,
@@ -58,13 +64,18 @@ try {
 
 	$notif = $notifCheck["data"];
 
-	if ($notif["notification_type"] !== "Product Request") {
+	if (($notif["notification_type"] ?? "") !== "Product Request") {
 		throw new Exception("Invalid notification type.");
 	}
 
 	$fromUserId = intval($notif["from_user_id"]);
 
-	$productData = json_decode(select_from(
+	if ($fromUserId <= 0) {
+        throw new Exception("Invalid requesting user.");
+    }
+
+	// 5) Get origin product (supplier/origin company)
+    $productData = json_decode(select_from(
         "products",
         ["*"],
         ["product_id" => $productId],
@@ -77,7 +88,12 @@ try {
 
     $productInfo = $productData["data"];
 
-	if ($quantity > intval($productInfo["quantity"])) {
+    if (isset($productInfo["company_id"]) && intval($productInfo["company_id"]) !== $companyId) {
+        throw new Exception("This product does not belong to your company.");
+    }
+
+	$originQty = intval($productInfo["quantity"] ?? 0);
+    if ($quantity > $originQty) {
         throw new Exception("Requested quantity exceeds available stock.");
     }
 
@@ -92,7 +108,15 @@ try {
         throw new Exception("Requesting user not found.");
     }
 
-    $requestCompany = $requestUser["data"]["company_id"] ?? "Unknown Company";
+    $requestCompany = intval($requestUser["data"]["company_id"] ?? 0);
+
+	if (!$requestCompany) {
+        throw new Exception("Requesting user's company not found.");
+    }
+
+	if ($requestCompany === $companyId) {
+        throw new Exception("Cannot transfer stock to the same company.");
+    }
 
     $productToUpdate = json_decode(select_from(
         "products",
@@ -104,11 +128,32 @@ try {
         ["fetch_first" => true]
     ), true);
 
-    if ($productToUpdate["success"] && !empty($productToUpdate["data"])) {
-        $productUpdateResult = update_table(
+	$newOriginQty = $originQty - $quantity;
+
+	$originProduct = update_table(
+		"products",
+		[
+			"quantity" => $newOriginQty
+		],
+		[
+			"product_id" => $productId,
+			"company_id" => $companyId
+		]
+	);
+
+	$originProductResult = json_decode($originProduct, true);
+
+	if (empty($originProductResult["success"]) || !$originProductResult["success"]) {
+		throw new Exception("Failed to update origin product stock.");
+	}
+
+    if (!empty($productToUpdate["success"]) && !empty($productToUpdate["data"])) {
+		$destCurrentQty = intval($productToUpdate["data"]["quantity"] ?? 0);
+		
+        $destUpdate = update_table(
             "products",
             [
-                "quantity" => intval($productToUpdate["data"]["quantity"]) - $quantity
+                "quantity" => $destCurrentQty + $quantity
             ],
             [
                 "product_name" => $productInfo["product_name"],
@@ -116,13 +161,17 @@ try {
             ]
         );
 
-        if (empty($productUpdateResult["success"]) || !$productUpdateResult["success"]) {
+		$destUpdateResult = json_decode($destUpdate, true);
+
+        if (empty($destUpdateResult["success"]) || !$destUpdateResult["success"]) {
+			update_table(
+                "products",
+                ["quantity" => $originQty],
+                ["product_id" => $productId, "company_id" => $companyId]
+            );
             throw new Exception("Failed to update product quantity. Please try again.");
         }
     } else {
-		// CREAR LA LOGICA PARA QUE SE CREE UN REGISTRO DE PRODUCTO NUEVO EN LA EMPRESA DEL USUARIO QUE HIZO LA SOLICITUD, 
-		// CON LA CANTIDAD SOLICITADA Y LOS DEMÁS DATOS IGUALES AL PRODUCTO ORIGINAL (EXCEPTO EL ID, QUE DEBE SER AUTO_INCREMENT). 
-		// SI SE DECIDE NO CREAR UN NUEVO REGISTRO, SIMPLEMENTE LANZAR UNA EXCEPCIÓN INDICANDO QUE EL PRODUCTO A ACTUALIZAR NO SE ENCONTRÓ EN LA EMPRESA DEL USUARIO SOLICITANTE.
         $newProductData = [
 			"company_id"		=> $requestCompany,
 			"create_by"			=> $userId,
@@ -132,9 +181,9 @@ try {
 			"product_name"		=> $productInfo["product_name"] ?? null,
 			"hs_code"			=> $productInfo["hs_code"] ?? null,
 			"product_type"		=> $productInfo["product_type"] ?? null,
-			"product_mark"		=> $productInfo["product_mark"] ?? null,
-			"product_model"		=> $productInfo["product_model"] ?? null,
-			"product_sub_model" => $productInfo["product_sub_model"] ?? null,
+			// "product_mark"		=> $productInfo["product_mark"] ?? null,
+			// "product_model"		=> $productInfo["product_model"] ?? null,
+			// "product_sub_model" => $productInfo["product_sub_model"] ?? null,
 			"product_year"		=> $productInfo["product_year"] ?? null,
 			"description"		=> $productInfo["description"] ?? null,
 			"currency"			=> $productInfo["currency"] ?? null,
@@ -150,15 +199,25 @@ try {
 
         $newProductResult = insert_into("products", $newProductData);
 
-        if (empty($newProductResult["success"]) || !$newProductResult["success"]) {
+        if (!$newProductResult["success"] || empty($newProductResult["id"])) {
+			update_table(
+                "products",
+                ["quantity" => $originQty],
+                ["product_id" => $productId, "company_id" => $companyId]
+            );
             throw new Exception("Failed to create new product in requesting user's company.");
         }
     }
 
     // 6️⃣ Marcar notificación como leída / respondida
-	update_table("notifications",
-		["notification_link" => 0],
-		["notification_id" => $notificationId]
+	$notifUpdate = update_table("notifications",
+		["handled" => 1],
+		[
+			"from_user_id"			=> $fromUserId,
+			"notification_type"		=> "Product Request",
+			"notification_content"	=> "{$productInfo["product_name"]} was requested",
+			"handled"				=> 0
+		]
 	);
 
     log_activity(
