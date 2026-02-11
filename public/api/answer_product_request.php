@@ -197,7 +197,7 @@ try {
 			"created_at"		=> date("Y-m-d H:i:s")
         ];
 
-        $newProductResult = insert_into("products", $newProductData);
+        $newProductResult = json_decode(insert_into("products", $newProductData, ["id" => "product_id"]), true);
 
         if (!$newProductResult["success"] || empty($newProductResult["id"])) {
 			update_table(

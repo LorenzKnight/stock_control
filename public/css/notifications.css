@@ -72,8 +72,15 @@
     margin: 10px auto;
 }
 
-
-
+.notification-handled {
+	background-color: var(--alert-green);
+	padding: 5px;
+	border-radius: 5px;
+	margin: 10px auto;
+	text-align: center;
+	color: var(--agree-green);
+	font-weight: bold;
+}
 
 
 /* ############################### CHAT ############################### */

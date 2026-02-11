@@ -17,8 +17,10 @@
     --cancel-dark-red: rgb(185, 1, 1);
     --agree-blue: rgb(1, 115, 196);
     --agree-green: rgb(0, 151, 0);
+    --alert-green: rgb(231, 251, 231);
     --warning-orange: rgb(236, 103, 38);
     --warning-yellow: rgb(250, 223, 183);
+    --warning-red: rgb(251, 165, 165);
     --main-text-color: #333;
 
     --basic-green: rgb(62 165 139);

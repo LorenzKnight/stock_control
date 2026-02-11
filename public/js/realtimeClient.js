@@ -448,6 +448,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 												<div class="update-stock-section">
 
 												</div>`;
+
+												handled = `
+												<div class="notification-handled">
+													<p>Handled</p>
+												</div>`;
 											}
 										} catch (e) {
 											console.error('Error fetching product by ID:', e);
@@ -457,7 +462,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									let notificationContent = '';
 
 									if (notif.notification_type === 'Product Request') {
-										notificationContent = `${message || ''} ${productHtml || ''} ${Number(notif.handled) === 0 ? answerProductHtml : 'Handled'}`;
+										notificationContent = `${message || ''} ${productHtml || ''} ${Number(notif.handled) === 0 ? answerProductHtml : handled}`;
 									}
 									else if (notif.notification_type === 'Stock Update') {
 										notificationContent = `${message || ''} ${productHtml || ''} ${updateStockHtml || ''}`;
