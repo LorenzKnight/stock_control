@@ -13,6 +13,98 @@
         align-items: center;
         align-content: center;
     }
+
+    form label {
+        font-size: 9px;
+        color: var(--main-text-color);
+        text-align: center;
+        display: block;
+        margin-bottom: 5px;
+        position: fixed;
+        margin: 8px 0 0 12px;
+    }
+
+    .form-input-style {
+        width: 90%;
+        margin: 5px 0;
+        padding: 10px;
+        font-size: 12px;
+        border-radius: 5px;
+        border: 1px solid var(--clr-border);
+        text-align: center;
+        -moz-appearance: inherit; 
+        -o-appearance: inherit;
+        -ms-appearance: inherit;
+        appearance: inherit;
+        -webkit-appearance: inherit;
+    }
+
+    .form-medium-input-style {
+        width: 80%;
+        margin: 5px 0;
+        padding: 10px;
+        font-size: 12px;
+        border-radius: 5px;
+        border: 1px solid var(--clr-border);
+        text-align: center;
+        -moz-appearance:inherit; 
+        -o-appearance:inherit;
+        -ms-appearance:inherit;
+        appearance:inherit;
+        -webkit-appearance:inherit;
+    }
+
+    .form-small-input-style {
+        width: 70%;
+        margin: 5px 0;
+        padding: 10px;
+        font-size: 12px;
+        border-radius: 5px;
+        border: 1px solid var(--clr-border);
+        text-align: center;
+        -moz-appearance:inherit; 
+        -o-appearance:inherit;
+        -ms-appearance:inherit;
+        appearance:inherit;
+        -webkit-appearance:inherit;
+    }
+
+    .form-mini-input-style {
+        width: 25px;
+        height: 20px;
+        margin: 5px 0;
+        padding: 5px 0 5px 10px;
+        font-size: 12px;
+        border-radius: 5px;
+        border: 1px solid var(--clr-border);
+        text-align: center;
+        -moz-appearance: inherit; 
+        -o-appearance: inherit;
+        -ms-appearance: inherit;
+        appearance: inherit;
+        -webkit-appearance: inherit;
+    }
+
+    .search-field {
+        width: 90%;
+        margin: 5px 0;
+        border: 0;
+        border-radius: 4px;
+        padding: 4% 2%;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .big-search-field {
+        width: 98%;
+        border-radius: 5px;
+        border: 1px solid var(--clr-border);
+        font-size: 12px;
+        text-align: center;
+        margin: 0;
+        padding: 10px 0;
+        
+    }
 }
 
 @media (max-width: 600px) and (orientation: portrait) {
@@ -28,6 +120,207 @@
         font-weight: 200;
         align-items: center;
         align-content: center;
+    }
+
+    form label {
+        font-size: 9px;
+        color: var(--main-text-color);
+        text-align: center;
+        display: block;
+        margin-bottom: 5px;
+        position: fixed;
+        margin: 8px 0 0 12px;
+    }
+
+    .form-input-style {
+        width: 90%;
+        margin: 5px 0;
+        padding: 10px;
+        font-size: 12px;
+        border-radius: 5px;
+        border: 1px solid var(--clr-border);
+        text-align: center;
+        -moz-appearance: inherit; 
+        -o-appearance: inherit;
+        -ms-appearance: inherit;
+        appearance: inherit;
+        -webkit-appearance: inherit;
+    }
+
+    .form-medium-input-style {
+        width: 80%;
+        margin: 5px 0;
+        padding: 10px;
+        font-size: 12px;
+        border-radius: 5px;
+        border: 1px solid var(--clr-border);
+        text-align: center;
+        -moz-appearance:inherit; 
+        -o-appearance:inherit;
+        -ms-appearance:inherit;
+        appearance:inherit;
+        -webkit-appearance:inherit;
+    }
+
+    .form-small-input-style {
+        width: 70%;
+        margin: 5px 0;
+        padding: 10px;
+        font-size: 12px;
+        border-radius: 5px;
+        border: 1px solid var(--clr-border);
+        text-align: center;
+        -moz-appearance:inherit; 
+        -o-appearance:inherit;
+        -ms-appearance:inherit;
+        appearance:inherit;
+        -webkit-appearance:inherit;
+    }
+
+    .form-mini-input-style {
+        width: 25px;
+        height: 20px;
+        margin: 5px 0;
+        padding: 5px 0 5px 10px;
+        font-size: 12px;
+        border-radius: 5px;
+        border: 1px solid var(--clr-border);
+        text-align: center;
+        -moz-appearance: inherit; 
+        -o-appearance: inherit;
+        -ms-appearance: inherit;
+        appearance: inherit;
+        -webkit-appearance: inherit;
+    }
+
+    .search-field {
+        width: 90%;
+        margin: 5px 0;
+        border: 0;
+        border-radius: 4px;
+        padding: 4% 2%;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .big-search-field {
+        width: 98%;
+        border-radius: 5px;
+        border: 1px solid var(--clr-border);
+        font-size: 12px;
+        text-align: center;
+        margin: 0;
+        padding: 10px 0;
+        
+    }
+}
+
+/* iPad / Tablet (iPad mini → iPad Pro, portrait + landscape) */
+@media (min-width: 601px) and (max-width: 1023px) {
+    .formular_front {
+        width: 420px;
+        margin: 40px auto 20px;
+        padding: 30px 0;
+        background: var(--main-bg-blue);
+        /* box-shadow: var(--main-box-shadow); */
+        backdrop-filter: blur( 4px );
+        -webkit-backdrop-filter: blur( 4px );
+        border-radius: 20px;
+        font-weight: 200;
+        align-items: center;
+        align-content: center;
+    }
+
+    form label {
+        font-size: 9px;
+        color: var(--main-text-color);
+        text-align: center;
+        display: block;
+        margin-bottom: 5px;
+        position: fixed;
+        margin: 8px 0 0 12px;
+    }
+
+    .form-input-style {
+        width: 90%;
+        margin: 5px 0;
+        padding: 15px;
+        font-size: 14px;
+        border-radius: 8px;
+        border: 1px solid var(--clr-border);
+        text-align: center;
+        -moz-appearance: inherit; 
+        -o-appearance: inherit;
+        -ms-appearance: inherit;
+        appearance: inherit;
+        -webkit-appearance: inherit;
+    }
+
+    .form-medium-input-style {
+        width: 80%;
+        margin: 5px 0;
+        padding: 10px;
+        font-size: 12px;
+        border-radius: 5px;
+        border: 1px solid var(--clr-border);
+        text-align: center;
+        -moz-appearance:inherit; 
+        -o-appearance:inherit;
+        -ms-appearance:inherit;
+        appearance:inherit;
+        -webkit-appearance:inherit;
+    }
+
+    .form-small-input-style {
+        width: 70%;
+        margin: 5px 0;
+        padding: 10px;
+        font-size: 12px;
+        border-radius: 5px;
+        border: 1px solid var(--clr-border);
+        text-align: center;
+        -moz-appearance:inherit; 
+        -o-appearance:inherit;
+        -ms-appearance:inherit;
+        appearance:inherit;
+        -webkit-appearance:inherit;
+    }
+
+    .form-mini-input-style {
+        width: 25px;
+        height: 20px;
+        margin: 5px 0;
+        padding: 5px 0 5px 10px;
+        font-size: 12px;
+        border-radius: 5px;
+        border: 1px solid var(--clr-border);
+        text-align: center;
+        -moz-appearance: inherit; 
+        -o-appearance: inherit;
+        -ms-appearance: inherit;
+        appearance: inherit;
+        -webkit-appearance: inherit;
+    }
+
+    .search-field {
+        width: 90%;
+        margin: 5px 0;
+        border: 0;
+        border-radius: 4px;
+        padding: 4% 2%;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .big-search-field {
+        width: 98%;
+        border-radius: 5px;
+        border: 1px solid var(--clr-border);
+        font-size: 12px;
+        text-align: center;
+        margin: 0;
+        padding: 10px 0;
+        
     }
 }
 
@@ -45,6 +338,98 @@
 		align-items: center;
 		align-content: center;
 	}
+
+    form label {
+        font-size: 9px;
+        color: var(--main-text-color);
+        text-align: center;
+        display: block;
+        margin-bottom: 5px;
+        position: fixed;
+        margin: 8px 0 0 12px;
+    }
+
+    .form-input-style {
+        width: 90%;
+        margin: 5px 0;
+        padding: 10px;
+        font-size: 12px;
+        border-radius: 5px;
+        border: 1px solid var(--clr-border);
+        text-align: center;
+        -moz-appearance: inherit; 
+        -o-appearance: inherit;
+        -ms-appearance: inherit;
+        appearance: inherit;
+        -webkit-appearance: inherit;
+    }
+
+    .form-medium-input-style {
+        width: 80%;
+        margin: 5px 0;
+        padding: 10px;
+        font-size: 12px;
+        border-radius: 5px;
+        border: 1px solid var(--clr-border);
+        text-align: center;
+        -moz-appearance:inherit; 
+        -o-appearance:inherit;
+        -ms-appearance:inherit;
+        appearance:inherit;
+        -webkit-appearance:inherit;
+    }
+
+    .form-small-input-style {
+        width: 70%;
+        margin: 5px 0;
+        padding: 10px;
+        font-size: 12px;
+        border-radius: 5px;
+        border: 1px solid var(--clr-border);
+        text-align: center;
+        -moz-appearance:inherit; 
+        -o-appearance:inherit;
+        -ms-appearance:inherit;
+        appearance:inherit;
+        -webkit-appearance:inherit;
+    }
+
+    .form-mini-input-style {
+        width: 25px;
+        height: 20px;
+        margin: 5px 0;
+        padding: 5px 0 5px 10px;
+        font-size: 12px;
+        border-radius: 5px;
+        border: 1px solid var(--clr-border);
+        text-align: center;
+        -moz-appearance: inherit; 
+        -o-appearance: inherit;
+        -ms-appearance: inherit;
+        appearance: inherit;
+        -webkit-appearance: inherit;
+    }
+
+    .search-field {
+        width: 90%;
+        margin: 5px 0;
+        border: 0;
+        border-radius: 4px;
+        padding: 4% 2%;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .big-search-field {
+        width: 98%;
+        border-radius: 5px;
+        border: 1px solid var(--clr-border);
+        font-size: 12px;
+        text-align: center;
+        margin: 0;
+        padding: 10px 0;
+        
+    }
 }
 
 .drop-area {
@@ -114,98 +499,6 @@
 
 .product-type-selection label :hover {
     color: var(--clr-white);
-}
-
-form label {
-    font-size: 9px;
-    color: var(--main-text-color);
-    text-align: center;
-    display: block;
-    margin-bottom: 5px;
-    position: fixed;
-    margin: 8px 0 0 12px;
-}
-
-.form-input-style {
-    width: 90%;
-    margin: 5px 0;
-    padding: 10px;
-    font-size: 12px;
-    border-radius: 5px;
-    border: 1px solid var(--clr-border);
-    text-align: center;
-    -moz-appearance: inherit; 
-    -o-appearance: inherit;
-    -ms-appearance: inherit;
-    appearance: inherit;
-    -webkit-appearance: inherit;
-}
-
-.form-medium-input-style {
-    width: 80%;
-    margin: 5px 0;
-    padding: 10px;
-    font-size: 12px;
-    border-radius: 5px;
-    border: 1px solid var(--clr-border);
-    text-align: center;
-    -moz-appearance:inherit; 
-    -o-appearance:inherit;
-    -ms-appearance:inherit;
-    appearance:inherit;
-    -webkit-appearance:inherit;
-}
-
-.form-small-input-style {
-    width: 70%;
-    margin: 5px 0;
-    padding: 10px;
-    font-size: 12px;
-    border-radius: 5px;
-    border: 1px solid var(--clr-border);
-    text-align: center;
-    -moz-appearance:inherit; 
-    -o-appearance:inherit;
-    -ms-appearance:inherit;
-    appearance:inherit;
-    -webkit-appearance:inherit;
-}
-
-.form-mini-input-style {
-    width: 25px;
-    height: 20px;
-    margin: 5px 0;
-    padding: 5px 0 5px 10px;
-    font-size: 12px;
-    border-radius: 5px;
-    border: 1px solid var(--clr-border);
-    text-align: center;
-    -moz-appearance: inherit; 
-    -o-appearance: inherit;
-    -ms-appearance: inherit;
-    appearance: inherit;
-    -webkit-appearance: inherit;
-}
-
-.search-field {
-    width: 90%;
-    margin: 5px 0;
-    border: 0;
-    border-radius: 4px;
-    padding: 4% 2%;
-    font-size: 14px;
-    text-align: center;
-}
-
-.big-search-field {
-    width: 98%;
-    border-radius: 5px;
-    border: 1px solid var(--clr-border);
-    font-size: 12px;
-    text-align: center;
-    margin: 0;
-    padding: 10px 0;
-    
 }
 
 .formular-frame {

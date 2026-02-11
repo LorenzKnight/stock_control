@@ -147,13 +147,75 @@ body {
     }
 }
 
+/* iPad / Tablet (iPad mini → iPad Pro, portrait + landscape) */
+@media (min-width: 601px) and (max-width: 1023px) {
+    .container-landscape {
+        /* background-color: var(--cancel-dark-red); */
+        flex: 1;
+        height: 94vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 0 10px;
+    }
+
+    .container {
+        /* max-width: 1200px;
+        margin: 0 auto; */
+        display: none;
+    }
+
+    .container-right,
+    .container-left {
+        flex: 1; 
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 0 60px;
+    }
+
+    .container-right h2,
+    .container-left h2 {
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .container-right p,
+    .container-left p {
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 1.8;
+        color: var(--main-text-color);
+    }
+
+    .title, .subtitle{
+        text-align: center;
+        margin: 50px 0;
+        padding: 0 15px;
+    }
+
+    .title h2 {
+        font-size: 18px;
+        font-weight: 300;
+        line-height: 1.5;
+    }
+
+    .subtitle p {
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 2;
+    }
+}
+
 @media (min-width: 1024px) {
     .container-landscape {
         display: none;
     }
 
     .container {
-        width: 1200px;
+        max-width: 1200px;
         margin: 0 auto;
     }
 

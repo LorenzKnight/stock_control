@@ -311,7 +311,7 @@ $i18n = [
 		'toggle_login'  => 'Logga in',
 
 		// banner
-		'home_main_h1'		 => 'Lagerhanteringssystem för småföretag',
+		'home_main_h1'		 => 'Lagerprogram för småföretag',
 		'home_main_subtitle' => 'Hantera ditt lager i realtid utan kalkylblad eller krångliga system. Full kontroll från valfri enhet.',
 		'home_cta'			 => 'Testa lagerhanteringssystemet gratis',
 		'cta_note'			 => 'Inget kreditkort krävs · Avsluta när som helst',

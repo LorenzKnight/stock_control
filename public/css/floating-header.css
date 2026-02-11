@@ -216,6 +216,116 @@
 	}
 }
 
+/* iPad / Tablet (iPad mini → iPad Pro, portrait + landscape) */
+@media (min-width: 601px) and (max-width: 1023px) {
+	.floating-logo {
+		display: none;
+	}
+
+	.floating-header {
+		position: fixed;
+		top: 40px; /* Retirado del top */
+		left: 50%;
+		transform: translateX(-50%); /* Para centrar horizontalmente */
+		width: 70%;
+		min-height: 65px;
+		background-color: transparent;
+		backdrop-filter: blur(6px);
+		color: var(--clr-white);
+		/* display: flex; */
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 20px;
+		border-radius: 40px;
+		transition: all 500ms ease;
+		z-index: 100;
+	}
+
+	.floating-header ul.menu {
+		display: none;
+	}
+
+	.mobile-menu-container {
+		display: flex; 
+	}
+
+	.floating-header ul.menu-hamburger {
+		display: flex;
+		padding: 0;
+		margin: 0;
+		list-style: none;
+		width: 100%;
+		justify-content: flex-end;
+		align-items: center;
+	}
+	
+	.mobile-logo img {
+		width: 60px;
+		border-radius: 50%;
+		margin-top: 10px;
+		object-fit: cover;
+	}
+
+	.floating-header ul.menu-hamburger img {
+		width: 38px;
+		filter: brightness(0) saturate(0) invert(100%);
+		opacity: 1;
+		transition: filter 0.3s ease;
+	}
+
+	.floating-header ul.menu-hamburger li {
+		flex: 1;
+		text-align: right;
+		display: inline-block;
+		margin: 0 10px;
+		text-transform: uppercase;
+	}
+
+	.floating-header.scrolled-out {
+	background-color: var(--clr-white);
+	color: var(--main-bg-dark-blue);
+	box-shadow: 0 4px 6px -4px var(--main-box-shadow);
+	transition: all 0.5s ease-in-out;
+	}
+
+	.floating-header.scrolled-out ul.menu-hamburger li a, .floating-header.scrolled-out .mobile-logo img {
+		filter: brightness(0) saturate(0) invert(0) !important;
+		color: var(--main-bg-dark-blue);
+		transition: all 0.5s ease-in-out;
+	}
+
+	.mobile-menu ul {
+		padding: 0;
+		margin: 0;
+		list-style: none;
+		width: 100%;
+	}
+
+	.mobile-menu ul li {
+		font-size: 18px;
+		text-align: center;
+		display: block;
+		margin: 20px 0;
+		text-transform: uppercase;
+		padding-bottom: 15px;
+	}
+
+	.floating-header ul li a {
+		color: var(--main-bg-dark-blue);
+		text-decoration: none;
+	}
+
+	.floating-header-transform {
+		background-color: var(--clr-white);
+		border-radius: 40px !important;
+	}
+
+	.img-color-change {
+		filter: brightness(0) saturate(0) invert(0) !important;
+		transition: all 0.3s ease;
+	}
+}
+
 @media (min-width: 1024px) {
     .floating-logo {
 		position: fixed;

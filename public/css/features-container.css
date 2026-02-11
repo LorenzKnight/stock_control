@@ -131,9 +131,78 @@
 	}
 }
 
+/* iPad / Tablet (iPad mini → iPad Pro, portrait + landscape) */
+@media (min-width: 601px) and (max-width: 1023px) {
+	.feat-container {
+		width: 90%;
+        margin: 0 auto;
+        display: block;
+	}
+
+	.features-title, .feature-name, .feature-desc {
+		color: var(--clr-white);
+	}
+
+	.container-grid {
+		display: grid;
+		gap: 24px;
+		padding: 0 15px 80px;
+	}
+    /* Título opcional a todo lo ancho */
+	.features-title {
+		margin: auto 0;
+		font-size: 24px !important;
+		font-weight: 600 !important;
+	}
+
+	/* Grid de 4 columnas, responsive */
+	.features-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 24px;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	/* Tarjeta básica */
+	.feature-card {
+		width: 100%;
+		max-width: 100%;
+		box-sizing: border-box;
+	}
+
+	.feature-img {
+		width: 50px;          /* ajusta a tu gusto (120–160px va bien) */
+		height: 50px;
+		object-fit: cover;
+		border-radius: 10px;
+		flex-shrink: 0;
+	}
+
+	.feature-body {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		min-width: 0;          /* evita overflow en títulos largos */
+	}
+
+	.feature-name {
+		font-size: 1rem;
+		font-weight: 500;
+		margin: 0;
+	}
+
+	.feature-desc {
+		margin: 0;
+		line-height: 1.5;
+		font-size: .75rem;
+		font-weight: 100;
+	}
+}
+
 @media (min-width: 1024px) {
 	.feat-container {
-		width: 1200px;
+		max-width: 1200px;
         margin: 0 auto;
         display: block;
 	}
