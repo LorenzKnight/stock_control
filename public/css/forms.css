@@ -1,5 +1,5 @@
 /* form-modal */
-@media (orientation: landscape) and (max-height: 500px) {
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 850px){
     .formular_front {
         width: 340px;
         margin: 40px auto 20px;

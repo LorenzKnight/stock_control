@@ -1,7 +1,8 @@
-@media (orientation: landscape) and (max-height: 500px) {
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 850px) {
     header {
-        background-color: var(--main-bg-dark-blue);
+        max-width: 850px;
         height: 12vh;
+        background-color: var(--main-bg-dark-blue);
         color: #fff;
         display: flex;
         align-items: center;
@@ -10,8 +11,21 @@
 
 @media (max-width: 600px) and (orientation: portrait) {
     header {
-        background-color: var(--main-bg-dark-blue);
+        max-width: 600px;
         height: 6vh;
+        background-color: var(--main-bg-dark-blue);
+        color: #fff;
+        display: flex;
+        align-items: center;
+    }
+}
+
+/* iPad / Tablet (iPad mini → iPad Pro, portrait + landscape) */
+@media (min-width: 601px) and (max-width: 1023px) {
+    header {
+        max-width: 1023px;
+        max-height: 12vh;
+        background-color: var(--main-bg-dark-blue);
         color: #fff;
         display: flex;
         align-items: center;
@@ -20,9 +34,9 @@
 
 @media (min-width: 1024px) {
     header {
-        background-color: var(--main-bg-dark-blue);
-        /* background: radial-gradient(50% 100% at 64.83% 30px, #3f71aebd 1.95%, #375d8bbd 48.44%, #08203ebd 89.02%), linear-gradient(142.79deg, #000 38.6%, #162b45 83.59%); */
+        min-width: 1200px;
         height: 6vh;
+        background-color: var(--main-bg-dark-blue);
         color: #fff;
         display: flex;
         align-items: center;
@@ -116,7 +130,7 @@ nav ul.menu li:hover {
 	background-color: white;
 	border: 1px solid #ddd;
 	border-radius: 4px;
-	margin-left: -112px;
+	margin-left: -116px;
 	padding: 0 10px;
 	box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
 	position: absolute;

@@ -1,5 +1,5 @@
 <header>
-	<div class="container">
+	<div class="header-container">
 		<nav>
 			<div style="flex: 1;">
 				<div class="logo">

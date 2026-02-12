@@ -39,15 +39,19 @@ body {
     color: var(--clr-white) !important;
 }
 
-@media (orientation: landscape) and (max-height: 500px) {
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 850px) {
+    .header-container {
+        max-width: 850px;
+        margin: 0 auto;
+    }
+
     .container-landscape {
         display: none;
     }
 
     .container {
-        width: 98%;
+        max-width: 850px;
         margin: 0 auto;
-        display: block;
     }
 
     .container-right,
@@ -87,9 +91,12 @@ body {
 }
 
 @media (max-width: 600px) and (orientation: portrait) {
+    .header-container {
+        display: none;
+    }
+
     .container-landscape {
-        /* background-color: var(--cancel-dark-red); */
-        flex: 1;
+        max-width: 600px;
         height: 94vh;
         display: flex;
         flex-direction: column;
@@ -99,8 +106,6 @@ body {
     }
 
     .container {
-        /* max-width: 1200px;
-        margin: 0 auto; */
         display: none;
     }
 
@@ -149,21 +154,26 @@ body {
 
 /* iPad / Tablet (iPad mini → iPad Pro, portrait + landscape) */
 @media (min-width: 601px) and (max-width: 1023px) {
+    .header-container {
+        width: 1023px;
+        margin: 0 auto;
+    }
+
     .container-landscape {
-        /* background-color: var(--cancel-dark-red); */
-        flex: 1;
+        /* flex: 1;
         height: 94vh;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        padding: 0 10px;
+        padding: 0 10px; */
+        display: none;
     }
 
     .container {
-        /* max-width: 1200px;
-        margin: 0 auto; */
-        display: none;
+        max-width: 1023px;
+        margin: 0 auto;
+        /* display: none; */
     }
 
     .container-right,
@@ -210,12 +220,17 @@ body {
 }
 
 @media (min-width: 1024px) {
+    .header-container {
+        min-width: 1200px;
+        margin: 0 auto;
+    }
+
     .container-landscape {
         display: none;
     }
 
     .container {
-        max-width: 1200px;
+        width: 1200px;
         margin: 0 auto;
     }
 
