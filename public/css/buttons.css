@@ -853,10 +853,10 @@
 
     .neutral-btn {
         width: 95%;
-        padding: 11px 0;
+        padding: 16px 0;
         background: var(--clr-neutral); 
         color: var(--clr-white);
-        font-size: 12px;
+        font-size: 16px;
         border: 0;
         border-radius: 5px;
         box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
@@ -873,9 +873,9 @@
         width: 95%;
         background: var(--cancel-red); 
         color: var(--clr-white);
-        font-size: 12px;
+        font-size: 16px;
         margin: 10px auto;
-        padding: 11px 0;
+        padding: 16px 0;
         border: 0;
         border-radius: 5px;
         box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
@@ -892,9 +892,9 @@
         width: 80%;
         background: var(--clr-neutral);
         color: var(--clr-white);
-        font-size: 12px;
+        font-size: 16px;
         margin: 5px 0;
-        padding: 10px 0;
+        padding: 16px 0;
         border: 0;
         border-radius: 5px;
         box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;

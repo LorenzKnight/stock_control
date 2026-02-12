@@ -259,9 +259,9 @@
     .form-medium-input-style {
         width: 80%;
         margin: 5px 0;
-        padding: 10px;
-        font-size: 12px;
-        border-radius: 5px;
+        padding: 15px;
+        font-size: 14px;
+        border-radius: 8px;
         border: 1px solid var(--clr-border);
         text-align: center;
         -moz-appearance:inherit; 
@@ -316,10 +316,10 @@
         width: 98%;
         border-radius: 5px;
         border: 1px solid var(--clr-border);
-        font-size: 12px;
+        font-size: 14px;
         text-align: center;
         margin: 0;
-        padding: 10px 0;
+        padding: 15px 0;
         
     }
 }
