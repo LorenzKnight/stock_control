@@ -1096,43 +1096,123 @@ function tooManyEmailsFromIP(string $ip): bool
     return false; // ✅ permitir
 }
 
+
 //function to display any type of variable
+if (!headers_sent() && ob_get_level() === 0) {
+    ob_start();
+}
 function cdebug($var, $name = 'var', $die = false)
 {
-	ob_start();
+    // Detecta si este request debe responder JSON
+    $accept      = $_SERVER['HTTP_ACCEPT']   ?? '';
+    $contentType = $_SERVER['CONTENT_TYPE']  ?? '';
+    $isJson = (stripos($accept, 'application/json') !== false) || (stripos($contentType, 'application/json') !== false);
 
-    echo '<pre style="font-size: 12px; color: #333;">';
-    echo '<span style="color: #007BFF;">*' . htmlspecialchars($name) . '*</span><br/>';
-    print_r($var);
-    echo '</pre><br/>';
+    // ---------------------------
+    // MODO JSON (endpoints)
+    // ---------------------------
+    if ($isJson) {
+        if (!isset($GLOBALS['__CDEBUG_TEXT__'])) {
+            $GLOBALS['__CDEBUG_TEXT__'] = [];
+        }
 
-    $buffer = ob_get_clean();
+        $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+        $callerFile = $bt[0]['file'] ?? 'unknown file';
+        $callerLine = $bt[0]['line'] ?? 'unknown line';
 
-    $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+        $GLOBALS['__CDEBUG_TEXT__'][] = [
+            'name' => $name,
+            'file' => $callerFile,
+            'line' => $callerLine,
+            'data' => $var
+        ];
 
-    $callerFile = $backtrace[0]['file'] ?? 'unknown file';
-    $callerLine = $backtrace[0]['line'] ?? 'unknown line';
-    $callerClass = $backtrace[1]['class'] ?? '';
-    $callerFunction = $backtrace[1]['function'] ?? '';
+        if ($die) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode([
+                'success' => false,
+                'message' => 'cdebug die',
+                '_debug'  => $GLOBALS['__CDEBUG_TEXT__']
+            ]);
+            exit;
+        }
 
-    $dieMsg = '<pre style="font-size: 12px; color: #666; background-color: #F8F8F8; padding: 10px; border: 1px solid #ccc;">';
+        return;
+    }
+
+    // ---------------------------
+    // MODO HTML (views)
+    // ---------------------------
+
+    // Asegura buffering (si alguien imprimió antes, ya no se puede "subir" nada)
+    if (ob_get_level() === 0) {
+        @ob_start();
+    }
+
+    // Inicializa almacenamiento HTML
+    if (!isset($GLOBALS['__CDEBUG__'])) {
+        $GLOBALS['__CDEBUG__'] = '';
+    }
+
+    // Registra el shutdown una sola vez para imprimir debug ARRIBA
+    static $shutdownRegistered = false;
+    if (!$shutdownRegistered) {
+        $shutdownRegistered = true;
+
+        register_shutdown_function(function () {
+            $debug = $GLOBALS['__CDEBUG__'] ?? '';
+
+            // Si no hay debug, deja salir la página normal
+            if ($debug === '') {
+                while (ob_get_level() > 0) {
+                    echo ob_get_clean();
+                }
+                return;
+            }
+
+            // Junta TODO el output en $content
+            $content = '';
+            while (ob_get_level() > 0) {
+                $content = ob_get_clean() . $content;
+            }
+
+            // Debug primero, luego el contenido normal
+            echo $debug . $content;
+
+            // Limpia
+            $GLOBALS['__CDEBUG__'] = '';
+        });
+    }
+
+    // Construye el bloque debug HTML
+    $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+    $callerFile = $bt[0]['file'] ?? 'unknown file';
+    $callerLine = $bt[0]['line'] ?? 'unknown line';
+
+    ob_start();
+    $dieMsg = '<div style="border:1px solid #ddd;background:#fff;padding:10px;margin:10px 0;font-family:monospace;font-size:12px;line-height:1.35;position:relative;z-index:999999">';
+    
+	$dieMsg .= '<div style="margin-bottom: 6px; color: #007BFF;"><b>' . htmlspecialchars($name) . '</b></div>';
+    $dieMsg .= '<div style="margin-top:8px;color:#666;background:#f8f8f8;padding:6px;border:1px solid #eee;">';
     $dieMsg .= '<b>cdebug() called from:</b><br>';
-    $dieMsg .= "» <span style='color: #888;'>file</span>: <b>$callerFile</b><br>";
-    $dieMsg .= "» <span style='color: #888;'>line</span>: <b>$callerLine</b><br>";
-    if ($callerClass) {
-        $dieMsg .= "» <span style='color: #888;'>class</span>: <b>$callerClass</b><br>";
-    }
-    if ($callerFunction) {
-        $dieMsg .= "» <span style='color: #888;'>function</span>: <b>$callerFunction</b><br>";
-    }
+	$dieMsg .= '<b>» File :</b> ' . htmlspecialchars($callerFile) . '<br>'; 
+    $dieMsg .= '<b>» Line :</b> ' . htmlspecialchars((string)$callerLine). '<br><br>';
+	
+	$dieMsg .= '<b>» print :</b>';
+	$dieMsg .= '<pre style="margin: 0; white-space: pre-wrap; color: #007BFF;">';
+    $dieMsg .= $var === null ? 'NULL' : htmlspecialchars(print_r($var, true));
     $dieMsg .= '</pre>';
 
-    echo $buffer;
+	$dieMsg .= '</div>';
+    $dieMsg .= '</div>';
+
+	echo $dieMsg;
+    $html = ob_get_clean();
+
+    // Acumula para imprimir arriba
+    $GLOBALS['__CDEBUG__'] .= $html;
 
     if ($die) {
-        die($dieMsg);
-    } else {
-        echo $dieMsg;
+        exit; // el shutdown imprimirá debug + contenido ya capturado
     }
 }
-?>

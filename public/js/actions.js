@@ -1448,6 +1448,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 					setTimeout(() => {
 						banner.style.opacity = '0';
+						banner.style.display = 'none';
 						// setTimeout(() => {
 						// 	window.location.href = data.redirect_url || window.location.href;
 						// }, 1000);

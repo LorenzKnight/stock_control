@@ -21,7 +21,7 @@
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<label for="fecha">Birthdate:</label>
+						<label for="edit_birthday">Birthdate:</label>
 						<input class="form-input-style" type="date" name="edit_birthday" id="edit_birthday" placeholder="" title=""/>
 					</td>
 				</tr>

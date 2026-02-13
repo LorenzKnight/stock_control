@@ -30,7 +30,7 @@
 				</tr>
                 <tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<label for="fecha">Birthdate:</label>
+						<label for="user_birthday">Birthdate:</label>
 						<input class="form-input-style" type="date" name="user_birthday" id="user_birthday" placeholder="yyyy-mm-dd" title="Birthdate (yyyy-mm-dd)"/>
 					</td>
 				</tr>
