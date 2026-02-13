@@ -59,6 +59,7 @@ try {
             "email",
             "username",
             "rank",
+            "verified",
             "status",
             "signup_date"
         ],
@@ -110,6 +111,7 @@ try {
             "email",
             "username",
             "rank",
+            "verified",
             "status",
             "signup_date"
         ],

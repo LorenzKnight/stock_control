@@ -7247,13 +7247,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 												</td>
 												<td>
 													<div class="mini-title">Name:</div>
-													${user.full_name}</td>
+													${user.full_name}
+												</td>
 												<td>
 													<div class="mini-title">Email:</div>
-													${user.email}</td>
+													${user.email}
+												</td>
 												<td>
 													<div class="mini-title">Rank:</div>
 													${user.rank_text ?? user.rank}
+												</td>
+												<td>
+													<div class="mini-title">Verified:</div>
+													${Number(user.verified) === 1 ? 'Yes' : 'No'}
 												</td>
 											</tr>
 									</tbody>
@@ -7282,9 +7288,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 											<strong>${priceText}</strong>
 										</div>
 									</div>
-									<div class="subsc-info">
-
-									</div>
 								`
 								: `
 									<div class="pack-card no-package">
@@ -7298,6 +7301,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 									</div>
 								`
 						}
+						<div class="subsc-info">
+							<h3>Info:</h3>
+						</div>
 					</div>
 
 					<div class="affiliate-section">
