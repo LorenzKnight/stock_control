@@ -29,6 +29,7 @@
 
 	<link rel="stylesheet" href="/css/styles.css">
 
+	<script defer src="js/functions.js"></script>
 	<script>
 		window.APP_LANG = "<?= htmlspecialchars($lang) ?>";
 		window.APP_LANG_FROM_URL = <?= in_array(substr(trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'), 0, 2), ['en','es','sv'], true) ? 'true' : 'false' ?>;

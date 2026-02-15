@@ -518,6 +518,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 											const formData = new FormData(this);
 											
+
+											const banner = document.getElementById('status-message');
+											const statusText = document.getElementById('status-text');
+											const statusImage = document.getElementById('status-image');
+
 											try {
 												const response = await fetch('api/answer_product_request.php', {
 													method: 'POST',
@@ -527,35 +532,23 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 												const data = await response.json();
 
-												const banner = document.getElementById('status-message');
-												const statusText = document.getElementById('status-text');
-												const statusImage = document.getElementById('status-image');
-
 												statusText.innerText = data.message || 'No message';
 												statusImage.src = data.img_gif || '../images/sys-img/info.gif';
-												banner.style.display = 'block';
-												banner.style.opacity = '1';
+												showBanner(banner);
 
 												if (data.success) {
 													setTimeout(() => {
-														banner.style.opacity = '0';
-														setTimeout(() => {
+														hideBanner(banner, () => {
 															window.location.reload();
-														}, 800);
+														});
 													}, 2500);
 												}
 
 											} catch (error) {
 												console.error('Error submitting product answer:', error);
-
-												const banner = document.getElementById('status-message');
-												const statusText = document.getElementById('status-text');
-												const statusImage = document.getElementById('status-image');
-
 												statusText.innerText = 'Error processing the request.';
 												statusImage.src = '../images/sys-img/error.gif';
-												banner.style.display = 'block';
-												banner.style.opacity = '1';
+												showBanner(banner);
 											}
 										});
 									}

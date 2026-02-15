@@ -107,20 +107,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	if (window.paymentMessage) {
-		let banner = document.getElementById('status-message');
-		let statusText = document.getElementById('status-text');
-		let statusImage = document.getElementById('status-image');
+		const banner = document.getElementById('status-message');
+		const statusText = document.getElementById('status-text');
+		const statusImage = document.getElementById('status-image');
 
 		statusText.innerText = window.paymentMessage;
-		statusImage.src = "../images/sys-img/loading1.gif"; // O el ícono que prefieras
-		banner.style.display = 'block';
-		banner.style.opacity = '1';
+		statusImage.src = "../images/sys-img/loading1.gif";
+
+		showBanner(banner);
 
 		setTimeout(() => {
-			banner.style.opacity = '0';
-			setTimeout(() => {
-				banner.style.display = 'none';
-			}, 1000);
+			hideBanner(banner);
 		}, 3000);
 	}
 	
@@ -177,17 +174,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 		formSignUp.addEventListener('submit', async function (e) {
 			e.preventDefault();
 
-			let password = document.getElementById('password').value.trim();
-			let confirmPassword = document.getElementById('confirm_password').value.trim();
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
+
+			const password = document.getElementById('password').value.trim();
+			const confirmPassword = document.getElementById('confirm_password').value.trim();
 
 			if (password !== confirmPassword) {
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
-
 				statusText.innerText = "Error: Passwords do not match.";
 				statusImage.src = "../images/sys-img/error.gif";
-				banner.style.display = 'block';
+
+				showBanner(banner);
 				return;
 			}
 
@@ -202,35 +200,26 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				let data = await response.json();
 
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
-
 				if (data.success) {
 					statusText.innerText = data.message;
 					statusImage.src = data.img_gif;
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
+
+					showBanner(banner);
 
 					setTimeout(() => {
-						banner.style.opacity = '0';
-						setTimeout(() => {
+						hideBanner(banner, () => {
 							window.location.href = data.redirect_url;
-						}, 1000);
+						});
 					}, 3000);
 				} else {
 					statusText.innerText = "Error: " + data.message;
 					statusImage.src = data.img_gif; 
-					banner.style.display = 'block';
+					showBanner(banner);
 				}
 			} catch (error) {
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
-
 				statusText.innerText = "Error procesando la solicitud.";
 				statusImage.src = data.img_gif;
-				banner.style.display = 'block';
+				showBanner(banner);
 			}
 		});
 	}
@@ -243,6 +232,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			let formData = new FormData(this);
 
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
+
 			try {
 				let response = await fetch('api/login.php', {
 					method: 'POST',
@@ -252,35 +245,26 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				let data = await response.json();
 
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
-
 				if (data.success) {
 					statusText.innerText = data.message;
 					statusImage.src = data.img_gif;
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
+					showBanner(banner);
 
 					setTimeout(() => {
-						banner.style.opacity = '0';
-						setTimeout(() => {
+						hideBanner(banner, () => {
 							window.location.href = data.redirect_url;
-						}, 1000);
+						});
 					}, 3000);
+
 				} else {
 					statusText.innerText = "Error: " + data.message;
-					statusImage.src = data.img_gif; 
-					banner.style.display = 'block';
+					statusImage.src = data.img_gif;
+					showBanner(banner);
 				}
 			} catch (error) {
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
-
 				statusText.innerText = "Error procesando la solicitud.";
 				statusImage.src = "../images/sys-img/error.gif";
-				banner.style.display = 'block';
+				showBanner(banner);
 			}
 		});
 	}
@@ -514,21 +498,20 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			let data = await response.json();
 
-			let banner = document.getElementById('status-message');
-			let statusText = document.getElementById('status-text');
-			let statusImage = document.getElementById('status-image');
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
 
 			if (data.success) {
 				statusText.innerText = data.message;
 				statusImage.src = data.img_gif;
-				banner.style.display = 'block';
-				banner.style.opacity = '1';
+				
+				showBanner(banner);
 
 				setTimeout(() => {
-					banner.style.opacity = '0';
-					setTimeout(() => {
+					hideBanner(banner, () => {
 						window.location.href = data.redirect_url;
-					}, 1000);
+					});
 				}, 3000);
 			} else {
 				alert("Error al cerrar sesión: " + data.message);
@@ -979,6 +962,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const formData = new FormData(this);
 			formData.append('edit_user_id', formEditMembers.getAttribute('data-user-id')); // ID del usuario a editar
 	
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
+
 			try {
 				const response = await fetch('api/update_member.php', {
 					method: 'POST',
@@ -988,21 +975,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 	
 				const data = await response.json();
 	
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
-	
 				statusText.innerText = data.message;
 				statusImage.src = data.img_gif;
-				banner.style.display = 'block';
-				banner.style.opacity = '1';
+				
+				showBanner(banner);
 	
 				if (data.success) {
 					setTimeout(() => {
-						banner.style.opacity = '0';
-						setTimeout(() => {
+						hideBanner(banner, () => {
 							window.location.href = data.redirect_url || window.location.href;
-						}, 1000);
+						});
 					}, 3000);
 				}
 			} catch (error) {
@@ -1038,21 +1020,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 					const data = await response.json();
 
-					let banner = document.getElementById('status-message');
-					let statusText = document.getElementById('status-text');
-					let statusImage = document.getElementById('status-image');
+					const banner = document.getElementById('status-message');
+					const statusText = document.getElementById('status-text');
+					const statusImage = document.getElementById('status-image');
 
 					statusText.innerText = data.message;
 					statusImage.src = data.img_gif;
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
+					showBanner(banner);
 
 					if (data.success) {
 						setTimeout(() => {
-							banner.style.opacity = '0';
-							setTimeout(() => {
+							hideBanner(banner, () => {
 								window.location.href = data.redirect_url || window.location.href;
-							}, 1000);
+							});
 						}, 3000);
 					}
 				} catch (error) {
@@ -1123,6 +1103,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			let formData = new FormData(this);
 
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
+
 			try {
 				let response = await fetch('api/update_my_info.php', {
 					method: 'POST',
@@ -1132,31 +1116,21 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				let data = await response.json();
 
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
-
 				statusText.innerText = data.message;
 				statusImage.src = data.img_gif;
-				banner.style.display = 'block';
-				banner.style.opacity = '1';
+				showBanner(banner);
 
 				if (data.success) {
 					setTimeout(() => {
-						banner.style.opacity = '0';
-						setTimeout(() => {
+						hideBanner(banner, () => {
 							window.location.href = data.redirect_url;
-						}, 1000);
+						});
 					}, 3000);
 				}
 			} catch (error) {
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
-
 				statusText.innerText = "Error processing request.";
 				statusImage.src = "../images/sys-img/error.gif";
-				banner.style.display = 'block';
+				showBanner(banner);
 			}
 		});
 	}
@@ -1388,17 +1362,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 		statusText.innerText = "You have unsaved changes.";
 		statusImage.src = "images/sys-img/error.gif";
-		banner.style.display = 'block';
-		banner.style.opacity = '1';
+		showBanner(banner);
 	}
 
 	function hideChangeBanner() {
 		const banner = document.getElementById('status-message');
 		if (banner) {
-			banner.style.opacity = '0';
-			setTimeout(() => {
-				banner.style.display = 'none';
-			}, 500);
+			hideBanner(banner);
 		}
 	}
 
@@ -1422,6 +1392,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const companyActionBtn = document.getElementById('company-action-btn');
 			const isSelecting = companyActionBtn.value === "Select Company";
 
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
+
 			if (isSelecting) {
 				const selectedInput = document.querySelector('input[name="company_edit_info"]:checked');
 				if (selectedInput) {
@@ -1431,14 +1405,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 					}
 				}
 
-				const banner = document.getElementById('status-message');
-				const statusText = document.getElementById('status-text');
-				const statusImage = document.getElementById('status-image');
-
 				statusText.innerText = "Company selected successfully.";
 				statusImage.src = "images/sys-img/loading1.gif";
-				banner.style.display = 'block';
-				banner.style.opacity = '1';
+				showBanner(banner);
 
 				const companyForm = document.getElementById('edit-company-form');
 				const popupContent = document.querySelector('.formular-medium-frame');
@@ -1447,15 +1416,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 					popupContent.style.display = "";
 
 					setTimeout(() => {
-						banner.style.opacity = '0';
-						banner.style.display = 'none';
-						// setTimeout(() => {
-						// 	window.location.href = data.redirect_url || window.location.href;
-						// }, 1000);
+						hideBanner(banner);
 					}, 1500);
 				}
 
-				return; // No enviar si no hay cambios
+				return;
 			}
 
 			let formData = new FormData(this);
@@ -1469,31 +1434,21 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				let data = await response.json();
 
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
-
 				statusText.innerText = data.message;
 				statusImage.src = data.img_gif;
-				banner.style.display = 'block';
-				banner.style.opacity = '1';
+				showBanner(banner);
 
 				if (data.success) {
 					setTimeout(() => {
-						banner.style.opacity = '0';
-						setTimeout(() => {
+						hideBanner(banner, () => {
 							window.location.href = data.redirect_url;
-						}, 1000);
+						});
 					}, 3000);
 				}
 			} catch (error) {
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
-
 				statusText.innerText = "Error procesando la solicitud.";
 				statusImage.src = "../images/sys-img/error.gif";
-				banner.style.display = 'block';
+				showBanner(banner);
 			}
 		});
 	}
@@ -1567,6 +1522,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			let formData = new FormData(this);
 
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
+
 			try {
 				let response = await fetch('api/manage_company.php', {
 					method: 'POST',
@@ -1576,22 +1535,30 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				let data = await response.json();
 
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
+				// let banner = document.getElementById('status-message');
+				// let statusText = document.getElementById('status-text');
+				// let statusImage = document.getElementById('status-image');
+				if (data.success) {
+					statusText.innerText = data.message;
+					statusImage.src = data.img_gif;
+					showBanner(banner);
 
-				statusText.innerText = data.message;
-				statusImage.src = data.img_gif;
-				banner.style.display = 'block';
-				banner.style.opacity = '1';
+					setTimeout(() => {
+						hideBanner(banner);
+					}, 3000);
+				} else {
+					statusText.innerText = "Error: " + data.message;
+					statusImage.src = data.img_gif;
+					showBanner(banner);
+				}
 			} catch (error) {
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
+				// let banner = document.getElementById('status-message');
+				// let statusText = document.getElementById('status-text');
+				// let statusImage = document.getElementById('status-image');
 
 				statusText.innerText = "Error procesando la solicitud.";
 				statusImage.src = "../images/sys-img/error.gif";
-				banner.style.display = 'block';
+				showBanner(banner);
 			}
 		});
 	}
@@ -1667,6 +1634,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			let formData = new FormData(this);
 
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
+
 			try {
 				let response = await fetch('api/create_members.php', {
 					method: 'POST',
@@ -1676,35 +1647,25 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				let data = await response.json();
 
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
-
 				if (data.success) {
 					statusText.innerText = data.message;
 					statusImage.src = data.img_gif;
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
+					showBanner(banner);
 
 					setTimeout(() => {
-						banner.style.opacity = '0';
-						setTimeout(() => {
+						hideBanner(banner, () => {
 							window.location.href = data.redirect_url;
-						}, 1000);
+						});
 					}, 3000);
 				} else {
 					statusText.innerText = "Error: " + data.message;
 					statusImage.src = data.img_gif; 
-					banner.style.display = 'block';
+					showBanner(banner);
 				}
 			} catch (error) {
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
-
 				statusText.innerText = "Error procesando la solicitud.";
 				statusImage.src = data.img_gif;
-				banner.style.display = 'block';
+				showBanner(banner);
 			}
 		});
 	}
@@ -1986,6 +1947,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 				return;
 			}
 
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
+
 			const trySubmit = async (isRetry = false) => {
 				if (isRetry) {
 					formData.append("confirm_update", "true");
@@ -2004,27 +1969,21 @@ document.addEventListener("DOMContentLoaded", async function () {
 						"Update Product",
 						data.message,
 						async () => {
-							await trySubmit(true); // retry con confirmación
+							await trySubmit(true);
 						}
 					);
-					return; // Esperar la decisión del usuario
+					return;
 				}
-
-				const banner = document.getElementById('status-message');
-				const statusText = document.getElementById('status-text');
-				const statusImage = document.getElementById('status-image');
 
 				statusText.innerText = data.message;
 				statusImage.src = data.img_gif;
-				banner.style.display = 'block';
-				banner.style.opacity = '1';
+				showBanner(banner);
 
 				if (data.success) {
 					setTimeout(() => {
-						banner.style.opacity = '0';
-						setTimeout(() => {
+						hideBanner(banner, () => {
 							window.location.href = data.redirect_url || window.location.href;
-						}, 1000);
+						});
 					}, 3000);
 				}
 			};
@@ -2032,13 +1991,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 			try {
 				await trySubmit();
 			} catch (error) {
-				const banner = document.getElementById('status-message');
-				const statusText = document.getElementById('status-text');
-				const statusImage = document.getElementById('status-image');
-
 				statusText.innerText = "Error processing the request.";
 				statusImage.src = "../images/sys-img/error.gif";
-				banner.style.display = 'block';
+				showBanner(banner);
 			}
 		});
 	}
@@ -2813,21 +2768,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 				
 								const data = await response.json();
 				
-								let banner = document.getElementById('status-message');
-								let statusText = document.getElementById('status-text');
-								let statusImage = document.getElementById('status-image');
+								const banner = document.getElementById('status-message');
+								const statusText = document.getElementById('status-text');
+								const statusImage = document.getElementById('status-image');
 				
 								statusText.innerText = data.message;
 								statusImage.src = data.img_gif;
-								banner.style.display = 'block';
-								banner.style.opacity = '1';
+								showBanner(banner);
 				
 								if (data.success) {
 									setTimeout(() => {
-										banner.style.opacity = '0';
-										setTimeout(() => {
+										hideBanner(banner, () => {
 											window.location.href = data.redirect_url || window.location.href;
-										}, 1000);
+										});
 									}, 3000);
 								}
 							} catch (error) {
@@ -2883,21 +2836,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 				
 								const data = await response.json();
 				
-								let banner = document.getElementById('status-message');
-								let statusText = document.getElementById('status-text');
-								let statusImage = document.getElementById('status-image');
+								const banner = document.getElementById('status-message');
+								const statusText = document.getElementById('status-text');
+								const statusImage = document.getElementById('status-image');
 				
 								statusText.innerText = data.message;
 								statusImage.src = data.img_gif;
-								banner.style.display = 'block';
-								banner.style.opacity = '1';
+								showBanner(banner);
 				
 								if (data.success) {
 									setTimeout(() => {
-										banner.style.opacity = '0';
-										setTimeout(() => {
+										hideBanner(banner, () => {
 											window.location.href = data.redirect_url || window.location.href;
-										}, 1000);
+										});
 									}, 3000);
 								}
 							} catch (error) {
@@ -3075,23 +3026,21 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				const data = await response.json();
 
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
+				const banner = document.getElementById('status-message');
+				const statusText = document.getElementById('status-text');
+				const statusImage = document.getElementById('status-image');
 
 				if (banner && statusText && statusImage) {
 					statusText.innerText = data.message || "Unknown response";
 					statusImage.src = data.img_gif || "images/sys-img/loading.gif";
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
+					showBanner(banner);
 				}
 
 				if (data.success) {
 					setTimeout(() => {
-						banner.style.opacity = '0';
-						setTimeout(() => {
+						hideBanner(banner, () => {
 							window.location.href = data.redirect_url || window.location.href;
-						}, 1000);
+						});
 					}, 3000);
 				}
 			} catch (error) {
@@ -3300,6 +3249,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 	
 			const formData = new FormData(this);
 
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
+
 			try {
 				const response = await fetch('api/create_customer.php', {
 					method: 'POST',
@@ -3309,34 +3262,22 @@ document.addEventListener("DOMContentLoaded", async function () {
 	
 				const data = await response.json();
 	
-				const banner = document.getElementById('status-message');
-				const statusText = document.getElementById('status-text');
-				const statusImage = document.getElementById('status-image');
-	
 				statusText.innerText = data.message || 'No message';
 				statusImage.src = data.img_gif || '../images/sys-img/info.gif';
-				banner.style.display = 'block';
-				banner.style.opacity = '1';
+				showBanner(banner);
 	
 				if (data.success) {
 					setTimeout(() => {
-						banner.style.opacity = '0';
-						setTimeout(() => {
+						hideBanner(banner, () => {
 							window.location.href = data.redirect_url || window.location.href;
-						}, 1000);
+						});
 					}, 3000);
 				}
 			} catch (error) {
 				console.error("Error submitting customer form:", error);
-	
-				const banner = document.getElementById('status-message');
-				const statusText = document.getElementById('status-text');
-				const statusImage = document.getElementById('status-image');
-	
 				statusText.innerText = "Error processing the request.";
 				statusImage.src = "../images/sys-img/error.gif";
-				banner.style.display = 'block';
-				banner.style.opacity = '1';
+				showBanner(banner);
 			}
 		});
 	}
@@ -3448,21 +3389,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 				
 								const data = await response.json();
 				
-								let banner = document.getElementById('status-message');
-								let statusText = document.getElementById('status-text');
-								let statusImage = document.getElementById('status-image');
+								const banner = document.getElementById('status-message');
+								const statusText = document.getElementById('status-text');
+								const statusImage = document.getElementById('status-image');
 				
 								statusText.innerText = data.message;
 								statusImage.src = data.img_gif;
-								banner.style.display = 'block';
-								banner.style.opacity = '1';
+								showBanner(banner);
 				
 								if (data.success) {
 									setTimeout(() => {
-										banner.style.opacity = '0';
-										setTimeout(() => {
+										hideBanner(banner, () => {
 											window.location.href = data.redirect_url || window.location.href;
-										}, 1000);
+										});
 									}, 3000);
 								}
 							} catch (error) {
@@ -3564,23 +3503,21 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				const data = await response.json();
 
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
+				const banner = document.getElementById('status-message');
+				const statusText = document.getElementById('status-text');
+				const statusImage = document.getElementById('status-image');
 
 				if (banner && statusText && statusImage) {
 					statusText.innerText = data.message || "Unknown response";
 					statusImage.src = data.img_gif || "images/sys-img/loading.gif";
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
+					showBanner(banner);
 				}
 
 				if (data.success) {
 					setTimeout(() => {
-						banner.style.opacity = '0';
-						setTimeout(() => {
+						hideBanner(banner, () => {
 							window.location.href = data.redirect_url || window.location.href;
-						}, 1000);
+						});
 					}, 3000);
 				}
 			} catch (error) {
@@ -4200,23 +4137,21 @@ document.addEventListener("DOMContentLoaded", async function () {
 			
 					const data = await res.json();
 
-					let banner = document.getElementById('status-message');
-					let statusText = document.getElementById('status-text');
-					let statusImage = document.getElementById('status-image');
+					const banner = document.getElementById('status-message');
+					const statusText = document.getElementById('status-text');
+					const statusImage = document.getElementById('status-image');
 
 					if (banner && statusText && statusImage) {
 						statusText.innerText = data.message || "Unknown response";
 						statusImage.src = data.img_gif || "images/sys-img/success.gif";
-						banner.style.display = 'block';
-						banner.style.opacity = '1';
+						showBanner(banner);
 					}
 			
 					if (data.success) {
 						setTimeout(() => {
-							banner.style.opacity = '0';
-							setTimeout(() => {
+							hideBanner(banner, () => {
 								window.location.href = data.redirect_url || window.location.href;
-							}, 1000);
+							});
 						}, 3000);
 					} else {
 						alert("Failed: " + data.message);
@@ -4324,21 +4259,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 								const data = await response.json();
 
-								let banner = document.getElementById('status-message');
-								let statusText = document.getElementById('status-text');
-								let statusImage = document.getElementById('status-image');
+								const banner = document.getElementById('status-message');
+								const statusText = document.getElementById('status-text');
+								const statusImage = document.getElementById('status-image');
 				
 								statusText.innerText = data.message;
 								statusImage.src = data.img_gif;
-								banner.style.display = 'block';
-								banner.style.opacity = '1';
+								showBanner(banner);
 
 								if (data.success) {
 									setTimeout(() => {
-										banner.style.opacity = '0';
-										setTimeout(() => {
+										hideBanner(banner, () => {
 											window.location.href = data.redirect_url || window.location.href;
-										}, 1000);
+										});
 									}, 3000);
 								}
 							} catch (error) {
@@ -4748,23 +4681,21 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				const data = await response.json();
 
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
+				const banner = document.getElementById('status-message');
+				const statusText = document.getElementById('status-text');
+				const statusImage = document.getElementById('status-image');
 
 				if (banner && statusText && statusImage) {
 					statusText.innerText = data.message || "Unknown response";
 					statusImage.src = data.img_gif || "images/sys-img/success.gif";
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
+					showBanner(banner);
 				}
 
 				if (data.success) {
 					setTimeout(() => {
-						banner.style.opacity = '0';
-						setTimeout(() => {
+						hideBanner(banner, () => {
 							window.location.href = data.redirect_url || window.location.href;
-						}, 1000);
+						});
 					}, 3000);
 				} else {
 					alert("Failed: " + data.message);
@@ -4950,7 +4881,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					}
 				}
 
-				// Botón: Delete Customer
+				// Botón: Delete Payment
 				const deleteBtn = document.getElementById('deletePaymentBtn');
 				if (deleteBtn) {
 					deleteBtn.onclick = () => {
@@ -4962,7 +4893,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							return;
 						}
 
-						showConfirmModal("Delete Customer", "Are you sure you want to delete this Payment?", async () => {
+						showConfirmModal("Delete Payment", "Are you sure you want to delete this Payment?", async () => {
 							const frame = document.querySelector('.formular-frame');
 							if (frame) frame.style.display = 'none';
 
@@ -4977,21 +4908,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 				
 								const data = await response.json();
 				
-								let banner = document.getElementById('status-message');
-								let statusText = document.getElementById('status-text');
-								let statusImage = document.getElementById('status-image');
+								const banner = document.getElementById('status-message');
+								const statusText = document.getElementById('status-text');
+								const statusImage = document.getElementById('status-image');
 				
 								statusText.innerText = data.message;
 								statusImage.src = data.img_gif;
-								banner.style.display = 'block';
-								banner.style.opacity = '1';
+								showBanner(banner);
 				
 								if (data.success) {
 									setTimeout(() => {
-										banner.style.opacity = '0';
-										setTimeout(() => {
+										hideBanner(banner, () => {
 											window.location.href = data.redirect_url || window.location.href;
-										}, 1000);
+										});
 									}, 3000);
 								}
 							} catch (error) {
@@ -5164,6 +5093,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 				formData.append('interest', interestInput.value || '0');
 			}
 
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
+
 			try {
 				const response = await fetch('api/create_payment.php', {
 					method: 'POST',
@@ -5175,39 +5108,26 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				const data = await response.json();
 
-				const banner = document.getElementById('status-message');
-				const statusText = document.getElementById('status-text');
-				const statusImage = document.getElementById('status-image');
-
 				if (data.success) {
 					statusText.innerText = data.message;
 					statusImage.src = data.img_gif || "images/sys-img/success.gif";
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
+					showBanner(banner);
 
 					setTimeout(() => {
-						banner.style.opacity = '0';
-						setTimeout(() => {
+						hideBanner(banner, () => {
 							window.location.href = data.redirect_url || window.location.href;
-						}, 1000);
+						});
 					}, 3000);
 				} else {
 					statusText.innerText = "Error: " + data.message;
 					statusImage.src = data.img_gif || "images/sys-img/error.gif";
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
+					showBanner(banner);
 				}
 			} catch (error) {
 				console.error("Request failed:", error);
-
-				const banner = document.getElementById('status-message');
-				const statusText = document.getElementById('status-text');
-				const statusImage = document.getElementById('status-image');
-
 				statusText.innerText = "Error procesando la solicitud.";
 				statusImage.src = "images/sys-img/error.gif";
-				banner.style.display = 'block';
-				banner.style.opacity = '1';
+				showBanner(banner);
 			}
 		});
 	}
@@ -5723,6 +5643,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			let formData = new FormData(this);
 
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
+
 			try {
 				let response = await fetch('api/create_shipping.php', {
 					method: 'POST',
@@ -5732,35 +5656,25 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				let data = await response.json();
 
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
-
 				if (data.success) {
 					statusText.innerText = data.message;
 					statusImage.src = data.img_gif;
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
+					showBanner(banner);
 
 					setTimeout(() => {
-						banner.style.opacity = '0';
-						setTimeout(() => {
+						hideBanner(banner, () => {
 							window.location.href = data.redirect_url;
-						}, 1000);
+						});
 					}, 3000);
 				} else {
 					statusText.innerText = "Error: " + data.message;
 					statusImage.src = data.img_gif; 
-					banner.style.display = 'block';
+					showBanner(banner);
 				}
 			} catch (error) {
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
-
 				statusText.innerText = "Error procesando la solicitud.";
 				statusImage.src = data.img_gif;
-				banner.style.display = 'block';
+				showBanner(banner);
 			}
 		});
 	}
@@ -5938,21 +5852,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 				
 								const data = await response.json();
 				
-								let banner = document.getElementById('status-message');
-								let statusText = document.getElementById('status-text');
-								let statusImage = document.getElementById('status-image');
+								const banner = document.getElementById('status-message');
+								const statusText = document.getElementById('status-text');
+								const statusImage = document.getElementById('status-image');
 				
 								statusText.innerText = data.message;
 								statusImage.src = data.img_gif;
-								banner.style.display = 'block';
-								banner.style.opacity = '1';
+								showBanner(banner);
 				
 								if (data.success) {
 									setTimeout(() => {
-										banner.style.opacity = '0';
-										setTimeout(() => {
+										hideBanner(banner, () => {
 											window.location.href = data.redirect_url || window.location.href;
-										}, 1000);
+										});
 									}, 3000);
 								}
 							} catch (error) {
@@ -6087,19 +5999,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 				
 								const data = await response.json();
 				
-								let banner = document.getElementById('status-message');
-								let statusText = document.getElementById('status-text');
-								let statusImage = document.getElementById('status-image');
+								const banner = document.getElementById('status-message');
+								const statusText = document.getElementById('status-text');
+								const statusImage = document.getElementById('status-image');
 				
 								statusText.innerText = data.message;
 								statusImage.src = data.img_gif;
-								banner.style.display = 'block';
-								banner.style.opacity = '1';
+								showBanner(banner);
 				
 								if (data.success) {
 									setTimeout(() => {
-										banner.style.opacity = '0';
-										setTimeout(() => {
+										hideBanner(banner, () => {
 											const loadOptions = document.getElementById('load-options');
 											if (loadOptions) fadeOutAndHide(loadOptions);
 
@@ -6107,7 +6017,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 											if (shippingOptions) fadeOutAndHide(shippingOptions);
 
 											refreshSelectedShipping();
-										}, 1000);
+										});
 									}, 3000);
 								}
 							} catch (error) {
@@ -6211,21 +6121,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				const data = await response.json();
 
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
+				const banner = document.getElementById('status-message');
+				const statusText = document.getElementById('status-text');
+				const statusImage = document.getElementById('status-image');
 
 				if (banner && statusText && statusImage) {
 					statusText.innerText = data.message || "Unknown response";
 					statusImage.src = data.img_gif || "images/sys-img/loading.gif";
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
+					showBanner(banner);
 				}
 
 				if (data.success) {
 					setTimeout(() => {
-						banner.style.opacity = '0';
-						setTimeout(() => {
+						hideBanner(banner,() => {
 							formEditShipping.reset();
 							
 							const editShippingModal = document.getElementById('edit-shipping-modal');
@@ -6235,7 +6143,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							if (shippingOptions) fadeOutAndHide(shippingOptions);
 
 							refreshSelectedShipping();
-						}, 1000);
+						});
 					}, 3000);
 				}
 			} catch (error) {
@@ -6578,21 +6486,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 					const data = await res.json();
 
 					// Banner de estado visual
-					let banner = document.getElementById('status-message');
-					let statusText = document.getElementById('status-text');
-					let statusImage = document.getElementById('status-image');
+					const banner = document.getElementById('status-message');
+					const statusText = document.getElementById('status-text');
+					const statusImage = document.getElementById('status-image');
 
 					if (banner && statusText && statusImage) {
 						statusText.innerText = data.message || "Unknown response";
 						statusImage.src = data.img_gif || "../images/sys-img/success.gif";
-						banner.style.display = 'block';
-						banner.style.opacity = '1';
+						showBanner(banner);
 					}
 
 					if (data.success) {
 						setTimeout(() => {
-							banner.style.opacity = '0';
-							setTimeout(() => {
+							hideBanner(banner, () => {
 								formAddLoad.reset();
 
 								const addLoadModal = document.getElementById('add-load-modal');
@@ -6602,7 +6508,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 								if (shippingOptions) fadeOutAndHide(shippingOptions);
 
 								refreshSelectedShipping();
-							}, 1000);
+							});
 						}, 3000);
 					} else {
 						alert("❌ Failed: " + (data.message || "Unknown error."));
@@ -6947,25 +6853,23 @@ document.addEventListener("DOMContentLoaded", async function () {
 					});
 
 					const data = await res.json();
-					console.log("📡 API Update Response:", data);
+					// console.log("📡 API Update Response:", data);
 
-					let banner = document.getElementById('status-message');
-					let statusText = document.getElementById('status-text');
-					let statusImage = document.getElementById('status-image');
+					const banner = document.getElementById('status-message');
+					const statusText = document.getElementById('status-text');
+					const statusImage = document.getElementById('status-image');
 
 					if (banner && statusText && statusImage) {
 						statusText.innerText = data.message || "Unknown response";
 						statusImage.src = data.img_gif || "../images/sys-img/success.gif";
-						banner.style.display = 'block';
-						banner.style.opacity = '1';
+						showBanner(banner);
 					}
 
 					if (data.success) {
 						setTimeout(() => {
-							banner.style.opacity = '0';
-							setTimeout(() => {
+							hideBanner(banner, () => {
 								window.location.href = data.redirect_url || window.location.href;
-							}, 1000);
+							});
 						}, 3000);
 					} else {
 						alert("❌ Failed: " + (data.message || "Unknown error."));
@@ -7651,22 +7555,22 @@ document.addEventListener("DOMContentLoaded", async function () {
 			let serviceName = formData.get('service_name').trim();
 			let userId = formData.get('user_id');
 
-			let banner = document.getElementById('status-message');
-			let statusText = document.getElementById('status-text');
-			let statusImage = document.getElementById('status-image');
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
 
 			// 🧩 Validaciones básicas
 			if (!userId) {
 				statusText.innerText = "Error: No user selected.";
 				statusImage.src = "../images/sys-img/loading1.gif";
-				banner.style.display = 'block';
+				showBanner(banner);
 				return;
 			}
 
 			if (!serviceName) {
 				statusText.innerText = "Error: Please enter the service name.";
 				statusImage.src = "../images/sys-img/loading1.gif";
-				banner.style.display = 'block';
+				showBanner(banner);
 				return;
 			}
 
@@ -7682,28 +7586,26 @@ document.addEventListener("DOMContentLoaded", async function () {
 				if (data.success) {
 					statusText.innerText = data.message || "Right created successfully!";
 					statusImage.src = data.img_gif || "../images/sys-img/loading1.gif";
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
+					showBanner(banner);
 
 					formAddRights.reset();
 					document.getElementById('add-rights-form').style.display = 'none';
 
 					setTimeout(() => {
-						banner.style.opacity = '0';
-						setTimeout(async () => {
-							await refreshSelectedUserView(); // 🔁 Recargar lista de rights
-						}, 1000);
+						hideBanner(banner, () => {
+							refreshSelectedUserView(); // 🔁 Recargar lista de rights
+						});
 					}, 2000);
 				} else {
 					statusText.innerText = "Error: " + (data.message || "Could not create right.");
 					statusImage.src = data.img_gif || "../images/sys-img/loading1.gif";
-					banner.style.display = 'block';
+					showBanner(banner);
 				}
 			} catch (error) {
 				console.error("❌ Error in formAddRights:", error);
 				statusText.innerText = "Error processing the request.";
 				statusImage.src = "../images/sys-img/loading1.gif";
-				banner.style.display = 'block';
+				showBanner(banner);
 			}
 		});
 	}
@@ -7718,22 +7620,22 @@ document.addEventListener("DOMContentLoaded", async function () {
 			let servicePrice = formData.get('service_price').trim();
 			let userId = formData.get('user_id');
 
-			let banner = document.getElementById('status-message');
-			let statusText = document.getElementById('status-text');
-			let statusImage = document.getElementById('status-image');
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
 
 			// 🧩 Validaciones básicas
 			if (!userId) {
 				statusText.innerText = "Error: No user selected.";
 				statusImage.src = data.img_gif;
-				banner.style.display = 'block';
+				showBanner(banner);
 				return;
 			}
 
 			if (!serviceName || !servicePrice) {
 				statusText.innerText = "Error: Please fill all fields.";
 				statusImage.src = data.img_gif;
-				banner.style.display = 'block';
+				showBanner(banner);
 				return;
 			}
 
@@ -7749,31 +7651,25 @@ document.addEventListener("DOMContentLoaded", async function () {
 				if (data.success) {
 					statusText.innerText = data.message || "Service created successfully!";
 					statusImage.src = data.img_gif;
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
+					showBanner(banner);
 
 					formAddServices.reset();
 					document.getElementById('add-services-form').style.display = 'none';
 
 					setTimeout(() => {
-						banner.style.opacity = '0';
-						setTimeout(async () => {
-							await refreshSelectedUserView(); // 🔁 Recargar la lista de servicios
-						}, 1000);
+						hideBanner(banner, () => {
+							refreshSelectedUserView(); // 🔁 Recargar la lista de servicios
+						});
 					}, 2000);
 				} else {
 					statusText.innerText = "Error: " + (data.message || "Could not create service.");
 					statusImage.src = data.img_gif;
-					banner.style.display = 'block';
+					showBanner(banner);
 				}
 			} catch (error) {
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
-
 				statusText.innerText = "Error procesando la solicitud.";
 				statusImage.src = data.img_gif;
-				banner.style.display = 'block';
+				showBanner(banner);
 			}
 		});
 	}
@@ -7865,21 +7761,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 				
 								const data = await response.json();
 				
-								let banner = document.getElementById('status-message');
-								let statusText = document.getElementById('status-text');
-								let statusImage = document.getElementById('status-image');
+								const banner = document.getElementById('status-message');
+								const statusText = document.getElementById('status-text');
+								const statusImage = document.getElementById('status-image');
 				
 								statusText.innerText = data.message;
 								statusImage.src = data.img_gif;
-								banner.style.display = 'block';
-								banner.style.opacity = '1';
+								showBanner(banner);
 				
 								if (data.success) {
 									setTimeout(async () => {
-										banner.style.opacity = '0';
-										setTimeout(async () => {
+										hideBanner(banner, async () => {
 											await refreshSelectedUserView();
-										}, 1000);
+										});
 									}, 3000);
 								}
 							} catch (error) {
@@ -7930,9 +7824,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 			let rightId = formEditRight.getAttribute('data-right-id');
 			formData.append('edit_right_id', rightId);
 
-			let banner = document.getElementById('status-message');
-			let statusText = document.getElementById('status-text');
-			let statusImage = document.getElementById('status-image');
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
 
 			if (!rightId) {
 				console.error("⚠️ Missing right ID for update.");
@@ -7952,32 +7846,26 @@ document.addEventListener("DOMContentLoaded", async function () {
 				if (data.success) {
 					statusText.innerText = data.message || "Unknown response";
 					statusImage.src = data.img_gif || "../images/sys-img/loading.gif";
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
+					showBanner(banner);
 				
 					formEditRight.reset();
 					document.getElementById('edit-right-modal').style.display = 'none';
 					document.getElementById('rights-options').style.display = 'none';
 
 					setTimeout(async () => {
-						banner.style.opacity = '0';
-						setTimeout(async () => {
+						hideBanner(banner, async () => {
 							await refreshSelectedUserView();
-						}, 1000);
+						});
 					}, 2000);
 				} else {
-					statusText.innerText = "Error: " + (data.message || "Could not update service.");
+					statusText.innerText = "Error: " + (data.message || "Could not update right.");
 					statusImage.src = data.img_gif || "../images/sys-img/error.gif";;
-					banner.style.display = 'block';
+					showBanner(banner);
 				}
 			} catch (error) {
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
-
 				statusText.innerText = "Error updating right.";
 				statusImage.src = "../images/sys-img/error.gif";
-				banner.style.display = 'block';
+				showBanner(banner);
 			}
 		});
 	}
@@ -8069,19 +7957,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 				
 								const data = await response.json();
 				
-								let banner = document.getElementById('status-message');
-								let statusText = document.getElementById('status-text');
-								let statusImage = document.getElementById('status-image');
+								const banner = document.getElementById('status-message');
+								const statusText = document.getElementById('status-text');
+								const statusImage = document.getElementById('status-image');
 				
 								statusText.innerText = data.message;
 								statusImage.src = data.img_gif;
-								banner.style.display = 'block';
-								banner.style.opacity = '1';
+								showBanner(banner);
 				
 								if (data.success) {
 									setTimeout(async () => {
-										banner.style.opacity = '0';
-										setTimeout(async () => {
+										hideBanner(banner, async () => {
 											await refreshSelectedUserView();
 										}, 1000);
 									}, 3000);
@@ -8134,9 +8020,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 			let serviceId = formEditExtraServices.getAttribute('data-extra-service-id');
 			formData.append('edit_service_id', serviceId);
 
-			let banner = document.getElementById('status-message');
-			let statusText = document.getElementById('status-text');
-			let statusImage = document.getElementById('status-image');
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
 
 			if (!serviceId) {
 				console.error("⚠️ Missing service ID for update.");
@@ -8156,32 +8042,26 @@ document.addEventListener("DOMContentLoaded", async function () {
 				if (data.success) {
 					statusText.innerText = data.message || "Unknown response";
 					statusImage.src = data.img_gif || "../images/sys-img/loading.gif";
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
+					showBanner(banner);
 				
 					formEditExtraServices.reset();
 					document.getElementById('edit-extra-services-modal').style.display = 'none';
 					document.getElementById('extra-services-options').style.display = 'none';
 
 					setTimeout(async () => {
-						banner.style.opacity = '0';
-						setTimeout(async () => {
+						hideBanner(banner, async () => {
 							await refreshSelectedUserView();
-						}, 1000);
+						});
 					}, 2000);
 				} else {
 					statusText.innerText = "Error: " + (data.message || "Could not update service.");
 					statusImage.src = data.img_gif || "../images/sys-img/error.gif";;
-					banner.style.display = 'block';
+					showBanner(banner);
 				}
 			} catch (error) {
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
-
 				statusText.innerText = "Error updating right.";
 				statusImage.src = "../images/sys-img/error.gif";
-				banner.style.display = 'block';
+				showBanner(banner);
 			}
 		});
 	}
@@ -8691,8 +8571,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			if (!companyId) {
 				statusText.innerText = "Error: No company selected.";
 				statusImage.src = "../images/sys-img/loading1.gif";
-				banner.style.display = 'block';
-				banner.style.opacity = '1';
+				showBanner(banner);
 				return;
 			}
 
@@ -8708,26 +8587,22 @@ document.addEventListener("DOMContentLoaded", async function () {
 				if (data.success) {
 					statusText.innerText = data.message || "Settings updated successfully.";
 					statusImage.src = data.img_gif || "../images/sys-img/loading1.gif";
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
+					showBanner(banner);
 
 					setTimeout(() => {
-						banner.style.opacity = '0';
-						setTimeout(async () => {
+						hideBanner(banner, async () => {
 							await refreshSelectedGeneralView();
-						}, 1000);
+						});
 					}, 2000);
 				} else {
 					statusText.innerText = data.message || "Error updating settings.";
 					statusImage.src = "../images/sys-img/loading1.gif";
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
+					showBanner(banner);
 				}
 			} catch (err) {
 				statusText.innerText = "Error processing the request.";
 				statusImage.src = "../images/sys-img/loading1.gif";
-				banner.style.display = 'block';
-				banner.style.opacity = '1';
+				showBanner(banner);
 			}
 		});
 	}
@@ -8767,14 +8642,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 				formData.set(name, value);
 			});
 
-			let banner = document.getElementById('status-message');
-			let statusText = document.getElementById('status-text');
-			let statusImage = document.getElementById('status-image');
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
 
 			if (!userId) {
 				statusText.innerText = "Error: No user selected.";
 				statusImage.src = "../images/sys-img/loading1.gif";
-				banner.style.display = 'block';
+				showBanner(banner);
 				return;
 			}
 
@@ -8790,25 +8665,23 @@ document.addEventListener("DOMContentLoaded", async function () {
 				if (data.success) {
 					statusText.innerText = data.message || "Right created successfully!";
 					statusImage.src = data.img_gif || "../images/sys-img/loading1.gif";
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
+					showBanner(banner);
 
 					setTimeout(() => {
-						banner.style.opacity = '0';
-						setTimeout(async () => {
+						hideBanner(banner, async () => {
 							await refreshSelectedCoWorkerView();
-						}, 1000);
+						});
 					}, 2000);
 				} else {
 					statusText.innerText = "Error: " + (data.message || "Could not create right.");
 					statusImage.src = data.img_gif || "../images/sys-img/loading1.gif";
-					banner.style.display = 'block';
+					showBanner(banner);
 				}
 			} catch (error) {
 				console.error("❌ Error in formAddRights:", error);
 				statusText.innerText = "Error processing the request.";
 				statusImage.src = "../images/sys-img/loading1.gif";
-				banner.style.display = 'block';
+				showBanner(banner);
 			}
 		});
 	}
@@ -9399,6 +9272,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			const formData = new FormData(this);
 
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
+
 			try {
 				const response = await fetch('api/send_email.php', {
 					method: 'POST',
@@ -9407,32 +9284,21 @@ document.addEventListener("DOMContentLoaded", async function () {
 				});
 
 				if (response.status === 204 || response.status === 429) {
-					let banner = document.getElementById('status-message');
-					let statusText = document.getElementById('status-text');
-					let statusImage = document.getElementById('status-image');
-
 					statusText.innerText = "Please try again later.";
 					statusImage.src = '../images/sys-img/error.gif';
-					banner.style.display = 'block';
-					banner.style.opacity = '1';
+					showBanner(banner);
 					return;
 				}
 
 				const data = await response.json();
 
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
-
 				statusText.innerText = data.message;
 				statusImage.src = data.img_gif || '';
-				banner.style.display = 'block';
-				banner.style.opacity = '1';
+				showBanner(banner);
 
 				if (data.success) {
 					setTimeout(() => {
-						banner.style.opacity = '0';
-						setTimeout(() => {
+						hideBanner(banner, () => {
 							contactForm.reset();
 							banner.style.display = 'none';
 
@@ -9460,7 +9326,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 								img.style.marginBottom = '5px';
 								contactBox.prepend(img);
 							}
-						}, 1000);
+						});
 					}, 1000);
 				}
 			} catch (error) {
@@ -9471,7 +9337,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 	//############################################################# END SEND EMAIL ##################################################################
 
 	//############################################################# FUNCTIONES ##################################################################
-
 	// 📌 scroll to top 
 	function scrollToTopIfNeeded() {
 		if (window.scrollY > 0) {

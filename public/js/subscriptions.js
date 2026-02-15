@@ -18,6 +18,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			let formData = new FormData(this);
 
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
+
 			try {
 				let response = await fetch('api/checkout.php', {
 					method: 'POST',
@@ -27,14 +31,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				let data = await response.json();
 
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
-
 				statusText.innerText = data.message;
 				statusImage.src = data.img_gif;
-				banner.style.display = 'block';
-				banner.style.opacity = '1';
+				showBanner(banner);
 
 				if (data.success && data.sessionId) {
 					// Espera medio segundo antes de redirigir a Stripe
@@ -44,20 +43,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 				} else if (data.success && data.redirect_url) {
 					// Caso anterior: redirección manual
 					setTimeout(() => {
-						banner.style.opacity = '0';
-						setTimeout(() => {
+						hideBanner(banner, () => {
 							window.location.href = data.redirect_url;
-						}, 1000);
+						});
 					}, 3000);
 				}
 			} catch (error) {
-				let banner = document.getElementById('status-message');
-				let statusText = document.getElementById('status-text');
-				let statusImage = document.getElementById('status-image');
-
 				statusText.innerText = "Error processing request.";
 				statusImage.src = "../images/sys-img/error.gif";
-				banner.style.display = 'block';
+				showBanner(banner);
 			}
 		});
 	}
