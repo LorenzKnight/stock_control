@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		async function getStripeInstance() {
 			if (stripe) return stripe;
 
-			const res = await fetch('inc/public_config.php', {
+			const res = await fetch('inc/public_key_config.php', {
 			method: 'GET',
 			headers: { 'Accept': 'application/json' }
 			});
