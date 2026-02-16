@@ -1,10 +1,20 @@
 <?php
+
+use Stripe\BillingPortal\Configuration;
+
+require_once ('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
-$STRIPE_SK_LIVE = 'REMOVED_STRIPE_LIVE_SECRET';
-$STRIPE_SK_TEST = 'REMOVED_STRIPE_TEST_SECRET';
+if (isProductionEnv()) {
+    $STRIPE_SK = $_ENV['STRIPE_SK_LIVE'];
+    $myUrl = $_ENV['APP_URL'];
+} else {
+    // Configuration test
+    $STRIPE_SK = $_ENV['STRIPE_SK_TEST'];
+    $myUrl = 'http://localhost:8889/';
+}
 
-\Stripe\Stripe::setApiKey($STRIPE_SK_TEST);
+\Stripe\Stripe::setApiKey($STRIPE_SK);
 
 header('Content-Type: application/json');
 
@@ -13,8 +23,12 @@ try {
         throw new Exception("Invalid request method.");
     }
 
-    $userId = $_SESSION['sc_UserId'] ?? null;
-    if (!$userId) throw new Exception("User not authenticated.");
+    $authUser = requireAuth();
+	$userId = $authUser["user_id"] ?? null;
+
+    if (!$userId) {
+        throw new Exception("Unauthorized access. User not found or invalid token.");
+    }
 
     if (empty($_POST['packs'])) {
 		throw new Exception("You must select a member package.");
@@ -34,9 +48,6 @@ try {
 
 	$estimatedCost = floatval($_POST['estimated_cost']);
     $unitAmount = intval($estimatedCost * 100);
-
-    $myUrl = 'http://localhost:8889/';
-    // $myUrl = 'https://www.allstockcontrol.com/';
 
     // 1. Crear producto dinámico
     $product = \Stripe\Product::create([
