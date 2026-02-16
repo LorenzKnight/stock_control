@@ -2,19 +2,31 @@ document.addEventListener("DOMContentLoaded", async function () {
     // 📌 Manejo del formulario de subscripcion y checkout via Stripe
 	let formSubscription = document.getElementById('formSubscription');
 	if (formSubscription) {
-		const STRIPE_PK_LIVE = 'REMOVED_STRIPE_LIVE_PUBLIC';
-		const STRIPE_PK_TEST = 'REMOVED_STRIPE_TEST_PUBLIC';
-
 		let stripe;
+
+		async function getStripeInstance() {
+			if (stripe) return stripe;
+
+			const res = await fetch('inc/public_config.php', {
+			method: 'GET',
+			headers: { 'Accept': 'application/json' }
+			});
+
+			const cfg = await res.json();
+			if (!cfg.success || !cfg.stripe_pk) {
+				throw new Error(cfg.message || 'Stripe config not available.');
+			}
+
+			if (typeof window.Stripe !== 'function') {
+				throw new Error('Stripe.js no se cargó. Revisa <script src="https://js.stripe.com/v3"></script> y tu CSP.');
+			}
+
+			stripe = window.Stripe(cfg.stripe_pk);
+			return stripe;
+		}
 		
 		formSubscription.addEventListener('submit', async function (e) {
 			e.preventDefault();
-
-			if (typeof window.Stripe !== 'function') {
-				alert('Stripe.js no se cargó. Revisa <script src="https://js.stripe.com/v3"></script> y tu CSP.');
-				return;
-			}
-			stripe = stripe || window.Stripe(STRIPE_PK_TEST); // Cambia a STRIPE_PK_LIVE en producción
 
 			let formData = new FormData(this);
 
@@ -23,6 +35,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const statusImage = document.getElementById('status-image');
 
 			try {
+				const stripeInstance = await getStripeInstance();
+
 				let response = await fetch('api/checkout.php', {
 					method: 'POST',
 					headers: { 'Accept': 'application/json' },
@@ -38,7 +52,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				if (data.success && data.sessionId) {
 					// Espera medio segundo antes de redirigir a Stripe
 					setTimeout(() => {
-						stripe.redirectToCheckout({ sessionId: data.sessionId }); // RESOLVER ESTO
+						stripeInstance.redirectToCheckout({ sessionId: data.sessionId });
 					}, 500);
 				} else if (data.success && data.redirect_url) {
 					// Caso anterior: redirección manual
