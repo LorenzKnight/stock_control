@@ -1,4 +1,5 @@
 <?php
+require_once ('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
@@ -15,8 +16,12 @@ try {
         throw new Exception("Invalid request method.");
     }
 
-    $userId = $_SESSION['sc_UserId'] ?? null;
-    if (!$userId) throw new Exception("User not authenticated.");
+    $authUser = requireAuth();
+	$userId = $authUser["user_id"] ?? null;
+
+    if (!$userId) {
+        throw new Exception("Unauthorized access. User not found or invalid token.");
+    }
 
     if (!check_user_permission($userId, 'data_handler')) {
         throw new Exception("Access denied. You do not have permission to edit data.");

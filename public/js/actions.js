@@ -10505,23 +10505,24 @@ document.addEventListener("DOMContentLoaded", async function () {
 				return;
 			}
 
-			let serviceNames = [];
-			let totalPrice = 0;
-
 			data.data.forEach(service => {
-				if (service.service_name) serviceNames.push(service.service_name);
-				if (service.service_price) totalPrice += parseFloat(service.service_price);
+				const opt = document.createElement('option');
+
+				// ✅ CAMBIO #1: value = service_id (no el precio)
+				opt.value = String(service.service_id);
+
+				// ✅ CAMBIO #2: texto visible con nombre + precio
+				const price = service.service_price != null ? parseFloat(service.service_price) : 0;
+				opt.dataset.price = String(price);
+
+				opt.textContent = `${service.service_name} (+$${price.toFixed(2)})`;
+
+				if (String(opt.value) === String(selectedValue)) {
+					opt.selected = true;
+				}
+
+				select.appendChild(opt);
 			});
-
-			const option = document.createElement('option');
-			option.value = totalPrice.toFixed(2);
-			option.textContent = serviceNames.join(', ');
-
-			if (String(option.value) === String(selectedValue)) {
-				option.selected = true;
-			}
-
-			select.appendChild(option);
 
 		} catch (error) {
 			console.error("Error loading extra services:", error);
@@ -10540,7 +10541,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (!selectedRadio || !estimated || !estimatedInput) return;
 
 		const selectedValue = parseInt(selectedRadio.value);
-		const extraValue = parseFloat(extraPackSelect?.value || 0);
+		const selectedOpt = extraPackSelect?.selectedOptions?.[0] || null;
+		const extraValue  = selectedOpt ? parseFloat(selectedOpt.dataset.price || 0) : 0;
 
 		try {
 			const res = await fetch('api/get_packages.php');
