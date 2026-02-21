@@ -1,11 +1,11 @@
-# Ignorar todo el contenido de las carpetas
-/public/images/company-logos/*
-/public/images/customers/*
-/public/images/products/*
-/public/images/profile/*
-/public/images/shippings-code/*
-.env
-.env.*
+# =========================
+# Uploads / imágenes dinámicas (no versionar contenido)
+# =========================
+/public/images/company-logos/**
+/public/images/customers/**
+/public/images/products/**
+/public/images/profile/**
+/public/images/shippings-code/**
 
 # Pero no ignorar los marcadores
 !/public/images/company-logos/.gitkeep
@@ -13,3 +13,30 @@
 !/public/images/products/.gitkeep
 !/public/images/profile/.gitkeep
 !/public/images/shippings-code/.gitkeep
+
+# =========================
+# Secretos / configuración local
+# =========================
+.env
+.env.*
+
+# =========================
+# Dependencias (no versionar)
+# =========================
+/vendor/
+/node_modules/
+
+# =========================
+# Runtime (logs / cache / tmp) - normalmente no se versiona
+# =========================
+/var/
+
+# =========================
+# OS / editor (opcional pero recomendado)
+# =========================
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+.idea/
+.vscode/
