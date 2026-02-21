@@ -3,7 +3,7 @@
 		<div class="container-right" style="color: var(--clr-white);">
 			<?php include("components/modal_signup.php"); ?>
 			<div class="positioning" id="container-login-info" style="display: block;">
-				<h1><?= htmlspecialchars($t['home_main_h1']) ?></h1>
+				<h1><?= htmlspecialchars($t['home_main_h1']) ?>2</h1>
 				 <h2><?= htmlspecialchars($t['home_main_subtitle']) ?></h2>
 				
 				 <p>
