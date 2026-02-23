@@ -46,7 +46,7 @@
 							<div class="drop-area" id="edit-customer-drop-area">
 								<img class="image-preview" id="edit-customer-pic-preview" src="" alt="customer pic preview">
 								<p>Drop image here or click to select</p>
-								<input type="file" name="customer_image" id="edit_customer_image" accept="image/*" style="display: none;">
+								<input type="file" name="edit_customer_image" id="edit_customer_image" accept="image/*" style="display: none;">
 							</div>
 						</td>
 					</tr>

@@ -386,7 +386,8 @@ function handle_uploaded_image(
 	string $uploadDir,
 	string $fileName,
 	?int $userId = null,
-	array $allowedExts = ['jpg', 'jpeg', 'png', 'webp']
+	array $allowedExts = ['jpg', 'jpeg', 'png', 'webp'],
+	?string $previousImageName = null
 ): ?string {
 	if (!isset($_FILES[$fieldName]) || empty($_FILES[$fieldName]['name'])) {
 		return null;
@@ -395,7 +396,7 @@ function handle_uploaded_image(
 	$uploadedFile = $_FILES[$fieldName];
 
 	$ext = strtolower(pathinfo($uploadedFile['name'], PATHINFO_EXTENSION));
-	if (!in_array($ext, $allowedExts)) {
+	if (!in_array($ext, $allowedExts, true)) {
 		throw new Exception("Invalid file type. Allowed: " . implode(', ', $allowedExts));
 	}
 
@@ -403,12 +404,28 @@ function handle_uploaded_image(
 		throw new Exception("Failed to create upload directory.");
 	}
 
-	$prefix = $userId ? "{$fileName}_user_{$userId}" : "uploaded";
-	$imageName = $prefix . '_' . time() . '.' . $ext;
-	$targetPath = rtrim($uploadDir, '/') . '/' . $imageName;
+	$prefix     = $userId ? "{$fileName}_user_{$userId}" : "uploaded";
+	$imageName  = $prefix . '_' . time() . '.' . $ext;
+	$uploadDir  = rtrim($uploadDir, '/');
+	$targetPath = $uploadDir . '/' . $imageName;
 
 	if (!move_uploaded_file($uploadedFile['tmp_name'], $targetPath)) {
 		throw new Exception("Failed to move uploaded file.");
+	}
+
+	if ($previousImageName) {
+		$prev = trim($previousImageName);
+
+		if ($prev !== '' && $prev !== '.gitkeep') {
+			$prevPath = $uploadDir . '/' . basename($prev);
+
+			$realDir  = realpath($uploadDir);
+			$realPrev = realpath($prevPath);
+
+			if ($realDir && $realPrev && strpos($realPrev, $realDir) === 0 && is_file($realPrev)) {
+				@unlink($realPrev);
+			}
+		}
 	}
 
 	return $imageName;

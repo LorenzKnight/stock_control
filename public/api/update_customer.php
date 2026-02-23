@@ -35,7 +35,7 @@ try {
 	$docType    = intval($_POST["edit_customer_document_type"] ?? 0);
 	$docNo      = trim($_POST["edit_customer_document_no"] ?? '');
 	$type       = intval($_POST["edit_customer_type"] ?? 0);
-	$status     = intval($_POST["edit_customer_status"] ?? 1);
+	$status 	= isset($_POST["edit_customer_status"]) ? 1 : 0;
 	$ref1       = trim($_POST["edit_references_1"] ?? '');
 	$r1Country  = trim($_POST["edit_references_1_country_code"] ?? '');
 	$ref1Phone  = trim($_POST["edit_references_1_phone"] ?? '');
@@ -65,13 +65,27 @@ try {
 		"references_2_phone"       => $ref2Phone
 	];
 
+	$previousData = json_decode(select_from(
+		"customers",
+		["customer_image"],
+		["customer_id" => $customerId],
+        ["fetch_first" => true]
+	),true);
+
+	$previousImage = null;
+	if (!empty($previousData["success"]) && !empty($previousData["data"]) && isset($previousData["data"]["customer_image"])) {
+		$tmp = trim((string)$previousData["data"]["customer_image"]);
+		$previousImage = $tmp !== '' ? $tmp : null;
+	}
+
 	try {
 		$imageName = handle_uploaded_image(
 			"edit_customer_image",
 			__DIR__ . "/../images/customers",
 			"customer",
 			$userId,
-			["jpg", "jpeg", "png", "webp"]
+			["jpg", "jpeg", "png", "webp"],
+			$previousImage
 		);
 
 		if ($imageName) {
