@@ -46,7 +46,8 @@ try {
 		"id_column"    => "user_id",
 		"id_value"     => $targetUserId,
 		"image_column" => "image",
-		"image_folder" => "images/profile"
+		"image_folder" => "images/profile",
+		"clear_db"     => false
 	]);
 
 	if (!$imgDelete["success"]) {

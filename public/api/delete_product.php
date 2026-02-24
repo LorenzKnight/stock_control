@@ -1,4 +1,5 @@
 <?php
+require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
@@ -15,8 +16,12 @@ try {
 		throw new Exception("Method not allowed");
 	}
 
-	$userId = $_SESSION["sc_UserId"] ?? null;
-    if (!$userId) throw new Exception("User session not found.");
+	$authUser = requireAuth();
+    $userId = intval($authUser["user_id"] ?? 0);
+
+    if (!$userId) {
+		throw new Exception("Unauthorized access. User not found or invalid token.");
+    }
 
     if (!check_user_permission($userId, 'platform_admin')) {
 		throw new Exception("Access denied. You do not have permission to delete data.");
@@ -33,7 +38,8 @@ try {
 		"id_column"    => "product_id",
 		"id_value"     => $productId,
 		"image_column" => "product_image",
-		"image_folder" => "images/products"
+		"image_folder" => "images/products",
+		"clear_db"     => false
 	]);
 
 	if (!$deleteImgResult["success"]) {

@@ -1,5 +1,7 @@
 <?php
+require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
+
 header("Content-Type: application/json");
 
 $response = [
@@ -14,8 +16,12 @@ try {
         throw new Exception("Method not allowed");
     }
 
-    $userId = $_SESSION["sc_UserId"] ?? null;
-    if (!$userId) throw new Exception("User session not found.");
+    $authUser = requireAuth();
+    $userId = intval($authUser["user_id"] ?? 0);
+
+    if (!$userId) {
+		throw new Exception("Unauthorized access. User not found or invalid token.");
+    }
 
     // 🔒 Verificar permisos
     if (!check_user_permission($userId, 'platform_admin')) {
@@ -33,7 +39,8 @@ try {
 		"id_column"    => "shippings_id",
 		"id_value"     => $shippingId,
 		"image_column" => "shipping_img",
-		"image_folder" => "images/shippings-code"
+		"image_folder" => "images/shippings-code",
+        "clear_db"     => false
 	]);
 
     // 🔍 Obtener company_id del usuario

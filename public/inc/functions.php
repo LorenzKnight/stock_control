@@ -433,58 +433,61 @@ function handle_uploaded_image(
 
 function delete_image_from_record(array $params): array
 {
-	global $sql;
+    global $sql;
+    if (!$sql) $sql = get_pg_connection();
 
-	if (!$sql) {
-		$sql = get_pg_connection();
-	}
+    $table        = $params['table'] ?? null;
+    $idColumn     = $params['id_column'] ?? null;
+    $idValue      = $params['id_value'] ?? null;
+    $imageColumn  = $params['image_column'] ?? null;
+    $imageFolder  = $params['image_folder'] ?? null;
 
-	// Esperados: 'table', 'id_column', 'id_value', 'image_column', 'image_folder'
+    // NUEVOS:
+    $clearDb      = $params['clear_db'] ?? true;          // por defecto, limpia DB
+    $dbNull       = $params['db_null'] ?? true;           // true => NULL, false => ''
 
-	$table        = $params['table'] ?? null;
-	$idColumn     = $params['id_column'] ?? null;
-	$idValue      = $params['id_value'] ?? null;
-	$imageColumn  = $params['image_column'] ?? null;
-	$imageFolder  = $params['image_folder'] ?? null;
+    if (!$table || !$idColumn || !$idValue || !$imageColumn || !$imageFolder) {
+        return ["success" => false, "message" => "Missing required parameters for image deletion."];
+    }
 
-	if (!$table || !$idColumn || !$idValue || !$imageColumn || !$imageFolder) {
-		return [
-			"success" => false,
-			"message" => "Missing required parameters for image deletion."
-		];
-	}
+    $q = "SELECT \"$imageColumn\" FROM \"$table\" WHERE \"$idColumn\" = $1 LIMIT 1;";
+    $result = pg_query_params($sql, $q, [$idValue]);
 
-	// 1. Obtener nombre del archivo de imagen
-	// $imageQuery = "SELECT {$imageColumn} FROM {$table} WHERE {$idColumn} = $1 LIMIT 1;";
-	$imageQuery = "SELECT \"$imageColumn\" FROM \"$table\" WHERE \"$idColumn\" = $1 LIMIT 1;";
-	$result = pg_query_params($sql, $imageQuery, [$idValue]);
+    if (!$result || pg_num_rows($result) === 0) {
+        return ["success" => true, "message" => "Record not found or no image assigned."];
+    }
 
-	if (!$result || pg_num_rows($result) === 0) {
-		return [
-			"success" => true,
-			"message" => "No image assigned to record. Nothing to delete."
-		];
-	}
+    $row = pg_fetch_assoc($result);
+    $imageName = $row[$imageColumn] ?? null;
 
-	$row = pg_fetch_assoc($result);
-	$imageName = $row[$imageColumn] ?? null;
+    // Si no hay imagen, igual puedes limpiar DB si quieres (normalmente no hace falta)
+    if (!$imageName || trim($imageName) === '' || trim($imageName) === '.gitkeep') {
+        if ($clearDb) {
+            $val = $dbNull ? null : '';
+            $u = "UPDATE \"$table\" SET \"$imageColumn\" = $2 WHERE \"$idColumn\" = $1;";
+            pg_query_params($sql, $u, [$idValue, $val]);
+        }
+        return ["success" => true, "message" => "No image assigned. Nothing to delete."];
+    }
 
-	// 2. Eliminar imagen (si existe)
-	if ($imageName && trim($imageName) !== "") {
-		$absolutePath = realpath(__DIR__ . "/../{$imageFolder}/" . $imageName);
-		if ($absolutePath && file_exists($absolutePath)) {
-			unlink($absolutePath);
-			return [
-				"success" => true,
-				"message" => "Image deleted successfully."
-			];
-		}
-	}
+    // Seguridad de path
+    $baseDir = realpath(__DIR__ . "/../" . trim($imageFolder, "/"));
+    if ($baseDir) {
+        $target = $baseDir . "/" . basename($imageName);
+        $realTarget = realpath($target);
 
-	return [
-		"success" => true,
-		"message" => "Image not found on disk. Possibly already deleted."
-	];
+        if ($realTarget && strpos($realTarget, $baseDir) === 0 && is_file($realTarget)) {
+            @unlink($realTarget);
+        }
+    }
+
+    if ($clearDb) {
+        $val = $dbNull ? null : '';
+        $u = "UPDATE \"$table\" SET \"$imageColumn\" = $2 WHERE \"$idColumn\" = $1;";
+        pg_query_params($sql, $u, [$idValue, $val]);
+    }
+
+    return ["success" => true, "message" => "Image removed successfully."];
 }
 
 function get_next_increment_value(string $table, string $field, int $companyId, int $startFrom = 10000): int
