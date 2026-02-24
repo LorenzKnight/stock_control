@@ -23,6 +23,7 @@ try {
     if (!$userId) {
 		throw new Exception("Unauthorized access. User not found or invalid token.");
     }
+    
 	if (!$companyId) {
 		throw new Exception("User company not found.");
 	}

@@ -1,4 +1,5 @@
 <?php
+require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
@@ -15,8 +16,12 @@ try {
 		throw new Exception("Method not allowed");
 	}
 
-	$userId = $_SESSION["sc_UserId"] ?? null;
-	if (!$userId) throw new Exception("User session not found.");
+	$authUser = requireAuth();
+    $userId = intval($authUser["user_id"] ?? 0);
+
+    if (!$userId) {
+		throw new Exception("Unauthorized access. User not found or invalid token.");
+    }
 
 	if (!check_user_permission($userId, 'platform_admin')) {
 		throw new Exception("Access denied. You do not have permission to update company info.");
@@ -45,7 +50,19 @@ try {
 		"company_phone" => $phone
 	];
 
-	$imageName = null;
+	$previousData = json_decode(select_from(
+		"companies",
+		["company_logo"],
+		["company_id" => $companyId],
+        ["fetch_first" => true]
+	),true);
+
+	$previousImage = null;
+	if (!empty($previousData["success"]) && !empty($previousData["data"]) && isset($previousData["data"]["company_logo"])) {
+		$tmp = trim((string)$previousData["data"]["company_logo"]);
+		$previousImage = $tmp !== '' ? $tmp : null;
+	}
+
 	try {
 		$imageName = handle_uploaded_image(
 			"company_logo",
@@ -53,7 +70,9 @@ try {
 			"logo",
 			$userId,
 			["png", "jpg", "jpeg", "webp"],
+			$previousImage
 		);
+		
 		if ($imageName) {
 			$updateData["company_logo"] = $imageName;
 		}
@@ -120,4 +139,3 @@ try {
 
 echo json_encode($response);
 exit;
-?>

@@ -1,4 +1,5 @@
 <?php
+require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
@@ -15,8 +16,12 @@ try {
 		throw new Exception("Method not allowed");
 	}
 
-	$userId = $_SESSION["sc_UserId"] ?? null;
-	if (!$userId) throw new Exception("User session not found.");
+	$authUser = requireAuth();
+    $userId = intval($authUser["user_id"] ?? 0);
+
+	if (!$userId) {
+		throw new Exception("Unauthorized access. User not found or invalid token.");
+    }
 
     if (!check_user_permission($userId, 'data_handler')) {
 		throw new Exception("Access denied. You do not have permission to edit data.");
@@ -61,13 +66,27 @@ try {
 		throw new Exception("Product type is required.");
 	}
 
+	$previousData = json_decode(select_from(
+		"products",
+		["product_image"],
+		["product_id" => $productId],
+        ["fetch_first" => true]
+	),true);
+
+	$previousImage = null;
+	if (!empty($previousData["success"]) && !empty($previousData["data"]) && isset($previousData["data"]["product_image"])) {
+		$tmp = trim((string)$previousData["data"]["product_image"]);
+		$previousImage = $tmp !== '' ? $tmp : null;
+	}
+
 	try {
 		$imageName = handle_uploaded_image(
 			"edit_Product_image",
 			__DIR__ . "/../images/products",
 			"product",
 			$userId,
-			["jpg", "jpeg", "png", "webp"]
+			["jpg", "jpeg", "png", "webp"],
+			$previousImage
 		);
 
 		if ($imageName) {
