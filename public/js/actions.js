@@ -4403,7 +4403,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 						fetchAndRenderCustomersForEdit(searchCustomerInput.value);
 					});
 
-					fetchAndRenderCustomersForEdit();
+					await fetchAndRenderCustomersForEdit();
 				}
 
 				// Cargar productos seleccionados

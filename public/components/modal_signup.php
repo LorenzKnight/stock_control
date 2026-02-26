@@ -36,17 +36,6 @@
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<label for="birthday"><?= htmlspecialchars($t['signup_birth_label']) ?></label>
-						<input class="form-input-style"
-							type="date"
-							name="birthday"
-							id="birthday"
-							required
-						/>
-					</td>
-				</tr>
-				<tr valign="baseline" class="form_height">
-					<td colspan="6" align="center" valign="middle">
 						<label for="email"><?= htmlspecialchars($t['signup_email_label']) ?></label>
 						<input class="form-input-style"
 							type="email"
@@ -95,6 +84,15 @@
 						<a href="#" class="close-link">
 							<?= htmlspecialchars($t['signup_have_account']) ?>
 						</a>
+					</td>
+				</tr>
+				<tr valign="baseline" class="form_height">
+					<td colspan="6" align="center" valign="middle">
+						<p>
+							<a class="gdpr-link" href="/base.php?page=gdpr" target="_blank" style="color: var(--warning-red); text-decoration: none;">
+								<?= htmlspecialchars($t['signup_gdpr']) ?>
+							</a>
+						</p>
 					</td>
 				</tr>
 			</table>

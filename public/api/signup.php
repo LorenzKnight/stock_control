@@ -18,7 +18,7 @@ try {
         throw new Exception("Method not allowed");
     }
 
-    $requiredFields = ["name", "surname", "birthday", "email", "password"];
+    $requiredFields = ["name", "surname", "email", "password"];
     $data = [];
 
 	foreach ($requiredFields as $field) {

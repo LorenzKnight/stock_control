@@ -113,8 +113,6 @@ $i18n = [
 		'signup_surname_ph'   => 'Enter your surname',
 		'signup_surname_title'=> 'Enter a valid surname',
 
-		'signup_birth_label'  => 'Birthdate',
-
 		'signup_email_label'  => 'Email',
 		'signup_email_ph'     => 'Enter your email address',
 		'signup_email_title'  => 'Enter a valid email',
@@ -127,6 +125,8 @@ $i18n = [
 
 		'signup_submit'       => 'Create account',
 		'signup_have_account' => 'Already have an account?',
+
+		'signup_gdpr' 		  => 'GDPR-policy',
 
 		// Pricing features
 		'pricing_contact'      => 'Contact us for a custom plan',
@@ -150,7 +150,7 @@ $i18n = [
 
 		// footer seo links
 		'footer_seo_title'        => 'Inventory Management Solutions',
-		'footer_seo_inventory'   => 'Inventory management software',
+		// 'footer_seo_inventory'   => 'Inventory management software',
 		'footer_seo_smallbiz'    => 'Inventory software for small businesses',
 		'footer_seo_cloud'       => 'Cloud-based inventory system',
 		'footer_seo_multilocation'=> 'Multi-location stock control',
@@ -250,8 +250,6 @@ $i18n = [
 		'signup_surname_ph'   => 'Introduce tu apellido',
 		'signup_surname_title'=> 'Introduce un apellido válido',
 
-		'signup_birth_label'  => 'Fecha de nacimiento',
-
 		'signup_email_label'  => 'Correo electrónico',
 		'signup_email_ph'     => 'Introduce tu correo electrónico',
 		'signup_email_title'  => 'Introduce un correo válido',
@@ -264,6 +262,8 @@ $i18n = [
 
 		'signup_submit'       => 'Crear cuenta',
 		'signup_have_account' => '¿Ya tienes una cuenta?',
+
+		'signup_gdpr' 		  => 'Política del RGPD / DPA',
 
 		// Pricing features
 		'pricing_contact'        => 'Contáctanos para un plan a medida',
@@ -287,7 +287,7 @@ $i18n = [
 
 		// footer seo links
 		'footer_seo_title'        => 'Soluciones de control de inventario',
-		'footer_seo_inventory'   => 'Software de control de inventario',
+		// 'footer_seo_inventory'   => 'Software de control de inventario',
 		'footer_seo_smallbiz'    => 'Software de inventario para pequeñas empresas',
 		'footer_seo_cloud'       => 'Sistema de inventario en la nube',
 		'footer_seo_multilocation'=> 'Control de stock multi-sucursal',
@@ -387,8 +387,6 @@ $i18n = [
 		'signup_surname_ph'   => 'Ange ditt efternamn',
 		'signup_surname_title'=> 'Ange ett giltigt efternamn',
 
-		'signup_birth_label'  => 'Födelsedatum',
-
 		'signup_email_label'  => 'E-post',
 		'signup_email_ph'     => 'Ange din e-postadress',
 		'signup_email_title'  => 'Ange en giltig e-post',
@@ -401,6 +399,8 @@ $i18n = [
 
 		'signup_submit'       => 'Skapa konto',
 		'signup_have_account' => 'Har du redan ett konto?',
+
+		'signup_gdpr' 		  => 'Integritetspolicy / GDPR',
 
 		// Pricing features
 		'pricing_contact'      => 'Kontakta oss för ett skräddarsytt paket',
@@ -424,7 +424,7 @@ $i18n = [
 
 		// footer seo links
 		'footer_seo_title'        => 'Lagerhanteringslösningar',
-		'footer_seo_inventory'   => 'Lagerhanteringssystem',
+		// 'footer_seo_inventory'   => 'Lagerhanteringssystem',
 		'footer_seo_smallbiz'    => 'Lagerhantering för småföretag',
 		'footer_seo_cloud'       => 'Molnbaserat lagerhanteringssystem',
 		'footer_seo_multilocation'=> 'Lagerhantering för flera platser',
@@ -435,9 +435,26 @@ $i18n = [
 $t = $i18n[$lang];
 
 // Helper para construir URLs con ?lang=…
+// function url_with_lang(string $targetLang): string {
+//     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+//     $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
+//     return $scheme . '://' . $host . '/' . $targetLang . '/';
+// }
+
 function url_with_lang(string $targetLang): string {
-    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    return $scheme . '://' . $host . '/' . $targetLang . '/';
+	$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+	$host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
+
+	$path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+	$path = '/' . trim($path, '/');
+
+	// quitar idioma actual al inicio si existe
+	$pathParts = explode('/', trim($path, '/'));
+	if (in_array($pathParts[0] ?? '', ['en','es','sv'], true)) {
+		array_shift($pathParts);
+	}
+	$rest = implode('/', $pathParts);
+
+	return $scheme . '://' . $host . '/' . $targetLang . '/' . $rest;
 }
 ?>

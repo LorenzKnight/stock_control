@@ -8,11 +8,11 @@
 						<p id="customers-name"></p>
 					</td>      
 				</tr>
-				<tr valign="baseline">
+				<!-- <tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
 						<button type="button" class="button-style-agree" id="assignCustomerSaleBtn">Assign to a sale</button>
 					</td>
-				</tr>
+				</tr> -->
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
 						<button type="button" class="button-style-agree" id="editCustomerBtn">Edit Customer</button>
