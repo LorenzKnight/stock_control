@@ -1,13 +1,13 @@
 <footer class="footer">
-	<!-- <div class="footer-seo">
+	<div class="footer-seo">
 		<h3><?= htmlspecialchars($t['footer_seo_title']) ?></h3>
 		<ul>
 			<li>
-				<a href="<?= htmlspecialchars(url_with_lang($lang)) ?>">
-					<?= htmlspecialchars($t['footer_seo_inventory']) ?>
+				<a class="gdpr-link" href="/<?= htmlspecialchars($lang) ?>/gdpr" target="_blank">
+					<?= htmlspecialchars($t['gdpr_title']) ?>
 				</a>
 			</li>
-			<li>
+			<!-- <li>
 				<a href="<?= htmlspecialchars(url_with_lang($lang)) ?>#features">
 					<?= htmlspecialchars($t['footer_seo_smallbiz']) ?>
 				</a>
@@ -26,9 +26,9 @@
 				<a href="<?= htmlspecialchars(url_with_lang($lang)) ?>#pricing">
 					<?= htmlspecialchars($t['footer_seo_pricing']) ?>
 				</a>
-			</li>
+			</li> -->
 		</ul>
-	</div> -->
+	</div>
 	
 	<div class="footer-content">
 		<p>
@@ -39,7 +39,7 @@
 	<div class="contact-us" id="contactBox">
 		<img src="../images/sys-img/email.gif" alt="e-mail" class="">
 		
-		<form id="contactForm" method="POST">
+		<form id="contactForm" method="POST" action="/api/send_email.php">
 			<button type="button" id="closeContactForm" class="close-btn">&times;</button>
 			<table width="100%" align="center" cellspacing="0">
 				<tr valign="baseline" class="form_height">

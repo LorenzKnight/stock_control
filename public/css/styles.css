@@ -307,6 +307,10 @@ body {
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.legal-page {
+    padding: 20px 40px;
+}
+
 .positioning {
     position: relative;
     bottom: -150px;

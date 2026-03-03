@@ -105,6 +105,20 @@
 		filter: brightness(0) saturate(0) invert(0) !important;
 		transition: all 0.3s ease;
 	}
+
+	.pages-header {
+		height: 8vh;
+		background-color: var(--main-bg-dark-blue);
+		color: #fff;
+		display: flex;
+		align-items: center;
+		vertical-align: middle;
+	}
+
+	.pages-header .asc-logo {
+		width: 70px;
+		margin-top: 5px;
+	}
 }
 
 @media (max-width: 600px) and (orientation: portrait) {
@@ -213,6 +227,20 @@
 	.img-color-change {
 		filter: brightness(0) saturate(0) invert(0) !important;
 		transition: all 0.3s ease;
+	}
+
+	.pages-header {
+		height: 8vh;
+		background-color: var(--main-bg-dark-blue);
+		color: #fff;
+		display: flex;
+		align-items: center;
+		vertical-align: middle;
+	}
+
+	.pages-header .asc-logo {
+		width: 70px;
+		margin-top: 5px;
 	}
 }
 
@@ -324,6 +352,20 @@
 		filter: brightness(0) saturate(0) invert(0) !important;
 		transition: all 0.3s ease;
 	}
+
+	.pages-header {
+		height: 8vh;
+		background-color: var(--main-bg-dark-blue);
+		color: #fff;
+		display: flex;
+		align-items: center;
+		vertical-align: middle;
+	}
+
+	.pages-header .asc-logo {
+		width: 70px;
+		margin-top: 5px;
+	}
 }
 
 @media (min-width: 1024px) {
@@ -413,5 +455,19 @@
 	.floating-header.scrolled-out ul li a:hover {
 		color: var(--clr-border);
 		transition: all 0s ease-in-out;
+	}
+
+	.pages-header {
+		height: 8vh;
+		background-color: var(--main-bg-dark-blue);
+		color: #fff;
+		display: flex;
+		align-items: center;
+		vertical-align: middle;
+	}
+
+	.pages-header .asc-logo {
+		width: 70px;
+		margin-top: 5px;
 	}
 }

@@ -89,8 +89,8 @@
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
 						<p>
-							<a class="gdpr-link" href="/base.php?page=gdpr" target="_blank" style="color: var(--warning-red); text-decoration: none;">
-								<?= htmlspecialchars($t['signup_gdpr']) ?>
+							<a class="gdpr-link" href="/<?= htmlspecialchars($lang) ?>/gdpr" target="_blank" style="color: var(--warning-red); text-decoration: none;">
+								<?= htmlspecialchars($t['gdpr_title']) ?>
 							</a>
 						</p>
 					</td>

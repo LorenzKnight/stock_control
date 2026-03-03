@@ -126,8 +126,6 @@ $i18n = [
 		'signup_submit'       => 'Create account',
 		'signup_have_account' => 'Already have an account?',
 
-		'signup_gdpr' 		  => 'GDPR-policy',
-
 		// Pricing features
 		'pricing_contact'      => 'Contact us for a custom plan',
 		'pricing_per_month'    => 'per month and employees',
@@ -147,6 +145,9 @@ $i18n = [
 		'footer_email'         => 'Your email',
 		'footer_message'       => 'Your message',
 		'footer_send'          => 'Send',
+
+		// GDPR
+		'gdpr_title' 		  => 'GDPR-policy',
 
 		// footer seo links
 		'footer_seo_title'        => 'Inventory Management Solutions',
@@ -263,8 +264,6 @@ $i18n = [
 		'signup_submit'       => 'Crear cuenta',
 		'signup_have_account' => '¿Ya tienes una cuenta?',
 
-		'signup_gdpr' 		  => 'Política del RGPD / DPA',
-
 		// Pricing features
 		'pricing_contact'        => 'Contáctanos para un plan a medida',
 		'pricing_per_month'      => 'por mes y empleados',
@@ -284,6 +283,9 @@ $i18n = [
 		'footer_email'         => 'Tu correo electrónico',
 		'footer_message'       => 'Tu mensaje',
 		'footer_send'          => 'Enviar',
+
+		// GDPR
+		'gdpr_title' 		  => 'Política del RGPD / DPA',
 
 		// footer seo links
 		'footer_seo_title'        => 'Soluciones de control de inventario',
@@ -400,8 +402,6 @@ $i18n = [
 		'signup_submit'       => 'Skapa konto',
 		'signup_have_account' => 'Har du redan ett konto?',
 
-		'signup_gdpr' 		  => 'Integritetspolicy / GDPR',
-
 		// Pricing features
 		'pricing_contact'      => 'Kontakta oss för ett skräddarsytt paket',
 		'pricing_per_month'    => 'per månad och anställda',
@@ -421,6 +421,9 @@ $i18n = [
 		'footer_email'         => 'Din e-postadress',
 		'footer_message'       => 'Ditt meddelande',
 		'footer_send'          => 'Skicka',
+
+		// GDPR 
+		'gdpr_title' 		  => 'Integritetspolicy / GDPR',
 
 		// footer seo links
 		'footer_seo_title'        => 'Lagerhanteringslösningar',
