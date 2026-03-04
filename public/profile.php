@@ -1,5 +1,24 @@
 <?php require_once('logic/stock_be.php'); ?>
 <?php include('logic/mini_language_switcher.php'); ?>
+<?php
+$host = $_SERVER['HTTP_HOST'] ?? '';
+
+function ends_with($haystack, $needle) {
+	if ($needle === '') return true;
+	$len = strlen($needle);
+	return $len === 0 ? true : (substr($haystack, -$len) === $needle);
+}
+
+$isLocalHost = (
+	$host === 'localhost' || 
+	$host === '127.0.0.1' || 
+	ends_with($host, '.local')
+);
+
+$isProduction = function_exists('isProductionEnv') ? isProductionEnv() : (!$isLocalHost);
+
+$stripeJsSrc = $isProduction ? 'https://js.stripe.com/v3/' : 'http://js.stripe.com/v3/';
+?>
 
 <!DOCTYPE html>
 <html class="no-js" lang="sw">
@@ -13,8 +32,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="css/styles.css">
 	<script defer src="js/functions.js"></script>
-	<script src="https://js.stripe.com/v3/"></script>
-	<!-- <script src="http://js.stripe.com/v3/"></script> --> <!-- Usa HTTP para localhost -->
+	<script src="<?= htmlspecialchars($stripeJsSrc) ?>"></script>
 	<script defer src="js/subscriptions.js"></script>
 	<script defer src="js/actions.js"></script>
 	<script defer src="js/realtimeClient.js"></script>
