@@ -28,7 +28,7 @@
                             </td>
                             <td colspan="5" align="left" valign="middle">
                                 I accept the processing of my personal data in accordance with the
-                                <a href="URL_DE_POLITICA" target="_blank">Privacy Policy</a> and in compliance with the applicable laws:</br>
+                                <a href="<?= htmlspecialchars($lang) ?>/gdpr" target="_blank">Privacy Policy</a> and in compliance with the applicable laws:</br>
                                 GDPR (Sweden/EU), CCPA/CPRA (USA), LGPD (Brazil), LFPDPPP (Mexico), and other relevant regulations.
                             </td>
                         </tr>

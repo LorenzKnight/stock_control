@@ -1,4 +1,5 @@
 <?php require_once('logic/stock_be.php'); ?>
+<?php include('logic/mini_language_switcher.php'); ?>
 
 <!DOCTYPE html>
 <html class="no-js" lang="sw">

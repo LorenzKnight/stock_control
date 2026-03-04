@@ -37,7 +37,7 @@
 		</p>
 	</div>
 	<div class="contact-us" id="contactBox">
-		<img src="../images/sys-img/email.gif" alt="e-mail" class="">
+		<img src="/images/sys-img/email.gif" alt="e-mail" class="">
 		
 		<form id="contactForm" method="POST" action="/api/send_email.php">
 			<button type="button" id="closeContactForm" class="close-btn">&times;</button>
