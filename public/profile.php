@@ -13,8 +13,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="css/styles.css">
 	<script defer src="js/functions.js"></script>
-	<!-- <script src="https://js.stripe.com/v3/"></script> -->
-	<script src="http://js.stripe.com/v3/"></script> <!-- Usa HTTP para localhost -->
+	<script src="https://js.stripe.com/v3/"></script>
+	<!-- <script src="http://js.stripe.com/v3/"></script> --> <!-- Usa HTTP para localhost -->
 	<script defer src="js/subscriptions.js"></script>
 	<script defer src="js/actions.js"></script>
 	<script defer src="js/realtimeClient.js"></script>
