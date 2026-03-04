@@ -19,7 +19,7 @@
                                 <input type="checkbox" id="terms-check" name="acepto" value="1">
                             </td>
                             <td colspan="5" align="left" valign="middle">
-                                I accept the <a href="URL_DE_POLITICA" target="_blank">terms and conditions</a> of use of AllStockControl
+                                I accept the <a href="<?= htmlspecialchars($lang) ?>/terms" target="_blank">terms and conditions</a> of use of AllStockControl
                             </td>
                         </tr>
                         <tr valign="baseline" height="60px">
@@ -37,7 +37,7 @@
 			</tr>
             <tr valign="baseline" height="60px">
                 <td colspan="6" align="center" valign="middle">
-                    <button type="button" class="button-style-agree button-ghost" id="submit-company-info">Submit Company info</button>
+                    <button type="button" class="button-style-agree button-ghost" id="submit-company-info">I Agree</button>
                 </td>
             </tr>
         </table>

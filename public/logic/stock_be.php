@@ -34,7 +34,3 @@ require_once __DIR__ .'/../inc/jwt_config.php';
 if (strpos($_SERVER['HTTP_HOST'] ?? '', 'localhost') !== false) {
     error_log("✅ stock_be.php loaded successfully with autoload.");
 }
-
-// define('VAPID_PUBLIC_KEY', 'BKqWcNgpm_rAhyuhrXKvDl7LksLNuhA-KQhanWJlBsOC34-ScYjy8p0xBb3h6YMOyT9kenbv_OTnEg5yWG-Kx5k');
-// define('VAPID_PRIVATE_KEY', 'gF251UD2mJU2ITv0qhUbTK_kDcaAdA4HEUYstmXggnE');
-// define('VAPID_SUBJECT', 'mailto:admin@allstockcontrol.com');
