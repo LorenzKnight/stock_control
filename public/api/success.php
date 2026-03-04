@@ -15,7 +15,7 @@ $sessionId = $_GET['session_id'] ?? null;
 
 if (!$sessionId) {
     $_SESSION["payment_message"] = "Payment session ID is missing.";
-    header("Location: ../profile.php");
+    header("Location: /profile.php");
     exit;
 }
 
@@ -38,6 +38,6 @@ try {
     $_SESSION["payment_message"] = "Error verifying your payment. Please try again later.";
 }
 
-header("Location: ../profile.php");
+header("Location: /profile.php");
 exit;
 ?>

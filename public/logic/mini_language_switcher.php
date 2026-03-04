@@ -2,7 +2,10 @@
 // Idiomas soportados y selección por query (?lang=en|es|sv)
 $supported = ['en','es','sv'];
 
-$uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+$path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+$path = is_string($path) ? $path : '/';
+
+$uri = trim($path, '/');
 $uriLang = substr($uri, 0, 2);
 
 if (in_array($uriLang, $supported, true)) {
@@ -441,26 +444,21 @@ $i18n = [
 $t = $i18n[$lang];
 
 // Helper para construir URLs con ?lang=…
-// function url_with_lang(string $targetLang): string {
-//     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-//     $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
-//     return $scheme . '://' . $host . '/' . $targetLang . '/';
-// }
-
 function url_with_lang(string $targetLang): string {
 	$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 	$host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
 
-	$path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
-	$path = '/' . trim($path, '/');
+	$rawPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+	$rawPath = is_string($rawPath) ? $rawPath : '/';
 
-	// quitar idioma actual al inicio si existe
+	$path = '/' . trim($rawPath, '/');
+
 	$pathParts = explode('/', trim($path, '/'));
 	if (in_array($pathParts[0] ?? '', ['en','es','sv'], true)) {
 		array_shift($pathParts);
 	}
 	$rest = implode('/', $pathParts);
 
-	return $scheme . '://' . $host . '/' . $targetLang . '/' . $rest;
+	return $scheme . '://' . $host . '/' . $targetLang . ($rest !== '' ? '/' . $rest : '');
 }
 ?>
