@@ -199,8 +199,8 @@ try {
 			'price' => $price->id,
 			'quantity' => 1,
 		]],
-		'success_url' => $myUrl . 'api/success.php?session_id={CHECKOUT_SESSION_ID}',
-        'cancel_url'  => $myUrl . 'api/cancel.php?session_id={CHECKOUT_SESSION_ID}',
+		'success_url' => $myUrl . '/api/success.php?session_id={CHECKOUT_SESSION_ID}',
+        'cancel_url'  => $myUrl . '/api/cancel.php?session_id={CHECKOUT_SESSION_ID}',
         'metadata'    => $metadata
 	]);
 
