@@ -146,8 +146,9 @@ $i18n = [
 		'footer_message'       => 'Your message',
 		'footer_send'          => 'Send',
 
-		// GDPR
+		// Privacy & GDPR
 		'gdpr_title' 		  => 'GDPR-policy',
+		'terms_title' 		  => 'Terms of Use',
 
 		// footer seo links
 		'footer_seo_title'        => 'Inventory Management Solutions',
@@ -284,8 +285,9 @@ $i18n = [
 		'footer_message'       => 'Tu mensaje',
 		'footer_send'          => 'Enviar',
 
-		// GDPR
+		// Privacy & GDPR
 		'gdpr_title' 		  => 'Política del RGPD / DPA',
+		'terms_title' 		  => 'Términos de uso',
 
 		// footer seo links
 		'footer_seo_title'        => 'Soluciones de control de inventario',
@@ -422,8 +424,9 @@ $i18n = [
 		'footer_message'       => 'Ditt meddelande',
 		'footer_send'          => 'Skicka',
 
-		// GDPR 
+		// Privacy & GDPR 
 		'gdpr_title' 		  => 'Integritetspolicy / GDPR',
+		'terms_title' 		  => 'Användarvillkor',
 
 		// footer seo links
 		'footer_seo_title'        => 'Lagerhanteringslösningar',

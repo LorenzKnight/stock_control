@@ -3,6 +3,11 @@
 		<h3><?= htmlspecialchars($t['footer_seo_title']) ?></h3>
 		<ul>
 			<li>
+				<a class="gdpr-link" href="/<?= htmlspecialchars($lang) ?>/terms" target="_blank">
+					<?= htmlspecialchars($t['terms_title']) ?>
+				</a>
+			</li>
+			<li>
 				<a class="gdpr-link" href="/<?= htmlspecialchars($lang) ?>/gdpr" target="_blank">
 					<?= htmlspecialchars($t['gdpr_title']) ?>
 				</a>

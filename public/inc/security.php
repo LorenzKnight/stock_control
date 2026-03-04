@@ -28,7 +28,7 @@ $allowed = [
     '/', 
     '/login', '/login.php',
     '/signup', '/signup.php',
-    '/gdpr',
+    '/gdpr', '/terms',
     '/api/login.php', '/api/signup.php',
     '/api/success.php', '/api/cancel.php',
     // agrega aquí otras públicas si las tienes:
