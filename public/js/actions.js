@@ -35,28 +35,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
-
+	// 📌 Manejo del formulario terms y gdpr
 	const termsCheck = document.getElementById('terms-check');
     const privacyCheck = document.getElementById('privacy-check');
     const submitBtn = document.getElementById('submit-company-info');
 
-    function updateButtonState() {
-        const enabled = termsCheck.checked && privacyCheck.checked;
-        submitBtn.disabled = !enabled;
-        
-        if (enabled) {
-            submitBtn.classList.remove('button-ghost');
-        } else {
-            submitBtn.classList.add('button-ghost');
-        }
-    }
-
     if (termsCheck && privacyCheck && submitBtn) {
-        termsCheck.addEventListener('change', updateButtonState);
-        privacyCheck.addEventListener('change', updateButtonState);
-        updateButtonState(); // Estado inicial al cargar
+		await bindSubmitToCheckboxes({
+			checkboxIds: ['terms-check', 'privacy-check'],
+			submitId: 'submit-company-info',
+		});
     }
-
 	
 	const submitCompanyInfo = document.getElementById('submit-company-info');
 	if (submitCompanyInfo) {
@@ -169,6 +158,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// 📌 Manejo del formulario de registro
+	const signupTermsCheck = document.getElementById('signup-terms-check');
+    const signupPrivacyCheck = document.getElementById('signup-privacy-check');
+    const submitSignupBtn = document.getElementById('submit-signup');
+
+    if (signupTermsCheck && signupPrivacyCheck && submitSignupBtn) {
+        await bindSubmitToCheckboxes({
+			checkboxIds: ['signup-terms-check', 'signup-privacy-check'],
+			submitId: 'submit-signup',
+		});
+    }
+
 	let formSignUp = document.getElementById('formsignup');
 	if (formSignUp) {
 		formSignUp.addEventListener('submit', async function (e) {
@@ -177,6 +177,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const banner = document.getElementById('status-message');
 			const statusText = document.getElementById('status-text');
 			const statusImage = document.getElementById('status-image');
+
+			const termsEl = document.getElementById('signup-terms-check');
+			const privacyEl = document.getElementById('signup-privacy-check');
+
+			// ✅ validar checks antes de enviar
+			if (!termsEl?.checked || !privacyEl?.checked) {
+				statusText.innerText = "Please accept Terms and Privacy Policy to continue.";
+				statusImage.src = "../images/sys-img/error.gif";
+				showBanner(banner);
+				return;
+			}
 
 			const password = document.getElementById('password').value.trim();
 			const confirmPassword = document.getElementById('confirm_password').value.trim();
@@ -191,6 +202,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			let formData = new FormData(this);
 
+			formData.set('terms', '1');
+    		formData.set('gdpr', '1');
+	
 			try {
 				let response = await fetch('api/signup.php', {
 					method: 'POST',
@@ -9337,6 +9351,30 @@ document.addEventListener("DOMContentLoaded", async function () {
 	//############################################################# END SEND EMAIL ##################################################################
 
 	//############################################################# FUNCTIONES ##################################################################
+	async function bindSubmitToCheckboxes({
+		checkboxIds = [],
+		submitId,
+		ghostClass = "button-ghost",
+	}) {
+		const submitBtn = document.getElementById(submitId);
+		const checkboxes = checkboxIds
+			.map((id) => document.getElementById(id))
+			.filter(Boolean);
+
+		if (!submitBtn || checkboxes.length !== checkboxIds.length) return;
+
+		function update() {
+			const enabled = checkboxes.every((cb) => cb.checked);
+			submitBtn.disabled = !enabled;
+
+			if (enabled) submitBtn.classList.remove(ghostClass);
+			else submitBtn.classList.add(ghostClass);
+		}
+
+		checkboxes.forEach((cb) => cb.addEventListener("change", update));
+		update();
+	};
+	
 	// 📌 scroll to top 
 	function scrollToTopIfNeeded() {
 		if (window.scrollY > 0) {

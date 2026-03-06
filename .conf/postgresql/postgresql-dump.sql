@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS users (
 	phone VARCHAR(20) NULL,
 	username VARCHAR(255) NULL,
 	password VARCHAR(255) NULL,
+	gdpr INTEGER DEFAULT 0,
+  	terms INTEGER DEFAULT 0,
 	image VARCHAR(255) NULL,
 	verified INTEGER NULL,
 	birthday TIMESTAMP NULL,

@@ -153,6 +153,12 @@ $i18n = [
 		'gdpr_title' 		  => 'GDPR-policy',
 		'terms_title' 		  => 'Terms of Use',
 
+		// signup checks
+		'signup_terms_prefix' => 'I accept the',
+		'signup_terms_link'   => 'terms and conditions',
+		'signup_terms_suffix' => 'of use of AllStockControl',
+		'signup_privacy_text' => 'for personal data processing. GDPR (EU) and applicable laws apply.',
+
 		// footer seo links
 		'footer_seo_title'        => 'Inventory Management Solutions',
 		// 'footer_seo_inventory'   => 'Inventory management software',
@@ -292,6 +298,12 @@ $i18n = [
 		'gdpr_title' 		  => 'Política del RGPD / DPA',
 		'terms_title' 		  => 'Términos de uso',
 
+		// signup checks
+		'signup_terms_prefix' => 'Acepto las',
+		'signup_terms_link'   => 'condiciones y términos',
+		'signup_terms_suffix' => 'de uso de AllStockControl',
+		'signup_privacy_text' => 'para el tratamiento de datos personales. Se aplica el RGPD (UE) y las leyes aplicables.',
+
 		// footer seo links
 		'footer_seo_title'        => 'Soluciones de control de inventario',
 		// 'footer_seo_inventory'   => 'Software de control de inventario',
@@ -430,6 +442,12 @@ $i18n = [
 		// Privacy & GDPR 
 		'gdpr_title' 		  => 'Integritetspolicy / GDPR',
 		'terms_title' 		  => 'Användarvillkor',
+
+		// signup checks
+		'signup_terms_prefix' => 'Jag accepterar',
+		'signup_terms_link'   => 'användarvillkoren',
+		'signup_terms_suffix' => 'för användning av AllStockControl',
+		'signup_privacy_text' => 'för behandling av personuppgifter. GDPR (EU) och tillämpliga lagar gäller.',
 
 		// footer seo links
 		'footer_seo_title'        => 'Lagerhanteringslösningar',

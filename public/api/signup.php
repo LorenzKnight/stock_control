@@ -18,7 +18,7 @@ try {
         throw new Exception("Method not allowed");
     }
 
-    $requiredFields = ["name", "surname", "email", "password"];
+    $requiredFields = ["name", "surname", "email", "password", "terms", "gdpr"];
     $data = [];
 
 	foreach ($requiredFields as $field) {
@@ -28,9 +28,15 @@ try {
 		$data[$field] = trim($_POST[$field]);
 	}
 
+    if ($data['terms'] !== '1' || $data['gdpr'] !== '1') {
+        throw new Exception("You must accept the Terms and Privacy Policy.");
+    }
+
     $data["status"] = 1;
     $data["username"] = strtolower($data["name"] . "_" . $data["surname"]);
     $data["password"] = password_hash($data["password"], PASSWORD_DEFAULT);
+    $data['terms'] = 1;
+    $data['gdpr']  = 1;
     $data["verified"] = 0;
     $data["signup_date"] = date("Y-m-d H:i:s");
     $data["rank"] = 3;
