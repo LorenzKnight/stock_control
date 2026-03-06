@@ -21,6 +21,7 @@
 	<?php include("components/modal_sale_options.php"); ?>
 	<?php include("components/modal_add_sale.php"); ?>
 	<?php include("components/message.php"); ?>
+	<?php include("components/confirm_and_notification.php"); ?>
 	<?php include("components/header.php"); ?>
 	<?php include("components/sales_container.php"); ?>
 </body>

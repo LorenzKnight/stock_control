@@ -23,6 +23,7 @@
 	<?php include("components/modal_add_product_type.php"); ?>
 	<?php include("components/modal_add_category.php"); ?>
 	<?php include("components/message.php"); ?>
+	<?php include("components/confirm_and_notification.php"); ?>
 	<?php include("components/header.php"); ?>
 	<?php include("components/products_container.php"); ?>
 </body>

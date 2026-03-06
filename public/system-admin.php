@@ -23,6 +23,7 @@
 	<?php include("components/modal_add_right.php"); ?>
 	<?php include("components/modal_add_service.php"); ?>
 	<?php include("components/message.php"); ?>
+	<?php include("components/confirm_and_notification.php"); ?>
 	<?php include("components/header.php"); ?>
 	<?php include("components/system_container.php"); ?>
 </body>

@@ -21,6 +21,7 @@
 	<?php include("components/modal_payments_options.php"); ?>
 	<?php include("components/modal_add_payments.php"); ?>
 	<?php include("components/message.php"); ?>
+	<?php include("components/confirm_and_notification.php"); ?>
 	<?php include("components/header.php"); ?>
 	<?php include("components/payments_container.php"); ?>
 </body>
