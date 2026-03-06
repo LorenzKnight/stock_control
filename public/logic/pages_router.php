@@ -1,5 +1,5 @@
 <?php
-// /public/router/pages_router.php
+// /public/logic/pages_router.php
 
 // Path limpio
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
@@ -21,7 +21,7 @@ $slug = implode('/', $parts); // 'gdpr' o ''
 
 // HOME (/, /es, /en, /sv)
 if ($slug === '') {
-	include(__DIR__ . '/../components/message.php');
+	include_once(__DIR__ . '/../components/message.php');
 	include(__DIR__ . '/../components/front_header.php');
     include(__DIR__ . '/../components/banner_container.php');
     include(__DIR__ . '/../components/descriptions_container.php');
@@ -33,8 +33,7 @@ if ($slug === '') {
 // Rutas bonitas -> archivo
 $routes = [
     'gdpr' => 'gdpr',
-    // 'privacy' => 'privacy',
-    // 'terms' => 'terms',
+    'terms' => 'terms',
 ];
 
 // resolver archivo de página
@@ -46,7 +45,9 @@ if (!is_file($pageFile)) {
     $pageFile = __DIR__ . '/../pages/404.php';
 }
 
+include_once(__DIR__ . '/../components/message.php');
 include(__DIR__ . '/../components/pages_header.php');
 
 // render
 include $pageFile;
+return;
