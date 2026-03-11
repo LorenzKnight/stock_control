@@ -24,7 +24,9 @@ try {
         "image",
         "signup_date",
         "company_id",
-        "package_id"
+        "package_id",
+        "gdpr",
+        "terms"
     ], ["user_id" => $userId], ["fetch_first" => true]);
 
     $userData = json_decode($userDataResponse, true);

@@ -1,56 +1,56 @@
 document.addEventListener("DOMContentLoaded", async function () {
-	const setUp = document.getElementById('setup-form');
-	if (setUp) {
-		const popupContent = setUp.querySelector('.formular-frame');
-		try {
-				let response = await fetch('api/get_my_info.php', {
-					method: 'GET',
-					headers: { Accept: 'application/json' }
-				});
+	function openCompanyModal() {
+		const editCompanyForm = document.getElementById('edit-company-form');
+		const companyPopupContent = editCompanyForm?.querySelector('.formular-medium-frame');
 
-				let data = await response.json();
+		if (editCompanyForm && companyPopupContent) {
+			editCompanyForm.style.display = 'block';
+			editCompanyForm.style.opacity = '0';
+			editCompanyForm.style.transition = 'opacity 300ms ease';
 
-				if (data.success && data.data) {
-					let user = data.data;
+			void editCompanyForm.offsetWidth;
+			editCompanyForm.style.opacity = '1';
 
-					if (user.company_id === null || user.company_id === "" || user.company_id === undefined) {
-						setUp.style.display = 'block';
-						setUp.style.opacity = '0';
-						setUp.style.transition = 'opacity 0.5s ease';
-						setTimeout(() => {
-							setUp.style.opacity = '1';
-						}, 10);
+			companyPopupContent.style.transform = 'scale(0.7)';
+			companyPopupContent.style.opacity = '0';
+			companyPopupContent.style.transition = 'transform 300ms ease, opacity 300ms ease';
 
-						popupContent.style.transform = 'scale(0.7)';
-						popupContent.style.opacity = '0';
-						popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-						setTimeout(() => {
-							popupContent.style.transform = 'scale(1)';
-							popupContent.style.opacity = '1';
-						}, 50);
-					}
-				}
-		} catch (error) {
-			console.error("Error fetching setup data:", error);
+			void companyPopupContent.offsetWidth;
+			companyPopupContent.style.transform = 'scale(1)';
+			companyPopupContent.style.opacity = '1';
+
+			if (!editCompanyForm.dataset.ddInit && typeof initDragAndDrop === 'function') {
+				initDragAndDrop('company-logo-drop-area', 'company_logo', 'logo-preview');
+				editCompanyForm.dataset.ddInit = '1';
+			}
 		}
 	}
 
-	// 📌 Manejo del formulario terms y gdpr
-	const termsCheck = document.getElementById('terms-check');
-    const privacyCheck = document.getElementById('privacy-check');
-    const submitBtn = document.getElementById('submit-company-info');
+	function bindSubmitCompanyInfo() {
+		const submitCompanyInfo = document.getElementById('submit-company-info');
+		if (!submitCompanyInfo) return;
 
-    if (termsCheck && privacyCheck && submitBtn) {
-		await bindSubmitToCheckboxes({
-			checkboxIds: ['terms-check', 'privacy-check'],
-			submitId: 'submit-company-info',
-		});
-    }
-	
-	const submitCompanyInfo = document.getElementById('submit-company-info');
-	if (submitCompanyInfo) {
+		if (submitCompanyInfo.dataset.bound === '1') return;
+		submitCompanyInfo.dataset.bound = '1';
+
 		submitCompanyInfo.addEventListener('click', async (e) => {
 			e.preventDefault();
+
+			// ✅ AQUÍ es donde pones el "submit" (fetch POST) para guardar gdpr/terms.
+			// const termsCheck = document.getElementById('terms-check');
+			// const privacyCheck = document.getElementById('privacy-check');
+
+			// if (!termsCheck?.checked || !privacyCheck?.checked) {
+			// // aquí puedes mostrar un banner/mensaje si quieres
+			// return;
+			// }
+
+			// // 2) Guardar aceptación en backend
+			// await fetch('/api/accept_legal.php', {
+			// 	method: 'POST',
+			// 	headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+			// 	body: JSON.stringify({ terms: 1, gdpr: 1 })
+			// });
 
 			const setUp = document.getElementById('setup-form');
 			const popupContent = setUp?.querySelector('.formular-frame');
@@ -68,33 +68,81 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}, { once: true });
 			}
 
-			const editCompanyForm = document.getElementById('edit-company-form');
-			const companyPopupContent = editCompanyForm?.querySelector('.formular-medium-frame');
+			let response = await fetch('/api/get_my_info.php', {
+				method: 'GET',
+				headers: { Accept: 'application/json' }
+			});
 
-			if (editCompanyForm && companyPopupContent) {
-				editCompanyForm.style.display = 'block';
-				editCompanyForm.style.opacity = '0';
-				editCompanyForm.style.transition = 'opacity 300ms ease';
+			let data = await response.json();
 
-				void editCompanyForm.offsetWidth;
-				editCompanyForm.style.opacity = '1';
+			if (data.success && data.data) {
+				let user = data.data;
 
-				companyPopupContent.style.transform = 'scale(0.7)';
-				companyPopupContent.style.opacity = '0';
-				companyPopupContent.style.transition = 'transform 300ms ease, opacity 300ms ease';
-				
-				void companyPopupContent.offsetWidth;
-				companyPopupContent.style.transform = 'scale(1)';
-				companyPopupContent.style.opacity = '1';
-
-				if (!editCompanyForm.dataset.ddInit && typeof initDragAndDrop === 'function') {
-					initDragAndDrop('company-logo-drop-area', 'company_logo', 'logo-preview');
-					editCompanyForm.dataset.ddInit = '1';
+				if (user.company_id === null || user.company_id === "" || user.company_id === undefined) {
+					openCompanyModal();
 				}
 			}
 		});
 	}
 
+	// --- Init flow ---
+	const setUp = document.getElementById('setup-form');
+	if (setUp) {
+		const popupContent = setUp.querySelector('.formular-frame');
+		try {
+			let response = await fetch('/api/get_my_info.php', {
+				method: 'GET',
+				headers: { Accept: 'application/json' }
+			});
+
+			let data = await response.json();
+
+			if (data.success && data.data) {
+				let user = data.data;
+
+				// 1) Si NO aceptó gdpr/terms -> mostrar setup
+				if (user.gdpr === "0" || user.terms === "0") {
+					setUp.style.display = 'block';
+					setUp.style.opacity = '0';
+					setUp.style.transition = 'opacity 0.5s ease';
+					setTimeout(() => {
+						setUp.style.opacity = '1';
+					}, 10);
+
+					popupContent.style.transform = 'scale(0.7)';
+					popupContent.style.opacity = '0';
+					popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+					setTimeout(() => {
+						popupContent.style.transform = 'scale(1)';
+						popupContent.style.opacity = '1';
+					}, 50);
+				}
+				// 2) Si YA aceptó gdpr/terms pero NO tiene company -> abrir modal de company automáticamente
+				else if (user.company_id === null || user.company_id === "" || user.company_id === undefined) {
+					openCompanyModal();
+				}
+			}
+		} catch (error) {
+			console.error("Error fetching setup data:", error);
+		}
+	}
+	// Bind del botón siempre (exista o no setup)
+	bindSubmitCompanyInfo();
+
+	// 📌 Manejo del formulario terms y gdpr (habilitar/deshabilitar botón submit-company-info)
+	const termsCheck = document.getElementById('terms-check');
+	const privacyCheck = document.getElementById('privacy-check');
+	const submitBtn = document.getElementById('submit-company-info');
+
+	if (termsCheck && privacyCheck && submitBtn && typeof bindSubmitToCheckboxes === 'function') {
+		bindSubmitToCheckboxes({
+			checkboxIds: ['terms-check', 'privacy-check'],
+			submitId: 'submit-company-info',
+		});
+	}
+
+
+	// 📌 Mostrar mensaje de pago (si viene por URL)
 	if (window.paymentMessage) {
 		const banner = document.getElementById('status-message');
 		const statusText = document.getElementById('status-text');

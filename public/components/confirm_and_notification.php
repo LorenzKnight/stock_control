@@ -1,4 +1,4 @@
-<div id="globalConfirmModal" class="delete-modal-overlay" style="display: none;">
+<div id="globalConfirmModal" class="delete-modal-overlay" style="display: none;" data-nosnippet>
 	<div class="delete-modal-box">
 		<h3 id="confirm-modal-title"></h3>
 		<p id="confirm-modal-message"></p>
@@ -9,7 +9,7 @@
 	</div>
 </div>
 
-<div id="globalOkModal" class="delete-modal-overlay" style="display: none;">
+<div id="globalOkModal" class="delete-modal-overlay" style="display: none;" data-nosnippet>
 	<div class="delete-modal-box">
 		<h3 id="alert-modal-title"></h3>
 		<p id="alert-modal-message"></p>
@@ -19,4 +19,4 @@
 	</div>
 </div>
 
-<div id="notification-container" class="notification-container"></div>
+<div id="notification-container" class="notification-container" data-nosnippet></div>
