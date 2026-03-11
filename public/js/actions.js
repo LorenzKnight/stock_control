@@ -36,22 +36,62 @@ document.addEventListener("DOMContentLoaded", async function () {
 		submitCompanyInfo.addEventListener('click', async (e) => {
 			e.preventDefault();
 
-			// ✅ AQUÍ es donde pones el "submit" (fetch POST) para guardar gdpr/terms.
-			// const termsCheck = document.getElementById('terms-check');
-			// const privacyCheck = document.getElementById('privacy-check');
+			// --- Banner global (ya existe en components/message.php) ---
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
 
-			// if (!termsCheck?.checked || !privacyCheck?.checked) {
-			// // aquí puedes mostrar un banner/mensaje si quieres
-			// return;
-			// }
+			// --- 1) Validar checks ---
+			const termsCheck = document.getElementById('terms-check');
+			const privacyCheck = document.getElementById('privacy-check');
 
-			// // 2) Guardar aceptación en backend
-			// await fetch('/api/accept_legal.php', {
-			// 	method: 'POST',
-			// 	headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-			// 	body: JSON.stringify({ terms: 1, gdpr: 1 })
-			// });
+			if (!termsCheck?.checked || !privacyCheck?.checked) {
+				statusText.innerText = "Please accept Terms and Privacy Policy to continue.";
+				statusImage.src = "../images/sys-img/error.gif";
+				showBanner(banner);
+				return;
+			}
 
+			// --- 2) Guardar aceptación en backend ---
+			const formData = new FormData();
+			formData.set('terms', '1');
+			formData.set('gdpr', '1');
+
+			try {
+				const resp = await fetch('/api/update_accept_legal.php', {
+					method: 'POST',
+					headers: { 'Accept': 'application/json' },
+					body: formData
+				});
+
+				const data = await resp.json();
+
+				if (data.success) {
+					statusText.innerText = data.message;
+					statusImage.src = data.img_gif;
+
+					showBanner(banner);
+
+					setTimeout(() => {
+						hideBanner(banner, () => {
+							// aquí NO redirigimos; solo seguimos con tu flujo actual
+							// (cerrar setup-form y luego abrir company modal si aplica)
+						});
+					}, 3000);
+				} else {
+					statusText.innerText = "Error: " + data.message;
+					statusImage.src = data.img_gif;
+					showBanner(banner);
+					return;
+				}
+			} catch (error) {
+				statusText.innerText = "Error procesando la solicitud.";
+				statusImage.src = "../images/sys-img/error.gif";
+				showBanner(banner);
+				return;
+			}
+
+			// --- 3) Cerrar setup-form ---
 			const setUp = document.getElementById('setup-form');
 			const popupContent = setUp?.querySelector('.formular-frame');
 
@@ -78,7 +118,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 			if (data.success && data.data) {
 				let user = data.data;
 
-				if (user.company_id === null || user.company_id === "" || user.company_id === undefined) {
+				const companyId = Number(user.company_id);
+
+				if (!Number.isFinite(companyId) || companyId <= 0) {
 					openCompanyModal();
 				}
 			}
@@ -118,7 +160,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					}, 50);
 				}
 				// 2) Si YA aceptó gdpr/terms pero NO tiene company -> abrir modal de company automáticamente
-				else if (user.company_id === null || user.company_id === "" || user.company_id === undefined) {
+				else if (!Number.isFinite(Number(user.company_id)) || Number(user.company_id) <= 0) {
 					openCompanyModal();
 				}
 			}
