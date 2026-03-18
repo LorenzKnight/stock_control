@@ -3179,12 +3179,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}
 
 				if (hasSearch) params.append('search', searchTerm);
-				const res = await fetch(`/api/get_storages.php?${params.toString()}`, {
+				const res = await fetch(`api/get_storages.php?${params.toString()}`, {
 					method: 'GET',
 					headers: { 'Accept': 'application/json' }
 				});
 				const data = await res.json();
-				
+				console.log(data);
 				if (data.success) {
 					renderStoragesTable(data.data, null, hasSearch);
 				} else {
