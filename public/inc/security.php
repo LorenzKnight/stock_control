@@ -31,9 +31,6 @@ $allowed = [
     '/gdpr', '/terms',
     '/api/login.php', '/api/signup.php',
     '/api/success.php', '/api/cancel.php',
-    // agrega aquí otras públicas si las tienes:
-    // '/pricing', '/pricing.php',
-    // '/forgot-password', '/forgot-password.php',
 ];
 
 // Si viene con prefijo de idioma, lo removemos SOLO para evaluar permisos
