@@ -172,6 +172,30 @@ CREATE TABLE IF NOT EXISTS category (
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- store slots for products in the warehouse
+CREATE TABLE IF NOT EXISTS slot (
+	slot_id SERIAL PRIMARY KEY,
+	company_id INTEGER NULL,
+	slot_name VARCHAR(255) NULL,
+	slot_description TEXT NULL,
+	max_capacity INTEGER NULL,
+	current_capacity INTEGER NULL,
+	status INTEGER NULL,
+	created_by INTEGER NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS storage (
+	storage_id SERIAL PRIMARY KEY,
+	company_id INTEGER NULL,
+	slot_id INTEGER NULL,
+	product_id INTEGER NULL,
+	quantity INTEGER NULL,
+	create_by INTEGER NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- customers table to store customer information, including references and document details for credit sales
 CREATE TABLE IF NOT EXISTS customers (
 	customer_id SERIAL PRIMARY KEY,
 	company_id INTEGER NULL,

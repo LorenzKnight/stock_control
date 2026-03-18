@@ -10,10 +10,11 @@
 				<li class="no-redirect" id="home-site">
 					<img src="images/sys-img/home-icon.png" alt="Home" id="notification-icon" class="home-icon">
 				</li>
-				<li>Sales</li>
 				<li>Products</li>
+				<li>Storage</li>
 				<li>Customers</li>
 				<li class="hidden" id="shipping-seccion">Shipping</li>
+				<li>Sales</li>
 				<li>Payments</li>
 				<li class="no-redirect" id="notification-site">
 					<img src="images/sys-img/notif.png" alt="Notification" id="notification-icon" class="notification-icon">

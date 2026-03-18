@@ -10,8 +10,16 @@ $response = [
 ];
 
 try {
-    $userId = $_SESSION["sc_UserId"] ?? null;
-	if (!$userId) throw new Exception("User session not found.");
+	if ($_SERVER["REQUEST_METHOD"] !== "GET") {
+		throw new Exception("Method not allowed.");
+	}
+	
+	$authUser = requireAuth();
+	$userId = $authUser["user_id"] ?? null;
+
+	if (empty($userId)) {
+        throw new Exception("Unauthorized access: invalid or missing token.");
+    }
 
     $search = $_GET['search'] ?? '';
 	$paymentId = isset($_GET['payment_id']) ? (int)$_GET['payment_id'] : null;

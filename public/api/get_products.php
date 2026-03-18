@@ -71,7 +71,9 @@ try {
 	$authUser = requireAuth();
 	$userId = $authUser["user_id"] ?? null;
 
-	if (!$userId) throw new Exception("User session not found.");
+	if (empty($userId)) {
+        throw new Exception("Unauthorized access: invalid or missing token.");
+    }
 
 	// Obtener datos del usuario
 	$userData = json_decode(select_from(

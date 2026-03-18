@@ -12,6 +12,10 @@ try {
     $authUser = requireAuth();
     $userId = $authUser["user_id"];
 
+    if (empty($userId)) {
+        throw new Exception("Unauthorized access: invalid or missing token.");
+    }
+    
     $userDataResponse = select_from("users", [
         "user_id",
         "parent_user",

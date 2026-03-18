@@ -3159,9 +3159,351 @@ document.addEventListener("DOMContentLoaded", async function () {
 		'product-menu-buttons', 
 		'product-options'
 	);
-//################################################################ END PRODUCTS ##################################################################
+	//################################################################ END PRODUCTS ##################################################################
 
-//################################################################ CUSTOMERS #####################################################################
+	//################################################################ STORAGE #####################################################################
+	const storageSidebarTable = document.getElementById('storageTable');
+	const storageDetails = document.getElementById('storageDetails');
+	const searchFieldStorage = document.getElementById('searchFieldStorage');
+
+	if (storageSidebarTable && searchFieldStorage) {
+		async function fetchAndRenderStorages() {
+			try {
+				const searchTerm = (searchFieldStorage?.value || '').trim().toLowerCase();
+				const hasSearch = searchTerm !== '';
+				const params = new URLSearchParams();
+				
+				if (!hasSearch) {
+					storageSidebarTable.innerHTML = `<tr><td><p style="text-align:center;">No result yet</p></td></tr>`;
+					storageDetails.innerHTML = `<p style="text-align:center; padding:15px;">No result yet</p>`;
+				}
+
+				if (hasSearch) params.append('search', searchTerm);
+				const res = await fetch(`api/get_storages.php?${params.toString()}`, {
+					method: 'GET',
+					headers: { 'Accept': 'application/json' }
+				});
+				const data = await res.json();
+				
+				if (data.success) {
+					renderStoragesTable(data.data, null, hasSearch);
+				} else {
+					storageSidebarTable.innerHTML = `<tr><td><p style="text-align:center;">No result yet</p></td></tr>`;
+					storageDetails.innerHTML = `<p style="text-align:center; padding:15px;">No result yet</p>`;
+				}
+			} catch (err) {
+				console.error("Error loading shippings:", err);
+				storageSidebarTable.innerHTML = `<tr><td><p style="text-align:center;">Error loading storages</p></td></tr>`;
+				storageDetails.innerHTML = `<p style="text-align:center; padding:15px;">Error loading storages</p>`;
+			}
+		}
+
+		// Inicializar búsqueda
+		fetchAndRenderStorages();
+		searchFieldStorage.addEventListener('keyup', fetchAndRenderStorages);
+	}
+
+	// 🔹 Función para renderizar la tabla de shippings (reutilizable)
+	function renderStoragesTable(data, selectedId = null, hasSearch = false) {
+		storageSidebarTable.innerHTML = '';
+		storageDetails.innerHTML = '';
+
+		const payload = Array.isArray(data) ? data[0] : data;
+		const slots = payload?.slots || [];
+		const storages = payload?.storages || [];
+		const products = payload?.products || [];
+
+		if (!hasSearch) {
+			storageSidebarTable.innerHTML = `<tr><td><p style="text-align:center;">No result yet</p></td></tr>`;
+			storageDetails.innerHTML = `<p style="text-align:center; padding:15px;">No result yet</p>`;
+			return;
+		}
+
+		if (!Array.isArray(products) || products.length === 0) {
+			storageDetails.innerHTML = `<p style="text-align:center; padding:15px;">No products found</p>`;
+		} else {
+			renderStorageDetails({
+				type: 'product-search',
+				products: products,
+				storages: storages
+			}, null);
+		}
+
+		if (!Array.isArray(slots) || slots.length === 0) {
+			storageSidebarTable.innerHTML = `<tr><td><p style="text-align:center;">No slots found.</p></td></tr>`;
+			return;
+		}
+
+		slots.forEach(slot => {
+			let statusColor = '';
+			switch (parseInt(slot.status, 10)) {
+				case 0: statusColor = 'red'; break;
+				case 1: statusColor = 'orange'; break;
+				case 2: statusColor = 'green'; break;
+				case 3: statusColor = 'deepskyblue'; break;
+				default: statusColor = 'gray'; break;
+			}
+
+			const row = document.createElement('tr');
+			row.className = 'form_height clickable-row';
+			row.setAttribute('data-id', slot.slot_id);
+
+			row.innerHTML = `
+				<td width="85%" align="left" valign="top">
+					<div style="padding: 0 5px;">
+						Slot Name: <strong>${slot.slot_name || '—'}</strong><br>
+						<p>Status: <strong style="color:${statusColor};">${slot.status ?? '—'}</strong></p>
+						<p class="mini-title">${slot.slot_description || ''}</p>
+					</div>
+				</td>
+				<td width="15%" align="left" valign="top">
+					${formatNotificationDate(slot.created_at)}
+				</td>
+			`;
+
+			row.addEventListener('click', () => {
+				localStorage.setItem("selectedStorageId", slot.slot_id);
+				renderStorageDetails({
+					type: 'slot',
+					slot: slot,
+					storages: storages,
+					products: products
+				}, row);
+			});
+
+			storageSidebarTable.appendChild(row);
+
+			if (String(slot.slot_id) === String(selectedId)) {
+				renderStorageDetails({
+					type: 'slot',
+					slot: slot,
+					storages: storages,
+					products: products
+				}, row);
+				row.style.backgroundColor = 'var(--clr-white)';
+			}
+		});
+	}
+
+	async function renderStorageDetails(payload, clickedRow) {
+		const allRows = storageSidebarTable.querySelectorAll('.clickable-row');
+		allRows.forEach(row => row.style.backgroundColor = '');
+
+		if (clickedRow) {
+			clickedRow.style.backgroundColor = 'var(--clr-white)';
+		}
+
+		function buildProductCard(product) {
+			if (!product) {
+				return `
+					<div class="notification-detail-card">
+						<div class="notification-product-desc">
+							<p>Product data not available.</p>
+						</div>
+					</div>
+				`;
+			}
+
+			let unitImg = "";
+			let prodDetail = "";
+
+			if (product.sale_unit_type === "1" || product.sale_unit_type === null) {
+				unitImg = "images/sys-img/papel-box.png";
+
+				const raw = product?.total_weight;
+				const w = raw == null ? NaN : Number(String(raw).trim().replace(',', '.'));
+
+				if (Number.isFinite(w) && w > 0) {
+					prodDetail = `
+						<tr valign="baseline">
+							<td colspan="6" style="height: 10px;">
+								<table width="100%" align="center" cellspacing="0">
+									<tr valign="baseline">
+										<td colspan="6" align="center" style="height: 10px; border-top: 1px solid #CCC;">
+											<p>Total Weight<br><strong>${product.total_weight ? product.total_weight + ' kg' : ''}</strong></p>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					`;
+				}
+			} else {
+				unitImg = "images/sys-img/wooden-box.png";
+				prodDetail = `
+					<tr valign="baseline">
+						<td colspan="6" style="height: 10px;">
+							<table width="100%" align="center" cellspacing="0">
+								<tr valign="baseline">
+									<td style="width: 25%; height: 10px; border-top: 1px solid #CCC;">
+										<p>Units<br><strong>${product.units_per_pack || ''}</strong></p>
+									</td>
+									<td style="width: 40%; height: 10px; border-top: 1px solid #CCC;">
+										<p>Weight/unit<br><strong>${product.weight_per_unit ? product.weight_per_unit + ' kg' : ''}</strong></p>
+									</td>
+									<td style="width: 35%; height: 10px; border-top: 1px solid #CCC;">
+										<p>Total Weight<br><strong>${product.total_weight ? product.total_weight + ' kg' : ''}</strong></p>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				`;
+			}
+
+			const isDefaultImage = !product.product_image || product.product_image.trim() === "";
+			const productImage = isDefaultImage
+				? unitImg
+				: `images/products/${product.product_image}`;
+
+			const imageClass = isDefaultImage ? "grayscale-img" : "";
+
+			const minQty = (
+				product.quantity !== null &&
+				product.min_quantity !== null &&
+				!isNaN(product.quantity) &&
+				!isNaN(product.min_quantity) &&
+				Number(product.quantity) <= Number(product.min_quantity)
+			) ? "min-qty" : "";
+
+			return `
+				<div class="notification-detail-card">
+					<div class="notification-product-pic">
+						<img src="${productImage}" alt="${product.product_name || ''}" class="${imageClass}" />
+					</div>
+					<div class="notification-product-desc">
+						<table width="90%" align="center" cellspacing="0">
+							<tr valign="baseline">
+								<td style="width: 50%; height: 20px;">
+									<p style="margin: 10px 0 0;">${product.product_name || ''}</p>
+								</td>
+								<td style="width: 50%; height: 20px;" align="right">
+									<p style="margin: 10px 0 0;">Qty: <strong class="${minQty}">${product.quantity ?? ''}</strong></p>
+								</td>
+							</tr>
+							<tr valign="baseline">
+								<td colspan="2" style="height: 20px;">
+									<h3><strong>${(product.mark_name || '') + (product.model_name ? ' - ' + product.model_name : '')}</strong></h3>
+								</td>
+							</tr>
+							<tr valign="baseline">
+								<td colspan="2" style="height: 20px;">
+									${product.submodel_name || ''}
+								</td>
+							</tr>
+							${prodDetail}
+							<tr valign="baseline">
+								<td style="width: 50%; border-top: 1px solid #CCC;">
+									<p>Year<br><strong>${product.product_year || ''}</strong></p>
+								</td>
+								<td style="width: 50%; border-top: 1px solid #CCC;">
+									<p>Price<br><strong>${product.price ? '$' + product.price + ' ' + product.currency : ''}</strong></p>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			`;
+		}
+
+		// Caso 1: mostrar productos automáticamente
+		if (payload?.type === 'product-search') {
+			const products = payload.products || [];
+			const storages = payload.storages || [];
+
+			const uniqueSlotIds = [...new Set(
+				products
+					.flatMap(p => Array.isArray(p.slot_ids) ? p.slot_ids : (p.slot_id != null ? [p.slot_id] : []))
+					.filter(v => v !== null && v !== undefined && v !== '')
+			)].sort((a, b) => Number(a) - Number(b));
+
+			const uniqueSlotNames = [...new Set(
+				products
+					.flatMap(p => Array.isArray(p.slot_names) ? p.slot_names : (p.slot_name ? [p.slot_name] : []))
+					.filter(v => v !== null && v !== undefined && v !== '')
+			)].sort((a, b) => String(a).localeCompare(String(b)));
+
+			const sharedSlotName =
+				uniqueSlotIds.length === 1 && uniqueSlotNames.length === 1
+					? uniqueSlotNames[0]
+					: uniqueSlotNames.join(', ');
+
+			storageDetails.innerHTML = `
+				<div class="shipping-header">
+					<table width="100%" style="border-bottom: 1px solid #999; margin-bottom:10px;" align="center" cellspacing="0">
+						<tr valign="baseline" class="form_height">
+							<td width="47%" align="left" valign="middle">
+								<p class="mini-title">Slot Name:</p>
+								<strong>${sharedSlotName || '—'}</strong>
+							</td>
+							<td width="50%" align="center" valign="middle"></td>
+							<td width="3%" align="center" valign="middle">
+								<div class="shipping-menu" id="shippingMenuBtn">
+									<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
+								</div>
+							</td>
+						</tr>
+						<tr class="form_height">
+							<td colspan="2" align="left" valign="middle">
+								<p class="mini-title">Products found:</p>
+								<strong>${products.length}</strong>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="loads-list">
+					${products.map(product => buildProductCard(product)).join('')}
+				</div>
+			`;
+			return;
+		}
+
+		// Caso 2: clic sobre slot
+		if (payload?.type === 'slot') {
+			const slot = payload.slot || {};
+			const storages = payload.storages || [];
+
+			const relatedStorages = storages.filter(
+				s => String(s.slot_id) === String(slot.slot_id)
+			);
+
+			storageDetails.innerHTML = `
+				<div class="shipping-header">
+					<table width="100%" style="border-bottom: 1px solid #999; margin-bottom:10px;" align="center" cellspacing="0">
+						<tr valign="baseline" class="form_height">
+							<td width="47%" align="left" valign="middle">
+								<p class="mini-title">Slot Name:</p>
+								<strong>${slot.slot_name || '—'}</strong>
+							</td>
+							<td width="50%" align="center" valign="middle"></td>
+							<td width="3%" align="center" valign="middle">
+								<div class="shipping-menu" id="shippingMenuBtn">
+									<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
+								</div>
+							</td>
+						</tr>
+						<tr valign="baseline" class="form_height">
+							<td width="100%" align="left" valign="middle"></td>
+						</tr>
+						<tr valign="baseline" class="form_height">
+							<td width="100%" align="left" valign="middle">
+								<p class="mini-title">Description:</p>
+								${slot.slot_description || '—'}
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="loads-list">
+					${relatedStorages.length > 0
+						? relatedStorages.map(storage => buildProductCard(storage.product)).join('')
+						: `<p>No storages linked to this slot.</p>`}
+				</div>
+			`;
+		}
+	}
+	//################################################################ END STORAGE ##################################################################
+
+	//################################################################ CUSTOMERS #####################################################################
 	const customerContainer = document.getElementById('customers-list');
 	const searchCustomerField = document.getElementById('customersSearchField');
 
