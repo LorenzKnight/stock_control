@@ -3179,7 +3179,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}
 
 				if (hasSearch) params.append('search', searchTerm);
-				const res = await fetch(`api/get_storages.php?${params.toString()}`, {
+				const res = await fetch(`/api/get_storages.php?${params.toString()}`, {
 					method: 'GET',
 					headers: { 'Accept': 'application/json' }
 				});
