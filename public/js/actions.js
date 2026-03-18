@@ -3184,7 +3184,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					headers: { 'Accept': 'application/json' }
 				});
 				const data = await res.json();
-				console.log(data);
+				
 				if (data.success) {
 					renderStoragesTable(data.data, null, hasSearch);
 				} else {
