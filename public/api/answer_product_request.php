@@ -175,7 +175,7 @@ try {
     } else {
         $newProductData = [
 			"company_id"		=> $requestCompany,
-			"create_by"			=> $userId,
+			"created_by"			=> $userId,
 			"sale_unit_type"	=> $productInfo["sale_unit_type"] ?? null,
 			"units_per_pack"	=> $productInfo["units_per_pack"] ?? null,
 			"product_image"		=> $productInfo["product_image"] ?? null,

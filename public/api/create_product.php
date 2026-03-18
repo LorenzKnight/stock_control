@@ -61,7 +61,7 @@ try {
 	}
 
     $insertData = [
-        "create_by"         => $userId,
+        "created_by"         => $userId,
         "company_id"        => $companyId,
         "sale_unit_type"    => $unitType,
         "units_per_pack"    => $units,

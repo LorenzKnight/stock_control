@@ -137,7 +137,7 @@ CREATE TABLE IF NOT EXISTS product_type (
 CREATE TABLE IF NOT EXISTS products (
 	product_id SERIAL PRIMARY KEY,
 	company_id INTEGER NULL,
-	create_by INT NOT NULL,
+	created_by INT NOT NULL,
 	sale_unit_type INTEGER NULL,
 	units_per_pack INTEGER NULL,
 	product_image VARCHAR(255) NULL,
