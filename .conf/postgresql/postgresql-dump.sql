@@ -191,7 +191,7 @@ CREATE TABLE IF NOT EXISTS storage (
 	slot_id INTEGER NULL,
 	product_id INTEGER NULL,
 	quantity INTEGER NULL,
-	create_by INTEGER NULL,
+	created_by INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

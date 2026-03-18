@@ -146,7 +146,7 @@ function appendStoragesByWhere(array $where, int $companyId, array &$allStorages
 	$storageResult = select_from("storage", [
 		"storage_id", "company_id",
 		"slot_id", "product_id", "quantity",
-		"create_by", "created_at"
+		"created_by", "created_at"
 	], $where, [
 		"order_by" => "created_at",
 		"order_direction" => "DESC"
