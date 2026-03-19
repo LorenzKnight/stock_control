@@ -14,7 +14,7 @@
                     </tr>
                     <tr valign="baseline" class="form_height">
                         <td colspan="4" style="border-bottom: 1px solid var(--clr-border); padding: 10px 0;" align="center" valign="middle">
-                            <button class="button-style-agree" id="add-storage-btn">Create Storage</button>
+                            <button class="button-style-agree" id="add-slot-btn">Create Slot</button>
                         </td>
                     </tr>
                 </table>

@@ -3501,6 +3501,82 @@ document.addEventListener("DOMContentLoaded", async function () {
 			`;
 		}
 	}
+
+	// 📌 script para add slot popup
+	let addSlotBtn = document.getElementById('add-slot-btn');
+	if (addSlotBtn) {
+		addSlotBtn.addEventListener('click', async function (e) {
+			scrollToTopIfNeeded();
+			
+			const addShippingForm = document.getElementById('add-slot-form');
+			const popupContent = addShippingForm.querySelector('.formular-frame');
+
+			if (addShippingForm && popupContent) {
+			    addShippingForm.style.display = 'block';
+			    addShippingForm.style.opacity = '0';
+			    addShippingForm.style.transition = 'opacity 0.5s ease';
+			    setTimeout(() => {
+			        addShippingForm.style.opacity = '1';
+			    }, 10);
+
+			    popupContent.style.transform = 'scale(0.7)';
+			    popupContent.style.opacity = '0';
+			    popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+			    setTimeout(() => {
+			        popupContent.style.transform = 'scale(1)';
+			        popupContent.style.opacity = '1';
+			    }, 50);
+			}
+
+			populateCompanies('storage_company_id');
+
+			handlePopupClose("add-slot-form", ".formular-frame", []);
+		});
+	}
+
+	// 📌 Manejo del formulario de crear slot
+	let formAddSlot = document.getElementById('formAddSlot');
+	if (formAddSlot) {
+		formAddSlot.addEventListener('submit', async function (e) {
+			e.preventDefault();
+
+			let formData = new FormData(this);
+
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
+
+			try {
+				let response = await fetch('api/create_slot.php', {
+					method: 'POST',
+					headers: { 'Accept': 'application/json' },
+					body: formData
+				});
+
+				let data = await response.json();
+
+				if (data.success) {
+					statusText.innerText = data.message;
+					statusImage.src = data.img_gif;
+					showBanner(banner);
+
+					setTimeout(() => {
+						hideBanner(banner, () => {
+							window.location.href = data.redirect_url;
+						});
+					}, 3000);
+				} else {
+					statusText.innerText = "Error: " + data.message;
+					statusImage.src = data.img_gif; 
+					showBanner(banner);
+				}
+			} catch (error) {
+				statusText.innerText = "Error procesando la solicitud.";
+				statusImage.src = data.img_gif;
+				showBanner(banner);
+			}
+		});
+	}
 	//################################################################ END STORAGE ##################################################################
 
 	//################################################################ CUSTOMERS #####################################################################
@@ -6050,9 +6126,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// 📌 script para add shipping popup
-	let addshippingBtn = document.getElementById('add-shipping-btn');
-	if (addshippingBtn) {
-		addshippingBtn.addEventListener('click', async function (e) {
+	let addShippingBtn = document.getElementById('add-shipping-btn');
+	if (addShippingBtn) {
+		addShippingBtn.addEventListener('click', async function (e) {
 			scrollToTopIfNeeded();
 			
 			const addShippingForm = document.getElementById('add-shipping-form');
@@ -6075,7 +6151,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			    }, 50);
 			}
 
-			populateCompanies('shipping_company_id');
+			// populateCompanies('shipping_company_id');
 
 			handlePopupClose("add-shipping-form", ".formular-frame", []);
 		});
