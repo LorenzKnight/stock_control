@@ -3257,7 +3257,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 					</div>
 				</td>
 				<td width="15%" align="left" valign="top">
-					${formatNotificationDate(slot.created_at)}
+					<div class="shipping-menu">
+						<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
+					</div>
 				</td>
 			`;
 
@@ -3470,7 +3472,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			storageDetails.innerHTML = `
 				<div class="shipping-header">
 					<table width="100%" style="border-bottom: 1px solid #999; margin-bottom:10px;" align="center" cellspacing="0">
-						<tr valign="baseline" class="form_height">
+						<tr valign="baseline">
 							<td width="47%" align="left" valign="middle">
 								<p class="mini-title">Slot Name:</p>
 								<strong>${slot.slot_name || '—'}</strong>
@@ -3482,10 +3484,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 								</div>
 							</td>
 						</tr>
-						<tr valign="baseline" class="form_height">
+						<tr valign="baseline">
 							<td width="100%" align="left" valign="middle"></td>
 						</tr>
-						<tr valign="baseline" class="form_height">
+						<tr valign="baseline">
 							<td width="100%" align="left" valign="middle">
 								<p class="mini-title">Description:</p>
 								${slot.slot_description || '—'}
@@ -3502,14 +3504,117 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
-	// 📌 script para add slot popup
-	let addSlotBtn = document.getElementById('add-slot-btn');
-	if (addSlotBtn) {
-		addSlotBtn.addEventListener('click', async function (e) {
+	// 📌 Cargar la lista de slot
+	const slotList = document.getElementById('slot-list');
+	if (slotList) {
+		try {
+			let response = await fetch('api/get_slot_info.php', {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			});
+
+			let data = await response.json();
+		// console.log(data);
+			if (data.success && data.data.length > 0) {
+				data.data.forEach(slot => {
+					const uniqueId = `slot-db-${slot.slot_id}`;
+					const row = document.createElement('tr');
+					row.className = "categoryContainer";
+					row.innerHTML = `
+						<td width="10%" align="center" valign="middle">
+							<div class="list-icon">
+								<img src="images/sys-img/element-list.png" alt="">
+							</div>
+						</td>
+						<td width="80%" valign="middle" style="padding-left:10px;">${slot.slot_name}</td>
+						<td width="10%" align="center" valign="middle" style="position: relative;">
+							<div class="opcion-radio">
+								<input type="radio" id="${uniqueId}" name="slot_edit_info" class="category-radio" data-slot="${slot.slot_id}" />
+								<label for="${uniqueId}"></label>
+							</div>
+						</td>
+					`;
+					slotList.appendChild(row);
+				});
+			}
+		} catch (error) {
+			console.error("Error loading categories:", error);
+		}
+	}
+
+	document.addEventListener('change', function (e) {
+		if (e.target.matches('input[name="slot_edit_info"]')) {
+			const notSlotForm = document.getElementById('not-slot-form');
+			const slotForm = document.getElementById('slot-form');
+			const slotActionBtn = document.getElementById('slot-action-btn');
+			if (e.target.checked) {
+				notSlotForm.classList.add('hidden');
+				slotForm.classList.remove('hidden');
+				slotActionBtn.value = "Select Slot";
+			}
+
+			const selectedSlotId = e.target.dataset.slot;
+			loadSlotFormOrData(selectedSlotId);
+		}
+	});
+
+	const slotFormFields = document.querySelectorAll(
+		'#slot-form input:not([type="hidden"]), #slot-form textarea, #slot-form select'
+	);
+
+	const allSlotFields = [...slotFormFields];
+	slotFormFields.forEach(field => {
+		const eventType = field.type === 'checkbox' || field.tagName === 'SELECT'
+			? 'change'
+			: 'input';
+
+		field.addEventListener(eventType, () => {
+			const fieldKey = field.id;
+			const currentValue = field.type === 'checkbox'
+				? (field.checked ? '1' : '0')
+				: (field.value ?? '');
+
+			const originalValue = field.type === 'checkbox'
+				? String(originalSlotData[fieldKey] ?? '0')
+				: String(originalSlotData[fieldKey] ?? '');
+
+			const slotActionBtn = document.getElementById('slot-action-btn');
+
+			if (currentValue !== originalValue) {
+				showChangeAlert();
+				slotActionBtn.value = "Save Changes";
+			} else {
+				checkIfAnySlotChange(allSlotFields);
+			}
+		});
+	});
+
+	function checkIfAnySlotChange(elements) {
+		hasChanges = Array.from(elements).some(el => {
+			const field = el.id;
+			const currentValue = el.value ?? '';
+			const originalValue = originalSlotData[field] ?? '';
+			return currentValue !== originalValue;
+		});
+
+		if (!hasChanges) hideSlotChangeBanner();
+	}
+
+	function hideSlotChangeBanner() {
+		const banner = document.getElementById('status-message');
+		if (banner) {
+			hideBanner(banner);
+		}
+	}
+
+	// 📌 script para add or edit slot popup
+	let manageSlotBtn = document.getElementById('manage-slot-btn');
+	if (manageSlotBtn) {
+		manageSlotBtn.addEventListener('click', async function (e) {
 			scrollToTopIfNeeded();
 			
-			const addShippingForm = document.getElementById('add-slot-form');
-			const popupContent = addShippingForm.querySelector('.formular-frame');
+			const addShippingForm = document.getElementById('edit-slot-form');
+			const popupContent = addShippingForm.querySelector('.formular-medium-frame');
 
 			if (addShippingForm && popupContent) {
 			    addShippingForm.style.display = 'block';
@@ -3528,9 +3633,42 @@ document.addEventListener("DOMContentLoaded", async function () {
 			    }, 50);
 			}
 
-			populateCompanies('storage_company_id');
+			// populateCompanies('storage_company_id');
 
-			handlePopupClose("add-slot-form", ".formular-frame", []);
+			handlePopupClose("edit-slot-form", ".formular-medium-frame", []);
+		});
+	}
+
+	const addSlotBtn = document.getElementById('add-slot-btn');
+	if (addSlotBtn) {
+		addSlotBtn.addEventListener('click', async function (e) {
+			e.preventDefault();
+
+			scrollToTopIfNeeded();
+
+			addSlotBtn.disabled = true;
+			setTimeout(() => addSlotBtn.disabled = false, 1000);
+
+			try {
+				const notSlotForm = document.getElementById('not-slot-form');
+				const slotForm = document.getElementById('slot-form');
+				const slotActionBtn = document.getElementById('slot-action-btn');
+				const slotRadios = document.querySelectorAll('input[type="radio"][name="slot_edit_info"]');
+
+				slotRadios.forEach(radio => {
+					radio.checked = false;
+				});
+
+				if (notSlotForm && slotForm && slotActionBtn) {
+					notSlotForm.classList.add('hidden');
+					slotForm.classList.remove('hidden');
+					slotActionBtn.value = "Add Slot";
+				}
+
+				loadSlotFormOrData();
+			} catch (err) {
+				console.error("Error opening add company form:", err);
+			}
 		});
 	}
 
@@ -10108,6 +10246,57 @@ document.addEventListener("DOMContentLoaded", async function () {
 					}
 				}
 			});
+		}
+	}
+
+	// 📌 script para recojer los datos de los slot
+	async function loadSlotFormOrData(selectedSlotId = undefined) {
+		if (!isNaN(selectedSlotId)) {
+			try {
+				let response = await fetch(`api/get_slot_info.php?select_slot=${selectedSlotId}`, {
+					method: 'GET',
+					headers: { 'Accept': 'application/json' }
+				});
+
+				let data = await response.json();
+				
+				if (data.success && data.data && data.data.length > 0) {
+					let slot = data.data[0];
+
+					originalSlotData = {
+						slot_name: slot.slot_name || '',
+						max_capacity: slot.max_capacity || '',
+						current_capacity: slot.current_capacity || '',
+						slot_description: slot.slot_description || '',
+						status: slot.status || 0
+					};
+
+					document.getElementById('slot_id').value = slot.slot_id;
+					document.getElementById('slot_name').value = originalSlotData.slot_name || '';
+					document.getElementById('max_capacity').value = originalSlotData.max_capacity || '';
+					document.getElementById('current_capacity').value = originalSlotData.current_capacity || '';
+					document.getElementById('slot_description').value = originalSlotData.slot_description || '';
+					document.getElementById("slot_status").checked = String(originalSlotData.status) === "1";
+				}
+			} catch (error) {
+				console.error("Error loading company data:", error);
+			}
+		} else {
+			// 🧹 Si no se pasa ID válido, limpiamos los campos
+			originalSlotData = {
+				slot_name: '',
+				max_capacity: '',
+				current_capacity: '',
+				slot_description: '',
+				status: 0
+			};
+
+			document.getElementById('slot_id').value = '';
+			document.getElementById('slot_name').value = '';
+			document.getElementById('max_capacity').value = '';
+			document.getElementById('current_capacity').value = '';
+			document.getElementById('slot_description').value = '';
+			document.getElementById("slot_status").checked = true;
 		}
 	}
 
