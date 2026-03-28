@@ -25,7 +25,7 @@ try {
 
     $where = [];
 
-    // $search        = $_GET["search"] ?? '';
+    $search        = $_GET["search"] ?? '';
     $selectSlot = $_GET["select_slot"] ?? '';
 
     if (!empty($selectSlot)) {
@@ -35,7 +35,7 @@ try {
     if (!empty($search)) {
 		$where["OR"] = [
 			"slot_name ILIKE"    => "%{$search}%",
-			"company_address ILIKE" => "%{$search}%"
+			// "company_address ILIKE" => "%{$search}%"
 		];
 	}
 

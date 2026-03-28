@@ -11,7 +11,16 @@
 					<td colspan="3" align="center" valign="middle">
 						<div class="formular-category-list">
 							<div class="create-list-holder" id="clic-create-mark">
-								<button type="button" class="button-style-agree" id="add-slot-btn">Create slot</button>
+								<table width="100%" align="center" cellspacing="0">
+									<tr valign="baseline">
+										<td width="70%" align="center" valign="middle">
+											<input type="text" class="form-medium-input-style" name="input-search-slot" id="input-search-slot" placeholder="Search slot"/>
+										</td>
+										<td width="30%" align="center" valign="middle">
+											<button type="button" class="button-style-agree" id="add-slot-btn">Create slot</button>
+										</td>
+									</tr>
+								</table>
 							</div>
 							<div class="cat-all-list">
 								<table class="all-mark-list" id="slot-list" cellspacing="0">

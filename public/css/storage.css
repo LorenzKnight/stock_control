@@ -1,0 +1,18 @@
+.storage-menu {
+    width: 38px;
+    height: 38px;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.storage-menu img {
+    width: 38px;
+	filter: brightness(0) saturate(0) invert(0);
+    opacity: 1;
+    transition: filter 0.3s ease;
+}
+
+.storage-menu img:hover {
+	filter: brightness(0) saturate(0) invert(55%) !important;
+	transition: all 0.6s ease;
+}

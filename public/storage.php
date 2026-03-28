@@ -20,8 +20,8 @@
 <body>
 	<?php // include("components/modal_product_options.php"); ?>
 	<?php // include("components/modal_add_product.php"); ?>
-	<?php // include("components/modal_add_product_type.php"); ?>
-	<?php include("components/modal_edit_storage.php"); ?>
+	<?php include("components/modal_edit_storage_position.php"); ?>
+	<?php include("components/modal_edit_slot.php"); ?>
 	<?php include("components/message.php"); ?>
 	<?php include("components/confirm_and_notification.php"); ?>
 	<?php include("components/header.php"); ?>

@@ -3257,9 +3257,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					</div>
 				</td>
 				<td width="15%" align="left" valign="top">
-					<div class="shipping-menu">
-						<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
-					</div>
+					
 				</td>
 			`;
 
@@ -3408,10 +3406,21 @@ document.addEventListener("DOMContentLoaded", async function () {
 			`;
 		}
 
+		function bindStorageMenuEvents() {
+			const storageMenuBtns = document.querySelectorAll('.storage-menu');
+			storageMenuBtns.forEach(sm => {
+				sm.addEventListener('click', () => {
+					openStorageForm();
+					// openStorageForm(storageId);
+					handlePopupClose("storage-options", ".formular-medium-frame", []);
+				});
+			});
+		}
+
 		// Caso 1: mostrar productos automáticamente
 		if (payload?.type === 'product-search') {
 			const products = payload.products || [];
-			const storages = payload.storages || [];
+			// const storages = payload.storages || [];
 
 			const uniqueSlotIds = [...new Set(
 				products
@@ -3440,7 +3449,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							</td>
 							<td width="50%" align="center" valign="middle"></td>
 							<td width="3%" align="center" valign="middle">
-								<div class="shipping-menu" id="shippingMenuBtn">
+								<div class="storage-menu">
 									<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
 								</div>
 							</td>
@@ -3457,6 +3466,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 					${products.map(product => buildProductCard(product)).join('')}
 				</div>
 			`;
+
+			bindStorageMenuEvents();
 			return;
 		}
 
@@ -3479,7 +3490,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							</td>
 							<td width="50%" align="center" valign="middle"></td>
 							<td width="3%" align="center" valign="middle">
-								<div class="shipping-menu" id="shippingMenuBtn">
+								<div class="storage-menu">
 									<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
 								</div>
 							</td>
@@ -3501,21 +3512,33 @@ document.addEventListener("DOMContentLoaded", async function () {
 						: `<p>No storages linked to this slot.</p>`}
 				</div>
 			`;
+
+			bindStorageMenuEvents();
 		}
 	}
 
 	// 📌 Cargar la lista de slot
-	const slotList = document.getElementById('slot-list');
-	if (slotList) {
+	async function loadSlotList() {
+		const slotList = document.getElementById('slot-list');
+		const inputSearchSlot = document.getElementById('input-search-slot');
+
+		if (!slotList) return;
+
 		try {
-			let response = await fetch('api/get_slot_info.php', {
+			const searchSlot = inputSearchSlot?.value.trim() || "";
+			const params = new URLSearchParams();
+			if (searchSlot) params.append('search', searchSlot);
+
+			const response = await fetch(`api/get_slot_info.php?${params.toString()}`, {
 				method: 'GET',
 				headers: { 'Accept': 'application/json' }
 			});
 
-			let data = await response.json();
+			const data = await response.json();
 		// console.log(data);
-			if (data.success && data.data.length > 0) {
+			slotList.innerHTML = '';
+			
+			if (data.success && Array.isArray(data.data) && data.data.length > 0) {
 				data.data.forEach(slot => {
 					const uniqueId = `slot-db-${slot.slot_id}`;
 					const row = document.createElement('tr');
@@ -3526,7 +3549,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 								<img src="images/sys-img/element-list.png" alt="">
 							</div>
 						</td>
-						<td width="80%" valign="middle" style="padding-left:10px;">${slot.slot_name}</td>
+						<td width="80%" valign="middle" style="padding-left:10px;">
+							${slot.slot_name || ''}
+						</td>
 						<td width="10%" align="center" valign="middle" style="position: relative;">
 							<div class="opcion-radio">
 								<input type="radio" id="${uniqueId}" name="slot_edit_info" class="category-radio" data-slot="${slot.slot_id}" />
@@ -3536,11 +3561,28 @@ document.addEventListener("DOMContentLoaded", async function () {
 					`;
 					slotList.appendChild(row);
 				});
+			} else {
+				slotList.innerHTML = `
+					<tr>
+						<td colspan="3" align="center" valign="middle">
+							No slots found.
+						</td>
+					</tr>
+				`;
 			}
 		} catch (error) {
 			console.error("Error loading categories:", error);
+			slotList.innerHTML = `
+				<tr>
+					<td colspan="3" align="center" valign="middle">
+						Error loading slots.
+					</td>
+				</tr>
+			`;
 		}
 	}
+	loadSlotList();
+	document.getElementById('input-search-slot')?.addEventListener('input', loadSlotList);
 
 	document.addEventListener('change', function (e) {
 		if (e.target.matches('input[name="slot_edit_info"]')) {
@@ -3605,6 +3647,31 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (banner) {
 			hideBanner(banner);
 		}
+	}
+
+	async function openStorageForm() {
+		scrollToTopIfNeeded();
+		console.log('AQUI');
+
+		const storageOptions = document.getElementById('storage-options');
+		const popupContent = storageOptions.querySelector('.formular-medium-frame');
+
+
+
+		storageOptions.style.display = 'block';
+		storageOptions.style.opacity = '0';
+		storageOptions.style.transition = 'opacity 0.5s ease';
+		setTimeout(() => {
+			storageOptions.style.opacity = '1';
+		}, 10);
+
+		popupContent.style.opacity = '0';
+		popupContent.style.transform = 'scale(0.7)';
+		popupContent.classList.remove('animate-elastic');
+		setTimeout(() => {
+			popupContent.style.transform = 'scale(1)';
+			popupContent.style.opacity = '1';
+		}, 50);
 	}
 
 	// 📌 script para add or edit slot popup
