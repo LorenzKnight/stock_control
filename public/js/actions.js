@@ -3192,7 +3192,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					storageDetails.innerHTML = `<p style="text-align:center; padding:15px;">No result yet</p>`;
 				}
 			} catch (err) {
-				console.error("Error loading shippings:", err);
+				console.error("Error loading storages:", err);
 				storageSidebarTable.innerHTML = `<tr><td><p style="text-align:center;">Error loading storages</p></td></tr>`;
 				storageDetails.innerHTML = `<p style="text-align:center; padding:15px;">Error loading storages</p>`;
 			}
@@ -3203,7 +3203,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		searchFieldStorage.addEventListener('keyup', fetchAndRenderStorages);
 	}
 
-	// 🔹 Función para renderizar la tabla de shippings (reutilizable)
+	// 🔹 Función para renderizar la tabla de storages (reutilizable)
 	function renderStoragesTable(data, selectedId = null, hasSearch = false) {
 		storageSidebarTable.innerHTML = '';
 		storageDetails.innerHTML = '';
@@ -3432,16 +3432,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 				<div class="shipping-header">
 					<table width="100%" style="border-bottom: 1px solid #999; margin-bottom:10px;" align="center" cellspacing="0">
 						<tr valign="baseline" class="form_height">
-							<td width="47%" align="left" valign="middle">
+							<td width="50%" align="left" valign="middle">
 								<p class="mini-title">Slot Name:</p>
 								<strong>${sharedSlotName || '—'}</strong>
 							</td>
 							<td width="50%" align="center" valign="middle"></td>
-							<td width="3%" align="center" valign="middle">
-								<div class="storage-menu">
-									<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
-								</div>
-							</td>
 						</tr>
 						<tr class="form_height">
 							<td colspan="2" align="left" valign="middle">
@@ -3456,7 +3451,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				</div>
 			`;
 
-			bindStorageMenuEvents();
 			return;
 		}
 
@@ -3473,16 +3467,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 				<div class="shipping-header">
 					<table width="100%" style="border-bottom: 1px solid #999; margin-bottom:10px;" align="center" cellspacing="0">
 						<tr valign="baseline">
-							<td width="47%" align="left" valign="middle">
+							<td width="50%" align="left" valign="middle">
 								<p class="mini-title">Slot Name:</p>
 								<strong>${slot.slot_name || '—'}</strong>
 							</td>
 							<td width="50%" align="center" valign="middle"></td>
-							<td width="3%" align="center" valign="middle">
-								<div class="storage-menu">
-									<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
-								</div>
-							</td>
 						</tr>
 						<tr valign="baseline">
 							<td width="100%" align="left" valign="middle"></td>
@@ -3501,8 +3490,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 						: `<p>No storages linked to this slot.</p>`}
 				</div>
 			`;
-
-			bindStorageMenuEvents();
+			
+			return;
 		}
 	}
 
@@ -3513,95 +3502,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			handlePopupClose("storage-options", ".formular-frame", []);
 		});
-	}
-
-	// 📌 Cargar la lista de slot
-	async function initSlotList({
-		listId,
-		searchId = null,
-		radioName = 'slot_edit_info',
-		emptyMessage = 'No slots found.'
-	}) {
-		const slotList = document.getElementById(listId);
-		const inputSearchSlot = searchId ? document.getElementById(searchId) : null;
-
-		if (!slotList) return;
-
-		const renderSlots = async () => {
-			try {
-				const searchSlot = inputSearchSlot?.value.trim() || '';
-				const params = new URLSearchParams();
-
-				if (searchSlot) {
-					params.append('search', searchSlot);
-				}
-
-				const response = await fetch(`api/get_slot_info.php?${params.toString()}`, {
-					method: 'GET',
-					headers: { 'Accept': 'application/json' }
-				});
-
-				const data = await response.json();
-
-				slotList.innerHTML = '';
-
-				if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-					data.data.forEach(slot => {
-						const uniqueId = `${radioName}-${slot.slot_id}`;
-						const row = document.createElement('tr');
-						row.className = 'categoryContainer';
-
-						row.innerHTML = `
-							<td width="10%" align="center" valign="middle">
-								<div class="list-icon">
-									<img src="images/sys-img/element-list.png" alt="">
-								</div>
-							</td>
-							<td width="80%" valign="middle" style="padding-left:10px;">
-								${slot.slot_name || ''}
-							</td>
-							<td width="10%" align="center" valign="middle" style="position: relative;">
-								<div class="opcion-radio">
-									<input
-										type="radio"
-										id="${uniqueId}"
-										name="${radioName}"
-										class="category-radio"
-										data-slot="${slot.slot_id}"
-									/>
-									<label for="${uniqueId}"></label>
-								</div>
-							</td>
-						`;
-
-						slotList.appendChild(row);
-					});
-				} else {
-					slotList.innerHTML = `
-						<tr>
-							<td colspan="3" align="center" valign="middle">
-								${emptyMessage}
-							</td>
-						</tr>
-					`;
-				}
-			} catch (error) {
-				console.error('Error loading slots:', error);
-				slotList.innerHTML = `
-					<tr>
-						<td colspan="3" align="center" valign="middle">
-							Error loading slots.
-						</td>
-					</tr>
-				`;
-			}
-		};
-
-		await renderSlots();
-
-		if (inputSearchSlot) {
-			inputSearchSlot.addEventListener('input', renderSlots);
-		}
 	}
 
 	document.addEventListener('change', function (e) {
@@ -3750,6 +3650,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 							radioName: 'storage_info'
 						});
 
+						initProductList({
+							listId: 'products-list',
+							searchId: 'input-search-product',
+							radioName: 'product_info'
+						});
+
 						// openEditShippingForm(shippingsId);
 			
 						const formFrame = document.getElementById('formular-medium-frame');
@@ -3772,6 +3678,195 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		} catch (error) {
 			console.error("Error loading storage management:", error);
+		}
+	}
+
+	// 📌 Cargar la lista de slot
+	async function initSlotList({
+		listId,
+		searchId = null,
+		radioName = 'slot_edit_info',
+		emptyMessage = 'No slots found.'
+	}) {
+		const slotList = document.getElementById(listId);
+		const inputSearchSlot = searchId ? document.getElementById(searchId) : null;
+
+		if (!slotList) return;
+
+		const renderSlots = async () => {
+			try {
+				const searchSlot = inputSearchSlot?.value.trim() || '';
+				const params = new URLSearchParams();
+
+				if (searchSlot) {
+					params.append('search', searchSlot);
+				}
+
+				const response = await fetch(`api/get_slot_info.php?${params.toString()}`, {
+					method: 'GET',
+					headers: { 'Accept': 'application/json' }
+				});
+
+				const data = await response.json();
+
+				slotList.innerHTML = '';
+
+				if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+					data.data.forEach(slot => {
+						const uniqueId = `${radioName}-${slot.slot_id}`;
+						const row = document.createElement('tr');
+						row.className = 'categoryContainer';
+
+						row.innerHTML = `
+							<td width="10%" align="center" valign="middle">
+								<div class="list-icon">
+									<img src="images/sys-img/element-list.png" alt="">
+								</div>
+							</td>
+							<td width="80%" valign="middle" style="padding-left:10px;">
+								${slot.slot_name || ''}
+							</td>
+							<td width="10%" align="center" valign="middle" style="position: relative;">
+								<div class="opcion-radio">
+									<input
+										type="radio"
+										id="${uniqueId}"
+										name="${radioName}"
+										class="category-radio"
+										data-slot="${slot.slot_id}"
+									/>
+									<label for="${uniqueId}"></label>
+								</div>
+							</td>
+						`;
+
+						slotList.appendChild(row);
+					});
+				} else {
+					slotList.innerHTML = `
+						<tr>
+							<td colspan="3" align="center" valign="middle">
+								${emptyMessage}
+							</td>
+						</tr>
+					`;
+				}
+			} catch (error) {
+				console.error('Error loading slots:', error);
+				slotList.innerHTML = `
+					<tr>
+						<td colspan="3" align="center" valign="middle">
+							Error loading slots.
+						</td>
+					</tr>
+				`;
+			}
+		};
+
+		await renderSlots();
+
+		if (inputSearchSlot) {
+			inputSearchSlot.addEventListener('input', renderSlots);
+		}
+	}
+
+	// 📌 Cargar la lista de productos
+	async function initProductList({
+		listId,
+		searchId = null,
+		checkName = 'product_info[]',
+		emptyMessage = 'No products found.'
+	}) {
+		const productList = document.getElementById(listId);
+		const inputSearchProduct = searchId ? document.getElementById(searchId) : null;
+
+		if (!productList) return;
+
+		const renderProducts = async () => {
+			try {
+				const searchProduct = inputSearchProduct?.value.trim() || '';
+				const params = new URLSearchParams();
+
+				if (searchProduct) {
+					params.append('search', searchProduct);
+				}
+
+				const response = await fetch(`api/get_products.php?${params.toString()}`, {
+					method: 'GET',
+					headers: { 'Accept': 'application/json' }
+				});
+
+				const data = await response.json();
+
+				productList.innerHTML = '';
+
+				if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+					data.data.forEach(product => {
+						const uniqueId = `${checkName.replace(/[\[\]]/g, '')}-${product.product_id}`;
+
+						const productImage = product.product_image && product.product_image.trim() !== ''
+							? `images/products/${product.product_image}`
+							: `images/sys-img/wooden-box.png`;
+
+						const row = document.createElement('tr');
+						row.className = 'categoryContainer';
+
+						row.innerHTML = `
+							<td width="10%" align="center" valign="middle">
+								<div class="list-icon">
+									<img src="${productImage}" alt="${product.product_name || ''}" width="32" height="32">
+								</div>
+							</td>
+							<td width="80%" valign="middle" style="padding-left:10px;">
+								<strong>${product.product_name || ''}</strong><br>
+								<small>
+									${product.mark_name || ''}
+									${product.model_name ? ' - ' + product.model_name : ''}
+									${product.submodel_name ? ' - ' + product.submodel_name : ''}
+								</small>
+							</td>
+							<td width="10%" align="center" valign="middle" style="position: relative;">
+								<div class="opcion-checkbox">
+									<input
+										type="checkbox"
+										id="${uniqueId}"
+										name="${checkName}"
+										class="category-checkbox"
+										value="${product.product_id}"
+										data-product="${product.product_id}"
+									/>
+									<label for="${uniqueId}"></label>
+								</div>
+							</td>
+						`;
+
+						productList.appendChild(row);
+					});
+				} else {
+					productList.innerHTML = `
+						<tr>
+							<td colspan="3" align="center" valign="middle">
+								${emptyMessage}
+							</td>
+						</tr>
+					`;
+				}
+			} catch (error) {
+				console.error('Error loading products:', error);
+				productList.innerHTML = `
+					<tr>
+						<td colspan="3" align="center" valign="middle">
+							Error loading products.
+						</td>
+					</tr>
+				`;
+			}
+		};
+
+		await renderProducts();
+
+		if (inputSearchProduct) {
+			inputSearchProduct.addEventListener('input', renderProducts);
 		}
 	}
 
