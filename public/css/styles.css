@@ -332,6 +332,10 @@ body {
     width: 1100px;
 }
 
+.expanded-medium {
+    width: 750px;
+}
+
 .list-icon img {
     width: 30px;
     height: 30px;

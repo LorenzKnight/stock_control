@@ -3406,17 +3406,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			`;
 		}
 
-		function bindStorageMenuEvents() {
-			const storageMenuBtns = document.querySelectorAll('.storage-menu');
-			storageMenuBtns.forEach(sm => {
-				sm.addEventListener('click', () => {
-					openStorageForm();
-					// openStorageForm(storageId);
-					handlePopupClose("storage-options", ".formular-medium-frame", []);
-				});
-			});
-		}
-
 		// Caso 1: mostrar productos automáticamente
 		if (payload?.type === 'product-search') {
 			const products = payload.products || [];
@@ -3517,72 +3506,103 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
+	const storageMenuBtns = document.getElementById('storageMenuBtns');
+	if (storageMenuBtns) {
+		storageMenuBtns.addEventListener('click', () => {
+			openStorageForm();
+
+			handlePopupClose("storage-options", ".formular-frame", []);
+		});
+	}
+
 	// 📌 Cargar la lista de slot
-	async function loadSlotList() {
-		const slotList = document.getElementById('slot-list');
-		const inputSearchSlot = document.getElementById('input-search-slot');
+	async function initSlotList({
+		listId,
+		searchId = null,
+		radioName = 'slot_edit_info',
+		emptyMessage = 'No slots found.'
+	}) {
+		const slotList = document.getElementById(listId);
+		const inputSearchSlot = searchId ? document.getElementById(searchId) : null;
 
 		if (!slotList) return;
 
-		try {
-			const searchSlot = inputSearchSlot?.value.trim() || "";
-			const params = new URLSearchParams();
-			if (searchSlot) params.append('search', searchSlot);
+		const renderSlots = async () => {
+			try {
+				const searchSlot = inputSearchSlot?.value.trim() || '';
+				const params = new URLSearchParams();
 
-			const response = await fetch(`api/get_slot_info.php?${params.toString()}`, {
-				method: 'GET',
-				headers: { 'Accept': 'application/json' }
-			});
+				if (searchSlot) {
+					params.append('search', searchSlot);
+				}
 
-			const data = await response.json();
-		// console.log(data);
-			slotList.innerHTML = '';
-			
-			if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-				data.data.forEach(slot => {
-					const uniqueId = `slot-db-${slot.slot_id}`;
-					const row = document.createElement('tr');
-					row.className = "categoryContainer";
-					row.innerHTML = `
-						<td width="10%" align="center" valign="middle">
-							<div class="list-icon">
-								<img src="images/sys-img/element-list.png" alt="">
-							</div>
-						</td>
-						<td width="80%" valign="middle" style="padding-left:10px;">
-							${slot.slot_name || ''}
-						</td>
-						<td width="10%" align="center" valign="middle" style="position: relative;">
-							<div class="opcion-radio">
-								<input type="radio" id="${uniqueId}" name="slot_edit_info" class="category-radio" data-slot="${slot.slot_id}" />
-								<label for="${uniqueId}"></label>
-							</div>
-						</td>
-					`;
-					slotList.appendChild(row);
+				const response = await fetch(`api/get_slot_info.php?${params.toString()}`, {
+					method: 'GET',
+					headers: { 'Accept': 'application/json' }
 				});
-			} else {
+
+				const data = await response.json();
+
+				slotList.innerHTML = '';
+
+				if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+					data.data.forEach(slot => {
+						const uniqueId = `${radioName}-${slot.slot_id}`;
+						const row = document.createElement('tr');
+						row.className = 'categoryContainer';
+
+						row.innerHTML = `
+							<td width="10%" align="center" valign="middle">
+								<div class="list-icon">
+									<img src="images/sys-img/element-list.png" alt="">
+								</div>
+							</td>
+							<td width="80%" valign="middle" style="padding-left:10px;">
+								${slot.slot_name || ''}
+							</td>
+							<td width="10%" align="center" valign="middle" style="position: relative;">
+								<div class="opcion-radio">
+									<input
+										type="radio"
+										id="${uniqueId}"
+										name="${radioName}"
+										class="category-radio"
+										data-slot="${slot.slot_id}"
+									/>
+									<label for="${uniqueId}"></label>
+								</div>
+							</td>
+						`;
+
+						slotList.appendChild(row);
+					});
+				} else {
+					slotList.innerHTML = `
+						<tr>
+							<td colspan="3" align="center" valign="middle">
+								${emptyMessage}
+							</td>
+						</tr>
+					`;
+				}
+			} catch (error) {
+				console.error('Error loading slots:', error);
 				slotList.innerHTML = `
 					<tr>
 						<td colspan="3" align="center" valign="middle">
-							No slots found.
+							Error loading slots.
 						</td>
 					</tr>
 				`;
 			}
-		} catch (error) {
-			console.error("Error loading categories:", error);
-			slotList.innerHTML = `
-				<tr>
-					<td colspan="3" align="center" valign="middle">
-						Error loading slots.
-					</td>
-				</tr>
-			`;
+		};
+
+		await renderSlots();
+
+		if (inputSearchSlot) {
+			inputSearchSlot.addEventListener('input', renderSlots);
 		}
 	}
-	loadSlotList();
-	document.getElementById('input-search-slot')?.addEventListener('input', loadSlotList);
 
 	document.addEventListener('change', function (e) {
 		if (e.target.matches('input[name="slot_edit_info"]')) {
@@ -3651,59 +3671,108 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	async function openStorageForm() {
 		scrollToTopIfNeeded();
-		console.log('AQUI');
 
 		const storageOptions = document.getElementById('storage-options');
-		const popupContent = storageOptions.querySelector('.formular-medium-frame');
+		const popupContent = storageOptions.querySelector('.formular-frame');
 
+		try {
+			// const res = await fetch(`api/get_shippings.php`);
+			// const data = await res.json();
 
+			if (storageOptions && popupContent) {
+				resetPopupView(['storage-menu-buttons'], [
+					'manage-storage-modal',
+					'manage-slot-modal'
+				]);
 
-		storageOptions.style.display = 'block';
-		storageOptions.style.opacity = '0';
-		storageOptions.style.transition = 'opacity 0.5s ease';
-		setTimeout(() => {
-			storageOptions.style.opacity = '1';
-		}, 10);
+				const manageSlotBtn = document.getElementById('manageSlotBtn');
+				const manageStorageBtn = document.getElementById('manageStorageBtn');
+				// const deleteShippingBtn = document.getElementById('deleteShippingBtn');
 
-		popupContent.style.opacity = '0';
-		popupContent.style.transform = 'scale(0.7)';
-		popupContent.classList.remove('animate-elastic');
-		setTimeout(() => {
-			popupContent.style.transform = 'scale(1)';
-			popupContent.style.opacity = '1';
-		}, 50);
-	}
+				storageOptions.style.display = 'block';
+				storageOptions.style.opacity = '0';
+				storageOptions.style.transition = 'opacity 0.5s ease';
+				setTimeout(() => {
+					storageOptions.style.opacity = '1';
+				}, 10);
 
-	// 📌 script para add or edit slot popup
-	let manageSlotBtn = document.getElementById('manage-slot-btn');
-	if (manageSlotBtn) {
-		manageSlotBtn.addEventListener('click', async function (e) {
-			scrollToTopIfNeeded();
+				popupContent.style.opacity = '0';
+				popupContent.style.transform = 'scale(0.7)';
+				popupContent.classList.remove('animate-elastic');
+				setTimeout(() => {
+					popupContent.style.transform = 'scale(1)';
+					popupContent.style.opacity = '1';
+				}, 50);
+
+				if (manageSlotBtn) {
+					manageSlotBtn.onclick = async () => {
+						const menuDiv = document.getElementById('storage-menu-buttons');
+						const manageDiv = document.getElementById('manage-slot-modal');
+						
+						if (manageDiv) {
+							manageDiv.style.display = 'none';
+						}
+
+						initSlotList({
+							listId: 'slot-list',
+							searchId: 'input-search-slot',
+							radioName: 'slot_edit_info'
+						});
+
+						const formFrame = document.getElementById('formular-medium-frame');
+						if (formFrame) {
+							formFrame.classList.add('expanded-medium');
+						}
+						
+						animateHeightChange(popupContent, manageDiv, () => {
+							fadeOutAndHide(menuDiv, () => {
+								showWithFadeIn(manageDiv);
+							});
+						});
+					}
+				}
+
+				if (manageStorageBtn) {
+					manageStorageBtn.onclick = () => {
+						const menuDiv = document.getElementById('storage-menu-buttons');
+						const manageDiv = document.getElementById('manage-storage-modal');
+
+						if (manageDiv) {
+							manageDiv.style.display = 'none';
+						}
+
+						// const shippingsId = editShippingBtn.getAttribute('data-shipping-id');
+						// if (!shippingsId) return;
+
+						initSlotList({
+							listId: 'storages-list',
+							searchId: 'input-search-storage',
+							radioName: 'storage_info'
+						});
+
+						// openEditShippingForm(shippingsId);
 			
-			const addShippingForm = document.getElementById('edit-slot-form');
-			const popupContent = addShippingForm.querySelector('.formular-medium-frame');
+						const formFrame = document.getElementById('formular-medium-frame');
+						if (formFrame) {
+							formFrame.classList.add('expanded-medium');
+						}
+						
+						animateHeightChange(popupContent, manageDiv, () => {
+							fadeOutAndHide(menuDiv, () => {
+								showWithFadeIn(manageDiv);
+							});
+						});
+					}
+				}
 
-			if (addShippingForm && popupContent) {
-			    addShippingForm.style.display = 'block';
-			    addShippingForm.style.opacity = '0';
-			    addShippingForm.style.transition = 'opacity 0.5s ease';
-			    setTimeout(() => {
-			        addShippingForm.style.opacity = '1';
-			    }, 10);
-
-			    popupContent.style.transform = 'scale(0.7)';
-			    popupContent.style.opacity = '0';
-			    popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-			    setTimeout(() => {
-			        popupContent.style.transform = 'scale(1)';
-			        popupContent.style.opacity = '1';
-			    }, 50);
+				// if (deleteShippingBtn) {
+				// 	deleteShippingBtn.onclick = async () => {
+				// 		console.log("Delete Shipping button clicked");
+				// 	}
 			}
-
-			// populateCompanies('storage_company_id');
-
-			handlePopupClose("edit-slot-form", ".formular-medium-frame", []);
-		});
+		} catch (error) {
+			console.error("Error loading storage management:", error);
+		}
 	}
 
 	const addSlotBtn = document.getElementById('add-slot-btn');
@@ -3740,9 +3809,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// 📌 Manejo del formulario de crear slot
-	let formAddSlot = document.getElementById('formAddSlot');
-	if (formAddSlot) {
-		formAddSlot.addEventListener('submit', async function (e) {
+	let formManageSlot = document.getElementById('formManageSlot');
+	if (formManageSlot) {
+		formManageSlot.addEventListener('submit', async function (e) {
 			e.preventDefault();
 
 			let formData = new FormData(this);
@@ -3782,6 +3851,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		});
 	}
+
+	setupBackToMenuButton(
+		'.back-to-storage-menu-btn', 
+		['manage-slot-modal', 'manage-storage-modal'], 
+		'storage-menu-buttons', 
+		'storage-options'
+	);
 	//################################################################ END STORAGE ##################################################################
 
 	//################################################################ CUSTOMERS #####################################################################
@@ -6010,12 +6086,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 		shippingSummary.innerHTML = renderShippingSummary(shipping.product_summary || [], shipping);
 
 		const shippingMenuBtn = document.getElementById('shippingMenuBtn');
-		shippingMenuBtn.addEventListener('click', () => {
-			openShippingForm(shipping.shippings_id);
+		if (shippingMenuBtn) {
+			shippingMenuBtn.addEventListener('click', () => {
+				openShippingForm(shipping.shippings_id);
 
-			handlePopupClose("shipping-options", ".formular-frame", []);
-		});
-
+				handlePopupClose("shipping-options", ".formular-frame", []);
+			});
+		}
 
 		const loadCards = document.querySelectorAll('.loads');
 		loadCards.forEach((card, index) => {
@@ -11529,6 +11606,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 				if (formFrame2) {
 					formFrame2.classList.remove('expanded');
 				}
+
+				const mediumFormFrame = document.getElementById('formular-medium-frame');
+				if (mediumFormFrame) {
+					mediumFormFrame.classList.remove('expanded-medium');
+				}
 			});
 		});
 	}
@@ -11591,8 +11673,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 	});
 
 	function resetPopupView(menuIds = [], sectionIdsToHide = []) {
-		const allFrames = document.querySelectorAll('.formular-frame, .formular-big-frame');
-		allFrames.forEach(frame => frame.classList.remove('expanded'));
+		const allFrames = document.querySelectorAll('.formular-frame, .formular-big-frame, .formular-medium-frame');
+		
+		allFrames.forEach(frame => {
+			frame.classList.remove('expanded', 'expanded-medium');
+		});
 
 		menuIds.forEach(menuId => {
 			const menuDiv = document.getElementById(menuId);

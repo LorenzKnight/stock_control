@@ -34,8 +34,7 @@ try {
     
     if (!empty($search)) {
 		$where["OR"] = [
-			"slot_name ILIKE"    => "%{$search}%",
-			// "company_address ILIKE" => "%{$search}%"
+			"slot_name ILIKE"    => "%{$search}%"
 		];
 	}
 

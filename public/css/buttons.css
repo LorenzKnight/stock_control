@@ -336,7 +336,8 @@
     .back-to-shipping-menu-btn, 
     .back-to-load-menu-btn,
     .edit-back-to-right-menu-btn,
-    .edit-back-to-services-menu-btn
+    .edit-back-to-services-menu-btn,
+    .back-to-storage-menu-btn
     {
         width: 38px;
         height: 38px;
@@ -360,7 +361,8 @@
     .back-to-shipping-menu-btn:hover, 
     .back-to-load-menu-btn:hover,
     .edit-back-to-right-menu-btn:hover,
-    .edit-back-to-services-menu-btn:hover
+    .edit-back-to-services-menu-btn:hover,
+    .back-to-storage-menu-btn:hover
     {
         background-color: var(--main-bg-dark-blue);
         box-shadow: 0 0 4px 3px rgb(47 48 63 / 19%);
@@ -373,7 +375,8 @@
     .back-to-shipping-menu-btn img, 
     .back-to-load-menu-btn img,
     .edit-back-to-right-menu-btn img,
-    .edit-back-to-services-menu-btn img
+    .edit-back-to-services-menu-btn img,
+    .back-to-storage-menu-btn img
     {
         width: 22px;
         filter: brightness(0) saturate(100%) invert(100%);
@@ -753,7 +756,8 @@
     .back-to-shipping-menu-btn, 
     .back-to-load-menu-btn,
     .edit-back-to-right-menu-btn,
-    .edit-back-to-services-menu-btn
+    .edit-back-to-services-menu-btn,
+    .back-to-storage-menu-btn
     {
         width: 38px;
         height: 38px;
@@ -777,7 +781,8 @@
     .back-to-shipping-menu-btn:hover, 
     .back-to-load-menu-btn:hover,
     .edit-back-to-right-menu-btn:hover,
-    .edit-back-to-services-menu-btn:hover
+    .edit-back-to-services-menu-btn:hover,
+    .back-to-storage-menu-btn:hover
     {
         background-color: var(--main-bg-dark-blue);
         box-shadow: 0 0 4px 3px rgb(47 48 63 / 19%);
@@ -790,7 +795,8 @@
     .back-to-shipping-menu-btn img, 
     .back-to-load-menu-btn img,
     .edit-back-to-right-menu-btn img,
-    .edit-back-to-services-menu-btn img
+    .edit-back-to-services-menu-btn img,
+    .back-to-storage-menu-btn img
     {
         width: 22px;
         filter: brightness(0) saturate(100%) invert(100%);
@@ -1171,7 +1177,8 @@
     .back-to-shipping-menu-btn, 
     .back-to-load-menu-btn,
     .edit-back-to-right-menu-btn,
-    .edit-back-to-services-menu-btn
+    .edit-back-to-services-menu-btn,
+    .back-to-storage-menu-btn
     {
         width: 38px;
         height: 38px;
@@ -1195,7 +1202,8 @@
     .back-to-shipping-menu-btn:hover, 
     .back-to-load-menu-btn:hover,
     .edit-back-to-right-menu-btn:hover,
-    .edit-back-to-services-menu-btn:hover
+    .edit-back-to-services-menu-btn:hover,
+    .back-to-storage-menu-btn:hover
     {
         background-color: var(--main-bg-dark-blue);
         box-shadow: 0 0 4px 3px rgb(47 48 63 / 19%);
@@ -1208,7 +1216,8 @@
     .back-to-shipping-menu-btn img, 
     .back-to-load-menu-btn img,
     .edit-back-to-right-menu-btn img,
-    .edit-back-to-services-menu-btn img
+    .edit-back-to-services-menu-btn img,
+    .back-to-storage-menu-btn img
     {
         width: 22px;
         filter: brightness(0) saturate(100%) invert(100%);
@@ -1588,7 +1597,8 @@
     .back-to-shipping-menu-btn, 
     .back-to-load-menu-btn,
     .edit-back-to-right-menu-btn,
-    .edit-back-to-services-menu-btn
+    .edit-back-to-services-menu-btn,
+    .back-to-storage-menu-btn
     {
         width: 38px;
         height: 38px;
@@ -1612,7 +1622,8 @@
     .back-to-shipping-menu-btn:hover, 
     .back-to-load-menu-btn:hover,
     .edit-back-to-right-menu-btn:hover,
-    .edit-back-to-services-menu-btn:hover
+    .edit-back-to-services-menu-btn:hover,
+    .back-to-storage-menu-btn:hover
     {
         background-color: var(--main-bg-dark-blue);
         box-shadow: 0 0 4px 3px rgb(47 48 63 / 19%);
@@ -1625,7 +1636,8 @@
     .back-to-shipping-menu-btn img, 
     .back-to-load-menu-btn img,
     .edit-back-to-right-menu-btn img,
-    .edit-back-to-services-menu-btn img
+    .edit-back-to-services-menu-btn img,
+    .back-to-storage-menu-btn img
     {
         width: 22px;
         filter: brightness(0) saturate(100%) invert(100%);
