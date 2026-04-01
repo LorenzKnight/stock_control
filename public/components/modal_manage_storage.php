@@ -173,7 +173,7 @@
                             <button type="button" class="neutral-btn">Cancel</button>
                         </td>
                         <td colspan="3" align="center" valign="middle" style="padding-top: 10px;">
-                            <input type="submit" class="button-style-agree" id="slot-action-btn" value="Ok" />
+                            <input type="submit" class="button-style-agree" id="storage-action-btn" value="Ok" />
                         </td>
                     </tr>
                 </table>

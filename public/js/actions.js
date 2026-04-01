@@ -3653,10 +3653,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 						initProductList({
 							listId: 'products-list',
 							searchId: 'input-search-product',
-							radioName: 'product_info'
+							checkName: 'product_info[]'
 						});
-
-						// openEditShippingForm(shippingsId);
 			
 						const formFrame = document.getElementById('formular-medium-frame');
 						if (formFrame) {
@@ -3944,6 +3942,72 @@ document.addEventListener("DOMContentLoaded", async function () {
 				statusImage.src = data.img_gif;
 				showBanner(banner);
 			}
+		});
+	}
+
+	function updateStorageActionButtonState() {
+		const storageActionBtn = document.getElementById('storage-action-btn');
+		if (!storageActionBtn) return;
+
+		const hasSlotSelected = !!document.querySelector('input[name="storage_info"]:checked');
+		const hasProductSelected = !!document.querySelector('input[name="product_info[]"]:checked');
+
+		if (hasSlotSelected || hasProductSelected) {
+			storageActionBtn.value = "Save Changes";
+		} else {
+			storageActionBtn.value = "Add Storage";
+		}
+	}
+
+	document.addEventListener('change', function (e) {
+		if (
+			e.target.matches('input[name="storage_info"]') ||
+			e.target.matches('input[name="product_info[]"]')
+		) {
+			updateStorageActionButtonState();
+		}
+	});
+
+	const formManageStorage = document.getElementById('formManageStorage');
+	if (formManageStorage) {
+		formManageStorage.addEventListener('submit', async function (e) {
+			e.preventDefault();
+
+			const selectedSlot = document.querySelector('input[name="storage_info"]:checked');
+			const selectedProducts = document.querySelectorAll('input[name="product_info[]"]:checked');
+			
+			if (!selectedSlot && selectedProducts.length === 0) {
+				showStorageSelectionMessage("You have not selected a slot or product.");
+				return;
+			}
+
+			if (!selectedSlot) {
+				showStorageSelectionMessage("You have not selected a slot.");
+				return;
+			}
+
+			if (selectedProducts.length === 0) {
+				showStorageSelectionMessage("You have not selected any product.");
+				return;
+			}
+
+			function showStorageSelectionMessage(message) {
+				const banner = document.getElementById('status-message');
+				const statusText = document.getElementById('status-text');
+				const statusImage = document.getElementById('status-image');
+
+				if (!banner || !statusText || !statusImage) {
+					alert(message);
+					return;
+				}
+
+				statusText.innerText = message;
+				statusImage.src = "../images/sys-img/error.gif";
+				showBanner(banner);
+			}
+
+			// aquí ya puedes continuar con el insert
+			console.log("Sutmitting storage form with selected slot and products:");
 		});
 	}
 
