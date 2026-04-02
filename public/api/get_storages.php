@@ -181,7 +181,7 @@ function appendStoragesByWhere(array $where, int $companyId, array &$allStorages
 			"slot_id"     => $storageRow["slot_id"] ?? null,
 			"product_id"  => $storageRow["product_id"] ?? null,
 			"quantity"    => $storageRow["quantity"] ?? null,
-			"create_by"   => $storageRow["create_by"] ?? null,
+			"created_by"   => $storageRow["created_by"] ?? null,
 			"created_at"  => $storageRow["created_at"] ?? null,
 			"product"     => $productInfo
 		];
@@ -210,7 +210,10 @@ try {
 
     $search = $_GET["search"] ?? '';
 	$search = trim($search);
+	$slotIdFilter = isset($_GET["slot_id"]) ? (int)$_GET["slot_id"] : 0;
+
 	$filterBySearch = ($search !== '');
+	$filterBySlotId = ($slotIdFilter > 0);
 	
 	$slotData = [];
 	$productData = [];
@@ -219,14 +222,18 @@ try {
 	$seenStorageIds = [];
 	$productMap = [];
 
-	if ($filterBySearch) {
+	if ($filterBySearch || $filterBySlotId) {
 		$slotWhere = [
 			"company_id" => $companyId
 		];
 
-		$slotWhere["OR"] = [
-			"slot_name ILIKE" => "%{$search}%"
-		];
+		if ($filterBySlotId) {
+			$slotWhere["slot_id"] = $slotIdFilter;
+		} else {
+			$slotWhere["OR"] = [
+				"slot_name ILIKE" => "%{$search}%"
+			];
+		}
 
         $slotResult = select_from("slot", [
             "slot_id", "company_id", "slot_name", 
@@ -240,37 +247,36 @@ try {
         $parsedSlots = json_decode($slotResult, true);
 		$slotData = $parsedSlots["data"] ?? [];
 
-		$productWhere = [
-			"company_id" => $companyId
-		];
+		if ($filterBySearch) {
+			$productWhere = [
+				"company_id" => $companyId,
+				"OR" => [
+					"product_name ILIKE" => "%{$search}%"
+				]
+			];
 
-		$productWhere["OR"] = [
-			"product_name ILIKE" => "%{$search}%"
-		];
+			$productResult = select_from("products", [
+				"product_id", "product_image", "product_name", "product_year",
+				"product_mark", "product_model", "product_sub_model",
+				"price", "sale_unit_type", "weight_per_unit", "total_weight",
+				"quantity", "min_quantity", "currency", "purpose"
+			], $productWhere, [
+				"order_by" => "created_at",
+				"order_direction" => "DESC"
+			]);
 
-		$productResult = select_from("products",[
-			"product_id", "product_image", "product_name", "product_year",
-			"product_mark", "product_model", "product_sub_model",
-			"price", "sale_unit_type", "weight_per_unit", "total_weight",
-			"quantity", "min_quantity", "currency", "purpose"
-		], $productWhere, [
-			"order_by" => "created_at",
-            "order_direction" => "DESC"
-		]);
+			$parsedProducts = json_decode($productResult, true);
+			$rawProducts = $parsedProducts["data"] ?? [];
 
-		$parsedProducts = json_decode($productResult, true);
-		$rawProducts = $parsedProducts["data"] ?? [];
+			if (!empty($rawProducts) && is_array($rawProducts)) {
+				foreach ($rawProducts as $productRow) {
+					$productId = $productRow["product_id"] ?? null;
+					if (!$productId) continue;
 
-		$productData = [];
-
-		if (!empty($rawProducts) && is_array($rawProducts)) {
-			foreach ($rawProducts as $productRow) {
-				$productId = $productRow["product_id"] ?? null;
-				if (!$productId) continue;
-
-				$productInfo = buildProductInfo($productId, $companyId);
-				if ($productInfo) {
-					$productData[] = $productInfo;
+					$productInfo = buildProductInfo($productId, $companyId);
+					if ($productInfo) {
+						$productData[] = $productInfo;
+					}
 				}
 			}
 		}
@@ -298,7 +304,19 @@ try {
 			}
 		}
 
-		if (!empty($productData) && is_array($productData)) {
+		if ($filterBySlotId && !empty($allStorages)) {
+			foreach ($allStorages as $storageRow) {
+				$product = $storageRow["product"] ?? null;
+
+				if (!empty($product["product_id"])) {
+					$productMap[(string)$product["product_id"]] = $product;
+				}
+			}
+
+			$productData = array_values($productMap);
+		}
+
+		if ($filterBySearch && !empty($productData) && is_array($productData)) {
 			$productIds = array_column($productData, "product_id");
 
 			foreach ($productIds as $productId) {

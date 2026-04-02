@@ -3763,8 +3763,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 		await renderSlots();
 
-		if (inputSearchSlot) {
+		if (inputSearchSlot && !inputSearchSlot.dataset.boundSlotSearch) {
 			inputSearchSlot.addEventListener('input', renderSlots);
+			inputSearchSlot.dataset.boundSlotSearch = '1';
 		}
 	}
 
@@ -3773,12 +3774,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 		listId,
 		searchId = null,
 		checkName = 'product_info[]',
-		emptyMessage = 'No products found.'
+		emptyMessage = 'No products found.',
+		selectedProductIds = []
 	}) {
 		const productList = document.getElementById(listId);
 		const inputSearchProduct = searchId ? document.getElementById(searchId) : null;
 
 		if (!productList) return;
+
+		const selectedSet = new Set((selectedProductIds || []).map(String));
 
 		const renderProducts = async () => {
 			try {
@@ -3806,6 +3810,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 							? `images/products/${product.product_image}`
 							: `images/sys-img/wooden-box.png`;
 
+						const isChecked = selectedSet.has(String(product.product_id));
+
 						const row = document.createElement('tr');
 						row.className = 'categoryContainer';
 
@@ -3832,6 +3838,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 										class="category-checkbox"
 										value="${product.product_id}"
 										data-product="${product.product_id}"
+										${isChecked ? 'checked' : ''}
 									/>
 									<label for="${uniqueId}"></label>
 								</div>
@@ -3849,6 +3856,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 						</tr>
 					`;
 				}
+
+				updateStorageActionButtonState();
 			} catch (error) {
 				console.error('Error loading products:', error);
 				productList.innerHTML = `
@@ -3863,8 +3872,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 		await renderProducts();
 
-		if (inputSearchProduct) {
+		if (inputSearchProduct && !inputSearchProduct.dataset.boundProductSearch) {
 			inputSearchProduct.addEventListener('input', renderProducts);
+			inputSearchProduct.dataset.boundProductSearch = '1';
 		}
 	}
 
@@ -3959,12 +3969,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
-	document.addEventListener('change', function (e) {
+	document.addEventListener('change', async function (e) {
 		if (
 			e.target.matches('input[name="storage_info"]') ||
 			e.target.matches('input[name="product_info[]"]')
 		) {
 			updateStorageActionButtonState();
+		}
+
+		if (e.target.matches('input[name="storage_info"]')) {
+			const selectedSlotId = e.target.checked ? e.target.dataset.slot : null;
+			await syncProductsFromSelectedSlot(selectedSlotId);
 		}
 	});
 
@@ -10600,6 +10615,60 @@ document.addEventListener("DOMContentLoaded", async function () {
 			document.getElementById('current_capacity').value = '';
 			document.getElementById('slot_description').value = '';
 			document.getElementById("slot_status").checked = true;
+		}
+	}
+
+	// 📌 script para recojer los productos seleccionados
+	async function syncProductsFromSelectedSlot(slotId) {
+		if (!slotId) {
+			await initProductList({
+				listId: 'products-list',
+				searchId: 'input-search-product',
+				checkName: 'product_info[]'
+			});
+			return;
+		}
+
+		try {
+			const params = new URLSearchParams();
+			params.append('slot_id', slotId);
+
+			const response = await fetch(`api/get_storages.php?${params.toString()}`, {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			});
+
+			const data = await response.json();
+
+			if (!data.success || !data.data) {
+				await initProductList({
+					listId: 'products-list',
+					searchId: 'input-search-product',
+					checkName: 'product_info[]'
+				});
+				return;
+			}
+
+			const payload = Array.isArray(data.data) ? data.data[0] : data.data;
+			const storages = payload?.storages || [];
+
+			const selectedProductIds = [...new Set(
+				storages
+					.map(storage => storage.product_id)
+					.filter(v => v !== null && v !== undefined && v !== '')
+					.map(String)
+			)];
+
+			await initProductList({
+				listId: 'products-list',
+				searchId: 'input-search-product',
+				checkName: 'product_info[]',
+				selectedProductIds
+			});
+
+			updateStorageActionButtonState();
+		} catch (error) {
+			console.error('Error syncing products from slot:', error);
 		}
 	}
 
