@@ -3647,13 +3647,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 						initSlotList({
 							listId: 'storages-list',
 							searchId: 'input-search-storage',
-							radioName: 'storage_info'
+							radioName: 'storages_info'
 						});
 
 						initProductList({
 							listId: 'products-list',
 							searchId: 'input-search-product',
-							checkName: 'product_info[]'
+							checkName: 'products_info[]'
 						});
 			
 						const formFrame = document.getElementById('formular-medium-frame');
@@ -3731,6 +3731,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 										id="${uniqueId}"
 										name="${radioName}"
 										class="category-radio"
+										value="${slot.slot_id}"
 										data-slot="${slot.slot_id}"
 									/>
 									<label for="${uniqueId}"></label>
@@ -3773,7 +3774,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	async function initProductList({
 		listId,
 		searchId = null,
-		checkName = 'product_info[]',
+		checkName = 'products_info[]',
 		emptyMessage = 'No products found.',
 		selectedProductIds = []
 	}) {
@@ -3948,7 +3949,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					showBanner(banner);
 				}
 			} catch (error) {
-				statusText.innerText = "Error procesando la solicitud.";
+				statusText.innerText = "Error processing request.";
 				statusImage.src = data.img_gif;
 				showBanner(banner);
 			}
@@ -3959,8 +3960,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 		const storageActionBtn = document.getElementById('storage-action-btn');
 		if (!storageActionBtn) return;
 
-		const hasSlotSelected = !!document.querySelector('input[name="storage_info"]:checked');
-		const hasProductSelected = !!document.querySelector('input[name="product_info[]"]:checked');
+		const hasSlotSelected = !!document.querySelector('input[name="storages_info"]:checked');
+		const hasProductSelected = !!document.querySelector('input[name="products_info[]"]:checked');
 
 		if (hasSlotSelected || hasProductSelected) {
 			storageActionBtn.value = "Save Changes";
@@ -3971,25 +3972,40 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	document.addEventListener('change', async function (e) {
 		if (
-			e.target.matches('input[name="storage_info"]') ||
-			e.target.matches('input[name="product_info[]"]')
+			e.target.matches('input[name="storages_info"]') ||
+			e.target.matches('input[name="products_info[]"]')
 		) {
 			updateStorageActionButtonState();
 		}
 
-		if (e.target.matches('input[name="storage_info"]')) {
+		if (e.target.matches('input[name="storages_info"]')) {
 			const selectedSlotId = e.target.checked ? e.target.dataset.slot : null;
 			await syncProductsFromSelectedSlot(selectedSlotId);
 		}
 	});
+
+	function showStorageSelectionMessage(message) {
+		const banner = document.getElementById('status-message');
+		const statusText = document.getElementById('status-text');
+		const statusImage = document.getElementById('status-image');
+
+		if (!banner || !statusText || !statusImage) {
+			alert(message);
+			return;
+		}
+
+		statusText.innerText = message;
+		statusImage.src = "../images/sys-img/error.gif";
+		showBanner(banner);
+	}
 
 	const formManageStorage = document.getElementById('formManageStorage');
 	if (formManageStorage) {
 		formManageStorage.addEventListener('submit', async function (e) {
 			e.preventDefault();
 
-			const selectedSlot = document.querySelector('input[name="storage_info"]:checked');
-			const selectedProducts = document.querySelectorAll('input[name="product_info[]"]:checked');
+			const selectedSlot = document.querySelector('input[name="storages_info"]:checked');
+			const selectedProducts = document.querySelectorAll('input[name="products_info[]"]:checked');
 			
 			if (!selectedSlot && selectedProducts.length === 0) {
 				showStorageSelectionMessage("You have not selected a slot or product.");
@@ -4006,23 +4022,43 @@ document.addEventListener("DOMContentLoaded", async function () {
 				return;
 			}
 
-			function showStorageSelectionMessage(message) {
-				const banner = document.getElementById('status-message');
-				const statusText = document.getElementById('status-text');
-				const statusImage = document.getElementById('status-image');
+			let formData = new FormData(this);
+			console.log(formData.get('storages_info')); // Slot ID
+			console.log(formData.getAll('products_info[]')); // Array of selected product IDs
 
-				if (!banner || !statusText || !statusImage) {
-					alert(message);
-					return;
+			const banner = document.getElementById('status-message');
+			const statusText = document.getElementById('status-text');
+			const statusImage = document.getElementById('status-image');
+
+			try {
+				let response = await fetch('api/create_storage.php', {
+					method: 'POST',
+					headers: { 'Accept': 'application/json' },
+					body: formData
+				});
+
+				let data = await response.json();
+
+				if (data.success) {
+					statusText.innerText = data.message;
+					statusImage.src = data.img_gif;
+					showBanner(banner);
+
+					setTimeout(() => {
+						hideBanner(banner, () => {
+							window.location.href = data.redirect_url;
+						});
+					}, 3000);
+				} else {
+					statusText.innerText = "Error: " + data.message;
+					statusImage.src = data.img_gif; 
+					showBanner(banner);
 				}
-
-				statusText.innerText = message;
-				statusImage.src = "../images/sys-img/error.gif";
+			} catch (error) {
+				statusText.innerText = "Error processing request.";
+				statusImage.src = data.img_gif;
 				showBanner(banner);
 			}
-
-			// aquí ya puedes continuar con el insert
-			console.log("Sutmitting storage form with selected slot and products:");
 		});
 	}
 
@@ -10624,7 +10660,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			await initProductList({
 				listId: 'products-list',
 				searchId: 'input-search-product',
-				checkName: 'product_info[]'
+				checkName: 'products_info[]'
 			});
 			return;
 		}
@@ -10644,7 +10680,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				await initProductList({
 					listId: 'products-list',
 					searchId: 'input-search-product',
-					checkName: 'product_info[]'
+					checkName: 'products_info[]'
 				});
 				return;
 			}
@@ -10662,7 +10698,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			await initProductList({
 				listId: 'products-list',
 				searchId: 'input-search-product',
-				checkName: 'product_info[]',
+				checkName: 'products_info[]',
 				selectedProductIds
 			});
 
