@@ -7995,6 +7995,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 						headers: { 'Accept': 'application/json' }
 					});
 					const data = await response.json();
+					
 					userListTable.innerHTML = "";
 
 					if (data.success && Array.isArray(data.data) && data.data.length > 0) {
@@ -8007,7 +8008,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 								? `images/profile/${user.image}`
 								: `images/sys-img/NonProfilePic.png`;
 
-							let borderColor = Number(user.status) === 1 ? "#8cda8a" : "#fbadad";
+							let borderColor = getUserBorderColor(user);
 
 							row.innerHTML = `
 								<td width="10%" align="center" valign="middle">
@@ -8125,7 +8126,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		try {
 			const response = await fetch(`${endpoint}?user_id=${selectedUserId}`);
 			const result = await response.json();
-		// console.log("📡 API Response:", result);
+
 			let html = '';
 
 			if (sectionType === "user-overview") {
@@ -8150,7 +8151,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				html += `
 					<div class="overview-header">
 						${users.map(user => {
-							let borderColor = Number(user.status) === 1 ? "#8cda8a" : "#fbadad";	
+							let borderColor = getUserBorderColor(user);
 
 							return `
 								<div class="overview-profile-pic" style="border: 2px solid ${borderColor};">
@@ -8294,7 +8295,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 													? `images/profile/${c.image}`
 													: `images/sys-img/NonProfilePic.png`;
 
-												let borderColor = Number(c.status) === 1 ? "#8cda8a" : "#fbadad";
+												let borderColor = getUserBorderColor(c);
 
 												return `
 													<tr>
@@ -9094,6 +9095,22 @@ document.addEventListener("DOMContentLoaded", async function () {
 		};
 
 		await handleUserSelect(fakeEvent, sectionType);
+	}
+
+	function getUserBorderColor(user) {
+		if (Number(user.status_by_admin) !== 1) {
+			return "#9a9999"; // Gris: bloqueado por admin
+		}
+
+		if (Number(user.status) !== 1) {
+			return "#fe7070"; // Rojo: inactivo
+		}
+
+		if (Number(user.verified) !== 1) {
+			return "#fad186"; // Amarillo: no verificado
+		}
+
+		return "#8cda8a"; // Verde: activo y verificado
 	}
 
 	setupBackToMenuButton(

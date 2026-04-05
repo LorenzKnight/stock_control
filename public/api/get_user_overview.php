@@ -61,6 +61,7 @@ try {
             "rank",
             "verified",
             "status",
+            "status_by_admin",
             "signup_date"
         ],
         ["user_id" => $targetId],
@@ -113,6 +114,7 @@ try {
             "rank",
             "verified",
             "status",
+            "status_by_admin",
             "signup_date"
         ],
         ["parent_user" => $targetId],
