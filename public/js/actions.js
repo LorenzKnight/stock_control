@@ -3232,7 +3232,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 
 		slots.forEach(slot => {
-			let statusColor = '';
+			let statusColor = ''; // Aqui "BORRAR O REVISAR ESTO" 
 			switch (parseInt(slot.status, 10)) {
 				case 0: statusColor = 'red'; break;
 				case 1: statusColor = 'orange'; break;
