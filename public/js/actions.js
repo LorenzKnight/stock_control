@@ -936,9 +936,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	// 📌 Manejo de lista de usuarios hijos
 	function loadChildUsers(companyId) {
-		// const spot = document.getElementById("spot");
 		const userContainer = document.getElementById('child-user-table');
-		if (/* spot && */ userContainer) {
+		if (userContainer) {
 			let url = 'api/get_users.php';
 			if (companyId && !isNaN(companyId)) {
 				url += `?select_company=${companyId}`;
@@ -950,8 +949,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			})
 			.then(response => response.json())
 			.then(data => {
-				// spot.innerHTML = data.count !== "" ? data.count : "0";
-
 				if (data.success && data.count > 0) {
 					userContainer.innerHTML = '';
 
@@ -3576,9 +3573,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 		const popupContent = storageOptions.querySelector('.formular-frame');
 
 		try {
-			// const res = await fetch(`api/get_shippings.php`);
-			// const data = await res.json();
-
 			if (storageOptions && popupContent) {
 				resetPopupView(['storage-menu-buttons'], [
 					'manage-storage-modal',
@@ -3587,7 +3581,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				const manageSlotBtn = document.getElementById('manageSlotBtn');
 				const manageStorageBtn = document.getElementById('manageStorageBtn');
-				// const deleteShippingBtn = document.getElementById('deleteShippingBtn');
 
 				storageOptions.style.display = 'block';
 				storageOptions.style.opacity = '0';
@@ -3641,9 +3634,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 							manageDiv.style.display = 'none';
 						}
 
-						// const shippingsId = editShippingBtn.getAttribute('data-shipping-id');
-						// if (!shippingsId) return;
-
 						initSlotList({
 							listId: 'storages-list',
 							searchId: 'input-search-storage',
@@ -3669,9 +3659,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 					}
 				}
 
-				// if (deleteShippingBtn) {
-				// 	deleteShippingBtn.onclick = async () => {
-				// 		console.log("Delete Shipping button clicked");
+				// if (deleteStorageBtn) {
+				// 	deleteStorageBtn.onclick = async () => {
+				// 		console.log("Delete Storage button clicked");
 				// 	}
 			}
 		} catch (error) {
@@ -4023,8 +4013,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 
 			let formData = new FormData(this);
-			// console.log(formData.get('storages_info')); // Slot ID
-			// console.log(formData.getAll('products_info[]')); // Array of selected product IDs
 
 			const banner = document.getElementById('status-message');
 			const statusText = document.getElementById('status-text');
