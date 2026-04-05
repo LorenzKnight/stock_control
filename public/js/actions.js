@@ -963,7 +963,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 						? `images/profile/${user.image}` 
 						: "images/sys-img/NonProfilePic.png";
 
-						let borderColor = Number(user.status) === 1 ? "#8cda8a" : "#fbadad";
+						let borderColor = getUserBorderColor(user);
 
 						card.innerHTML = `
 							<div class="mini-banner">
@@ -9095,22 +9095,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 		};
 
 		await handleUserSelect(fakeEvent, sectionType);
-	}
-
-	function getUserBorderColor(user) {
-		if (Number(user.status_by_admin) !== 1) {
-			return "#9a9999"; // Gris: bloqueado por admin
-		}
-
-		if (Number(user.status) !== 1) {
-			return "#fe7070"; // Rojo: inactivo
-		}
-
-		if (Number(user.verified) !== 1) {
-			return "#fad186"; // Amarillo: no verificado
-		}
-
-		return "#8cda8a"; // Verde: activo y verificado
 	}
 
 	setupBackToMenuButton(

@@ -38,8 +38,10 @@ try {
                 "email",
                 "phone",
                 "image",
+                "verified",
                 "rank",
                 "status",
+                "status_by_admin",
                 "signup_date"
             ],
             ["user_id" => $targetId],
@@ -124,8 +126,10 @@ try {
         "email",
         "phone",
         "image",
+        "verified",
         "rank",
         "status",
+        "status_by_admin",
         "signup_date"
     ], $where,
     [
