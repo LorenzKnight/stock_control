@@ -4023,8 +4023,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 
 			let formData = new FormData(this);
-			console.log(formData.get('storages_info')); // Slot ID
-			console.log(formData.getAll('products_info[]')); // Array of selected product IDs
+			// console.log(formData.get('storages_info')); // Slot ID
+			// console.log(formData.getAll('products_info[]')); // Array of selected product IDs
 
 			const banner = document.getElementById('status-message');
 			const statusText = document.getElementById('status-text');
@@ -4056,7 +4056,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}
 			} catch (error) {
 				statusText.innerText = "Error processing request.";
-				statusImage.src = data.img_gif;
+				statusImage.src = "../images/sys-img/error.gif";
 				showBanner(banner);
 			}
 		});
