@@ -3310,13 +3310,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 		try {
 			const res = await fetch(`api/get_slot_info.php`);
 			const data = await res.json();
-// console.log("Slot info data:", data);
+
 			if (slotOptions && popupContent) {
 				resetPopupView(['slot-menu-buttons'], [
 					'edit-slot-modal'
 				]);
 
-				const editSlotBtn = document.getElementById('editSlotBtn');
+				// const editSlotBtn = document.getElementById('editSlotBtn');
 				const deleteSlotBtn = document.getElementById('deleteSlotBtn');
 
 				let slot = null;
@@ -3344,79 +3344,79 @@ document.addEventListener("DOMContentLoaded", async function () {
 					popupContent.style.opacity = '1';
 				}, 50);
 
-				if (editSlotBtn) {
-					editSlotBtn.setAttribute('data-slot-id', slotId);
-					editSlotBtn.onclick = async () => {
-						const menuDiv = document.getElementById('slot-menu-buttons');
-						const editDiv = document.getElementById('edit-slot-modal');
+				// if (editSlotBtn) {
+				// 	editSlotBtn.setAttribute('data-slot-id', slotId);
+				// 	editSlotBtn.onclick = async () => {
+				// 		const menuDiv = document.getElementById('slot-menu-buttons');
+				// 		const editDiv = document.getElementById('edit-slot-modal');
 					
-						if (editDiv) {
-							editDiv.style.display = 'none';
-						}
+				// 		if (editDiv) {
+				// 			editDiv.style.display = 'none';
+				// 		}
 
-						const slotId = editSlotBtn.getAttribute('data-slot-id');
-						if (!slotId) return;
+				// 		const slotId = editSlotBtn.getAttribute('data-slot-id');
+				// 		if (!slotId) return;
 
-						const formFrame = document.getElementById('formular-medium-frame-2');
-						if (formFrame) {
-							formFrame.classList.add('expanded-medium');
-						}
+				// 		const formFrame = document.getElementById('formular-medium-frame-2');
+				// 		if (formFrame) {
+				// 			formFrame.classList.add('expanded-medium');
+				// 		}
 
-						openEditSlotForm(slotId);
+				// 		openEditSlotForm(slotId);
 
-						animateHeightChange(popupContent, editDiv, () => {
-							fadeOutAndHide(menuDiv, () => {
-								showWithFadeIn(editDiv);
-							});
-						});
-					};
-				}
+				// 		animateHeightChange(popupContent, editDiv, () => {
+				// 			fadeOutAndHide(menuDiv, () => {
+				// 				showWithFadeIn(editDiv);
+				// 			});
+				// 		});
+				// 	};
+				// }
 
 				if (deleteSlotBtn) {
 					deleteSlotBtn.setAttribute('data-slot-id', slotId);
 					deleteSlotBtn.onclick = () => {
-						// deleteShippingBtn.setAttribute('data-shipping-id', shippingsId);
+						// deleteSlotBtn.setAttribute('data-slot-id', slotId);
 						
-						// if (!shippingsId) {
-						// 	alert("Shipping ID not found.");
-						// 	return;
-						// }
+						if (!slotId) {
+							alert("Slot ID not found.");
+							return;
+						}
 
-						// showConfirmModal("Delete Shipping", "Are you sure you want to delete this Shipping?", async () => {
-						// 	const frame = document.querySelector('.formular-frame');
-						// 	if (frame) frame.style.display = 'none';
+						showConfirmModal("Delete Slot", "Are you sure you want to delete this Slot?", async () => {
+							const frame = document.querySelector('.formular-frame');
+							if (frame) frame.style.display = 'none';
 
-						// 	const formData = new FormData();
-						// 	formData.append("shippings_id", shippingsId);
+							const formData = new FormData();
+							formData.append("slot_id", slotId);
 				
-						// 	try {
-						// 		const response = await fetch('api/delete_shipping.php', {
-						// 			method: 'POST',
-						// 			body: formData
-						// 		});
+							try {
+								const response = await fetch('api/delete_slot.php', {
+									method: 'POST',
+									body: formData
+								});
 				
-						// 		const data = await response.json();
+								const data = await response.json();
 				
-						// 		const banner = document.getElementById('status-message');
-						// 		const statusText = document.getElementById('status-text');
-						// 		const statusImage = document.getElementById('status-image');
+								const banner = document.getElementById('status-message');
+								const statusText = document.getElementById('status-text');
+								const statusImage = document.getElementById('status-image');
 				
-						// 		statusText.innerText = data.message;
-						// 		statusImage.src = data.img_gif;
-						// 		showBanner(banner);
+								statusText.innerText = data.message;
+								statusImage.src = data.img_gif;
+								showBanner(banner);
 				
-						// 		if (data.success) {
-						// 			setTimeout(() => {
-						// 				hideBanner(banner, () => {
-						// 					window.location.href = data.redirect_url || window.location.href;
-						// 				});
-						// 			}, 3000);
-						// 		}
-						// 	} catch (error) {
-						// 		console.error("Error deleting shipping:", error);
-						// 		alert("Error deleting shipping. Check console.");
-						// 	}
-						// });
+								if (data.success) {
+									setTimeout(() => {
+										hideBanner(banner, () => {
+											window.location.href = data.redirect_url || window.location.href;
+										});
+									}, 3000);
+								}
+							} catch (error) {
+								console.error("Error deleting slot:", error);
+								alert("Error deleting slot. Check console.");
+							}
+						});
 					};
 				}
 			}
@@ -3425,9 +3425,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
-	async function openEditSlotForm(slotId) {
+	// async function openEditSlotForm(slotId) {
 
-	}
+	// }
 
 	async function renderStorageDetails(payload, clickedRow) {
 		const allRows = storageSidebarTable.querySelectorAll('.clickable-row');

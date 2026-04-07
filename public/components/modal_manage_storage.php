@@ -24,7 +24,7 @@
 				</tr>
 			</table>
 		</div>
-        <div id="manage-slot-modal" style="display: none;">
+        <!-- <div id="manage-slot-modal" style="display: none;">
             <div class="back-to-storage-menu-btn">
 				<img src="images/sys-img/backward.png" alt="back">
 			</div>
@@ -60,12 +60,7 @@
                         <td colspan="3" align="center" valign="middle">
                             <div class="formular-category-list">
                                 <table class="hidden" id="slot-form" width="100%" align="center" cellspacing="0">
-                                    <!-- <tr valign="baseline">
-                                        <td colspan="6" align="center" valign="middle">
-                                            <label for="company_id">Company:</label>
-                                            <select class="form-input-style" name="storage_company_id" id="storage_company_id"></select>
-                                        </td>
-                                    </tr> -->
+                                    
                                     <tr valign="baseline">
                                         <td colspan="6" align="center" valign="middle">
                                             <label for="slot_name">Slot Name:</label>
@@ -125,7 +120,7 @@
                     </tr>
                 </table>
             </form>
-        </div>
+        </div> -->
         <div id="manage-storage-modal" style="display: none;">
             <div class="back-to-storage-menu-btn">
 				<img src="images/sys-img/backward.png" alt="back">
