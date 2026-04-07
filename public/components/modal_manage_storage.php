@@ -19,12 +19,7 @@
 				</tr>
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="cancel-btn" id="deleteShippingBtn">Delete Shipping</button>
-					</td>
-				</tr>
-				<tr valign="baseline">
-					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="neutral-btn">Close</button>
+						<button type="button" class="neutral-btn" style="margin-top: 10px;">Close</button>
 					</td>
 				</tr>
 			</table>

@@ -196,7 +196,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					if (data.success && Array.isArray(data.data) && data.data.length > 0) {
 						data.data.forEach(notif => {
 							const row = document.createElement('tr');
-							row.className = 'form_height notification-row';
+							row.className = 'notification-row';
 							row.setAttribute('data-id', notif.notification_id);
 
 							row.innerHTML = `

@@ -18,6 +18,7 @@
 </head>
 
 <body>
+	<?php include("components/modal_manage_slot.php"); ?>
 	<?php include("components/modal_manage_storage.php"); ?>
 	<?php include("components/message.php"); ?>
 	<?php include("components/confirm_and_notification.php"); ?>

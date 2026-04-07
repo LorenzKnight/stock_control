@@ -3232,41 +3232,48 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 
 		slots.forEach(slot => {
-			let statusColor = ''; // Aqui "BORRAR O REVISAR ESTO" 
-			switch (parseInt(slot.status, 10)) {
-				case 0: statusColor = 'red'; break;
-				case 1: statusColor = 'orange'; break;
-				case 2: statusColor = 'green'; break;
-				case 3: statusColor = 'deepskyblue'; break;
-				default: statusColor = 'gray'; break;
-			}
+			const slotStatus = parseInt(slot.status, 10);
+
+			const statusConfig = {
+				0: { color: 'red', text: 'Disabled' },
+				1: { color: 'green', text: 'In Use' }
+			};
+
+			const {
+				color: statusColor,
+				text: statusText
+			} = statusConfig[slotStatus] || { color: 'gray', text: 'Unknown' };
 
 			const row = document.createElement('tr');
-			row.className = 'form_height clickable-row';
 			row.setAttribute('data-id', slot.slot_id);
 
 			row.innerHTML = `
-				<td width="85%" align="left" valign="top">
+				<td class="slot-click-area" width="85%" align="left" valign="top" style="cursor:pointer;">
 					<div style="padding: 0 5px;">
 						Slot Name: <strong>${slot.slot_name || '—'}</strong><br>
-						<p>Status: <strong style="color:${statusColor};">${slot.status ?? '—'}</strong></p>
-						<p class="mini-title">${slot.slot_description || ''}</p>
+						<p>Status: <strong style="color:${statusColor};">${statusText}</strong></p>
 					</div>
 				</td>
 				<td width="15%" align="left" valign="top">
-					
+					<div class="shipping-menu" id="slotMenuBtn" >
+						<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
+					</div>
 				</td>
 			`;
 
-			row.addEventListener('click', () => {
-				localStorage.setItem("selectedStorageId", slot.slot_id);
-				renderStorageDetails({
-					type: 'slot',
-					slot: slot,
-					storages: storages,
-					products: products
-				}, row);
-			});
+			const clickableCell = row.querySelector('.slot-click-area');
+
+			if (clickableCell) {
+				clickableCell.addEventListener('click', () => {
+					localStorage.setItem("selectedStorageId", slot.slot_id);
+					renderStorageDetails({
+						type: 'slot',
+						slot: slot,
+						storages: storages,
+						products: products
+					}, row);
+				});
+			}
 
 			storageSidebarTable.appendChild(row);
 
@@ -3279,7 +3286,147 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}, row);
 				row.style.backgroundColor = 'var(--clr-white)';
 			}
+
+			const slotMenuBtn = row.querySelector('#slotMenuBtn');
+			if (slotMenuBtn) {
+				slotMenuBtn.addEventListener('click', (e) => {
+					openStorageSlotMenu(slot.slot_id);
+					
+					handlePopupClose("slot-options", ".formular-frame", []);
+				});
+			}
 		});
+	}
+
+	async function openStorageSlotMenu(slotId) {
+		scrollToTopIfNeeded();
+
+		const slotOptions = document.getElementById('slot-options');
+		const popupContent = slotOptions.querySelector('.formular-frame');
+		const slotName = document.getElementById('slot-name');
+
+		if (!slotId) return;
+
+		try {
+			const res = await fetch(`api/get_slot_info.php`);
+			const data = await res.json();
+// console.log("Slot info data:", data);
+			if (slotOptions && popupContent) {
+				resetPopupView(['slot-menu-buttons'], [
+					'edit-slot-modal'
+				]);
+
+				const editSlotBtn = document.getElementById('editSlotBtn');
+				const deleteSlotBtn = document.getElementById('deleteSlotBtn');
+
+				let slot = null;
+				if (data?.success && Array.isArray(data.data)) {
+					const sid = String(slotId);
+					slot = data.data.find(item => String(item.slot_id) === sid);
+				}
+
+				if (slotName) {
+					slotName.textContent = slot.slot_name || 'Unnamed slot';
+				}
+
+				slotOptions.style.display = 'block';
+				slotOptions.style.opacity = '0';
+				slotOptions.style.transition = 'opacity 0.5s ease';
+				setTimeout(() => {
+					slotOptions.style.opacity = '1';
+				}, 10);
+
+				popupContent.style.opacity = '0';
+				popupContent.style.transform = 'scale(0.7)';
+				popupContent.classList.remove('animate-elastic');
+				setTimeout(() => {
+					popupContent.style.transform = 'scale(1)';
+					popupContent.style.opacity = '1';
+				}, 50);
+
+				if (editSlotBtn) {
+					editSlotBtn.setAttribute('data-slot-id', slotId);
+					editSlotBtn.onclick = async () => {
+						const menuDiv = document.getElementById('slot-menu-buttons');
+						const editDiv = document.getElementById('edit-slot-modal');
+					
+						if (editDiv) {
+							editDiv.style.display = 'none';
+						}
+
+						const slotId = editSlotBtn.getAttribute('data-slot-id');
+						if (!slotId) return;
+
+						const formFrame = document.getElementById('formular-medium-frame-2');
+						if (formFrame) {
+							formFrame.classList.add('expanded-medium');
+						}
+
+						openEditSlotForm(slotId);
+
+						animateHeightChange(popupContent, editDiv, () => {
+							fadeOutAndHide(menuDiv, () => {
+								showWithFadeIn(editDiv);
+							});
+						});
+					};
+				}
+
+				if (deleteSlotBtn) {
+					deleteSlotBtn.setAttribute('data-slot-id', slotId);
+					deleteSlotBtn.onclick = () => {
+						// deleteShippingBtn.setAttribute('data-shipping-id', shippingsId);
+						
+						// if (!shippingsId) {
+						// 	alert("Shipping ID not found.");
+						// 	return;
+						// }
+
+						// showConfirmModal("Delete Shipping", "Are you sure you want to delete this Shipping?", async () => {
+						// 	const frame = document.querySelector('.formular-frame');
+						// 	if (frame) frame.style.display = 'none';
+
+						// 	const formData = new FormData();
+						// 	formData.append("shippings_id", shippingsId);
+				
+						// 	try {
+						// 		const response = await fetch('api/delete_shipping.php', {
+						// 			method: 'POST',
+						// 			body: formData
+						// 		});
+				
+						// 		const data = await response.json();
+				
+						// 		const banner = document.getElementById('status-message');
+						// 		const statusText = document.getElementById('status-text');
+						// 		const statusImage = document.getElementById('status-image');
+				
+						// 		statusText.innerText = data.message;
+						// 		statusImage.src = data.img_gif;
+						// 		showBanner(banner);
+				
+						// 		if (data.success) {
+						// 			setTimeout(() => {
+						// 				hideBanner(banner, () => {
+						// 					window.location.href = data.redirect_url || window.location.href;
+						// 				});
+						// 			}, 3000);
+						// 		}
+						// 	} catch (error) {
+						// 		console.error("Error deleting shipping:", error);
+						// 		alert("Error deleting shipping. Check console.");
+						// 	}
+						// });
+					};
+				}
+			}
+		} catch (error) {
+			console.error("Error loading slot info:", error);
+		}
+	}
+
+	async function openEditSlotForm(slotId) {
+
 	}
 
 	async function renderStorageDetails(payload, clickedRow) {
@@ -3406,7 +3553,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 		// Caso 1: mostrar productos automáticamente
 		if (payload?.type === 'product-search') {
 			const products = payload.products || [];
-			// const storages = payload.storages || [];
 
 			const uniqueSlotIds = [...new Set(
 				products
@@ -3429,11 +3575,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 				<div class="shipping-header">
 					<table width="100%" style="border-bottom: 1px solid #999; margin-bottom:10px;" align="center" cellspacing="0">
 						<tr valign="baseline" class="form_height">
-							<td width="50%" align="left" valign="middle">
+							<td width="47%" align="left" valign="middle">
 								<p class="mini-title">Slot Name:</p>
 								<strong>${sharedSlotName || '—'}</strong>
 							</td>
 							<td width="50%" align="center" valign="middle"></td>
+							<td width="3%" align="center" valign="middle">
+								<div class="shipping-menu" id="shippingMenuBtn" style="display: none;"> // QUITA EL NONE
+									<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
+								</div>
+							</td>
 						</tr>
 						<tr class="form_height">
 							<td colspan="2" align="left" valign="middle">
@@ -3658,11 +3809,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 						});
 					}
 				}
-
-				// if (deleteStorageBtn) {
-				// 	deleteStorageBtn.onclick = async () => {
-				// 		console.log("Delete Storage button clicked");
-				// 	}
 			}
 		} catch (error) {
 			console.error("Error loading storage management:", error);
@@ -4049,6 +4195,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		});
 	}
+
+	setupBackToMenuButton(
+		'.back-to-slot-menu-btn', 
+		['edit-slot-modal'], 
+		'slot-menu-buttons', 
+		'slot-options'
+	);
 
 	setupBackToMenuButton(
 		'.back-to-storage-menu-btn', 
@@ -6196,7 +6349,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const shippingTracking = shipping.tracking?.checkpoint_name || '';
 
 			const row = document.createElement('tr');
-			row.className = 'form_height clickable-row';
+			row.className = 'clickable-row';
 			row.setAttribute('data-id', shipping.shippings_id);
 			row.innerHTML = `
 				<td width="20%" align="center" valign="middle">
@@ -6725,7 +6878,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				if (shippingNo) {
 					shippingNo.textContent = shipping.shipping_no || 'Unnamed shipping';
 				}
-				
 
 				shippingOptions.style.display = 'block';
 				shippingOptions.style.opacity = '0';
@@ -11863,6 +12015,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 				const mediumFormFrame = document.getElementById('formular-medium-frame');
 				if (mediumFormFrame) {
 					mediumFormFrame.classList.remove('expanded-medium');
+				}
+
+				const mediumFormFrame2 = document.getElementById('formular-medium-frame-2');
+				if (mediumFormFrame2) {
+					mediumFormFrame2.classList.remove('expanded-medium');
 				}
 			});
 		});
