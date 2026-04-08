@@ -11,19 +11,21 @@
 }
 
 .payment-row {
-	width: 100%;
+	width: 98%;
 	height: 20px;
-	background-color: var(--main-bg-color);
-	margin: 0 0 10px;
+	background-color: var(--clr-white);
+    border: 1px solid var(--border-light);
+    box-shadow: 0px 20px 30px var(--shadow-color);
+	margin: 0 auto 10px;
 	padding: 10px 0;
 	font-size: 12px;
-	border-radius: 5px;
+	border-radius: 10px;
 	display: flex;
 	align-items: center;
 }
 
 .payment-row:hover {
-	background-color: var(--clr-neutral);
+	background-color: var(--text-muted);
 	color: var(--clr-white);
 	transition: all 1.0s ease;
 }

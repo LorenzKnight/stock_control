@@ -332,7 +332,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 																<td colspan="6" style="height: 10px;">
 																	<table width="100%" align="center" cellspacing="0">
 																		<tr valign="baseline">
-																			<td colspan="6" align="center" style="height: 10px; border-top: 1px solid #CCC;">
+																			<td colspan="6" align="center" style="height: 10px; border-top: 1px solid var(--border-light);">
 																				<p>Total Weight<br><strong>${product.total_weight ? product.total_weight + ' kg' : ''}</strong></p>
 																			</td>
 																		</tr>
@@ -350,13 +350,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 															<td colspan="6" style="height: 10px;">
 																<table width="100%" align="center" cellspacing="0">
 																	<tr valign="baseline">
-																		<td style="width: 25%; height: 10px; border-top: 1px solid #CCC;">
+																		<td style="width: 25%; height: 10px; border-top: 1px solid var(--border-light);">
 																			<p>Units<br><strong>${product.units_per_pack || ''}</strong></p>
 																		</td>
-																		<td style="width: 40%; height: 10px; border-top: 1px solid #CCC;">
+																		<td style="width: 40%; height: 10px; border-top: 1px solid var(--border-light);">
 																			<p>Weight/unit<br><strong>${product.weight_per_unit ? product.weight_per_unit + ' kg' : ''}</strong></p>
 																		</td>
-																		<td style="width: 35%; height: 10px; border-top: 1px solid #CCC;">
+																		<td style="width: 35%; height: 10px; border-top: 1px solid var(--border-light);">
 																			<p>Total Weight<br><strong>${product.total_weight ? product.total_weight + ' kg' : ''}</strong></p>
 																		</td>
 																	</tr>
@@ -409,10 +409,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 																</tr>
 																${prodDetail}
 																<tr valign="baseline">
-																	<td style="width: 50%; border-top: 1px solid #CCC;">
+																	<td style="width: 50%; border-top: 1px solid var(--border-light);">
 																		<p>Year<br><strong>${product.product_year || ''}</strong></p>
 																	</td>
-																	<td style="width: 50%; border-top: 1px solid #CCC;">
+																	<td style="width: 50%; border-top: 1px solid var(--border-light);">
 																		<p>Price<br><strong>${product.price ? '$' + product.price + ' ' + product.currency : ''}</strong></p>
 																	</td>
 																</tr>

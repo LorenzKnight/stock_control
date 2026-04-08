@@ -5,8 +5,10 @@
 .notifications-sidebar {
     width: 25%;
     height: 82.5vh;
-    background-color: var(--main-bg-color);
-    border-radius: 5px;
+    background-color: var(--clr-white);
+    border: 1px solid var(--border-light);
+    box-shadow: 0px 20px 30px var(--shadow-color);
+    border-radius: 15px;
 }
 
 .notifications-details {
@@ -26,8 +28,10 @@
 
 .notification-detail-card {
     width: 500px;
-    background-color: var(--main-bg-color);
-    border-radius: 5px;
+    background-color: var(--clr-white);
+    border: 1px solid var(--border-light);
+    box-shadow: 0px 20px 30px var(--shadow-color);
+    border-radius: 15px;
     margin: 20px auto;
     display: flex;
 }
@@ -35,8 +39,8 @@
 .notification-product-pic {
 	width: 187px;
 	height: 187px;
-	background-color: var(--main-bg-beige);
-	border-radius: 5px;
+	background-color: var(--gray-300);
+	border-radius: 10px;
 	margin: 10px;
 	overflow: hidden;
 	display: flex;

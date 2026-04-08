@@ -13,7 +13,7 @@
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
-						<td colspan="4" style="border-top: 1px solid #ccc; padding-top: 5px;" align="center" valign="middle">
+						<td colspan="4" style="border-top: 1px solid var(--border-light); padding-top: 5px;" align="center" valign="middle">
 							<select class="form-input-style" name="search_product_mark" id="search_product_mark"></select>
 						</td>
 					</tr>
@@ -26,19 +26,19 @@
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
-						<td colspan="4" style="border-top: 1px solid #ccc; padding: 5px 0;" align="center" valign="middle">
+						<td colspan="4" style="border-top: 1px solid var(--border-light); padding: 5px 0;" align="center" valign="middle">
 							<select class="form-input-style" name="products-order-by" id="products-order-by">
 								<option value="">* Order by</option>
 							</select>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
-						<td colspan="4" style="border-top: 1px solid #ccc; padding: 5px 0;" align="center" valign="middle">
+						<td colspan="4" style="border-top: 1px solid var(--border-light); padding: 5px 0;" align="center" valign="middle">
 							<select class="form-input-style" name="select-company" id="select-company"></select>
 						</td>
 					</tr>
 					<tr valign="baseline" class="form_height">
-						<td colspan="4" style="border-top: 1px solid #ccc; padding-top: 5px;" align="center" valign="middle">
+						<td colspan="4" style="border-top: 1px solid var(--border-light); padding-top: 5px;" align="center" valign="middle">
 							<p id="selection-notice" class="hidden" style="color:var(--main-bg-blue); font-size: 10px;">Select a company or affiliate to continue create</br>categories or products</p>
 						</td>
 					</tr>

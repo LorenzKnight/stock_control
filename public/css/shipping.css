@@ -5,8 +5,10 @@
 .shipping-sidebar {
     width: 25%;
 	height: 82.5vh;
-    background-color: var(--main-bg-color);
-    border-radius: 5px;
+    background-color: var(--clr-white);
+    border: 1px solid var(--border-light);
+    box-shadow: 0px 20px 30px var(--shadow-color);
+    border-radius: 15px;
 }
 
 .shipping-list {
@@ -29,13 +31,19 @@
 }
 
 .shipping-header {
-	height: 110px;
-	padding: 0 1%;
+	width: 95%;
+	height: 105px;
+	background-color: var(--clr-white);
+	border: 1px solid var(--border-light);
+	box-shadow: 0px 20px 30px var(--shadow-color);
+	border-radius: 15px;
+	margin: 0 auto 20px;
+	padding: 10px 1%;
 	font-size: 11px;
 }
 
 .loads-list {
-	height: 610px;
+	height: 567px;
 	margin: 0 0.5%;
     padding: 0 0.5%;
 	overflow: auto;
@@ -87,9 +95,11 @@
 
 .loads {
 	margin-bottom: 25px;
-	border: 1px solid var(--clr-light-border);
 	padding: 0 10px 10px;
-	border-radius: 6px;
+	background-color: var(--clr-white);
+	border: 1px solid var(--border-light);
+	box-shadow: 0px 20px 30px var(--shadow-color);
+	border-radius: 15px;
 	position: relative;
 }
 

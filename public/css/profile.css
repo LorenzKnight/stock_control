@@ -4,6 +4,8 @@
 }
 
 .box-title {
+    width: 90%;
+    border-bottom: 1px solid var(--gray-200);
     position: absolute;
     top: 0;
 }
@@ -23,9 +25,9 @@
     border-radius: 8px;
     margin: 5px 10px;
     padding: 10px;
-    color: #666;
-    background-color: var(--main-bg-color);
-    border: 1px solid var(--clr-light-border);
+    background-color: var(--clr-white);
+    border: 1px solid var(--border-light);
+    box-shadow: 0px 20px 30px var(--shadow-color);
     font-size: 12px;
     display: flex;
     flex-direction: column;
@@ -34,7 +36,7 @@
 }
 
 .small-box h1, h2, h3 {
-    font-weight: lighter;
+    font-weight: 500;
 }
 
 .members-container-height {
@@ -46,26 +48,26 @@
     min-height: 363px;
     height: 45vh;
     padding-top: 5px;
-    border-top: 1px solid #CCC;
+    border-top: 1px solid var(--border-light);
     overflow: auto;
 }
 
 .members-card {
     width: 253px;
     height: 160px;
-    border-radius: 6px;
+    border-radius: 10px;
     margin: 0 8px 10px;
     padding: 10px;
-    font-size: 12px;
-    background-color: var(--main-bg-color);
-    /* border: 1px solid var(--clr-light-border); */
-    box-shadow: 0px 2px 6px var(--main-box-light-shadow);
+    /* font-size: 12px; */
+    background-color: var(--clr-white);
+    border: 1px solid var(--border-light);
+    box-shadow: 0px 20px 30px var(--shadow-color);
     float: left;
     position: relative;
 }
 
 .members-card:hover {
-    box-shadow: 0px 2px 6px var(--main-box-shadow);
+    box-shadow: 0px 5px 10px var(--main-box-light-shadow);
 }
 
 .mini-banner {
@@ -73,32 +75,36 @@
     height: 40px;
     padding-top: 5px;
     border-radius: 6px;
-    background-color: var(--main-bg-beige);
+    background-color: var(--gray-200);
 }
 
 .mini-profile {
-    background-color: var(--clr-white);
+    background-color: var(--gray-400);
     width: 60px;
     height: 60px;
     border-radius: 50%;
     margin: 0 0 0 10px;
     position: relative;
+    overflow: hidden;
+}
+
+.mini-profile img {
+    display: block;
+    width: 130%;
+    height: 130%;
+    border-radius: 50%;
+    object-fit: cover;
+    position: relative;
+    left: -15%;
+    top: -15%;
 }
 
 .co-worker-position {
     width: 180px;
-    color: var(--main-bg-beige);
+    color: var(--gray-300);
     position: absolute;
     top: 58px;
     right: 5px;
-}
-
-.mini-profile img {
-    background-color: #fff;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    object-fit: cover;
 }
 
 .card-info {

@@ -10,23 +10,30 @@
 			<p>You now have full access to our stock management platform, giving you complete control over inventory tracking and optimization. Where will efficiency take your business today?</p>
 		</div>
 		<div class="small-box">
-			<h2 class="box-title">My info</h2>
+			<div class="box-title">
+				<h2>My info</h2>
+			</div>
 			<span id="my-data"></span>
 			<button class="button-style-neutral" id="edit-my-data">Update Info</button>
 		</div>
 		<div class="small-box">
-			<h2 class="box-title">Selected Pack</h2>
+			<div class="box-title">
+				<h2>Selected Pack</h2>
+			</div>
 			<div id="subsc"></div>
 			<button class="button-style-neutral" id="subsc-button">Subscription</button>
 		</div>
 		<div class="small-box">
-			<h2 class="box-title">Company data</h2>
-				
+			<div class="box-title">
+				<h2>Company data</h2>
+			</div>
 			<span id="company-data"></span>
 			<button class="button-style-neutral" id="manage-comp-button">manage</button>
 		</div>
 		<div class="small-box">
-			<h2 class="box-title">Spot</h2>
+			<div class="box-title">
+				<h2>Spot</h2>
+			</div>
 			<h2><span id="spot">0</span> / <span id="total-spot">0</span></h2>
 			<button class="button-style-neutral" id="add-members-button">Add Members</button>
 		</div>
