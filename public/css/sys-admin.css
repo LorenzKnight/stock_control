@@ -14,27 +14,28 @@
 
 .system-menu ul {
     list-style: none;
-    margin: 0;
+    margin: 0 10px;
     padding: 0;
 }
 
 .system-menu ul li {
-	padding: 20px 15px;
+	margin: 1px 0;
+	padding: 15px 15px;
 	text-align: left;
-    /* background-color: rgba(255, 0, 0, 0.256); */
+	border-radius: 10px;
     transition: background-color 0.3s ease;
 }
 
 .system-menu ul li:hover {
-    background-color: var(--main-bg-dark-blue);
+    background-color: var(--gray-400);
 	color: white;
-    border-radius: 6px;
+    border-radius: 10px;
 }
 
 .system-menu li.active {
-  background-color: var(--main-bg-dark-blue); /* Azul o el color que prefieras */
+  background-color: var(--gray-300); /* Azul o el color que prefieras */
   color: white;
-  border-radius: 6px;
+  border-radius: 10px;
 }
 
 .system-content {
@@ -60,7 +61,7 @@
 {
     width: 30%;
     height: 82.5vh;
-    border-right: 1px solid var(--clr-border);
+    border-right: 1px solid var(--border-light);
 }
 
 .affiliate-list,
@@ -74,12 +75,16 @@
 	overflow-y: auto;
 }
 
+.user-table {
+	margin: 0 auto;
+}
+
 .user-table tr {
 	cursor: pointer;
 }
 
 .user-table tr td {
-	border-bottom: 1px solid var(--main-bg-beige);
+	border-bottom: 1px solid var(--border-light);
 	padding: 5px 0;
 }
 
@@ -93,7 +98,7 @@
 }
 
 .user-table tr:hover {
-	background-color: var(--main-bg-color);
+	background-color: var(--gray-300);
 	transition: background-color 0.3s ease;
 }
 
@@ -103,7 +108,7 @@
 }
 
 .users-row.selected-user {
-	background-color: var(--main-bg-color);
+	background-color: var(--gray-300);
 	transition: background-color 0.2s ease;
 }
 /* hasta aqui */
@@ -118,19 +123,21 @@
 }
 
 .sys-admin-table  {
-	width: 98%;
+	width: 96%;
 	height: 20px;
-	background-color: var(--main-bg-color);
-	margin: 5px 1%;
+	background-color: var(--clr-white);
+	border: 1px solid var(--border-light);
+	box-shadow: 0px 20px 30px var(--shadow-color);
+	margin: 5px auto;
 	padding: 10px 0;
 	font-size: 12px;
-	border-radius: 5px;
+	border-radius: 10px;
 	display: flex;
 	align-items: center;
 }
 
 .sys-admin-table:hover {
-	background-color: var(--clr-neutral);
+	background-color: var(--gray-300);
 	color: var(--clr-white);
 	transition: all 1.0s ease;
 }
@@ -176,9 +183,9 @@
 .overview-header {
 	width: 96%;
 	height: 50px;
-	background-color: var(--main-bg-beige);
+	background-color: var(--gray-200);
 	margin: 0 auto;
-	border-radius: 6px;
+	border-radius: 15px;
 	display: flex;
 	padding: 0 1%;
 }
@@ -203,9 +210,11 @@
 .subsc-section {
 	width: 96%;
 	height: 200px;
-	background-color: var(--main-bg-color);
+	background-color: var(--clr-white);
+	border: 1px solid var(--border-light);
+	box-shadow: 0px 20px 30px var(--shadow-color);
 	margin: 30px auto 0;
-	border-radius: 6px;
+	border-radius: 15px;
 	padding: 10px 1%;
 	display: flex;
 }
@@ -213,7 +222,7 @@
 .pack-card {
 	width: 100px;
 	height: 180px;
-	border-radius: 6px;
+	border-radius: 10px;
 	margin-left: 10px;
 	padding: 10px;
 	background-color: var(--clr-white);
@@ -267,19 +276,21 @@
 .affiliate-section {
 	width: 96%;
 	margin: 20px auto 0;
-	border-radius: 6px;
+	border-radius: 15px;
 	padding: 10px 1%;
-	background-color: var(--main-bg-color);
-	/* box-shadow: 0px 2px 6px var(--main-box-light-shadow); */
+	background-color: var(--clr-white);
+	border: 1px solid var(--border-light);
+	box-shadow: 0px 20px 30px var(--shadow-color);
 }
 
 .collab-section {
 	width: 96%;
 	margin: 20px auto 0;
-	border-radius: 6px;
+	border-radius: 15px;
 	padding: 10px 1%;
-	background-color: var(--main-bg-color);
-	/* box-shadow: 0px 2px 6px var(--main-box-light-shadow); */
+	background-color: var(--clr-white);
+	border: 1px solid var(--border-light);
+	box-shadow: 0px 20px 30px var(--shadow-color);
 }
 
 .overview-table {
@@ -289,7 +300,7 @@
 }
 
 .overview-table thead {
-	background-color: var(--main-bg-beige);
+	background-color: var(--gray-200);
 }
 
 .overview-table th, .overview-table td {
@@ -305,7 +316,7 @@
 }
 
 .overview-table tbody tr:hover {
-	background-color: var(--clr-white);
+	background-color: var(--gray-300);
 	transition: background-color 0.3s ease;
 }
 

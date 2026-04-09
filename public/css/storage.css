@@ -1,3 +1,22 @@
+.storage-header {
+	width: 95%;
+	height: 60px;
+	background-color: var(--clr-white);
+	border: 1px solid var(--border-light);
+	box-shadow: 0px 20px 30px var(--shadow-color);
+	border-radius: 15px;
+	margin: 0 auto;
+	padding: 10px 1%;
+	font-size: 11px;
+}
+
+.storage-list {
+	height: 622px;
+	margin: 10px 0.5% 0;
+    padding: 0 0.5%;
+	overflow: auto;
+}
+
 /* .storage-menu {
     width: 38px;
     height: 38px;

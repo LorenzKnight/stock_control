@@ -3572,7 +3572,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					: uniqueSlotNames.join(', ');
 
 			storageDetails.innerHTML = `
-				<div class="shipping-header">
+				<div class="storage-header">
 					<table width="100%" align="center" cellspacing="0">
 						<tr valign="baseline" class="form_height">
 							<td width="47%" align="left" valign="middle">
@@ -3594,7 +3594,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 						</tr>
 					</table>
 				</div>
-				<div class="loads-list">
+				<div class="storage-list">
 					${products.map(product => buildProductCard(product)).join('')}
 				</div>
 			`;
@@ -3612,7 +3612,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			);
 
 			storageDetails.innerHTML = `
-				<div class="shipping-header">
+				<div class="storage-header">
 					<table width="100%" align="center" cellspacing="0">
 						<tr valign="baseline">
 							<td width="50%" align="left" valign="middle">
@@ -3632,7 +3632,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 						</tr>
 					</table>
 				</div>
-				<div class="loads-list">
+				<div class="storage-list">
 					${relatedStorages.length > 0
 						? relatedStorages.map(storage => buildProductCard(storage.product)).join('')
 						: `<p>No storages linked to this slot.</p>`}

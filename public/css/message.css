@@ -133,8 +133,7 @@
 	color: var(--clr-neutral-dark);
 }
 .message-list {
-	margin-top: 15px;
-	float: right;
+	margin: 15px auto 0;
 }
 
 .message-list tr {
@@ -142,7 +141,7 @@
 }
 
 .message-list tr td {
-	border-bottom: 1px solid var(--main-bg-beige);
+	border-bottom: 1px solid var(--border-light);
 	padding: 5px 0;
 }
 
@@ -156,12 +155,12 @@
 }
 
 .message-list tr:hover {
-	background-color: var(--clr-white);
+	background-color: var(--gray-300);
 	transition: background-color 0.3s ease;
 }
 
 .message-list tr.notification-selected {
-	background-color: var(--clr-white);
+	background-color: var(--gray-300);
 	transition: background-color 0.2s ease;
 }
 

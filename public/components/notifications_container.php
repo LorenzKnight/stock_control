@@ -17,7 +17,7 @@
 						</tr>
 					</table>
 				<div class="notifications-list" id="notificationsList">
-					<table class="message-list" id="messageList" width="96%" cellspacing="0" cellpadding="0"></table>
+					<table class="message-list" id="messageList" width="90%" cellspacing="0" cellpadding="0"></table>
 				</div>
 			</div>
 			<div class="notifications-details" id="notifications-details"></div>

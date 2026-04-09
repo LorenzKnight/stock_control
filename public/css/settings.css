@@ -5,8 +5,10 @@
 .settings-sidebar {
     width: 20%;
     height: 82.5vh;
-    background-color: var(--main-bg-color);
-    border-radius: 5px;
+    background-color: var(--clr-white);
+    border: 1px solid var(--border-light);
+    box-shadow: 0px 20px 30px var(--shadow-color);
+    border-radius: 15px;
 }
 
 .settings-menu {
@@ -16,27 +18,27 @@
 
 .settings-menu ul {
     list-style: none;
-    margin: 0;
+    margin: 0 10px;
     padding: 0;
 }
 
 .settings-menu ul li {
-	padding: 20px 15px;
+	padding: 15px 15px;
 	text-align: left;
-    /* background-color: rgba(255, 0, 0, 0.256); */
+    border-radius: 10px;
     transition: background-color 0.3s ease;
 }
 
 .settings-menu ul li:hover {
-    background-color: var(--main-bg-dark-blue);
+    background-color: var(--gray-400);
 	color: white;
-    border-radius: 6px;
+    border-radius: 10px;
 }
 
 .settings-menu li.active {
-  background-color: var(--main-bg-dark-blue); /* Azul o el color que prefieras */
+  background-color: var(--gray-300); /* Azul o el color que prefieras */
   color: white;
-  border-radius: 6px;
+  border-radius: 10px;
 }
 
 
@@ -88,12 +90,16 @@
     overflow: auto;
 }
 
+.co-worker-table {
+    margin: 0 auto;
+}
+
 .co-worker-table tr {
 	cursor: pointer;
 }
 
 .co-worker-table tr td {
-	border-bottom: 1px solid var(--main-bg-beige);
+	border-bottom: 1px solid var(--border-light);
 	padding: 5px 0;
 }
 
@@ -107,7 +113,7 @@
 }
 
 .co-worker-table tr:hover {
-	background-color: var(--main-bg-color);
+	background-color: var(--gray-300);
 	transition: background-color 0.3s ease;
 }
 
@@ -119,7 +125,7 @@
 
 .company-row.selected-company,
 .co-worker-row.selected-co-worker {
-	background-color: var(--main-bg-color);
+	background-color: var(--gray-300);
 	transition: background-color 0.2s ease;
 }
 /* hasta aqui */
@@ -128,9 +134,11 @@
     width: 80%;
     height: 80vh;
     margin: 10px auto 0;
-    border-radius: 10px;
     position: relative;
-    box-shadow: 0 .15rem 0.37rem 0 rgba(58,59,69,.15)!important;
+    background-color: var(--clr-white);
+    border: 1px solid var(--border-light);
+    box-shadow: 0px 20px 30px var(--shadow-color);
+    border-radius: 15px;
 }
 
 .access-rights-buttons {
