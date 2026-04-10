@@ -28,6 +28,8 @@
 .shipping-details {
     width: 50%;
 	height: 82.5vh;
+	display: flex;
+	flex-direction: column;
 }
 
 .shipping-header {
@@ -43,7 +45,7 @@
 }
 
 .loads-list {
-	height: 567px;
+	flex: 1;
 	margin: 0 0.5%;
     padding: 0 0.5%;
 	overflow: auto;
@@ -70,13 +72,19 @@
 
 .shipping-table tr:hover {
 	background-color: var(--gray-300);
-	color: var(--clr-white);
+	/* color: var(--clr-white); */
 	transition: background-color 0.6s ease;
 }
 
 .shipping-table tr:hover td img {
 	filter: brightness(0) saturate(100%) invert(100%) !important;
 	transition: all 0.4s ease;
+}
+
+.shipping-table tr:hover {
+	background-color: var(--gray-300);
+	/* color: var(--clr-white); */
+	transition: background-color 0.6s ease;
 }
 
 .shipping-menu {

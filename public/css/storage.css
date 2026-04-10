@@ -1,3 +1,10 @@
+.storage-details {
+    width: 50%;
+	height: 82.5vh;
+	display: flex;
+	flex-direction: column;
+}
+
 .storage-header {
 	width: 95%;
 	height: 60px;
@@ -11,9 +18,9 @@
 }
 
 .storage-list {
-	height: 622px;
+	flex: 1;
 	margin: 10px 0.5% 0;
-    padding: 0 0.5%;
+	padding: 0 0.5%;
 	overflow: auto;
 }
 

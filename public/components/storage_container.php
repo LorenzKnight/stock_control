@@ -22,7 +22,7 @@
                     <table class="shipping-table" id="storageTable" width="96%" align="right" cellspacing="0" cellpadding="0"></table>
                 </div>
             </div>
-            <div class="shipping-details" id="storageDetails"></div>
+            <div class="storage-details" id="storageDetails"></div>
             <div class="shipping-sidebar" id="storageSummary"></div>
         </div>
     </div>

@@ -4,38 +4,42 @@
 <div class="container">
 	<h1 id="hi-user"></h1>
 	<div class="data-container flex profile-detail-height" id="profile-data">
-		<div class="info-box">
-			<h1>Welcome to</h1>
-			<h4>Stock Control</h4>
-			<p>You now have full access to our stock management platform, giving you complete control over inventory tracking and optimization. Where will efficiency take your business today?</p>
-		</div>
-		<div class="small-box">
-			<div class="box-title">
-				<h2>My info</h2>
+		<div class="info-box-container">
+			<div class="info-box">
+				<h2>Welcome to</h2>
+				<h4>Stock Control</h4>
+				<p>You now have full access to our stock management platform, giving you complete control over inventory tracking and optimization. Where will efficiency take your business today?</p>
 			</div>
-			<span id="my-data"></span>
-			<button class="button-style-neutral" id="edit-my-data">Update Info</button>
 		</div>
-		<div class="small-box">
-			<div class="box-title">
-				<h2>Selected Pack</h2>
+		<div class="small-box-container">
+			<div class="small-box">
+				<div class="box-title">
+					<h2>My info</h2>
+				</div>
+				<span id="my-data"></span>
+				<button class="button-style-neutral" id="edit-my-data">Update Info</button>
 			</div>
-			<div id="subsc"></div>
-			<button class="button-style-neutral" id="subsc-button">Subscription</button>
-		</div>
-		<div class="small-box">
-			<div class="box-title">
-				<h2>Company data</h2>
+			<div class="small-box">
+				<div class="box-title">
+					<h2>Selected Pack</h2>
+				</div>
+				<div id="subsc"></div>
+				<button class="button-style-neutral" id="subsc-button">Subscription</button>
 			</div>
-			<span id="company-data"></span>
-			<button class="button-style-neutral" id="manage-comp-button">manage</button>
-		</div>
-		<div class="small-box">
-			<div class="box-title">
-				<h2>Spot</h2>
+			<div class="small-box">
+				<div class="box-title">
+					<h2>Company data</h2>
+				</div>
+				<span id="company-data"></span>
+				<button class="button-style-neutral" id="manage-comp-button">manage</button>
 			</div>
-			<h2><span id="spot">0</span> / <span id="total-spot">0</span></h2>
-			<button class="button-style-neutral" id="add-members-button">Add Members</button>
+			<div class="small-box">
+				<div class="box-title">
+					<h2>Spot</h2>
+				</div>
+				<h2><span id="spot">0</span> / <span id="total-spot">0</span></h2>
+				<button class="button-style-neutral" id="add-members-button">Add Members</button>
+			</div>
 		</div>
 	</div>
 	<div class="data-container members-container-height">

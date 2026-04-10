@@ -6376,7 +6376,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			// 🧠 Si hay un shipping seleccionado, mostrarlo automáticamente
 			if (String(shipping.shippings_id) === String(selectedId)) {
 				renderShippingDetails(shipping, row);
-				row.style.backgroundColor = 'var(--clr-white)';
+				row.style.backgroundColor = 'var(--gray-300)';
 			}
 		});
 	}
@@ -6386,7 +6386,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		allRows.forEach(row => row.style.backgroundColor = '');
 
 		if (clickedRow) {
-			clickedRow.style.backgroundColor = 'var(--clr-white)';
+			clickedRow.style.backgroundColor = 'var(--gray-300)';
 		}
 
 		const shippingTracking = shipping.tracking?.checkpoint_name || "";
