@@ -1,4 +1,5 @@
 <div class="wrapper-dark-blue">
+	<img src="images/sys-img/almacen.jpg" alt="Stock Control Banner">
 	<div class="banner-container banner-height" id="result-container">
 		<div class="container-right" style="color: var(--clr-white);">
 			<?php include("components/modal_signup.php"); ?>
@@ -22,4 +23,3 @@
 		</div>
 	</div>
 </div>
-<div class="blue-curve"></div>

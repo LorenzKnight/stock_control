@@ -4,12 +4,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	document.addEventListener('scroll', function() {
 		const header = document.querySelector('.floating-header');
-		const blueCurve = document.querySelector('.blue-curve');
+		const wrapperDarkBlue = document.querySelector('.wrapper-dark-blue');
 		const ascLogo = document.querySelector('.asc-logo');
 
-		if (!header || !blueCurve || !ascLogo) return;
+		if (!header || !wrapperDarkBlue || !ascLogo) return;
 
-		const wrapperRect = blueCurve.getBoundingClientRect();
+		const wrapperRect = wrapperDarkBlue.getBoundingClientRect();
 
 		if (wrapperRect.bottom <= 120) {
 			header.classList.add('scrolled-out');

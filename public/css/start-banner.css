@@ -1,49 +1,32 @@
-@media (orientation: landscape) and (max-height: 500px) and (max-width: 850px) {
-    .wrapper-dark-blue {
-        width: 100%;
-        height: 445px;
-        background-color: var(--main-bg-dark-blue);
-    }
-
-    .banner-container {
-        width: 90%;
-        padding: 0 5%;
-        display: flex;
-        /* flex-direction: column; */
-        align-items: center;
-        text-align: center;
-    }
-
-    .banner-height {
-        height: 200px;
-    }
-
-    .blue-curve {
-        height: 150px;
-        background-color: var(--main-bg-dark-blue);
-        border-bottom-right-radius: 100% 90%;
-        margin-bottom: 50px;
-    }
-
-    .banner-container h1 {
-        font-size: 30px;
-    }
-
-    .banner-container h2 {
-        font-size: 20px;
-        font-weight: 400;
-    }
-}
-
 @media (max-width: 600px) and (orientation: portrait) {
     .wrapper-dark-blue {
         width: 100%;
-        height: 85vh;
+        height: 95vh;
         background-color: var(--main-bg-dark-blue);
+        border-bottom-right-radius: 150% 20%;
+        margin-bottom: 50px;
+
+        position: relative;
+        overflow: hidden;
+    }
+
+    .wrapper-dark-blue img {
+        position: absolute;
+        inset: 0;
+        height: 100%;
+        top: 50%;
+        left: 50%;
+        filter: brightness(65%);
+        object-fit: cover;
+        transform: translate(-50%, -50%);
+        z-index: 1;
     }
 
     .banner-container {
+        position: relative;
+        z-index: 2;
         width: 100%;
+        padding: 65px 0;
         flex-direction: column;
         align-items: center;
         text-align: center;
@@ -51,13 +34,6 @@
 
     .banner-height {
         height: 450px;
-    }
-
-    .blue-curve {
-        height: 150px;
-        background-color: var(--main-bg-dark-blue);
-        border-bottom-right-radius: 100% 90%;
-        margin-bottom: 50px;
     }
 
     .banner-container h1 {
@@ -74,12 +50,32 @@
 @media (min-width: 601px) and (max-width: 1023px) {
     .wrapper-dark-blue {
         width: 100%;
-        height: 85vh;
+        /* height: 95vh; */
         background-color: var(--main-bg-dark-blue);
+        border-bottom-right-radius: 150% 20%;
+        margin-bottom: 50px;
+        padding-bottom: 65px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .wrapper-dark-blue img {
+        position: absolute;
+        inset: 0;
+        height: 100%;
+        top: 50%;
+        left: 50%;
+        filter: brightness(65%);
+        object-fit: cover;
+        transform: translate(-50%, -50%);
+        z-index: 1;
     }
 
     .banner-container {
+        position: relative;
+        z-index: 2;
         width: 100%;
+        padding: 120px 0;
         flex-direction: column;
         align-items: center;
         text-align: center;
@@ -89,11 +85,54 @@
         height: 450px;
     }
 
-    .blue-curve {
-        height: 150px;
+    .banner-container h1 {
+        font-size: 30px;
+    }
+
+    .banner-container h2 {
+        font-size: 20px;
+        font-weight: 400;
+    }
+}
+
+@media (orientation: landscape) and (max-width: 850px) and (max-height: 500px) {
+    .wrapper-dark-blue {
+        width: 100%;
+        min-height: 850px;
+        /* height: 85vh; */
         background-color: var(--main-bg-dark-blue);
-        border-bottom-right-radius: 100% 90%;
+        border-bottom-right-radius: 150% 20%;
         margin-bottom: 50px;
+        padding-bottom: 65px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .wrapper-dark-blue img {
+        position: absolute;
+        inset: 0;
+        height: 100%;
+        filter: brightness(65%);
+        top: 50%;
+        left: 50%;
+        object-fit: cover;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+    }
+
+    .banner-container {
+        position: relative;
+        z-index: 2;
+        width: 90%;
+        padding: 120px 5%;
+        /* display: flex; */
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .banner-height {
+        height: 200px;
     }
 
     .banner-container h1 {
@@ -109,27 +148,38 @@
 @media (min-width: 1024px) {
     .wrapper-dark-blue {
         background-color: var(--main-bg-dark-blue);
+        border-bottom-right-radius: 150% 43%;
+        margin-bottom: 50px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .wrapper-dark-blue img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        filter: brightness(65%);
+        top: 50%;
+        left: 50%;
+        object-fit: cover;
+        transform: translate(-50%, -50%);
+        z-index: 1;
     }
 
     .banner-container {
+        position: relative;
+        z-index: 2;
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin: 0 auto;
         padding: 40px 80px;
         max-width: 1200px;
-        height: 450px;
     }
 
     .banner-height {
-        height: 450px;
-    }
-
-    .blue-curve {
-        height: 250px;
-        background-color: var(--main-bg-dark-blue);
-        border-bottom-right-radius: 100% 90%;
-        margin-bottom: 50px;
+        height: 700px;
     }
 
     .banner-container h1 {
