@@ -27,6 +27,14 @@ try {
 		throw new Exception("Access denied. You do not have permission to update company info.");
 	}
 
+	$userData = json_decode(select_from("users", ["parent_user"], ["user_id" => $userId], ["fetch_first" => true]), true);
+	if (!$userData["success"] || empty($userData["data"])) {
+        throw new Exception("No user data found.");
+    }
+	$userInfo = $userData["data"];
+
+	$altUser = empty($userInfo["parent_user"] ?? null) ? $userId : intval($userInfo["parent_user"]);
+
 	$companyId = $_POST['company_id'] ?? null;
 	if ($companyId && !is_numeric($companyId)) {
 		throw new Exception("Invalid company ID.");
@@ -81,18 +89,69 @@ try {
 	}
 
     if (!empty($companyId) && is_numeric($companyId)) {
-        $updateResponse = update_table("companies", $updateData, ["user_id" => $userId, "company_id" => $companyId]);
+        $updateResponse = update_table("companies", $updateData, ["user_id" => $altUser, "company_id" => $companyId]);
         $updateResult = json_decode($updateResponse, true);
 
-	    if (!$updateResult["success"]) throw new Exception("Update failed.");
+	    if (empty($updateResult["success"])) throw new Exception("Update failed.");
 
         $action = "updated";
     } else {
-		$updateData["user_id"] = $userId;
+		$ownerPackageData = json_decode(
+			select_from(
+				"users",
+				["package_id"],
+				["user_id" => $altUser],
+				["fetch_first" => true]
+			),
+			true
+		);
+
+		$packageId = intval($ownerPackageData["data"]["package_id"] ?? 0);
+
+		if ($packageId <= 0) {
+			throw new Exception("No package assigned to this account.");
+		}
+
+		$packageInfo = json_decode(
+			select_from(
+				"packages",
+				["branch_affiliate_limit"],
+				["package_id" => $packageId],
+				["fetch_first" => true]
+			),
+			true
+		);
+
+		$allowedAffiliates = intval($packageInfo["data"]["branch_affiliate_limit"] ?? 0);
+
+		if ($allowedAffiliates <= 0) {
+			throw new Exception("Your package does not allow affiliates.");
+		}
+
+		$companiesCountRes = json_decode(
+			select_from(
+				"companies",
+				["company_id"],
+				["user_id" => $altUser]
+			),
+			true
+		);
+
+		$currentAffiliatesCount = 0;
+
+		if (!empty($companiesCountRes["success"]) && !empty($companiesCountRes["data"]) && is_array($companiesCountRes["data"])) {
+			$currentAffiliatesCount = count($companiesCountRes["data"]);
+		}
+
+		if ($currentAffiliatesCount >= $allowedAffiliates) {
+			throw new Exception("Maximum allowed affiliates reached. Upgrade your pack.");
+		}
+
+		$updateData["user_id"] = $altUser;
 		$insertResponse = insert_into("companies", $updateData, ["id" => "company_id"]);
 		$insertResult = json_decode($insertResponse, true);
 
-		if (!$insertResult["success"]) throw new Exception("Insert failed.");
+		if (empty($insertResult["success"])) throw new Exception("Insert failed.");
 
 		$userInfo = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
 		$decodedUser = json_decode($userInfo, true);
@@ -103,7 +162,7 @@ try {
 			$updateResponse = update_table("users", ["company_id" => $insertResult["id"]], ["user_id" => $userId]);
 			$updateResult = json_decode($updateResponse, true);
 
-			if (!$updateResult["success"]) throw new Exception("Update failed.");
+			if (empty($updateResult["success"])) throw new Exception("Update failed.");
 		}
 	
 		$action = "created";
