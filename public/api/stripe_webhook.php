@@ -2,11 +2,13 @@
 define('IS_STRIPE_WEBHOOK', true);
 require_once('../logic/stock_be.php');
 
-\Stripe\Stripe::setApiKey('REMOVED_STRIPE_TEST_SECRET'); // tu clave secreta
-$endpointSecret = 'REMOVED_STRIPE_WEBHOOK_SECRET'; // tu clave secreta del webhook (desde el dashboard de Stripe)
-
-// \Stripe\Stripe::setApiKey('REMOVED_STRIPE_LIVE_SECRET');
-// $endpointSecret = 'REMOVED_STRIPE_WEBHOOK_SECRET';
+if (isProductionEnv()) {
+	\Stripe\Stripe::setApiKey($_ENV['STRIPE_SK_LIVE']);
+	$endpointSecret = $_ENV['STRIPE_WEBHOOK_SECRET_LIVE'];
+} else {
+	\Stripe\Stripe::setApiKey($_ENV['STRIPE_SK_TEST']); // tu clave secreta
+	$endpointSecret = $_ENV['STRIPE_WEBHOOK_SECRET_TEST']; // tu clave secreta del webhook (desde el dashboard de Stripe)
+}
 
 // 1. Captura y verifica el evento
 $payload = @file_get_contents('php://input');
@@ -49,12 +51,18 @@ if ($event->type === 'checkout.session.completed') {
 
             log_activity($userId, "webhook_update", "Subscripción actualizada con nuevo stripe_subscription_id: $subscriptionId", "subscriptions", $userId);
         } else {
-            $existing = json_decode(select_from("subscriptions", ["stripe_subscription_id"], [
+            $existing = json_decode(select_from("subscriptions", ["subsc_id"], [
                 "user_id" => $userId,
                 "stripe_subscription_id" => $subscriptionId
             ], ["fetch_first" => true]), true);
 
-            if (!isset($existing['success']) || !$existing['success']) {
+            $alreadyExists = (
+                isset($existing["success"]) &&
+                $existing["success"] &&
+                !empty($existing["data"])
+            );
+
+            if (!$alreadyExists) {
                 $insert = insert_into("subscriptions", [
                     "user_id" => $userId,
                     "package_id" => $packageId,
@@ -66,7 +74,7 @@ if ($event->type === 'checkout.session.completed') {
 
                 $insertResult = json_decode($insert, true);
 
-                if (!is_array($insertResult) || !$insertResult['success']) {
+                if (!is_array($insertResult) || empty($insertResult['success'])) {
                     log_activity($userId, "webhook_error", "Fallo al registrar la suscripción: " . $insert, "subscriptions", $userId);
                 } else {
                     log_activity($userId, "webhook_success", "Suscripción insertada correctamente. ID: ". $insertResult["id"], "subscriptions", $userId);
