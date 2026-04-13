@@ -8329,6 +8329,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 					<div class="subsc-section">
 						${
+							console.log("Package data:", pkg) || // Log para depuración
 							hasPackage
 								? `
 									<div class="pack-card">
