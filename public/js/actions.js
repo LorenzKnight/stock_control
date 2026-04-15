@@ -905,7 +905,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			})
 			.then(response => response.json())
 			.then(data => {
-				// console.log("Data received:", data);
 				if (data.success && data.data) {
 					let company = data.data[0];
 
@@ -1239,15 +1238,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 	// 📌 script para subscrition popup
 	let subscButton = document.getElementById('subsc-button');
 	if (subscButton) {
-		subscButton.addEventListener('click', function (e) {
+		subscButton.addEventListener('click', async (e) => {
 			e.preventDefault();
 
 			scrollToTopIfNeeded();
 
 			const subscForm = document.getElementById('subsc-form');
 			const popupContent = subscForm.querySelector('.formular-medium-frame');
+			const formSubscription = document.getElementById('formSubscription');
 
-			if (subscForm && popupContent) {
+			if (subscForm && popupContent && formSubscription) {
 				subscForm.style.display = 'block';
 				subscForm.style.opacity = '0';
 				subscForm.style.transition = 'opacity 0.5s ease';
@@ -1263,9 +1263,39 @@ document.addEventListener("DOMContentLoaded", async function () {
 					popupContent.style.opacity = '1';
 				}, 50);
 
-				populatePackages('packs');
+				try {
+					const response = await fetch('/api/get_my_info.php', {
+						method: 'GET',
+						headers: { Accept: 'application/json' }
+					});
 
-				populateExtraServices('extra_pack');
+					const data = await response.json();
+
+					if (data.success && data.data) {
+						const user = data.data;
+						const packageId = user.package_id || user.package_info?.package_id || "";
+
+						let currentPackageInput = document.getElementById('current_package_id');
+
+						if (!currentPackageInput) {
+							currentPackageInput = document.createElement('input');
+							currentPackageInput.type = 'hidden';
+							currentPackageInput.id = 'current_package_id';
+							formSubscription.appendChild(currentPackageInput);
+						}
+
+						currentPackageInput.value = packageId;
+					}
+				} catch (error) {
+					console.error("Error fetching setup data:", error);
+				}
+
+				await populatePackages('packs');
+
+				await populateExtraServices('extra_pack');
+
+				assignPackageListeners();
+				updateEstimatedCost();
 
 				handlePopupClose("subsc-form", ".formular-medium-frame", []);
 			}
@@ -8329,6 +8359,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 					<div class="subsc-section">
 						${
+							console.log(pkg),
 							hasPackage
 								? `
 									<div class="pack-card">
@@ -8362,6 +8393,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 						}
 						<div class="subsc-info">
 							<h3>Info:</h3>
+							<p>fecha de subscripción: </p>
+							<p>fecha de expiración: </p>
+							<p>price: $${pkg.package_price ?? '-'}</p>
 						</div>
 					</div>
 
@@ -11818,40 +11852,108 @@ document.addEventListener("DOMContentLoaded", async function () {
 	let estimated = document.getElementById('estimated');
 	let estimatedInput = document.getElementById('estimated_cost');
 	let extraPackSelect = document.getElementById('extra_pack');
-	let packUpdateBtn = document.getElementById('packUpgradeBtn'); 
-
+	let packUpdateBtn = document.getElementById('packUpgradeBtn');
+	
 	async function updateEstimatedCost() {
 		const selectedRadio = document.querySelector('input[name="packs"]:checked');
-		if (!selectedRadio || !estimated || !estimatedInput) return;
+		const currentPackageInput = document.getElementById('current_package_id');
+		const currentPackageId = currentPackageInput
+			? parseInt(currentPackageInput.value, 10)
+			: 0;
 
-		const selectedValue = parseInt(selectedRadio.value);
+		if (!estimated || !estimatedInput) return;
+
 		const selectedOpt = extraPackSelect?.selectedOptions?.[0] || null;
-		const extraValue  = selectedOpt ? parseFloat(selectedOpt.dataset.price || 0) : 0;
+		const extraValue = selectedOpt
+			? (Number.parseFloat(selectedOpt.dataset.price || 0) || 0)
+			: 0;
+
+		const selectedValue = selectedRadio
+			? parseInt(selectedRadio.value, 10)
+			: currentPackageId;
+
+		// Valor visual: solo lo que el usuario cambió
+		const visualHasNewPack = !!selectedRadio;
+		const visualBaseValue = visualHasNewPack
+			? parseInt(selectedRadio.value, 10)
+			: (extraValue > 0 ? currentPackageId : 0);
+
+		if (!selectedValue) {
+			const visualCost = extraValue.toFixed(2);
+
+			estimated.innerHTML = `Estimated cost: <strong>$ ${visualCost}</strong>`;
+			estimatedInput.value = extraValue.toFixed(2);
+
+			if (packUpdateBtn) {
+				if (extraValue > 0) {
+					packUpdateBtn.classList.remove('disabled');
+				} else {
+					packUpdateBtn.classList.add('disabled');
+				}
+			}
+			return;
+		}
 
 		try {
 			const res = await fetch('api/get_packages.php');
 			const data = await res.json();
 
 			if (data.success && Array.isArray(data.packages)) {
-				const pkg = data.packages.find(p => parseInt(p.package_id) === selectedValue);
+				const realPkg = data.packages.find(
+					p => parseInt(p.package_id, 10) === selectedValue
+				);
 
-				if (pkg) {
-					const baseCost = parseFloat(pkg.package_price ?? 0);
-					const totalCost = baseCost + extraValue;
+				if (realPkg) {
+					const realBaseCost = Number.parseFloat(realPkg.package_price ?? 0) || 0;
+					const realTotalCost = (realBaseCost + extraValue).toFixed(2);
 
-					estimated.innerHTML = `Estimated cost: <strong>$ ${totalCost}</strong>`;
-					estimatedInput.value = totalCost;
+					// estimatedInput conserva el valor real
+					estimatedInput.value = realTotalCost;
 
-					packUpdateBtn.classList.remove('disabled');
+					let visualCost = extraValue;
+
+					if (visualBaseValue > 0) {
+						const visualPkg = data.packages.find(
+							p => parseInt(p.package_id, 10) === visualBaseValue
+						);
+
+						if (visualPkg) {
+							const visualBaseCost = Number.parseFloat(visualPkg.package_price ?? 0) || 0;
+							visualCost = visualBaseCost + extraValue;
+						}
+					}
+
+					// Solo visual
+					estimated.innerHTML = `Estimated cost: <strong>$ ${visualCost.toFixed(2)}</strong>`;
+
+					if (packUpdateBtn) {
+						if (visualHasNewPack || extraValue > 0) {
+							packUpdateBtn.classList.remove('disabled');
+						} else {
+							packUpdateBtn.classList.add('disabled');
+						}
+					}
 				} else {
-					estimated.innerHTML = `Estimated cost: <strong>$ 0</strong>`;
+					estimated.innerHTML = `Estimated cost: <strong>$ 0.00</strong>`;
 					estimatedInput.value = 0;
+					if (packUpdateBtn) {
+						packUpdateBtn.classList.add('disabled');
+					}
+				}
+			} else {
+				estimated.innerHTML = `Estimated cost: <strong>$ 0.00</strong>`;
+				estimatedInput.value = 0;
+				if (packUpdateBtn) {
+					packUpdateBtn.classList.add('disabled');
 				}
 			}
 		} catch (error) {
 			console.error("Error loading package data:", error);
-			estimated.innerHTML = `Estimated cost: <strong>$ 0</strong>`;
+			estimated.innerHTML = `Estimated cost: <strong>$ 0.00</strong>`;
 			estimatedInput.value = 0;
+			if (packUpdateBtn) {
+				packUpdateBtn.classList.add('disabled');
+			}
 		}
 	}
 
