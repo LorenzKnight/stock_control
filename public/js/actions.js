@@ -8360,7 +8360,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 					<div class="subsc-section">
 						${
-							console.log(pkg),
 							hasPackage
 								? `
 									<div class="pack-card">
