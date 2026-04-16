@@ -9,7 +9,7 @@
 	background-color: var(--main-bg-blue);
 	color: var(--clr-white);
 	padding: 15px 20px;
-	border-radius: 5px;
+	border-radius: 10px;
 	box-shadow: 0px 4px 6px var(--main-bg-pop-up);
 	z-index: 1000;
 	text-align: center;

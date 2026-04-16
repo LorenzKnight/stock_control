@@ -8303,6 +8303,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				const users = Array.isArray(result.data) ? result.data : [];
 
 				const pkg = result.meta?.package ?? null;
+				const subs = result.meta?.subscription ?? null;
 				const hasPackage = pkg && Object.keys(pkg).length > 0;
 
 				let priceText = 'Free';
@@ -8392,10 +8393,50 @@ document.addEventListener("DOMContentLoaded", async function () {
 								`
 						}
 						<div class="subsc-info">
-							<h3>Info:</h3>
-							<p>fecha de subscripción: </p>
-							<p>fecha de expiración: </p>
-							<p>price: $${pkg.package_price ?? '-'}</p>
+							<table width="100%" align="center" cellspacing="0">
+								<tr valign="baseline">
+									<td colspan="6" align="center" valign="middle">
+										<h3>Info</h3>
+									</td>
+								</tr>
+								<tr valign="baseline">
+									<td width="25%" align="left" valign="middle" style="height: 20px; border-top: 1px solid var(--border-light);">
+										<strong>Subscription Date</strong>
+									</td>
+									<td width="75%" align="left" valign="middle" style="height: 20px; border-top: 1px solid var(--border-light);">
+										: ${formatFullDateTime(subs?.subscription_date) ?? '-'}
+									</td>
+								</tr>
+								<tr valign="baseline">
+									<td width="25%" align="left" valign="middle" style="height: 20px; border-top: 1px solid var(--border-light);">
+										<strong>Expiration Date</strong>
+									</td>
+									<td width="75%" align="left" valign="middle" style="height: 20px; border-top: 1px solid var(--border-light);">
+										: ${formatFullDateTime(subs?.expiration_date) ?? '-'}
+									</td>
+								</tr>
+								<tr valign="baseline">
+									<td width="25%" align="left" valign="middle" style="height: 20px; border-top: 1px solid var(--border-light);">
+										<strong>Price</strong>
+									</td>
+									<td width="75%" align="left" valign="middle" style="height: 20px; border-top: 1px solid var(--border-light);">
+										: $${subs?.estimated_cost ?? '-'}
+									</td>
+								</tr>
+								<tr valign="baseline">
+									<td colspan="6" align="center" valign="middle" style="border-top: 1px solid var(--border-light);">
+										<h3>Extra Pack</h3>
+									</td>
+								</tr>
+								<tr valign="baseline">
+									<td width="25%" align="left" valign="middle" style="height: 20px; border-top: 1px solid var(--border-light);">
+										<strong>Pack Name</strong>
+									</td>
+									<td width="75%" align="left" valign="middle" style="height: 20px; border-top: 1px solid var(--border-light);">
+										: 
+									</td>
+								</tr>
+							</table>
 						</div>
 					</div>
 
@@ -10669,25 +10710,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 	window.formatNotificationDate = formatNotificationDate;
-
-	// 📌 formatear fecha y hora completa
-	function formatFullDateTime(dateString) {
-		const monthsAbbr = [
-			"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-			"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-		];
-
-		const date = new Date(dateString);
-
-		const year = date.getFullYear();
-		const month = monthsAbbr[date.getMonth()];
-		const day = String(date.getDate()).padStart(2, '0');
-		const hours = String(date.getHours()).padStart(2, '0');
-		const minutes = String(date.getMinutes()).padStart(2, '0');
-
-		return `${year} ${month} ${day} ${hours}:${minutes}`;
-	}
-  	window.formatFullDateTime = formatFullDateTime;
 
 	function parseDbTimestamp(s) {
 		// intenta ISO-like
