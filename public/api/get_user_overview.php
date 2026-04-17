@@ -176,6 +176,22 @@ try {
         $package = $pkgRes["data"] ?? null;
     }
 
+    // 📦 Extra Services
+    $extraPack = [];
+    if ($subscription) {
+        $extraRes = json_decode(select_from(
+            "service_rights",
+            [
+                "service_name",
+                "can_access"
+            ],
+            ["user_id" => $targetId],
+            ["fetch_all" => true]
+        ), true);
+
+        $extraPack = $extraRes["data"] ?? null;
+    }
+
     // 🔑 Impersonation token
     $impersonationToken = base64_encode(json_encode([
         "admin_id" => $authUserId,
@@ -192,6 +208,7 @@ try {
         "meta"  => [
             "subscription"   => $subscription,
             "package"        => $package,
+            "extra_pack"     => $extraPack,
             "affiliate"      => $affiliates,
             "collaborators"  => $collaborators,
             "impersonation"  => [
