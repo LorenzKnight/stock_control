@@ -60,6 +60,7 @@ try {
             "username",
             "rank",
             "verified",
+            "package_id",
             "status",
             "status_by_admin",
             "signup_date"
