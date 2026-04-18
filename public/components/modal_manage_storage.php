@@ -24,7 +24,7 @@
 				</tr>
 			</table>
 		</div>
-        <!-- <div id="manage-slot-modal" style="display: none;">
+        <div id="manage-slot-modal" style="display: none;">
             <div class="back-to-storage-menu-btn">
 				<img src="images/sys-img/backward.png" alt="back">
 			</div>
@@ -120,7 +120,7 @@
                     </tr>
                 </table>
             </form>
-        </div> -->
+        </div>
         <div id="manage-storage-modal" style="display: none;">
             <div class="back-to-storage-menu-btn">
 				<img src="images/sys-img/backward.png" alt="back">
