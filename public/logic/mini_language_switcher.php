@@ -24,7 +24,7 @@ else {
 $i18n = [
 	'en' => [
 		'title'       => 'Inventory management software for small businesses | AllStockControl',
-		'description' => 'Cloud-based inventory management software for small businesses. Track stock in real time, manage multiple locations, and avoid spreadsheets. Try AllStockControl free.',
+		'description' => 'Cloud-based inventory management software for small businesses. Track stock in real time, manage multiple locations, and control inventory movements from any device. Try AllStockControl free.',
 		'features_h2' => 'Key Features',
 		'pricing_h2'  => 'Pricing & Plans',
 		'content_language' => 'en',
@@ -41,7 +41,7 @@ $i18n = [
 
 		// banner
 		'home_main_h1'		 => 'Inventory management software for small businesses',
-		'home_main_subtitle' => 'Manage your stock in real time without spreadsheets or complex systems. Control your inventory from any device.',
+		'home_main_subtitle' => 'Manage stock, inventory movements, and product availability in real time without spreadsheets or complex systems.',
 		'home_cta'			 => 'Try inventory software for free',
 		'cta_note'			 => 'No credit card required · Cancel anytime',
 		'signup_message'	 => 'Create your free account and start managing your company inventory easily and securely.',
@@ -168,8 +168,8 @@ $i18n = [
 		'footer_seo_pricing'     => 'Inventory software pricing',
 	],
 	'es' => [
-		'title'       => 'Software de control de inventario para pequeñas empresas | AllStockControl',
-		'description' => 'Software de control de inventario en la nube para pequeñas empresas. Controla tu stock en tiempo real, sin Excel y desde cualquier dispositivo. Pruébalo gratis.',
+		'title'       => 'Sistema de control de stock e inventario para pequeñas empresas | AllStockControl',
+		'description' => 'Sistema de control de stock e inventario en la nube para pequeñas empresas. Controla stock en tiempo real, entradas, salidas y sucursales desde cualquier dispositivo. Pruébalo gratis.',
 		'features_h2' => 'Funciones clave',
 		'pricing_h2'  => 'Precios y planes',
 		'content_language' => 'es',
@@ -185,8 +185,8 @@ $i18n = [
 		'toggle_login'  => 'Iniciar sesión',
 
 		// banner
-		'home_main_h1'		 => 'Software de control de inventario para pequeñas empresas',
-		'home_main_subtitle' => 'Gestiona tu stock en tiempo real, sin Excel y sin sistemas complicados. Controla tu inventario desde cualquier dispositivo.',
+		'home_main_h1'		 => 'Sistema de control de stock e inventario para pequeñas empresas',
+		'home_main_subtitle' => 'Gestiona tu stock e inventario en tiempo real, sin Excel y sin sistemas complicados. Controla entradas, salidas y movimientos desde cualquier dispositivo.',
 		'home_cta'			 => 'Probar el software de inventario gratis',
 		'cta_note'			 => 'No se requiere tarjeta de crédito · Cancela cuando quieras',
 		'signup_message'	 => 'Crea tu cuenta gratis y empieza a controlar el inventario de tu empresa de forma simple y segura.',
@@ -313,8 +313,8 @@ $i18n = [
 		'footer_seo_pricing'     => 'Precios del software de inventario',
 	],
 	'sv' => [
-		'title'       => 'Lagerhanteringssystem för småföretag | AllStockControl',
-		'description' => 'Molnbaserat lagerhanteringssystem för småföretag. Följ lagersaldo i realtid, hantera flera platser och slipp kalkylblad. Testa gratis.',
+		'title'       => 'Lagerprogram och lagerkontroll för småföretag | AllStockControl',
+		'description' => 'Molnbaserat lagerprogram för småföretag. Följ lagersaldo i realtid, hantera flera platser och få bättre lagerkontroll utan kalkylblad. Testa gratis.',
 		'features_h2' => 'Viktigaste funktionerna',
 		'pricing_h2'  => 'Priser och paket',
 		'content_language' => 'sv',
@@ -330,8 +330,8 @@ $i18n = [
 		'toggle_login'  => 'Logga in',
 
 		// banner
-		'home_main_h1'		 => 'Lagerprogram för småföretag',
-		'home_main_subtitle' => 'Hantera ditt lager i realtid utan kalkylblad eller krångliga system. Full kontroll från valfri enhet.',
+		'home_main_h1'		 => 'Lagerprogram och lagerkontroll för småföretag',
+		'home_main_subtitle' => 'Hantera lager, lagersaldo och lagertransaktioner i realtid utan kalkylblad eller krångliga system. Full kontroll från valfri enhet.',
 		'home_cta'			 => 'Testa lagerhanteringssystemet gratis',
 		'cta_note'			 => 'Inget kreditkort krävs · Avsluta när som helst',
 		'signup_message'	 => 'Skapa ett gratis konto och börja kontrollera företagets lager enkelt och säkert.',
