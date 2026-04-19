@@ -22,7 +22,7 @@
     .selected-pack-group {
         font-size: 20px;
         color: var(--main-bg-dark-blue) !important;
-        /* font-weight: bold; */
+        font-weight: bold;
     }
 
     .opcions-packages .packs-selection input[type="radio"] {
@@ -147,6 +147,7 @@
     .selected-pack-group {
         font-size: 20px;
         color: var(--main-bg-dark-blue) !important;
+        font-weight: bold;
     }
 
     .opcions-packages .packs-selection input[type="radio"] {
@@ -258,7 +259,7 @@
     .selected-pack-group {
         font-size: 20px;
         color: var(--main-bg-dark-blue) !important;
-        /* font-weight: bold; */
+        font-weight: bold;
     }
 
     .opcions-packages .packs-selection input[type="radio"] {
