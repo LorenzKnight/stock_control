@@ -81,4 +81,50 @@ document.addEventListener("DOMContentLoaded", async function () {
 		return `${year} ${month} ${day} ${hours}:${minutes}`;
 	}
   	window.formatFullDateTime = formatFullDateTime;
+
+	async function populateCompanies(selectId, selectedValue = '') {
+		const select = document.getElementById(selectId);
+		if (!select) return;
+
+		// 🔹 Limpiar el contenido actual del <select>
+		select.innerHTML = '';
+
+		// 🔹 Agregar opción por defecto
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = 'Select a Company';
+		select.appendChild(defaultOption);
+
+		try {
+			const res = await fetch('api/get_company_info.php');
+			const data = await res.json();
+
+			if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+				data.data.forEach((company, index) => {
+					const option = document.createElement('option');
+					option.value = company.company_id;
+					option.textContent = company.company_name;
+
+					if (selectedValue) {
+						if (String(company.company_id) === String(selectedValue)) {
+							option.selected = true;
+						}
+					} else if (index === 0) {
+						option.selected = true;
+					}
+
+					select.appendChild(option);
+				});
+
+				select.dispatchEvent(new Event('change'));
+			} else {
+				select.innerHTML += `<option value="">No companies found</option>`;
+			}
+		} catch (error) {
+			console.error("Error loading companies:", error);
+			select.innerHTML += `<option value="">Error loading companies</option>`;
+		}
+	}
+	window.populateCompanies = populateCompanies;
+
 });

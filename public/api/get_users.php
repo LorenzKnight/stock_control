@@ -140,7 +140,7 @@ try {
 
     $users = json_decode($userResponse, true);
     
-    $minRoleId = 1; // Cambia esto según el rol mínimo que quieras mostrar
+    $minRoleId = 2; // Cambia esto según el rol mínimo que quieras mostrar
     $rolesResponse = select_from("roles", ["role_id", "role_name"], [
         "role_id" => ["condition" => ">=", "value" => $minRoleId]
     ], [

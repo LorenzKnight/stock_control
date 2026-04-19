@@ -1,5 +1,6 @@
 @media (orientation: landscape) and (max-height: 500px) and (max-width: 850px) {
     .opcions-packages {
+        color: var(--clr-border) !important;
         display: flex;
         text-align: center;
         justify-content: center;
@@ -15,12 +16,12 @@
     }
 
     .packs-selection label:hover {
-        color: var(--clr-border);
+        color: var(--agree-blue);
     }
 
     .selected-pack-group {
         font-size: 20px;
-        color: var(--clr-border) !important;
+        color: var(--main-bg-dark-blue) !important;
         /* font-weight: bold; */
     }
 
@@ -124,6 +125,7 @@
 
 @media (max-width: 600px) and (orientation: portrait) {
     .opcions-packages {
+        color: var(--clr-border) !important;
         display: flex;
         text-align: center;
         justify-content: center;
@@ -139,12 +141,12 @@
     }
 
     .packs-selection label:hover {
-        color: var(--clr-border);
+        color: var(--agree-blue);
     }
 
     .selected-pack-group {
         font-size: 20px;
-        color: var(--clr-border) !important;
+        color: var(--main-bg-dark-blue) !important;
     }
 
     .opcions-packages .packs-selection input[type="radio"] {
@@ -234,6 +236,7 @@
 /* iPad / Tablet (iPad mini → iPad Pro, portrait + landscape) */
 @media (min-width: 601px) and (max-width: 1023px) {
     .opcions-packages {
+        color: var(--clr-border) !important;
         display: flex;
         text-align: center;
         justify-content: center;
@@ -249,12 +252,12 @@
     }
 
     .packs-selection label:hover {
-        color: var(--clr-border);
+        color: var(--agree-blue);
     }
 
     .selected-pack-group {
         font-size: 20px;
-        color: var(--clr-border) !important;
+        color: var(--main-bg-dark-blue) !important;
         /* font-weight: bold; */
     }
 
@@ -358,6 +361,7 @@
 
 @media (min-width: 1024px) {
     .opcions-packages {
+        color: var(--clr-border) !important;
         display: flex;
         text-align: center;
         justify-content: center;
@@ -373,13 +377,13 @@
     }
 
     .packs-selection label:hover {
-        color: var(--clr-border);
+        color: var(--agree-blue);
     }
 
     .selected-pack-group {
         font-size: 20px;
-        color: var(--clr-border) !important;
-        /* font-weight: bold; */
+        color: var(--main-bg-dark-blue) !important;
+        font-weight: bold;
     }
 
     .opcions-packages .packs-selection input[type="radio"] {
