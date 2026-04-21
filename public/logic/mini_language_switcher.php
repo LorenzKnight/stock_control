@@ -46,6 +46,15 @@ $i18n = [
 		'cta_note'			 => 'No credit card required · Cancel anytime',
 		'signup_message'	 => 'Create your free account and start managing your company inventory easily and securely.',
 
+		// catch container
+		'excel_h2' => 'Still managing inventory with spreadsheets?',
+		'excel_p1' => 'Spreadsheets may work at the beginning, but as your business grows, they often lead to outdated stock numbers, manual errors, and wasted time.',
+		'excel_p2' => 'AllStockControl helps small businesses move from Excel and manual tracking to simple, real-time inventory control from any device.',
+		'excel_li_1' => 'Know your real stock levels in real time',
+		'excel_li_2' => 'Reduce mistakes in stock entries and exits',
+		'excel_li_3' => 'Keep inventory organized across users and locations',
+		'excel_cta' => 'Start with a simpler inventory system',
+
 		// descriptions container
 		'desc_1_title' => 'Cloud-based inventory control from anywhere',
 		'desc_1_text'  => 'AllStockControl is cloud-based inventory management software built for small businesses. Manage your stock in real time from your laptop, tablet, or phone—without spreadsheets or fixed locations.',
@@ -191,6 +200,15 @@ $i18n = [
 		'cta_note'			 => 'No se requiere tarjeta de crédito · Cancela cuando quieras',
 		'signup_message'	 => 'Crea tu cuenta gratis y empieza a controlar el inventario de tu empresa de forma simple y segura.',
 	
+		// catch container
+		'excel_h2' => '¿Sigues controlando tu inventario con Excel?',
+		'excel_p1' => 'Las hojas de cálculo pueden funcionar al principio, pero a medida que tu empresa crece suelen generar stock desactualizado, errores manuales y pérdida de tiempo.',
+		'excel_p2' => 'AllStockControl ayuda a pequeñas empresas a pasar de Excel y del control manual a un sistema de inventario simple y en tiempo real, accesible desde cualquier dispositivo.',
+		'excel_li_1' => 'Conoce tu stock real en tiempo real',
+		'excel_li_2' => 'Reduce errores en entradas y salidas de inventario',
+		'excel_li_3' => 'Mantén el control del inventario entre usuarios y sucursales',
+		'excel_cta' => 'Empieza con un sistema de inventario más simple',
+
 		// descriptions container
 		'desc_1_title' => 'Control de inventario en la nube, desde cualquier lugar',
 		'desc_1_text'  => 'AllStockControl es un software de control de inventario en la nube diseñado para pequeñas empresas. Gestiona tu stock en tiempo real desde tu computadora, tablet o celular, sin depender de Excel ni de un lugar físico.',
@@ -335,6 +353,15 @@ $i18n = [
 		'home_cta'			 => 'Testa lagerhanteringssystemet gratis',
 		'cta_note'			 => 'Inget kreditkort krävs · Avsluta när som helst',
 		'signup_message'	 => 'Skapa ett gratis konto och börja kontrollera företagets lager enkelt och säkert.',
+
+		// catch container
+		'excel_h2' => 'Använder du fortfarande Excel för att hålla koll på lagret?',
+		'excel_p1' => 'Kalkylblad kan fungera i början, men när företaget växer leder de ofta till felaktigt lagersaldo, manuella misstag och onödigt extraarbete.',
+		'excel_p2' => 'AllStockControl hjälper småföretag att gå från Excel och manuell hantering till ett enkelt lagerhanteringssystem i realtid, tillgängligt från valfri enhet.',
+		'excel_li_1' => 'Se ditt verkliga lagersaldo i realtid',
+		'excel_li_2' => 'Minska fel i in- och utleveranser',
+		'excel_li_3' => 'Behåll kontrollen över lagret mellan användare och platser',
+		'excel_cta' => 'Börja med ett enklare lagerhanteringssystem',
 
 		// descriptions container
 		'desc_1_title' => 'Molnbaserad lagerkontroll – var du än är',

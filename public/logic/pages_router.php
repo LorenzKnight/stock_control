@@ -24,6 +24,7 @@ if ($slug === '') {
 	include_once(__DIR__ . '/../components/message.php');
 	include(__DIR__ . '/../components/front_header.php');
     include(__DIR__ . '/../components/banner_container.php');
+    include(__DIR__ . '/../components/catch_container.php');
     include(__DIR__ . '/../components/descriptions_container.php');
     include(__DIR__ . '/../components/features_container.php');
     include(__DIR__ . '/../components/pricing_container.php');
