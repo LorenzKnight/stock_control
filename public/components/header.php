@@ -28,7 +28,7 @@
 						<ul>
 							<li class="no-redirect" style="border-bottom: 1px solid var(--clr-light-border);"><a href="profile.php" style="margin: 0 auto; font-weight: bold;" id="my-name"></a></li>
 							<li id="system-admin-site"><a href="#">System-Admin</a></li>
-							<!-- <li id="reports-site"><a href="#">Reports</a></li> -->
+							<li id="reports-site"><a href="#">Reports</a></li>
 							<li><a href="#">Settings</a></li>
 							<li class="no-redirect" style="border-top: 1px solid var(--clr-light-border);"><a href="#" style="margin: 0 auto;" class="logout-button turn-off">Log Out</a></li>
 						</ul>
