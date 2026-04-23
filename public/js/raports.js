@@ -1,37 +1,143 @@
 document.addEventListener("DOMContentLoaded", async function () {
 //############################################################# REPORTS ##################################################################
-	const reportsContainer = document.getElementById('reports-list');
-	const reportsSearchField = document.getElementById('reportsSearchField');
+    const reportsSearchField = document.getElementById('reportsSearchField');
+    const reportsFromDate = document.getElementById('reports_from_date');
+    const reportsToDate = document.getElementById('reports_to_date');
+    const reportsContainer = document.getElementById('reports-list');
+    const reportSidebar = document.getElementById('report-sidebar');
 
-	if (reportsContainer || reportsSearchField) {
+	if (reportsSearchField || reportsFromDate || reportsToDate || reportsContainer || reportSidebar) {
 		async function fetchAndRenderReports() {
 			try {
 				const searchTerm = reportsSearchField?.value.trim() || "";
+                const fromDate = reportsFromDate?.value || "";
+			    const toDate = reportsToDate?.value || "";
 
 				const params = new URLSearchParams();
 				if (searchTerm) params.append('search', searchTerm);
+                if (fromDate) params.append('reports_from_date', fromDate);
+                if (toDate) params.append('reports_to_date', toDate);
 
 				const res = await fetch(`api/get_reports.php?${params.toString()}`, {
 					method: 'GET',
 					headers: { 'Accept': 'application/json' }
 				});
+
 				const data = await res.json();
 				console.log("Fetched reports data:", data);
-				reportsContainer.innerHTML = "";
 
-				if (data.success && data.data.length > 0) {
+				if (reportsContainer) {
+					reportsContainer.innerHTML = "";
+				}
+
+                if (reportSidebar) {
+					reportSidebar.innerHTML = "";
+				}
+
+				if (reportSidebar) {
+					const summary = data?.summary || {};
+
+					const totalSoldAmount = !isNaN(parseFloat(summary.total_sold_amount))
+						? parseFloat(summary.total_sold_amount).toFixed(2)
+						: "0.00";
+
+					const totalQuantitySold = !isNaN(parseInt(summary.total_quantity_sold, 10))
+						? parseInt(summary.total_quantity_sold, 10)
+						: 0;
+
+					const productsFound = !isNaN(parseInt(summary.products_found, 10))
+						? parseInt(summary.products_found, 10)
+						: 0;
+
+					const averageSoldAmount = !isNaN(parseFloat(summary.average_sold_amount_per_product))
+						? parseFloat(summary.average_sold_amount_per_product).toFixed(2)
+						: "0.00";
+
+					const summaryFromDate = summary.from_date || "-";
+					const summaryToDate = summary.to_date || "-";
+
+					reportSidebar.innerHTML = `
+						<div class="report-sidebar-box">
+							<table width="90%" align="center" cellspacing="0" cellpadding="6">
+								<tr>
+									<td colspan="2" align="center" valign="middle">
+										<h3 style="margin:0;">Report Summary</h3>
+									</td>
+								</tr>
+								<tr>
+									<td width="60%" align="left" valign="middle">
+										<strong>From</strong>
+									</td>
+									<td width="40%" align="right" valign="middle">
+										${summaryFromDate}
+									</td>
+								</tr>
+								<tr>
+									<td width="60%" align="left" valign="middle">
+										<strong>To</strong>
+									</td>
+									<td width="40%" align="right" valign="middle">
+										${summaryToDate}
+									</td>
+								</tr>
+								<tr>
+									<td width="60%" align="left" valign="middle">
+										<strong>Products found</strong>
+									</td>
+									<td width="40%" align="right" valign="middle">
+										${productsFound}
+									</td>
+								</tr>
+								<tr>
+									<td width="60%" align="left" valign="middle">
+										<strong>Total quantity sold</strong>
+									</td>
+									<td width="40%" align="right" valign="middle">
+										${totalQuantitySold}
+									</td>
+								</tr>
+								<tr>
+									<td width="60%" align="left" valign="middle">
+										<strong>Total sold amount</strong>
+									</td>
+									<td width="40%" align="right" valign="middle">
+										$${totalSoldAmount}
+									</td>
+								</tr>
+								<tr>
+									<td width="60%" align="left" valign="middle">
+										<strong>Avg. per product</strong>
+									</td>
+									<td width="40%" align="right" valign="middle">
+										$${averageSoldAmount}
+									</td>
+								</tr>
+							</table>
+						</div>
+					`;
+				}
+
+				if (data.success && Array.isArray(data.data) && data.data.length > 0) {
 					data.data.forEach(report => {
 						const row = document.createElement('div');
 						row.className = 'report-row';
+
+						const price = !isNaN(parseFloat(report.price))
+							? parseFloat(report.price).toFixed(2)
+							: "0.00";
+
+						const soldTotal = !isNaN(parseFloat(report.sold_total))
+							? parseFloat(report.sold_total).toFixed(2)
+							: "0.00";
 
 						row.innerHTML = `
 							<table width="100%" align="center" cellspacing="0">
 								<tr valign="baseline" class="form_height">
                                     <td width="8%" align="center" valign="middle">
-										<p class="mini-title">Ord no:</p>
-										${report.ord_no || ''}
+										<p class="mini-title">No.:</p>
+										${report.product_id || ''}
 									</td>
-									<td width="13%" align="left" valign="middle" style="padding-left:2%;">
+									<td width="17%" align="left" valign="middle" style="padding-left:2%;">
 										<p class="mini-title">Name:</p>
 										${report.product_name || ''}
 									</td>
@@ -45,22 +151,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 										${report.sold || '-'}
 									</td>
                                     <td width="11%" align="center" valign="middle">
-										<p class="mini-title">Transfered:</p>
-										- ${parseFloat(report.transfered).toFixed(2)}
+										<p class="mini-title">Sold Total:</p>
+										$${soldTotal}
 									</td>
 									<td width="11%" align="center" valign="middle">
-										<p class="mini-title">Amount:</p>
+										<p class="mini-title">Quantity:</p>
 										${report.quantity || '-'}
-									</td>
-                                    <td width="8%" align="center" valign="middle">
-										<p class="mini-title">Payment no:</p>
-										${report.payment_no || ''}
 									</td>
 									<td width="11%" align="center" valign="middle">
 										<p class="mini-title">Price:</p>
-										${parseFloat(report.price).toFixed(2)}
+										$${price}
 									</td>
-									<td width="10%" align="center" valign="middle">
+									<td width="14%" align="center" valign="middle">
 										<p class="mini-title">Create Date:</p>
 										${formatFullDateTime(report.created_at) || '-'}
 									</td>
@@ -83,19 +185,36 @@ document.addEventListener("DOMContentLoaded", async function () {
 						});
 					});
 				} else {
-					reportsContainer.innerHTML = `
-						<p class="isNotLinkedToCompany hidden" style="text-align: center; color: var(--warning-orange);">To activate this section you must complete the company details <a href="profile.php">here.</a></p>
-						<p style="text-align:center;">No reports found.</p>
-					`;
+					if (reportsContainer) {
+						reportsContainer.innerHTML = `
+							<p class="isNotLinkedToCompany hidden" style="text-align: center; color: var(--warning-orange);">
+								To activate this section you must complete the company details <a href="profile.php">here.</a>
+							</p>
+							<p style="text-align:center;">No reports found.</p>
+						`;
+					}
 				}
 			} catch (err) {
 				console.error("Error loading reports:", err);
-				reportsContainer.innerHTML = `<p style="text-align:center;">Error loading reports</p>`;
+				
+				if (reportsContainer) {
+					reportsContainer.innerHTML = `<p style="text-align:center;">Error loading reports</p>`;
+				}
+
+				if (reportSidebar) {
+					reportSidebar.innerHTML = `
+						<div class="report-sidebar-box">
+							<p style="text-align:center;">Error loading summary</p>
+						</div>
+					`;
+				}
 			}
 		}
 
 		reportsSearchField?.addEventListener('keyup', fetchAndRenderReports);
-
+        reportsFromDate?.addEventListener('change', fetchAndRenderReports);
+	    reportsToDate?.addEventListener('change', fetchAndRenderReports);
+        
 		fetchAndRenderReports();
 	}
 

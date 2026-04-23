@@ -47,6 +47,24 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 			continue;
 		}
 
+		if (preg_match('/^(.+)\s+BETWEEN$/i', $column, $matches) && is_array($value) && count($value) === 2) {
+			$field = trim($matches[1]);
+			$fieldFormatted = (preg_match('/\bCAST\s*\(.+\)/i', $field) || strpos($field, '(') !== false)
+				? $field
+				: ((strpos($field, '.') === false) ? "\"$field\"" : $field);
+
+			$fromVal = is_numeric($value[0])
+				? $value[0]
+				: "'" . pg_escape_string($sql, (string)$value[0]) . "'";
+
+			$toVal = is_numeric($value[1])
+				? $value[1]
+				: "'" . pg_escape_string($sql, (string)$value[1]) . "'";
+
+			$whereParts[] = "$fieldFormatted BETWEEN $fromVal AND $toVal";
+			continue;
+		}
+
 		if (stripos($column, 'CAST(') === 0 || stripos($column, '(') !== false) {
 			$colFormatted = $column;
 		} else {
@@ -70,7 +88,25 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 					$orField = trim($matches[1]);
 					$orColFormatted = (strpos($orField, '.') === false) ? "\"$orField\"" : $orField;
 					$escapedVals = array_map(fn($val) => "'" . pg_escape_string($sql, $val) . "'", $orVal);
-					$orParts[] = "$orColFormatted IN (" . implode(',', $escapedVals) . ")";
+					$orParts[] = "$orColFormatted IN (" . implode(', ', $escapedVals) . ")";
+					continue;
+				}
+
+				if (preg_match('/^(.+)\s+BETWEEN$/i', $orKey, $matches) && is_array($orVal) && count($orVal) === 2) {
+					$field = trim($matches[1]);
+					$fieldFormatted = (preg_match('/\bCAST\s*\(.+\)/i', $field) || strpos($field, '(') !== false)
+						? $field
+						: ((strpos($field, '.') === false) ? "\"$field\"" : $field);
+
+					$fromVal = is_numeric($orVal[0])
+						? $orVal[0]
+						: "'" . pg_escape_string($sql, (string)$orVal[0]) . "'";
+
+					$toVal = is_numeric($orVal[1])
+						? $orVal[1]
+						: "'" . pg_escape_string($sql, (string)$orVal[1]) . "'";
+
+					$orParts[] = "$fieldFormatted BETWEEN $fromVal AND $toVal";
 					continue;
 				}
 
@@ -96,7 +132,7 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 			foreach ($value as $field => $inValues) {
 				$orInCol = (strpos($field, '.') === false) ? "\"$field\"" : $field;
 				$escapedVals = array_map(fn($val) => "'" . pg_escape_string($sql, $val) . "'", $inValues);
-				$orInParts[] = "$orInCol IN (" . implode(',', $escapedVals) . ")";
+				$orInParts[] = "$orInCol IN (" . implode(', ', $escapedVals) . ")";
 			}
 			$whereParts[] = '(' . implode(' OR ', $orInParts) . ')';
 		} elseif (preg_match('/^(.+)\s+(ILIKE|LIKE)$/i', $column, $matches)) {
@@ -123,7 +159,12 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 	if (!empty($options['order_by'])) {
 		$orderByRaw = $options['order_by'];
 		$orderDirection = isset($options['order_direction']) && strtolower($options['order_direction']) === 'desc' ? 'DESC' : 'ASC';
-		$orderClause = " ORDER BY \"$orderByRaw\" $orderDirection";
+		
+		if (preg_match('/\(|\.|\s/', $orderByRaw)) {
+			$orderClause = " ORDER BY $orderByRaw $orderDirection";
+		} else {
+			$orderClause = " ORDER BY \"$orderByRaw\" $orderDirection";
+		}
 	}
 
 	$limitClause = '';
@@ -142,7 +183,7 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 	if (!$result) {
 		return json_encode([
 			"success"	=> false,
-			"message"	=> "Error executing query",
+			"message"	=> "Error executing query: " . pg_last_error($sql),
 			"query"		=> (isset($options['echo_query']) && $options['echo_query']) ? $query : null,
 			"count"		=> 0
 		]);

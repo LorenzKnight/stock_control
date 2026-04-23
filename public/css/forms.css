@@ -573,3 +573,13 @@
     border: 1px solid var(--frm-border-semi-transparent);
     border-radius: 8px;
 }
+
+.auxlabel label {
+    font-size: 9px;
+    color: var(--main-text-color);
+    text-align: center;
+    display: block;
+    margin-bottom: 5px;
+    position: fixed;
+    margin: 8px 0 0 12px;
+}
