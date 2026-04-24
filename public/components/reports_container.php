@@ -6,14 +6,26 @@
 		<div class="centralize auxlabel" style="width: 100%;">
 			<table width="100%" align="center" cellspacing="0">
 				<tr valign="baseline">
-					<td width="60%" align="center" valign="middle">
+					<td width="10%" align="center" valign="middle" style="border-right: 1px solid var(--gray-300);">
+						<select class="form-input-style" name="reports_select_company" id="reports_select_company"></select>
+					</td>
+					<td width="24%" align="center" valign="middle" style="border-right: 1px solid var(--gray-300);">
 						<input type="text" name="reportsSearchField" id="reportsSearchField" class="big-search-field" placeholder="Search Report..." title="Search Report">
 					</td>
-					<td width="20%" align="center" valign="middle">
+					<td width="10%" align="center" valign="middle">
+						<select class="form-input-style" name="reports_product_mark" id="reports_product_mark"></select>
+					</td>
+					<td width="10%" align="center" valign="middle">
+						<select class="form-input-style" name="reports_product_model" id="reports_product_model"></select>
+					</td>
+					<td width="10%" align="center" valign="middle">
+						<select class="form-input-style" name="reports_product_sub_model" id="reports_product_sub_model"></select>
+					</td>
+					<td width="18%" align="center" valign="middle" style="padding-left: 5px; border-left: 1px solid var(--gray-300);">
 						<label for="reports_from_date">From Date:</label>
 						<input class="form-input-style" type="date" name="reports_from_date" id="reports_from_date" placeholder="Enter a Estimate date..."/>
 					</td>
-					<td width="20%" align="center" valign="middle">
+					<td width="18%" align="center" valign="middle" style="padding-left: 10px;">
 						<label for="reports_to_date">To Date:</label>
 						<input class="form-input-style" type="date" name="reports_to_date" id="reports_to_date" placeholder="Enter a Estimate date..."/>
 					</td>

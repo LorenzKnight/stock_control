@@ -30,36 +30,58 @@ try {
         throw new Exception("Unauthorized access: invalid or missing token.");
     }
 
-    $search     = $_GET['search'] ?? '';
-    $fromDate   = $_GET['reports_from_date'] ?? '';
-    $toDate     = $_GET['reports_to_date'] ?? '';
+    $search				= $_GET['search'] ?? '';
+    $fromDate			= $_GET['reports_from_date'] ?? '';
+    $toDate				= $_GET['reports_to_date'] ?? '';
+	$company 			= $_GET['reports_select_company'] ?? '';
+    $productMark		= $_GET['reports_product_mark'] ?? '';
+    $productModel 		= $_GET['reports_product_model'] ?? '';
+    $productSubModel	= $_GET['reports_product_sub_model'] ?? '';
     
 	$productId = isset($_GET['product_id']) && is_numeric($_GET['product_id'])
         ? (int)$_GET['product_id']
         : null;
 
-	$userInfo = select_from(
+	$parsedUserInfo = json_decode(select_from(
         "users",
         ["company_id"],
         ["user_id" => $userId],
         ["fetch_first" => true]
-    );
+    ), true);
 
-    $parsedUserInfo = json_decode($userInfo, true);
+	$userInfo = $parsedUserInfo["data"];
 
     if (
         !is_array($parsedUserInfo) ||
         empty($parsedUserInfo["success"]) ||
-        empty($parsedUserInfo["data"]["company_id"])
+        empty($userInfo["company_id"])
     ) {
         throw new Exception("Company not found for this user.");
     }
 
-    $companyId = (int)$parsedUserInfo["data"]["company_id"];
+    $companyId = (int)$userInfo["company_id"];
 
+	$companyFilter = (!empty($company) && is_numeric($company))
+		? (int)$company
+		: $companyId;
+
+	$where = [];
+	
     $where = [
-		"company_id" => $companyId,
+		"company_id" => $companyFilter,
 	];
+
+	if (!empty($productMark)) {
+		$where["product_mark"] = $productMark;
+	}
+
+	if (!empty($productModel)) {
+		$where["product_model"] = $productModel;
+	}
+
+	if (!empty($productSubModel)) {
+		$where["product_sub_model"] = $productSubModel;
+	}
 
     if (!empty($productId)) {
         $where["product_id"] = $productId;
@@ -134,10 +156,11 @@ try {
     $reportsResult = select_from('products', [
         'product_id',
         'product_name',
+		'hs_code',
         'product_type',
         'product_mark',
         'product_model',
-        'hs_code',
+		'product_sub_model',
         'price',
         'quantity',
         'created_by',
@@ -231,6 +254,7 @@ try {
 					? (float)$parsedSoldResult["data"]["total_amount_sold"]
 					: 0;
 
+				$grandTotalSoldQty += (int)$report["sold"];
 				$grandTotalSoldAmount += (float)$report["sold_total"];
             }
         }

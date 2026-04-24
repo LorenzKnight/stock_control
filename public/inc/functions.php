@@ -531,6 +531,58 @@ function delete_image_from_record(array $params): array
     return ["success" => true, "message" => "Image removed successfully."];
 }
 
+function mapProductRelations(array $product, int $companyId): ?array
+{
+	// Seguridad por compañía
+	if ((int)($product["company_id"] ?? null) !== $companyId) {
+		return null;
+	}
+
+	// Marca
+	if (!empty($product['product_mark'])) {
+		$res = json_decode(select_from(
+			"category",
+			["category_name"],
+			["category_id" => $product['product_mark']],
+			["fetch_first" => true]
+		), true);
+
+		$product["mark_name"] = $res["data"]["category_name"] ?? null;
+	}
+
+	// Modelo
+	if (!empty($product['product_model'])) {
+		$res = json_decode(select_from(
+			"category",
+			["category_name"],
+			["category_id" => $product['product_model']],
+			["fetch_first" => true]
+		), true);
+
+		$product["model_name"] = $res["data"]["category_name"] ?? null;
+	}
+
+	// Submodelo
+	if (!empty($product['product_sub_model'])) {
+		$res = json_decode(select_from(
+			"category",
+			["category_name"],
+			["category_id" => $product['product_sub_model']],
+			["fetch_first" => true]
+		), true);
+
+		$product["submodel_name"] = $res["data"]["category_name"] ?? null;
+	}
+
+	// Propósito
+	if (isset($product['purpose'])) {
+		$purposeMap = GlobalArrays::$productPurpose;
+		$product["purpose_text"] = $purposeMap[$product['purpose']] ?? "Unknown";
+	}
+
+	return $product;
+}
+
 function get_next_increment_value(string $table, string $field, int $companyId, int $startFrom = 10000): int
 {
 	global $sql;

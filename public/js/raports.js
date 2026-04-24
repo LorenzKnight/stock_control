@@ -3,6 +3,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     const reportsSearchField = document.getElementById('reportsSearchField');
     const reportsFromDate = document.getElementById('reports_from_date');
     const reportsToDate = document.getElementById('reports_to_date');
+	const reportsSelectCompany = document.getElementById('reports_select_company');
+	const reportsProductMark = document.getElementById('reports_product_mark');
+	const reportsProductModel = document.getElementById('reports_product_model');
+	const reportsProductSubModel = document.getElementById('reports_product_sub_model');
+
     const reportsContainer = document.getElementById('reports-list');
     const reportSidebar = document.getElementById('report-sidebar');
 
@@ -12,11 +17,28 @@ document.addEventListener("DOMContentLoaded", async function () {
 				const searchTerm = reportsSearchField?.value.trim() || "";
                 const fromDate = reportsFromDate?.value || "";
 			    const toDate = reportsToDate?.value || "";
+				const company = reportsSelectCompany?.value || "";
+				const productMark = reportsProductMark?.value || "";
+				const productModel = reportsProductModel?.value || "";
+				const productSubModel = reportsProductSubModel?.value || "";
+				
 
 				const params = new URLSearchParams();
 				if (searchTerm) params.append('search', searchTerm);
                 if (fromDate) params.append('reports_from_date', fromDate);
                 if (toDate) params.append('reports_to_date', toDate);
+				if (company) params.append('reports_select_company', company);
+				if (productMark) params.append('reports_product_mark', productMark);
+				if (productModel) params.append('reports_product_model', productModel);
+				if (productSubModel) params.append('reports_product_sub_model', productSubModel);
+
+				// console.log({
+				// 	company,
+				// 	productMark,
+				// 	productModel,
+				// 	productSubModel,
+				// 	params: params.toString()
+				// });
 
 				const res = await fetch(`api/get_reports.php?${params.toString()}`, {
 					method: 'GET',
@@ -24,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				});
 
 				const data = await res.json();
-				console.log("Fetched reports data:", data);
+				// console.log("Fetched reports data:", data);
 
 				if (reportsContainer) {
 					reportsContainer.innerHTML = "";
@@ -133,19 +155,22 @@ document.addEventListener("DOMContentLoaded", async function () {
 						row.innerHTML = `
 							<table width="100%" align="center" cellspacing="0">
 								<tr valign="baseline" class="form_height">
-                                    <td width="8%" align="center" valign="middle">
-										<p class="mini-title">No.:</p>
-										${report.product_id || ''}
-									</td>
-									<td width="17%" align="left" valign="middle" style="padding-left:2%;">
-										<p class="mini-title">Name:</p>
-										${report.product_name || ''}
-									</td>
-									<td width="10%" align="center" valign="middle">
+									<td width="12%" align="center" valign="middle">
 										<p class="mini-title">HS Code:</p>
 										${report.hs_code || '-'}
 									</td>
-                                    
+									<td width="21%" align="left" valign="middle" style="padding-left:2%;">
+										<p class="mini-title">Name:</p>
+										${report.product_name || ''}
+									</td>
+                                    <td width="11%" align="center" valign="middle">
+										<p class="mini-title">Quantity:</p>
+										${report.quantity || '-'}
+									</td>
+									<td width="11%" align="center" valign="middle">
+										<p class="mini-title">Price:</p>
+										$${price}
+									</td>
 									<td width="11%" align="center" valign="middle">
 										<p class="mini-title">Sold:</p>
 										${report.sold || '-'}
@@ -154,15 +179,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 										<p class="mini-title">Sold Total:</p>
 										$${soldTotal}
 									</td>
-									<td width="11%" align="center" valign="middle">
-										<p class="mini-title">Quantity:</p>
-										${report.quantity || '-'}
-									</td>
-									<td width="11%" align="center" valign="middle">
-										<p class="mini-title">Price:</p>
-										$${price}
-									</td>
-									<td width="14%" align="center" valign="middle">
+									<td width="16%" align="center" valign="middle">
 										<p class="mini-title">Create Date:</p>
 										${formatFullDateTime(report.created_at) || '-'}
 									</td>
@@ -177,19 +194,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 						reportsContainer.appendChild(row);
 
-						const reportsMenuBtn = row.querySelector('.reports-menu');
-						reportsMenuBtn.addEventListener('click', () => {
-							// openReportsForm(payment.payment_id);
+						// const reportsMenuBtn = row.querySelector('.reports-menu');
+						// reportsMenuBtn.addEventListener('click', () => {
+						// 	// openReportsForm(payment.payment_id);
 
-							handlePopupClose("payments-options", ".formular-frame", []);
-						});
+						// 	handlePopupClose("payments-options", ".formular-frame", []);
+						// });
 					});
 				} else {
 					if (reportsContainer) {
 						reportsContainer.innerHTML = `
-							<p class="isNotLinkedToCompany hidden" style="text-align: center; color: var(--warning-orange);">
-								To activate this section you must complete the company details <a href="profile.php">here.</a>
-							</p>
 							<p style="text-align:center;">No reports found.</p>
 						`;
 					}
@@ -211,9 +225,20 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		}
 
+		await populateCompanies('reports_select_company');
+
+		initCategorySelectors('reports_product_mark', 'reports_product_model', 'reports_product_sub_model', 'reports_select_company');
+		
 		reportsSearchField?.addEventListener('keyup', fetchAndRenderReports);
         reportsFromDate?.addEventListener('change', fetchAndRenderReports);
 	    reportsToDate?.addEventListener('change', fetchAndRenderReports);
+		
+		document.addEventListener('change', (e) => {
+			const id = e.target?.id;
+			if (["reports_product_mark", "reports_product_model", "reports_product_sub_model", "reports_select_company"].includes(id)) {
+				fetchAndRenderReports();
+			}
+		});
         
 		fetchAndRenderReports();
 	}
