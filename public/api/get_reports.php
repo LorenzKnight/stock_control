@@ -155,6 +155,7 @@ try {
 
     $reportsResult = select_from('products', [
         'product_id',
+		'company_id',
         'product_name',
 		'hs_code',
         'product_type',
@@ -261,6 +262,16 @@ try {
     }
     unset($report);
 
+	$productsData = [];
+
+	foreach ($parsedResults["data"] ?? [] as $product) {
+		$enriched = mapProductRelations($product, $companyFilter);
+
+		if ($enriched) {
+			$productsData[] = $enriched;
+		}
+	}
+
 	$productsFound = count($parsedResults["data"]);
     $averageSoldAmountPerProduct = $productsFound > 0
         ? $grandTotalSoldAmount / $productsFound
@@ -269,7 +280,7 @@ try {
     $response = [
         "success" => true,
         "message" => "Products fetched successfully",
-        "data" => $parsedResults["data"],
+        "data" => $productsData,
         "summary" => [
             "total_sold_amount" => round($grandTotalSoldAmount, 2),
 			"total_quantity_sold" => $grandTotalSoldQty,

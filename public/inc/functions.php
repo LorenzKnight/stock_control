@@ -538,6 +538,10 @@ function mapProductRelations(array $product, int $companyId): ?array
 		return null;
 	}
 
+	$product["mark_name"] = "Uncategorized";
+	$product["model_name"] = "No model assigned";
+	$product["submodel_name"] = "No submodel assigned";
+
 	// Marca
 	if (!empty($product['product_mark'])) {
 		$res = json_decode(select_from(
@@ -547,7 +551,7 @@ function mapProductRelations(array $product, int $companyId): ?array
 			["fetch_first" => true]
 		), true);
 
-		$product["mark_name"] = $res["data"]["category_name"] ?? null;
+		$product["mark_name"] = $res["data"]["category_name"] ?? "Uncategorized";
 	}
 
 	// Modelo
@@ -559,7 +563,7 @@ function mapProductRelations(array $product, int $companyId): ?array
 			["fetch_first" => true]
 		), true);
 
-		$product["model_name"] = $res["data"]["category_name"] ?? null;
+		$product["model_name"] = $res["data"]["category_name"] ?? "No model assigned";
 	}
 
 	// Submodelo
@@ -571,13 +575,15 @@ function mapProductRelations(array $product, int $companyId): ?array
 			["fetch_first" => true]
 		), true);
 
-		$product["submodel_name"] = $res["data"]["category_name"] ?? null;
+		$product["submodel_name"] = $res["data"]["category_name"] ?? "No submodel assigned";
 	}
 
 	// Propósito
 	if (isset($product['purpose'])) {
 		$purposeMap = GlobalArrays::$productPurpose;
-		$product["purpose_text"] = $purposeMap[$product['purpose']] ?? "Unknown";
+		$product["purpose_text"] = $purposeMap[$product['purpose']] ?? "Unknown purpose";
+	} else {
+		$product["purpose_text"] = "No purpose assigned";
 	}
 
 	return $product;

@@ -32,22 +32,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 				if (productModel) params.append('reports_product_model', productModel);
 				if (productSubModel) params.append('reports_product_sub_model', productSubModel);
 
-				// console.log({
-				// 	company,
-				// 	productMark,
-				// 	productModel,
-				// 	productSubModel,
-				// 	params: params.toString()
-				// });
-
 				const res = await fetch(`api/get_reports.php?${params.toString()}`, {
 					method: 'GET',
 					headers: { 'Accept': 'application/json' }
 				});
 
 				const data = await res.json();
-				// console.log("Fetched reports data:", data);
-
+				
 				if (reportsContainer) {
 					reportsContainer.innerHTML = "";
 				}
@@ -160,8 +151,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 										${report.hs_code || '-'}
 									</td>
 									<td width="21%" align="left" valign="middle" style="padding-left:2%;">
-										<p class="mini-title">Name:</p>
 										${report.product_name || ''}
+										<p class="mini-title">${report.mark_name + ' - ' + report.model_name + ' - ' + report.sub_model_name}</p>
 									</td>
                                     <td width="11%" align="center" valign="middle">
 										<p class="mini-title">Quantity:</p>

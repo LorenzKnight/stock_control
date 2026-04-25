@@ -105,26 +105,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const newCompanyId = companySelect.value;
 			await loadMarksByCompany(newCompanyId);
 		});
-	
+
 		// 🔹 Reemplazar modelo (por si venía como input) y configurar
-		const modelSelectCloned = document.createElement('select');
-		modelSelectCloned.name = modelId;
-		modelSelectCloned.id = modelId;
-		modelSelectCloned.className = 'form-medium-input-style';
-		modelSelectCloned.disabled = true;
-		modelSelectCloned.innerHTML = `<option value="">Select Model</option>`;
-		modelSelect.parentNode.replaceChild(modelSelectCloned, modelSelect);
-		modelSelect = modelSelectCloned;
-	
+		modelSelect.disabled = true;
+		modelSelect.innerHTML = `<option value="">Select Model</option>`;
+
 		// 🔹 Reemplazar submodelo y configurar
-		const submodelSelectCloned = document.createElement('select');
-		submodelSelectCloned.name = submodelId;
-		submodelSelectCloned.id = submodelId;
-		submodelSelectCloned.className = 'form-medium-input-style';
-		submodelSelectCloned.disabled = true;
-		submodelSelectCloned.innerHTML = `<option value="">Select Submodel</option>`;
-		submodelSelect.parentNode.replaceChild(submodelSelectCloned, submodelSelect);
-		submodelSelect = submodelSelectCloned;
+		submodelSelect.disabled = true;
+		submodelSelect.innerHTML = `<option value="">Select Submodel</option>`;
 	
 		// 🔹 Evento: Al cambiar Marca → cargar Modelos
 		markSelect.addEventListener('change', () => {
