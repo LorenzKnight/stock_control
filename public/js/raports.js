@@ -71,12 +71,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 					reportSidebar.innerHTML = `
 						<div class="report-sidebar-box">
-							<table width="90%" align="center" cellspacing="0" cellpadding="6">
-								<tr>
-									<td colspan="2" align="center" valign="middle">
-										<h3 style="margin:0;">Report Summary</h3>
-									</td>
-								</tr>
+							<h3 style="text-align: center; margin: 10px 0;">Report Summary</h3>
+							<table width="90%" align="center" cellspacing="0" cellpadding="6" style="border-bottom: 1px solid var(--border-light);">
 								<tr>
 									<td width="60%" align="left" valign="middle">
 										<strong>From</strong>
@@ -127,7 +123,50 @@ document.addEventListener("DOMContentLoaded", async function () {
 								</tr>
 							</table>
 						</div>
+						<div class="report-chart" id="piechart_3d"></div>
 					`;
+
+					// Cargar Google Charts y dibujar el gráfico circular
+					google.charts.load("current", { packages: ["corechart"] });
+					google.charts.setOnLoadCallback(() => drawChart(data.data));
+
+					function drawChart(reports) {
+						const chartRows = Array.isArray(reports)
+							? reports
+								.map(report => [
+									report.product_name || "Unknown product",
+									Number.parseFloat(report.sold_total || 0)
+								])
+								.filter(row => row[1] > 0)
+							: [];
+
+						const chartData = google.visualization.arrayToDataTable([
+							["Product", "Sales"],
+							...chartRows
+						]);
+
+						const options = {
+							title: "Sales by Product",
+							is3D: true,
+							legend: { position: "right" },
+							chartArea: {
+								width: "90%",
+								height: "80%"
+							}
+						};
+
+						const chartElement = document.getElementById("piechart_3d");
+						if (!chartElement) return;
+
+						if (chartRows.length === 0) {
+							chartElement.innerHTML = `<p style="text-align:center;">No sales data for chart.</p>`;
+							return;
+						}
+
+						const chart = new google.visualization.PieChart(chartElement);
+						chart.draw(chartData, options);
+					}
+					// Fin gráfico circular
 				}
 
 				if (data.success && Array.isArray(data.data) && data.data.length > 0) {

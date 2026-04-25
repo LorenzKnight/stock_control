@@ -14,6 +14,7 @@
     <script defer src="js/raports.js"></script>
 	<script defer src="js/realtimeClient.js"></script>
 	<script defer src="js/checkPermission.js"></script>
+	<script src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
 
 <body>
