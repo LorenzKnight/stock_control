@@ -153,6 +153,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				onboardingStatus.client = progress.client === true || progress.client === 't';
 				onboardingStatus.sale = progress.sale === true || progress.sale === 't';
 			}
+			// console.log('Onboarding status:', onboardingStatus);
 		} catch (error) {
 			console.error('Error fetching onboarding progress:', error);
 		}
@@ -166,7 +167,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (!hasSeenOnboarding) {
 			setTimeout(() => {
 				startOnboardingGuide();
-				localStorage.setItem('hasSeenOnboarding', 'true');
+				// localStorage.setItem('hasSeenOnboarding', 'true');
 			}, 500);
 		}
 	}

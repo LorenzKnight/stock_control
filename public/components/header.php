@@ -38,9 +38,9 @@
 		</nav>
 	</div>
 
-	<div id="onboarding-progress" class="onboarding-box">
+	<!-- <div id="onboarding-progress" class="onboarding-box">
 		<div class="onboarding-header">
-			<strong>Set up your inventory</strong>
+			<strong>Get your inventory ready</strong>
 			<span id="onboarding-percent">0%</span>
 		</div>
 
@@ -54,5 +54,5 @@
 			<li id="step-client">Add your first customer</li>
 			<li id="step-sale">Record your first sale</li>
 		</ul>
-	</div>
+	</div> -->
 </header>
