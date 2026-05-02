@@ -392,3 +392,120 @@ body {
 .grayscale-img {
 	filter: grayscale(75%);
 }
+
+
+/* ########## ONBOARDING GUIDE STYLES ########## */
+.onboarding-box {
+    background: #fff;
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 20px 0;
+    position: absolute;
+    left: 30px;
+    bottom: 0;
+    z-index: 4;
+}
+
+.onboarding-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.onboarding-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--gray-200);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+#onboarding-bar-fill {
+    width: 0%;
+    height: 100%;
+    background: var(--main-bg-dark-blue);
+    transition: width 0.3s ease;
+}
+
+.onboarding-steps {
+    padding-left: 18px;
+    margin: 0;
+}
+
+.onboarding-steps li {
+    margin-bottom: 6px;
+    color: var(--text-muted);
+}
+
+.onboarding-steps li.completed {
+    color: var(--max-blue);
+    font-weight: 600;
+}
+
+/* Caja principal del popup */
+.driver-popover {
+	background: #ffffff;
+	border-radius: 10px !important;
+	padding: 18px;
+	box-shadow: 0 15px 40px rgba(0, 0, 0, 0.18);
+	border: 1px solid var(--border-light);
+	max-width: 320px;
+}
+
+/* Título */
+.driver-popover-title {
+    background: none;
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--main-bg-dark-blue);
+	margin-bottom: 8px;
+}
+
+/* Texto */
+.driver-popover-description {
+	font-size: 12px !important;
+	line-height: 1.5;
+	color: var(--text-muted);
+}
+
+/* Footer donde están los botones */
+.driver-popover-footer {
+    background: none;
+	margin-top: 16px;
+}
+
+/* Botones */
+.driver-popover-btn {
+	border-radius: 8px;
+	padding: 8px 14px;
+	font-size: 14px;
+	font-weight: 600;
+	border: none;
+	cursor: pointer;
+}
+
+/* Botón siguiente / terminar */
+.driver-popover-next-btn,
+.driver-popover-done-btn {
+	background: #2563eb;
+	color: #ffffff;
+}
+
+/* Botón anterior */
+.driver-popover-prev-btn {
+	background: #f3f4f6;
+	color: #374151;
+}
+
+/* Botón cerrar */
+.driver-popover-close-btn {
+	color: #6b7280;
+	font-size: 18px;
+}
+
+/* Flecha del popup */
+.driver-popover-arrow {
+	border-color: #ffffff;
+}

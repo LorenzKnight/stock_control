@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					reportSidebar.innerHTML = `
 						<div class="report-sidebar-box">
 							<h3 style="text-align: center; margin: 10px 0;">Report Summary</h3>
-							<table width="90%" align="center" cellspacing="0" cellpadding="6" style="border-bottom: 1px solid var(--border-light);">
+							<table width="90%" align="center" cellspacing="0" cellpadding="6" style="border-block: 1px solid var(--border-light);">
 								<tr>
 									<td width="60%" align="left" valign="middle">
 										<strong>From</strong>

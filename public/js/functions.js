@@ -252,4 +252,128 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 	window.populateCompanies = populateCompanies;
 
+	
+
+
+
+	// 📌 Función para actualizar el progreso del onboarding
+	function updateOnboardingProgress(status) {
+		const onboardingPercent = document.getElementById('onboarding-percent');
+		const onboardingBarFill = document.getElementById('onboarding-bar-fill');
+		const onboardingProgress = document.getElementById('onboarding-progress');
+
+		if (!onboardingPercent || !onboardingBarFill || !onboardingProgress) {
+			return;
+		}
+
+		// const steps = ['company_created', 'first_product_created', 'first_client_created', 'first_sale_created'];
+		const steps = ['company', 'product', 'client', 'sale'];
+		const completed = steps.filter(step => status[step]).length;
+		const percent = Math.round((completed / steps.length) * 100);
+
+		onboardingPercent.textContent = `${percent}%`;
+		onboardingBarFill.style.width = `${percent}%`;
+
+		steps.forEach(step => {
+			const element = document.getElementById(`step-${step}`);
+			if (element) {
+				element.classList.toggle('completed', status[step]);
+			}
+		});
+
+		if (percent === 100) {
+			onboardingProgress.style.display = 'none';
+		}
+	}
+	window.updateOnboardingProgress = updateOnboardingProgress;
+
+	function waitForElements(selectors, callback, timeout = 5000) {
+		const start = Date.now();
+
+		const interval = setInterval(() => {
+			const elements = selectors.map(selector => document.querySelector(selector));
+			const allFound = elements.every(element => element !== null);
+
+			if (allFound) {
+				clearInterval(interval);
+				callback(elements);
+				return;
+			}
+
+			if (Date.now() - start > timeout) {
+				clearInterval(interval);
+
+				const missingSelectors = selectors.filter(selector => !document.querySelector(selector));
+				console.warn('Elementos no encontrados para onboarding:', missingSelectors);
+			}
+		}, 300);
+	}
+
+	function startOnboardingGuide() {
+		const driverFactory = window.driver?.js?.driver || window.driver?.driver;
+
+		if (!driverFactory) {
+			console.warn('Driver.js no está cargado.');
+			console.log('window.driver:', window.driver);
+			return;
+		}
+
+		const requiredSelectors = [
+			'#btn-create-product',
+			'#onboarding-progress',
+			'#btn-create-client',
+			'#btn-create-sale'
+		];
+
+		waitForElements(requiredSelectors, () => {
+			const guide = driverFactory({
+				showProgress: true,
+				allowClose: true,
+				nextBtnText: 'Next',
+				prevBtnText: 'Back',
+				doneBtnText: 'Done',
+				steps: [
+					{
+						element: '#onboarding-progress',
+						popover: {
+							title: 'Track your progress',
+							description: 'Here you can see the steps needed to set up your inventory.',
+							side: 'bottom',
+							align: 'start'
+						}
+					},
+					{
+						element: '#btn-create-product',
+						popover: {
+							title: 'Create your first product',
+							description: 'Start by adding a product to your inventory. It takes less than a minute.',
+							side: 'bottom',
+							align: 'start'
+						}
+					},
+					{
+						element: '#btn-create-client',
+						popover: {
+							title: 'Add your customers',
+							description: 'You can create customer profiles to manage and track your sales more easily.',
+							side: 'bottom',
+							align: 'start'
+						}
+					},
+					{
+						element: '#btn-create-sale',
+						popover: {
+							title: 'Record a sale',
+							description: 'When you record a sale, the system will automatically update your stock.',
+							side: 'bottom',
+							align: 'start'
+						}
+					}
+				]
+			});
+
+			guide.drive();
+		});
+	}
+	window.startOnboardingGuide = startOnboardingGuide;
 });

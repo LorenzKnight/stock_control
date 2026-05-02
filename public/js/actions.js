@@ -127,6 +127,50 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
+	// --- Onboarding guide ---
+	const onboardingBox = document.getElementById('onboarding-progress');
+	if (onboardingBox) {
+		const onboardingStatus = {
+			company: false,
+			product: false,
+			client: false,
+			sale: false
+		};
+
+		try {
+			const response = await fetch('/api/get_my_info.php', {
+				method: 'GET',
+				headers: { Accept: 'application/json' }
+			});
+
+			const data = await response.json();
+
+			if (data.success && data.data?.onboarding_progress) {
+				const progress = data.data.onboarding_progress;
+
+				onboardingStatus.company = progress.company === true || progress.company === 't';
+				onboardingStatus.product = progress.product === true || progress.product === 't';
+				onboardingStatus.client = progress.client === true || progress.client === 't';
+				onboardingStatus.sale = progress.sale === true || progress.sale === 't';
+			}
+		} catch (error) {
+			console.error('Error fetching onboarding progress:', error);
+		}
+
+		updateOnboardingProgress(onboardingStatus);
+
+		const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
+
+		console.log('hasSeenOnboarding:', hasSeenOnboarding);
+
+		if (!hasSeenOnboarding) {
+			setTimeout(() => {
+				startOnboardingGuide();
+				localStorage.setItem('hasSeenOnboarding', 'true');
+			}, 500);
+		}
+	}
+
 	// --- Init flow ---
 	const setUp = document.getElementById('setup-form');
 	if (setUp) {

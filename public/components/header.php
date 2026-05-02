@@ -10,11 +10,11 @@
 				<li class="no-redirect" id="home-site">
 					<img src="images/sys-img/home-icon.png" alt="Home" id="notification-icon" class="home-icon">
 				</li>
-				<li>Products</li>
+				<li id="btn-create-product">Products</li>
 				<li>Storage</li>
-				<li>Customers</li>
+				<li id="btn-create-client">Customers</li>
 				<li class="hidden" id="shipping-seccion">Shipping</li>
-				<li>Sales</li>
+				<li id="btn-create-sale">Sales</li>
 				<li>Payments</li>
 				<li class="no-redirect" id="notification-site">
 					<img src="images/sys-img/notif.png" alt="Notification" id="notification-icon" class="notification-icon">
@@ -36,5 +36,23 @@
 				</li>
 			</ul>
 		</nav>
+	</div>
+
+	<div id="onboarding-progress" class="onboarding-box">
+		<div class="onboarding-header">
+			<strong>Set up your inventory</strong>
+			<span id="onboarding-percent">0%</span>
+		</div>
+
+		<div class="onboarding-bar">
+			<div id="onboarding-bar-fill"></div>
+		</div>
+
+		<ul class="onboarding-steps">
+			<li id="step-company">Set up your company profile</li>
+			<li id="step-product">Create your first product</li>
+			<li id="step-client">Add your first customer</li>
+			<li id="step-sale">Record your first sale</li>
+		</ul>
 	</div>
 </header>

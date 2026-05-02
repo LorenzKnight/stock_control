@@ -96,6 +96,34 @@ try {
         $userInfo["tokens"] = [];
     }
 
+    // Obtener informacion de la guia de onboarding
+    $onboardingResponse = select_from(
+        "user_onboarding",
+        [
+            "user_id",
+            "company",
+            "product",
+            "client",
+            "sale",
+            "onboarding_completed"
+        ],
+        ["user_id" => $userId],
+        ["fetch_first" => true]
+    );
+    $onboardingData = json_decode($onboardingResponse, true);
+
+    if ($onboardingData["success"] && !empty($onboardingData["data"])) {
+        $userInfo["onboarding_progress"] = $onboardingData["data"];
+    } else {
+        $userInfo["onboarding_progress"] = [
+            "company_created" => false,
+            "first_product_created" => false,
+            "first_client_created" => false,
+            "first_sale_created" => false,
+            "onboarding_completed" => false
+        ];
+    }
+
     $response = [
         "success" => true,
         "message" => "User data retrieved successfully.",
