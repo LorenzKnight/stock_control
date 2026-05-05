@@ -1,5 +1,5 @@
 <?php
-require_once ('../inc/cors.php');
+require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
@@ -14,6 +14,7 @@ $response = [
 try {
 	$authUser = requireAuth();
 	$userId = $authUser["user_id"] ?? null;
+	$companyId = $authUser["company_id"] ?? null;
 
 	if (!$userId) {
 		throw new Exception("Unauthorized access. User not found or invalid token.");
@@ -22,11 +23,6 @@ try {
 	if (!check_user_permission($userId, 'sales_handler')) {
 		throw new Exception("Access denied. You do not have permission to create data.");
 	}
-
-	$userInfo = json_decode(select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]), true);
-	$userData = $userInfo["data"];
-
-	$companyId = $userData["company_id"] ?? null;
 
 	$input = json_decode(file_get_contents('php://input'), true);
 	if (!$input) throw new Exception("No data received.");
@@ -83,6 +79,40 @@ try {
 		throw new Exception("Failed to create sale record.");
 	}
 	$saleId = $saleInsert["id"];
+
+	// ✅ Validar si este es el primer producto creado
+	$salesCountRes = json_decode(select_from("sales", ["COUNT(*) AS total"], [
+		"company_id" => $companyId
+	], ["fetch_first" => true]), true);
+
+	$totalSales = intval($salesCountRes["data"]["total"] ?? 0);
+
+	if ($salesCountRes["success"] && $totalSales === 1) {
+		$onboardingCheck = json_decode(select_from("user_onboarding", ["user_id"], [
+			"user_id" => $userId
+		], ["fetch_first" => true]), true);
+
+		if ($onboardingCheck["success"] && !empty($onboardingCheck["data"])) {
+			// ✅ Existe: actualizar
+			$onboardingResult = json_decode(update_table("user_onboarding", [
+				"sale" => true,
+				"updated_at" => date("Y-m-d H:i:s")
+			], [
+				"user_id" => $userId
+			]), true);
+		} else {
+			// ✅ No existe: insertar nuevo registro
+			$onboardingResult = json_decode(insert_into("user_onboarding", [
+				"user_id" => $userId,
+				"sale" => true,
+				"created_at" => date("Y-m-d H:i:s")
+			]), true);
+		}
+
+		if (!$onboardingResult["success"]) {
+			error_log("Could not update onboarding sale step for user_id: " . $userId);
+		}
+	}
 
 	$tolerance = 0.01;
 	$sumFromFront = 0.0;

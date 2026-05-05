@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
-	// --- Onboarding guide ---
+	// --- Onboarding guide --- REVISA PARA QUE NO SALGA EL LOG EN LA CONSOLA (solo es para debug)
 	const onboardingBox = document.getElementById('onboarding-progress');
 	if (onboardingBox) {
 		const onboardingStatus = {
@@ -153,7 +153,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				onboardingStatus.client = progress.client === true || progress.client === 't';
 				onboardingStatus.sale = progress.sale === true || progress.sale === 't';
 			}
-			// console.log('Onboarding status:', onboardingStatus);
 		} catch (error) {
 			console.error('Error fetching onboarding progress:', error);
 		}
@@ -167,7 +166,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (!hasSeenOnboarding) {
 			setTimeout(() => {
 				startOnboardingGuide();
-				// localStorage.setItem('hasSeenOnboarding', 'true');
+				localStorage.setItem('hasSeenOnboarding', 'true');
 			}, 500);
 		}
 	}
@@ -2680,7 +2679,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (selectedMark) params.append('mark', selectedMark);
 		if (selectedModel) params.append('model', selectedModel);
 		if (selectedSubmodel) params.append('submodel', selectedSubmodel);
-		if (selectedCompany) params.append('company', selectedCompany);
+		
+		if (
+			selectedCompany &&
+			selectedCompany !== "0" &&
+			selectedCompany !== "all" &&
+			selectedCompany !== "null" &&
+			selectedCompany !== "undefined"
+		) {
+			params.append('company', selectedCompany);
+		}
 
 		// Log params para depuración
 		// console.log("🔍 Enviando filtros a get_products.php:", params.toString());
@@ -3041,6 +3049,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	async function openEditProductForm(productId) {
+		console.log("Opening edit form for product ID:", productId);
 		const formEditProduct = document.getElementById('formEditProduct');
 		if (!formEditProduct) return;
 	
@@ -3060,6 +3069,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	
 			if (data.success && data.data.length > 0) {
 				const product = data.data.find(p => p.product_id == productId);
+				console.log("Product for editing:", product);
 				if (!product) return;
 				
 				// Llenar campos del formulario
@@ -3097,6 +3107,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 				);
 				
 				initDragAndDrop('edit-drop-product-area', 'edit_Product_image', 'edit-product-image-preview');
+
+				console.log('Edit type debug:', {
+					productType: product.product_type,
+					companyId: product.company_id
+				});
 
 				await populateProductTypes('edit_product_type', product.product_type, product.company_id, true);
 
@@ -11129,6 +11144,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	async function populateProductTypes(selectId, selectedValue = '', companyId = '', withCreate = true) {
+		console.log(`[populateProductTypes] Cargando tipos para companyId=${companyId}, selectedValue=${selectedValue}, withCreate=${withCreate}`);
 		const select = document.getElementById(selectId);
 		if (!select) return;
 	

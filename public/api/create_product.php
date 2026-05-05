@@ -1,4 +1,5 @@
 <?php
+require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
@@ -15,14 +16,19 @@ try {
         throw new Exception("Method not allowed");
     }
 
-    $userId = $_SESSION["sc_UserId"] ?? null;
-    if (!$userId) throw new Exception("User session not found.");
+    $authUser = requireAuth();
+    $userId = $authUser["user_id"];
+	$companyId = $authUser["company_id"] ?? null;
+
+    if (empty($userId)) {
+        throw new Exception("Unauthorized access: invalid or missing token.");
+    }
 
     if (!check_user_permission($userId, 'process_handler')) {
 		throw new Exception("Access denied. You do not have permission to create data.");
 	}
 
-    $companyId              = intval($_POST["company_id"] ?? '');
+    $productCompanyId       = intval($_POST["company_id"] ?? $companyId);
     $unitType         		= intval($_POST["unit_type"] ?? 1);
     $units         			= is_numeric($_POST["units"] ?? null) ? intval($_POST["units"]) : 1;
     $weightUnit         	= is_numeric($_POST["weight_unit"] ?? null) ? floatval($_POST["weight_unit"]) : 0;
@@ -62,7 +68,7 @@ try {
 
     $insertData = [
         "created_by"         => $userId,
-        "company_id"        => $companyId,
+        "company_id"        => $productCompanyId,
         "sale_unit_type"    => $unitType,
         "units_per_pack"    => $units,
         "weight_per_unit"   => $weightUnit,
@@ -89,7 +95,7 @@ try {
     }
 
     $productRes = json_decode(select_from("products", ["product_id", "quantity"], [
-        "company_id"        => $companyId,
+        "company_id"        => $productCompanyId,
         "product_name"      => $productName,
         "product_mark"      => $productMark,
         "product_model"     => $productModel,
@@ -130,6 +136,41 @@ try {
         }
 
         $finalProductId = $insertResult["id"];
+
+        // ✅ Validar si este es el primer producto creado
+		$productCountRes = json_decode(select_from("products", ["COUNT(*) AS total"], [
+			"company_id" => $productCompanyId,
+			"created_by" => $userId
+		], ["fetch_first" => true]), true);
+
+		$totalProducts = intval($productCountRes["data"]["total"] ?? 0);
+
+		if ($productCountRes["success"] && $totalProducts === 1) {
+			$onboardingCheck = json_decode(select_from("user_onboarding", ["user_id"], [
+				"user_id" => $userId
+			], ["fetch_first" => true]), true);
+
+			if ($onboardingCheck["success"] && !empty($onboardingCheck["data"])) {
+				// ✅ Existe: actualizar
+				$onboardingResult = json_decode(update_table("user_onboarding", [
+					"product" => true,
+					"updated_at" => date("Y-m-d H:i:s")
+				], [
+					"user_id" => $userId
+				]), true);
+			} else {
+				// ✅ No existe: insertar nuevo registro
+				$onboardingResult = json_decode(insert_into("user_onboarding", [
+					"user_id" => $userId,
+					"product" => true,
+					"created_at" => date("Y-m-d H:i:s")
+				]), true);
+			}
+
+			if (!$onboardingResult["success"]) {
+				error_log("Could not update onboarding product step for user_id: " . $userId);
+			}
+		}
     }
 
     log_activity(
@@ -158,4 +199,3 @@ try {
 
 echo json_encode($response);
 exit;
-?>

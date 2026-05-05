@@ -1,4 +1,5 @@
 <?php
+require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
@@ -15,8 +16,12 @@ try {
 		throw new Exception("Method not allowed");
 	}
 
-	$userId = $_SESSION["sc_UserId"] ?? null;
-	if (!$userId) throw new Exception("User session not found.");
+	$authUser = requireAuth();
+    $userId = $authUser["user_id"];
+	
+	if (empty($userId)) {
+        throw new Exception("Unauthorized access: invalid or missing token.");
+    }
 
 	if (!function_exists('check_user_permission') || !check_user_permission($userId, 'process_handler')) {
 		throw new Exception("Access denied. You do not have permission to create data.");

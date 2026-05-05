@@ -1,5 +1,5 @@
 <?php
-require_once ('../inc/cors.php');
+require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
@@ -18,25 +18,11 @@ try {
 
 	$authUser = requireAuth();
 	$userId = $authUser["user_id"] ?? null;
-
+	$companyId = $authUser["company_id"] ?? null;
+	
 	if (empty($userId)) {
         throw new Exception("Unauthorized access: invalid or missing token.");
     }
-
-	// Obtener datos del usuario
-	$userData = json_decode(select_from(
-		"users",
-		["company_id"],
-		["user_id" => $userId],
-		["fetch_first" => true]
-	), true);
-
-	if (!$userData["success"] || empty($userData["data"])) {
-		throw new Exception("No user data found.");
-	}
-
-	$userInfo = $userData["data"];
-	$companyId = (int)$userInfo["company_id"];
 
 	// Leer filtros desde la URL
 	$search     = $_GET["search"]     ?? '';
@@ -48,10 +34,17 @@ try {
 	$purpose    = $_GET["purpose"]    ?? '';
 	$barcode    = $_GET["barcode"]    ?? '';
 
-	$companyFilter = (!empty($company) && is_numeric($company))
-		? (int)$company
-		: $companyId;
+	$companyFilter = null;
 
+	if (is_numeric($company) && intval($company) > 0) {
+		$companyFilter = intval($company);
+	} elseif (is_numeric($companyId) && intval($companyId) > 0) {
+		$companyFilter = intval($companyId);
+	}
+
+	if (empty($companyFilter)) {
+		throw new Exception("No company selected or linked to this user.");
+	}
 	/*
 	-------------------------------------------------------------------
 	🔎 BÚSQUEDA POR CÓDIGO DE BARRAS (modo individual)
@@ -109,9 +102,10 @@ try {
 
 	if (!empty($productId) && is_numeric($productId)) {
 		$where["product_id"] = (int)$productId;
-	} else {
-		$where["company_id"] = $companyFilter;
 	}
+
+	$where["company_id"] = $companyFilter;
+	
 
 	if (!empty($search)) {
 		$where["OR"] = [
@@ -125,9 +119,9 @@ try {
 		"order_by" => "created_at",
 		"order_direction" => "DESC"
 	]);
-
+	
 	$parsed = json_decode($productsQuery, true);
-
+	
 	if (!$parsed["success"]) {
 		throw new Exception("Error loading products.");
 	}
@@ -140,6 +134,10 @@ try {
 		if ($enriched) {
 			$productsData[] = $enriched;
 		}
+
+		if (!$enriched) {
+			error_log("Product discarded. Product company_id: " . ($product["company_id"] ?? 'NULL') . " / companyFilter: " . $companyFilter);
+		}
 	}
 
 	$response = [
@@ -148,7 +146,6 @@ try {
 		"count"   => count($productsData),
 		"data"    => array_values($productsData)
 	];
-
 } catch (Exception $e) {
 	$response = [
 		"success" => false,

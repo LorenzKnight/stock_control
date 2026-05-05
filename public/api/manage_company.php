@@ -35,7 +35,11 @@ try {
 
 	$altUser = empty($userInfo["parent_user"] ?? null) ? $userId : intval($userInfo["parent_user"]);
 
-	$companyId = $_POST['company_id'] ?? null;
+	$companyIdRaw = $_POST['company_id'] ?? null;
+	$companyId = (is_numeric($companyIdRaw) && intval($companyIdRaw) > 0)
+		? intval($companyIdRaw)
+		: null;
+
 	if ($companyId && !is_numeric($companyId)) {
 		throw new Exception("Invalid company ID.");
 	}
@@ -58,17 +62,27 @@ try {
 		"company_phone" => $phone
 	];
 
-	$previousData = json_decode(select_from(
-		"companies",
-		["company_logo"],
-		["company_id" => $companyId],
-        ["fetch_first" => true]
-	),true);
+	// $previousData = json_decode(select_from(
+	// 	"companies",
+	// 	["company_logo"],
+	// 	["company_id" => $companyId],
+    //     ["fetch_first" => true]
+	// ),true);
 
 	$previousImage = null;
-	if (!empty($previousData["success"]) && !empty($previousData["data"]) && isset($previousData["data"]["company_logo"])) {
-		$tmp = trim((string)$previousData["data"]["company_logo"]);
-		$previousImage = $tmp !== '' ? $tmp : null;
+
+	if (!empty($companyId)) {
+		$previousData = json_decode(select_from(
+			"companies",
+			["company_logo"],
+			["company_id" => $companyId],
+			["fetch_first" => true]
+		), true);
+
+		if (!empty($previousData["success"]) && !empty($previousData["data"]["company_logo"])) {
+			$tmp = trim((string)$previousData["data"]["company_logo"]);
+			$previousImage = $tmp !== '' ? $tmp : null;
+		}
 	}
 
 	try {
@@ -148,13 +162,11 @@ try {
 		}
 
 		$updateData["user_id"] = $altUser;
-		$insertResponse = insert_into("companies", $updateData, ["id" => "company_id"]);
-		$insertResult = json_decode($insertResponse, true);
+		$insertResult = json_decode(insert_into("companies", $updateData, ["id" => "company_id"]), true);
 
 		if (empty($insertResult["success"])) throw new Exception("Insert failed.");
 
-		$userInfo = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
-		$decodedUser = json_decode($userInfo, true);
+		$decodedUser = json_decode(select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]), true);
 
 		$companyId = $decodedUser["data"]["company_id"] ?? null;
 
@@ -163,6 +175,40 @@ try {
 			$updateResult = json_decode($updateResponse, true);
 
 			if (empty($updateResult["success"])) throw new Exception("Update failed.");
+		}
+
+		// ✅ Validar si este es el primer producto creado
+		$companiesCountRes = json_decode(select_from("companies", ["COUNT(*) AS total"], [
+			"user_id" => $altUser
+		], ["fetch_first" => true]), true);
+
+		$totalCompanies = intval($companiesCountRes["data"]["total"] ?? 0);
+
+		if ($companiesCountRes["success"] && $totalCompanies === 1) {
+			$onboardingCheck = json_decode(select_from("user_onboarding", ["user_id"], [
+				"user_id" => $userId
+			], ["fetch_first" => true]), true);
+
+			if ($onboardingCheck["success"] && !empty($onboardingCheck["data"])) {
+				// ✅ Existe: actualizar
+				$onboardingResult = json_decode(update_table("user_onboarding", [
+					"company" => true,
+					"updated_at" => date("Y-m-d H:i:s")
+				], [
+					"user_id" => $userId
+				]), true);
+			} else {
+				// ✅ No existe: insertar nuevo registro
+				$onboardingResult = json_decode(insert_into("user_onboarding", [
+					"user_id" => $userId,
+					"company" => true,
+					"created_at" => date("Y-m-d H:i:s")
+				]), true);
+			}
+
+			if (!$onboardingResult["success"]) {
+				error_log("Could not update onboarding company step for user_id: " . $userId);
+			}
 		}
 	
 		$action = "created";

@@ -1,4 +1,5 @@
 <?php
+require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
@@ -15,17 +16,17 @@ try {
 		throw new Exception("Method not allowed");
 	}
 
-	$userId = $_SESSION["sc_UserId"] ?? null;
-	if (!$userId) throw new Exception("User session not found.");
+	$authUser = requireAuth();
+    $userId = $authUser["user_id"];
+	$companyId = $authUser["company_id"] ?? null;
+
+	if (empty($userId)) {
+        throw new Exception("Unauthorized access: invalid or missing token.");
+    }
 
 	if (!check_user_permission($userId, 'process_handler')) {
 		throw new Exception("Access denied. You do not have permission to create data.");
 	}
-
-	$userInfo = json_decode(select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]), true);
-	$userData = $userInfo["data"];
-
-	$companyId = $userData["company_id"] ?? null;
 
 	$name		= trim($_POST["customer_name"] ?? '');
 	$surname	= trim($_POST["customer_surname"] ?? '');
@@ -93,11 +94,42 @@ try {
 		$insertData["customer_image"] = $imageName;
 	}
 	
-	$insertResponse = insert_into("customers", $insertData, ["id" => "customer_id"]);
-	$insertResult = json_decode($insertResponse, true);
+	$insertResult = json_decode(insert_into("customers", $insertData, ["id" => "customer_id"]), true);
 
 	if (!$insertResult["success"]) {
 		throw new Exception("Error saving customer data.");
+	}
+
+	// ✅ Validar si este es el primer cliente creado
+	$customerCountRes = json_decode(select_from("customers", ["COUNT(*) AS total"], [
+		"company_id" => $companyId
+	], ["fetch_first" => true]), true);
+
+	$totalCustomers = intval($customerCountRes["data"]["total"] ?? 0);
+
+	if ($customerCountRes["success"] && $totalCustomers === 1) {
+		$onboardingCheck = json_decode(select_from("user_onboarding", ["user_id"], [
+			"user_id" => $userId
+		], ["fetch_first" => true]), true);
+
+		if ($onboardingCheck["success"] && !empty($onboardingCheck["data"])) {
+			$onboardingResult = json_decode(update_table("user_onboarding", [
+				"client" => true,
+				"updated_at" => date("Y-m-d H:i:s")
+			], [
+				"user_id" => $userId
+			]), true);
+		} else {
+			$onboardingResult = json_decode(insert_into("user_onboarding", [
+				"user_id" => $userId,
+				"client" => true,
+				"created_at" => date("Y-m-d H:i:s")
+			]), true);
+		}
+
+		if (!$onboardingResult["success"]) {
+			error_log("Could not update onboarding customer step for user_id: " . $userId);
+		}
 	}
 
 	log_activity(
@@ -126,4 +158,3 @@ try {
 
 echo json_encode($response);
 exit;
-?>

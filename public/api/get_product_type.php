@@ -1,4 +1,5 @@
 <?php
+require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
@@ -11,8 +12,12 @@ $response = [
 ];
 
 try {
-    $userId = $_SESSION["sc_UserId"] ?? null;
-    if (!$userId) throw new Exception("User session not found.");
+    $authUser = requireAuth();
+	$userId = $authUser["user_id"] ?? null;
+// var_dump($authUser);
+    if (!$userId) {
+		throw new Exception("Unauthorized access. User not found or invalid token.");
+	}
 
     $userData = json_decode(select_from("users", ["parent_user"], ["user_id" => $userId], ["fetch_first" => true]), true);
     if (!$userData["success"] || empty($userData["data"])) {
@@ -27,9 +32,10 @@ try {
 	];
 
     $selectCompany = $_GET["select_company"] ?? '';
-    if (!empty($selectCompany)) {
-        $where["company_id"] = $selectCompany;
-    }
+    
+    if (!empty($selectCompany) && is_numeric($selectCompany)) {
+		$where["company_id"] = intval($selectCompany);
+	}
     
     $companyResponse = select_from("product_type", [
         "product_type_id",
@@ -39,7 +45,7 @@ try {
         "created_at"
     ], $where, [
         "order_by" => "product_type_id",
-        "oder_direction" => "ASC"
+        "order_direction" => "ASC"
     ]);
 
     $companyData = json_decode($companyResponse, true);

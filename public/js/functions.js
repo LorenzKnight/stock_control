@@ -266,7 +266,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			return;
 		}
 
-		// const steps = ['company_created', 'first_product_created', 'first_client_created', 'first_sale_created'];
 		const steps = ['company', 'product', 'client', 'sale'];
 		const completed = steps.filter(step => status[step]).length;
 		const percent = Math.round((completed / steps.length) * 100);
@@ -281,8 +280,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		});
 
-		if (percent === 100) {
-			onboardingProgress.style.display = 'none';
+		if (percent !== 100) {
+			onboardingProgress.classList.remove('hidden');
 		}
 	}
 	window.updateOnboardingProgress = updateOnboardingProgress;

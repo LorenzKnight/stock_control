@@ -33,8 +33,8 @@ $stripeJsSrc = $isProduction ? 'https://js.stripe.com/v3/' : 'http://js.stripe.c
 	<link rel="stylesheet" href="css/styles.css">
 
 	<!-- Hotjar Tracking Code for https://allstockcontrol.com -->
-	<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.3.6/dist/driver.css">
-	<script src="https://cdn.jsdelivr.net/npm/driver.js@1.3.6/dist/driver.js.iife.js"></script> -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.3.6/dist/driver.css">
+	<script src="https://cdn.jsdelivr.net/npm/driver.js@1.3.6/dist/driver.js.iife.js"></script>
 
 	<script defer src="js/functions.js"></script>
 	<script src="<?= htmlspecialchars($stripeJsSrc) ?>"></script>

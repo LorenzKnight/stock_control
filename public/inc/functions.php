@@ -531,10 +531,13 @@ function delete_image_from_record(array $params): array
     return ["success" => true, "message" => "Image removed successfully."];
 }
 
-function mapProductRelations(array $product, int $companyId): ?array
+function mapProductRelations(array $product, $companyId): ?array
 {
 	// Seguridad por compañía
-	if ((int)($product["company_id"] ?? null) !== $companyId) {
+	$productCompanyId = isset($product["company_id"]) ? (int)$product["company_id"] : 0;
+	$filterCompanyId = !empty($companyId) ? (int)$companyId : 0;
+
+	if ($filterCompanyId <= 0 || $productCompanyId !== $filterCompanyId) {
 		return null;
 	}
 
