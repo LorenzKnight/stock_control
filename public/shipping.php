@@ -1,7 +1,8 @@
 <?php 
-require_once('logic/stock_be.php'); 
+require_once('logic/stock_be.php');
 enforce_service_right("shipping_access");
 ?>
+<?php include('logic/mini_language_switcher.php'); ?>
 
 <!DOCTYPE html>
 <html class="no-js" lang="sw">

@@ -218,7 +218,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									</p>
 								</td>
 								<td width="20%" align="center" valign="top">
-									<p>${notif.is_read == 0 ? `<strong>${formatNotificationDate(notif.created_at)}</strong>` : `${formatNotificationDate(notif.created_at)}`}</p>
+									<p>${notif.is_read == 0 ? `<strong>${window.formatNotificationDate(notif.created_at)}</strong>` : `${window.formatNotificationDate(notif.created_at)}`}</p>
 								</td>
 							`;
 
@@ -281,7 +281,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 									const dateCell = row.querySelector('td:nth-child(3) p');
 									if (dateCell && dateCell.innerHTML.includes('<strong>')) {
-										dateCell.innerHTML = formatNotificationDate(notif.created_at);
+										dateCell.innerHTML = window.formatNotificationDate(notif.created_at);
 									}
 
 									await checkNotifications();

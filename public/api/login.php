@@ -11,6 +11,16 @@ $sql = get_pg_connection();
 
 header("Content-Type: application/json");
 
+$supportedLangs = ['en', 'es', 'sv'];
+
+$lang = $_POST['lang'] ?? $_GET['lang'] ?? '';
+$lang = strtolower($lang);
+
+if (!in_array($lang, $supportedLangs, true)) {
+    $browserLang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '', 0, 2);
+    $lang = in_array($browserLang, $supportedLangs, true) ? $browserLang : 'en';
+}
+
 $response = [
     "success" => false,
     "message" => "Invalid request",
@@ -136,7 +146,7 @@ try {
         "token" => $jwt,
         "refresh_token" => $refreshToken,
         "img_gif" => "../images/sys-img/loading1.gif",
-        "redirect_url" => $isMobile ? "" : "../profile.php"
+        "redirect_url" => $isMobile ? "" : "/" . $lang . "/profile"
     ];
 
 } catch (Exception $e) {

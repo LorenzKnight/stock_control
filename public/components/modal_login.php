@@ -41,6 +41,7 @@
 						/>
 					</td>
 				</tr>
+				<input type="hidden" name="lang" value="<?= htmlspecialchars($lang ?? 'en') ?>">
 			</table>
 		</form>
 	</div>

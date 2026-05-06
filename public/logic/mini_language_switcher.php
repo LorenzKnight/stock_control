@@ -6,7 +6,9 @@ $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 $path = is_string($path) ? $path : '/';
 
 $uri = trim($path, '/');
-$uriLang = substr($uri, 0, 2);
+$pathParts = explode('/', $uri);
+
+$uriLang = $pathParts[0] ?? '';
 
 if (in_array($uriLang, $supported, true)) {
     $lang = $uriLang;
@@ -175,6 +177,50 @@ $i18n = [
 		'footer_seo_cloud'       => 'Cloud-based inventory system',
 		'footer_seo_multilocation'=> 'Multi-location stock control',
 		'footer_seo_pricing'     => 'Inventory software pricing',
+
+		// IN LOGs page
+		// Header:
+		'header_products' => 'Products',
+		'header_storage' => 'Storage',
+		'header_customers' => 'Customers',
+		'header_shipping' => 'Shipping',
+		'header_sales' => 'Sales',
+		'header_payments' => 'Payments',
+		'header_Reports' => 'Reports',
+		'header_settings' => 'Settings',
+		'header_system_admin' => 'System Administration',
+		'header_logout' => 'Log out',
+
+		// profile page
+		'profile_greeting' => 'Hello, ',
+		'user_fallback_name' => 'User',
+
+		// info box
+		'welcome_title' => 'Welcome to',
+		'welcome_desc' => 'You now have full access to our stock management platform, giving you complete control over inventory tracking and optimization. Where will efficiency take your business today?',
+
+		//small boxes
+		'smallbox_my_info' => 'My info',
+		'smallbox_selected_pack' => 'Selected Pack',
+		'smallbox_company_data' => 'Company data',
+		'smallbox_spot' => 'Spot',
+
+		'smallbox_members' => 'Members',
+		'smallbox_branches' => 'Branches',
+		'smallbox_products_limit' => 'Products limit',
+
+		'smallbox_name' => 'Name',
+
+		//small box buttons
+		'edit_my_data' => 'Update info',
+		'subscription' => 'Subscription',
+		'add_members' => 'Add members',
+		'manage' => 'Manage',
+
+		'user_list' => 'User List',
+
+		// Global
+		'phone' => 'Phone',
 	],
 	'es' => [
 		'title'       => 'Sistema de control de stock e inventario para pequeñas empresas | AllStockControl',
@@ -329,6 +375,50 @@ $i18n = [
 		'footer_seo_cloud'       => 'Sistema de inventario en la nube',
 		'footer_seo_multilocation'=> 'Control de stock multi-sucursal',
 		'footer_seo_pricing'     => 'Precios del software de inventario',
+
+		// IN LOGs page
+		// Header:
+		'header_products' => 'Productos',
+		'header_storage' => 'Almacenamiento',
+		'header_customers' => 'Clientes',
+		'header_shipping' => 'Envíos',
+		'header_sales' => 'Ventas',
+		'header_payments' => 'Pagos',
+		'header_Reports' => 'Informes',
+		'header_settings' => 'Configuración',
+		'header_system_admin' => 'Administración del sistema',
+		'header_logout' => 'Cerrar sesión',
+
+		// profile page
+		'profile_greeting' => 'Hola, ',
+		'user_fallback_name' => 'Usuario',
+
+		// info box
+		'welcome_title' => 'Bienvenido a',
+		'welcome_desc' => 'Ahora tienes acceso completo a nuestra plataforma de control de inventario, dándote el control total sobre el seguimiento y la optimización de tu stock. ¿A dónde llevará la eficiencia tu negocio hoy?',
+
+		//small boxes
+		'smallbox_my_info' => 'Mi información',
+		'smallbox_selected_pack' => 'Pack seleccionado',
+		'smallbox_company_data' => 'Datos de la empresa',
+		'smallbox_spot' => 'Spot',
+
+		'smallbox_members' => 'Miembros',
+		'smallbox_branches' => 'Sucursales',
+		'smallbox_products_limit' => 'Límite de productos',
+
+		'smallbox_name' => 'Nombre',
+
+		//small box buttons
+		'edit_my_data' => 'Actualizar información',
+		'subscription' => 'Suscripción',
+		'add_members' => 'Agregar miembros',
+		'manage' => 'Gestionar',
+
+		'user_list' => 'Lista de usuarios',
+
+		// Global
+		'phone' => 'Teléfono',
 	],
 	'sv' => [
 		'title'       => 'Lagerprogram och lagerkontroll för småföretag | AllStockControl',
@@ -483,27 +573,97 @@ $i18n = [
 		'footer_seo_cloud'       => 'Molnbaserat lagerhanteringssystem',
 		'footer_seo_multilocation'=> 'Lagerhantering för flera platser',
 		'footer_seo_pricing'     => 'Priser för lagerhanteringssystem',
+
+		// IN LOGs page
+		// Header:
+		'header_products' => 'Produkter',
+		'header_storage' => 'Lager',
+		'header_customers' => 'Kunder',
+		'header_shipping' => 'Leveranser',
+		'header_sales' => 'Försäljning',
+		'header_payments' => 'Betalningar',
+		'header_Reports' => 'Rapporter',
+		'header_settings' => 'Inställningar',
+		'header_system_admin' => 'Systemadministration',
+		'header_logout' => 'Logga ut',
+
+		// PROFILE PAGE
+		'profile_greeting' => 'Hej, ',
+		'user_fallback_name' => 'Användare',
+
+		// info box
+		'welcome_title' => 'Välkommen till',
+		'welcome_desc' => 'Du har nu full tillgång till vår plattform för lagerhantering, vilket ger dig total kontroll över spårning och optimering av ditt lager. Vart tar effektiviteten ditt företag idag?',
+
+		//small boxes
+		'smallbox_my_info' => 'Min information',
+		'smallbox_selected_pack' => 'Valt paket',
+		'smallbox_company_data' => 'Företagsdata',
+		'smallbox_spot' => 'Spot',
+
+		'smallbox_members' => 'Medlemmar',
+		'smallbox_branches' => 'Filialer',
+		'smallbox_products_limit' => 'Produktgräns',
+
+		'smallbox_name' => 'Namn',
+
+		//small box buttons
+		'edit_my_data' => 'Uppdatera information',
+		'subscription' => 'Prenumeration',
+		'add_members' => 'Lägg till medlemmar',
+		'manage' => 'Hantera',
+
+		'user_list' => 'Användarlista',
+
+		// Global
+		'phone' => 'Telefon',
 	],
 ];
 
-$t = $i18n[$lang];
+$t = $i18n[$lang] ?? $i18n['en'];
 
 // Helper para construir URLs con ?lang=…
 function url_with_lang(string $targetLang): string {
+	$supported = ['en', 'es', 'sv'];
+
 	$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 	$host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
 
 	$rawPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 	$rawPath = is_string($rawPath) ? $rawPath : '/';
 
-	$path = '/' . trim($rawPath, '/');
+	$parts = explode('/', trim($rawPath, '/'));
 
-	$pathParts = explode('/', trim($path, '/'));
-	if (in_array($pathParts[0] ?? '', ['en','es','sv'], true)) {
-		array_shift($pathParts);
+	// Quitar idioma actual si existe
+	if (in_array($parts[0] ?? '', $supported, true)) {
+		array_shift($parts);
 	}
-	$rest = implode('/', $pathParts);
+
+	// Si la ruta viene como profile.php, convertirla en profile
+	if (!empty($parts)) {
+		$lastIndex = count($parts) - 1;
+		$parts[$lastIndex] = preg_replace('/\.php$/', '', $parts[$lastIndex]);
+	}
+
+	$rest = implode('/', $parts);
 
 	return $scheme . '://' . $host . '/' . $targetLang . ($rest !== '' ? '/' . $rest : '');
+}
+
+function localized_url(string $page, ?string $targetLang = null): string {
+	global $lang;
+
+	$supported = ['en', 'es', 'sv'];
+
+	$targetLang = $targetLang ?? $lang;
+
+	if (!in_array($targetLang, $supported, true)) {
+		$targetLang = 'en';
+	}
+
+	$page = trim($page, '/');
+	$page = preg_replace('/\.php$/', '', $page);
+
+	return '/' . $targetLang . '/' . $page;
 }
 ?>

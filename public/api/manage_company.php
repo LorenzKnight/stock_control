@@ -62,13 +62,6 @@ try {
 		"company_phone" => $phone
 	];
 
-	// $previousData = json_decode(select_from(
-	// 	"companies",
-	// 	["company_logo"],
-	// 	["company_id" => $companyId],
-    //     ["fetch_first" => true]
-	// ),true);
-
 	$previousImage = null;
 
 	if (!empty($companyId)) {

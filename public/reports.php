@@ -1,3 +1,5 @@
+<?php include('logic/mini_language_switcher.php'); ?>
+
 <!DOCTYPE html>
 <html class="no-js" lang="sw">
 

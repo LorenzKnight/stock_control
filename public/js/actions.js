@@ -245,18 +245,53 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 	
 	// 📌 Redireccionar al hacer clic en Menu
-	document.querySelectorAll('.menu li').forEach(item => {
+	function getCurrentLang() {
+		const supported = ['en', 'es', 'sv'];
+
+		const pathParts = window.location.pathname.split('/').filter(Boolean);
+		const urlLang = pathParts[0];
+
+		if (supported.includes(urlLang)) {
+			return urlLang;
+		}
+
+		if (window.APP_LANG && supported.includes(window.APP_LANG)) {
+			return window.APP_LANG;
+		}
+
+		const browserLang = (navigator.language || '').slice(0, 2).toLowerCase();
+
+		if (supported.includes(browserLang)) {
+			return browserLang;
+		}
+
+		return 'en';
+	}
+
+	function localizedPath(page) {
+		const lang = getCurrentLang();
+
+		page = String(page || '').trim();
+		page = page.replace(/^\/+/, '');
+		page = page.replace(/\.php$/, '');
+
+		return `/${lang}/${page}`;
+	}
+
+	document.querySelectorAll('.menu li[data-page]').forEach(item => {
 		if (!item.classList.contains('no-redirect')) {
 			item.addEventListener('click', function () {
-				const section = this.textContent.trim().toLowerCase();
-				window.location.href = section + ".php";
+				const page = this.dataset.page;
+				window.location.href = localizedPath(page);
 			});
 		}
 
-		const currentPage = window.location.pathname.split("/").pop(); // ej: "products.php"
-		const sectionName = item.textContent.trim().toLowerCase() + ".php";
+		const pathParts = window.location.pathname.split('/').filter(Boolean);
 
-		if (sectionName === currentPage) {
+		let currentPage = pathParts[pathParts.length - 1] || 'stock';
+		currentPage = currentPage.replace('.php', '');
+
+		if (item.dataset.page === currentPage) {
 			item.classList.add('active');
 		}
 	});
@@ -264,14 +299,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 	let homeSite = document.getElementById('home-site');
 	if (homeSite) {
 		homeSite.addEventListener('click', function () {
-			window.location.href = "profile.php";
+			window.location.href = localizedPath('profile');
 		});
 	}
 
 	let notificationSite = document.getElementById('notification-site');
 	if (notificationSite) {
 		notificationSite.addEventListener('click', function () {
-			window.location.href = "notifications.php";
+			window.location.href = localizedPath('notifications');
 		});
 	}
 
@@ -742,12 +777,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 			if (data.success && data.data) {
 				let user = data.data;
 
-				if (hiUser) hiUser.innerHTML = `Hi, ${user.name || 'User'}!`;
+				if (hiUser) {
+					const greeting = window.i18n?.profile_greeting || 'Hi, ';
+					const fallbackName = window.i18n?.user_fallback_name || 'User';
+
+					hiUser.innerHTML = `${greeting}${user.name || fallbackName}!`;
+				}
 
 				if (myData) {
 					myData.innerHTML =
 						`<p><strong>ID:</strong> ${user.user_id?.trim() || "-"}</p>` +
-						`<p><strong>Phone:</strong> ${user.phone?.trim() || "No Phone Number"}</p>` +
+						`<p><strong>${window.i18n?.phone || "Phone"}:</strong> ${user.phone?.trim() || "No Phone Number"}</p>` +
 						`<p><strong>Email:</strong> ${user.email?.trim() || "No Email"}</p>`;
 					;
 				}
@@ -757,9 +797,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 						user.package_info && user.package_info.package_id 
 							? `
 								<p><strong>Pack:</strong> ${user.package_info.package_name || "No Package"}</p>
-								<p><strong>Members:</strong> ${user.package_info.members_limit}</p>
-								<p><strong>Branch:</strong> ${user.package_info.branch_affiliate_limit}</p>
-								<p><strong>Product limit:</strong> ${user.package_info.products_limit}</p>
+								<p><strong>${window.i18n?.smallbox_members || "Members"}:</strong> ${user.package_info.members_limit}</p>
+								<p><strong>${window.i18n?.smallbox_branches || "Branches"}:</strong> ${user.package_info.branch_affiliate_limit}</p>
+								<p><strong>${window.i18n?.smallbox_products_limit || "Product Limit"}:</strong> ${user.package_info.products_limit}</p>
 							` 
 							: "0";
 				}
@@ -1015,7 +1055,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							<div class="card-info">
 								<h3>${user.name} ${user.surname}</h3>
 								<p><strong>Email:</strong> ${user.email}</p>
-								<p><strong>Phone:</strong> ${user.phone ? user.phone : "No Phone Number"}</p>
+								<p><strong>${window.i18n?.phone || "Phone"}:</strong> ${user.phone ? user.phone : "No Phone Number"}</p>
 							</div>
 							<div class="card-menu">
 								<img src="images/sys-img/edit-icon.png" alt="edit-card">
@@ -10768,32 +10808,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			document.addEventListener('click', handler, { capture: true }); // ← sin once
 		}, 0);
 	}
-	
-
-	// 📌 formatear fecha de notificación
-	function formatNotificationDate(dateString) {
-		const monthsAbbr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-		const dateObj = new Date(dateString);
-		const now = new Date();
-
-		const isToday = dateObj.toDateString() === now.toDateString();
-		const isSameYear = dateObj.getFullYear() === now.getFullYear();
-
-		if (isToday) {
-			// Mostrar solo la hora: HH:MM
-			return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-		} else if (isSameYear) {
-			// Mostrar día y mes abreviado: ej. 21 Jul
-			return `${dateObj.getDate()} ${monthsAbbr[dateObj.getMonth()]}`;
-		} else {
-			// Mostrar día/mes/año corto: ej. 24/11/23
-			const day = String(dateObj.getDate()).padStart(2, '0');
-			const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-			const year = String(dateObj.getFullYear()).slice(-2);
-			return `${year}/${month}/${day}`;
-		}
-	}
-	window.formatNotificationDate = formatNotificationDate;
 
 	function parseDbTimestamp(s) {
 		// intenta ISO-like
