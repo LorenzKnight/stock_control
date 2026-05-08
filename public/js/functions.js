@@ -342,6 +342,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 			return;
 		}
 
+		const t = window.i18n || {};
+
 		const requiredSelectors = [
 			'#btn-create-product',
 			'#onboarding-progress',
@@ -353,15 +355,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const guide = driverFactory({
 				showProgress: true,
 				allowClose: true,
-				nextBtnText: 'Next',
-				prevBtnText: 'Back',
-				doneBtnText: 'Done',
+				nextBtnText: t.next || 'Next',
+				prevBtnText: t.back || 'Back',
+				doneBtnText: t.done || 'Done',
 				steps: [
 					{
 						element: '#onboarding-progress',
 						popover: {
-							title: 'Track your progress',
-							description: 'Here you can see the steps needed to set up your inventory.',
+							title: t.track_your_progress || 'Track your progress',
+							description: t.track_desc || 'Here you can see the steps needed to set up your inventory.',
 							side: 'bottom',
 							align: 'start'
 						}
@@ -369,8 +371,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 					{
 						element: '#btn-create-product',
 						popover: {
-							title: 'Create your first product',
-							description: 'Start by adding a product to your inventory. It takes less than a minute.',
+							title: t.create_first_product || 'Create your first product',
+							description: t.first_product_desc || 'Start by adding a product to your inventory. It takes less than a minute.',
 							side: 'bottom',
 							align: 'start'
 						}
@@ -378,8 +380,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 					{
 						element: '#btn-create-client',
 						popover: {
-							title: 'Add your customers',
-							description: 'You can create customer profiles to manage and track your sales more easily.',
+							title: t.add_first_customer || 'Add your customers',
+							description: t.first_customer_desc || 'You can create customer profiles to manage and track your sales more easily.',
 							side: 'bottom',
 							align: 'start'
 						}
@@ -387,8 +389,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 					{
 						element: '#btn-create-sale',
 						popover: {
-							title: 'Record a sale',
-							description: 'When you record a sale, the system will automatically update your stock.',
+							title: t.record_your_first_sale || 'Record your first sale',
+							description: t.first_sale_desc || 'When you record a sale, the system will automatically update your stock.',
 							side: 'bottom',
 							align: 'start'
 						}

@@ -4,8 +4,8 @@
 			<table width="95%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td style="font-size: 12px;" colspan="4" align="center" valign="middle">
-						<h2>Upgrade your Subscription</h2>
-						<p>Select a Subscription Package</p>
+						<h2><?= $t['upgrade_your_plan']; ?></h2>
+						<p><?= $t['select_a_subscription_pack'] ?></p>
 					</td>      
 				</tr>
 				<tr valign="baseline" class="form_height">
@@ -20,7 +20,7 @@
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="4" align="center" valign="middle">
-						<div class="estimated" id="estimated">Estimated cost: <strong>$ 0</strong></div>
+						<div class="estimated" id="estimated"><?= $t['estimated_cost']; ?>: <strong>$ 0</strong></div>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
@@ -28,10 +28,10 @@
 					</td>
 					<td width="25%" align="center" valign="middle">
 						<button type="button" class="cancel-btn logout-button hidden" id="subs-logout-btn">Log Out</button>
-						<button type="button" class="neutral-btn" id="subs-cancel-btn">Cancel</button>
+						<button type="button" class="neutral-btn" id="subs-cancel-btn"><?= $t['cancel']; ?></button>
 					</td>
 					<td width="25%" align="center" valign="middle">
-						<input type="submit" class="button-style-agree disabled" id="packUpgradeBtn" value="Upgrade"/>
+						<input type="submit" class="button-style-agree disabled" id="packUpgradeBtn" value="<?= $t['upgrade']; ?>"/>
 					</td>
 					<td width="25%" align="center" valign="middle">
 					</td>

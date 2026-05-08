@@ -166,7 +166,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (!hasSeenOnboarding) {
 			setTimeout(() => {
 				startOnboardingGuide();
-				localStorage.setItem('hasSeenOnboarding', 'true');
+				// localStorage.setItem('hasSeenOnboarding', 'true');
 			}, 500);
 		}
 	}
@@ -798,7 +798,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							? `
 								<p><strong>Pack:</strong> ${user.package_info.package_name || "No Package"}</p>
 								<p><strong>${window.i18n?.smallbox_members || "Members"}:</strong> ${user.package_info.members_limit}</p>
-								<p><strong>${window.i18n?.smallbox_branches || "Branches"}:</strong> ${user.package_info.branch_affiliate_limit}</p>
+								<p><strong>${window.i18n?.branches || "Branches"}:</strong> ${user.package_info.branch_affiliate_limit}</p>
 								<p><strong>${window.i18n?.smallbox_products_limit || "Product Limit"}:</strong> ${user.package_info.products_limit}</p>
 							` 
 							: "0";
@@ -1702,7 +1702,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				if (notCompanyForm && companyForm && companyActionBtn) {
 					notCompanyForm.classList.add('hidden');
 					companyForm.classList.remove('hidden');
-					companyActionBtn.value = "Add Company";
+					companyActionBtn.value = window.i18n?.create || "Create";
 				}
 
 				document.querySelectorAll('input[name="company_edit_info"]').forEach(radio => {
@@ -1731,7 +1731,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			e.preventDefault();
 
 			const companyActionBtn = document.getElementById('company-action-btn');
-			const isAdding = companyActionBtn.value === "Add Company";
+			const isAdding = companyActionBtn.value === (window.i18n?.create || "Create");
 
 			if (!isAdding) return;
 
@@ -11696,9 +11696,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 						<div class="pack-name"><strong>${pkg.package_name}</strong></div>
 						<div class="pack-details">
 							<ul>
-								<li>Members: ${pkg.members_limit ? pkg.members_limit : 'undefinited'}</li>
+								<li>${window.i18n?.memmbers || "Members"}: ${pkg.members_limit ? pkg.members_limit : 'undefinited'}</li>
 								<li>Max admin: ${pkg.admins_limit ? pkg.admins_limit : 'undefinited'}</li>
-								<li>Affiliate: ${pkg.branch_affiliate_limit ? pkg.branch_affiliate_limit : 'undefinited'}</li>
+								<li>${window.i18n?.branches || "Branches"}: ${pkg.branch_affiliate_limit ? pkg.branch_affiliate_limit : 'undefinited'}</li>
 							</ul>
 						</div>
 						<div class="pack-price">
@@ -11758,7 +11758,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 		const defaultOption = document.createElement('option');
 		defaultOption.value = '';
-		defaultOption.textContent = 'Select Extra Service';
+		defaultOption.textContent = window.i18n?.select_extra_service || 'Select Extra Service';
 		select.appendChild(defaultOption);
 
 		try {
@@ -11828,7 +11828,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (!selectedValue) {
 			const visualCost = extraValue.toFixed(2);
 
-			estimated.innerHTML = `Estimated cost: <strong>$ ${visualCost}</strong>`;
+			estimated.innerHTML = `${window.i18n?.estimated_cost}: <strong>$ ${visualCost}</strong>`;
 			estimatedInput.value = extraValue.toFixed(2);
 
 			if (packUpdateBtn) {
@@ -11871,7 +11871,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					}
 
 					// Solo visual
-					estimated.innerHTML = `Estimated cost: <strong>$ ${visualCost.toFixed(2)}</strong>`;
+					estimated.innerHTML = `${window.i18n?.estimated_cost}: <strong>$ ${visualCost.toFixed(2)}</strong>`;
 
 					if (packUpdateBtn) {
 						if (visualHasNewPack || extraValue > 0) {
@@ -11881,14 +11881,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 						}
 					}
 				} else {
-					estimated.innerHTML = `Estimated cost: <strong>$ 0.00</strong>`;
+					estimated.innerHTML = `${window.i18n?.estimated_cost}: <strong>$ 0.00</strong>`;
 					estimatedInput.value = 0;
 					if (packUpdateBtn) {
 						packUpdateBtn.classList.add('disabled');
 					}
 				}
 			} else {
-				estimated.innerHTML = `Estimated cost: <strong>$ 0.00</strong>`;
+				estimated.innerHTML = `${window.i18n?.estimated_cost}: <strong>$ 0.00</strong>`;
 				estimatedInput.value = 0;
 				if (packUpdateBtn) {
 					packUpdateBtn.classList.add('disabled');
@@ -11896,7 +11896,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		} catch (error) {
 			console.error("Error loading package data:", error);
-			estimated.innerHTML = `Estimated cost: <strong>$ 0.00</strong>`;
+			estimated.innerHTML = `${window.i18n?.estimated_cost}: <strong>$ 0.00</strong>`;
 			estimatedInput.value = 0;
 			if (packUpdateBtn) {
 				packUpdateBtn.classList.add('disabled');

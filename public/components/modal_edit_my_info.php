@@ -4,58 +4,58 @@
             <table width="80%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td colspan="2" align="center" valign="middle">
-						<h2>Edit My Info</h2>
+						<h2><?= $t['edit_profile_title']; ?></h2>
 					</td>      
 				</tr>
                 <tr valign="baseline" class="form_height">
 					<td colspan="2" align="center" valign="middle">
 						<div class="drop-area" id="profile-drop-area">
 							<img class="image-preview" id="profile-pic-preview" src="" alt="profile pic preview">
-							<p>Drop image here or click to select</p>
+							<p><?= $t['form_drop_image']; ?></p>
 							<input type="file" name="image" id="profile-img" accept="image/*" style="display: none;">
 						</div>
 					</td>
 				</tr>
                 <tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<label for="user_name">Name:</label>
-						<input class="form-input-style" type="text" name="user_name" id="user_name" placeholder="Enter your name..." title="Enter a valid name" required/>
+						<label for="user_name"><?= $t['form_name']; ?></label>
+						<input class="form-input-style" type="text" name="user_name" id="user_name" placeholder="<?= $t['form_name']; ?>" title="<?= $t['form_name']; ?>" required/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<label for="user_surname">Surname:</label>
-						<input class="form-input-style" type="text" name="user_surname" id="user_surname" placeholder="Enter your surname..." title="Enter a valid surname" required/>
+						<label for="user_surname"><?= $t['form_surname']; ?></label>
+						<input class="form-input-style" type="text" name="user_surname" id="user_surname" placeholder="<?= $t['form_surname']; ?>" title="<?= $t['form_surname']; ?>" required/>
 					</td>
 				</tr>
                 <tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<label for="user_birthday">Birthdate:</label>
-						<input class="form-input-style" type="date" name="user_birthday" id="user_birthday" placeholder="yyyy-mm-dd" title="Birthdate (yyyy-mm-dd)"/>
+						<label for="user_birthday"><?= $t['form_birthday']; ?></label>
+						<input class="form-input-style" type="date" name="user_birthday" id="user_birthday" placeholder="<?= $t['form_birthday']; ?>" title="<?= $t['form_birthday']; ?>"/>
 					</td>
 				</tr>
                 <tr valign="baseline" class="form_height">
 					<td width="50%" align="center" valign="middle">
-						<label for="country_code">Country Code:</label>
+						<label for="country_code"><?= $t['form_country_code']; ?></label>
 						<select class="form-medium-input-style" name="country_code" id="country_code" required></select>
 					</td>
 					<td width="50%" align="center" valign="middle">
-						<label for="user_phone">Phone Number:</label>
-						<input class="form-medium-input-style" type="text" name="user_phone" id="user_phone" placeholder="Enter your phone number..." title="Enter a valid phone number"/>
+						<label for="user_phone"><?= $t['phone']; ?></label>
+						<input class="form-medium-input-style" type="text" name="user_phone" id="user_phone" placeholder="<?= $t['phone']; ?>" title="<?= $t['phone']; ?>"/>
 					</td>
 				</tr>
                 <tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
 						<label for="user_email">E-Mail:</label>
-						<input class="form-input-style" type="email" name="user_email" id="user_email" placeholder="Enter your E-Mail..." title="Enter a valid email" required/>
+						<input class="form-input-style" type="email" name="user_email" id="user_email" placeholder="E-Mail..." title="email" required/>
 					</td>
 				</tr>
                 <tr valign="baseline" class="form_height">
                     <td width="50%" align="center" valign="middle">
-						<button type="button" class="neutral-btn">Cancel</button>
+						<button type="button" class="neutral-btn"><?= $t['cancel']; ?></button>
 					</td>
 					<td width="50%" align="center" valign="middle">
-						<input type="submit" class="button-style-agree" value="Update" />
+						<input type="submit" class="button-style-agree" value="<?= $t['update']; ?>" />
 					</td>
 				</tr>
             </table>

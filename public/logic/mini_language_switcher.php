@@ -206,7 +206,6 @@ $i18n = [
 		'smallbox_spot' => 'Spot',
 
 		'smallbox_members' => 'Members',
-		'smallbox_branches' => 'Branches',
 		'smallbox_products_limit' => 'Products limit',
 
 		'smallbox_name' => 'Name',
@@ -219,8 +218,62 @@ $i18n = [
 
 		'user_list' => 'User List',
 
+		// Forms
+		'edit_profile_title' => 'Edit my profile',
+		'upgrade_your_plan' => 'Upgrade your plan',
+		'select_a_subscription_pack' => 'Select a subscription pack',
+		'add_edit_company_title' => 'Add or Edit Company or Affiliate',
+		'add_member_title' => 'Add a new member to your company',
+		'company_info' => 'Company info',
+
+		'estimated_cost' => 'Estimated cost',
+		'select_extra_service' => 'Select extra service',
+
+		'form_drop_image' => 'Drop image here or click to select',
+		'form_name' => 'Name',
+		'form_surname' => 'Surname',
+		'form_birthday' => 'Birthdate',
+		'form_country_code' => 'Country Code',
+		'form_user_role' => 'User Role',
+
+		'company_name' => 'Company Name',
+		'organization_no' => 'Organization No.',
+		'company_address' => 'Company Address',
+		'company_country_code' => 'Country Code',
+		'company_phone' => 'Company Phone',
+
+		// Onboarding Guide
+		'get_your_inventory_ready' => 'Get your inventory ready',
+
+		'track_your_progress' => 'Track your progress',
+		'company_setup' => 'Set up your company profile',
+		'create_first_product' => 'Create your first product',
+		'add_first_customer' => 'Add your first customer',
+		'record_your_first_sale' => 'Record your first sale',
+
+		'track_desc' => 'Here you can see the steps needed to set up your inventory.',
+		'first_product_desc' => 'Start by adding a product to your inventory. It takes less than a minute.',
+		'first_customer_desc' => 'You can create customer profiles to manage and track your sales more easily.',
+		'first_sale_desc' => 'Record your first sale and see how your inventory updates in real time.',
+
+		'next' => 'Next',
+		'back' => 'Back',
+		'done' => 'Done',
+
+		// Buttons
+		'cancel' => 'Cancel',
+		'update' => 'Update',
+		'upgrade' => 'Upgrade',
+		'create_affiliate' => 'Create Affiliate',
+		'ok' => 'Ok',
+		'create' => 'Create',
+
 		// Global
 		'phone' => 'Phone',
+		'loading' => 'Loading...',
+		'branches' => 'Branches',
+		'memmbers' => 'Memmbers',
+		'password' => 'Password',
 	],
 	'es' => [
 		'title'       => 'Sistema de control de stock e inventario para pequeñas empresas | AllStockControl',
@@ -404,7 +457,6 @@ $i18n = [
 		'smallbox_spot' => 'Spot',
 
 		'smallbox_members' => 'Miembros',
-		'smallbox_branches' => 'Sucursales',
 		'smallbox_products_limit' => 'Límite de productos',
 
 		'smallbox_name' => 'Nombre',
@@ -417,8 +469,62 @@ $i18n = [
 
 		'user_list' => 'Lista de usuarios',
 
+		// Forms
+		'edit_profile_title' => 'Editar mi perfil',
+		'upgrade_your_plan' => 'Actualizar tu plan',
+		'select_a_subscription_pack' => 'Selecciona un pack de suscripción',
+		'add_edit_company_title' => 'Agregar o editar empresa o afiliado',
+		'add_member_title' => 'Agregar un nuevo miembro a tu empresa',
+		'company_info' => 'Información de la empresa',
+
+		'estimated_cost' => 'Costo estimado',
+		'select_extra_service' => 'Seleccionar servicio adicional',
+
+		'form_drop_image' => 'Suelta la imagen aquí o haz clic para seleccionar',
+		'form_name' => 'Nombre',
+		'form_surname' => 'Apellido',
+		'form_birthday' => 'Fecha de nacimiento',
+		'form_country_code' => 'Código de país',
+		'form_user_role' => 'Rol del usuario',
+
+		'company_name' => 'Nombre de la empresa',
+		'organization_no' => 'Número de organización',
+		'company_address' => 'Dirección de la empresa',
+		'company_country_code' => 'Código de país',
+		'company_phone' => 'Teléfono de la empresa',
+
+		// Onboarding Guide
+		'get_your_inventory_ready' => 'Prepara tu inventario',
+
+		'track_your_progress' => 'Sigue tu progreso',
+		'company_setup' => 'Configura el perfil de tu empresa',
+		'create_first_product' => 'Crea tu primer producto',
+		'add_first_customer' => 'Agrega tu primer cliente',
+		'record_your_first_sale' => 'Registra tu primera venta',
+
+		'track_desc' => 'Aquí puedes ver los pasos necesarios para configurar tu inventario.',
+		'first_product_desc' => 'Comienza agregando un producto a tu inventario. Toma menos de un minuto.',
+		'first_customer_desc' => 'Puedes crear perfiles de clientes para gestionar y seguir tus ventas más fácilmente.',
+		'first_sale_desc' => 'Registra tu primera venta y observa cómo tu inventario se actualiza en tiempo real.',
+
+		'next' => 'Siguiente',
+		'back' => 'Atrás',
+		'done' => 'Hecho',
+
+		// Buttons
+		'cancel' => 'Cancelar',
+		'update' => 'Actualizar',
+		'upgrade' => 'Mejorar plan',
+		'create_affiliate' => 'Crear afiliado',
+		'ok' => 'Aceptar',
+		'create' => 'Crear',
+
 		// Global
 		'phone' => 'Teléfono',
+		'loading' => 'Cargando...',
+		'branches' => 'Sucursales',
+		'memmbers' => 'Miembros',
+		'password' => 'Contraseña',
 	],
 	'sv' => [
 		'title'       => 'Lagerprogram och lagerkontroll för småföretag | AllStockControl',
@@ -602,7 +708,6 @@ $i18n = [
 		'smallbox_spot' => 'Spot',
 
 		'smallbox_members' => 'Medlemmar',
-		'smallbox_branches' => 'Filialer',
 		'smallbox_products_limit' => 'Produktgräns',
 
 		'smallbox_name' => 'Namn',
@@ -615,8 +720,62 @@ $i18n = [
 
 		'user_list' => 'Användarlista',
 
+		// Forms
+		'edit_profile_title' => 'Redigera min profil',
+		'upgrade_your_plan' => 'Uppgradera ditt plan',
+		'select_a_subscription_pack' => 'Välj ett prenumerationspaket',
+		'add_edit_company_title' => 'Lägg till eller redigera företag eller filial',
+		'add_member_title' => 'Lägg till en ny medlem i ditt företag',
+		'company_info' => 'Företagsinformation',
+
+		'estimated_cost' => 'Beräknad kostnad',
+		'select_extra_service' => 'Välj extra tjänst',
+
+		'form_drop_image' => 'Släpp bilden här eller klicka för att välja',
+		'form_name' => 'Namn',
+		'form_surname' => 'Efternamn',
+		'form_birthday' => 'Födelsedatum',
+		'form_country_code' => 'Landskod',
+		'form_user_role' => 'Användarroll',
+
+		'company_name' => 'Företagsnamn',
+		'organization_no' => 'Organisationsnummer',
+		'company_address' => 'Företagsadress',
+		'company_country_code' => 'Landskod',
+		'company_phone' => 'Företagstelefon',
+
+		// Onboarding Guide
+		'get_your_inventory_ready' => 'Förbered ditt lager',
+
+		'track_your_progress' => 'Följ din utveckling',
+		'company_setup' => 'Ställ in din företagsprofil',
+		'create_first_product' => 'Skapa din första produkt',
+		'add_first_customer' => 'Lägg till din första kund',
+		'record_your_first_sale' => 'Registrera din första försäljning',
+
+		'track_desc' => 'Här kan du se de steg som krävs för att ställa in ditt lager.',
+		'first_product_desc' => 'Börja med att lägga till en produkt i ditt lager. Det tar mindre än en minut.',
+		'first_customer_desc' => 'Du kan skapa kundprofiler för att hantera och följa dina försäljningar enklare.',
+		'first_sale_desc' => 'Registrera din första försäljning och se hur ditt lager uppdateras i realtid.',
+
+		'next' => 'Nästa',
+		'back' => 'Tillbaka',
+		'done' => 'Klart',
+
+		// Buttons
+		'cancel' => 'Avbryt',
+		'update' => 'Uppdatera',
+		'upgrade' => 'Uppgradera',
+		'create_affiliate' => 'Skapa filial',
+		'ok' => 'Ok',
+		'create' => 'Skapa',
+
 		// Global
 		'phone' => 'Telefon',
+		'loading' => 'Laddar...',
+		'branches' => 'Filialer',
+		'memmbers' => 'Medlemmar',
+		'password' => 'Lösenord',
 	],
 ];
 

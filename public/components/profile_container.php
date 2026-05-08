@@ -44,6 +44,6 @@
 	</div>
 	<div class="data-container members-container-height">
 		<h2 style="margin-left: 10px;"><?= htmlspecialchars($t['user_list'] ?? 'User List') ?></h2>
-		<div class="members-table" id="child-user-table">Loading users...</div>
+		<div class="members-table" id="child-user-table"><?= htmlspecialchars($t['loading'] ?? 'Loading...') ?></div>
 	</div>
 </div>

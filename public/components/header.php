@@ -83,7 +83,7 @@
 
 	<div id="onboarding-progress" class="onboarding-box hidden">
 		<div class="onboarding-header">
-			<strong>Get your inventory ready</strong>
+			<strong><?= htmlspecialchars($t['get_your_inventory_ready'] ?? 'Get your inventory ready') ?></strong>
 			<span id="onboarding-percent">0%</span>
 		</div>
 
@@ -92,10 +92,10 @@
 		</div>
 
 		<ul class="onboarding-steps">
-			<li id="step-company">Set up your company profile</li>
-			<li id="step-product">Create your first product</li>
-			<li id="step-client">Add your first customer</li>
-			<li id="step-sale">Record your first sale</li>
+			<li id="step-company"><?= htmlspecialchars($t['company_setup'] ?? 'Set up your company profile') ?></li>
+			<li id="step-product"><?= htmlspecialchars($t['create_first_product'] ?? 'Create your first product') ?></li>
+			<li id="step-client"><?= htmlspecialchars($t['add_first_customer'] ?? 'Add your first customer') ?></li>
+			<li id="step-sale"><?= htmlspecialchars($t['record_your_first_sale'] ?? 'Record your first sale') ?></li>
 		</ul>
 	</div>
 </header>

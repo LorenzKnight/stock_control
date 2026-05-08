@@ -411,6 +411,7 @@ body {
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
+    color: var(--main-bg-dark-blue);
 }
 
 .onboarding-bar {
