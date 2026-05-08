@@ -166,7 +166,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (!hasSeenOnboarding) {
 			setTimeout(() => {
 				startOnboardingGuide();
-				// localStorage.setItem('hasSeenOnboarding', 'true');
+				localStorage.setItem('hasSeenOnboarding', 'true');
 			}, 500);
 		}
 	}
