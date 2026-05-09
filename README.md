@@ -1,5 +1,69 @@
-# Clean Docker with PHP
-Docker with PHP 7.4 fpm, Nginx, Composer, PhpUnit and postgresDB
+ALL STOCK CONTROL
+
+Modern SaaS platform for inventory, warehouse, shipping, and business management.
+
+Overview
+
+AllStockControl is a fullstack SaaS platform designed to help companies manage inventory, products, shipping flows, customers, reports, and business operations through a scalable web-based system.
+
+The platform was built with a strong focus on:
+
+- Scalable backend architecture
+- API-first development
+- Real-time communication
+- Authentication & security
+- Multi-company support
+- Long-term maintainability
+- SaaS-oriented architecture
+
+This project reflects my experience building and maintaining production-oriented systems using PHP, PostgreSQL, JavaScript, Docker, and modern web technologies.
+
+## Tech Stack
+- Backend
+- PHP 8
+- PostgreSQL
+- REST APIs
+- JWT Authentication
+- WebSocket integration
+- Stripe subscriptions & payments
+- Frontend
+- JavaScript
+- HTML5
+- CSS3
+- Dynamic UI rendering
+- Infrastructure
+- Docker & Docker Compose
+- Apache
+- Linux environment
+- Environment-based configuration
+- Main Features
+- Inventory and stock management
+- Product/category/brand management
+- Shipping & logistics management
+- Customer management
+- Role & permission system
+- Real-time notifications
+- Subscription/payment integration with Stripe
+- API-based architecture
+- Reporting system
+- Multi-company support
+- WebSocket communication
+- Architecture Focus
+
+The project was designed with a strong focus on:
+
+Separation of concerns
+Modular backend structure
+Secure authentication flows
+Scalable database modeling
+Real-time communication handling
+API-driven architecture
+Maintainable and extensible codebase
+
+
+
+## Docker with PHP
+Docker with PHP 8 fpm, Nginx, Composer, PhpUnit and postgresDB
 
 ## Starting app
 make start
@@ -138,4 +202,5 @@ in default.conf uncomment the lines:
 access_log /var/log/nginx/default.log;
 error_log /var/log/nginx/default.log;
 
-### by Lorenz Knight
+### Author
+### Lorenz Knight
