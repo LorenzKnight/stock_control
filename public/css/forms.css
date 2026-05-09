@@ -246,7 +246,7 @@
     .form-input-style {
         width: 90%;
         margin: 5px 0;
-        padding: 15px;
+        padding: 15px 0;
         font-size: 14px;
         border-radius: 10px;
         border: 1px solid var(--border-light);

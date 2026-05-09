@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 		const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
 
-		console.log('hasSeenOnboarding:', hasSeenOnboarding);
+		// console.log('hasSeenOnboarding:', hasSeenOnboarding);
 
 		if (!hasSeenOnboarding) {
 			setTimeout(() => {
@@ -2730,9 +2730,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			params.append('company', selectedCompany);
 		}
 
-		// Log params para depuración
-		// console.log("🔍 Enviando filtros a get_products.php:", params.toString());
-
 		try {
 			const res = await fetch(`api/get_products.php?${params.toString()}`, {
 				method: 'GET',
@@ -2768,7 +2765,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 										<table width="100%" align="center" cellspacing="0">
 											<tr valign="baseline">
 												<td colspan="6" align="center" style="height: 10px; border-top: 1px solid var(--border-light);">
-													<p>Total Weight<br><strong>${product.total_weight ? product.total_weight + ' kg' : ''}</strong></p>
+													<p>${window.i18n?.total_weight}<br><strong>${product.total_weight ? product.total_weight + ' kg' : ''}</strong></p>
 												</td>
 											</tr>
 										</table>
@@ -2786,13 +2783,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 									<table width="100%" align="center" cellspacing="0">
 										<tr valign="baseline">
 											<td style="width: 25%; height: 10px; border-top: 1px solid var(--border-light);">
-												<p>Units<br><strong>${product.units_per_pack || ''}</strong></p>
+												<p>${window.i18n?.units}<br><strong>${product.units_per_pack || ''}</strong></p>
 											</td>
 											<td style="width: 40%; height: 10px; border-top: 1px solid var(--border-light);">
-												<p>Weight/unit<br><strong>${product.weight_per_unit ? product.weight_per_unit + ' kg' : ''}</strong></p>
+												<p>${window.i18n?.weight_unit}<br><strong>${product.weight_per_unit ? product.weight_per_unit + ' kg' : ''}</strong></p>
 											</td>
 											<td style="width: 35%; height: 10px; border-top: 1px solid var(--border-light);">
-												<p>Total Weight<br><strong>${product.total_weight ? product.total_weight + ' kg' : ''}</strong></p>
+												<p>${window.i18n?.total_weight}<br><strong>${product.total_weight ? product.total_weight + ' kg' : ''}</strong></p>
 											</td>
 										</tr>
 									</table>
@@ -2813,6 +2810,27 @@ document.addEventListener("DOMContentLoaded", async function () {
 					Number(product.quantity) <= Number(product.min_quantity))
 					? "min-qty" : "";
 
+					const markName = product.mark_name || '';
+					const modelName = product.model_name || '';
+
+					const hasMark = product.product_mark !== null &&
+						product.product_mark !== undefined &&
+						String(product.product_mark) !== '' &&
+						String(product.product_mark) !== '0';
+
+					const hasModel = product.product_model !== null &&
+						product.product_model !== undefined &&
+						String(product.product_model) !== '' &&
+						String(product.product_model) !== '0';
+
+					const markText = hasMark
+						? `<strong>${markName}</strong>`
+						: markName;
+
+					const modelText = hasModel
+						? `<strong>${modelName}</strong>`
+						: modelName;
+
 					card.innerHTML = `
 					<div class="product-pic">
 						<img src="${productImage}" alt="${product.product_name}" class="${imageClass}" />
@@ -2828,7 +2846,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 												<p class="mini-title" style="margin: 0;">${product.hs_code || ''}</p>
 											</td>
 											<td style="width: 40%; height: 10px;" align="right">
-												<p style="margin: 10px 0 0;">Qty: <strong class="${minQty}">${product.quantity || ''}</strong></p>
+												<p style="margin: 10px 0 0;">${window.i18n?.qty}: <strong class="${minQty}">${product.quantity || ''}</strong></p>
 												<p class="mini-title" style="margin: 0;">${product.purpose_text || ''}</p>
 											</td>
 										</tr>
@@ -2837,7 +2855,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							</tr>
 							<tr valign="baseline">
 								<td colspan="6" style="height: 10px;">
-									<h3><strong>${product.mark_name + ' - ' + product.model_name}</strong></h3>
+									<p>${markText} - ${modelText}</p>
 								</td>
 							</tr>
 							<tr valign="baseline">
@@ -2848,10 +2866,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 							${prodDetail}
 							<tr valign="baseline">
 								<td style="width: 50%; border-top: 1px solid var(--border-light);">
-									<p>Year<br><strong>${product.product_year == 0 || product.product_year == null ? 'N/E' : product.product_year}</strong></p>
+									<p>${window.i18n?.year}<br><strong>${product.product_year == 0 || product.product_year == null ? 'N/E' : product.product_year}</strong></p>
 								</td>
 								<td style="width: 50%; border-top: 1px solid var(--border-light);">
-									<p>Price<br><strong>${product.price ? '$' + product.price + ' ' + product.currency : ''}</strong></p>
+									<p>${window.i18n?.price}<br><strong>${product.price ? '$' + product.price + ' ' + product.currency : ''}</strong></p>
 								</td>
 							</tr>
 						</table>

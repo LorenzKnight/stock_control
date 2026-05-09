@@ -15,6 +15,7 @@
 	<script defer src="/js/functions.js"></script>
 	<script>
 		window.APP_LANG = <?= json_encode($lang ?? 'en') ?>;
+		window.i18n = <?= json_encode($t ?? [], JSON_UNESCAPED_UNICODE) ?>;
 	</script>
 	<script defer src="/js/actions.js"></script>
 	<script defer src="/js/realtimeClient.js"></script>

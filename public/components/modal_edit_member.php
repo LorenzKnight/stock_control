@@ -4,53 +4,53 @@
 			<table width="80%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td style="font-size: 12px;" colspan="6" align="center" valign="middle">
-						<h2>Edit co-Workers</h2>
+						<h2><?= $t['edit_member_title'] ?></h2>
 					</td>      
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<label for="edit_name">Name:</label>
-						<input class="form-input-style" type="text" name="edit_name" id="edit_name" placeholder="Enter a name..." title="Enter a valid name" required/>
+						<label for="edit_name"><?= $t['form_name'] ?>:</label>
+						<input class="form-input-style" type="text" name="edit_name" id="edit_name" placeholder="<?= $t['form_name'] ?>..." title="<?= $t['form_name'] ?>" required/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<label for="edit_surname">Surame:</label>
-						<input class="form-input-style" type="text" name="edit_surname" id="edit_surname" placeholder="Enter a surname..." title="Enter a valid surname" required/>
+						<label for="edit_surname"><?= $t['form_surname'] ?>:</label>
+						<input class="form-input-style" type="text" name="edit_surname" id="edit_surname" placeholder="<?= $t['form_surname'] ?>..." title="<?= $t['form_surname'] ?>" required/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<label for="edit_birthday">Birthdate:</label>
-						<input class="form-input-style" type="date" name="edit_birthday" id="edit_birthday" placeholder="" title=""/>
+						<label for="edit_birthday"><?= $t['form_birthday'] ?>:</label>
+						<input class="form-input-style" type="date" name="edit_birthday" id="edit_birthday" placeholder="<?= $t['form_birthday'] ?>..." title="<?= $t['form_birthday'] ?>"/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td width="50%" align="center" valign="middle">
-						<label for="country_code">Country Code:</label>
+						<label for="country_code"><?= $t['form_country_code'] ?>:</label>
 						<select class="form-medium-input-style" name="edit_member_country_code" id="edit_member_country_code" required></select>
 					</td>
 					<td width="50%" align="center" valign="middle">
-						<label for="edit_phone">Phone Number:</label>
-						<input class="form-medium-input-style" type="text" name="edit_phone" id="edit_phone" placeholder="Enter a phone number..." title="Enter a valid phone number"/>
+						<label for="edit_phone"><?= $t['phone'] ?>:</label>
+						<input class="form-medium-input-style" type="text" name="edit_phone" id="edit_phone" placeholder="<?= $t['phone'] ?>..." title="<?= $t['phone'] ?>"/>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="2" align="center" valign="middle">
-						<label for="edit_company">Company / Affiliate:</label>
+						<label for="edit_company"><?= $t['company_name'] ?>:</label>
 						<select class="form-input-style" name="edit_company" id="edit_company" required></select>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="2" align="center" valign="middle">
-						<label for="edit_rank">User Role / Permissions:</label>
+						<label for="edit_rank"><?= $t['form_user_role'] ?>:</label>
 						<select class="form-input-style" name="edit_rank" id="edit_rank"></select>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" style="padding-bottom: 5px" align="center" valign="middle">
 						<label for="edit_email">E-Mail:</label>
-						<input class="form-input-style" type="email" name="edit_email" id="edit_email" placeholder="Enter a E-Mail..." title="Enter a valid email" required/>
+						<input class="form-input-style" type="email" name="edit_email" id="edit_email" placeholder="E-Mail..." title="email" required/>
 					</td>
 				</tr>
 				<!-- <tr valign="baseline" class="form_height">
@@ -60,7 +60,7 @@
 				</tr> -->
 				<tr valign="baseline" class="form_height">
 					<td width="50%" style="border-block: 1px solid var(--clr-border); padding: 5px 10px;" align="left" valign="middle">
-						<span style="display: block;">Status</span>
+						<span style="display: block;"><?= $t['status'] ?></span>
 					</td>
 					<td width="50%" style="border-block: 1px solid var(--clr-border); padding: 5px 10px;" align="right" valign="middle">
 						<label class="switch">
@@ -71,15 +71,15 @@
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td width="50%" align="center" valign="middle">
-						<button type="button" class="cancel-btn" id="deleteAccountBtn">Delete Account</button>
+						<button type="button" class="cancel-btn" id="deleteAccountBtn"><?= $t['delete_account'] ?></button>
 					</td>
 					<td width="50%" align="center" valign="middle">
-						<input type="submit" class="button-style-agree" value="Update" />
+						<input type="submit" class="button-style-agree" value="<?= $t['update'] ?>" />
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
 					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="neutral-btn">Cancel</button>
+						<button type="button" class="neutral-btn"><?= $t['cancel'] ?></button>
 					</td>
 				</tr>
 			</table>

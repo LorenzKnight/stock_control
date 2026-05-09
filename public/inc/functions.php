@@ -533,6 +533,11 @@ function delete_image_from_record(array $params): array
 
 function mapProductRelations(array $product, $companyId): ?array
 {
+	// Cargar idioma dentro de la función si todavía no existe
+	if (!function_exists('tr')) {
+		require_once(__DIR__ . '/../logic/mini_language_switcher.php');
+	}
+
 	// Seguridad por compañía
 	$productCompanyId = isset($product["company_id"]) ? (int)$product["company_id"] : 0;
 	$filterCompanyId = !empty($companyId) ? (int)$companyId : 0;
@@ -541,9 +546,9 @@ function mapProductRelations(array $product, $companyId): ?array
 		return null;
 	}
 
-	$product["mark_name"] = "Uncategorized";
-	$product["model_name"] = "No model assigned";
-	$product["submodel_name"] = "No submodel assigned";
+	$product["mark_name"] = tr("uncategorized", "Uncategorized");
+	$product["model_name"] = tr("no_model", "No model assigned");
+	$product["submodel_name"] = tr("no_submodel", "No submodel assigned");
 
 	// Marca
 	if (!empty($product['product_mark'])) {
@@ -554,7 +559,7 @@ function mapProductRelations(array $product, $companyId): ?array
 			["fetch_first" => true]
 		), true);
 
-		$product["mark_name"] = $res["data"]["category_name"] ?? "Uncategorized";
+		$product["mark_name"] = $res["data"]["category_name"] ?? tr("uncategorized", "Uncategorized");
 	}
 
 	// Modelo
@@ -566,7 +571,7 @@ function mapProductRelations(array $product, $companyId): ?array
 			["fetch_first" => true]
 		), true);
 
-		$product["model_name"] = $res["data"]["category_name"] ?? "No model assigned";
+		$product["model_name"] = $res["data"]["category_name"] ?? tr("no_model", "No model assigned");
 	}
 
 	// Submodelo
@@ -578,15 +583,15 @@ function mapProductRelations(array $product, $companyId): ?array
 			["fetch_first" => true]
 		), true);
 
-		$product["submodel_name"] = $res["data"]["category_name"] ?? "No submodel assigned";
+		$product["submodel_name"] = $res["data"]["category_name"] ?? tr("no_submodel", "No submodel assigned");
 	}
 
 	// Propósito
 	if (isset($product['purpose'])) {
 		$purposeMap = GlobalArrays::$productPurpose;
-		$product["purpose_text"] = $purposeMap[$product['purpose']] ?? "Unknown purpose";
+		$product["purpose_text"] = $purposeMap[$product['purpose']] ?? tr("unknown_purpose", "Unknown purpose");
 	} else {
-		$product["purpose_text"] = "No purpose assigned";
+		$product["purpose_text"] = tr("no_purpose", "No purpose assigned");
 	}
 
 	return $product;

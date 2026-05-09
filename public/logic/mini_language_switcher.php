@@ -13,13 +13,15 @@ $uriLang = $pathParts[0] ?? '';
 if (in_array($uriLang, $supported, true)) {
     $lang = $uriLang;
 }
-else if (isset($_GET['lang']) && in_array($_GET['lang'], $supported, true)) {
+else if (isset($_GET['lang']) && in_array(strtolower($_GET['lang']), $supported, true)) {
     $lang = strtolower($_GET['lang']);
 }
 // 2️⃣ SI NO: detectar idioma del navegador
 else {
     $browserLang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '', 0, 2);
-    $lang = in_array($browserLang, $supported, true) ? $browserLang : 'en';
+    $browserLang = strtolower($browserLang);
+
+	$lang = in_array($browserLang, $supported, true) ? $browserLang : 'en';
 }
 
 // Textos por idioma
@@ -216,7 +218,9 @@ $i18n = [
 		'add_members' => 'Add members',
 		'manage' => 'Manage',
 
+		// content titles
 		'user_list' => 'User List',
+		'products_list' => 'Products List',
 
 		// Forms
 		'edit_profile_title' => 'Edit my profile',
@@ -224,6 +228,7 @@ $i18n = [
 		'select_a_subscription_pack' => 'Select a subscription pack',
 		'add_edit_company_title' => 'Add or Edit Company or Affiliate',
 		'add_member_title' => 'Add a new member to your company',
+		'edit_member_title' => 'Edit member information',
 		'company_info' => 'Company info',
 
 		'estimated_cost' => 'Estimated cost',
@@ -241,6 +246,11 @@ $i18n = [
 		'company_address' => 'Company Address',
 		'company_country_code' => 'Country Code',
 		'company_phone' => 'Company Phone',
+
+		'product_search' => 'Search products',
+		'mark_category' => 'Mark / Category',
+		'model' => 'Model',
+		'sub_model' => 'Sub/Model',
 
 		// Onboarding Guide
 		'get_your_inventory_ready' => 'Get your inventory ready',
@@ -260,6 +270,20 @@ $i18n = [
 		'back' => 'Back',
 		'done' => 'Done',
 
+		// Products
+		'qty' => 'Qty.',
+		'stock' => 'Stock',
+		'export' => 'Export',
+		'units' => 'Units',
+		'weight_unit' => 'weight / unit',
+		'total_weight' => 'Total weight',
+		'year' => 'Year',
+		'price' => 'Price',
+
+		'uncategorized' => 'Uncategorized',
+		'no_model' => 'No model assigned',
+		'no_submodel' => 'No sub/model assigned',
+
 		// Buttons
 		'cancel' => 'Cancel',
 		'update' => 'Update',
@@ -267,6 +291,9 @@ $i18n = [
 		'create_affiliate' => 'Create Affiliate',
 		'ok' => 'Ok',
 		'create' => 'Create',
+		'delete_account' => 'Delete Account',
+		'create_product' => 'Create Product',
+		'create_category' => 'Create Category',
 
 		// Global
 		'phone' => 'Phone',
@@ -274,6 +301,7 @@ $i18n = [
 		'branches' => 'Branches',
 		'memmbers' => 'Memmbers',
 		'password' => 'Password',
+		'status' => 'Status',
 	],
 	'es' => [
 		'title'       => 'Sistema de control de stock e inventario para pequeñas empresas | AllStockControl',
@@ -467,7 +495,9 @@ $i18n = [
 		'add_members' => 'Agregar miembros',
 		'manage' => 'Gestionar',
 
+		// content titles
 		'user_list' => 'Lista de usuarios',
+		'products_list' => 'Lista de productos',
 
 		// Forms
 		'edit_profile_title' => 'Editar mi perfil',
@@ -475,6 +505,7 @@ $i18n = [
 		'select_a_subscription_pack' => 'Selecciona un pack de suscripción',
 		'add_edit_company_title' => 'Agregar o editar empresa o afiliado',
 		'add_member_title' => 'Agregar un nuevo miembro a tu empresa',
+		'edit_member_title' => 'Editar información del miembro',
 		'company_info' => 'Información de la empresa',
 
 		'estimated_cost' => 'Costo estimado',
@@ -492,6 +523,11 @@ $i18n = [
 		'company_address' => 'Dirección de la empresa',
 		'company_country_code' => 'Código de país',
 		'company_phone' => 'Teléfono de la empresa',
+
+		'product_search' => 'Buscar productos',
+		'mark_category' => 'Marcar / Categoría',
+		'model' => 'Modelo',
+		'sub_model' => 'Sub/Modelo',
 
 		// Onboarding Guide
 		'get_your_inventory_ready' => 'Prepara tu inventario',
@@ -511,6 +547,20 @@ $i18n = [
 		'back' => 'Atrás',
 		'done' => 'Hecho',
 
+		// Products
+		'qty' => 'Cant.',
+		'stock' => 'Stock',
+		'export' => 'Exportar',
+		'units' => 'Unidades',
+		'weight_unit' => 'peso / unidad',
+		'total_weight' => 'Peso total',
+		'year' => 'Año',
+		'price' => 'Precio',
+
+		'uncategorized' => 'Sin categoría',
+		'no_model' => 'Sin modelo asignado',
+		'no_submodel' => 'Sin sub/modelo asignado',
+
 		// Buttons
 		'cancel' => 'Cancelar',
 		'update' => 'Actualizar',
@@ -518,6 +568,9 @@ $i18n = [
 		'create_affiliate' => 'Crear afiliado',
 		'ok' => 'Aceptar',
 		'create' => 'Crear',
+		'delete_account' => 'Eliminar cuenta',
+		'create_product' => 'Crear producto',
+		'create_category' => 'Crear categoría',
 
 		// Global
 		'phone' => 'Teléfono',
@@ -525,6 +578,7 @@ $i18n = [
 		'branches' => 'Sucursales',
 		'memmbers' => 'Miembros',
 		'password' => 'Contraseña',
+		'status' => 'Estado',
 	],
 	'sv' => [
 		'title'       => 'Lagerprogram och lagerkontroll för småföretag | AllStockControl',
@@ -718,7 +772,9 @@ $i18n = [
 		'add_members' => 'Lägg till medlemmar',
 		'manage' => 'Hantera',
 
+		// content titles
 		'user_list' => 'Användarlista',
+		'products_list' => 'Produktlista',
 
 		// Forms
 		'edit_profile_title' => 'Redigera min profil',
@@ -726,6 +782,7 @@ $i18n = [
 		'select_a_subscription_pack' => 'Välj ett prenumerationspaket',
 		'add_edit_company_title' => 'Lägg till eller redigera företag eller filial',
 		'add_member_title' => 'Lägg till en ny medlem i ditt företag',
+		'edit_member_title' => 'Redigera medlemsinformation',
 		'company_info' => 'Företagsinformation',
 
 		'estimated_cost' => 'Beräknad kostnad',
@@ -743,6 +800,11 @@ $i18n = [
 		'company_address' => 'Företagsadress',
 		'company_country_code' => 'Landskod',
 		'company_phone' => 'Företagstelefon',
+
+		'product_search' => 'Sök produkter',
+		'mark_category' => 'Märk / Kategori',
+		'model' => 'Modell',
+		'sub_model' => 'Sub/Modell',
 
 		// Onboarding Guide
 		'get_your_inventory_ready' => 'Förbered ditt lager',
@@ -762,6 +824,20 @@ $i18n = [
 		'back' => 'Tillbaka',
 		'done' => 'Klart',
 
+		// Products
+		'qty' => 'Ant.',
+		'stock' => 'Lager',
+		'export' => 'Exportera',
+		'units' => 'Enheter',
+		'weight_unit' => 'vikt / enhet',
+		'total_weight' => 'Total vikt',
+		'year' => 'År',
+		'price' => 'Pris',
+
+		'uncategorized' => 'Okategoriserad',
+		'no_model' => 'Ingen modell tilldelad',
+		'no_submodel' => 'Ingen sub/modell tilldelad',
+
 		// Buttons
 		'cancel' => 'Avbryt',
 		'update' => 'Uppdatera',
@@ -769,6 +845,9 @@ $i18n = [
 		'create_affiliate' => 'Skapa filial',
 		'ok' => 'Ok',
 		'create' => 'Skapa',
+		'delete_account' => 'Radera konto',
+		'create_product' => 'Skapa produkt',
+		'create_category' => 'Skapa kategori',
 
 		// Global
 		'phone' => 'Telefon',
@@ -776,53 +855,77 @@ $i18n = [
 		'branches' => 'Filialer',
 		'memmbers' => 'Medlemmar',
 		'password' => 'Lösenord',
+		'status' => 'Status',
 	],
 ];
 
 $t = $i18n[$lang] ?? $i18n['en'];
 
+$GLOBALS['lang'] = $lang;
+$GLOBALS['t'] = $t;
+$GLOBALS['i18n'] = $i18n;
+
 // Helper para construir URLs con ?lang=…
-function url_with_lang(string $targetLang): string {
-	$supported = ['en', 'es', 'sv'];
+if (!function_exists('url_with_lang')) {
+	function url_with_lang(string $targetLang): string {
+		$supported = ['en', 'es', 'sv'];
 
-	$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-	$host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
+		$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+		$host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
 
-	$rawPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-	$rawPath = is_string($rawPath) ? $rawPath : '/';
+		$rawPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+		$rawPath = is_string($rawPath) ? $rawPath : '/';
 
-	$parts = explode('/', trim($rawPath, '/'));
+		$parts = explode('/', trim($rawPath, '/'));
 
-	// Quitar idioma actual si existe
-	if (in_array($parts[0] ?? '', $supported, true)) {
-		array_shift($parts);
+		// Quitar idioma actual si existe
+		if (in_array($parts[0] ?? '', $supported, true)) {
+			array_shift($parts);
+		}
+
+		// Si la ruta viene como profile.php, convertirla en profile
+		if (!empty($parts)) {
+			$lastIndex = count($parts) - 1;
+			$parts[$lastIndex] = preg_replace('/\.php$/', '', $parts[$lastIndex]);
+		}
+
+		$rest = implode('/', $parts);
+
+		return $scheme . '://' . $host . '/' . $targetLang . ($rest !== '' ? '/' . $rest : '');
 	}
-
-	// Si la ruta viene como profile.php, convertirla en profile
-	if (!empty($parts)) {
-		$lastIndex = count($parts) - 1;
-		$parts[$lastIndex] = preg_replace('/\.php$/', '', $parts[$lastIndex]);
-	}
-
-	$rest = implode('/', $parts);
-
-	return $scheme . '://' . $host . '/' . $targetLang . ($rest !== '' ? '/' . $rest : '');
 }
 
-function localized_url(string $page, ?string $targetLang = null): string {
-	global $lang;
+if (!function_exists('localized_url')) {
+	function localized_url(string $page, ?string $targetLang = null): string {
+		global $lang;
 
-	$supported = ['en', 'es', 'sv'];
+		$supported = ['en', 'es', 'sv'];
 
-	$targetLang = $targetLang ?? $lang;
+		$targetLang = $targetLang ?? $lang;
 
-	if (!in_array($targetLang, $supported, true)) {
-		$targetLang = 'en';
+		if (!in_array($targetLang, $supported, true)) {
+			$targetLang = 'en';
+		}
+
+		$page = trim($page, '/');
+		$page = preg_replace('/\.php$/', '', $page);
+
+		return '/' . $targetLang . '/' . $page;
 	}
+}
 
-	$page = trim($page, '/');
-	$page = preg_replace('/\.php$/', '', $page);
+if (!function_exists('tr')) {
+	function tr(string $key, string $fallback = ''): string {
+		if (!isset($GLOBALS['t']) || !is_array($GLOBALS['t'])) {
+			$lang = $GLOBALS['lang'] ?? 'en';
+			$i18n = $GLOBALS['i18n'] ?? [];
 
-	return '/' . $targetLang . '/' . $page;
+			if (isset($i18n[$lang]) && is_array($i18n[$lang])) {
+				$GLOBALS['t'] = $i18n[$lang];
+			}
+		}
+
+		return $GLOBALS['t'][$key] ?? $fallback;
+	}
 }
 ?>
