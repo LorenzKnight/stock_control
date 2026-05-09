@@ -1,4 +1,4 @@
-ALL STOCK CONTROL
+## ALL STOCK CONTROL
 
 Modern SaaS platform for inventory, warehouse, shipping, and business management.
 
@@ -202,5 +202,5 @@ in default.conf uncomment the lines:
 access_log /var/log/nginx/default.log;
 error_log /var/log/nginx/default.log;
 
-### Author
-### Lorenz Knight
+## Author
+## Lorenz Knight
