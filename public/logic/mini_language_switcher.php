@@ -230,9 +230,15 @@ $i18n = [
 		'add_member_title' => 'Add a new member to your company',
 		'edit_member_title' => 'Edit member information',
 		'company_info' => 'Company info',
+		'add_product_title' => 'Add a new product',
+		'add_category_or_subcategory' => 'Add a new category or subcategory',
+		'product_options' => 'Product options',
+		'edit_product_title' => 'Edit Product',
+		'delete_product_title' => 'Delete Product',
 
 		'estimated_cost' => 'Estimated cost',
 		'select_extra_service' => 'Select extra service',
+		'confirm_delete_product' => 'Are you sure you want to delete this product?',
 
 		'form_drop_image' => 'Drop image here or click to select',
 		'form_name' => 'Name',
@@ -271,6 +277,11 @@ $i18n = [
 		'done' => 'Done',
 
 		// Products
+		'single_unit' => 'Single unit',
+		'multi_pack' => 'Multi-pack',
+		'product_name' => 'Product name',
+		'hs_code' => 'Tariff fraction (HS Code)',
+		'type' => 'Type',
 		'qty' => 'Qty.',
 		'stock' => 'Stock',
 		'export' => 'Export',
@@ -278,7 +289,9 @@ $i18n = [
 		'weight_unit' => 'weight / unit',
 		'total_weight' => 'Total weight',
 		'year' => 'Year',
+		'currency' => 'Currency',
 		'price' => 'Price',
+		'purpose' => 'Purpose',
 
 		'uncategorized' => 'Uncategorized',
 		'no_model' => 'No model assigned',
@@ -290,18 +303,34 @@ $i18n = [
 		'upgrade' => 'Upgrade',
 		'create_affiliate' => 'Create Affiliate',
 		'ok' => 'Ok',
+		'confirm' => 'Confirm',
 		'create' => 'Create',
 		'delete_account' => 'Delete Account',
 		'create_product' => 'Create Product',
 		'create_category' => 'Create Category',
+		'new_mark' => 'New Mark',
+		'new_model' => 'New Model',
+		'new_submodel' => 'New Sub/Model',
+		'request_product' => 'Request product',
+		'edit_product' => 'Edit Product',
+		'delete_product' => 'Delete Product',
+
+		// messages
+		'no_marks_found' => 'No marks found',
+		'no_models_found' => 'No models found for this brand',
+		'no_submodels_found' => 'No sub/models found for this model',
 
 		// Global
 		'phone' => 'Phone',
 		'loading' => 'Loading...',
 		'branches' => 'Branches',
 		'memmbers' => 'Memmbers',
+		'description' => 'Description',
+		'quantity' => 'Quantity',
+		'min_quantity' => 'Min quantity',
 		'password' => 'Password',
 		'status' => 'Status',
+		'close' => 'Close',
 	],
 	'es' => [
 		'title'       => 'Sistema de control de stock e inventario para pequeñas empresas | AllStockControl',
@@ -507,9 +536,15 @@ $i18n = [
 		'add_member_title' => 'Agregar un nuevo miembro a tu empresa',
 		'edit_member_title' => 'Editar información del miembro',
 		'company_info' => 'Información de la empresa',
+		'add_product_title' => 'Agregar un nuevo producto',
+		'add_category_or_subcategory' => 'Agregar una nueva categoría o subcategoría',
+		'product_options' => 'Opciones del producto',
+		'edit_product_title' => 'Editar producto',
+		'delete_product_title' => 'Eliminar producto',
 
 		'estimated_cost' => 'Costo estimado',
 		'select_extra_service' => 'Seleccionar servicio adicional',
+		'confirm_delete_product' => '¿Estás seguro de que quieres eliminar este producto?',
 
 		'form_drop_image' => 'Suelta la imagen aquí o haz clic para seleccionar',
 		'form_name' => 'Nombre',
@@ -548,6 +583,11 @@ $i18n = [
 		'done' => 'Hecho',
 
 		// Products
+		'single_unit' => 'Unidad simple',
+		'multi_pack' => 'Multi-pack',
+		'product_name' => 'Nombre del producto',
+		'hs_code' => 'Fracción arancelaria (HS Code)',
+		'type' => 'Tipo',
 		'qty' => 'Cant.',
 		'stock' => 'Stock',
 		'export' => 'Exportar',
@@ -555,7 +595,9 @@ $i18n = [
 		'weight_unit' => 'peso / unidad',
 		'total_weight' => 'Peso total',
 		'year' => 'Año',
+		'currency' => 'Moneda',
 		'price' => 'Precio',
+		'purpose' => 'Propósito',
 
 		'uncategorized' => 'Sin categoría',
 		'no_model' => 'Sin modelo asignado',
@@ -567,18 +609,34 @@ $i18n = [
 		'upgrade' => 'Mejorar plan',
 		'create_affiliate' => 'Crear afiliado',
 		'ok' => 'Aceptar',
+		'confirm' => 'Confirmar',
 		'create' => 'Crear',
 		'delete_account' => 'Eliminar cuenta',
 		'create_product' => 'Crear producto',
 		'create_category' => 'Crear categoría',
+		'new_mark' => 'Nueva marca',
+		'new_model' => 'Nuevo modelo',
+		'new_submodel' => 'Nuevo sub/modelo',
+		'request_product' => 'Solicitar producto',
+		'edit_product' => 'Editar producto',
+		'delete_product' => 'Eliminar producto',
+
+		// messages
+		'no_marks_found' => 'No se encontraron marcas',
+		'no_models_found' => 'No se encontraron modelos para esta marca',
+		'no_submodels_found' => 'No se encontraron sub/modelos para este modelo',
 
 		// Global
 		'phone' => 'Teléfono',
 		'loading' => 'Cargando...',
 		'branches' => 'Sucursales',
 		'memmbers' => 'Miembros',
+		'description' => 'Descripción',
+		'quantity' => 'Cantidad',
+		'min_quantity' => 'Cantidad mínima',
 		'password' => 'Contraseña',
 		'status' => 'Estado',
+		'close' => 'Cerrar',
 	],
 	'sv' => [
 		'title'       => 'Lagerprogram och lagerkontroll för småföretag | AllStockControl',
@@ -784,9 +842,15 @@ $i18n = [
 		'add_member_title' => 'Lägg till en ny medlem i ditt företag',
 		'edit_member_title' => 'Redigera medlemsinformation',
 		'company_info' => 'Företagsinformation',
+		'add_product_title' => 'Lägg till en ny produkt',
+		'add_category_or_subcategory' => 'Lägg till en ny kategori eller underkategori',
+		'product_options' => 'Produktalternativ',
+		'edit_product_title' => 'Redigera produkt',
+		'delete_product_title' => 'Radera produkt',
 
 		'estimated_cost' => 'Beräknad kostnad',
 		'select_extra_service' => 'Välj extra tjänst',
+		'confirm_delete_product' => 'Är du säker på att du vill radera den här produkten?',
 
 		'form_drop_image' => 'Släpp bilden här eller klicka för att välja',
 		'form_name' => 'Namn',
@@ -825,6 +889,11 @@ $i18n = [
 		'done' => 'Klart',
 
 		// Products
+		'single_unit' => 'Enkel enhet',
+		'multi_pack' => 'Multi-pack',
+		'product_name' => 'Produktnamn',
+		'hs_code' => 'HS-kod',
+		'type' => 'Typ',
 		'qty' => 'Ant.',
 		'stock' => 'Lager',
 		'export' => 'Exportera',
@@ -833,6 +902,7 @@ $i18n = [
 		'total_weight' => 'Total vikt',
 		'year' => 'År',
 		'price' => 'Pris',
+		'purpose' => 'Syfte',
 
 		'uncategorized' => 'Okategoriserad',
 		'no_model' => 'Ingen modell tilldelad',
@@ -844,18 +914,35 @@ $i18n = [
 		'upgrade' => 'Uppgradera',
 		'create_affiliate' => 'Skapa filial',
 		'ok' => 'Ok',
+		'confirm' => 'Bekräfta',
 		'create' => 'Skapa',
 		'delete_account' => 'Radera konto',
 		'create_product' => 'Skapa produkt',
 		'create_category' => 'Skapa kategori',
+		'new_mark' => 'Ny mark',
+		'new_model' => 'Ny modell',
+		'new_submodel' => 'Ny sub/modell',
+		'request_product' => 'Begär produkt',
+		'edit_product' => 'Redigera produkt',
+		'delete_product' => 'Radera produkt',
+
+		// messages
+		'no_marks_found' => 'Inga märken hittades',
+		'no_models_found' => 'Inga modeller hittades för detta märke',
+		'no_submodels_found' => 'Inga sub/modeller hittades för denna modell',
 
 		// Global
 		'phone' => 'Telefon',
 		'loading' => 'Laddar...',
 		'branches' => 'Filialer',
 		'memmbers' => 'Medlemmar',
+		'description' => 'Beskrivning',
+		'quantity' => 'Kvantitet',
+		'min_quantity' => 'Minimikvantitet',
+		'currency' => 'Valuta',
 		'password' => 'Lösenord',
 		'status' => 'Status',
+		'close' => 'Stäng',
 	],
 ];
 

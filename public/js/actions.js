@@ -2483,7 +2483,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							modelList.appendChild(row);
 						});
 					} else {
-						modelList.innerHTML = `<tr data-empty-message><td colspan="3" style="text-align: center; padding:15px 0;">No models found for this brand.</td></tr>`;
+						modelList.innerHTML = `<tr data-empty-message><td colspan="3" style="text-align: center; padding:15px 0;">${window.i18n?.no_models_found || 'No models found for this brand.'}</td></tr>`;
 					}
 				})
 				.catch(error => {
@@ -2607,7 +2607,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							submodelList.appendChild(row);
 						});
 					} else {
-						submodelList.innerHTML = `<tr data-empty-message><td colspan="3" style="text-align: center; padding:15px 0;">No submodels found.</td></tr>`;
+						submodelList.innerHTML = `<tr data-empty-message><td colspan="3" style="text-align: center; padding:15px 0;">${window.i18n?.no_submodels_found || 'No submodels found for this model.'}</td></tr>`;
 					}
 				})
 				.catch(error => {
@@ -3063,7 +3063,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							return;
 						}
 
-						showConfirmModal("Delete Product", "Are you sure you want to delete this product?", async () => {
+						showConfirmModal(window.i18n?.delete_product_title || "Delete Product", window.i18n?.confirm_delete_product || "Are you sure you want to delete this product?", async () => {
 							const frame = document.querySelector('.formular-frame');
 							if (frame) frame.style.display = 'none';
 
@@ -3107,7 +3107,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	async function openEditProductForm(productId) {
-		console.log("Opening edit form for product ID:", productId);
 		const formEditProduct = document.getElementById('formEditProduct');
 		if (!formEditProduct) return;
 	
@@ -3127,7 +3126,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	
 			if (data.success && data.data.length > 0) {
 				const product = data.data.find(p => p.product_id == productId);
-				console.log("Product for editing:", product);
+				
 				if (!product) return;
 				
 				// Llenar campos del formulario
@@ -3165,11 +3164,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 				);
 				
 				initDragAndDrop('edit-drop-product-area', 'edit_Product_image', 'edit-product-image-preview');
-
-				console.log('Edit type debug:', {
-					productType: product.product_type,
-					companyId: product.company_id
-				});
 
 				await populateProductTypes('edit_product_type', product.product_type, product.company_id, true);
 
@@ -5823,33 +5817,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 							`;
 						}
 					}
-
-					// 🔹 Cargar marcas
-					// async function loadMarks() {
-					// 	try {
-					// 		const response = await fetch("api/get_categories.php", {
-					// 			method: "GET",
-					// 			headers: { "Accept": "application/json" }
-					// 		});
-					// 		const data = await response.json();
-
-					// 		saleMarkSelectForEdit.innerHTML = `<option value="">All Marks</option>`;
-
-					// 		if (data.success && data.data.length > 0) {
-					// 			data.data.forEach(category => {
-					// 				const option = document.createElement("option");
-					// 				option.value = category.category_id;
-					// 				option.textContent = category.category_name;
-					// 				saleMarkSelectForEdit.appendChild(option);
-					// 			});
-					// 		} else {
-					// 			saleMarkSelectForEdit.innerHTML += `<option value="">No marks found</option>`;
-					// 		}
-					// 	} catch (error) {
-					// 		console.error("Error loading marks:", error);
-					// 		saleMarkSelectForEdit.innerHTML = `<option value="">Error loading marks</option>`;
-					// 	}
-					// }
 
 					searchProductInputForEdit.addEventListener('input', () => {
 						fetchAndRenderProducts(searchProductInputForEdit.value, saleMarkSelectForEdit.value);
@@ -11176,7 +11143,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	async function populateProductTypes(selectId, selectedValue = '', companyId = '', withCreate = true) {
-		console.log(`[populateProductTypes] Cargando tipos para companyId=${companyId}, selectedValue=${selectedValue}, withCreate=${withCreate}`);
 		const select = document.getElementById(selectId);
 		if (!select) return;
 	
@@ -12193,7 +12159,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					saleMarkSelectId.appendChild(option);
 				});
 			} else {
-				saleMarkSelectId.innerHTML += `<option value="">No marks found</option>`;
+				saleMarkSelectId.innerHTML += `<option value="">${window.i18n?.no_marks_found || 'No marks found'}</option>`;
 			}
 		} catch (error) {
 			console.error("Error loading marks:", error);

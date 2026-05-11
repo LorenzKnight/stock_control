@@ -3,8 +3,8 @@
 		<h3 id="confirm-modal-title"></h3>
 		<p id="confirm-modal-message"></p>
 		<div class="delete-modal-actions">
-			<button id="modalCancelBtn" class="neutral-btn">Cancel</button>
-			<button id="modalConfirmBtn" class="button-style-agree">Confirm</button>
+			<button id="modalCancelBtn" class="neutral-btn"><?= $t['cancel'] ?></button>
+			<button id="modalConfirmBtn" class="button-style-agree"><?= $t['confirm'] ?></button>
 		</div>
 	</div>
 </div>
@@ -14,7 +14,7 @@
 		<h3 id="alert-modal-title"></h3>
 		<p id="alert-modal-message"></p>
 		<div class="confirm-modal-actions">
-			<button id="modalOkBtn" class="button-style-agree">Ok</button>
+			<button id="modalOkBtn" class="button-style-agree"><?= $t['ok'] ?></button>
 		</div>
 	</div>
 </div>

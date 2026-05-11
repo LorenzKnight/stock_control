@@ -4,14 +4,14 @@
 			<table width="80%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
-						<h2>Add Category or Sub-Category</h2>
+						<h2><?= $t['add_category_or_subcategory'] ?></h2>
 					</td>      
 				</tr>
 				<tr valign="baseline">
 					<td colspan="2" align="center" valign="middle">
 						<div class="formular-category-list">
 							<div class="create-list-holder" id="clic-create-mark">
-								<button type="button" class="button-style-agree" id="add-mark-btn">New Mark</button>
+								<button type="button" class="button-style-agree" id="add-mark-btn"><?= $t['new_mark'] ?></button>
 							</div>
 							<div class="create-list-holder flex" id="input-mark" style="display: none;">
 								<table width="100%" align="center" cellspacing="0">
@@ -20,22 +20,20 @@
 											<input type="text" class="form-medium-input-style" name="input-product-mark" id="input-product-mark" />
 										</td>
 										<td width="30%" align="center" valign="middle">
-											<button type="button" class="button-style-agree" id="btn-create-mark">Create</button>
+											<button type="button" class="button-style-agree" id="btn-create-mark"><?= $t['create'] ?></button>
 										</td>
 									</tr>
 								</table>
 							</div>
 							<div class="cat-all-list">
-								<table class="all-mark-list" id="mark-list" cellspacing="0">
-								
-								</table>
+								<table class="all-mark-list" id="mark-list" cellspacing="0"></table>
 							</div>
 						</div>
 					</td>
 					<td colspan="2" align="center" valign="middle">
 						<div class="formular-category-list">
 							<div class="create-list-holder" id="clic-create-model">
-								<button type="button" class="button-style-agree disabled" id="add-model-btn" disabled>New Model</button>
+								<button type="button" class="button-style-agree disabled" id="add-model-btn" disabled><?= $t['new_model'] ?></button>
 							</div>
 							<div class="create-list-holder" id="input-model" style="display: none;">
 								<table width="100%" align="center" cellspacing="0">
@@ -44,22 +42,20 @@
 											<input type="text" class="form-medium-input-style" name="input-product-model" id="input-product-model" />
 										</td>
 										<td width="30%" align="center" valign="middle">
-											<button type="button" class="button-style-agree" id="btn-create-model">Create</button>
+											<button type="button" class="button-style-agree" id="btn-create-model"><?= $t['create'] ?></button>
 										</td>
 									</tr>
 								</table>
 							</div>
 							<div class="cat-all-list">
-								<table class="all-model-list" id="model-list" cellspacing="0">
-								
-								</table>
+								<table class="all-model-list" id="model-list" cellspacing="0"></table>
 							</div>
 						</div>
 					</td>
 					<td colspan="2" align="center" valign="middle">
 						<div class="formular-category-list">
 							<div class="create-list-holder" id="clic-create-submodel">
-								<button type="button" class="button-style-agree disabled" id="add-submodel-btn" disabled>New Submodel</button>
+								<button type="button" class="button-style-agree disabled" id="add-submodel-btn" disabled><?= $t['new_submodel'] ?></button>
 							</div>
 							<div class="create-list-holder" id="input-submodel" style="display: none;">
 								<table width="100%" align="center" cellspacing="0">
@@ -68,15 +64,13 @@
 											<input type="text" class="form-medium-input-style" name="input-product-submodel" id="input-product-submodel" />
 										</td>
 										<td width="30%" align="center" valign="middle">
-											<button type="button" class="button-style-agree" id="btn-create-submodel">Create</button>
+											<button type="button" class="button-style-agree" id="btn-create-submodel"><?= $t['create'] ?></button>
 										</td>
 									</tr>
 								</table>
 							</div>
 							<div class="cat-all-list">
-								<table class="all-submodel-list" id="submodel-list" cellspacing="0">
-								
-								</table>
+								<table class="all-submodel-list" id="submodel-list" cellspacing="0"></table>
 							</div>
 						</div>
 					</td>
@@ -85,10 +79,10 @@
 					<td colspan="2" align="center" valign="middle">
 					</td>
 					<td colspan="1" align="center" valign="middle">
-						<button type="button" class="neutral-btn">Cancel</button>
+						<button type="button" class="neutral-btn"><?= $t['cancel'] ?></button>
 					</td>
 					<td colspan="1" align="center" valign="middle">
-						<input type="submit" class="button-style-agree" value="Create" />
+						<input type="submit" class="button-style-agree" value="<?= $t['create'] ?>" />
 					</td>
 					<td colspan="2" align="center" valign="middle">
 					</td>
