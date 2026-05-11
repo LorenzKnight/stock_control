@@ -36,9 +36,9 @@ services:
     image: postgres:14.1-alpine
     restart: always
     environment:
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=REMOVED_PASSWORD
-      - POSTGRES_DB=stock_control_db
+      - POSTGRES_USER=${DB_USER_LOCAL}
+      - POSTGRES_PASSWORD=${DB_PASSWORD_LOCAL}
+      - POSTGRES_DB=${DB_NAME_LOCAL}
       - TZ=Europe/Stockholm
     volumes:
       - db_stock:/var/lib/postgresql/data
