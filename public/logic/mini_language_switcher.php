@@ -28,7 +28,7 @@ else {
 $i18n = [
 	'en' => [
 		'title'       => 'Inventory management software for small businesses | AllStockControl',
-		'description' => 'Cloud-based inventory management software for small businesses. Track stock in real time, manage multiple locations, and control inventory movements from any device. Try AllStockControl free.',
+		'meta_description' => 'Cloud-based inventory management software for small businesses. Track stock in real time, manage multiple locations, and control inventory movements from any device. Try AllStockControl free.',
 		'features_h2' => 'Key Features',
 		'pricing_h2'  => 'Pricing & Plans',
 		'content_language' => 'en',
@@ -221,6 +221,7 @@ $i18n = [
 		// content titles
 		'user_list' => 'User List',
 		'products_list' => 'Products List',
+		'storage_list' => 'Storage List',
 
 		// Forms
 		'edit_profile_title' => 'Edit my profile',
@@ -235,6 +236,10 @@ $i18n = [
 		'product_options' => 'Product options',
 		'edit_product_title' => 'Edit Product',
 		'delete_product_title' => 'Delete Product',
+		'storage_options' => 'Storage options',
+		'add_or_edit_slot' => 'Add or edit slot',
+		'add_or_edit_storage' => 'Add or edit storage',
+		'slot_options' => 'Slot options',
 
 		'estimated_cost' => 'Estimated cost',
 		'select_extra_service' => 'Select extra service',
@@ -253,7 +258,13 @@ $i18n = [
 		'company_country_code' => 'Country Code',
 		'company_phone' => 'Company Phone',
 
+		'slot_name' => 'Slot name',
+		'current_capacity' => 'Current capacity',
+		'max_capacity' => 'Max capacity',
+
 		'product_search' => 'Search products',
+		'storage_or_product_no' => 'Storage/Product No.',
+		'search_slot' => 'Search slot',
 		'mark_category' => 'Mark / Category',
 		'model' => 'Model',
 		'sub_model' => 'Sub/Model',
@@ -314,11 +325,24 @@ $i18n = [
 		'request_product' => 'Request product',
 		'edit_product' => 'Edit Product',
 		'delete_product' => 'Delete Product',
+		'storage_menu' => 'Storage Menu',
+		'manage_slots' => 'Manage Slots',
+		'manage_storage' => 'Manage Storage',
+		'create_slot' => 'Create Slot',
+		'add_storage' => 'Add Storage',
+		'select_slot' => 'Select a slot',
+		'save_changes' => 'Save changes',
+		'delete_slot' => 'Delete Slot',
 
 		// messages
 		'no_marks_found' => 'No marks found',
 		'no_models_found' => 'No models found for this brand',
 		'no_submodels_found' => 'No sub/models found for this model',
+		'no_results_yet' => 'No results yet',
+		'product_found' => 'Product found',
+		'no_product_found' => 'No product found',
+		'no_slots_found' => 'No slots found.',
+		'slot_info' => 'Slot info',
 
 		// Global
 		'phone' => 'Phone',
@@ -334,7 +358,7 @@ $i18n = [
 	],
 	'es' => [
 		'title'       => 'Sistema de control de stock e inventario para pequeñas empresas | AllStockControl',
-		'description' => 'Sistema de control de stock e inventario en la nube para pequeñas empresas. Controla stock en tiempo real, entradas, salidas y sucursales desde cualquier dispositivo. Pruébalo gratis.',
+		'meta_description' => 'Sistema de control de stock e inventario en la nube para pequeñas empresas. Controla stock en tiempo real, entradas, salidas y sucursales desde cualquier dispositivo. Pruébalo gratis.',
 		'features_h2' => 'Funciones clave',
 		'pricing_h2'  => 'Precios y planes',
 		'content_language' => 'es',
@@ -527,6 +551,7 @@ $i18n = [
 		// content titles
 		'user_list' => 'Lista de usuarios',
 		'products_list' => 'Lista de productos',
+		'storage_list' => 'Lista de almacenamiento',
 
 		// Forms
 		'edit_profile_title' => 'Editar mi perfil',
@@ -541,6 +566,10 @@ $i18n = [
 		'product_options' => 'Opciones del producto',
 		'edit_product_title' => 'Editar producto',
 		'delete_product_title' => 'Eliminar producto',
+		'storage_options' => 'Opciones de almacenamiento',
+		'add_or_edit_slot' => 'Agregar o editar slot',
+		'add_or_edit_storage' => 'Agregar o editar almacenamiento',
+		'slot_options' => 'Opciones del slot',
 
 		'estimated_cost' => 'Costo estimado',
 		'select_extra_service' => 'Seleccionar servicio adicional',
@@ -559,7 +588,13 @@ $i18n = [
 		'company_country_code' => 'Código de país',
 		'company_phone' => 'Teléfono de la empresa',
 
+		'slot_name' => 'Nombre del slot',
+		'current_capacity' => 'Capacidad actual',
+		'max_capacity' => 'Capacidad máxima',
+
 		'product_search' => 'Buscar productos',
+		'storage_or_product_no' => 'Número de almacenamiento/producto',
+		'search_slot' => 'Buscar slot',
 		'mark_category' => 'Marcar / Categoría',
 		'model' => 'Modelo',
 		'sub_model' => 'Sub/Modelo',
@@ -620,11 +655,24 @@ $i18n = [
 		'request_product' => 'Solicitar producto',
 		'edit_product' => 'Editar producto',
 		'delete_product' => 'Eliminar producto',
+		'storage_menu' => 'Menú de almacenamiento',
+		'manage_slots' => 'Gestionar slots',
+		'manage_storage' => 'Gestionar almacenamiento',
+		'create_slot' => 'Crear slot',
+		'add_storage' => 'Agregar almacenamiento',
+		'select_slot' => 'Selecciona un slot',
+		'save_changes' => 'Guardar cambios',
+		'delete_slot' => 'Eliminar slot',
 
 		// messages
 		'no_marks_found' => 'No se encontraron marcas',
 		'no_models_found' => 'No se encontraron modelos para esta marca',
 		'no_submodels_found' => 'No se encontraron sub/modelos para este modelo',
+		'no_results_yet' => 'Aún no hay resultados',
+		'product_found' => 'Producto encontrado',
+		'no_product_found' => 'No se encontró ningún producto',
+		'no_slots_found' => 'No se encontraron slots.',
+		'slot_info' => 'Información del slot',
 
 		// Global
 		'phone' => 'Teléfono',
@@ -640,7 +688,7 @@ $i18n = [
 	],
 	'sv' => [
 		'title'       => 'Lagerprogram och lagerkontroll för småföretag | AllStockControl',
-		'description' => 'Molnbaserat lagerprogram för småföretag. Följ lagersaldo i realtid, hantera flera platser och få bättre lagerkontroll utan kalkylblad. Testa gratis.',
+		'meta_description' => 'Molnbaserat lagerprogram för småföretag. Följ lagersaldo i realtid, hantera flera platser och få bättre lagerkontroll utan kalkylblad. Testa gratis.',
 		'features_h2' => 'Viktigaste funktionerna',
 		'pricing_h2'  => 'Priser och paket',
 		'content_language' => 'sv',
@@ -833,6 +881,7 @@ $i18n = [
 		// content titles
 		'user_list' => 'Användarlista',
 		'products_list' => 'Produktlista',
+		'storage_list' => 'Lagerlista',
 
 		// Forms
 		'edit_profile_title' => 'Redigera min profil',
@@ -847,6 +896,10 @@ $i18n = [
 		'product_options' => 'Produktalternativ',
 		'edit_product_title' => 'Redigera produkt',
 		'delete_product_title' => 'Radera produkt',
+		'storage_options' => 'Lageralternativ',
+		'add_or_edit_slot' => 'Lägg till eller redigera slot',
+		'add_or_edit_storage' => 'Lägg till eller redigera lager',
+		'slot_options' => 'Slot-alternativ',
 
 		'estimated_cost' => 'Beräknad kostnad',
 		'select_extra_service' => 'Välj extra tjänst',
@@ -865,7 +918,13 @@ $i18n = [
 		'company_country_code' => 'Landskod',
 		'company_phone' => 'Företagstelefon',
 
+		'slot_name' => 'Slot namn',
+		'current_capacity' => 'Nuvarande kapacitet',
+		'max_capacity' => 'Max kapacitet',
+
 		'product_search' => 'Sök produkter',
+		'storage_or_product_no' => 'Lager-/produktnummer',
+		'search_slot' => 'Sök slot',
 		'mark_category' => 'Märk / Kategori',
 		'model' => 'Modell',
 		'sub_model' => 'Sub/Modell',
@@ -925,11 +984,24 @@ $i18n = [
 		'request_product' => 'Begär produkt',
 		'edit_product' => 'Redigera produkt',
 		'delete_product' => 'Radera produkt',
+		'storage_menu' => 'Lager meny',
+		'manage_slots' => 'Hantera slots',
+		'manage_storage' => 'Hantera lager',
+		'create_slot' => 'Skapa slot',
+		'add_storage' => 'Lägg till lager',
+		'select_slot' => 'Välj en slot',
+		'save_changes' => 'Spara ändringar',
+		'delete_slot' => 'Radera slot',
 
 		// messages
 		'no_marks_found' => 'Inga märken hittades',
 		'no_models_found' => 'Inga modeller hittades för detta märke',
 		'no_submodels_found' => 'Inga sub/modeller hittades för denna modell',
+		'no_results_yet' => 'Inga resultat än',
+		'product_found' => 'Produkt hittad',
+		'no_product_found' => 'Ingen produkt hittades',
+		'no_slots_found' => 'Inga slots hittades.',
+		'slot_info' => 'Slot information',
 
 		// Global
 		'phone' => 'Telefon',

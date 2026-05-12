@@ -7,9 +7,9 @@ header("Content-Type: application/json");
 function buildProductInfo(int $productId, int $companyId): ?array
 {
 	$productLookup = select_from("products", [
-		"product_id", "product_image", "product_name", "product_year",
+		"product_id", 'company_id', "product_image", "product_name", "product_year",
 		"product_mark", "product_model", "product_sub_model",
-		"price", "sale_unit_type", "weight_per_unit", "total_weight",
+		"price", "sale_unit_type", "units_per_pack", "weight_per_unit", "total_weight",
 		"quantity", "min_quantity", "currency", "purpose"
 	], [
 		"company_id" => $companyId,
@@ -24,42 +24,15 @@ function buildProductInfo(int $productId, int $companyId): ?array
 		return null;
 	}
 
-	$markName = null;
-	$modelName = null;
-	$submodelName = null;
+	$productLookupData = mapProductRelations($productLookupData, $companyId);
+
+	if (!$productLookupData) {
+		return null;
+	}
+
 	$slots = [];
 	$slotIds = [];
 	$slotNames = [];
-
-	if (!empty($productLookupData['product_mark'])) {
-		$mark = select_from(
-			"category",
-			["category_name"],
-			["category_id" => $productLookupData['product_mark']],
-			["fetch_first" => true]
-		);
-		$markName = json_decode($mark, true)["data"]["category_name"] ?? null;
-	}
-
-	if (!empty($productLookupData['product_model'])) {
-		$model = select_from(
-			"category",
-			["category_name"],
-			["category_id" => $productLookupData['product_model']],
-			["fetch_first" => true]
-		);
-		$modelName = json_decode($model, true)["data"]["category_name"] ?? null;
-	}
-
-	if (!empty($productLookupData['product_sub_model'])) {
-		$sub = select_from(
-			"category",
-			["category_name"],
-			["category_id" => $productLookupData['product_sub_model']],
-			["fetch_first" => true]
-		);
-		$submodelName = json_decode($sub, true)["data"]["category_name"] ?? null;
-	}
 
 	if (!empty($productLookupData['product_id'])) {
 		$storageRows = select_from(
@@ -122,12 +95,14 @@ function buildProductInfo(int $productId, int $companyId): ?array
 		"product_mark"      => $productLookupData["product_mark"] ?? null,
 		"product_model"     => $productLookupData["product_model"] ?? null,
 		"product_sub_model" => $productLookupData["product_sub_model"] ?? null,
-		"mark_name"         => $markName,
-		"model_name"        => $modelName,
-		"submodel_name"     => $submodelName,
+		"mark_name"         => $productLookupData["mark_name"] ?? tr("uncategorized", "Uncategorized"),
+		"model_name"        => $productLookupData["model_name"] ?? tr("no_model", "No model assigned"),
+		"submodel_name"     => $productLookupData["submodel_name"] ?? tr("no_submodel", "No submodel assigned"),
 		"purpose"           => $productLookupData["purpose"] ?? '',
+		"purpose_text"      => $productLookupData["purpose_text"] ?? tr("no_purpose", "No purpose assigned"),
 		"price"             => $productLookupData["price"] ?? 0,
 		"sale_unit_type"    => $productLookupData["sale_unit_type"] ?? '',
+		"units_per_pack"    => $productLookupData["units_per_pack"] ?? 0,
 		"weight_per_unit"   => (float)($productLookupData["weight_per_unit"] ?? 0),
 		"total_weight"      => (float)($productLookupData["total_weight"] ?? 0),
 		"quantity"          => $productLookupData["quantity"] ?? 0,

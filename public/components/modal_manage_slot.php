@@ -4,7 +4,7 @@
 			<table width="80%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td style="font-size: 12px;" colspan="6" align="center" valign="middle">
-						<h2>Slot Options</h2>
+						<h2><?= $t['slot_options'] ?></h2>
 						<p id="slot-name"></p>
 					</td>      
 				</tr>
@@ -15,12 +15,12 @@
 				</tr> -->
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="cancel-btn" id="deleteSlotBtn">Delete Slot</button>
+						<button type="button" class="cancel-btn" id="deleteSlotBtn"><?= $t['delete_slot'] ?></button>
 					</td>
 				</tr>
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="neutral-btn">Close</button>
+						<button type="button" class="neutral-btn"><?= $t['close'] ?></button>
 					</td>
 				</tr>
 			</table>

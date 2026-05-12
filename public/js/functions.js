@@ -402,4 +402,464 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 	window.startOnboardingGuide = startOnboardingGuide;
+
+	function setupBackToMenuButton(buttonSelector, divsToHide = [], menuDivId = '', optionsDivId = '') {
+		const buttons = document.querySelectorAll(buttonSelector);
+		if (!buttons.length) return;
+	
+		buttons.forEach(button => {
+			button.addEventListener('click', (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				e.stopImmediatePropagation();
+	
+				const menuDiv = document.getElementById(menuDivId);
+				const optionsDiv = optionsDivId ? document.getElementById(optionsDivId) : null;
+	
+				let anyDivShown = false;
+	
+				divsToHide.forEach(divId => {
+					const div = document.getElementById(divId);
+					if (div && div.style.display === 'block') {
+						anyDivShown = true;
+						fadeOutAndHide(div, () => {
+							if (menuDiv) showWithFadeIn(menuDiv);
+						});
+					}
+				});
+	
+				if (!anyDivShown && menuDiv) {
+					showWithFadeIn(menuDiv);
+				}
+	
+				if (optionsDiv) {
+					optionsDiv.style.display = 'block';
+				}
+
+				const formFrame = document.getElementById('formular-frame');
+				if (formFrame) {
+					formFrame.classList.remove('expanded');
+				}
+
+				const formFrame2 = document.getElementById('formular-frame-2');
+				if (formFrame2) {
+					formFrame2.classList.remove('expanded');
+				}
+
+				const mediumFormFrame = document.getElementById('formular-medium-frame');
+				if (mediumFormFrame) {
+					mediumFormFrame.classList.remove('expanded-medium');
+				}
+
+				const mediumFormFrame2 = document.getElementById('formular-medium-frame-2');
+				if (mediumFormFrame2) {
+					mediumFormFrame2.classList.remove('expanded-medium');
+				}
+			});
+		});
+	}
+	window.setupBackToMenuButton = setupBackToMenuButton;
+
+	function animateHeightChange(container, sectionToShow, callback) {
+		const startHeight = container.offsetHeight + 'px';
+		container.style.height = startHeight;
+	
+		// Ocultar sección destino antes de mostrarla
+		sectionToShow.style.display = 'block';
+		sectionToShow.style.opacity = '0';
+		sectionToShow.style.visibility = 'hidden';
+	
+		// Realizar cambios (esconder lo anterior, mostrar lo nuevo)
+		if (callback) callback();
+	
+		requestAnimationFrame(() => {
+			const desiredHeight = container.scrollHeight;
+			const maxHeight = window.innerHeight * 0.9;
+			const endHeight = Math.min(desiredHeight, maxHeight) + 'px';
+			container.style.height = endHeight;
+	
+			container.addEventListener('transitionend', function handler() {
+				container.style.height = 'auto';
+				// Mostrar suavemente la sección nueva después del estiramiento
+				sectionToShow.style.visibility = 'visible';
+				sectionToShow.style.transition = 'opacity 0.2s ease';
+				sectionToShow.style.opacity = '1';
+	
+				container.removeEventListener('transitionend', handler);
+			});
+		});
+	}
+	window.animateHeightChange = animateHeightChange;
+
+	function fadeOutAndHide(element, callback) {
+		element.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+		element.style.opacity = '1';
+		element.style.transform = 'scale(1)';
+	
+		setTimeout(() => {
+			element.style.opacity = '0';
+			element.style.transform = 'scale(0.8)';
+
+			setTimeout(() => {
+				element.style.display = 'none';
+				element.style.removeProperty('opacity');
+				element.style.removeProperty('transform');
+				element.style.removeProperty('transition');
+				element.style.removeProperty('height');
+				if (callback) callback();
+			}, 400);
+		}, 10);
+	}
+	window.fadeOutAndHide = fadeOutAndHide;
+	
+	function showWithFadeIn(element) {
+		if (!element) return;
+
+		element.style.removeProperty('opacity');
+		element.style.removeProperty('transform');
+		element.style.removeProperty('transition');
+
+		element.style.display = 'block';
+		element.style.opacity = '0';
+		element.style.transform = 'scale(0.8)';
+
+		void element.offsetWidth;
+		element.getBoundingClientRect();
+
+		requestAnimationFrame(() => {
+			element.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+			element.style.opacity = '1';
+			element.style.transform = 'scale(1)';
+		});
+	}
+	window.showWithFadeIn = showWithFadeIn;
+
+	// 📌 scroll to top 
+	function scrollToTopIfNeeded() {
+		if (window.scrollY > 0) {
+			window.scrollTo({
+				top: 0,
+				behavior: 'smooth'
+			});
+		}
+	}
+	window.scrollToTopIfNeeded = scrollToTopIfNeeded;
+
+	function resetPopupView(menuIds = [], sectionIdsToHide = []) {
+		const allFrames = document.querySelectorAll('.formular-frame, .formular-big-frame, .formular-medium-frame');
+		
+		allFrames.forEach(frame => {
+			frame.classList.remove('expanded', 'expanded-medium');
+		});
+
+		menuIds.forEach(menuId => {
+			const menuDiv = document.getElementById(menuId);
+			if (menuDiv) {
+				menuDiv.style.display = 'block';
+				menuDiv.style.opacity = '1';
+				menuDiv.style.transform = 'scale(1)';
+			}
+		});
+
+		sectionIdsToHide.forEach(sectionId => {
+			const section = document.getElementById(sectionId);
+			if (section) {
+				section.style.display = 'none';
+				section.style.opacity = '0';
+				section.style.transform = 'scale(0.8)';
+			}
+		});
+	}
+	window.resetPopupView = resetPopupView;
+
+	// 📌 cerrar al hacer clic fuera del formulario
+	function handlePopupClose(popupId, contentSelector, otherPopups = []) {
+		const popup = document.getElementById(popupId);
+		if (!popup) return;
+
+		const content = popup.querySelector(contentSelector);
+		if (!content) return;
+
+		const isVisible = (el) => !!(el && (el.offsetWidth || el.offsetHeight || el.getClientRects().length));
+
+		// Evita listeners duplicados si re-llamas esta función
+		if (popup._outsideHandler) {
+			document.removeEventListener('click', popup._outsideHandler, true);
+			popup._outsideHandler = null;
+		}
+
+		const handler = (e) => {
+			if (!isVisible(popup)) return;
+
+			const mini = document.getElementById('create-type-form');
+			if (mini && isVisible(mini) && mini.contains(e.target)) {
+				return;
+			}
+
+			const clickDentroContenido = content.contains(e.target);
+			if (clickDentroContenido) return; // si clickeas dentro, mantenemos el listener
+
+			// Cerrar
+			popup.style.display = 'none';
+			otherPopups.forEach(id => {
+				const other = document.getElementById(id);
+				if (other) other.style.display = 'none';
+			});
+
+			// Limpieza: ya no necesitamos seguir escuchando
+			document.removeEventListener('click', handler, true);
+			popup._outsideHandler = null;
+		};
+
+		popup._outsideHandler = handler;
+
+		// Deja que termine de abrir/transicionar antes de enganchar el listener
+		setTimeout(() => {
+			document.addEventListener('click', handler, { capture: true }); // ← sin once
+		}, 0);
+	}
+	window.handlePopupClose = handlePopupClose;
+
+	// 📌 script para recojer los datos de los slot
+	async function loadSlotFormOrData(selectedSlotId = undefined) {
+		if (!isNaN(selectedSlotId)) {
+			try {
+				let response = await fetch(`api/get_slot_info.php?select_slot=${selectedSlotId}`, {
+					method: 'GET',
+					headers: { 'Accept': 'application/json' }
+				});
+
+				let data = await response.json();
+				
+				if (data.success && data.data && data.data.length > 0) {
+					let slot = data.data[0];
+
+					originalSlotData = {
+						slot_name: slot.slot_name || '',
+						max_capacity: slot.max_capacity || '',
+						current_capacity: slot.current_capacity || '',
+						slot_description: slot.slot_description || '',
+						status: slot.status || 0
+					};
+
+					document.getElementById('slot_id').value = slot.slot_id;
+					document.getElementById('slot_name').value = originalSlotData.slot_name || '';
+					document.getElementById('max_capacity').value = originalSlotData.max_capacity || '';
+					document.getElementById('current_capacity').value = originalSlotData.current_capacity || '';
+					document.getElementById('slot_description').value = originalSlotData.slot_description || '';
+					document.getElementById("slot_status").checked = String(originalSlotData.status) === "1";
+				}
+			} catch (error) {
+				console.error("Error loading company data:", error);
+			}
+		} else {
+			// 🧹 Si no se pasa ID válido, limpiamos los campos
+			originalSlotData = {
+				slot_name: '',
+				max_capacity: '',
+				current_capacity: '',
+				slot_description: '',
+				status: 0
+			};
+
+			document.getElementById('slot_id').value = '';
+			document.getElementById('slot_name').value = '';
+			document.getElementById('max_capacity').value = '';
+			document.getElementById('current_capacity').value = '';
+			document.getElementById('slot_description').value = '';
+			document.getElementById("slot_status").checked = true;
+		}
+	}
+	window.loadSlotFormOrData = loadSlotFormOrData;
+
+	// 📌 script para recojer los productos seleccionados
+	async function syncProductsFromSelectedSlot(slotId) {
+		if (!slotId) {
+			await initProductList({
+				listId: 'products-list',
+				searchId: 'input-search-product',
+				checkName: 'products_info[]'
+			});
+			return;
+		}
+
+		try {
+			const params = new URLSearchParams();
+			params.append('slot_id', slotId);
+
+			const response = await fetch(`api/get_storages.php?${params.toString()}`, {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			});
+
+			const data = await response.json();
+
+			if (!data.success || !data.data) {
+				await initProductList({
+					listId: 'products-list',
+					searchId: 'input-search-product',
+					checkName: 'products_info[]'
+				});
+				return;
+			}
+
+			const payload = Array.isArray(data.data) ? data.data[0] : data.data;
+			const storages = payload?.storages || [];
+
+			const selectedProductIds = [...new Set(
+				storages
+					.map(storage => storage.product_id)
+					.filter(v => v !== null && v !== undefined && v !== '')
+					.map(String)
+			)];
+
+			await initProductList({
+				listId: 'products-list',
+				searchId: 'input-search-product',
+				checkName: 'products_info[]',
+				selectedProductIds
+			});
+
+			updateStorageActionButtonState();
+		} catch (error) {
+			console.error('Error syncing products from slot:', error);
+		}
+	}
+	window.syncProductsFromSelectedSlot = syncProductsFromSelectedSlot;
+
+	// 📌 Cargar la lista de productos
+	async function initProductList({
+		listId,
+		searchId = null,
+		checkName = 'products_info[]',
+		emptyMessage = 'No products found.',
+		selectedProductIds = []
+	}) {
+		const productList = document.getElementById(listId);
+		const inputSearchProduct = searchId ? document.getElementById(searchId) : null;
+
+		if (!productList) return;
+
+		const selectedSet = new Set((selectedProductIds || []).map(String));
+
+		const renderProducts = async () => {
+			try {
+				const searchProduct = inputSearchProduct?.value.trim() || '';
+				const params = new URLSearchParams();
+
+				if (searchProduct) {
+					params.append('search', searchProduct);
+				}
+
+				const response = await fetch(`api/get_products.php?${params.toString()}`, {
+					method: 'GET',
+					headers: { 'Accept': 'application/json' }
+				});
+
+				const data = await response.json();
+
+				productList.innerHTML = '';
+
+				if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+					data.data.forEach(product => {
+						const uniqueId = `${checkName.replace(/[\[\]]/g, '')}-${product.product_id}`;
+
+						const productImage = product.product_image && product.product_image.trim() !== ''
+							? `images/products/${product.product_image}`
+							: `images/sys-img/wooden-box.png`;
+
+						const isChecked = selectedSet.has(String(product.product_id));
+
+						const row = document.createElement('tr');
+						row.className = 'categoryContainer';
+
+						row.innerHTML = `
+							<td width="10%" align="center" valign="middle">
+								<div class="list-icon">
+									<img src="${productImage}" alt="${product.product_name || ''}" width="32" height="32">
+								</div>
+							</td>
+							<td width="80%" valign="middle" style="padding-left:10px;">
+								<strong>${product.product_name || ''}</strong><br>
+								<small>
+									${product.mark_name || ''}
+									${product.model_name ? ' - ' + product.model_name : ''}
+									${product.submodel_name ? ' - ' + product.submodel_name : ''}
+								</small>
+							</td>
+							<td width="10%" align="center" valign="middle" style="position: relative;">
+								<div class="opcion-checkbox">
+									<input
+										type="checkbox"
+										id="${uniqueId}"
+										name="${checkName}"
+										class="category-checkbox"
+										value="${product.product_id}"
+										data-product="${product.product_id}"
+										${isChecked ? 'checked' : ''}
+									/>
+									<label for="${uniqueId}"></label>
+								</div>
+							</td>
+						`;
+
+						productList.appendChild(row);
+					});
+				} else {
+					productList.innerHTML = `
+						<tr>
+							<td colspan="3" align="center" valign="middle">
+								${emptyMessage}
+							</td>
+						</tr>
+					`;
+				}
+
+				updateStorageActionButtonState();
+			} catch (error) {
+				console.error('Error loading products:', error);
+				productList.innerHTML = `
+					<tr>
+						<td colspan="3" align="center" valign="middle">
+							Error loading products.
+						</td>
+					</tr>
+				`;
+			}
+		};
+
+		await renderProducts();
+
+		if (inputSearchProduct && !inputSearchProduct.dataset.boundProductSearch) {
+			inputSearchProduct.addEventListener('input', renderProducts);
+			inputSearchProduct.dataset.boundProductSearch = '1';
+		}
+	}
+	window.initProductList = initProductList;
+
+	function updateStorageActionButtonState() {
+		const storageActionBtn = document.getElementById('storage-action-btn');
+		if (!storageActionBtn) return;
+
+		const hasSlotSelected = !!document.querySelector('input[name="storages_info"]:checked');
+		const hasProductSelected = !!document.querySelector('input[name="products_info[]"]:checked');
+
+		if (hasSlotSelected || hasProductSelected) {
+			storageActionBtn.value = window.i18n?.save_changes || "Save Changes";
+		} else {
+			storageActionBtn.value = window.i18n?.add_storage || "Add Storage";
+		}
+	}
+	window.updateStorageActionButtonState = updateStorageActionButtonState;
+
+	function showChangeAlert() {
+		const banner = document.getElementById('status-message');
+		const statusText = document.getElementById('status-text');
+		const statusImage = document.getElementById('status-image');
+
+		statusText.innerText = "You have unsaved changes.";
+		statusImage.src = "images/sys-img/error.gif";
+		showBanner(banner);
+	}
+	window.showChangeAlert = showChangeAlert;
 });

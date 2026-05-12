@@ -3,18 +3,18 @@
 </div>
 <div class="container">
     <div class="data-container product-container-height">
-        <h2 style="margin-left: 10px;">Storage List</h2>
+        <h2 style="margin-left: 10px;"><?= $t['storage_list'] ?></h2>
         <div class="product-table flex">
             <div class="product-sidebar">
                 <table width="90%" align="center" cellspacing="0" style="margin-top: 15px;">
                     <tr valign="baseline" class="form_height">
                         <td colspan="4" style="padding-bottom: 5px;" align="center" valign="middle">
-                            <input type="text" name="searchFieldStorage" id="searchFieldStorage" class="search-field" placeholder="Storage/Product No.">
+                            <input type="text" name="searchFieldStorage" id="searchFieldStorage" class="search-field" placeholder="<?= $t['storage_or_product_no'] ?>">
                         </td>
                     </tr>
                     <tr valign="baseline" class="form_height">
                         <td colspan="4" style="border-bottom: 1px solid var(--border-light); padding: 10px 0;" align="center" valign="middle">
-                            <button class="button-style-agree" id="storageMenuBtns">Storage Menu</button>
+                            <button class="button-style-agree" id="storageMenuBtns"><?= $t['storage_menu'] ?></button>
                         </td>
                     </tr>
                 </table>

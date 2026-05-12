@@ -9,7 +9,7 @@ if (in_array($parts[0] ?? '', ['en','es','sv'], true)) array_shift($parts);
 $slug = $parts[0] ?? 'home';
 
 $metaTitle = $t['title'] ?? 'AllStockControl';
-$metaDesc  = $t['description'] ?? '';
+$metaDesc  = $t['meta_description'] ?? '';
 
 if ($slug === 'gdpr') {
   $metaTitle = ($t['gdpr_title'] ?? 'GDPR') . ' | AllStockControl';

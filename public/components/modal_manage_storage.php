@@ -4,22 +4,22 @@
 			<table width="80%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td style="font-size: 12px;" colspan="6" align="center" valign="middle">
-						<h2>Storage Options</h2>
+						<h2><?= $t['storage_options'] ?></h2>
 					</td>      
 				</tr>
                 <tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="button-style-agree" id="manageSlotBtn">Manage Slot</button>
+						<button type="button" class="button-style-agree" id="manageSlotBtn"><?= $t['manage_slots'] ?></button>
 					</td>
 				</tr>
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="button-style-agree" id="manageStorageBtn">Manage Storage</button>
+						<button type="button" class="button-style-agree" id="manageStorageBtn"><?= $t['manage_storage'] ?></button>
 					</td>
 				</tr>
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="neutral-btn" style="margin-top: 10px;">Close</button>
+						<button type="button" class="neutral-btn" style="margin-top: 10px;"><?= $t['close'] ?></button>
 					</td>
 				</tr>
 			</table>
@@ -32,7 +32,7 @@
                 <table width="90%" align="center" cellspacing="0">
                     <tr valign="baseline">
                         <td colspan="6" align="center" valign="middle">
-                            <h2>Add or Edit Slot</h2>
+                            <h2><?= $t['add_or_edit_slot'] ?></h2>
                         </td>      
                     </tr>
                     <tr valign="baseline">
@@ -42,10 +42,10 @@
                                     <table width="100%" align="center" cellspacing="0">
                                         <tr valign="baseline">
                                             <td width="70%" align="center" valign="middle">
-                                                <input type="text" class="form-medium-input-style" name="input-search-slot" id="input-search-slot" placeholder="Search slot"/>
+                                                <input type="text" class="form-medium-input-style" name="input-search-slot" id="input-search-slot" placeholder="<?= $t['search_slot'] ?>"/>
                                             </td>
                                             <td width="30%" align="center" valign="middle">
-                                                <button type="button" class="button-style-agree" id="add-slot-btn">Create slot</button>
+                                                <button type="button" class="button-style-agree" id="add-slot-btn"><?= $t['create_slot'] ?></button>
                                             </td>
                                         </tr>
                                     </table>
@@ -63,32 +63,32 @@
                                     
                                     <tr valign="baseline">
                                         <td colspan="6" align="center" valign="middle">
-                                            <label for="slot_name">Slot Name:</label>
-                                            <input class="form-input-style" type="text" name="slot_name" id="slot_name" placeholder="Slot Name..." title="Slot Name"/>
+                                            <label for="slot_name"><?= $t['slot_name'] ?>:</label>
+                                            <input class="form-input-style" type="text" name="slot_name" id="slot_name" placeholder="<?= $t['slot_name'] ?>..." title="<?= $t['slot_name'] ?>"/>
                                         </td>
                                     </tr>
                                     <tr valign="baseline">
                                         <td colspan="6" align="center" valign="middle">
-                                            <label for="current_capacity">Current Capacity:</label>
-                                            <input class="form-input-style" type="number" name="current_capacity" id="current_capacity" placeholder="Current Capacity..." title="Current Capacity"/>
+                                            <label for="current_capacity"><?= $t['current_capacity'] ?>:</label>
+                                            <input class="form-input-style" type="number" name="current_capacity" id="current_capacity" placeholder="<?= $t['current_capacity'] ?>..." title="<?= $t['current_capacity'] ?>"/>
                                         </td>
                                     </tr>
                                     <tr valign="baseline">
                                         <td colspan="6" align="center" valign="middle">
-                                            <label for="max_capacity">Max Capacity:</label>
-                                            <input class="form-input-style" type="number" name="max_capacity" id="max_capacity" placeholder="Max Capacity..." title="Max Capacity"/>
+                                            <label for="max_capacity"><?= $t['max_capacity'] ?>:</label>
+                                            <input class="form-input-style" type="number" name="max_capacity" id="max_capacity" placeholder="<?= $t['max_capacity'] ?>..." title="<?= $t['max_capacity'] ?>"/>
                                         </td>
                                     </tr>
                                     <tr valign="baseline">
                                         <td colspan="6" align="center" valign="middle">
-                                            <label for="slot_description">Description:</label>
+                                            <label for="slot_description"><?= $t['description'] ?>:</label>
                                             <textarea class="form-input-style" id="slot_description" name="slot_description" rows="5" cols="35">
                                             </textarea>
                                         </td>
                                     </tr>
                                     <tr valign="baseline">
                                         <td colspan="3" style="border-block: 1px solid var(--clr-border); padding: 5px 10px;" align="left" valign="middle">
-                                            <span style="display: block;">Status</span>
+                                            <span style="display: block;"><?= $t['status'] ?></span>
                                         </td>
                                         <td colspan="3" style="border-block: 1px solid var(--clr-border); padding: 5px 10px;" align="right" valign="middle">
                                             <label class="switch">
@@ -103,7 +103,7 @@
                                 <table id="not-slot-form" width="100%" align="center" cellspacing="0">
                                     <tr valign="baseline" class="form_height">
                                         <td colspan="2" align="center" valign="middle">
-                                            <p>Slot Info</p>
+                                            <p><?= $t['slot_info'] ?></p>
                                         </td>
                                     </tr>
                                 </table>
@@ -112,10 +112,10 @@
                     </tr>
                     <tr valign="baseline">
                         <td colspan="3" align="center" valign="middle" style="padding-top: 10px;">
-                            <button type="button" class="neutral-btn">Cancel</button>
+                            <button type="button" class="neutral-btn"><?= $t['cancel'] ?></button>
                         </td>
                         <td colspan="3" align="center" valign="middle" style="padding-top: 10px;">
-                            <input type="submit" class="button-style-agree" id="slot-action-btn" value="Ok" />
+                            <input type="submit" class="button-style-agree" id="slot-action-btn" value="<?= $t['select_slot'] ?>" />
                         </td>
                     </tr>
                 </table>
@@ -129,14 +129,14 @@
                 <table width="90%" align="center" cellspacing="0">
                     <tr valign="baseline">
                         <td colspan="6" align="center" valign="middle">
-                            <h2>Add or Edit Storage</h2>
+                            <h2><?= $t['add_or_edit_storage'] ?></h2>
                         </td>      
                     </tr>
                     <tr valign="baseline">
                         <td colspan="3" align="center" valign="middle">
                             <div class="formular-category-list">
                                 <div class="create-list-holder" id="clic-create-mark">
-                                    <input type="text" class="form-medium-input-style" name="input-search-storage" id="input-search-storage" placeholder="Search slot"/>
+                                    <input type="text" class="form-medium-input-style" name="input-search-storage" id="input-search-storage" placeholder="<?= $t['search_slot'] ?>"/>
                                 </div>
                                 <div class="cat-all-list">
                                     <table class="all-mark-list" id="storages-list" cellspacing="0">
@@ -148,7 +148,7 @@
                         <td colspan="3" align="center" valign="middle">
                             <div class="formular-category-list">
                                 <div class="create-list-holder" id="clic-create-mark">
-                                    <input type="text" class="form-medium-input-style" name="input-search-product" id="input-search-product" placeholder="Search product"/>
+                                    <input type="text" class="form-medium-input-style" name="input-search-product" id="input-search-product" placeholder="<?= $t['product_search'] ?>"/>
                                 </div>
                                 <div class="cat-all-list">
                                     <table class="all-mark-list" id="products-list" cellspacing="0">
@@ -160,10 +160,10 @@
                     </tr>
                     <tr valign="baseline">
                         <td colspan="3" align="center" valign="middle" style="padding-top: 10px;">
-                            <button type="button" class="neutral-btn">Cancel</button>
+                            <button type="button" class="neutral-btn"><?= $t['cancel'] ?></button>
                         </td>
                         <td colspan="3" align="center" valign="middle" style="padding-top: 10px;">
-                            <input type="submit" class="button-style-agree" id="storage-action-btn" value="Ok" />
+                            <input type="submit" class="button-style-agree" id="storage-action-btn" value="<?= $t['ok'] ?>" />
                         </td>
                     </tr>
                 </table>
