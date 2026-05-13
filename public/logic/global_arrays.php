@@ -1,5 +1,13 @@
 <?php
 class GlobalArrays {
+
+	private static function ensureTranslationsLoaded(): void
+	{
+		if (!function_exists('tr')) {
+			require_once(__DIR__ . '/../logic/mini_language_switcher.php');
+		}
+	}
+
 	public static $productTypes = [
 		1 => "New",
 		2 => "Used"
@@ -10,19 +18,74 @@ class GlobalArrays {
 		2 => "Export"
 	];
 
+	// document types.
 	public static $documentTypes = [
 		1 => "National ID / Cedula",
 		2 => "Passport",
 		3 => "Driver's License",
 		4 => "Social Security Number",
-		5 => "Tax Identification Number"
+		5 => "Tax Identification Number",
+		6 => "Other"
 	];
 
+	public static function documentTypes(): array
+	{
+		self::ensureTranslationsLoaded();
+
+		return [
+			1 => tr_nested('document_types', 'national_id_cedula', self::$documentTypes[1]),
+			2 => tr_nested('document_types', 'passport', self::$documentTypes[2]),
+			3 => tr_nested('document_types', 'driver_license', self::$documentTypes[3]),
+			4 => tr_nested('document_types', 'social_security_card', self::$documentTypes[4]),
+			5 => tr_nested('document_types', 'tax_id', self::$documentTypes[5]),
+			6 => tr_nested('document_types', 'other', self::$documentTypes[6]),
+		];
+	}
+
+
+	// customer types.
 	public static $customerTypes = [
-		1 => "Individual",
-		2 => "Company"
+		1 => "regular",
+		2 => "vip",
+		3 => "wholesale",
+		4 => "retail",
+		5 => "online",
+		6 => "other"
 	];
+
+	public static function customerTypes(): array
+	{
+		self::ensureTranslationsLoaded();
+
+		return [
+			1 => tr_nested('customer_types', 'regular', self::$customerTypes[1]),
+			2 => tr_nested('customer_types', 'vip', self::$customerTypes[2]),
+			3 => tr_nested('customer_types', 'wholesale', self::$customerTypes[3]),
+			4 => tr_nested('customer_types', 'retail', self::$customerTypes[4]),
+			5 => tr_nested('customer_types', 'online', self::$customerTypes[5]),
+			6 => tr_nested('customer_types', 'other', self::$customerTypes[6]),
+		];
+	}
+
+
+	// general status.
+	public static $generalStatus = [
+		1 => "Active",
+		0 => "Inactive"
+	];
+
+	public static function generalStatus(): array
+	{
+		self::ensureTranslationsLoaded();
+
+		return [
+			1 => tr_nested('general_status', 'active', self::$generalStatus[1]),
+			0 => tr_nested('general_status', 'inactive', self::$generalStatus[0])
+		];
+	}
 	
+
+	// marital status.
 	public static $maritalStatus = [
 		1 => "Single",
 		2 => "Married",

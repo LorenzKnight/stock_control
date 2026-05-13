@@ -1,4 +1,9 @@
 document.addEventListener("DOMContentLoaded", async function () {
+	const lang = typeof getCurrentLang === 'function'
+		? getCurrentLang()
+		: (window.APP_LANG || 'en');
+
+
     async function showBanner(bannerEl) {
 		if (!bannerEl) return;
 		bannerEl.classList.remove('hide');
@@ -862,4 +867,302 @@ document.addEventListener("DOMContentLoaded", async function () {
 		showBanner(banner);
 	}
 	window.showChangeAlert = showChangeAlert;
+
+	function activateTab(activeTab, inactiveTab, showSection, hideSection) {
+		activeTab.classList.add('tab-active');
+		inactiveTab.classList.remove('tab-active');
+
+		showSection.style.display = 'block';
+		hideSection.style.display = 'none';
+	}
+	window.activateTab = activateTab;
+
+	// Drag & Drop + click
+	function initDragAndDrop(dropAreaId, inputFileId, previewImgId = null) {
+		const dropArea = document.getElementById(dropAreaId);
+		const fileInput = document.getElementById(inputFileId);
+		const previewImage = previewImgId ? document.getElementById(previewImgId) : null;
+	
+		if (!dropArea || !fileInput) return;
+	
+		// Al hacer clic en el área se dispara el input
+		dropArea.addEventListener('click', () => fileInput.click());
+	
+		// Drag events
+		dropArea.addEventListener('dragenter', (e) => {
+			e.preventDefault();
+			dropArea.classList.add('active');
+		});
+		dropArea.addEventListener('dragleave', () => dropArea.classList.remove('active'));
+		dropArea.addEventListener('dragover', (e) => e.preventDefault());
+	
+		// Drop file
+		dropArea.addEventListener('drop', (e) => {
+			e.preventDefault();
+			dropArea.classList.remove('active');
+			const files = e.dataTransfer.files;
+			fileInput.files = files;
+	
+			if (previewImage && files && files[0]) {
+				const reader = new FileReader();
+				reader.onload = function (e) {
+					previewImage.src = e.target.result;
+					previewImage.style.display = 'block';
+					previewImage.style.opacity = 1;
+				};
+				reader.readAsDataURL(files[0]);
+			}
+		});
+	
+		// Input change
+		fileInput.addEventListener('change', () => {
+			if (previewImage && fileInput.files && fileInput.files[0]) {
+				const reader = new FileReader();
+				reader.onload = function (e) {
+					previewImage.src = e.target.result;
+					previewImage.style.display = 'block';
+					previewImage.style.opacity = 1;
+				};
+				reader.readAsDataURL(fileInput.files[0]);
+			}
+		});
+	}
+	window.initDragAndDrop = initDragAndDrop;
+
+	async function populateCustomerTypes(selectId, selectedValue = '') {
+		const select = document.getElementById(selectId);
+		if (!select) return;
+	
+		select.innerHTML = '';
+	
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = 'Select Customer Type';
+		select.appendChild(defaultOption);
+	
+		try {
+			const res = await fetch('api/get_global_array.php?key=customerTypes');
+			const data = await res.json();
+	
+			if (data.success && data.data) {
+				for (const [value, label] of Object.entries(data.data)) {
+					const option = document.createElement('option');
+					option.value = value;
+					option.textContent = label;
+					if (String(value) === String(selectedValue)) {
+						option.selected = true;
+					}
+					select.appendChild(option);
+				}
+			} else {
+				select.innerHTML += `<option value="">No customer types found</option>`;
+			}
+		} catch (error) {
+			console.error("Error loading customer types:", error);
+			select.innerHTML += `<option value="">Error loading customer types</option>`;
+		}
+	}
+	window.populateCustomerTypes = populateCustomerTypes;
+
+	async function populateCountryPhoneCodes(selectId, phoneInputId, selectedValue = '') {
+		const select = document.getElementById(selectId);
+		const phoneInput = document.getElementById(phoneInputId);
+		if (!select || !phoneInput) return;
+
+		// Limpia el select
+		select.innerHTML = '';
+
+		// Opción por defecto
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = 'Select a Country Code';
+		select.appendChild(defaultOption);
+
+		try {
+			const res = await fetch('api/get_global_array.php?key=countryPhoneCodes');
+			const data = await res.json();
+
+			if (data.success && data.data) {
+				for (const [value, label] of Object.entries(data.data)) {
+					const option = document.createElement('option');
+					option.value = value;
+					option.textContent = `${label} (${value.split('|')[1]})`;
+					if (String(value) === String(selectedValue)) {
+						option.selected = true;
+						setPhonePrefix(phoneInput, value.split('|')[1], true);
+					}
+					select.appendChild(option);
+				}
+			} else {
+				select.innerHTML += `<option value="">No country codes found</option>`;
+			}
+		} catch (error) {
+			console.error("Error loading country codes:", error);
+			select.innerHTML += `<option value="">Error loading country codes</option>`;
+		}
+
+		// Evento para actualizar prefijo al cambiar el país
+		select.addEventListener('change', () => {
+			const selected = select.value;
+			const prefix = selected ? selected.split('|')[1] : '';
+			setPhonePrefix(phoneInput, prefix, true);
+		});
+	}
+	window.populateCountryPhoneCodes = populateCountryPhoneCodes;
+
+	function setPhonePrefix(input, prefix, preserveExisting = true) {
+		if (!prefix) {
+			if (input._prefixHandler) {
+			input.removeEventListener('input', input._prefixHandler);
+			input._prefixHandler = null;
+			}
+			input.value = '';
+			input.readOnly = false;
+			return;
+		}
+
+		const base = prefix + ' ';
+
+		if (input._prefixHandler) {
+			input.removeEventListener('input', input._prefixHandler);
+			input._prefixHandler = null;
+		}
+
+		let numberPart = '';
+		if (preserveExisting && input.value) {
+			const normalized = String(input.value).replace(/[^\d+]/g, '');
+			if (normalized.startsWith(prefix)) {
+				numberPart = normalized.slice(prefix.length).replace(/[^0-9]/g, '');
+			} else if (normalized.startsWith('+')) {
+				numberPart = normalized.replace(/^\+\d+/, '').replace(/[^0-9]/g, '');
+			} else {
+				numberPart = normalized.replace(/[^0-9]/g, '');
+			}
+		}
+
+		numberPart = numberPart.replace(/^0+/, '');
+
+		input.value = base + numberPart;
+		input.readOnly = false;
+
+		const handler = () => {
+			if (!input.value.startsWith(base)) {
+				input.value = base + '';
+				input.setSelectionRange(input.value.length, input.value.length);
+				return;
+			}
+			
+			let np = input.value.slice(base.length).replace(/[^0-9]/g, '');
+			np = np.replace(/^0+/, '');
+			input.value = base + np;
+			input.setSelectionRange(input.value.length, input.value.length);
+		};
+
+		input._prefixHandler = handler;
+		input.addEventListener('input', handler);
+
+		input.setSelectionRange(input.value.length, input.value.length);
+	}
+
+	async function populateDocumentTypes(selectId, selectedValue = '') {
+		const select = document.getElementById(selectId);
+		if (!select) return;
+	
+		select.innerHTML = '';
+	
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = window.i18n?.select_document_type || 'Select a Document Type';
+		select.appendChild(defaultOption);
+	
+		try {
+			const res = await fetch(`/api/get_global_array.php?key=documentTypes&lang=${encodeURIComponent(lang)}`, {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			});
+			
+			const data = await res.json();
+	
+			if (data.success && data.data) {
+				for (const [value, label] of Object.entries(data.data)) {
+					const option = document.createElement('option');
+					option.value = value;
+					option.textContent = label;
+
+					if (String(value) === String(selectedValue)) {
+						option.selected = true;
+					}
+
+					select.appendChild(option);
+				}
+			} else {
+				const option = document.createElement('option');
+				option.value = '';
+				option.textContent = window.i18n?.no_document_types_found || 'No document types found';
+				select.appendChild(option);
+			}
+		} catch (error) {
+			console.error("Error loading document types:", error);
+
+			const option = document.createElement('option');
+			option.value = '';
+			option.textContent = window.i18n?.error_loading_document_types || 'Error loading document types';
+			select.appendChild(option);
+		}
+	}
+	window.populateDocumentTypes = populateDocumentTypes;
+
+	function showConfirmModal(title, message, onConfirm) {
+		const modal = document.getElementById('globalConfirmModal');
+		const modalTitle = document.getElementById('confirm-modal-title');
+		const modalMessage = document.getElementById('confirm-modal-message');
+		const cancelBtn = document.getElementById('modalCancelBtn');
+		const confirmBtn = document.getElementById('modalConfirmBtn');
+
+		if (!modal || !modalTitle || !modalMessage || !cancelBtn || !confirmBtn) return;
+
+		modalTitle.textContent = title || "Confirm Action";
+		modalMessage.textContent = message || "Are you sure you want to proceed?";
+		modal.style.display = 'flex';
+
+		// Reset listeners
+		const newConfirmBtn = confirmBtn.cloneNode(true);
+		confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+		// Confirmación
+		newConfirmBtn.addEventListener('click', () => {
+			modal.style.display = 'none';
+			if (typeof onConfirm === 'function') onConfirm();
+		});
+
+		// Cancelar
+		cancelBtn.onclick = () => {
+			modal.style.display = 'none';
+		};
+	}
+	window.showConfirmModal = showConfirmModal;
+
+	function showAlertModal(title, message) {
+		const modal = document.getElementById('globalOkModal');
+		const modalTitle = document.getElementById('alert-modal-title');
+		const modalMessage = document.getElementById('alert-modal-message');
+		const confirmBtn = document.getElementById('modalOkBtn');
+	
+		if (!modal || !modalTitle || !modalMessage || !confirmBtn) return;
+	
+		modalTitle.textContent = title || "Notice";
+		modalMessage.textContent = message || "";
+	
+		modal.style.display = 'flex';
+	
+		// Clonar y reemplazar para quitar listeners previos
+		const newConfirmBtn = confirmBtn.cloneNode(true);
+		confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+	
+		newConfirmBtn.textContent = 'OK';
+		newConfirmBtn.onclick = () => {
+			modal.style.display = 'none';
+		};
+	}
+	window.showAlertModal = showAlertModal;
 });

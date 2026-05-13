@@ -35,7 +35,13 @@ try {
     }
 
     // Obtener el array usando la clase GlobalArrays
-    $data = GlobalArrays::$$key;
+    if (method_exists('GlobalArrays', $key)) {
+        $data = GlobalArrays::$key();
+    } elseif (property_exists('GlobalArrays', $key)) {
+        $data = GlobalArrays::$$key;
+    } else {
+        throw new Exception("Requested array does not exist.");
+    }
 
     $response["success"] = true;
     $response["message"] = "Array '$key' loaded successfully.";

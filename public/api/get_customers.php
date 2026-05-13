@@ -59,15 +59,18 @@ try {
 		throw new Exception("No customers available.");
 	}
 
+	$documentTypes = GlobalArrays::documentTypes();
+	$generalStatus = GlobalArrays::generalStatus();
+
 	foreach ($parsed["data"] as &$customer) {
 		$customer["full_name"] = trim($customer["customer_name"] . ' ' . $customer["customer_surname"]);
 		$customer["document_no"] = $customer["customer_document_no"];
 		$customer["address"] = $customer["customer_address"];
-		$customer["status"] = ($customer["customer_status"] == 1) ? "Active" : "Inactive";
+		$customer["status"] = $generalStatus[$customer["customer_status"]] ?? tr("unknown", "Unknown");
 		$customer["image"] = $customer["customer_image"] ?? "";
 
         $docType = $customer["customer_document_type"] ?? null;
-	    $customer["document_type"] = GlobalArrays::$documentTypes[$docType] ?? "Unknown";
+		$customer["document_type"] = $documentTypes[$docType] ?? tr("unknown", "Unknown");
 	}
 
 	$response["success"] = true;

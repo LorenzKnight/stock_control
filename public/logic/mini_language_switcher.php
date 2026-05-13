@@ -222,6 +222,7 @@ $i18n = [
 		'user_list' => 'User List',
 		'products_list' => 'Products List',
 		'storage_list' => 'Storage List',
+		'customers_list' => 'Customers List',
 
 		// Forms
 		'edit_profile_title' => 'Edit my profile',
@@ -240,10 +241,17 @@ $i18n = [
 		'add_or_edit_slot' => 'Add or edit slot',
 		'add_or_edit_storage' => 'Add or edit storage',
 		'slot_options' => 'Slot options',
+		'add_customer_title' => 'Add a new customer',
+		'customer_data' => 'Customer data',
+		'customer_reference' => 'Customer reference',
+		'customer_options' => 'Customer options',
+		'edit_customer_title' => 'Edit Customer',
+		'delete_customer_title' => 'Delete Customer',
 
 		'estimated_cost' => 'Estimated cost',
 		'select_extra_service' => 'Select extra service',
 		'confirm_delete_product' => 'Are you sure you want to delete this product?',
+		'confirm_delete_customer' => 'Are you sure you want to delete this customer?',
 
 		'form_drop_image' => 'Drop image here or click to select',
 		'form_name' => 'Name',
@@ -262,9 +270,18 @@ $i18n = [
 		'current_capacity' => 'Current capacity',
 		'max_capacity' => 'Max capacity',
 
+		'customer_type' => 'Customer type',
+		'document_type' => 'Document type',
+		'document_no' => 'Document No.',
+		'references_1' => 'Reference 1',
+		'references_1_phone' => 'Reference 1 Phone',
+		'references_2' => 'Reference 2',
+		'references_2_phone' => 'Reference 2 Phone',
+
 		'product_search' => 'Search products',
 		'storage_or_product_no' => 'Storage/Product No.',
 		'search_slot' => 'Search slot',
+		'search_customer' => 'Search customer',
 		'mark_category' => 'Mark / Category',
 		'model' => 'Model',
 		'sub_model' => 'Sub/Model',
@@ -333,6 +350,33 @@ $i18n = [
 		'select_slot' => 'Select a slot',
 		'save_changes' => 'Save changes',
 		'delete_slot' => 'Delete Slot',
+		'create_customer' => 'Create Customer',
+		'edit_customer' => 'Edit Customer',
+		'delete_customer' => 'Delete Customer',
+
+		// Global arrays
+		'document_types' => [
+			'national_id_cedula' => 'National ID / Cedula',
+			'passport' => 'Passport',
+			'driver_license' => 'Driver License',
+			'social_security_card' => 'Social Security Card',
+			'tax_id' => 'Tax ID',
+			'other' => 'Other',
+		],
+
+		'general_status' => [
+			'active' => 'Active',
+			'inactive' => 'Inactive'
+		],
+
+		'customer_types' => [
+			'regular' => 'Regular',
+			'vip' => 'VIP',
+			'wholesale' => 'Wholesale',
+			'retail' => 'Retail',
+			'online' => 'Online',
+			'other' => 'Other',
+		],
 
 		// messages
 		'no_marks_found' => 'No marks found',
@@ -350,6 +394,8 @@ $i18n = [
 		'branches' => 'Branches',
 		'memmbers' => 'Memmbers',
 		'description' => 'Description',
+		'address' => 'Address',
+		'birthdate' => 'Birthdate',
 		'quantity' => 'Quantity',
 		'min_quantity' => 'Min quantity',
 		'password' => 'Password',
@@ -552,6 +598,7 @@ $i18n = [
 		'user_list' => 'Lista de usuarios',
 		'products_list' => 'Lista de productos',
 		'storage_list' => 'Lista de almacenamiento',
+		'customers_list' => 'Lista de clientes',
 
 		// Forms
 		'edit_profile_title' => 'Editar mi perfil',
@@ -570,10 +617,17 @@ $i18n = [
 		'add_or_edit_slot' => 'Agregar o editar slot',
 		'add_or_edit_storage' => 'Agregar o editar almacenamiento',
 		'slot_options' => 'Opciones del slot',
+		'add_customer_title' => 'Agregar un nuevo cliente',
+		'customer_data' => 'Datos del cliente',
+		'customer_reference' => 'Referencia del cliente',
+		'customer_options' => 'Opciones del cliente',
+		'edit_customer_title' => 'Editar cliente',
+		'delete_customer_title' => 'Eliminar cliente',
 
 		'estimated_cost' => 'Costo estimado',
 		'select_extra_service' => 'Seleccionar servicio adicional',
 		'confirm_delete_product' => '¿Estás seguro de que quieres eliminar este producto?',
+		'confirm_delete_customer' => '¿Estás seguro de que quieres eliminar este cliente?',
 
 		'form_drop_image' => 'Suelta la imagen aquí o haz clic para seleccionar',
 		'form_name' => 'Nombre',
@@ -592,9 +646,18 @@ $i18n = [
 		'current_capacity' => 'Capacidad actual',
 		'max_capacity' => 'Capacidad máxima',
 
+		'customer_type' => 'Tipo de cliente',
+		'document_type' => 'Tipo de documento',
+		'document_no' => 'Número de documento',
+		'references_1' => 'Referencia 1',
+		'references_1_phone' => 'Teléfono de referencia 1',
+		'references_2' => 'Referencia 2',
+		'references_2_phone' => 'Teléfono de referencia 2',
+
 		'product_search' => 'Buscar productos',
 		'storage_or_product_no' => 'Número de almacenamiento/producto',
 		'search_slot' => 'Buscar slot',
+		'search_customer' => 'Buscar cliente',
 		'mark_category' => 'Marcar / Categoría',
 		'model' => 'Modelo',
 		'sub_model' => 'Sub/Modelo',
@@ -663,6 +726,33 @@ $i18n = [
 		'select_slot' => 'Selecciona un slot',
 		'save_changes' => 'Guardar cambios',
 		'delete_slot' => 'Eliminar slot',
+		'create_customer' => 'Crear cliente',
+		'edit_customer' => 'Editar cliente',
+		'delete_customer' => 'Eliminar cliente',
+
+		// Global arrays
+		'document_types' => [
+			'national_id_cedula' => 'Identificación nacional / Cédula',
+			'passport' => 'Pasaporte',
+			'driver_license' => 'Licencia de conducir',
+			'social_security_card' => 'Tarjeta de seguridad social',
+			'tax_id' => 'Identificación fiscal',
+			'other' => 'Otro',
+		],
+
+		'general_status' => [
+			'active' => 'Activo',
+			'inactive' => 'Inactivo'
+		],
+
+		'customer_types' => [
+			'regular' => 'Regular',
+			'vip' => 'VIP',
+			'wholesale' => 'Mayorista',
+			'retail' => 'Minorista',
+			'online' => 'En línea',
+			'other' => 'Otro',
+		],
 
 		// messages
 		'no_marks_found' => 'No se encontraron marcas',
@@ -680,6 +770,8 @@ $i18n = [
 		'branches' => 'Sucursales',
 		'memmbers' => 'Miembros',
 		'description' => 'Descripción',
+		'address' => 'Dirección',
+		'birthdate' => 'Fecha de nacimiento',
 		'quantity' => 'Cantidad',
 		'min_quantity' => 'Cantidad mínima',
 		'password' => 'Contraseña',
@@ -882,6 +974,7 @@ $i18n = [
 		'user_list' => 'Användarlista',
 		'products_list' => 'Produktlista',
 		'storage_list' => 'Lagerlista',
+		'customers_list' => 'Kundlista',
 
 		// Forms
 		'edit_profile_title' => 'Redigera min profil',
@@ -900,10 +993,17 @@ $i18n = [
 		'add_or_edit_slot' => 'Lägg till eller redigera slot',
 		'add_or_edit_storage' => 'Lägg till eller redigera lager',
 		'slot_options' => 'Slot-alternativ',
+		'add_customer_title' => 'Lägg till en ny kund',
+		'customer_data' => 'Kunddata',
+		'customer_reference' => 'Kundreferens',
+		'customer_options' => 'Kundalternativ',
+		'edit_customer_title' => 'Redigera kund',
+		'delete_customer_title' => 'Radera kund',
 
 		'estimated_cost' => 'Beräknad kostnad',
 		'select_extra_service' => 'Välj extra tjänst',
 		'confirm_delete_product' => 'Är du säker på att du vill radera den här produkten?',
+		'confirm_delete_customer' => 'Är du säker på att du vill radera den här kunden?',
 
 		'form_drop_image' => 'Släpp bilden här eller klicka för att välja',
 		'form_name' => 'Namn',
@@ -922,9 +1022,18 @@ $i18n = [
 		'current_capacity' => 'Nuvarande kapacitet',
 		'max_capacity' => 'Max kapacitet',
 
+		'customer_type' => 'Kundtyp',
+		'document_type' => 'Dokumenttyp',
+		'document_no' => 'Dokumentnummer',
+		'references_1' => 'Referens 1',
+		'references_1_phone' => 'Referens 1 telefon',
+		'references_2' => 'Referens 2',
+		'references_2_phone' => 'Referens 2 telefon',
+
 		'product_search' => 'Sök produkter',
 		'storage_or_product_no' => 'Lager-/produktnummer',
 		'search_slot' => 'Sök slot',
+		'search_customer' => 'Sök kund',
 		'mark_category' => 'Märk / Kategori',
 		'model' => 'Modell',
 		'sub_model' => 'Sub/Modell',
@@ -992,6 +1101,33 @@ $i18n = [
 		'select_slot' => 'Välj en slot',
 		'save_changes' => 'Spara ändringar',
 		'delete_slot' => 'Radera slot',
+		'create_customer' => 'Skapa kund',
+		'edit_customer' => 'Redigera kund',
+		'delete_customer' => 'Radera kund',
+
+		// Global arrays
+		'document_types' => [
+			'national_id_cedula' => 'National ID / Cédula',
+			'passport' => 'Pass',
+			'driver_license' => 'Körkort',
+			'social_security_card' => 'Socialförsäkringskort',
+			'tax_id' => 'Skatte-ID',
+			'other' => 'Annat',
+		],
+
+		'general_status' => [
+			'active' => 'Aktiv',
+			'inactive' => 'Inaktiv'
+		],
+
+		'customer_types' => [
+			'regular' => 'Vanlig',
+			'vip' => 'VIP',
+			'wholesale' => 'Grossist',
+			'retail' => 'Detaljhandel',
+			'online' => 'Online',
+			'other' => 'Annat',
+		],
 
 		// messages
 		'no_marks_found' => 'Inga märken hittades',
@@ -1009,6 +1145,8 @@ $i18n = [
 		'branches' => 'Filialer',
 		'memmbers' => 'Medlemmar',
 		'description' => 'Beskrivning',
+		'address' => 'Adress',
+		'birthdate' => 'Födelsedatum',
 		'quantity' => 'Kvantitet',
 		'min_quantity' => 'Minimikvantitet',
 		'currency' => 'Valuta',
@@ -1085,6 +1223,16 @@ if (!function_exists('tr')) {
 		}
 
 		return $GLOBALS['t'][$key] ?? $fallback;
+	}
+}
+
+if (!function_exists('tr_nested')) {
+	function tr_nested(string $group, string $key, string $fallback = ''): string {
+		$t = $GLOBALS['t'] ?? [];
+
+		$value = $t[$group][$key] ?? $fallback;
+
+		return is_string($value) ? $value : $fallback;
 	}
 }
 ?>
