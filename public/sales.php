@@ -2,7 +2,7 @@
 <?php include('logic/mini_language_switcher.php'); ?>
 
 <!DOCTYPE html>
-<html class="no-js" lang="sw">
+<html class="no-js" lang="<?= htmlspecialchars($lang ?? 'en') ?>">
 
 <head>
 	<meta charset="utf-8">
@@ -13,7 +13,12 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="css/styles.css">
 	<script defer src="js/functions.js"></script>
+	<script>
+		window.APP_LANG = <?= json_encode($lang ?? 'en') ?>;
+		window.i18n = <?= json_encode($t ?? [], JSON_UNESCAPED_UNICODE) ?>;
+	</script>
 	<script defer src="js/actions.js"></script>
+	<script defer src="js/sales.js"></script>
 	<script defer src="js/realtimeClient.js"></script>
 	<script defer src="js/checkPermission.js"></script>
 </head>

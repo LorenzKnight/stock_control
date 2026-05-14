@@ -133,7 +133,9 @@ elseif ($event->type === 'invoice.paid') {
             "expiration_date" => date("Y-m-d H:i:s", strtotime("+1 month"))
         ], ["stripe_subscription_id" => $subscriptionId]);
 
-        update_table("users", ["account_status" => "active"], ["user_id" => $userId]);
+        update_table("users", ["status" => 1], ["user_id" => $userId]);
+
+        update_table("users", ["status" => 1], ["parent_user" => $userId]);
 
         log_activity(
             $userId,
@@ -159,7 +161,9 @@ elseif ($event->type === 'invoice.payment_failed') {
     if ($record["success"]) {
         $userId = $record["data"]["user_id"];
 
-        update_table("users", ["account_status" => "suspended"], ["user_id" => $userId]);
+        update_table("users", ["status" => 0], ["user_id" => $userId]);
+
+        update_table("users", ["status" => 0], ["parent_user" => $userId]);
 
         log_activity(
             $userId,

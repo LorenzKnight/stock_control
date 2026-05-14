@@ -1165,4 +1165,66 @@ document.addEventListener("DOMContentLoaded", async function () {
 		};
 	}
 	window.showAlertModal = showAlertModal;
+
+	async function loadMarksForSearch(saleMarkSelectId) {
+		try {
+			const response = await fetch("api/get_categories.php", {
+				method: "GET",
+				headers: { "Accept": "application/json" }
+			});
+			const data = await response.json();
+
+			saleMarkSelectId.innerHTML = `<option value="">All Marks</option>`;
+
+			if (data.success && data.data.length > 0) {
+				data.data.forEach(category => {
+					const option = document.createElement("option");
+					option.value = category.category_id;
+					option.textContent = category.category_name;
+					saleMarkSelectId.appendChild(option);
+				});
+			} else {
+				saleMarkSelectId.innerHTML += `<option value="">${window.i18n?.no_marks_found || 'No marks found'}</option>`;
+			}
+		} catch (error) {
+			console.error("Error loading marks:", error);
+			saleMarkSelectId.innerHTML = `<option value="">Error loading marks</option>`;
+		}
+	}
+	window.loadMarksForSearch = loadMarksForSearch;
+
+	async function populateCurrencies(selectId, selectedValue = '') {
+		const select = document.getElementById(selectId);
+		if (!select) return;
+
+		select.innerHTML = '';
+
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = 'Select Currency';
+		select.appendChild(defaultOption);
+
+		try {
+			const res = await fetch('api/get_global_array.php?key=currencies');
+			const data = await res.json();
+
+			if (data.success && data.data) {
+				for (const [value, label] of Object.entries(data.data)) {
+					const option = document.createElement('option');
+					option.value = value;
+					option.textContent = label;
+					if (String(value) === String(selectedValue)) {
+						option.selected = true;
+					}
+					select.appendChild(option);
+				}
+			} else {
+				select.innerHTML += `<option value="">No currencies found</option>`;
+			}
+		} catch (error) {
+			console.error("Error loading currencies:", error);
+			select.innerHTML += `<option value="">Error loading currencies</option>`;
+		}
+	}
+	window.populateCurrencies = populateCurrencies;
 });

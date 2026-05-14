@@ -223,6 +223,7 @@ $i18n = [
 		'products_list' => 'Products List',
 		'storage_list' => 'Storage List',
 		'customers_list' => 'Customers List',
+		'sales_list' => 'Sales List',
 
 		// Forms
 		'edit_profile_title' => 'Edit my profile',
@@ -282,6 +283,7 @@ $i18n = [
 		'storage_or_product_no' => 'Storage/Product No.',
 		'search_slot' => 'Search slot',
 		'search_customer' => 'Search customer',
+		'search_sale' => 'Search sale',
 		'mark_category' => 'Mark / Category',
 		'model' => 'Model',
 		'sub_model' => 'Sub/Model',
@@ -353,6 +355,7 @@ $i18n = [
 		'create_customer' => 'Create Customer',
 		'edit_customer' => 'Edit Customer',
 		'delete_customer' => 'Delete Customer',
+		'create_sale' => 'Create Sale',
 
 		// Global arrays
 		'document_types' => [
@@ -599,6 +602,7 @@ $i18n = [
 		'products_list' => 'Lista de productos',
 		'storage_list' => 'Lista de almacenamiento',
 		'customers_list' => 'Lista de clientes',
+		'sales_list' => 'Lista de ventas',
 
 		// Forms
 		'edit_profile_title' => 'Editar mi perfil',
@@ -658,6 +662,7 @@ $i18n = [
 		'storage_or_product_no' => 'Número de almacenamiento/producto',
 		'search_slot' => 'Buscar slot',
 		'search_customer' => 'Buscar cliente',
+		'search_sale' => 'Buscar venta',
 		'mark_category' => 'Marcar / Categoría',
 		'model' => 'Modelo',
 		'sub_model' => 'Sub/Modelo',
@@ -729,6 +734,7 @@ $i18n = [
 		'create_customer' => 'Crear cliente',
 		'edit_customer' => 'Editar cliente',
 		'delete_customer' => 'Eliminar cliente',
+		'create_sale' => 'Crear venta',
 
 		// Global arrays
 		'document_types' => [
@@ -975,6 +981,7 @@ $i18n = [
 		'products_list' => 'Produktlista',
 		'storage_list' => 'Lagerlista',
 		'customers_list' => 'Kundlista',
+		'sales_list' => 'Försäljningslista',
 
 		// Forms
 		'edit_profile_title' => 'Redigera min profil',
@@ -1034,6 +1041,7 @@ $i18n = [
 		'storage_or_product_no' => 'Lager-/produktnummer',
 		'search_slot' => 'Sök slot',
 		'search_customer' => 'Sök kund',
+		'search_sale' => 'Sök försäljning',
 		'mark_category' => 'Märk / Kategori',
 		'model' => 'Modell',
 		'sub_model' => 'Sub/Modell',
@@ -1104,6 +1112,7 @@ $i18n = [
 		'create_customer' => 'Skapa kund',
 		'edit_customer' => 'Redigera kund',
 		'delete_customer' => 'Radera kund',
+		'create_sale' => 'Skapa försäljning',
 
 		// Global arrays
 		'document_types' => [
