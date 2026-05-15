@@ -153,25 +153,35 @@ elseif ($event->type === 'invoice.paid') {
 elseif ($event->type === 'invoice.payment_failed') {
     $invoice = $event->data->object;
     $subscriptionId = $invoice->subscription ?? null;
+    $attemptCount = (int)($invoice->attempt_count ?? 0);
 
     $record = json_decode(select_from("subscriptions", ["user_id"], [
         "stripe_subscription_id" => $subscriptionId
     ], ["fetch_first" => true]), true);
 
-    if ($record["success"]) {
+    if (!empty($record["success"]) && !empty($record["data"]["user_id"])) {
         $userId = $record["data"]["user_id"];
 
-        update_table("users", ["status" => 0], ["user_id" => $userId]);
+        if ($attemptCount >= 3) {
+            update_table("users", ["status" => 2], ["user_id" => $userId]);
+            update_table("users", ["status" => 2], ["parent_user" => $userId]);
 
-        update_table("users", ["status" => 0], ["parent_user" => $userId]);
-
-        log_activity(
-            $userId,
-            "webhook_payment_failed",
-            "Pago mensual fallido. Cuenta suspendida.",
-            "users",
-            $userId
-        );
+            log_activity(
+                $userId,
+                "webhook_payment_failed",
+                "Pago mensual fallido. Intento #{$attemptCount}. Cuenta principal y miembros suspendidos.",
+                "users",
+                $userId
+            );
+        } else {
+            log_activity(
+                $userId,
+                "webhook_payment_failed_warning",
+                "Pago mensual fallido. Intento #{$attemptCount}. Cuenta aún no suspendida.",
+                "users",
+                $userId
+            );
+        }
     }
 }
 
