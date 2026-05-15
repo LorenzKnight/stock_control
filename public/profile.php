@@ -52,6 +52,7 @@ $stripeJsSrc = $isProduction ? 'https://js.stripe.com/v3/' : 'http://js.stripe.c
 <body>
 	<?php include("components/modal_setup.php"); ?>
 	<?php include("components/modal_try_pack.php"); ?>
+	<?php include("components/modal_reactivate_subscription.php"); ?>
 	<?php include("components/modal_edit_my_info.php"); ?>
 	<?php include("components/modal_subscription.php"); ?>
 	<?php include("components/modal_edit_company.php"); ?>

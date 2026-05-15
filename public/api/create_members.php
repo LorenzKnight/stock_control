@@ -67,7 +67,7 @@ try {
 		"company_id"		=> $data["company"],
 		"status"			=> 1,
 		"username"			=> strtolower($data["name"] . "_" . $data["surname"]),
-		"verified"			=> 0,
+		"verified"			=> 1,
 		"signup_date"		=> date("Y-m-d H:i:s"),
 		"status_by_admin"	=> 1
 	];

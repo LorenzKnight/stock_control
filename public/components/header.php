@@ -3,7 +3,7 @@
 		<nav>
 			<div style="flex: 1;">
 				<div class="logo">
-					<a href="profile.php"><h3>All<strong>Stock</strong>Control</h3></a>
+					<a href="profile"><h3>All<strong>Stock</strong>Control</h3></a>
 				</div>
 			</div>
 			<ul class="menu" id="header-menu">

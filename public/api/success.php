@@ -2,6 +2,10 @@
 define('IS_STRIPE_WEBHOOK', true);
 require_once('../logic/stock_be.php');
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 if (isProductionEnv()) {
     $STRIPE_SK = $_ENV['STRIPE_SK_LIVE'];
 } else {
@@ -11,11 +15,18 @@ if (isProductionEnv()) {
 
 \Stripe\Stripe::setApiKey($STRIPE_SK);
 
+$supportedLangs = ['en', 'es', 'sv'];
+$lang = 'en';
+
 $sessionId = $_GET['session_id'] ?? null;
 
 if (!$sessionId) {
     $_SESSION["payment_message"] = "Payment session ID is missing.";
-    header("Location: /profile.php");
+
+    $browserLang = strtolower(substr($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '', 0, 2));
+    $lang = in_array($browserLang, $supportedLangs, true) ? $browserLang : 'en';
+
+    header("Location: /{$lang}/profile");
     exit;
 }
 
@@ -24,6 +35,16 @@ try {
         'id'     => $sessionId,
         'expand' => ['subscription', 'customer']
     ]);
+
+    $sessionLang = $session->metadata->lang ?? null;
+    $sessionLang = is_string($sessionLang) ? strtolower($sessionLang) : null;
+
+    if (!empty($sessionLang) && in_array($sessionLang, $supportedLangs, true)) {
+        $lang = $sessionLang;
+    } else {
+        $browserLang = strtolower(substr($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '', 0, 2));
+        $lang = in_array($browserLang, $supportedLangs, true) ? $browserLang : 'en';
+    }
 
     $isPaid = ($session->payment_status === 'paid');
     $isComplete = ($session->status === 'complete');
@@ -36,8 +57,11 @@ try {
 
 } catch (Exception $e) {
     $_SESSION["payment_message"] = "Error verifying your payment. Please try again later.";
+
+    $browserLang = strtolower(substr($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '', 0, 2));
+    $lang = in_array($browserLang, $supportedLangs, true) ? $browserLang : 'en';
 }
 
-header("Location: /profile.php");
+header("Location: /{$lang}/profile");
 exit;
 ?>

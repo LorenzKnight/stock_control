@@ -15,6 +15,7 @@ if (isProductionEnv()) {
 }
 
 \Stripe\Stripe::setApiKey($STRIPE_SK);
+
 header('Content-Type: application/json');
 
 try {
@@ -31,6 +32,16 @@ try {
 
     if (empty($_POST['packs'])) {
         throw new Exception("You must select a member package.");
+    }
+
+    $supportedLangs = ['en', 'es', 'sv'];
+
+    $lang = $_POST['lang'] ?? $_GET['lang'] ?? '';
+    $lang = strtolower($lang);
+
+    if (!in_array($lang, $supportedLangs, true)) {
+        $browserLang = strtolower(substr($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '', 0, 2));
+        $lang = in_array($browserLang, $supportedLangs, true) ? $browserLang : 'en';
     }
 
     $selectedPackId = intval($_POST['packs']);
@@ -51,11 +62,13 @@ try {
     }
 
     $selectedPackName = $packRow["data"]["package_name"] ?? null;
+
     if (!$selectedPackName) {
         throw new Exception("Package name not found in DB.");
     }
 
     $basePrice = null;
+
 	if (isset($packRow["data"]["package_price"]) && is_numeric($packRow["data"]["package_price"])) {
 		$basePrice = (float)$packRow["data"]["package_price"];
 	}
@@ -68,6 +81,7 @@ try {
 
 	if (!empty($extraPack)) {
 		$serviceId = intval($extraPack);
+
 		if ($serviceId <= 0) {
 			throw new Exception("Invalid extra pack selection.");
 		}
@@ -91,6 +105,7 @@ try {
 		}
 
 		$serviceUserId = $serviceRow["data"]["user_id"] ?? null;
+
 		if ($serviceUserId !== null && (int)$serviceUserId !== (int)$userId) {
 			throw new Exception("Extra service not allowed for this user.");
 		}
@@ -109,6 +124,7 @@ try {
 	}
 
     $finalMonthlyCost = $basePrice + $extraCost;
+
     if ($finalMonthlyCost <= 0) {
         throw new Exception("Calculated cost is invalid.");
     }
@@ -120,12 +136,7 @@ try {
 	if ($clientEstimated !== null) {
 		$diff = abs($finalMonthlyCost - $clientEstimated);
 
-		// ✅ Opción A (solo monitorear): no bloquea
-		// if ($diff > 0.05) {
-		//     // log interno opcional
-		// }
-
-		// ✅ Opción B (bloquear si intentan manipular)
+		// bloquear si intentan manipular
 		if ($diff > 0.05) {
 			throw new Exception("Invalid price estimate.");
 		}
@@ -139,6 +150,7 @@ try {
             'app_user_id' => (string)$userId,
             'package_id'  => (string)$selectedPackId,
             'extra_pack'  => (string)($extraPack ?? ''),
+            'lang'        => $lang,
             'type'        => 'allstockcontrol_subscription'
         ]
     ]);
@@ -152,6 +164,7 @@ try {
             'app_user_id' => (string)$userId,
             'package_id'  => (string)$selectedPackId,
             'extra_pack'  => (string)($extraPack ?? ''),
+            'lang'        => $lang,
             'type'        => 'allstockcontrol_subscription_price'
         ]
     ]);
@@ -167,7 +180,8 @@ try {
 				"fetch_first" => true
     		]
 		),
-	true);
+	    true
+    );
     
 	$hasPrevious = (
         $subscriptionRecord["success"] &&
@@ -175,23 +189,27 @@ try {
     );
 
     $previousSubscriptionId = $hasPrevious ? $subscriptionRecord["data"]["stripe_subscription_id"] : null;
-    $subscId                = $hasPrevious ? $subscriptionRecord["data"]["subsc_id"] : null;
+    $subscId = $hasPrevious ? $subscriptionRecord["data"]["subsc_id"] : null;
 
     $metadata = [
         'user_id'    => $userId,
         'package_id' => $selectedPackId,
         'cost'       => $unitAmount / 100,
-        'extra_pack' => $extraPack
+        'extra_pack' => $extraPack,
+        'lang'       => $lang
     ];
 
 	if ($hasPrevious && !empty($previousSubscriptionId)) {
-        $metadata['previous_subscription_id'] = $previousSubscriptionId;
+        $metadata['previous_subscription_id'] = (string)$previousSubscriptionId;
+
         if (!empty($subscId)) {
-            $metadata['subsc_id'] = $subscId;
+            $metadata['subsc_id'] = (string)$subscId;
         }
     }
 
 	// Crear nueva sesión de checkout para nueva suscripción
+    $baseUrl = rtrim($myUrl, '/');
+
 	$checkoutSession = \Stripe\Checkout\Session::create([
 		'payment_method_types' => ['card'],
 		'mode' => 'subscription',
@@ -199,8 +217,8 @@ try {
 			'price' => $price->id,
 			'quantity' => 1,
 		]],
-		'success_url' => $myUrl . '/api/success.php?session_id={CHECKOUT_SESSION_ID}',
-        'cancel_url'  => $myUrl . '/api/cancel.php?session_id={CHECKOUT_SESSION_ID}',
+		'success_url' => $baseUrl . '/api/success.php?session_id={CHECKOUT_SESSION_ID}',
+        'cancel_url'  => $baseUrl . '/api/cancel.php?session_id={CHECKOUT_SESSION_ID}',
         'metadata'    => $metadata
 	]);
 

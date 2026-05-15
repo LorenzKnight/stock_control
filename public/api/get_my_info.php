@@ -29,6 +29,7 @@ try {
         "signup_date",
         "company_id",
         "package_id",
+        "status",
         "gdpr",
         "terms"
     ], ["user_id" => $userId], ["fetch_first" => true]);

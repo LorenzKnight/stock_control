@@ -306,6 +306,10 @@ $i18n = [
 		'back' => 'Back',
 		'done' => 'Done',
 
+		// Payment
+		'non_payment_message' => 'This subscription is currently inactive for non-payment!',
+		'non_payment_message_reactivate' => 'Your subscription has been deactivated due to non-payment. If you wish to continue using the AllStockControl stock control system, please check payment details and reactivate your subscription.',
+
 		// Products
 		'single_unit' => 'Single unit',
 		'multi_pack' => 'Multi-pack',
@@ -356,6 +360,7 @@ $i18n = [
 		'edit_customer' => 'Edit Customer',
 		'delete_customer' => 'Delete Customer',
 		'create_sale' => 'Create Sale',
+		'reactivate_subscription' => 'Reactivate Subscription',
 
 		// Global arrays
 		'document_types' => [
@@ -685,6 +690,10 @@ $i18n = [
 		'back' => 'Atrás',
 		'done' => 'Hecho',
 
+		// Payment
+		'non_payment_message' => '¡Esta suscripción está actualmente inactiva por falta de pago!',
+		'non_payment_message_reactivate' => 'Tu suscripción ha sido desactivada debido a la falta de pago. Si deseas continuar utilizando el sistema de control de stock de AllStockControl, por favor revisa los detalles de pago y reactiva tu suscripción.',
+
 		// Products
 		'single_unit' => 'Unidad simple',
 		'multi_pack' => 'Multi-pack',
@@ -735,6 +744,7 @@ $i18n = [
 		'edit_customer' => 'Editar cliente',
 		'delete_customer' => 'Eliminar cliente',
 		'create_sale' => 'Crear venta',
+		'reactivate_subscription' => 'Reactivar suscripción',
 
 		// Global arrays
 		'document_types' => [
@@ -1064,6 +1074,10 @@ $i18n = [
 		'back' => 'Tillbaka',
 		'done' => 'Klart',
 
+		// Payment
+		'non_payment_message' => 'Denna prenumeration är för närvarande inaktiv på grund av utebliven betalning!',
+		'non_payment_message_reactivate' => 'Din prenumeration har inaktiverats på grund av utebliven betalning. Om du vill fortsätta använda AllStockControls lagerhanteringssystem, vänligen granska dina betalningsuppgifter och återaktivera din prenumeration.',
+
 		// Products
 		'single_unit' => 'Enkel enhet',
 		'multi_pack' => 'Multi-pack',
@@ -1113,6 +1127,7 @@ $i18n = [
 		'edit_customer' => 'Redigera kund',
 		'delete_customer' => 'Radera kund',
 		'create_sale' => 'Skapa försäljning',
+		'reactivate_subscription' => 'Reaktivera prenumeration',
 
 		// Global arrays
 		'document_types' => [

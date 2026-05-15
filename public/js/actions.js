@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
-	// --- Onboarding guide --- REVISA PARA QUE NO SALGA EL LOG EN LA CONSOLA (solo es para debug)
+	// --- Onboarding guide ---
 	const onboardingBox = document.getElementById('onboarding-progress');
 	if (onboardingBox) {
 		const onboardingStatus = {
@@ -144,30 +144,49 @@ document.addEventListener("DOMContentLoaded", async function () {
 			});
 
 			const data = await response.json();
+			
+			if (!data.success || !data.data) {
+				onboardingBox.style.display = 'none';
+				return;
+			}
 
-			if (data.success && data.data?.onboarding_progress) {
-				const progress = data.data.onboarding_progress;
+			const user = data.data;
 
-				onboardingStatus.company = progress.company === true || progress.company === 't';
-				onboardingStatus.product = progress.product === true || progress.product === 't';
-				onboardingStatus.client = progress.client === true || progress.client === 't';
-				onboardingStatus.sale = progress.sale === true || progress.sale === 't';
+			// ✅ Solo mostrar onboarding al usuario principal/admin
+			const isMainUser = (
+				user.parent_user === null ||
+				user.parent_user === '' ||
+				user.parent_user === 0 ||
+				user.parent_user === '0'
+			);
+
+			if (!isMainUser) {
+				onboardingBox.style.display = 'none';
+			} else {
+				if (user.onboarding_progress) {
+					const progress = user.onboarding_progress;
+
+					onboardingStatus.company = progress.company === true || progress.company === 't';
+					onboardingStatus.product = progress.product === true || progress.product === 't';
+					onboardingStatus.client = progress.client === true || progress.client === 't';
+					onboardingStatus.sale = progress.sale === true || progress.sale === 't';
+				}
+
+				updateOnboardingProgress(onboardingStatus);
+
+				const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
+				// console.log('hasSeenOnboarding:', hasSeenOnboarding);
+
+				if (!hasSeenOnboarding) {
+					setTimeout(() => {
+						startOnboardingGuide();
+						localStorage.setItem('hasSeenOnboarding', 'true');
+					}, 500);
+				}
 			}
 		} catch (error) {
 			console.error('Error fetching onboarding progress:', error);
-		}
-
-		updateOnboardingProgress(onboardingStatus);
-
-		const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
-
-		// console.log('hasSeenOnboarding:', hasSeenOnboarding);
-
-		if (!hasSeenOnboarding) {
-			setTimeout(() => {
-				startOnboardingGuide();
-				localStorage.setItem('hasSeenOnboarding', 'true');
-			}, 500);
+			onboardingBox.style.display = 'none';
 		}
 	}
 
@@ -776,7 +795,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			if (data.success && data.data) {
 				let user = data.data;
-
+				
 				if (hiUser) {
 					const greeting = window.i18n?.profile_greeting || 'Hi, ';
 					const fallbackName = window.i18n?.user_fallback_name || 'User';
@@ -842,10 +861,30 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				const expiratedPack = today >= expDay;
 
-				
-
 				if (parseInt(user.package_id) === 1 && expiratedPack) {
 					const activatePackForm = document.getElementById('activate-pack-form');
+					const popupContent = activatePackForm.querySelector('.formular-frame');
+					if (activatePackForm && popupContent) {
+						activatePackForm.style.display = 'block';
+						activatePackForm.style.opacity = '0';
+						activatePackForm.style.transition = 'opacity 0.5s ease';
+						setTimeout(() => {
+							activatePackForm.style.opacity = '1';
+						}, 10);
+
+						popupContent.style.transform = 'scale(0.7)';
+						popupContent.style.opacity = '0';
+						popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+						setTimeout(() => {
+							popupContent.style.transform = 'scale(1)';
+							popupContent.style.opacity = '1';
+						}, 50);
+					}
+				}
+
+				if (parseInt(user.status) === 2) {
+					console.log("This subscription is currently inactive for non-payment. Please contact support to reactivate it.");
+					const activatePackForm = document.getElementById('reactivate-subscription-form');
 					const popupContent = activatePackForm.querySelector('.formular-frame');
 					if (activatePackForm && popupContent) {
 						activatePackForm.style.display = 'block';
@@ -931,6 +970,38 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		});
 	}
+
+	async function openBillingPortal() {
+		try {
+			const lang = typeof getCurrentLang === 'function'
+				? getCurrentLang()
+				: (window.APP_LANG || 'en');
+
+			const res = await fetch(`/api/reactivate_subscription.php?lang=${encodeURIComponent(lang)}`, {
+				method: 'POST',
+				headers: { Accept: 'application/json' }
+			});
+
+			const data = await res.json();
+
+			if (data.success && data.url) {
+				window.location.href = data.url;
+			} else {
+				alert(data.message || 'Could not open billing portal.');
+			}
+		} catch (error) {
+			console.error('Error opening billing portal:', error);
+			alert('Could not open billing portal.');
+		}
+	}
+
+	const reactivateSubscriptionBtn = document.getElementById('reactivate-subscription');
+
+	if (reactivateSubscriptionBtn) {
+		reactivateSubscriptionBtn.addEventListener('click', openBillingPortal);
+	}
+
+
 
 	const profileData = document.getElementById("profile-data");
 	if (profileData) {

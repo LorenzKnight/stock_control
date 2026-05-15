@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		async function getStripeInstance() {
 			if (stripe) return stripe;
 
-			const res = await fetch('inc/public_key_config.php', {
+			const res = await fetch('/inc/public_key_config.php', {
 			method: 'GET',
 			headers: { 'Accept': 'application/json' }
 			});
@@ -30,6 +30,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			let formData = new FormData(this);
 
+			const lang = typeof getCurrentLang === 'function'
+				? getCurrentLang()
+				: (window.APP_LANG || 'en');
+
+			formData.append('lang', lang);
+
 			const banner = document.getElementById('status-message');
 			const statusText = document.getElementById('status-text');
 			const statusImage = document.getElementById('status-image');
@@ -37,7 +43,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			try {
 				const stripeInstance = await getStripeInstance();
 
-				let response = await fetch('api/checkout.php', {
+				let response = await fetch('/api/checkout.php', {
 					method: 'POST',
 					headers: { 'Accept': 'application/json' },
 					body: formData
