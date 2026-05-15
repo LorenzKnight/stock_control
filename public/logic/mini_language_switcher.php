@@ -310,6 +310,10 @@ $i18n = [
 		'non_payment_message' => 'This subscription is currently inactive for non-payment!',
 		'non_payment_message_reactivate' => 'Your subscription has been deactivated due to non-payment. If you wish to continue using the AllStockControl stock control system, please check payment details and reactivate your subscription.',
 
+		'your_free_trial_has_expired' => 'Your 30-day trial package has expired!',
+		'trial_expired_desc' => 'Your 30-day trial package has expired. If you wish to continue using the AllStockControl stock control system, please choose one of our subscription packages that best suits your needs.',
+		'trial_expired_warning' => 'If you do not upgrade your package, all data saved up to this point will be deleted within 14 days.',
+
 		// Products
 		'single_unit' => 'Single unit',
 		'multi_pack' => 'Multi-pack',
@@ -361,6 +365,7 @@ $i18n = [
 		'delete_customer' => 'Delete Customer',
 		'create_sale' => 'Create Sale',
 		'reactivate_subscription' => 'Reactivate Subscription',
+		'upgrade_package' => 'Upgrade your Package',
 
 		// Global arrays
 		'document_types' => [
@@ -694,6 +699,10 @@ $i18n = [
 		'non_payment_message' => '¡Esta suscripción está actualmente inactiva por falta de pago!',
 		'non_payment_message_reactivate' => 'Tu suscripción ha sido desactivada debido a la falta de pago. Si deseas continuar utilizando el sistema de control de stock de AllStockControl, por favor revisa los detalles de pago y reactiva tu suscripción.',
 
+		'your_free_trial_has_expired' => '¡Tu paquete de prueba gratuita de 30 días ha expirado!',
+		'trial_expired_desc' => 'Tu paquete de prueba gratuita de 30 días ha expirado. Si deseas continuar utilizando el sistema de control de stock de AllStockControl, por favor elige uno de nuestros paquetes de suscripción que mejor se adapte a tus necesidades.',
+		'trial_expired_warning' => 'Si no actualizas tu paquete, todos los datos guardados hasta este punto serán eliminados dentro de 14 días.',
+
 		// Products
 		'single_unit' => 'Unidad simple',
 		'multi_pack' => 'Multi-pack',
@@ -745,6 +754,7 @@ $i18n = [
 		'delete_customer' => 'Eliminar cliente',
 		'create_sale' => 'Crear venta',
 		'reactivate_subscription' => 'Reactivar suscripción',
+		'upgrade_package' => 'Actualizar tu paquete',
 
 		// Global arrays
 		'document_types' => [
@@ -1078,6 +1088,10 @@ $i18n = [
 		'non_payment_message' => 'Denna prenumeration är för närvarande inaktiv på grund av utebliven betalning!',
 		'non_payment_message_reactivate' => 'Din prenumeration har inaktiverats på grund av utebliven betalning. Om du vill fortsätta använda AllStockControls lagerhanteringssystem, vänligen granska dina betalningsuppgifter och återaktivera din prenumeration.',
 
+		'your_free_trial_has_expired' => 'Din 30-dagars gratis provperiod har gått ut!',
+		'trial_expired_desc' => 'Din 30-dagars gratis provperiod har gått ut. Om du vill fortsätta använda AllStockControls lagerhanteringssystem, vänligen välj ett av våra prenumerationspaket som bäst passar dina behov.',
+		'trial_expired_warning' => 'Om du inte uppgraderar ditt paket kommer all data som sparats hittills att raderas inom 14 dagar.',
+
 		// Products
 		'single_unit' => 'Enkel enhet',
 		'multi_pack' => 'Multi-pack',
@@ -1128,6 +1142,7 @@ $i18n = [
 		'delete_customer' => 'Radera kund',
 		'create_sale' => 'Skapa försäljning',
 		'reactivate_subscription' => 'Reaktivera prenumeration',
+		'upgrade_package' => 'Uppgradera ditt paket',
 
 		// Global arrays
 		'document_types' => [
