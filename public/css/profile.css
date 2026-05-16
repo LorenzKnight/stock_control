@@ -259,25 +259,31 @@
 .packages {
     width: 152px;
     height: 218px;
-    border-radius: 10px;
+    border-radius: 15px;
     border: 1px solid var(--frm-border-semi-transparent);
     margin: 0 8px 7px;
-    background-color: var(--frm-bg-transparent-grey);
+    /* background-color: var(--frm-bg-transparent-grey); */
+    background-color: var(--clr-white);
     box-shadow: 0px 2px 5px var(--main-box-shadow);
+    opacity: 0.8;
+    filter: grayscale(70%);
     float: left;
+    position: relative;
     transition: all 0.3s ease;
 	cursor: pointer;
 }
 
 .packages:hover {
-    box-shadow: 0px 2px 5px var(--main-bg-color);
-    color: var(--clr-white);
+    box-shadow: 0px 4px 10px var(--main-bg-color);
+    filter: grayscale(0%);
+    opacity: 1;
 }
 
 .pack-img img {
-    width: 90px;
-	height: 90px;
+    width: 120px;
+	height: 120px;
     object-fit: cover;
+    /* border-radius: 50%; */
 }
 
 .pack-name {
@@ -290,20 +296,32 @@
     padding: 6px 0 0;
 }
 
+.pack-details {
+    width: 152px;
+    /* background-color: red; */
+    font-size: 11px;
+    padding: 5px 0;
+    position: relative;
+    top: -20px;
+}
+
 .pack-details ul {
     margin: 0;
     padding: 0;
 }
 
 .pack-details ul li {
-    padding: 3px 0;
+    padding: 2px 0;
     list-style: none;
 }
 
 .selected-package {
-	background-color: var(--main-bg-blue);
-	color: white;
 	border-color: var(--frm-border-semi-transparent);
+    filter: grayscale(0%);
+    opacity: 1;
+    font-weight: 400;
+	border-color: var(--clr-white);
+    box-shadow: 0px 4px 10px var(--main-bg-color);
 }
 
 .packages .opcion-radio input[type="radio"] {

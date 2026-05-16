@@ -8689,10 +8689,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 						if (isDisabledByConfig) {
 							container.title = 'This package is temporarily unavailable';
 							container.style.opacity = '0.7';
-							container.style.backgroundColor = '#5cb2cfff';
+							container.style.filter = 'grayscale(100%)'; // estilo visual para desactivado por configuración
 						} else {
-							container.style.opacity = '0.3';
-							container.style.backgroundColor = '#f2f2f2'; // estilo visual para desactivado
+							container.style.opacity = '0.2';
 						}
 					}
 
@@ -8704,16 +8703,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 						<div class="pack-img">
 							<img src="images/sys-img/${pkg.package_image}" alt="Package Image">
 						</div>
-						<div class="pack-name"><strong>${pkg.package_name}</strong></div>
 						<div class="pack-details">
+							<div class="pack-name" style="color: ${pkg.pack_color} !important;"><strong>${pkg.package_name}</strong></div>
 							<ul>
 								<li>${window.i18n?.memmbers || "Members"}: ${pkg.members_limit ? pkg.members_limit : 'undefinited'}</li>
 								<li>Max admin: ${pkg.admins_limit ? pkg.admins_limit : 'undefinited'}</li>
 								<li>${window.i18n?.branches || "Branches"}: ${pkg.branch_affiliate_limit ? pkg.branch_affiliate_limit : 'undefinited'}</li>
 							</ul>
-						</div>
-						<div class="pack-price">
-							<strong>${priceText}</strong>
+							<div class="pack-price">
+								<strong>${priceText}</strong>
+							</div>
 						</div>
 						<div class="opcion-radio">
 							<input type="radio" id="${uniqueId}" name="packs" class="category-radio"

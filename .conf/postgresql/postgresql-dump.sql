@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS packages (
 	package_id SERIAL PRIMARY KEY,
 	package_name VARCHAR(255) NULL,
 	package_image VARCHAR(255) NULL,
+	pack_color VARCHAR(10) NULL,
 	package_description TEXT NULL,
 	package_price INTEGER NULL,
 	members_limit INTEGER NULL, -- Límite de miembros
@@ -61,31 +62,31 @@ CREATE TABLE IF NOT EXISTS packages (
 -- INSERT INTO packages (
 --   package_name, package_image, package_description, package_price, members_limit, admins_limit, branch_affiliate_limit, products_limit, package_duration, package_status
 -- ) VALUES 
--- ('Try Pack', 'pack-upgrade-2.png',
+-- ('Try Pack', 'try_pack.png', '#00ccff',
 --  'Perfect to explore the system with no commitment. Includes 1 user, limited access to essential features, and 1 affiliate branch. Great for solo entrepreneurs.', 
 --  NULL, 0, 0, 1, 50, 30, 1),
 
--- ('Starter', 'pack-upgrade-2.png',
+-- ('Starter', 'pack-upgrade-2.png', '#00aeff',
 --  'Ideal for freelancers and very small businesses starting with inventory control.', 
 --  15, 1, 1, 1, 100, NULL, 1),
 
--- ('Basic', 'pack-upgrade-2.png',
+-- ('Basic', 'pack_basic.png', '#00c0b6',
 --  'Perfect for small shops that need better control of products and stock movements.', 
 --  25, 5, 1, 1, 250, NULL, 1),
 
--- ('Business', 'pack-upgrade-2.png',
+-- ('Business', 'pack_business.png', '#772cd3',
 --  'Designed for growing businesses managing inventory across multiple locations.', 
 --  40, 10, 2, 2, 500, NULL, 1),
 
--- ('Growth', 'pack-upgrade-2.png',
+-- ('Growth', 'pack_growth.png', '#4201b9',
 --  'For businesses scaling operations with multiple locations and teams.', 
 --  60, 20, 3, 3, 1000, NULL, 1),
 
--- ('Scale', 'pack-upgrade-2.png',
+-- ('Scale', 'pack-scale.png', '#d45201',
 --  'Built for large operations that require performance, control, and scalability.', 
 --  85, 35, 4, 4, 2500, NULL, 1),
 
--- ('Enterprise', 'pack-upgrade-2.png',
+-- ('Enterprise', 'pack-enterprise.png', '#aa2200',
 --  'Custom inventory solution for large organizations. Contact us for a tailored plan.', 
 --  200, 40, 5, 5, NULL, NULL, 1);
 
