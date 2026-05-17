@@ -32,17 +32,26 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
     window.hideBanner = hideBanner;
 
-	function getUserBorderColor(user) {
+	function getUserBorderColorAndText(user) {
 		if (Number(user.status_by_admin) !== 1) {
-			return "#9a9999"; // Gris: bloqueado por admin
+			return {
+				color: "#9a9999",
+				text: "Blocked by admin"
+			};
 		}
 
 		if (Number(user.status) !== 1) {
-			return "#fe7070"; // Rojo: inactivo
+			return {
+				color: "#fe7070",
+				text: "Inactive"
+			};
 		}
 
 		if (Number(user.verified) !== 1) {
-			return "#fad186"; // Amarillo: no verificado
+			return {
+				color: "#fad186",
+				text: "Not Verified"
+			};
 		}
 
 		if (Number(user.package_id) === 1 && user.signup_date) {
@@ -51,14 +60,20 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const diffMs = now - signupDate;
 			const diffDays = diffMs / (1000 * 60 * 60 * 24);
 
-			if (diffDays >= 15) {
-				return "#4c0bbd"; // Morado: 15+ días con package_id 1
+			if (diffDays >= 30) {
+				return {
+					color: "#4c0bbd",
+					text: "Trial expired"
+				};
 			}
 		}
 
-		return "#8cda8a"; // Verde: activo y verificado
+		return {
+			color: "#8cda8a",
+			text: "Active"
+		};
 	}
-	window.getUserBorderColor = getUserBorderColor;
+	window.getUserBorderColorAndText = getUserBorderColorAndText;
 
 	// 📌 script para cargar marcas, modelos y submodelos
 	async function initCategorySelectors(markId, modelId, submodelId, companyId) {
@@ -208,7 +223,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		const hours = String(date.getHours()).padStart(2, '0');
 		const minutes = String(date.getMinutes()).padStart(2, '0');
 
-		return `${year} ${month} ${day} ${hours}:${minutes}`;
+		return `${year} ${month} ${day}, ${hours}:${minutes}`;
 	}
   	window.formatFullDateTime = formatFullDateTime;
 

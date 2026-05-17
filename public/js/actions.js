@@ -815,10 +815,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 					subsc.innerHTML = 
 						user.package_info && user.package_info.package_id 
 							? `
-								<p><strong>Pack:</strong> ${user.package_info.package_name || "No Package"}</p>
-								<p><strong>${window.i18n?.smallbox_members || "Members"}:</strong> ${user.package_info.members_limit}</p>
-								<p><strong>${window.i18n?.branches || "Branches"}:</strong> ${user.package_info.branch_affiliate_limit}</p>
-								<p><strong>${window.i18n?.smallbox_products_limit || "Product Limit"}:</strong> ${user.package_info.products_limit}</p>
+								<div class="small-box-pack-img">
+									<img src="images/sys-img/${user.package_info.package_image}" alt="${user.package_info.package_name}">
+								</div>
+								<div class="small-box-pack-details">
+									<h2 style="margin-bottom: 5px; color: ${user.package_info.pack_color || '#000'}">${user.package_info.package_name || "No Package"}</h2>
+									<ul>
+										<li><strong>${window.i18n?.smallbox_members || "Members"}:</strong> ${user.package_info.members_limit}</li>
+										<li><strong>${window.i18n?.branches || "Branches"}:</strong> ${user.package_info.branch_affiliate_limit}</li>
+										<li><strong>${window.i18n?.smallbox_products_limit || "Product Limit"}:</strong> ${user.package_info.products_limit}</li>
+									</ul>
+								</div>
 							` 
 							: "0";
 				}
@@ -1114,11 +1121,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 						? `images/profile/${user.image}` 
 						: "images/sys-img/NonProfilePic.png";
 
-						let borderColor = getUserBorderColor(user);
+						let borderColor = getUserBorderColorAndText(user);
 
 						card.innerHTML = `
 							<div class="mini-banner">
-								<div class="mini-profile" style="border: 2px solid ${borderColor};">
+								<div class="mini-profile" style="border: 2px solid ${borderColor.color};">
 									<img src="${profileImage}" alt="Profile Picture">
 								</div>
 								<div class="co-worker-position">${user.rank_text || 'Unknown role'}</div>
@@ -5640,17 +5647,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 								? `images/profile/${user.image}`
 								: `images/sys-img/NonProfilePic.png`;
 
-							let borderColor = getUserBorderColor(user);
+							let borderColor = getUserBorderColorAndText(user);
 
 							row.innerHTML = `
 								<td width="10%" align="center" valign="middle">
-									<div class="customers-profile" style="border: 2px solid ${borderColor};">
+									<div class="customers-profile" style="border: 2px solid ${borderColor.color};">
 										<img src="${profileImg}" alt="">
 									</div>
 								</td>
 								<td width="80%" valign="middle" style="padding-left:10px;">
 									<strong>${user.full_name || 'Unknown'}</strong>
 									<p class="mini-title">${user.email}</p>
+									<small style="color: ${borderColor.color};">${borderColor.text}</small>
 								</td>
 								<td width="10%" align="center" valign="middle">
 									<div class="opcion-radio">
@@ -5787,10 +5795,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 				html += `
 					<div class="overview-header">
 						${users.map(user => {
-							let borderColor = getUserBorderColor(user);
+							let borderColor = getUserBorderColorAndText(user);
 
 							return `
-								<div class="overview-profile-pic" style="border: 2px solid ${borderColor};">
+								<div class="overview-profile-pic" style="border: 2px solid ${borderColor.color};">
 									<img src="${user.image && user.image.trim() !== '' ? `images/profile/${user.image}` : 'images/sys-img/NonProfilePic.png'}" alt="Profile Picture">
 								</div>
 								<table class="overview-header-table" style="margin-top: 0;" width="80%" cellspacing="0" cellpadding="0">
@@ -5809,8 +5817,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 													${user.email}
 												</td>
 												<td>
-													<div class="mini-title">Rank:</div>
-													${user.rank_text ?? user.rank}
+													<div class="mini-title">Reg. Date:</div>
+													${formatFullDateTime(user.signup_date)}
 												</td>
 												<td>
 													<div class="mini-title">Verified:</div>
@@ -5831,7 +5839,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 										<div class="overview-pack-img">
 											<img src="images/sys-img/${pkg.package_image}" alt="Package Image">
 										</div>
-										<div class="overview-pack-name"><strong>${pkg.package_name}</strong></div>
+										<div class="overview-pack-name" style="color: ${pkg.pack_color || '#000'}">
+											<strong>${pkg.package_name}</strong>
+										</div>
 										<div class="overview-pack-details">
 											<ul>
 												<li>Members: ${pkg.members_limit ? pkg.members_limit : 'undefinited'}</li>
@@ -5846,12 +5856,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 								`
 								: `
 									<div class="pack-card no-package">
-										<div class="no-package-icon">📦 (Try Pack)</div>
-										<div class="no-package-title">
-											<strong>No active subscription</strong>
+										<div class="overview-pack-img">
+											<img src="images/sys-img/try-pack.png" alt="Package Image">
 										</div>
-										<div class="no-package-text">
-											This user does not have an active package.
+										<div class="no-package-icon"><strong>📦 (Try Pack)</strong></div>
+										<div class="no-package-title">
+											No active subscription
 										</div>
 									</div>
 								`
@@ -5996,13 +6006,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 													? `images/profile/${c.image}`
 													: `images/sys-img/NonProfilePic.png`;
 
-												let borderColor = getUserBorderColor(c);
+												let borderColor = getUserBorderColorAndText(c);
 
 												return `
 													<tr>
 														<td>${c.user_id}</td>
 														<td>
-															<div class="customers-profile" style="border: 2px solid ${borderColor};">
+															<div class="customers-profile" style="border: 2px solid ${borderColor.color};">
 																<img src="${collaboratorImg}" alt="">
 															</div>
 														</td>

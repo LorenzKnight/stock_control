@@ -55,6 +55,8 @@ try {
         $packageInfo = json_decode(select_from("packages", [
             "package_id",
             "package_name",
+            "package_image",
+            'pack_color',
             "package_price",
             "members_limit",
             "admins_limit",

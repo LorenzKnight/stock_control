@@ -597,7 +597,7 @@ $i18n = [
 		'smallbox_spot' => 'Spot',
 
 		'smallbox_members' => 'Miembros',
-		'smallbox_products_limit' => 'Límite de productos',
+		'smallbox_products_limit' => 'Límite de prod',
 
 		'smallbox_name' => 'Nombre',
 
