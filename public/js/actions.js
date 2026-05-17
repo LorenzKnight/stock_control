@@ -5949,6 +5949,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 												<th>Logo</th>
 												<th>Company</th>
 												<th>Created</th>
+												<th>Products</th>
 												<th></th>
 											</tr>
 										</thead>
@@ -5968,6 +5969,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 														</td>
 														<td>${a.company_name}</td>
 														<td>${formatFullDateTime(a.created_at) ?? '-'}</td>
+														<td>${a.product_count ?? 0}</td>
 														<td width="5%">
 															<div class="overview-aff-menu" data-id="${a.company_id}">
 																<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">

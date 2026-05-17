@@ -13,7 +13,6 @@ $response = [
 ];
 
 try {
-
     if ($_SERVER["REQUEST_METHOD"] !== "GET") {
         throw new Exception("Method not allowed");
     }
@@ -97,10 +96,31 @@ try {
 	$affiliates = [];
 
 	if (!empty($affiliateRes["success"]) && !empty($affiliateRes["data"])) {
-		foreach ($affiliateRes["data"] as $company) {
-			$affiliates[] = $company;
-		}
-	}
+        foreach ($affiliateRes["data"] as $company) {
+            $companyId = intval($company["company_id"] ?? 0);
+
+            $productCount = 0;
+
+            if ($companyId > 0) {
+                $productRes = json_decode(select_from(
+                    "products",
+                    ["product_id"],
+                    ["company_id" => $companyId],
+                    [
+                        "fetch_all" => true
+                    ]
+                ), true);
+
+                if (!empty($productRes["success"]) && !empty($productRes["data"])) {
+                    $productCount = count($productRes["data"]);
+                }
+            }
+
+            $company["product_count"] = $productCount;
+
+            $affiliates[] = $company;
+        }
+    }
 
     // 👥 Colaboradores (usuarios hijos)
     $collabRes = json_decode(select_from(
