@@ -368,6 +368,16 @@ $i18n = [
 		'upgrade_package' => 'Upgrade your Package',
 
 		// Global arrays
+		'package_descriptions' => [
+			'try_pack' => 'Try our inventory management software for free for 30 days. No credit card required.',
+			'starter_pack' => 'Ideal for freelancers and very small businesses starting with inventory control.',
+			'basic_pack' => 'Perfect for small shops that need better control of products and stock movements.',
+			'business_pack' => 'Designed for growing businesses managing inventory across multiple locations.',
+			'growth_pack' => 'For businesses scaling operations with multiple locations and teams.',
+			'scale_pack' => 'Built for large operations that require performance, control, and scalability.',
+			'enterprise_pack' => 'Custom inventory solution for large organizations. Contact us for a tailored plan.'
+		],
+
 		'document_types' => [
 			'national_id_cedula' => 'National ID / Cedula',
 			'passport' => 'Passport',
@@ -757,6 +767,16 @@ $i18n = [
 		'upgrade_package' => 'Actualizar tu paquete',
 
 		// Global arrays
+		'package_descriptions' => [
+			'try_pack' => 'Prueba nuestro software de gestión de inventario gratis por 30 días. No se requiere tarjeta de crédito.',
+			'starter_pack' => 'Ideal para freelancers y negocios muy pequeños que comienzan con el control de inventario.',
+			'basic_pack' => 'Perfecto para pequeñas tiendas que necesitan un mejor control de productos y movimientos de stock.',
+			'business_pack' => 'Diseñado para negocios en crecimiento que gestionan inventario en múltiples ubicaciones.',
+			'growth_pack' => 'Para negocios que escalan operaciones con múltiples ubicaciones y equipos.',
+			'scale_pack' => 'Construido para operaciones grandes que requieren rendimiento, control y escalabilidad.',
+			'enterprise_pack' => 'Solución de inventario personalizada para grandes organizaciones. Contáctanos para un plan a medida.'
+		],
+
 		'document_types' => [
 			'national_id_cedula' => 'Identificación nacional / Cédula',
 			'passport' => 'Pasaporte',
@@ -1145,6 +1165,16 @@ $i18n = [
 		'upgrade_package' => 'Uppgradera ditt paket',
 
 		// Global arrays
+		'package_descriptions' => [
+			'try_pack' => 'Prova vårt lagerhanteringsprogram gratis i 30 dagar. Inget kreditkort krävs.',
+			'starter_pack' => 'Perfekt för frilansare och mycket små företag som börjar med lagerkontroll.',
+			'basic_pack' => 'Idealisk för små butiker som behöver bättre kontroll över produkter och lagertransaktioner.',
+			'business_pack' => 'Designad för växande företag som hanterar lager på flera platser.',
+			'growth_pack' => 'För företag som skalar upp verksamheten med flera platser och team.',
+			'scale_pack' => 'Byggt för stora operationer som kräver prestanda, kontroll och skalbarhet.',
+			'enterprise_pack' => 'Skräddarsydd lagerlösning för stora organisationer. Kontakta oss för en anpassad plan.'
+		],
+
 		'document_types' => [
 			'national_id_cedula' => 'National ID / Cédula',
 			'passport' => 'Pass',

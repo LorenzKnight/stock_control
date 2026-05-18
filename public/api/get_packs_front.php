@@ -73,8 +73,28 @@ try {
 		throw new Exception("No active packages found");
 	}
 
+	$packages = array_values($packagesData["data"]);
+
+	// Cargar descripciones traducidas
+	$packageDescriptions = [];
+
+	if (method_exists('GlobalArrays', 'packageDescriptions')) {
+		$packageDescriptions = GlobalArrays::packageDescriptions();
+	}
+
+	foreach ($packages as &$package) {
+		$descId = $package["package_description"] ?? null;
+
+		$package["package_description_text"] = "";
+
+		if ($descId !== null && $descId !== '') {
+			$package["package_description_text"] = $packageDescriptions[$descId] ?? "";
+		}
+	}
+	unset($package);
+
 	$response["success"]  = true;
-	$response["packages"] = array_values($packagesData["data"]);
+	$response["packages"] = $packages;
 	$response["message"]  = "Packages retrieved successfully";
 } catch (Exception $e) {
 	http_response_code(200);

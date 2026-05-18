@@ -8,6 +8,33 @@ class GlobalArrays {
 		}
 	}
 
+	// package descriptions.
+	public static $packageDescriptions = [
+		1 => "Try Pack Description",
+		2 => "Starter Pack Description",
+		3 => "Basic Pack Description",
+		4 => "Business Pack Description",
+		5 => "Growth Pack Description",
+		6 => "Scale Pack Description",
+		7 => "Enterprise Pack Description"
+	];
+
+	public static function packageDescriptions(): array
+	{
+		self::ensureTranslationsLoaded();
+
+		return [
+			1 => tr_nested('package_descriptions', 'try_pack', self::$packageDescriptions[1]),
+			2 => tr_nested('package_descriptions', 'starter_pack', self::$packageDescriptions[2]),
+			3 => tr_nested('package_descriptions', 'basic_pack', self::$packageDescriptions[3]),
+			4 => tr_nested('package_descriptions', 'business_pack', self::$packageDescriptions[4]),
+			5 => tr_nested('package_descriptions', 'growth_pack', self::$packageDescriptions[5]),
+			6 => tr_nested('package_descriptions', 'scale_pack', self::$packageDescriptions[6]),
+			7 => tr_nested('package_descriptions', 'enterprise_pack', self::$packageDescriptions[7])
+		];
+	}
+
+	// product types.
 	public static $productTypes = [
 		1 => "New",
 		2 => "Used"

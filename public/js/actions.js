@@ -539,7 +539,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 		params.append('sort', 'package_price');
 		params.append('dir', 'ASC');
 
-		const url = `api/get_packs_front.php?${params.toString()}`;
+		const currentLang = typeof getCurrentLang === 'function'
+			? getCurrentLang()
+			: (window.APP_LANG || 'en');
+
+		params.append('lang', currentLang);
+
+		const url = `/api/get_packs_front.php?${params.toString()}`; // AQUI
 
 		fetch(url, {
 			method: 'GET',
@@ -564,7 +570,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			return data;
 		})
-		.then(data => {
+		.then(async data => {
 			if (!data.success || !Array.isArray(data.packages)) {
 				container.innerHTML = `<p style="text-align:center;padding:12px;color:#c00">
 					${data.message ? `Error: ${data.message}` : 'Error loading packages.'}
@@ -588,7 +594,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					id: p.package_id,
 					name: p.package_name || 'Package',
 					img: p.package_image || null,
-					desc: p.package_description || null,
+					desc: p.package_description_text || null,
 					price: p.package_price ?? null,
 					members: (m == null || m === '') ? null : Number(m), // null = ilimitado
 					admins: p.admins_limit ?? null,
@@ -609,7 +615,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			const t = window.i18n || {};
 			
-			const html = list.map((pkg, i) => {
+			const htmlItems = list.map((pkg, i) => {
 				const cvar = colorVarByIndex(i);
 
 				return `
@@ -667,9 +673,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 					</div>
 					<!-- <button class="access-btn" data-package-id="${esc(pkg.id)}">Select</button> -->
 				</div>`;
-			}).join('');
+			});
 
-			container.innerHTML = html;
+			container.innerHTML = htmlItems.join('');
 		})
 		.catch(err => {
 			console.error('Error loading packages:', err);

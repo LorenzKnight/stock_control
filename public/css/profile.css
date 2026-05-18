@@ -64,10 +64,10 @@
     padding: 0;
 }
 
-.small-box-pack-details ul li {
-	/* display: flex; */
-	/* justify-content: center; */
-}
+/* .small-box-pack-details ul li {
+	display: flex;
+	justify-content: center;
+} */
 
 .members-container-height {
     min-height: 423px;

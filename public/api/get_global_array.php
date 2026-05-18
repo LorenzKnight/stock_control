@@ -18,6 +18,7 @@ try {
 
     // 🔒 Seguridad: lista blanca de claves permitidas
     $allowedKeys = [
+        'packageDescriptions',
         'documentTypes',
         'customerTypes',
         'maritalStatus',

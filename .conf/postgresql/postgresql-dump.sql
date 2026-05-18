@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS packages (
 	package_name VARCHAR(255) NULL,
 	package_image VARCHAR(255) NULL,
 	pack_color VARCHAR(10) NULL,
-	package_description TEXT NULL,
+	package_description INTEGER NULL,
 	package_price INTEGER NULL,
 	members_limit INTEGER NULL, -- Límite de miembros
 	admins_limit INTEGER NULL, -- Límite de administradores
@@ -60,34 +60,27 @@ CREATE TABLE IF NOT EXISTS packages (
 );
 
 -- INSERT INTO packages (
---   package_name, package_image, package_description, package_price, members_limit, admins_limit, branch_affiliate_limit, products_limit, package_duration, package_status
+--   package_name, package_image, pack_color, package_description, package_price, members_limit, admins_limit, branch_affiliate_limit, products_limit, package_duration, package_status
 -- ) VALUES 
--- ('Try Pack', 'try_pack.png', '#00ccff',
---  'Perfect to explore the system with no commitment. Includes 1 user, limited access to essential features, and 1 affiliate branch. Great for solo entrepreneurs.', 
+-- ('Try Pack', 'try-pack.png', '#00ccff', 1,
 --  NULL, 0, 0, 1, 50, 30, 1),
 
--- ('Starter', 'pack-upgrade-2.png', '#00aeff',
---  'Ideal for freelancers and very small businesses starting with inventory control.', 
+-- ('Starter', 'pack-upgrade-2.png', '#00aeff', 2,
 --  15, 1, 1, 1, 100, NULL, 1),
 
--- ('Basic', 'pack_basic.png', '#00c0b6',
---  'Perfect for small shops that need better control of products and stock movements.', 
+-- ('Basic', 'pack-basic.png', '#00c0b6', 3,
 --  25, 5, 1, 1, 250, NULL, 1),
 
--- ('Business', 'pack_business.png', '#772cd3',
---  'Designed for growing businesses managing inventory across multiple locations.', 
+-- ('Business', 'pack-business.png', '#772cd3', 4,
 --  40, 10, 2, 2, 500, NULL, 1),
 
--- ('Growth', 'pack_growth.png', '#4201b9',
---  'For businesses scaling operations with multiple locations and teams.', 
+-- ('Growth', 'pack-growth.png', '#4201b9', 5, 
 --  60, 20, 3, 3, 1000, NULL, 1),
 
--- ('Scale', 'pack-scale.png', '#d45201',
---  'Built for large operations that require performance, control, and scalability.', 
+-- ('Scale', 'pack-scale.png', '#d45201', 6,
 --  85, 35, 4, 4, 2500, NULL, 1),
 
--- ('Enterprise', 'pack-enterprise.png', '#aa2200',
---  'Custom inventory solution for large organizations. Contact us for a tailored plan.', 
+-- ('Enterprise', 'pack-enterprise.png', '#aa2200', 7,
 --  200, 40, 5, 5, NULL, NULL, 1);
 
 CREATE TABLE IF NOT EXISTS subscriptions (
