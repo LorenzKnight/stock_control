@@ -4,23 +4,23 @@
 			<table width="80%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td style="font-size: 12px;" colspan="6" align="center" valign="middle">
-						<h2>Payments Options</h2>
+						<h2><?= $t['payment_options'] ?></h2>
 						<p id="ord-no-name"></p>
 					</td>      
 				</tr>
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="button-style-agree" id="editPaymentBtn">Edit Payment</button>
+						<button type="button" class="button-style-agree" id="editPaymentBtn"><?= $t['edit_payment'] ?></button>
 					</td>
 				</tr>
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="cancel-btn" id="deletePaymentBtn">Delete Payment</button>
+						<button type="button" class="cancel-btn" id="deletePaymentBtn"><?= $t['delete_payment'] ?></button>
 					</td>
 				</tr>
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
-						<button type="button" class="neutral-btn">Close</button>
+						<button type="button" class="neutral-btn"><?= $t['close'] ?></button>
 					</td>
 				</tr>
 			</table>

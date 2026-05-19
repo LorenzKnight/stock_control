@@ -7,17 +7,17 @@
 			<table width="100%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td width="15%" align="center" valign="middle">
-						<button type="button" class="button-style-agree" id="add-payments-btn">Make a Payment</button>
+						<button type="button" class="button-style-agree" id="add-payments-btn"><?= $t['make_payment'] ?></button>
 					</td>
 					<td width="85%" align="center" valign="middle">
-						<input type="text" name="paymentsSearchField" id="paymentsSearchField" class="big-search-field" placeholder="Search Payment..." title="Search Payment">
+						<input type="text" name="paymentsSearchField" id="paymentsSearchField" class="big-search-field" placeholder="<?= $t['search_payment'] ?>" title="<?= $t['search_payment'] ?>">
 					</td>
 				</tr>
 			</table>
 		</div>
 	</div>
 	<div class="data-container payments-container-height">
-		<h2 style="margin-left: 10px;">Payments List</h2>
+		<h2 style="margin-left: 10px;"><?= $t['payments_list'] ?></h2>
 		<div class="centralize" style="width: 100%;">
 			<div class="payments-list" id="payments-list"></div>
 		</div>

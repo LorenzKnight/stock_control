@@ -3404,7 +3404,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							<table width="100%" align="center" cellspacing="0">
 								<tr valign="baseline" class="form_height">
 									<td width="8%" align="center" valign="middle">
-										<p class="mini-title">Payment no:</p>
+										<p class="mini-title">${window.i18n?.payment_no}:</p>
 										${payment.payment_no || ''}
 									</td>
 									<td width="8%" align="center" valign="middle">
@@ -3412,7 +3412,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 										${payment.ord_no || ''}
 									</td>
 									<td width="13%" align="left" valign="middle" style="padding-left:2%;">
-										<p class="mini-title">Name:</p>
+										<p class="mini-title">${window.i18n?.form_name}:</p>
 										${payment.full_name || ''}
 									</td>
 									<td width="10%" align="center" valign="middle">
@@ -3420,23 +3420,23 @@ document.addEventListener("DOMContentLoaded", async function () {
 										${payment.document_no || ''}
 									</td>
 									<td width="11%" align="center" valign="middle">
-										<p class="mini-title">Payment method:</p>
+										<p class="mini-title">${window.i18n?.method_of_payment}:</p>
 										${payment.payment_method || ''}
 									</td>
 									<td width="11%" align="center" valign="middle">
-										<p class="mini-title">Amount:</p>
+										<p class="mini-title">${window.i18n?.amount}:</p>
 										${parseFloat(payment.amount).toFixed(2)}
 									</td>
 									<td width="11%" align="center" valign="middle">
-										<p class="mini-title">Interest:</p>
+										<p class="mini-title">${window.i18n?.interest}:</p>
 										- ${parseFloat(payment.interest).toFixed(2)}
 									</td>
 									<td width="11%" align="center" valign="middle">
-										<p class="mini-title">Due:</p>
+										<p class="mini-title">${window.i18n?.due}:</p>
 										${parseFloat(payment.due).toFixed(2)}
 									</td>
 									<td width="10%" align="center" valign="middle">
-										<p class="mini-title">Payment Date:</p>
+										<p class="mini-title">${window.i18n?.payment_date}:</p>
 										${payment.payment_date || ''}
 									</td>
 									<td width="5%" align="center" valign="middle">
@@ -3552,7 +3552,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							return;
 						}
 
-						showConfirmModal("Delete Payment", "Are you sure you want to delete this Payment?", async () => {
+						showConfirmModal(window.i18n?.delete_payment || "Delete Payment", window.i18n?.confirm_delete_payment || "Are you sure you want to delete this Payment?", async () => {
 							const frame = document.querySelector('.formular-frame');
 							if (frame) frame.style.display = 'none';
 

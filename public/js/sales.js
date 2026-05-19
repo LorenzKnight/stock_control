@@ -168,7 +168,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							<div style="width: 30%;">
 								<table width="100%" align="center" cellspacing="0">
 									<tr valign="baseline" class="form_height">
-										<td colspan="2" style="padding-left: 7px;" align="left" valign="middle"><strong>Method of Payment</strong></td>
+										<td colspan="2" style="padding-left: 7px;" align="left" valign="middle"><strong>${window.i18n.method_of_payment}</strong></td>
 									</tr>
 									<tr valign="baseline" class="form_height">
 										<td width="35%" align="right">${window.i18n.price} :</td><td width="65%" style="padding-left: 5px;">${sale.price_sum}</td>

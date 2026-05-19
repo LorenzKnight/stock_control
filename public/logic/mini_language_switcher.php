@@ -224,6 +224,7 @@ $i18n = [
 		'storage_list' => 'Storage List',
 		'customers_list' => 'Customers List',
 		'sales_list' => 'Sales List',
+		'payments_list' => 'Payments List',
 
 		// Forms
 		'edit_profile_title' => 'Edit my profile',
@@ -253,12 +254,15 @@ $i18n = [
 		'sale_options' => 'Sale options',
 		'edit_sale_title' => 'Edit Sale',
 		'delete_sale_title' => 'Delete Sale',
+		'crete_payment_title' => 'Create a new payment',
+		'payment_options' => 'Payment options',
 
 		'estimated_cost' => 'Estimated cost',
 		'select_extra_service' => 'Select extra service',
 		'confirm_delete_product' => 'Are you sure you want to delete this product?',
 		'confirm_delete_customer' => 'Are you sure you want to delete this customer?',
 		'confirm_delete_sale' => 'Are you sure you want to delete this sale and all associated data?',
+		'confirm_delete_payment' => 'Are you sure you want to delete this payment?',
 
 		'form_drop_image' => 'Drop image here or click to select',
 		'form_name' => 'Name',
@@ -266,6 +270,7 @@ $i18n = [
 		'form_birthday' => 'Birthdate',
 		'form_country_code' => 'Country Code',
 		'form_user_role' => 'User Role',
+		'select_document_type' => 'Select document type',
 
 		'company_name' => 'Company Name',
 		'organization_no' => 'Organization No.',
@@ -285,11 +290,14 @@ $i18n = [
 		'references_2' => 'Reference 2',
 		'references_2_phone' => 'Reference 2 Phone',
 
+		'person_who_pays' => 'Person who pays',
+
 		'product_search' => 'Search products',
 		'storage_or_product_no' => 'Storage/Product No.',
 		'search_slot' => 'Search slot',
 		'search_customer' => 'Search customer',
 		'search_sale' => 'Search sale',
+		'search_payment' => 'Search payment',
 		'enter_name_or_document' => 'Enter name or document no.',
 		'enter_product_name' => 'Enter product name',
 		'mark_category' => 'Mark / Category',
@@ -377,6 +385,9 @@ $i18n = [
 		'edit_sale' => 'Edit Sale',
 		'more_information' => 'More Information',
 		'delete_sale' => 'Delete Sale',
+		'make_payment' => 'Make a Payment',
+		'edit_payment' => 'Edit Payment',
+		'delete_payment' => 'Delete Payment',
 
 		// Global arrays
 		'package_descriptions' => [
@@ -446,6 +457,8 @@ $i18n = [
 		'price_sum' => 'Price sum',
 		'total_interest' => 'Total interest',
 		'percent' => 'Percent',
+		'amount' => 'Amount',
+		'payment_no' => 'Payment No.',
 	],
 	'es' => [
 		'title'       => 'Sistema de control de stock e inventario para pequeñas empresas | AllStockControl',
@@ -645,6 +658,7 @@ $i18n = [
 		'storage_list' => 'Lista de almacenamiento',
 		'customers_list' => 'Lista de clientes',
 		'sales_list' => 'Lista de ventas',
+		'payments_list' => 'Lista de pagos',
 
 		// Forms
 		'edit_profile_title' => 'Editar mi perfil',
@@ -674,12 +688,15 @@ $i18n = [
 		'sale_options' => 'Opciones de la venta',
 		'edit_sale_title' => 'Editar venta',
 		'delete_sale_title' => 'Eliminar venta',
+		'crete_payment_title' => 'Crear un nuevo pago',
+		'payment_options' => 'Opciones en pago',
 
 		'estimated_cost' => 'Costo estimado',
 		'select_extra_service' => 'Seleccionar servicio adicional',
 		'confirm_delete_product' => '¿Estás seguro de que quieres eliminar este producto?',
 		'confirm_delete_customer' => '¿Estás seguro de que quieres eliminar este cliente?',
 		'confirm_delete_sale' => '¿Estás seguro de que quieres eliminar esta venta y todos los datos asociados?',
+		'confirm_delete_payment' => '¿Estás seguro de que quieres eliminar este pago?',
 
 		'form_drop_image' => 'Suelta la imagen aquí o haz clic para seleccionar',
 		'form_name' => 'Nombre',
@@ -687,6 +704,7 @@ $i18n = [
 		'form_birthday' => 'Fecha de nacimiento',
 		'form_country_code' => 'Código de país',
 		'form_user_role' => 'Rol del usuario',
+		'select_document_type' => 'Selecciona un tipo de documento',
 
 		'company_name' => 'Nombre de la empresa',
 		'organization_no' => 'Número de organización',
@@ -706,11 +724,14 @@ $i18n = [
 		'references_2' => 'Referencia 2',
 		'references_2_phone' => 'Teléfono de referencia 2',
 
+		'person_who_pays' => 'Persona que paga',
+
 		'product_search' => 'Buscar productos',
 		'storage_or_product_no' => 'Número de almacenamiento/producto',
 		'search_slot' => 'Buscar slot',
 		'search_customer' => 'Buscar cliente',
 		'search_sale' => 'Buscar venta',
+		'search_payment' => 'Buscar pago',
 		'enter_name_or_document' => 'Ingresa nombre o número de documento',
 		'enter_product_name' => 'Ingresa nombre del producto',
 		'mark_category' => 'Marcar / Categoría',
@@ -798,6 +819,9 @@ $i18n = [
 		'edit_sale' => 'Editar venta',
 		'more_information' => 'Más información',
 		'delete_sale' => 'Eliminar venta',
+		'make_payment' => 'Realizar un pago',
+		'edit_payment' => 'Editar pago',
+		'delete_payment' => 'Eliminar pago',
 
 		// Global arrays
 		'package_descriptions' => [
@@ -867,6 +891,8 @@ $i18n = [
 		'price_sum' => 'Suma de precios',
 		'total_interest' => 'Interés total',
 		'percent' => 'Porcentaje',
+		'amount' => 'Monto',
+		'payment_no' => 'Pago No.',
 	],
 	'sv' => [
 		'title'       => 'Lagerprogram och lagerkontroll för småföretag | AllStockControl',
@@ -1066,6 +1092,7 @@ $i18n = [
 		'storage_list' => 'Lagerlista',
 		'customers_list' => 'Kundlista',
 		'sales_list' => 'Försäljningslista',
+		'payments_list' => 'Betalningslista',
 
 		// Forms
 		'edit_profile_title' => 'Redigera min profil',
@@ -1095,12 +1122,15 @@ $i18n = [
 		'sale_options' => 'Försäljningsalternativ',
 		'edit_sale_title' => 'Redigera försäljning',
 		'delete_sale_title' => 'Radera försäljning',
+		'crete_payment_title' => 'Skapa en ny betalning',
+		'payment_options' => 'Betalningsalternativ',
 
 		'estimated_cost' => 'Beräknad kostnad',
 		'select_extra_service' => 'Välj extra tjänst',
 		'confirm_delete_product' => 'Är du säker på att du vill radera den här produkten?',
 		'confirm_delete_customer' => 'Är du säker på att du vill radera den här kunden?',
 		'confirm_delete_sale' => 'Är du säker på att du vill radera den här försäljningen och all associerad data?',
+		'confirm_delete_payment' => 'Är du säker på att du vill radera den här betalningen?',
 
 		'form_drop_image' => 'Släpp bilden här eller klicka för att välja',
 		'form_name' => 'Namn',
@@ -1108,6 +1138,7 @@ $i18n = [
 		'form_birthday' => 'Födelsedatum',
 		'form_country_code' => 'Landskod',
 		'form_user_role' => 'Användarroll',
+		'select_document_type' => 'Välj dokumenttyp',
 
 		'company_name' => 'Företagsnamn',
 		'organization_no' => 'Organisationsnummer',
@@ -1127,11 +1158,14 @@ $i18n = [
 		'references_2' => 'Referens 2',
 		'references_2_phone' => 'Referens 2 telefon',
 
+		'person_who_pays' => 'Person som betalar',
+
 		'product_search' => 'Sök produkter',
 		'storage_or_product_no' => 'Lager-/produktnummer',
 		'search_slot' => 'Sök slot',
 		'search_customer' => 'Sök kund',
 		'search_sale' => 'Sök försäljning',
+		'search_payment' => 'Sök betalning',
 		'enter_name_or_document' => 'Ange namn eller dokumentnummer',
 		'enter_product_name' => 'Ange produktnamn',
 		'mark_category' => 'Märk / Kategori',
@@ -1218,6 +1252,9 @@ $i18n = [
 		'edit_sale' => 'Redigera försäljning',
 		'more_information' => 'Mer information',
 		'delete_sale' => 'Radera försäljning',
+		'make_payment' => 'Gör en betalning',
+		'edit_payment' => 'Redigera betalning',
+		'delete_payment' => 'Radera betalning',
 
 		// Global arrays
 		'package_descriptions' => [
@@ -1288,6 +1325,8 @@ $i18n = [
 		'price_sum' => 'Prissumma',
 		'total_interest' => 'Total ränta',
 		'percent' => 'Procent',
+		'amount' => 'Belopp',
+		'payment_no' => 'Betalningsnummer',
 	],
 ];
 
