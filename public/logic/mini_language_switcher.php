@@ -225,6 +225,7 @@ $i18n = [
 		'customers_list' => 'Customers List',
 		'sales_list' => 'Sales List',
 		'payments_list' => 'Payments List',
+		'notifications' => 'Notifications',
 
 		// Forms
 		'edit_profile_title' => 'Edit my profile',
@@ -659,6 +660,7 @@ $i18n = [
 		'customers_list' => 'Lista de clientes',
 		'sales_list' => 'Lista de ventas',
 		'payments_list' => 'Lista de pagos',
+		'notifications' => 'Notificaciones',
 
 		// Forms
 		'edit_profile_title' => 'Editar mi perfil',
@@ -1093,6 +1095,7 @@ $i18n = [
 		'customers_list' => 'Kundlista',
 		'sales_list' => 'Försäljningslista',
 		'payments_list' => 'Betalningslista',
+		'notifications' => 'Notiser',
 
 		// Forms
 		'edit_profile_title' => 'Redigera min profil',

@@ -17,6 +17,7 @@
 		window.i18n = <?= json_encode($t ?? [], JSON_UNESCAPED_UNICODE) ?>;
 	</script>
 	<script defer src="/js/actions.js"></script>
+	<script defer src="/js/payments.js"></script>
 	<script defer src="/js/realtimeClient.js"></script>
 	<script defer src="/js/checkPermission.js"></script>
 </head>

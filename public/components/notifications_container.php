@@ -3,7 +3,7 @@
 </div>
 <div class="container">
 	<div class="data-container notifications-container-height">
-		<h2 style="margin-left: 10px;">Notifications</h2>
+		<h2 style="margin-left: 10px;"><?= $t['notifications'] ?></h2>
 		<div class="product-table flex">
 			<div class="notifications-sidebar">
 					<table width="95%" align="center" cellspacing="0" style="margin-top: 15px; border-bottom: 1px solid var(--clr-border);">

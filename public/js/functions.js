@@ -1242,4 +1242,39 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 	window.populateCurrencies = populateCurrencies;
+
+	async function populatePaymentMethods(selectId, selectedValue = '') {
+		const select = document.getElementById(selectId);
+		if (!select) return;
+
+		select.innerHTML = '';
+
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = 'Select Payment Method';
+		select.appendChild(defaultOption);
+
+		try {
+			const res = await fetch('api/get_global_array.php?key=paymentMethods');
+			const data = await res.json();
+
+			if (data.success && data.data) {
+				for (const [value, label] of Object.entries(data.data)) {
+					const option = document.createElement('option');
+					option.value = value;
+					option.textContent = label;
+					if (String(value) === String(selectedValue)) {
+						option.selected = true;
+					}
+					select.appendChild(option);
+				}
+			} else {
+				select.innerHTML += `<option value="">No payment methods found</option>`;
+			}
+		} catch (error) {
+			console.error("Error loading payment methods:", error);
+			select.innerHTML += `<option value="">Error loading payment methods</option>`;
+		}
+	}
+	window.populatePaymentMethods = populatePaymentMethods;
 });
