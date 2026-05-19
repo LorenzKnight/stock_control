@@ -248,11 +248,17 @@ $i18n = [
 		'customer_options' => 'Customer options',
 		'edit_customer_title' => 'Edit Customer',
 		'delete_customer_title' => 'Delete Customer',
+		'create_sale_title' => 'Create a new sale',
+		'method_of_payment' => 'Method of payment',
+		'sale_options' => 'Sale options',
+		'edit_sale_title' => 'Edit Sale',
+		'delete_sale_title' => 'Delete Sale',
 
 		'estimated_cost' => 'Estimated cost',
 		'select_extra_service' => 'Select extra service',
 		'confirm_delete_product' => 'Are you sure you want to delete this product?',
 		'confirm_delete_customer' => 'Are you sure you want to delete this customer?',
+		'confirm_delete_sale' => 'Are you sure you want to delete this sale and all associated data?',
 
 		'form_drop_image' => 'Drop image here or click to select',
 		'form_name' => 'Name',
@@ -284,6 +290,8 @@ $i18n = [
 		'search_slot' => 'Search slot',
 		'search_customer' => 'Search customer',
 		'search_sale' => 'Search sale',
+		'enter_name_or_document' => 'Enter name or document no.',
+		'enter_product_name' => 'Enter product name',
 		'mark_category' => 'Mark / Category',
 		'model' => 'Model',
 		'sub_model' => 'Sub/Model',
@@ -366,6 +374,9 @@ $i18n = [
 		'create_sale' => 'Create Sale',
 		'reactivate_subscription' => 'Reactivate Subscription',
 		'upgrade_package' => 'Upgrade your Package',
+		'edit_sale' => 'Edit Sale',
+		'more_information' => 'More Information',
+		'delete_sale' => 'Delete Sale',
 
 		// Global arrays
 		'package_descriptions' => [
@@ -424,6 +435,17 @@ $i18n = [
 		'password' => 'Password',
 		'status' => 'Status',
 		'close' => 'Close',
+
+		'initial' => 'Initial',
+		'delivery_date' => 'Delivery date',
+		'remaining' => 'Remaining',
+		'interest' => 'Interest',
+		'installments_month' => 'Inst./month',
+		'payment_date' => 'Payment date',
+		'due' => 'Due',
+		'price_sum' => 'Price sum',
+		'total_interest' => 'Total interest',
+		'percent' => 'Percent',
 	],
 	'es' => [
 		'title'       => 'Sistema de control de stock e inventario para pequeñas empresas | AllStockControl',
@@ -647,11 +669,17 @@ $i18n = [
 		'customer_options' => 'Opciones del cliente',
 		'edit_customer_title' => 'Editar cliente',
 		'delete_customer_title' => 'Eliminar cliente',
+		'create_sale_title' => 'Crear una nueva venta',
+		'method_of_payment' => 'Método de pago',
+		'sale_options' => 'Opciones de la venta',
+		'edit_sale_title' => 'Editar venta',
+		'delete_sale_title' => 'Eliminar venta',
 
 		'estimated_cost' => 'Costo estimado',
 		'select_extra_service' => 'Seleccionar servicio adicional',
 		'confirm_delete_product' => '¿Estás seguro de que quieres eliminar este producto?',
 		'confirm_delete_customer' => '¿Estás seguro de que quieres eliminar este cliente?',
+		'confirm_delete_sale' => '¿Estás seguro de que quieres eliminar esta venta y todos los datos asociados?',
 
 		'form_drop_image' => 'Suelta la imagen aquí o haz clic para seleccionar',
 		'form_name' => 'Nombre',
@@ -683,6 +711,8 @@ $i18n = [
 		'search_slot' => 'Buscar slot',
 		'search_customer' => 'Buscar cliente',
 		'search_sale' => 'Buscar venta',
+		'enter_name_or_document' => 'Ingresa nombre o número de documento',
+		'enter_product_name' => 'Ingresa nombre del producto',
 		'mark_category' => 'Marcar / Categoría',
 		'model' => 'Modelo',
 		'sub_model' => 'Sub/Modelo',
@@ -765,6 +795,9 @@ $i18n = [
 		'create_sale' => 'Crear venta',
 		'reactivate_subscription' => 'Reactivar suscripción',
 		'upgrade_package' => 'Actualizar tu paquete',
+		'edit_sale' => 'Editar venta',
+		'more_information' => 'Más información',
+		'delete_sale' => 'Eliminar venta',
 
 		// Global arrays
 		'package_descriptions' => [
@@ -823,6 +856,17 @@ $i18n = [
 		'password' => 'Contraseña',
 		'status' => 'Estado',
 		'close' => 'Cerrar',
+
+		'initial' => 'Inicial',
+		'delivery_date' => 'Fecha de entrega',
+		'remaining' => 'Restante',
+		'interest' => 'Interés',
+		'installments_month' => 'Cuotas/mes',
+		'payment_date' => 'Fecha de pago',
+		'due' => 'Restante',
+		'price_sum' => 'Suma de precios',
+		'total_interest' => 'Interés total',
+		'percent' => 'Porcentaje',
 	],
 	'sv' => [
 		'title'       => 'Lagerprogram och lagerkontroll för småföretag | AllStockControl',
@@ -1046,11 +1090,17 @@ $i18n = [
 		'customer_options' => 'Kundalternativ',
 		'edit_customer_title' => 'Redigera kund',
 		'delete_customer_title' => 'Radera kund',
+		'create_sale_title' => 'Skapa en ny försäljning',
+		'method_of_payment' => 'Betalningsmetod',
+		'sale_options' => 'Försäljningsalternativ',
+		'edit_sale_title' => 'Redigera försäljning',
+		'delete_sale_title' => 'Radera försäljning',
 
 		'estimated_cost' => 'Beräknad kostnad',
 		'select_extra_service' => 'Välj extra tjänst',
 		'confirm_delete_product' => 'Är du säker på att du vill radera den här produkten?',
 		'confirm_delete_customer' => 'Är du säker på att du vill radera den här kunden?',
+		'confirm_delete_sale' => 'Är du säker på att du vill radera den här försäljningen och all associerad data?',
 
 		'form_drop_image' => 'Släpp bilden här eller klicka för att välja',
 		'form_name' => 'Namn',
@@ -1082,6 +1132,8 @@ $i18n = [
 		'search_slot' => 'Sök slot',
 		'search_customer' => 'Sök kund',
 		'search_sale' => 'Sök försäljning',
+		'enter_name_or_document' => 'Ange namn eller dokumentnummer',
+		'enter_product_name' => 'Ange produktnamn',
 		'mark_category' => 'Märk / Kategori',
 		'model' => 'Modell',
 		'sub_model' => 'Sub/Modell',
@@ -1163,6 +1215,9 @@ $i18n = [
 		'create_sale' => 'Skapa försäljning',
 		'reactivate_subscription' => 'Reaktivera prenumeration',
 		'upgrade_package' => 'Uppgradera ditt paket',
+		'edit_sale' => 'Redigera försäljning',
+		'more_information' => 'Mer information',
+		'delete_sale' => 'Radera försäljning',
 
 		// Global arrays
 		'package_descriptions' => [
@@ -1222,6 +1277,17 @@ $i18n = [
 		'password' => 'Lösenord',
 		'status' => 'Status',
 		'close' => 'Stäng',
+
+		'initial' => 'Initial',
+		'delivery_date' => 'Leveransdatum',
+		'remaining' => 'Kvar',
+		'interest' => 'Ränta',
+		'installments_month' => 'Installment/månad',
+		'payment_date' => 'Betalningsdatum',
+		'due' => 'Kvar',
+		'price_sum' => 'Prissumma',
+		'total_interest' => 'Total ränta',
+		'percent' => 'Procent',
 	],
 ];
 

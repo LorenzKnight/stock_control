@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 								productsHtml += `
 									<tr valign="baseline" class="form_height">
 										<td width="3%" align="center" valign="middle">
-											<p class="mini-title">Qty</p>
+											<p class="mini-title">${window.i18n.qty}</p>
 											${product.quantity}
 										</td>
 										<td width="15%" align="left" valign="middle">
@@ -112,15 +112,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 											<p style="margin: 0; padding: 0;">${product.submodel_name ? product.submodel_name : ''}</p>
 										</td>
 										<td width="10%" align="left" valign="middle">
-											<p class="mini-title">Year</p>
+											<p class="mini-title">${window.i18n.year}</p>
 											<strong>${product.year}</strong>
 										</td>
 										<td width="12%" align="left" valign="middle">
-											<p class="mini-title">Price</p>
+											<p class="mini-title">${window.i18n.price}</p>
 											<strong>${product.price}</strong>
 										</td>
 										<td width="20%" align="left" valign="middle">
-											<p class="mini-title">Product No:</p>
+											<p class="mini-title">${window.i18n.form_name}:</p>
 											${product.name}
 										</td>
 									</tr>
@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 											<h3><strong>${sale.customer.full_name}</strong></h3>
 											<p class="mini-title">${sale.customer.document_type}:</p>
 											${sale.customer.document_no}<br><br>
-											<p class="mini-title">Phone:</p>
+											<p class="mini-title">${window.i18n.phone}:</p>
 											${sale.customer.phone}
 										</td>
 									</tr>
@@ -171,28 +171,28 @@ document.addEventListener("DOMContentLoaded", async function () {
 										<td colspan="2" style="padding-left: 7px;" align="left" valign="middle"><strong>Method of Payment</strong></td>
 									</tr>
 									<tr valign="baseline" class="form_height">
-										<td width="35%" align="right">Price :</td><td width="65%" style="padding-left: 5px;">${sale.price_sum}</td>
+										<td width="35%" align="right">${window.i18n.price} :</td><td width="65%" style="padding-left: 5px;">${sale.price_sum}</td>
 									</tr>
 									<tr valign="baseline" class="form_height">
-										<td align="right">Initial :</td><td style="padding-left: 5px;">${sale.initial}</td>
+										<td align="right">${window.i18n.initial} :</td><td style="padding-left: 5px;">${sale.initial}</td>
 									</tr>
 									<tr valign="baseline" class="form_height">
-										<td align="right">Delivery date :</td><td style="padding-left: 5px;">${sale.delivery_date}</td>
+										<td align="right">${window.i18n.delivery_date} :</td><td style="padding-left: 5px;">${sale.delivery_date}</td>
 									</tr>
 									<tr valign="baseline" class="form_height">
-										<td align="right">Remaining :</td><td style="padding-left: 5px;">${sale.remaining}</td>
+										<td align="right">${window.i18n.remaining} :</td><td style="padding-left: 5px;">${sale.remaining}</td>
 									</tr>
 									<tr valign="baseline" class="form_height">
-										<td align="right">Interest :</td><td style="padding-left: 5px;">${sale.total_interest}</td>
+										<td align="right">${window.i18n.interest} :</td><td style="padding-left: 5px;">${sale.total_interest}</td>
 									</tr>
 									<tr valign="baseline" class="form_height">
-										<td align="right">Installments / month :</td><td style="padding-left: 5px;">${sale.no_installments} / ${sale.payments}</td>
+										<td align="right">${window.i18n.installments_month} :</td><td style="padding-left: 5px;">${sale.no_installments} / ${sale.payments}</td>
 									</tr>
 									<tr valign="baseline" class="form_height">
-										<td align="right">Payment date :</td><td style="padding-left: 5px;">${paymentDateFormatted}</td>
+										<td align="right">${window.i18n.payment_date} :</td><td style="padding-left: 5px;">${paymentDateFormatted}</td>
 									</tr>
 									<tr valign="baseline" class="form_height">
-										<td align="right">Due :</td><td style="padding-left: 5px;">${sale.due}</td>
+										<td align="right">${window.i18n.due} :</td><td style="padding-left: 5px;">${sale.due}</td>
 									</tr>
 								</table>
 							</div>
@@ -690,7 +690,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							return;
 						}
 
-						showConfirmModal("Delete Sale", "Are you sure you want to delete this sale and all associated products?", async () => {
+						showConfirmModal(window.i18n?.delete_sale_title || "Delete Sale", window.i18n?.confirm_delete_sale || "Are you sure you want to delete this sale and all associated data?", async () => {
 							const formData = new FormData();
 							formData.append("sale_id", saleId);
 

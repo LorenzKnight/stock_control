@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS packages (
 -- ('Try Pack', 'try-pack.png', '#00ccff', 1,
 --  NULL, 0, 0, 1, 50, 30, 1),
 
--- ('Starter', 'pack-upgrade-2.png', '#00aeff', 2,
+-- ('Starter', 'starter-pack.png', '#00aeff', 2,
 --  15, 1, 1, 1, 100, NULL, 1),
 
 -- ('Basic', 'pack-basic.png', '#00c0b6', 3,

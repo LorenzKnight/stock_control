@@ -43,6 +43,8 @@ try {
 		throw new Exception("No sales available.");
 	}
 
+	$documentTypes = GlobalArrays::documentTypes();
+
 	$salesData = [];
 	foreach ($parsedSales["data"] as $sale) {
 		$customerInfo = select_from("customers", [
@@ -51,7 +53,7 @@ try {
 		], ["customer_id" => $sale["customer_id"]], ["fetch_first" => true]);
 
 		$customer = json_decode($customerInfo, true)["data"] ?? [];
-		$documentTypes = GlobalArrays::$documentTypes;
+		$docTypeId = $customer["customer_document_type"] ?? null;
 
 		$productsQuery = select_from("purchased_products", [
 			"product_id", "quantity", "price", "discount", "total"
@@ -137,7 +139,7 @@ try {
 				"customer" => [
 					"customer_id"		=> $sale["customer_id"],
 					"full_name"			=> trim(($customer["customer_name"] ?? '') . ' ' . ($customer["customer_surname"] ?? '')),
-					"document_type"		=> $documentTypes[$customer["customer_document_type"]] ?? '',
+					"document_type"		=> $docTypeId !== null ? ($documentTypes[(int)$docTypeId] ?? '') : '',
 					"document_no"		=> $customer["customer_document_no"] ?? '',
 					"phone"				=> $customer["customer_phone"] ?? '',
 					"image"				=> $customer["customer_image"] ?? ''
