@@ -562,14 +562,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 						const detailsDiv = document.getElementById('notifications-details');
 						if (detailsDiv && detailsDiv.innerHTML.trim() === "") {
-							detailsDiv.innerHTML = `<p style="text-align:center; opacity: 0.7;">Select a notification</p>`;
+							detailsDiv.innerHTML = `<p style="text-align:center; opacity: 0.7;">`+ window.i18n?.select_a_notification +`</p>`;
 						}
 					} else {
 						messageListContainer.innerHTML = `<p style="text-align:center;">No notifications found.</p>`;
 
 						const detailsDiv = document.getElementById('notifications-details');
 						if (detailsDiv) {
-							detailsDiv.innerHTML = `<p style="text-align:center; opacity: 0.7;">Select a notification</p>`;
+							detailsDiv.innerHTML = `<p style="text-align:center; opacity: 0.7;">`+ window.i18n?.select_a_notification +`</p>`;
 						}
 					}
 				} catch (err) {
@@ -578,7 +578,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 					const detailsDiv = document.getElementById('notifications-details');
 					if (detailsDiv) {
-						detailsDiv.innerHTML = `<p style="text-align:center; opacity: 0.7;">Select a notification</p>`;
+						detailsDiv.innerHTML = `<p style="text-align:center; opacity: 0.7;">`+ window.i18n?.select_a_notification +`</p>`;
 					}
 				}
 			}

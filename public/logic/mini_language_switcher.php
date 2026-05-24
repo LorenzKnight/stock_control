@@ -299,11 +299,15 @@ $i18n = [
 		'search_customer' => 'Search customer',
 		'search_sale' => 'Search sale',
 		'search_payment' => 'Search payment',
+		'search_messages' => 'Search Messages',
+		'select_a_notification' => 'Select a notification',
+
 		'enter_name_or_document' => 'Enter name or document no.',
 		'enter_product_name' => 'Enter product name',
 		'mark_category' => 'Mark / Category',
 		'model' => 'Model',
 		'sub_model' => 'Sub/Model',
+		'message' => 'Message',
 
 		// Onboarding Guide
 		'get_your_inventory_ready' => 'Get your inventory ready',
@@ -389,6 +393,7 @@ $i18n = [
 		'make_payment' => 'Make a Payment',
 		'edit_payment' => 'Edit Payment',
 		'delete_payment' => 'Delete Payment',
+		'send' => 'Send',
 
 		// Global arrays
 		'package_descriptions' => [
@@ -734,11 +739,15 @@ $i18n = [
 		'search_customer' => 'Buscar cliente',
 		'search_sale' => 'Buscar venta',
 		'search_payment' => 'Buscar pago',
+		'search_messages' => 'Buscar Mensages',
+		'select_a_notification' => 'Seleccione una notificacion',
+
 		'enter_name_or_document' => 'Ingresa nombre o número de documento',
 		'enter_product_name' => 'Ingresa nombre del producto',
 		'mark_category' => 'Marcar / Categoría',
 		'model' => 'Modelo',
 		'sub_model' => 'Sub/Modelo',
+		'message' => 'Mensaje',
 
 		// Onboarding Guide
 		'get_your_inventory_ready' => 'Prepara tu inventario',
@@ -824,6 +833,7 @@ $i18n = [
 		'make_payment' => 'Realizar un pago',
 		'edit_payment' => 'Editar pago',
 		'delete_payment' => 'Eliminar pago',
+		'send' => 'Enviar',
 
 		// Global arrays
 		'package_descriptions' => [
@@ -1169,11 +1179,15 @@ $i18n = [
 		'search_customer' => 'Sök kund',
 		'search_sale' => 'Sök försäljning',
 		'search_payment' => 'Sök betalning',
+		'search_messages' => 'Sök Meddelanden',
+		'select_a_notification' => 'Välj en avisering',
+
 		'enter_name_or_document' => 'Ange namn eller dokumentnummer',
 		'enter_product_name' => 'Ange produktnamn',
 		'mark_category' => 'Märk / Kategori',
 		'model' => 'Modell',
 		'sub_model' => 'Sub/Modell',
+		'message' => 'Meddelande',
 
 		// Onboarding Guide
 		'get_your_inventory_ready' => 'Förbered ditt lager',
@@ -1258,6 +1272,7 @@ $i18n = [
 		'make_payment' => 'Gör en betalning',
 		'edit_payment' => 'Redigera betalning',
 		'delete_payment' => 'Radera betalning',
+		'send' => 'Skicka',
 
 		// Global arrays
 		'package_descriptions' => [

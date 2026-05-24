@@ -9,7 +9,7 @@
 					<table width="95%" align="center" cellspacing="0" style="margin-top: 15px; border-bottom: 1px solid var(--clr-border);">
 						<tr valign="baseline" class="form_height">
 							<td width="85%" style="padding-bottom: 5px;" align="center" valign="middle">
-								<input type="text" name="messageSearchField" id="messageSearchField" class="search-field" placeholder="Search Messages...">
+								<input type="text" name="messageSearchField" id="messageSearchField" class="search-field" placeholder="<?= $t['search_messages'] ?>...">
 							</td>
 							<td width="15%" align="center" valign="middle">
 								<img src="images/sys-img/send_message.png" alt="Search" class="send-message" id="startDirectMessage">
