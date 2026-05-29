@@ -12,27 +12,27 @@
 				</li>
 
 				<li id="btn-create-product" data-page="products">
-					<?= htmlspecialchars(tr('header_products') ?? 'Products') ?>
+					<?= htmlspecialchars(tr('header_products', 'Products')) ?>
 				</li>
 
 				<li data-page="storage">
-					<?= htmlspecialchars(tr('header_storage') ?? 'Storage') ?>
+					<?= htmlspecialchars(tr('header_storage', 'Storage')) ?>
 				</li>
 
 				<li id="btn-create-client" data-page="customers">
-					<?= htmlspecialchars(tr('header_customers') ?? 'Customers') ?>
+					<?= htmlspecialchars(tr('header_customers', 'Customers')) ?>
 				</li>
 
 				<li class="hidden" id="shipping-seccion" data-page="shipping">
-					<?= htmlspecialchars(tr('header_shipping') ?? 'Shipping') ?>
+					<?= htmlspecialchars(tr('header_shipping', 'Shipping')) ?>
 				</li>
 
 				<li id="btn-create-sale" data-page="sales">
-					<?= htmlspecialchars(tr('header_sales') ?? 'Sales') ?>
+					<?= htmlspecialchars(tr('header_sales', 'Sales')) ?>
 				</li>
 
 				<li data-page="payments">
-					<?= htmlspecialchars(tr('header_payments') ?? 'Payments') ?>
+					<?= htmlspecialchars(tr('header_payments', 'Payments')) ?>
 				</li>
 
 				<li class="no-redirect" id="notification-site" data-page="notifications">
@@ -53,25 +53,25 @@
 
 							<li id="reports-site" data-page="reports">
 								<a href="<?= htmlspecialchars(localized_url('reports')) ?>">
-									<?= htmlspecialchars(tr('header_reports') ?? 'Reports') ?>
+									<?= htmlspecialchars(tr('header_reports', 'Reports')) ?>
 								</a>
 							</li>
 
 							<li>
 								<a href="<?= htmlspecialchars(localized_url('settings')) ?>">
-									<?= htmlspecialchars(tr('header_settings') ?? 'Settings') ?>
+									<?= htmlspecialchars(tr('header_settings', 'Settings')) ?>
 								</a>
 							</li>
 
 							<li id="system-admin-site">
 								<a href="<?= htmlspecialchars(localized_url('system-admin')) ?>">
-									<?= htmlspecialchars(tr('header_system_admin') ?? 'System-Admin') ?>
+									<?= htmlspecialchars(tr('header_system_admin', 'System-Admin')) ?>
 								</a>
 							</li>
 
 							<li class="no-redirect" style="border-top: 1px solid var(--clr-light-border);">
 								<a href="#" style="margin: 0 auto;" class="logout-button turn-off">
-									<?= htmlspecialchars(tr('header_logout') ?? 'Log Out') ?>
+									<?= htmlspecialchars(tr('header_logout', 'Log Out')) ?>
 								</a>
 							</li>
 						</ul>
