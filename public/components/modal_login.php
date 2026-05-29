@@ -4,7 +4,7 @@
 			<table width="80%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td style="font-size: 12px;" colspan="6" align="center" valign="middle">
-						<h2><?= htmlspecialchars($t['login_title']) ?></h2>
+						<h2><?= htmlspecialchars(tr('login_title')) ?></h2>
 					</td>      
 				</tr>
 				<tr valign="baseline" class="form_height">
@@ -14,8 +14,8 @@
 							type="email" 
 							name="login_email" 
 							id="login_email" 
-							placeholder="<?= htmlspecialchars($t['login_email_ph']) ?>" 
-							title="<?= htmlspecialchars($t['login_email_title']) ?>" 
+							placeholder="<?= htmlspecialchars(tr('login_email_ph')) ?>" 
+							title="<?= htmlspecialchars(tr('login_email_title')) ?>" 
 							required
 						/>
 					</td>
@@ -27,7 +27,7 @@
 							type="password" 
 							name="login_password" 
 							id="login_password" 
-							placeholder="<?= htmlspecialchars($t['login_password_ph']) ?>" 
+							placeholder="<?= htmlspecialchars(tr('login_password_ph')) ?>" 
 							required
 						/>
 					</td>
@@ -37,7 +37,7 @@
 						<input 
 							type="submit" 
 							class="button-style-agree" 
-							value="<?= htmlspecialchars($t['login_submit']) ?>" 
+							value="<?= htmlspecialchars(tr('login_submit')) ?>" 
 						/>
 					</td>
 				</tr>

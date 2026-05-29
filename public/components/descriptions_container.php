@@ -6,15 +6,15 @@
 			</div>
 		</div>
 		<div class="container-left">
-            <h2><?= htmlspecialchars($t['desc_1_title']) ?></h2>
-			<p><?= htmlspecialchars($t['desc_1_text']) ?></p>
+            <h2><?= htmlspecialchars(tr('desc_1_title')) ?></h2>
+			<p><?= htmlspecialchars(tr('desc_1_text')) ?></p>
 		</div>
 	</div>
 
 	<div class="container flex" style="height: 350px;">
 		<div class="container-right">
-            <h2><?= htmlspecialchars($t['desc_2_title']) ?></h2>
-			<p><?= htmlspecialchars($t['desc_2_text']) ?></p>
+            <h2><?= htmlspecialchars(tr('desc_2_title')) ?></h2>
+			<p><?= htmlspecialchars(tr('desc_2_text')) ?></p>
 		</div>
 		<div class="container-left">
 			<div class="image-container">
@@ -30,15 +30,15 @@
 			</div>
 		</div>
 		<div class="container-left">
-            <h2><?= htmlspecialchars($t['desc_3_title']) ?></h2>
-			<p><?= htmlspecialchars($t['desc_3_text']) ?></p>
+            <h2><?= htmlspecialchars(tr('desc_3_title')) ?></h2>
+			<p><?= htmlspecialchars(tr('desc_3_text')) ?></p>
 		</div>
 	</div>
 
 	<div class="container flex" style="height: 350px;">
 		<div class="container-right">
-            <h2><?= htmlspecialchars($t['desc_4_title']) ?></h2>
-			<p><?= htmlspecialchars($t['desc_4_text']) ?></p>
+            <h2><?= htmlspecialchars(tr('desc_4_title')) ?></h2>
+			<p><?= htmlspecialchars(tr('desc_4_text')) ?></p>
 		</div>
 		<div class="container-left">
 			<div class="image-container">

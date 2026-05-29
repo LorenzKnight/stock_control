@@ -36,20 +36,20 @@
 
 		window.i18n = {
 			// toggles
-			signup: "<?= htmlspecialchars($t['toggle_signup']) ?>",
-			login:  "<?= htmlspecialchars($t['toggle_login']) ?>",
+			signup: "<?= htmlspecialchars(tr('toggle_signup')) ?>",
+			login:  "<?= htmlspecialchars(tr('toggle_login')) ?>",
 
 			// pricing
-			contact: "<?= htmlspecialchars($t['pricing_contact']) ?>",
-			perMonth: "<?= htmlspecialchars($t['pricing_per_month']) ?>",
-			includes: "<?= htmlspecialchars($t['pricing_includes']) ?>",
-			maxMembers: "<?= htmlspecialchars($t['pricing_max_members']) ?>",
-			maxAdmins: "<?= htmlspecialchars($t['pricing_max_admins']) ?>",
-			maxBranches: "<?= htmlspecialchars($t['pricing_max_branches']) ?>",
-			maxProducts: "<?= htmlspecialchars($t['pricing_max_products']) ?>",
-			asAgreed: "<?= htmlspecialchars($t['pricing_as_agreed']) ?>",
-			shipping: "<?= htmlspecialchars($t['pricing_shipping']) ?>",
-			priority: "<?= htmlspecialchars($t['pricing_priority']) ?>"
+			contact: "<?= htmlspecialchars(tr('pricing_contact')) ?>",
+			perMonth: "<?= htmlspecialchars(tr('pricing_per_month')) ?>",
+			includes: "<?= htmlspecialchars(tr('pricing_includes')) ?>",
+			maxMembers: "<?= htmlspecialchars(tr('pricing_max_members')) ?>",
+			maxAdmins: "<?= htmlspecialchars(tr('pricing_max_admins')) ?>",
+			maxBranches: "<?= htmlspecialchars(tr('pricing_max_branches')) ?>",
+			maxProducts: "<?= htmlspecialchars(tr('pricing_max_products')) ?>",
+			asAgreed: "<?= htmlspecialchars(tr('pricing_as_agreed')) ?>",
+			shipping: "<?= htmlspecialchars(tr('pricing_shipping')) ?>",
+			priority: "<?= htmlspecialchars(tr('pricing_priority')) ?>"
 		};
 	</script>
 	

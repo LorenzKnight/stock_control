@@ -9,7 +9,7 @@ $companyDisplay = 'AllStockControl';
 ?>
 <div class="container">
 	<div class="data-container legal-page">
-		<h1><?= htmlspecialchars($t['terms_title'] ?? 'Terms & Conditions') ?></h1>
+		<h1><?= htmlspecialchars(tr('terms_title') ?? 'Terms & Conditions') ?></h1>
 
 		<?php if (($lang ?? 'en') === 'sv'): ?>
 

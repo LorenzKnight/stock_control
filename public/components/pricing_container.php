@@ -1,15 +1,15 @@
 <div id="pricing-container">
 	<div class="container">
 		<div class="title">
-			<p class="pricing-title"><?= htmlspecialchars($t['pricing_title_main']) ?></p>
+			<p class="pricing-title"><?= htmlspecialchars(tr('pricing_title_main')) ?></p>
 		</div>
 		<div class="subtitle">
-			<p><?= htmlspecialchars($t['pricing_subtitle']) ?></p>
+			<p><?= htmlspecialchars(tr('pricing_subtitle')) ?></p>
 		</div>
 	</div>
 
 	<div class="title">
-		<p class="pricing-title"><?= htmlspecialchars($t['pricing_employees_title']) ?></p>
+		<p class="pricing-title"><?= htmlspecialchars(tr('pricing_employees_title')) ?></p>
 	</div>
 	<div class="opcions-packages">
 		<div class="packs-selection">

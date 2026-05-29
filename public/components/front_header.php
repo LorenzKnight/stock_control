@@ -6,22 +6,22 @@
     <ul class="menu">
         <li class="no-redirect">
 			<a href="" class="start-btn">
-				<?= htmlspecialchars($t['nav_start']) ?>
+				<?= htmlspecialchars(tr('nav_start')) ?>
 			</a>
 		</li>
         <li class="no-redirect">
 			<a href="" class="features-btn">
-				<?= htmlspecialchars($t['nav_features']) ?>
+				<?= htmlspecialchars(tr('nav_features')) ?>
 			</a>
 		</li>
         <li class="no-redirect">
 			<a href="" class="pricing-btn">
-				<?= htmlspecialchars($t['nav_pricing']) ?>
+				<?= htmlspecialchars(tr('nav_pricing')) ?>
 			</a>
 		</li>
         <li class="no-redirect">
 			<a href="" class="toggle-link">
-				<?= htmlspecialchars($t['nav_signup']) ?>
+				<?= htmlspecialchars(tr('nav_signup')) ?>
 			</a>
 		</li>
 
@@ -46,22 +46,22 @@
 		<ul class="mobile-menu-list">
 			<li class="no-redirect">
 				<a href="" class="start-btn">
-					<?= htmlspecialchars($t['nav_start']) ?>
+					<?= htmlspecialchars(tr('nav_start')) ?>
 				</a>
 			</li>
 			<li class="no-redirect">
 				<a href="" class="features-btn">
-					<?= htmlspecialchars($t['nav_features']) ?>
+					<?= htmlspecialchars(tr('nav_features')) ?>
 				</a>
 			</li>
 			<li class="no-redirect">
 				<a href="" class="pricing-btn">
-					<?= htmlspecialchars($t['nav_pricing']) ?>
+					<?= htmlspecialchars(tr('nav_pricing')) ?>
 				</a>
 			</li>
 			<li class="no-redirect">
 				<a href="" class="toggle-link">
-					<?= htmlspecialchars($t['nav_signup']) ?>
+					<?= htmlspecialchars(tr('nav_signup')) ?>
 				</a>
 			</li>
 		</ul>

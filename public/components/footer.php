@@ -1,35 +1,35 @@
 <footer class="footer">
 	<div class="footer-seo">
-		<h3><?= htmlspecialchars($t['footer_seo_title']) ?></h3>
+		<h3><?= htmlspecialchars(tr('footer_seo_title')) ?></h3>
 		<ul>
 			<li>
 				<a class="gdpr-link" href="/<?= htmlspecialchars($lang) ?>/terms" target="_blank">
-					<?= htmlspecialchars($t['terms_title']) ?>
+					<?= htmlspecialchars(tr('terms_title')) ?>
 				</a>
 			</li>
 			<li>
 				<a class="gdpr-link" href="/<?= htmlspecialchars($lang) ?>/gdpr" target="_blank">
-					<?= htmlspecialchars($t['gdpr_title']) ?>
+					<?= htmlspecialchars(tr('gdpr_title')) ?>
 				</a>
 			</li>
 			<!-- <li>
 				<a href="<?= htmlspecialchars(url_with_lang($lang)) ?>#features">
-					<?= htmlspecialchars($t['footer_seo_smallbiz']) ?>
+					<?= htmlspecialchars(tr('footer_seo_smallbiz')) ?>
 				</a>
 			</li>
 			<li>
 				<a href="<?= htmlspecialchars(url_with_lang($lang)) ?>#features">
-					<?= htmlspecialchars($t['footer_seo_cloud']) ?>
+					<?= htmlspecialchars(tr('footer_seo_cloud')) ?>
 				</a>
 			</li>
 			<li>
 				<a href="<?= htmlspecialchars(url_with_lang($lang)) ?>#features">
-					<?= htmlspecialchars($t['footer_seo_multilocation']) ?>
+					<?= htmlspecialchars(tr('footer_seo_multilocation')) ?>
 				</a>
 			</li>
 			<li>
 				<a href="<?= htmlspecialchars(url_with_lang($lang)) ?>#pricing">
-					<?= htmlspecialchars($t['footer_seo_pricing']) ?>
+					<?= htmlspecialchars(tr('footer_seo_pricing')) ?>
 				</a>
 			</li> -->
 		</ul>
@@ -38,7 +38,7 @@
 	<div class="footer-content">
 		<p>
 			&copy; <?php echo date("Y"); ?> AllStockControl.
-			<?= htmlspecialchars($t['footer_rights']) ?>
+			<?= htmlspecialchars(tr('footer_rights')) ?>
 		</p>
 	</div>
 	<div class="contact-us" id="contactBox">
@@ -49,7 +49,7 @@
 			<table width="100%" align="center" cellspacing="0">
 				<tr valign="baseline" class="form_height">
 					<td colspan="2" align="center" valign="middle">
-						<h2><?= htmlspecialchars($t['footer_contact_title']) ?></h2>
+						<h2><?= htmlspecialchars(tr('footer_contact_title')) ?></h2>
 					</td>
 				</tr>
 				<tr valign="baseline" class="form_height">
@@ -58,7 +58,7 @@
 							class="form-input-style"
 							name="contact-us-name"
 							type="text"
-							placeholder="<?= htmlspecialchars($t['footer_name']) ?>"
+							placeholder="<?= htmlspecialchars(tr('footer_name')) ?>"
 							required
 						/>
 					</td>
@@ -69,7 +69,7 @@
 							class="form-input-style"
 							name="contact-us-email"
 							type="email"
-							placeholder="<?= htmlspecialchars($t['footer_email']) ?>"
+							placeholder="<?= htmlspecialchars(tr('footer_email')) ?>"
 							required
 						/>
 					</td>
@@ -79,7 +79,7 @@
 						<textarea
 							class="form-input-style"
 							name="contact-us-message"
-							placeholder="<?= htmlspecialchars($t['footer_message']) ?>"
+							placeholder="<?= htmlspecialchars(tr('footer_message')) ?>"
 							rows="4"
 							required
 						></textarea>
@@ -88,7 +88,7 @@
 				<tr valign="baseline" class="form_height">
 					<td colspan="2" align="center" valign="middle">
 						<button type="submit" class="button-style-agree">
-							<?= htmlspecialchars($t['footer_send']) ?>
+							<?= htmlspecialchars(tr('footer_send')) ?>
 						</button>
 					</td>
 				</tr>

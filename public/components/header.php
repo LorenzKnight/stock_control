@@ -12,27 +12,27 @@
 				</li>
 
 				<li id="btn-create-product" data-page="products">
-					<?= htmlspecialchars($t['header_products'] ?? 'Products') ?>
+					<?= htmlspecialchars(tr('header_products') ?? 'Products') ?>
 				</li>
 
 				<li data-page="storage">
-					<?= htmlspecialchars($t['header_storage'] ?? 'Storage') ?>
+					<?= htmlspecialchars(tr('header_storage') ?? 'Storage') ?>
 				</li>
 
 				<li id="btn-create-client" data-page="customers">
-					<?= htmlspecialchars($t['header_customers'] ?? 'Customers') ?>
+					<?= htmlspecialchars(tr('header_customers') ?? 'Customers') ?>
 				</li>
 
 				<li class="hidden" id="shipping-seccion" data-page="shipping">
-					<?= htmlspecialchars($t['header_shipping'] ?? 'Shipping') ?>
+					<?= htmlspecialchars(tr('header_shipping') ?? 'Shipping') ?>
 				</li>
 
 				<li id="btn-create-sale" data-page="sales">
-					<?= htmlspecialchars($t['header_sales'] ?? 'Sales') ?>
+					<?= htmlspecialchars(tr('header_sales') ?? 'Sales') ?>
 				</li>
 
 				<li data-page="payments">
-					<?= htmlspecialchars($t['header_payments'] ?? 'Payments') ?>
+					<?= htmlspecialchars(tr('header_payments') ?? 'Payments') ?>
 				</li>
 
 				<li class="no-redirect" id="notification-site" data-page="notifications">
@@ -53,25 +53,25 @@
 
 							<li id="reports-site" data-page="reports">
 								<a href="<?= htmlspecialchars(localized_url('reports')) ?>">
-									<?= htmlspecialchars($t['header_reports'] ?? 'Reports') ?>
+									<?= htmlspecialchars(tr('header_reports') ?? 'Reports') ?>
 								</a>
 							</li>
 
 							<li>
 								<a href="<?= htmlspecialchars(localized_url('settings')) ?>">
-									<?= htmlspecialchars($t['header_settings'] ?? 'Settings') ?>
+									<?= htmlspecialchars(tr('header_settings') ?? 'Settings') ?>
 								</a>
 							</li>
 
 							<li id="system-admin-site">
 								<a href="<?= htmlspecialchars(localized_url('system-admin')) ?>">
-									<?= htmlspecialchars($t['header_system_admin'] ?? 'System-Admin') ?>
+									<?= htmlspecialchars(tr('header_system_admin') ?? 'System-Admin') ?>
 								</a>
 							</li>
 
 							<li class="no-redirect" style="border-top: 1px solid var(--clr-light-border);">
 								<a href="#" style="margin: 0 auto;" class="logout-button turn-off">
-									<?= htmlspecialchars($t['header_logout'] ?? 'Log Out') ?>
+									<?= htmlspecialchars(tr('header_logout') ?? 'Log Out') ?>
 								</a>
 							</li>
 						</ul>
@@ -83,7 +83,7 @@
 
 	<div id="onboarding-progress" class="onboarding-box hidden">
 		<div class="onboarding-header">
-			<strong><?= htmlspecialchars($t['get_your_inventory_ready'] ?? 'Get your inventory ready') ?></strong>
+			<strong><?= htmlspecialchars(tr('get_your_inventory_ready') ?? 'Get your inventory ready') ?></strong>
 			<span id="onboarding-percent">0%</span>
 		</div>
 
@@ -92,10 +92,10 @@
 		</div>
 
 		<ul class="onboarding-steps">
-			<li id="step-company"><?= htmlspecialchars($t['company_setup'] ?? 'Set up your company profile') ?></li>
-			<li id="step-product"><?= htmlspecialchars($t['create_first_product'] ?? 'Create your first product') ?></li>
-			<li id="step-client"><?= htmlspecialchars($t['add_first_customer'] ?? 'Add your first customer') ?></li>
-			<li id="step-sale"><?= htmlspecialchars($t['record_your_first_sale'] ?? 'Record your first sale') ?></li>
+			<li id="step-company"><?= htmlspecialchars(tr('company_setup') ?? 'Set up your company profile') ?></li>
+			<li id="step-product"><?= htmlspecialchars(tr('create_first_product') ?? 'Create your first product') ?></li>
+			<li id="step-client"><?= htmlspecialchars(tr('add_first_customer') ?? 'Add your first customer') ?></li>
+			<li id="step-sale"><?= htmlspecialchars(tr('record_your_first_sale') ?? 'Record your first sale') ?></li>
 		</ul>
 	</div>
 </header>

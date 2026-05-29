@@ -1,6 +1,6 @@
 <?php
 // public/pages/gdpr.php
-$meta['title'] = ($t['gdpr_title'] ?? 'GDPR') . ' | AllStockControl';
+$meta['title'] = (tr('gdpr_title') ?? 'GDPR') . ' | AllStockControl';
 $meta['description'] = 'GDPR policy for AllStockControl.';
 
 $emailInfo = 'info@allstockcontrol.com';
@@ -8,7 +8,7 @@ $emailSupport = 'support@allstockcontrol.com';
 ?>
 <div class="container">
 	<div class="data-container legal-page">
-		<h1><?= htmlspecialchars($t['gdpr_title'] ?? 'GDPR') ?></h1>
+		<h1><?= htmlspecialchars(tr('gdpr_title') ?? 'GDPR') ?></h1>
 
 		<?php if (($lang ?? 'en') === 'sv'): ?>
 

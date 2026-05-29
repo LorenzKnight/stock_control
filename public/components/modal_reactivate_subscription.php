@@ -8,22 +8,22 @@
             </tr>
             <tr valign="baseline">
                 <td colspan="6" align="center" valign="middle">
-                    <h2><?= $t['non_payment_message'] ?></h2>
+                    <h2><?= tr('non_payment_message') ?></h2>
                 </td>
             </tr>
             <tr valign="baseline">
                 <td colspan="6" align="center" valign="middle">
                     <p>
-                        <?= $t['non_payment_message_reactivate'] ?>
+                        <?= tr('non_payment_message_reactivate') ?>
                     </p>
                 </td>
             </tr>
             <tr valign="baseline">
                 <td width="50%" align="center" valign="middle">
-                    <button type="button" class="cancel-btn logout-button"><?= $t['header_logout'] ?></button>
+                    <button type="button" class="cancel-btn logout-button"><?= tr('header_logout') ?></button>
                 </td>
                 <td width="50%" align="center" valign="middle">
-                    <button type="button" class="button-style-agree" id="reactivate-subscription"><?= $t['reactivate_subscription'] ?></button>
+                    <button type="button" class="button-style-agree" id="reactivate-subscription"><?= tr('reactivate_subscription') ?></button>
                 </td>
             </tr>
         </table>

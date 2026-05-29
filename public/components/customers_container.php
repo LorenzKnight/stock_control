@@ -7,17 +7,17 @@
 			<table width="100%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td width="15%" align="center" valign="middle">
-						<button type="button" class="button-style-agree" id="add-customers-button"><?= $t['create_customer'] ?></button>
+						<button type="button" class="button-style-agree" id="add-customers-button"><?= tr('create_customer') ?></button>
 					</td>
 					<td width="85%" align="center" valign="middle">
-						<input type="text" name="customersSearchField" id="customersSearchField" class="big-search-field" placeholder="<?= $t['search_customer'] ?>..." title="<?= $t['search_customer'] ?>">
+						<input type="text" name="customersSearchField" id="customersSearchField" class="big-search-field" placeholder="<?= tr('search_customer') ?>..." title="<?= tr('search_customer') ?>">
 					</td>
 				</tr>
 			</table>
 		</div>
 	</div>
 	<div class="data-container customers-container-height">
-		<h2 style="margin-left: 10px;"><?= $t['customers_list'] ?></h2>
+		<h2 style="margin-left: 10px;"><?= tr('customers_list') ?></h2>
 		<div class="centralize" style="width: 100%;">
 			<div class="customers-list" id="customers-list"></div>
 		</div>
