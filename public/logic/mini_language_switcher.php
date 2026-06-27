@@ -952,7 +952,6 @@ $i18n = [
 		'desc_4_title' => 'Fatta trygga beslut med full lagerkontroll',
 		'desc_4_text'  => 'Med uppdaterad lagerinformation i realtid ger AllStockControl dig trygghet i beslutsfattandet. Undvik fel, minska förluster och behåll full kontroll.',
 
-		
 		// features section
 		'features_title' => 'Funktioner för lagerhantering',
 
