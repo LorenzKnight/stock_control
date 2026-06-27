@@ -908,7 +908,7 @@ $i18n = [
 	],
 	'sv' => [
 		'title'       => 'Lagerprogram och lagerkontroll för småföretag | AllStockControl',
-		'meta_description' => 'Molnbaserat lagerprogram för småföretag. Följ lagersaldo i realtid, hantera flera platser och få bättre lagerkontroll utan kalkylblad. Testa gratis.',
+		'meta_description' => 'Har ditt företag dålig lagerkontroll? All Stock Control hjälper småföretag att följa lagersaldo i realtid, hantera flera platser och få bättre kontroll utan kalkylblad.',
 		'features_h2' => 'Viktigaste funktionerna',
 		'pricing_h2'  => 'Priser och paket',
 		'content_language' => 'sv',
@@ -970,14 +970,14 @@ $i18n = [
 		'feature_search_title' => 'Snabb sökning och smart filtrering',
 		'feature_search_desc'  => 'Hitta produkter direkt med snabb sökning och smarta filter och spara tid i det dagliga arbetet.',
 
-		'feature_stock_title' => 'Lagertransaktioner i realtid',
-		'feature_stock_desc'  => 'Registrera inleveranser, utleveranser och justeringar i realtid för att alltid ha korrekta lagernivåer.',
+		'feature_stock_title' => 'Undvik dålig lagerkontroll',
+		'feature_stock_desc'  => 'Registrera inleveranser, utleveranser och justeringar i realtid för att minska felaktiga lagersaldon, missade försäljningar och onödiga inköp.',
 
 		'feature_transfers_title' => 'Överföringar mellan filialer',
 		'feature_transfers_desc'  => 'Flytta lager mellan platser med full spårbarhet, utan borttappade varor eller oklarheter.',
 
 		'feature_min_stock_title' => 'Miniminivåer och lagerlarm',
-		'feature_min_stock_desc'  => 'Sätt miniminivåer och få varningar innan varor tar slut, för att minska förluster och förseningar.',
+		'feature_min_stock_desc'  => 'Sätt miniminivåer och få varningar innan varor tar slut. Ett enkelt sätt att undvika dålig lagerkontroll, förluster och förseningar.',
 
 		'feature_cloud_title' => 'Molnbaserat lagerhanteringssystem',
 		'feature_cloud_desc'  => 'Kom åt ditt lager var som helst via ett säkert molnbaserat system, från dator, surfplatta eller mobil.',
