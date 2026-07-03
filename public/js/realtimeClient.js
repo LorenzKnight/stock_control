@@ -333,7 +333,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 																	<table width="100%" align="center" cellspacing="0">
 																		<tr valign="baseline">
 																			<td colspan="6" align="center" style="height: 10px; border-top: 1px solid var(--border-light);">
-																				<p>Total Weight<br><strong>${product.total_weight ? product.total_weight + ' kg' : ''}</strong></p>
+																				<p>${window.i18n?.total_weight || 'Total Weight'}<br><strong>${product.total_weight ? product.total_weight + ' kg' : ''}</strong></p>
 																			</td>
 																		</tr>
 																	</table>
@@ -394,7 +394,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 																		<p style="margin: 10px 0 0;">${product.product_name || ''}</p>
 																	</td>
 																	<td style="width: 50%; height: 20px;" align="right">
-																		<p style="margin: 10px 0 0;">Qty: <strong class="${minQty}">${product.quantity ?? ''}</strong></p>
+																		<p style="margin: 10px 0 0;">${window.i18n?.qty || 'Qty'}: <strong class="${minQty}">${product.quantity ?? ''}</strong></p>
 																	</td>
 																</tr>
 																<tr valign="baseline">
@@ -410,10 +410,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 																${prodDetail}
 																<tr valign="baseline">
 																	<td style="width: 50%; border-top: 1px solid var(--border-light);">
-																		<p>Year<br><strong>${product.product_year || ''}</strong></p>
+																		<p>${window.i18n?.year || 'Year'}<br><strong>${product.product_year || ''}</strong></p>
 																	</td>
 																	<td style="width: 50%; border-top: 1px solid var(--border-light);">
-																		<p>Price<br><strong>${product.price ? '$' + product.price + ' ' + product.currency : ''}</strong></p>
+																		<p>${window.i18n?.price || 'Price'}<br><strong>${product.price ? '$' + product.price + ' ' + product.currency : ''}</strong></p>
 																	</td>
 																</tr>
 															</table>
@@ -451,7 +451,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 												handled = `
 												<div class="notification-handled">
-													<p>Handled</p>
+													<p>${window.i18n?.handled || 'Handled'}</p>
 												</div>`;
 											}
 										} catch (e) {
@@ -498,8 +498,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 													</td>
 												</tr>
 												<tr class="form_height" valign="baseline">
-													<td width="50%" align="left" valign="middle" style="border-bottom: 1px solid #ccc; padding: 10px 0;"><strong>From:</strong> ${notif.from_user_name}</td>
-													<td width="50%" align="right" valign="middle" style="border-bottom: 1px solid #ccc; padding: 10px 0;"><strong>Date: </strong><span id="notif-from-user">${formatFullDateTime(notif.created_at)}</span></td>
+													<td width="50%" align="left" valign="middle" style="border-bottom: 1px solid #ccc; padding: 10px 0;"><strong>${window.i18n?.from || 'From'}:</strong> ${notif.from_user_name}</td>
+													<td width="50%" align="right" valign="middle" style="border-bottom: 1px solid #ccc; padding: 10px 0;"><strong>${window.i18n?.date || 'Date'}: </strong><span id="notif-from-user">${formatFullDateTime(notif.created_at)}</span></td>
 												</tr>
 												<tr valign="baseline">
 													<td colspan="2" align="center" valign="middle">

@@ -465,6 +465,12 @@ $i18n = [
 		'percent' => 'Percent',
 		'amount' => 'Amount',
 		'payment_no' => 'Payment No.',
+
+		'from' => 'From',
+		'to' => 'To',
+		'date' => 'Date',
+
+		'handled' => 'Handled',
 	],
 	'es' => [
 		'title'       => 'Sistema de control de stock e inventario para pequeñas empresas | AllStockControl',
@@ -905,6 +911,12 @@ $i18n = [
 		'percent' => 'Porcentaje',
 		'amount' => 'Monto',
 		'payment_no' => 'Pago No.',
+
+		'from' => 'Desde',
+		'to' => 'Hasta',
+		'date' => 'Fecha',
+
+		'handled' => 'Manejado',
 	],
 	'sv' => [
 		'title'       => 'Lagerprogram och lagerkontroll för småföretag | AllStockControl',
@@ -1345,6 +1357,12 @@ $i18n = [
 		'percent' => 'Procent',
 		'amount' => 'Belopp',
 		'payment_no' => 'Betalningsnummer',
+
+		'from' => 'Från',
+		'to' => 'Till',
+		'date' => 'Datum',
+
+		'handled' => 'Hanterad',
 	],
 ];
 
