@@ -545,7 +545,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 		params.append('lang', currentLang);
 
-		const url = `/api/get_packs_front.php?${params.toString()}`; // AQUI
+		const url = `/api/get_packs_front.php?${params.toString()}`;
 
 		fetch(url, {
 			method: 'GET',

@@ -266,10 +266,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
-	// async function openEditSlotForm(slotId) {
-
-	// }
-
 	async function renderStorageDetails(payload, clickedRow) {
 		const allRows = storageSidebarTable.querySelectorAll('.clickable-row');
 		allRows.forEach(row => row.style.backgroundColor = '');
@@ -278,7 +274,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			clickedRow.style.backgroundColor = 'var(--clr-white)';
 		}
 
-		function buildProductCard(product) { //AQUI
+		function buildProductCard(product) {
 			if (!product) {
 				return `
 					<div class="notification-detail-card">
