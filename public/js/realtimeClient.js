@@ -427,17 +427,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 														<table width="100%" align="center" cellspacing="0" style="margin: 10px 0 15px;">
 															<tr valign="baseline">
 																<td colspan="2" align="center">
-																	<input class="form-input-style" type="number" name="quantity" required placeholder="Quantity" min="1">
+																	<input class="form-input-style" type="number" name="quantity" required placeholder="${window.i18n?.quantity || 'Quantity'}" min="1">
 																	<input type="hidden" name="product_id" value="${product.product_id}">
 																	<input type="hidden" name="notification_id" value="${notif.notification_id}">
 																</td>
 															</tr>
 															<tr valign="baseline" class="form_height" >
 																<td width="50%" align="left" valign="middle">
-																	<button type="button" class="neutral-btn">Cancel</button>
+																	<button type="button" class="neutral-btn">${window.i18n?.cancel || 'Cancel'}</button>
 																</td>
 																<td width="50%" align="right" valign="middle">
-																	<input type="submit" class="button-style-agree" value="Send" />
+																	<input type="submit" class="button-style-agree" value="${window.i18n?.send || 'Send'}" />
 																</td>
 															</tr>
 														</table>
