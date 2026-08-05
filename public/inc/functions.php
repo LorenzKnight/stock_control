@@ -172,7 +172,12 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 		$limitClause = " LIMIT " . intval($options['limit']);
 	}
 
-	$query = "SELECT $columnNames FROM $escapedTable$whereClauseStr$orderClause$limitClause;";
+	$lockClause = '';
+	if (!empty($options['for_update'])) {
+		$lockClause = ' FOR UPDATE';
+	}
+
+	$query = "SELECT $columnNames FROM $escapedTable$whereClauseStr$orderClause$limitClause$lockClause;";
 
 	if (isset($options['echo_query']) && $options['echo_query'] && php_sapi_name() === 'cli') {
 		echo "Q: $query\n";

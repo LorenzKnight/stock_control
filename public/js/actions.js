@@ -26,6 +26,49 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
+	function openWelcomeOnboardingModal() {
+		const modal =
+			document.getElementById('welcome-onboarding-modal');
+
+		const onboardingProgress =
+			document.getElementById('onboarding-progress');
+
+		if (!modal) return;
+
+		modal.style.display = 'flex';
+
+		document.body.classList.add('onboarding-open');
+		onboardingProgress?.classList.add('onboarding-hidden');
+
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				modal.classList.add('is-visible');
+			});
+		});
+
+		setTimeout(() => {
+			document.getElementById('start-first-product')?.focus();
+		}, 350);
+	}
+
+	function closeWelcomeOnboardingModal() {
+		const modal =
+			document.getElementById('welcome-onboarding-modal');
+
+		const onboardingProgress =
+			document.getElementById('onboarding-progress');
+
+		if (!modal) return;
+
+		modal.classList.remove('is-visible');
+		document.body.classList.remove('onboarding-open');
+
+		setTimeout(() => {
+			modal.style.display = 'none';
+			onboardingProgress?.classList.remove('onboarding-hidden');
+		}, 320);
+	}
+
 	function bindSubmitCompanyInfo() {
 		const submitCompanyInfo = document.getElementById('submit-company-info');
 		if (!submitCompanyInfo) return;
@@ -118,10 +161,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 			if (data.success && data.data) {
 				let user = data.data;
 
-				const companyId = Number(user.company_id);
+				const hasCreatedFirstProduct =
+					user.onboarding_progress?.product === true ||
+					user.onboarding_progress?.product === 't';
 
-				if (!Number.isFinite(companyId) || companyId <= 0) {
-					openCompanyModal();
+				if (!hasCreatedFirstProduct) {
+					openWelcomeOnboardingModal();
 				}
 			}
 		});
@@ -174,6 +219,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				updateOnboardingProgress(onboardingStatus);
 
+				/*
+				* Guía interactiva antigua.
+				* Desactivada temporalmente porque el nuevo modal de bienvenida
+				* ya dirige al usuario hacia la creación del primer producto.
+				*
+				* Mantener hasta decidir si se reutiliza en otra etapa.
+				*
 				const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
 				// console.log('hasSeenOnboarding:', hasSeenOnboarding);
 
@@ -183,11 +235,38 @@ document.addEventListener("DOMContentLoaded", async function () {
 						localStorage.setItem('hasSeenOnboarding', 'true');
 					}, 500);
 				}
+				*/
 			}
 		} catch (error) {
 			console.error('Error fetching onboarding progress:', error);
 			onboardingBox.style.display = 'none';
 		}
+	}
+
+	// --- Botones del modal de bienvenida ---
+	const startFirstProductBtn = document.getElementById('start-first-product');
+	if (startFirstProductBtn) {
+		startFirstProductBtn.addEventListener('click', () => {
+			closeWelcomeOnboardingModal();
+
+			setTimeout(() => {
+				const productsUrl = new URL(
+					localizedPath('products'),
+					window.location.origin
+				);
+
+				productsUrl.searchParams.set('open', 'create-product');
+
+				window.location.href = productsUrl.toString();
+			}, 320);
+		});
+	}
+
+	const exploreDashboardBtn = document.getElementById('explore-dashboard-first');
+	if (exploreDashboardBtn) {
+		exploreDashboardBtn.addEventListener('click', () => {
+			closeWelcomeOnboardingModal();
+		});
 	}
 
 	// --- Init flow ---
@@ -223,8 +302,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 					}, 50);
 				}
 				// 2) Si YA aceptó gdpr/terms pero NO tiene company -> abrir modal de company automáticamente
-				else if (!Number.isFinite(Number(user.company_id)) || Number(user.company_id) <= 0) {
-					openCompanyModal();
+				else {
+					const hasCreatedFirstProduct =
+						user.onboarding_progress?.product === true ||
+						user.onboarding_progress?.product === 't';
+
+					if (!hasCreatedFirstProduct) {
+						openWelcomeOnboardingModal();
+					}
 				}
 			}
 		} catch (error) {
@@ -2019,6 +2104,122 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		});
 	}
+
+	function initDynamicProductForm() {
+		const form = document.getElementById('formAddProduct');
+		const advancedToggle =
+			document.getElementById('product-advanced-toggle');
+
+		const advancedRows =
+			form?.querySelectorAll('.product-advanced-row');
+
+		const packRows =
+			form?.querySelectorAll('.product-pack-row');
+
+		const singleUnitRadio =
+			document.getElementById('unit_type_1');
+
+		const multiPackRadio =
+			document.getElementById('unit_type_2');
+
+		if (
+			!form ||
+			!advancedToggle ||
+			!advancedRows?.length
+		) {
+			return;
+		}
+
+		const toggleText =
+			advancedToggle.querySelector(
+				'.product-advanced-toggle-text'
+			);
+
+		const showLabel =
+			advancedToggle.dataset.showLabel ||
+			'Show advanced options';
+
+		const hideLabel =
+			advancedToggle.dataset.hideLabel ||
+			'Hide advanced options';
+
+		const updatePackFields = () => {
+			const advancedIsOpen =
+				advancedToggle.getAttribute('aria-expanded') ===
+				'true';
+
+			const isMultiPack =
+				multiPackRadio?.checked === true;
+
+			packRows.forEach(row => {
+				row.classList.toggle(
+					'is-visible',
+					advancedIsOpen && isMultiPack
+				);
+			});
+		};
+
+		const setAdvancedState = (isOpen) => {
+			advancedToggle.setAttribute(
+				'aria-expanded',
+				String(isOpen)
+			);
+
+			advancedRows.forEach(row => {
+				/*
+				* Las filas multipack tienen su propia condición.
+				* No las mostramos solamente por abrir avanzado.
+				*/
+				if (!row.classList.contains('product-pack-row')) {
+					row.classList.toggle('is-visible', isOpen);
+				}
+			});
+
+			if (toggleText) {
+				toggleText.textContent =
+					isOpen ? hideLabel : showLabel;
+			}
+
+			updatePackFields();
+		};
+
+		/*
+		* Evita registrar los eventos de nuevo cada vez
+		* que el usuario abre el formulario.
+		*/
+		if (advancedToggle.dataset.bound !== '1') {
+			advancedToggle.dataset.bound = '1';
+
+			advancedToggle.addEventListener('click', () => {
+				const isCurrentlyOpen =
+					advancedToggle.getAttribute(
+						'aria-expanded'
+					) === 'true';
+
+				setAdvancedState(!isCurrentlyOpen);
+			});
+
+			singleUnitRadio?.addEventListener(
+				'change',
+				updatePackFields
+			);
+
+			multiPackRadio?.addEventListener(
+				'change',
+				updatePackFields
+			);
+		}
+
+		/*
+		* Primera apertura: formulario sencillo.
+		* No altera los valores internos de los selects.
+		*/
+		setAdvancedState(false);
+
+		setTimeout(() => {
+			document.getElementById('product_name')?.focus();
+		}, 180);
+	}
 	
 	// 📌 script para add product popup
 	let addProductButton = document.getElementById('add-product-btn');
@@ -2086,6 +2287,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 					populateCurrencies('currency');
 
+					initDynamicProductForm();
+
 					handlePopupClose("add-product-form", ".formular-frame", []);
 				}
 			} catch (err) {
@@ -2093,6 +2296,38 @@ document.addEventListener("DOMContentLoaded", async function () {
 				alert("An error occurred while trying to open the add product form.");
 			}
 		});
+
+		const pageParams = new URLSearchParams(window.location.search);
+		const shouldOpenFirstProduct = pageParams.get('open') === 'create-product';
+		if (shouldOpenFirstProduct) {
+			const companySelect = document.getElementById('select-company');
+
+			if (companySelect && companySelect.value.trim() !== '') {
+				companySelect.dispatchEvent(
+					new Event('change', {
+						bubbles: true
+					})
+				);
+			}
+
+			setTimeout(() => {
+				if (!addProductButton.disabled) {
+					addProductButton.click();
+
+					/*
+					* Quitamos el parámetro para que el formulario
+					* no vuelva a abrirse al actualizar la página.
+					*/
+					const cleanUrl = window.location.pathname + window.location.hash;
+
+					window.history.replaceState({}, '', cleanUrl);
+				} else {
+					console.warn(
+						'The product form could not be opened because the add-product button is disabled.'
+					);
+				}
+			}, 350);
+		}
 	}
 
 	function el(ref) {
@@ -3372,9 +3607,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 		'product-menu-buttons', 
 		'product-options'
 	);
-	//################################################################ END PRODUCTS ##################################################################
+//################################################################ END PRODUCTS ##################################################################
 
-	//############################################################### SHIPPING ####################################################################
+//############################################################### SHIPPING ####################################################################
 	const shippingTable = document.getElementById('shippingTable');
 	const shippingDetails = document.getElementById('shippingDetails');
 	const searchShippingField = document.getElementById('searchShippingField');

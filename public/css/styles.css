@@ -327,8 +327,10 @@ body {
     background-color: var(--main-bg-pop-up);
     position: fixed;
     display: none;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
     opacity: 0;
-    transition: opacity 0.5s ease;
+    transition: opacity 280ms ease;
     z-index: 3;
 }
 

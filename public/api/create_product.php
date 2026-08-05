@@ -35,7 +35,9 @@ try {
     $totalWeight         	= $weightUnit * $units;
     $productName     		= trim($_POST["product_name"] ?? '');
     $hsCode         		= trim($_POST["hs_code"] ?? '');
-    $productType     		= intval($_POST["product_type"] ?? 0);
+    $productType            = (isset($_POST["product_type"]) && $_POST["product_type"] !== '' && is_numeric($_POST["product_type"]))
+                                ? intval($_POST["product_type"])
+                                : null;
     $productMark     		= intval($_POST["product_mark"] ?? 0);
     $productModel    		= intval($_POST["product_model"] ?? 0);
     $productSubModel		= intval($_POST["product_sub_model"] ?? 0);
@@ -49,7 +51,6 @@ try {
     $confirmUpdate          = $_POST["confirm_update"] ?? 'false';
 
     if ($productName === '') throw new Exception("Product name is required.");
-    if ($productType === 0) throw new Exception("Product type is required.");
     if ($productQuantity < 0) throw new Exception("Quantity must be 0 or more.");
     if ($productPrice < 0) throw new Exception("Price must be 0 or more.");
 

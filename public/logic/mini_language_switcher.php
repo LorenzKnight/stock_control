@@ -236,6 +236,9 @@ $i18n = [
 		'edit_member_title' => 'Edit member information',
 		'company_info' => 'Company info',
 		'add_product_title' => 'Add a new product',
+		'product_form_simple_intro' => 'Add a new product to your inventory. Fill in the required fields and click "Save" to add the product to your stock list.',
+		'show_advanced_options' => 'Show advanced options',
+		'hide_advanced_options' => 'Hide advanced options',
 		'add_category_or_subcategory' => 'Add a new category or subcategory',
 		'product_options' => 'Product options',
 		'edit_product_title' => 'Edit Product',
@@ -326,6 +329,14 @@ $i18n = [
 		'next' => 'Next',
 		'back' => 'Back',
 		'done' => 'Done',
+
+		// Onboarding Guide - Tooltips
+		'welcome_to_allstockcontrol' => 'Welcome to AllStockControl!',
+		'start_your_inventory' => 'Start your inventory journey',
+		'welcome_first_product_description' => 'Let\'s get started by creating your first product. This will help you understand how to manage your inventory effectively.',
+		'create_first_product_help' => 'Click here to create your first product and start managing your inventory.',
+		'create_my_first_product' => 'Create my first product',
+		'explore_dashboard_first' => 'Explore the dashboard first',
 
 		// Payment
 		'non_payment_message' => 'This subscription is currently inactive for non-payment!',
@@ -682,6 +693,9 @@ $i18n = [
 		'edit_member_title' => 'Editar información del miembro',
 		'company_info' => 'Información de la empresa',
 		'add_product_title' => 'Agregar un nuevo producto',
+		'product_form_simple_intro' => 'Agrega un nuevo producto a tu inventario. Completa los campos requeridos y haz clic en "Guardar" para agregar el producto a tu lista de stock.',
+		'show_advanced_options' => 'Mostrar opciones avanzadas',
+		'hide_advanced_options' => 'Ocultar opciones avanzadas',
 		'add_category_or_subcategory' => 'Agregar una nueva categoría o subcategoría',
 		'product_options' => 'Opciones del producto',
 		'edit_product_title' => 'Editar producto',
@@ -772,6 +786,14 @@ $i18n = [
 		'next' => 'Siguiente',
 		'back' => 'Atrás',
 		'done' => 'Hecho',
+
+		// Onboarding Guide - Tooltips
+		'welcome_to_allstockcontrol' => '¡Bienvenido a AllStockControl!',
+		'start_your_inventory' => '¡Comienza tu viaje de inventario!',
+		'welcome_first_product_description' => 'Comencemos creando tu primer producto. Esto te ayudará a entender cómo gestionar tu inventario de manera efectiva.',
+		'create_first_product_help' => 'Haz clic aquí para crear tu primer producto y comenzar a gestionar tu inventario.',
+		'create_my_first_product' => 'Crear mi primer producto',
+		'explore_dashboard_first' => 'Explorar el tablero primero',
 
 		// Payment
 		'non_payment_message' => '¡Esta suscripción está actualmente inactiva por falta de pago!',
@@ -1128,6 +1150,9 @@ $i18n = [
 		'edit_member_title' => 'Redigera medlemsinformation',
 		'company_info' => 'Företagsinformation',
 		'add_product_title' => 'Lägg till en ny produkt',
+		'product_form_simple_intro' => 'Lägg till en ny produkt i ditt lager. Fyll i de obligatoriska fälten och klicka på "Spara" för att lägga till produkten i din lagersaldo.',
+		'show_advanced_options' => 'Visa avancerade alternativ',
+		'hide_advanced_options' => 'Dölj avancerade alternativ',
 		'add_category_or_subcategory' => 'Lägg till en ny kategori eller underkategori',
 		'product_options' => 'Produktalternativ',
 		'edit_product_title' => 'Redigera produkt',
@@ -1218,6 +1243,14 @@ $i18n = [
 		'next' => 'Nästa',
 		'back' => 'Tillbaka',
 		'done' => 'Klart',
+
+		// Onboarding Guide - Tooltips
+		'welcome_to_allstockcontrol' => 'Välkommen till AllStockControl!',
+		'start_your_inventory' => 'Start your inventory journey',
+		'welcome_first_product_description' => 'Let\'s get started by creating your first product. This will help you understand how to manage your inventory effectively.',
+		'create_first_product_help' => 'Click here to create your first product and start managing your inventory.',
+		'create_my_first_product' => 'Create my first product',
+		'explore_dashboard_first' => 'Explore the dashboard first',
 
 		// Payment
 		'non_payment_message' => 'Denna prenumeration är för närvarande inaktiv på grund av utebliven betalning!',

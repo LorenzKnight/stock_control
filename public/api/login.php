@@ -41,7 +41,7 @@ try {
     $password = pg_escape_string($sql, trim($_POST["login_password"]));
 
     $userResponse = select_from("users", 
-        ["user_id", "email", "verified", "rank", "password", "company_id", "status", "status_by_admin"], 
+        ["user_id", "email", "verified", "rank", "password", "company_id", "parent_user", "status", "status_by_admin"], 
         ["email" => $email], 
         ["fetch_first" => true]
     );
@@ -70,6 +70,153 @@ try {
     // 🚫 Bloquear acceso si un administrador lo ha desactivado (status_by_admin = 0)
     if (intval($user["status_by_admin"]) === 0) {
         throw new Exception("Your account has been disabled by the system. Please contact support.");
+    }
+
+    // 🏢 Garantizar que el usuario tenga una empresa predeterminada
+    $companyId = isset($user["company_id"])
+        ? intval($user["company_id"])
+        : 0;
+
+    $isMainUser =
+    empty($user["parent_user"]) ||
+    intval($user["parent_user"]) === 0;
+
+    if ($companyId <= 0 && $isMainUser) {
+        $userId = intval($user["user_id"]);
+
+        if ($userId <= 0) {
+            throw new Exception("Invalid user ID.");
+        }
+
+        if (!pg_query($sql, "BEGIN")) {
+            throw new Exception("Could not start company creation transaction.");
+        }
+
+        try {
+            $lockedUserData = json_decode(select_from("users",
+                [
+                    "user_id",
+                    "company_id"
+                ],
+                [
+                    "user_id" => $userId
+                ],
+                [
+                    "fetch_first" => true,
+                    "for_update" => true
+                ]
+            ), true);
+
+            if (
+                !is_array($lockedUserData) ||
+                !array_key_exists("success", $lockedUserData)
+            ) {
+                throw new Exception(
+                    "Invalid response while locking the user."
+                );
+            }
+
+            if (empty($lockedUserData["success"])) {
+                throw new Exception(
+                    $lockedUserData["message"] ??
+                    "Could not lock the user while initializing the company."
+                );
+            }
+
+            $lockedUser = $lockedUserData["data"] ?? [];
+
+            if (!$lockedUser) {
+                throw new Exception("The user could not be found.");
+            }
+
+            $lockedCompanyId = intval(
+                $lockedUser["company_id"] ?? 0
+            );
+
+            if ($lockedCompanyId > 0) {
+                $companyId = $lockedCompanyId;
+            } else {
+                $existingCompanyData = json_decode(select_from("companies",
+                    ["company_id"],
+                    ["user_id" => $userId],
+                    [
+                        "order_by" => "company_id",
+                        "order_direction" => "asc",
+                        "limit" => 1,
+                        "fetch_first" => true
+                    ]
+                ), true);
+
+                if (!is_array($existingCompanyData) || !array_key_exists("success", $existingCompanyData)) {
+                    throw new Exception("Invalid response while verifying the user's company.");
+                }
+
+                if (empty($existingCompanyData["success"]) && ($existingCompanyData["message"] ?? "") !== "No records found") {
+                    throw new Exception($existingCompanyData["message"] ?? "Could not verify the user's company.");
+                }
+
+                if (!empty($existingCompanyData["success"]) && !empty($existingCompanyData["data"]["company_id"])) {
+                    $companyId = intval($existingCompanyData["data"]["company_id"]);
+                } else {
+                    $createCompanyData = json_decode(insert_into("companies",
+                        [
+                            "user_id"         => $userId,
+                            "company_type"    => null,
+                            "company_name"    => "My Company",
+                            "organization_no" => null,
+                            "company_address" => null,
+                            "country_code"    => null,
+                            "company_phone"   => null,
+                            "company_logo"    => null
+                        ],
+                        [
+                            "id" => "company_id"
+                        ]
+                    ), true);
+
+                    if (!is_array($createCompanyData) || empty($createCompanyData["success"])) {
+                        throw new Exception($createCompanyData["message"] ?? "Could not create the default company.");
+                    }
+
+                    $companyId = intval($createCompanyData["id"] ?? 0);
+
+                    if ($companyId <= 0) {
+                        throw new Exception("The default company ID was not returned.");
+                    }
+                }
+
+                $updateUserData = json_decode(update_table("users",
+                    [
+                        "company_id" => $companyId
+                    ],
+                    [
+                        "user_id" => $userId
+                    ]
+                ), true);
+
+                if (!is_array($updateUserData) || empty($updateUserData["success"])) {
+                    throw new Exception($updateUserData["message"] ?? "Could not associate the company with the user.");
+                }
+
+                if (intval($updateUserData["count"] ?? 0) !== 1) {
+                    throw new Exception("The company could not be assigned to the user.");
+                }
+            }
+
+            if (!pg_query($sql, "COMMIT")) {
+                throw new Exception("Could not complete company creation.");
+            }
+
+            $user["company_id"] = $companyId;
+
+        } catch (Throwable $companyError) {
+            pg_query($sql, "ROLLBACK");
+
+            throw new Exception(
+                "Could not initialize your company: " .
+                $companyError->getMessage()
+            );
+        }
     }
 
     $issuedAt = time();
