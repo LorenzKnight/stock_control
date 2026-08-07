@@ -34,7 +34,9 @@
 								</tr>
 								<tr valign="baseline" class="form_height">
 									<td colspan="2" align="center" valign="middle">
-										<label for="company_name"><?= tr('company_name') ?>:</label>
+										<label for="company_name">
+											<?= tr('company_name') ?> <span class="required-field">*</span>
+										</label>
 										<input class="form-input-style" type="text" name="company_name" id="company_name" placeholder="Company Name..." title="Company name"/>
 									</td>
 								</tr>
@@ -52,11 +54,15 @@
 								</tr>
 								<tr valign="baseline" class="form_height">
 									<td width="50%" align="center" valign="middle">
-										<label for="company_country_code"><?= tr('company_country_code') ?>:</label>
+										<label for="company_country_code">
+											<?= tr('company_country_code') ?> <span class="required-field">*</span>
+										</label>
 										<select class="form-medium-input-style" name="company_country_code" id="company_country_code" required></select>
 									</td>
 									<td width="50%" align="center" valign="middle">
-										<label for="company_phone"><?= tr('company_phone') ?>:</label>
+										<label for="company_phone">
+											<?= tr('company_phone') ?> <span class="required-field">*</span>
+										</label>
 										<input class="form-medium-input-style" type="text" name="company_phone" id="company_phone" placeholder="Company Phone..." title="Company Phone"/>
 									</td>
 								</tr>

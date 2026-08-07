@@ -7692,7 +7692,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	async function loadCompanyFormOrData(selectedCompanyId = undefined) {
 		if (!isNaN(selectedCompanyId)) {
 			try {
-				let response = await fetch(`api/get_company_info.php?select_company=${selectedCompanyId}`, {
+				let response = await fetch(`/api/get_company_info.php?select_company=${selectedCompanyId}`, {
 					method: 'GET',
 					headers: { 'Accept': 'application/json' }
 				});

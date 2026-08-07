@@ -40,19 +40,34 @@ try {
 		? intval($companyIdRaw)
 		: null;
 
-	if ($companyId && !is_numeric($companyId)) {
-		throw new Exception("Invalid company ID.");
-	}
-
 	$companyName = trim($_POST['company_name'] ?? '');
-	$orgNo = trim($_POST['organization_no'] ?? '');
+
+	$orgNoRaw = trim($_POST['organization_no'] ?? '');
+	$orgNo = ($orgNoRaw !== '' && is_numeric($orgNoRaw))
+		? intval($orgNoRaw)
+		: null;
+		
 	$address = trim($_POST['company_address'] ?? '');
 	$phone = trim($_POST['company_phone'] ?? '');
 	$countryCode = trim($_POST['company_country_code'] ?? '');
 
-	if ($companyName === '' || $orgNo === '' || $address === '' || $phone === '') {
-		throw new Exception("All fields are required.");
+	if ($companyName === '') {
+		throw new Exception("Company name is required.");
 	}
+
+	if ($countryCode === '') {
+		throw new Exception("Company country code is required.");
+	}
+
+	if ($phone === '') {
+		throw new Exception("Company phone is required.");
+	}
+
+	$isCompanyProfileCompleted =
+		$companyName !== '' &&
+		$phone !== '' &&
+		$countryCode !== '' &&
+		strcasecmp($companyName, 'My Company') !== 0;
 
 	$updateData = [
 		"company_name" => $companyName,
@@ -96,10 +111,128 @@ try {
 	}
 
     if (!empty($companyId) && is_numeric($companyId)) {
-        $updateResponse = update_table("companies", $updateData, ["user_id" => $altUser, "company_id" => $companyId]);
-        $updateResult = json_decode($updateResponse, true);
+        $updateResult = json_decode(
+			update_table(
+				"companies",
+				$updateData,
+				[
+					"user_id" => $altUser,
+					"company_id" => $companyId
+				]
+			),
+			true
+		);
 
 	    if (empty($updateResult["success"])) throw new Exception("Update failed.");
+
+		/*
+		* ✅ Onboarding: completar empresa
+		*
+		* Solo se completa cuando el usuario edita
+		* su primera empresa.
+		*/
+		$firstCompanyData = json_decode(
+			select_from(
+				"companies",
+				["company_id"],
+				[
+					"user_id" => $altUser
+				],
+				[
+					"order_by" => "company_id",
+					"order_direction" => "asc",
+					"limit" => 1,
+					"fetch_first" => true
+				]
+			),
+			true
+		);
+
+		$firstCompanyId = intval(
+			$firstCompanyData["data"]["company_id"] ?? 0
+		);
+
+		if (
+			!empty($firstCompanyData["success"]) &&
+			$firstCompanyId > 0 &&
+			intval($companyId) === $firstCompanyId &&
+			$isCompanyProfileCompleted
+		) {
+			$onboardingCheck = json_decode(select_from("user_onboarding",
+					[
+						"user_id",
+						"company"
+					],
+					[
+						"user_id" => $altUser
+					],
+					[
+						"fetch_first" => true
+					]
+				),
+				true
+			);
+
+			if (
+				!empty($onboardingCheck["success"]) &&
+				!empty($onboardingCheck["data"])
+			) {
+				$companyAlreadyCompleted =
+					$onboardingCheck["data"]["company"] === true ||
+					$onboardingCheck["data"]["company"] === "t" ||
+					$onboardingCheck["data"]["company"] === 1 ||
+					$onboardingCheck["data"]["company"] === "1";
+
+				/*
+				* Evitamos hacer UPDATE innecesariamente
+				* si ya estaba completado.
+				*/
+				if (!$companyAlreadyCompleted) {
+					$onboardingResult = json_decode(update_table("user_onboarding",
+							[
+								"company" => true,
+								"updated_at" => date("Y-m-d H:i:s")
+							],
+							[
+								"user_id" => $altUser
+							]
+						),
+						true
+					);
+
+					if (empty($onboardingResult["success"])) {
+						error_log("Could not update onboarding company step for user_id: " .$altUser);
+					}
+				}
+
+			} elseif (
+				($onboardingCheck["message"] ?? "") === "No records found"
+			) {
+				$onboardingResult = json_decode(
+					insert_into(
+						"user_onboarding",
+						[
+							"user_id" => $altUser,
+							"company" => true,
+							"created_at" => date("Y-m-d H:i:s"),
+							"updated_at" => date("Y-m-d H:i:s")
+						]
+					),
+					true
+				);
+
+				if (empty($onboardingResult["success"])) {
+					error_log("Could not create onboarding company step for user_id: " .$altUser);
+				}
+			} else {
+				error_log(
+					"Could not read onboarding company state for user_id " .
+					$altUser .
+					": " .
+					($onboardingCheck["message"] ?? "Unknown error")
+				);
+			}
+		}
 
         $action = "updated";
     } else {
@@ -155,55 +288,46 @@ try {
 		}
 
 		$updateData["user_id"] = $altUser;
+
 		$insertResult = json_decode(insert_into("companies", $updateData, ["id" => "company_id"]), true);
 
 		if (empty($insertResult["success"])) throw new Exception("Insert failed.");
 
-		$decodedUser = json_decode(select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]), true);
+		$newCompanyId = intval($insertResult["id"] ?? 0);
 
-		$companyId = $decodedUser["data"]["company_id"] ?? null;
-
-		if (empty($companyId)) {
-			$updateResponse = update_table("users", ["company_id" => $insertResult["id"]], ["user_id" => $userId]);
-			$updateResult = json_decode($updateResponse, true);
-
-			if (empty($updateResult["success"])) throw new Exception("Update failed.");
+		if ($newCompanyId <= 0) {
+			throw new Exception("Invalid company ID returned after insert.");
 		}
+		
+		$decodedUser = json_decode(
+			select_from(
+				"users",
+				["company_id"],
+				["user_id" => $userId],
+				["fetch_first" => true]
+			),
+			true
+		);
 
-		// ✅ Validar si este es el primer producto creado
-		$companiesCountRes = json_decode(select_from("companies", ["COUNT(*) AS total"], [
-			"user_id" => $altUser
-		], ["fetch_first" => true]), true);
+		$currentUserCompanyId =
+			intval($decodedUser["data"]["company_id"] ?? 0);
 
-		$totalCompanies = intval($companiesCountRes["data"]["total"] ?? 0);
+		if ($currentUserCompanyId <= 0) {
+			$updateResult = json_decode(
+				update_table(
+					"users",
+					["company_id" => $newCompanyId],
+					["user_id" => $userId]
+				),
+				true
+			);
 
-		if ($companiesCountRes["success"] && $totalCompanies === 1) {
-			$onboardingCheck = json_decode(select_from("user_onboarding", ["user_id"], [
-				"user_id" => $userId
-			], ["fetch_first" => true]), true);
-
-			if ($onboardingCheck["success"] && !empty($onboardingCheck["data"])) {
-				// ✅ Existe: actualizar
-				$onboardingResult = json_decode(update_table("user_onboarding", [
-					"company" => true,
-					"updated_at" => date("Y-m-d H:i:s")
-				], [
-					"user_id" => $userId
-				]), true);
-			} else {
-				// ✅ No existe: insertar nuevo registro
-				$onboardingResult = json_decode(insert_into("user_onboarding", [
-					"user_id" => $userId,
-					"company" => true,
-					"created_at" => date("Y-m-d H:i:s")
-				]), true);
-			}
-
-			if (!$onboardingResult["success"]) {
-				error_log("Could not update onboarding company step for user_id: " . $userId);
+			if (empty($updateResult["success"])) {
+				throw new Exception("Update failed.");
 			}
 		}
-	
+
+		$companyId = $newCompanyId;
 		$action = "created";
     }
 
@@ -217,7 +341,7 @@ try {
 		"update_company_info",
 		$description,
 		"companies",
-		$userId
+		$companyId
 	);
 
 	$response = [
