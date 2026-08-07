@@ -433,18 +433,37 @@ body {
 }
 
 .onboarding-steps {
-    padding-left: 18px;
+    padding: 0;
     margin: 0;
+    list-style: none;
 }
 
 .onboarding-steps li {
     margin-bottom: 6px;
     color: var(--text-muted);
+    position: relative;
+    padding-left: 22px;
+}
+
+.onboarding-steps li::before {
+    content: "•";
+    position: absolute;
+    left: 1px;
+    top: -1px;
+    color: var(--text-muted);
+    font-size: 16px;
+    line-height: 1;
 }
 
 .onboarding-steps li.completed {
     color: var(--max-blue);
     font-weight: 600;
+}
+
+.onboarding-steps li.completed::before {
+    content: "✓";
+    color: var(--max-blue);
+    font-weight: 700;
 }
 
 /* Caja principal del popup */

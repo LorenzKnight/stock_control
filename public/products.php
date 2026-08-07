@@ -28,6 +28,7 @@
 		Browser: <?= htmlspecialchars($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? 'N/A') ?><br>
 		URL: <?= htmlspecialchars($_SERVER['REQUEST_URI'] ?? 'N/A') ?>
 	</div> -->
+	<?php include("components/modal_onboarding.php"); ?>
 	<?php include("components/modal_product_options.php"); ?>
 	<?php include("components/modal_add_product.php"); ?>
 	<?php include("components/modal_add_product_type.php"); ?>

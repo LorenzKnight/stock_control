@@ -1,3 +1,4 @@
+<!-- Modal de bienvenida -->
 <div class="bg-popup" id="welcome-onboarding-modal">
 	<div class="welcome-modal-card">
 		<div class="welcome-icon" aria-hidden="true">
@@ -98,4 +99,60 @@
 			<span aria-hidden="true">›</span>
 		</button>
 	</div>
+</div>
+
+<!-- Modal de recompensa: primer producto -->
+<div class="bg-popup" id="first-product-reward-modal">
+	<div class="onboarding-reward-card">
+
+		<div class="onboarding-reward-icon" aria-hidden="true">
+			<span class="reward-icon">🎉</span>
+		</div>
+
+		<p class="onboarding-reward-eyebrow">
+			<?= tr('first_product_reward_eyebrow') ?>
+		</p>
+
+		<h2 id="first-product-reward-title">
+			<?= tr('first_product_reward_title') ?>
+		</h2>
+
+		<p
+			class="onboarding-reward-description"
+			id="first-product-reward-description"
+		>
+			<?= tr('first_product_reward_description') ?>
+		</p>
+
+		<div class="onboarding-reward-product">
+			<span><?= tr('product') ?>:</span>
+
+			<strong id="first-product-reward-name">
+				—
+			</strong>
+		</div>
+
+		<button
+			type="button"
+			class="onboarding-reward-primary"
+			id="view-first-product"
+		>
+			<?= tr('view_my_product') ?>
+			<span aria-hidden="true">→</span>
+		</button>
+
+		<button
+			type="button"
+			class="onboarding-reward-secondary"
+			id="create-another-product"
+		>
+			<?= tr('create_another_product') ?>
+		</button>
+
+	</div>
+</div>
+
+<!-- Futuro: recompensa primera venta -->
+<div class="bg-popup" id="first-sale-reward-modal">
+	<!-- contenido futuro -->
 </div>

@@ -807,6 +807,189 @@
         
     }
 
+
+    .onboarding-reward-card {
+        width: min(92vw, 420px);
+        margin: 60px auto;
+        padding: 40px 30px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+
+        text-align: center;
+
+        border-radius: 28px;
+
+        background: rgba(255,255,255,.82);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+
+        border: 1px solid rgba(255,255,255,.45);
+
+        box-shadow:
+            0 30px 60px rgba(0,0,0,.18),
+            inset 0 1px 0 rgba(255,255,255,.6);
+
+        animation: rewardAppear .35s ease;
+    }
+
+    .onboarding-reward-icon{
+        width:90px;
+        height:90px;
+
+        display:flex;
+        align-items:center;
+        justify-content:center;
+
+        border-radius:50%;
+
+        background:linear-gradient(
+            135deg,
+            #4facfe,
+            #00c6fb
+        );
+
+        font-size:42px;
+
+        box-shadow:
+            0 12px 30px rgba(0,198,251,.35);
+
+        animation:
+            rewardAppear .35s ease,
+            rewardPulse 2.5s infinite;
+    }
+
+    @keyframes rewardPulse {
+
+        0%{
+            transform:scale(1);
+        }
+
+        50%{
+            transform:scale(1.08);
+        }
+
+        100%{
+            transform:scale(1);
+        }
+
+    }
+
+    .onboarding-reward-eyebrow{
+        margin:0;
+
+        font-size:11px;
+        font-weight:700;
+        letter-spacing:2px;
+        text-transform:uppercase;
+
+        color:#4facfe;
+    }
+
+    .onboarding-reward-card h2{
+        margin:0;
+
+        font-size:30px;
+        font-weight:700;
+
+        color:var(--main-text-color);
+    }
+
+    .onboarding-reward-description{
+        margin:0;
+
+        font-size:15px;
+        line-height:1.6;
+
+        color:var(--clr-neutral);
+    }
+
+    .onboarding-reward-product{
+        width:100%;
+
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+
+        padding:14px 18px;
+
+        border-radius:16px;
+
+        background:rgba(255,255,255,.45);
+        border:1px solid rgba(255,255,255,.55);
+
+        box-sizing:border-box;
+    }
+
+    .onboarding-reward-product span{
+        color:var(--clr-neutral);
+        font-size:13px;
+    }
+
+    .onboarding-reward-product strong{
+        font-size:15px;
+        font-weight:600;
+
+        color:var(--main-text-color);
+    }
+
+    .onboarding-reward-primary,
+    .onboarding-reward-secondary{
+        width:100%;
+
+        height:48px;
+
+        border:none;
+        border-radius:14px;
+
+        cursor:pointer;
+
+        transition:.25s;
+    }
+
+    .onboarding-reward-primary{
+        background:#007AFF;
+        color:#fff;
+
+        font-weight:600;
+        font-size:15px;
+    }
+
+    .onboarding-reward-primary:hover{
+        transform:translateY(-2px);
+
+        box-shadow:
+            0 12px 25px rgba(0,122,255,.30);
+    }
+
+    .onboarding-reward-secondary{
+        background:transparent;
+
+        color:var(--main-text-color);
+
+        border:1px solid rgba(0,0,0,.08);
+    }
+
+    .onboarding-reward-secondary:hover{
+        background:rgba(255,255,255,.35);
+    }
+
+    @keyframes rewardAppear{
+
+        from{
+            opacity:0;
+            transform:translateY(25px) scale(.95);
+        }
+
+        to{
+            opacity:1;
+            transform:translateY(0) scale(1);
+        }
+
+    }
+
     /* =====================================
         FORMULARIO DINÁMICO DE PRODUCTOS
     ===================================== */

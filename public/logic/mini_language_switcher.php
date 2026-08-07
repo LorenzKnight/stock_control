@@ -316,7 +316,7 @@ $i18n = [
 		'get_your_inventory_ready' => 'Get your inventory ready',
 
 		'track_your_progress' => 'Track your progress',
-		'company_setup' => 'Set up your company profile',
+		'company_setup' => 'Complete your company profile',
 		'create_first_product' => 'Create your first product',
 		'add_first_customer' => 'Add your first customer',
 		'record_your_first_sale' => 'Record your first sale',
@@ -337,6 +337,12 @@ $i18n = [
 		'create_first_product_help' => 'Click here to create your first product and start managing your inventory.',
 		'create_my_first_product' => 'Create my first product',
 		'explore_dashboard_first' => 'Explore the dashboard first',
+
+		'first_product_reward_eyebrow' => 'First product created.',
+		'first_product_reward_title' => 'Your first milestone is complete!',
+		'first_product_reward_description' => 'Great job! You\'ve completed your first inventory milestone. Here\'s a small reward to celebrate.',
+		'view_my_product' => 'View my product',
+		'create_another_product' => 'Create another product',
 
 		// Payment
 		'non_payment_message' => 'This subscription is currently inactive for non-payment!',
@@ -451,6 +457,7 @@ $i18n = [
 		'slot_info' => 'Slot info',
 
 		// Global
+		'product' => 'Product',
 		'phone' => 'Phone',
 		'loading' => 'Loading...',
 		'branches' => 'Branches',
@@ -773,7 +780,7 @@ $i18n = [
 		'get_your_inventory_ready' => 'Prepara tu inventario',
 
 		'track_your_progress' => 'Sigue tu progreso',
-		'company_setup' => 'Configura el perfil de tu empresa',
+		'company_setup' => 'Completa tu perfil de empresa',
 		'create_first_product' => 'Crea tu primer producto',
 		'add_first_customer' => 'Agrega tu primer cliente',
 		'record_your_first_sale' => 'Registra tu primera venta',
@@ -794,6 +801,12 @@ $i18n = [
 		'create_first_product_help' => 'Haz clic aquí para crear tu primer producto y comenzar a gestionar tu inventario.',
 		'create_my_first_product' => 'Crear mi primer producto',
 		'explore_dashboard_first' => 'Explorar el tablero primero',
+
+		'first_product_reward_eyebrow' => 'Primer producto creado.',
+		'first_product_reward_title' => '¡Tu primer hito está completo!',
+		'first_product_reward_description' => '¡Buen trabajo! Has completado tu primer hito de inventario. Aquí tienes una pequeña recompensa para celebrar.',
+		'view_my_product' => 'Ver mi producto',
+		'create_another_product' => 'Crear otro producto',
 
 		// Payment
 		'non_payment_message' => '¡Esta suscripción está actualmente inactiva por falta de pago!',
@@ -908,6 +921,7 @@ $i18n = [
 		'slot_info' => 'Información del slot',
 
 		// Global
+		'product' => 'Producto',
 		'phone' => 'Teléfono',
 		'loading' => 'Cargando...',
 		'branches' => 'Sucursales',
@@ -1230,7 +1244,7 @@ $i18n = [
 		'get_your_inventory_ready' => 'Förbered ditt lager',
 
 		'track_your_progress' => 'Följ din utveckling',
-		'company_setup' => 'Ställ in din företagsprofil',
+		'company_setup' => 'Slutför din företagsprofil',
 		'create_first_product' => 'Skapa din första produkt',
 		'add_first_customer' => 'Lägg till din första kund',
 		'record_your_first_sale' => 'Registrera din första försäljning',
@@ -1246,11 +1260,17 @@ $i18n = [
 
 		// Onboarding Guide - Tooltips
 		'welcome_to_allstockcontrol' => 'Välkommen till AllStockControl!',
-		'start_your_inventory' => 'Start your inventory journey',
-		'welcome_first_product_description' => 'Let\'s get started by creating your first product. This will help you understand how to manage your inventory effectively.',
-		'create_first_product_help' => 'Click here to create your first product and start managing your inventory.',
-		'create_my_first_product' => 'Create my first product',
-		'explore_dashboard_first' => 'Explore the dashboard first',
+		'start_your_inventory' => 'Börja ditt lageräventyr!',
+		'welcome_first_product_description' => 'Låt oss börja med att skapa din första produkt. Detta hjälper dig att förstå hur du effektivt hanterar ditt lager.',
+		'create_first_product_help' => 'Klicka här för att skapa din första produkt och börja hantera ditt lager.',
+		'create_my_first_product' => 'Skapa min första produkt',
+		'explore_dashboard_first' => 'Utforska instrumentpanelen först',
+
+		'first_product_reward_eyebrow' => 'Första produkten skapad!',
+		'first_product_reward_title' => 'Din första framgång!',
+		'first_product_reward_description' => 'Bra jobbat! Du har slutfört ditt första lagerhinder. Här är en liten belöning för att fira.',
+		'view_my_product' => 'Visa min produkt',
+		'create_another_product' => 'Skapa en annan produkt',
 
 		// Payment
 		'non_payment_message' => 'Denna prenumeration är för närvarande inaktiv på grund av utebliven betalning!',
@@ -1364,6 +1384,7 @@ $i18n = [
 		'slot_info' => 'Slot information',
 
 		// Global
+		'product' => 'Produkt',
 		'phone' => 'Telefon',
 		'loading' => 'Laddar...',
 		'branches' => 'Filialer',

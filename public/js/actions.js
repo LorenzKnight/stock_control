@@ -173,8 +173,82 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// --- Onboarding guide ---
-	const onboardingBox = document.getElementById('onboarding-progress');
-	if (onboardingBox) {
+	// const onboardingBox = document.getElementById('onboarding-progress');
+	// if (onboardingBox) {
+	// 	const onboardingStatus = {
+	// 		company: false,
+	// 		product: false,
+	// 		client: false,
+	// 		sale: false
+	// 	};
+
+	// 	try {
+	// 		const response = await fetch('/api/get_my_info.php', {
+	// 			method: 'GET',
+	// 			headers: { Accept: 'application/json' }
+	// 		});
+
+	// 		const data = await response.json();
+			
+	// 		if (!data.success || !data.data) {
+	// 			onboardingBox.style.display = 'none';
+	// 			return;
+	// 		}
+
+	// 		const user = data.data;
+
+	// 		// ✅ Solo mostrar onboarding al usuario principal/admin
+	// 		const isMainUser = (
+	// 			user.parent_user === null ||
+	// 			user.parent_user === '' ||
+	// 			user.parent_user === 0 ||
+	// 			user.parent_user === '0'
+	// 		);
+
+	// 		if (!isMainUser) {
+	// 			onboardingBox.style.display = 'none';
+	// 		} else {
+	// 			if (user.onboarding_progress) {
+	// 				const progress = user.onboarding_progress;
+
+	// 				onboardingStatus.company = progress.company === true || progress.company === 't';
+	// 				onboardingStatus.product = progress.product === true || progress.product === 't';
+	// 				onboardingStatus.client = progress.client === true || progress.client === 't';
+	// 				onboardingStatus.sale = progress.sale === true || progress.sale === 't';
+	// 			}
+
+	// 			updateOnboardingProgress(onboardingStatus);
+
+	// 			/*
+	// 			* Guía interactiva antigua.
+	// 			* Desactivada temporalmente porque el nuevo modal de bienvenida
+	// 			* ya dirige al usuario hacia la creación del primer producto.
+	// 			*
+	// 			* Mantener hasta decidir si se reutiliza en otra etapa.
+	// 			*
+	// 			const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
+	// 			// console.log('hasSeenOnboarding:', hasSeenOnboarding);
+
+	// 			if (!hasSeenOnboarding) {
+	// 				setTimeout(() => {
+	// 					startOnboardingGuide();
+	// 					localStorage.setItem('hasSeenOnboarding', 'true');
+	// 				}, 500);
+	// 			}
+	// 			*/
+	// 		}
+	// 	} catch (error) {
+	// 		console.error('Error fetching onboarding progress:', error);
+	// 		onboardingBox.style.display = 'none';
+	// 	}
+	// }
+
+	async function refreshOnboardingProgress() {
+		const onboardingBox =
+			document.getElementById('onboarding-progress');
+
+		if (!onboardingBox) return;
+
 		const onboardingStatus = {
 			company: false,
 			product: false,
@@ -189,7 +263,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			});
 
 			const data = await response.json();
-			
+
 			if (!data.success || !data.data) {
 				onboardingBox.style.display = 'none';
 				return;
@@ -197,7 +271,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			const user = data.data;
 
-			// ✅ Solo mostrar onboarding al usuario principal/admin
 			const isMainUser = (
 				user.parent_user === null ||
 				user.parent_user === '' ||
@@ -207,41 +280,41 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			if (!isMainUser) {
 				onboardingBox.style.display = 'none';
-			} else {
-				if (user.onboarding_progress) {
-					const progress = user.onboarding_progress;
-
-					onboardingStatus.company = progress.company === true || progress.company === 't';
-					onboardingStatus.product = progress.product === true || progress.product === 't';
-					onboardingStatus.client = progress.client === true || progress.client === 't';
-					onboardingStatus.sale = progress.sale === true || progress.sale === 't';
-				}
-
-				updateOnboardingProgress(onboardingStatus);
-
-				/*
-				* Guía interactiva antigua.
-				* Desactivada temporalmente porque el nuevo modal de bienvenida
-				* ya dirige al usuario hacia la creación del primer producto.
-				*
-				* Mantener hasta decidir si se reutiliza en otra etapa.
-				*
-				const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
-				// console.log('hasSeenOnboarding:', hasSeenOnboarding);
-
-				if (!hasSeenOnboarding) {
-					setTimeout(() => {
-						startOnboardingGuide();
-						localStorage.setItem('hasSeenOnboarding', 'true');
-					}, 500);
-				}
-				*/
+				return;
 			}
+
+			if (user.onboarding_progress) {
+				const progress = user.onboarding_progress;
+
+				onboardingStatus.company =
+					progress.company === true ||
+					progress.company === 't';
+
+				onboardingStatus.product =
+					progress.product === true ||
+					progress.product === 't';
+
+				onboardingStatus.client =
+					progress.client === true ||
+					progress.client === 't';
+
+				onboardingStatus.sale =
+					progress.sale === true ||
+					progress.sale === 't';
+			}
+
+			updateOnboardingProgress(onboardingStatus);
+
 		} catch (error) {
-			console.error('Error fetching onboarding progress:', error);
+			console.error(
+				'Error fetching onboarding progress:',
+				error
+			);
+
 			onboardingBox.style.display = 'none';
 		}
 	}
+	await refreshOnboardingProgress();
 
 	// --- Botones del modal de bienvenida ---
 	const startFirstProductBtn = document.getElementById('start-first-product');
@@ -2453,6 +2526,201 @@ document.addEventListener("DOMContentLoaded", async function () {
 		applyMode();
 	}
 
+
+	let firstProductRewardState = {
+		productId: null,
+		productName: ''
+	};
+
+	function openFirstProductRewardModal(productId, productName) {
+		const modal =
+			document.getElementById('first-product-reward-modal');
+
+		const productNameElement =
+			document.getElementById('first-product-reward-name');
+
+		const card =
+			modal?.querySelector('.onboarding-reward-card');
+
+		if (!modal || !card) return;
+
+		firstProductRewardState = {
+			productId: productId ?? null,
+			productName: productName ?? ''
+		};
+
+		if (productNameElement) {
+			productNameElement.textContent =
+				productName || 'Product';
+		}
+
+		modal.style.display = 'block';
+		modal.style.opacity = '0';
+
+		card.style.opacity = '0';
+		card.style.transform =
+			'translateY(20px) scale(0.96)';
+
+		requestAnimationFrame(() => {
+			modal.style.transition =
+				'opacity 280ms ease';
+
+			card.style.transition =
+				'opacity 320ms ease, transform 320ms ease';
+
+			modal.style.opacity = '1';
+			card.style.opacity = '1';
+			card.style.transform =
+				'translateY(0) scale(1)';
+		});
+
+		document.body.classList.add('onboarding-open');
+
+		setTimeout(() => {
+			document
+				.getElementById('view-first-product')
+				?.focus();
+		}, 350);
+	}
+
+	function closeFirstProductRewardModal() {
+		const modal =
+			document.getElementById('first-product-reward-modal');
+
+		const card =
+			modal?.querySelector('.onboarding-reward-card');
+
+		if (!modal || !card) return;
+
+		modal.style.opacity = '0';
+		card.style.opacity = '0';
+		card.style.transform =
+			'translateY(12px) scale(0.98)';
+
+		document.body.classList.remove('onboarding-open');
+
+		setTimeout(() => {
+			modal.style.display = 'none';
+		}, 320);
+	}
+
+	async function markProductRewardAsSeen() {
+		try {
+			const formData = new FormData();
+
+			formData.append(
+				'reward_type',
+				'first_product'
+			);
+
+			const response = await fetch(
+				'api/mark_onboarding_reward_seen.php',
+				{
+					method: 'POST',
+					headers: {
+						Accept: 'application/json'
+					},
+					body: formData
+				}
+			);
+
+			const data = await response.json();
+
+			if (!data.success) {
+				console.warn(
+					'Could not mark product reward as seen:',
+					data.message
+				);
+			}
+
+			return data.success === true;
+
+		} catch (error) {
+			console.error(
+				'Error marking product reward as seen:',
+				error
+			);
+
+			return false;
+		}
+	}
+
+	function highlightCreatedProduct(productId) {
+		if (!productId) return;
+
+		const productCard = document.querySelector(
+			`.product-card[data-product-id="${productId}"]`
+		);
+
+		if (!productCard) return;
+
+		productCard.scrollIntoView({
+			behavior: 'smooth',
+			block: 'center'
+		});
+
+		productCard.classList.add(
+			'new-product-highlight'
+		);
+
+		setTimeout(() => {
+			productCard.classList.remove(
+				'new-product-highlight'
+			);
+		}, 3200);
+	}
+
+
+	const viewFirstProductBtn = document.getElementById('view-first-product');
+
+	if (viewFirstProductBtn) {
+		viewFirstProductBtn.addEventListener(
+			'click',
+			async () => {
+				await markProductRewardAsSeen();
+
+				const productId =
+					firstProductRewardState.productId;
+
+				closeFirstProductRewardModal();
+
+				requestAnimationFrame(() => {
+					requestAnimationFrame(() => {
+						highlightCreatedProduct(productId);
+					});
+				});
+			}
+		);
+	}
+
+	const createAnotherProductBtn =
+		document.getElementById('create-another-product');
+
+	if (createAnotherProductBtn) {
+		createAnotherProductBtn.addEventListener(
+			'click',
+			async () => {
+				await markProductRewardAsSeen();
+
+				closeFirstProductRewardModal();
+
+				setTimeout(() => {
+					const addProductBtn =
+						document.getElementById(
+							'add-product-btn'
+						);
+
+					if (
+						addProductBtn &&
+						!addProductBtn.disabled
+					) {
+						addProductBtn.click();
+					}
+				}, 340);
+			}
+		);
+	}
+
 	
 	// 📌 Manejo del formulario para crear Producto
 	const formAddProduct = document.getElementById('formAddProduct');
@@ -2505,10 +2773,47 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				if (data.success) {
 					setTimeout(() => {
-						hideBanner(banner, () => {
-							window.location.href = data.redirect_url || window.location.href;
+						hideBanner(banner, async () => {
+
+							const shouldShowReward =
+								data.show_reward_modal === true &&
+								data.reward_type ===
+									'first_product';
+
+							if (shouldShowReward) {
+								const addProductForm =
+									document.getElementById(
+										'add-product-form'
+									);
+
+								if (addProductForm) {
+									addProductForm.style.display =
+										'none';
+
+									addProductForm.style.opacity =
+										'';
+								}
+
+								formAddProduct.reset();
+
+								await Promise.all([
+									fetchAndRenderProducts(),
+									refreshOnboardingProgress()
+								]);
+
+								openFirstProductRewardModal(
+									data.product_id,
+									data.product_name
+								);
+
+								return;
+							}
+
+							window.location.href =
+								data.redirect_url ||
+								window.location.href;
 						});
-					}, 3000);
+					}, 1400);
 				}
 			};
 
@@ -3060,6 +3365,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 				data.data.forEach(product => {
 					const card = document.createElement('div');
 					card.className = 'product-card';
+
+					card.dataset.productId = String(product.product_id);
 
 					if (product.sale_unit_type === "1" || product.sale_unit_type === null) {
 						unitImg = "images/sys-img/papel-box.png";

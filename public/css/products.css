@@ -113,6 +113,27 @@
     }
 }
 
+.new-product-highlight {
+    animation: newProductFocus 1.5s ease;
+}
+
+@keyframes newProductFocus {
+    0% {
+        transform: scale(.985);
+        opacity: .7;
+    }
+
+    35% {
+        transform: scale(1.01);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
 .all-mark-list tr:hover,
 .all-model-list tr:hover,
 .all-submodel-list tr:hover {

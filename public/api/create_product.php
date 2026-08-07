@@ -50,6 +50,8 @@ try {
     $description     		= trim($_POST["description"] ?? '');
     $confirmUpdate          = $_POST["confirm_update"] ?? 'false';
 
+    $showProductReward = false;
+
     if ($productName === '') throw new Exception("Product name is required.");
     if ($productQuantity < 0) throw new Exception("Quantity must be 0 or more.");
     if ($productPrice < 0) throw new Exception("Price must be 0 or more.");
@@ -104,7 +106,7 @@ try {
         "product_year"      => $productYear
     ], ["fetch_first" => true]), true);
 
-    $existingProduct = $productRes["data"];
+    $existingProduct = $productRes["data"] ?? [];
 
     if ($productRes["success"] && !empty($existingProduct) && $confirmUpdate !== 'true') {
         $response = [
@@ -139,39 +141,139 @@ try {
         $finalProductId = $insertResult["id"];
 
         // ✅ Validar si este es el primer producto creado
-		$productCountRes = json_decode(select_from("products", ["COUNT(*) AS total"], [
-			"company_id" => $productCompanyId,
-			"created_by" => $userId
-		], ["fetch_first" => true]), true);
+        $productCountRes = json_decode(
+            select_from(
+                "products",
+                ["COUNT(*) AS total"],
+                [
+                    "company_id" => $productCompanyId,
+                    "created_by" => $userId
+                ],
+                [
+                    "fetch_first" => true
+                ]
+            ),
+            true
+        );
 
-		$totalProducts = intval($productCountRes["data"]["total"] ?? 0);
+        if (
+            !is_array($productCountRes) ||
+            empty($productCountRes["success"])
+        ) {
+            error_log(
+                "Could not count products for onboarding. User ID: " .
+                $userId
+            );
+        } else {
+            $totalProducts = intval(
+                $productCountRes["data"]["total"] ?? 0
+            );
 
-		if ($productCountRes["success"] && $totalProducts === 1) {
-			$onboardingCheck = json_decode(select_from("user_onboarding", ["user_id"], [
-				"user_id" => $userId
-			], ["fetch_first" => true]), true);
+            if ($totalProducts === 1) {
+                $onboardingCheck = json_decode(
+                    select_from(
+                        "user_onboarding",
+                        [
+                            "user_id",
+                            "product",
+                            "product_reward_seen"
+                        ],
+                        [
+                            "user_id" => $userId
+                        ],
+                        [
+                            "fetch_first" => true
+                        ]
+                    ),
+                    true
+                );
 
-			if ($onboardingCheck["success"] && !empty($onboardingCheck["data"])) {
-				// ✅ Existe: actualizar
-				$onboardingResult = json_decode(update_table("user_onboarding", [
-					"product" => true,
-					"updated_at" => date("Y-m-d H:i:s")
-				], [
-					"user_id" => $userId
-				]), true);
-			} else {
-				// ✅ No existe: insertar nuevo registro
-				$onboardingResult = json_decode(insert_into("user_onboarding", [
-					"user_id" => $userId,
-					"product" => true,
-					"created_at" => date("Y-m-d H:i:s")
-				]), true);
-			}
+                if (
+                    !is_array($onboardingCheck) ||
+                    !array_key_exists("success", $onboardingCheck)
+                ) {
+                    error_log(
+                        "Invalid onboarding response for user_id: " .
+                        $userId
+                    );
 
-			if (!$onboardingResult["success"]) {
-				error_log("Could not update onboarding product step for user_id: " . $userId);
-			}
-		}
+                } elseif (
+                    empty($onboardingCheck["success"]) &&
+                    ($onboardingCheck["message"] ?? "") !==
+                        "No records found"
+                ) {
+                    error_log(
+                        "Could not read onboarding state for user_id " .
+                        $userId .
+                        ": " .
+                        ($onboardingCheck["message"] ?? "Unknown error")
+                    );
+
+                } elseif (
+                    !empty($onboardingCheck["success"]) &&
+                    !empty($onboardingCheck["data"])
+                ) {
+                    $rewardAlreadySeen =
+                        $onboardingCheck["data"]["product_reward_seen"] === true ||
+                        $onboardingCheck["data"]["product_reward_seen"] === "t" ||
+                        $onboardingCheck["data"]["product_reward_seen"] === 1 ||
+                        $onboardingCheck["data"]["product_reward_seen"] === "1";
+
+                    $showProductReward = !$rewardAlreadySeen;
+
+                    $onboardingResult = json_decode(
+                        update_table(
+                            "user_onboarding",
+                            [
+                                "product" => true,
+                                "updated_at" => date("Y-m-d H:i:s")
+                            ],
+                            [
+                                "user_id" => $userId
+                            ]
+                        ),
+                        true
+                    );
+
+                    if (empty($onboardingResult["success"])) {
+                        error_log(
+                            "Could not update onboarding product step for user_id: " .
+                            $userId
+                        );
+                    }
+
+                } else {
+                    $showProductReward = true;
+
+                    $onboardingResult = json_decode(
+                        insert_into(
+                            "user_onboarding",
+                            [
+                                "user_id" => $userId,
+                                "product" => true,
+                                "product_reward_seen" => false,
+                                "created_at" => date("Y-m-d H:i:s"),
+                                "updated_at" => date("Y-m-d H:i:s")
+                            ]
+                        ),
+                        true
+                    );
+
+                    if (empty($onboardingResult["success"])) {
+                        error_log(
+                            "Could not create onboarding state for user_id: " .
+                            $userId
+                        );
+
+                        /*
+                        * Si no pudimos guardar el estado, evitamos mostrar
+                        * una recompensa que podría repetirse indefinidamente.
+                        */
+                        $showProductReward = false;
+                    }
+                }
+            }
+        }
     }
 
     log_activity(
@@ -186,7 +288,13 @@ try {
         "success" => true,
         "message" => "Product created successfully!",
         "img_gif" => "../images/sys-img/loading1.gif",
-        "redirect_url" => ""
+        "redirect_url" => "",
+        "show_reward_modal" => $showProductReward,
+        "reward_type" => $showProductReward
+            ? "first_product"
+            : null,
+        "product_id" => $finalProductId,
+        "product_name" => $productName
     ];
 
 } catch (Exception $e) {
