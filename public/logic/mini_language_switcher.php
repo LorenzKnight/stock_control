@@ -216,7 +216,8 @@ $i18n = [
 		'edit_my_data' => 'Update info',
 		'subscription' => 'Subscription',
 		'add_members' => 'Add members',
-		'manage' => 'Manage',
+		'manage_companies' => 'Manage companies',
+		'complete_company_profile' => 'Complete company profile',
 
 		// content titles
 		'user_list' => 'User List',
@@ -680,7 +681,8 @@ $i18n = [
 		'edit_my_data' => 'Actualizar información',
 		'subscription' => 'Suscripción',
 		'add_members' => 'Agregar miembros',
-		'manage' => 'Gestionar',
+		'manage_companies' => 'Administrar empresas',
+		'complete_company_profile' => 'Completar perfil de empresa',
 
 		// content titles
 		'user_list' => 'Lista de usuarios',
@@ -1144,7 +1146,8 @@ $i18n = [
 		'edit_my_data' => 'Uppdatera information',
 		'subscription' => 'Prenumeration',
 		'add_members' => 'Lägg till medlemmar',
-		'manage' => 'Hantera',
+		'manage_companies' => 'Hantera företag',
+		'complete_company_profile' => 'Slutför företagsprofil',
 
 		// content titles
 		'user_list' => 'Användarlista',

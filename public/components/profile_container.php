@@ -31,7 +31,7 @@
 					<h2><?= htmlspecialchars(tr('smallbox_company_data') ?? 'Company Data') ?></h2>
 				</div>
 				<span id="company-data"></span>
-				<button class="button-style-neutral" id="manage-comp-button"><?= htmlspecialchars(tr('manage') ?? 'Manage') ?></button>
+				<button class="button-style-neutral" id="manage-comp-button"><?= htmlspecialchars(tr('manage_companies') ?? 'Manage companies') ?></button>
 			</div>
 			<div class="small-box">
 				<div class="box-title">

@@ -173,76 +173,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	// --- Onboarding guide ---
-	// const onboardingBox = document.getElementById('onboarding-progress');
-	// if (onboardingBox) {
-	// 	const onboardingStatus = {
-	// 		company: false,
-	// 		product: false,
-	// 		client: false,
-	// 		sale: false
-	// 	};
-
-	// 	try {
-	// 		const response = await fetch('/api/get_my_info.php', {
-	// 			method: 'GET',
-	// 			headers: { Accept: 'application/json' }
-	// 		});
-
-	// 		const data = await response.json();
-			
-	// 		if (!data.success || !data.data) {
-	// 			onboardingBox.style.display = 'none';
-	// 			return;
-	// 		}
-
-	// 		const user = data.data;
-
-	// 		// ✅ Solo mostrar onboarding al usuario principal/admin
-	// 		const isMainUser = (
-	// 			user.parent_user === null ||
-	// 			user.parent_user === '' ||
-	// 			user.parent_user === 0 ||
-	// 			user.parent_user === '0'
-	// 		);
-
-	// 		if (!isMainUser) {
-	// 			onboardingBox.style.display = 'none';
-	// 		} else {
-	// 			if (user.onboarding_progress) {
-	// 				const progress = user.onboarding_progress;
-
-	// 				onboardingStatus.company = progress.company === true || progress.company === 't';
-	// 				onboardingStatus.product = progress.product === true || progress.product === 't';
-	// 				onboardingStatus.client = progress.client === true || progress.client === 't';
-	// 				onboardingStatus.sale = progress.sale === true || progress.sale === 't';
-	// 			}
-
-	// 			updateOnboardingProgress(onboardingStatus);
-
-	// 			/*
-	// 			* Guía interactiva antigua.
-	// 			* Desactivada temporalmente porque el nuevo modal de bienvenida
-	// 			* ya dirige al usuario hacia la creación del primer producto.
-	// 			*
-	// 			* Mantener hasta decidir si se reutiliza en otra etapa.
-	// 			*
-	// 			const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
-	// 			// console.log('hasSeenOnboarding:', hasSeenOnboarding);
-
-	// 			if (!hasSeenOnboarding) {
-	// 				setTimeout(() => {
-	// 					startOnboardingGuide();
-	// 					localStorage.setItem('hasSeenOnboarding', 'true');
-	// 				}, 500);
-	// 			}
-	// 			*/
-	// 		}
-	// 	} catch (error) {
-	// 		console.error('Error fetching onboarding progress:', error);
-	// 		onboardingBox.style.display = 'none';
-	// 	}
-	// }
-
 	async function refreshOnboardingProgress() {
 		const onboardingBox =
 			document.getElementById('onboarding-progress');
@@ -301,6 +231,29 @@ document.addEventListener("DOMContentLoaded", async function () {
 				onboardingStatus.sale =
 					progress.sale === true ||
 					progress.sale === 't';
+			}
+
+			const companyButton =
+				document.getElementById('manage-comp-button');
+
+			if (companyButton) {
+				const companyCompleted =
+					onboardingStatus.company === true;
+
+				companyButton.textContent =
+					companyCompleted
+						? (window.i18n?.manage_companies || 'Manage companies')
+						: (window.i18n?.complete_company_profile || 'Complete company profile');
+
+				companyButton.classList.toggle(
+					'button-style-neutral',
+					companyCompleted
+				);
+
+				companyButton.classList.toggle(
+					'button-style-agree',
+					!companyCompleted
+				);
 			}
 
 			updateOnboardingProgress(onboardingStatus);

@@ -4,6 +4,7 @@
         background: var(--agree-blue); 
         color: var(--clr-white);
         font-size: 12px;
+        margin: 5px 0;
         padding: 11px 0;
         border: 0;
         border-radius: 10px;
@@ -426,6 +427,7 @@
         background: var(--agree-blue); 
         color: var(--clr-white);
         font-size: 12px;
+        margin: 5px 0;
         padding: 11px 0;
         border: 0;
         border-radius: 10px;
@@ -849,6 +851,7 @@
         background: var(--agree-blue); 
         color: var(--clr-white);
         font-size: 16px;
+        margin: 5px 0;
         padding: 16px 0;
         border: 0;
         border-radius: 10px;
@@ -1271,6 +1274,7 @@
         background: var(--agree-blue); 
         color: var(--clr-white);
         font-size: 12px;
+        margin: 5px 0;
         padding: 11px 0;
         border: 0;
         border-radius: 10px;
