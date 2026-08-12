@@ -267,6 +267,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			onboardingBox.style.display = 'none';
 		}
 	}
+	window.refreshOnboardingProgress = refreshOnboardingProgress;
 	await refreshOnboardingProgress();
 
 	// --- Botones del modal de bienvenida ---
@@ -2751,7 +2752,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 								await Promise.all([
 									fetchAndRenderProducts(),
-									refreshOnboardingProgress()
+									window.refreshOnboardingProgress()
 								]);
 
 								openFirstProductRewardModal(

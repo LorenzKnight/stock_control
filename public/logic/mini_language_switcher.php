@@ -327,6 +327,13 @@ $i18n = [
 		'first_customer_desc' => 'You can create customer profiles to manage and track your sales more easily.',
 		'first_sale_desc' => 'Record your first sale and see how your inventory updates in real time.',
 
+		'first_client_reward_eyebrow' => 'First client added.',
+		'first_client_reward_title' => 'You\'ve completed your first milestone!',
+		'first_client_reward_description' => 'Congratulations! You\'ve added your first client to your inventory system. Here\'s a small reward to celebrate this achievement.',
+		'customer' => 'Customer',
+		'view_my_customer' => 'View my customer',
+		'create_another_customer' => 'Create another customer',
+
 		'next' => 'Next',
 		'back' => 'Back',
 		'done' => 'Done',
@@ -792,6 +799,13 @@ $i18n = [
 		'first_customer_desc' => 'Puedes crear perfiles de clientes para gestionar y seguir tus ventas más fácilmente.',
 		'first_sale_desc' => 'Registra tu primera venta y observa cómo tu inventario se actualiza en tiempo real.',
 
+		'first_client_reward_eyebrow' => 'Primer cliente agregado.',
+		'first_client_reward_title' => '¡Has completado tu primer hito!',
+		'first_client_reward_description' => '¡Felicidades! Has agregado tu primer cliente a tu sistema de inventario. Aquí tienes una pequeña recompensa para celebrar este logro.',
+		'customer' => 'Cliente',
+		'view_my_customer' => 'Ver mi cliente',
+		'create_another_customer' => 'Crear otro cliente',
+
 		'next' => 'Siguiente',
 		'back' => 'Atrás',
 		'done' => 'Hecho',
@@ -1256,6 +1270,13 @@ $i18n = [
 		'first_product_desc' => 'Börja med att lägga till en produkt i ditt lager. Det tar mindre än en minut.',
 		'first_customer_desc' => 'Du kan skapa kundprofiler för att hantera och följa dina försäljningar enklare.',
 		'first_sale_desc' => 'Registrera din första försäljning och se hur ditt lager uppdateras i realtid.',
+
+		'first_client_reward_eyebrow' => 'Första kunden tillagd.',
+		'first_client_reward_title' => 'Du har slutfört ditt första mål!',
+		'first_client_reward_description' => 'Grattis! Du har lagt till din första kund i ditt lagersystem. Här är en liten belöning för att fira detta framgångsrika steg.',
+		'customer' => 'Kund',
+		'view_my_customer' => 'Visa min kund',
+		'create_another_customer' => 'Skapa en annan kund',
 
 		'next' => 'Nästa',
 		'back' => 'Tillbaka',

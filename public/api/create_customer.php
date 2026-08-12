@@ -46,6 +46,8 @@ try {
 	$r2Country  = trim($_POST["references_2_country_code"] ?? '');
 	$ref2Phone  = trim($_POST["references_2_phone"] ?? '');
 
+	$showClientReward = false;
+
 	if ($name === '') {
 		throw new Exception("Customer name is required.");
 	}
@@ -100,36 +102,108 @@ try {
 		throw new Exception("Error saving customer data.");
 	}
 
-	// ✅ Validar si este es el primer cliente creado
-	$customerCountRes = json_decode(select_from("customers", ["COUNT(*) AS total"], [
-		"company_id" => $companyId
-	], ["fetch_first" => true]), true);
-
-	$totalCustomers = intval($customerCountRes["data"]["total"] ?? 0);
-
-	if ($customerCountRes["success"] && $totalCustomers === 1) {
-		$onboardingCheck = json_decode(select_from("user_onboarding", ["user_id"], [
-			"user_id" => $userId
-		], ["fetch_first" => true]), true);
-
-		if ($onboardingCheck["success"] && !empty($onboardingCheck["data"])) {
-			$onboardingResult = json_decode(update_table("user_onboarding", [
-				"client" => true,
-				"updated_at" => date("Y-m-d H:i:s")
-			], [
+	// ✅ Onboarding: primer cliente
+	$onboardingCheck = json_decode(
+		select_from(
+			"user_onboarding",
+			[
+				"user_id",
+				"client",
+				"client_reward_seen"
+			],
+			[
 				"user_id" => $userId
-			]), true);
-		} else {
-			$onboardingResult = json_decode(insert_into("user_onboarding", [
-				"user_id" => $userId,
-				"client" => true,
-				"created_at" => date("Y-m-d H:i:s")
-			]), true);
+			],
+			[
+				"fetch_first" => true
+			]
+		),
+		true
+	);
+
+	if (
+		!empty($onboardingCheck["success"]) &&
+		!empty($onboardingCheck["data"])
+	) {
+		$clientCompleted =
+			$onboardingCheck["data"]["client"] === true ||
+			$onboardingCheck["data"]["client"] === "t" ||
+			$onboardingCheck["data"]["client"] === 1 ||
+			$onboardingCheck["data"]["client"] === "1";
+
+		$rewardAlreadySeen =
+			$onboardingCheck["data"]["client_reward_seen"] === true ||
+			$onboardingCheck["data"]["client_reward_seen"] === "t" ||
+			$onboardingCheck["data"]["client_reward_seen"] === 1 ||
+			$onboardingCheck["data"]["client_reward_seen"] === "1";
+
+		/*
+		* Solo mostramos el reward cuando este paso todavía
+		* no estaba completado y la recompensa tampoco fue vista.
+		*/
+		$showClientReward =
+			!$clientCompleted &&
+			!$rewardAlreadySeen;
+
+		if (!$clientCompleted) {
+			$onboardingResult = json_decode(
+				update_table(
+					"user_onboarding",
+					[
+						"client" => true,
+						"updated_at" => date("Y-m-d H:i:s")
+					],
+					[
+						"user_id" => $userId
+					]
+				),
+				true
+			);
+
+			if (empty($onboardingResult["success"])) {
+				error_log(
+					"Could not update onboarding customer step for user_id: " .
+					$userId
+				);
+
+				$showClientReward = false;
+			}
 		}
 
-		if (!$onboardingResult["success"]) {
-			error_log("Could not update onboarding customer step for user_id: " . $userId);
+	} elseif (
+		($onboardingCheck["message"] ?? "") === "No records found"
+	) {
+		$onboardingResult = json_decode(
+			insert_into(
+				"user_onboarding",
+				[
+					"user_id" => $userId,
+					"client" => true,
+					"client_reward_seen" => false,
+					"created_at" => date("Y-m-d H:i:s"),
+					"updated_at" => date("Y-m-d H:i:s")
+				]
+			),
+			true
+		);
+
+		$showClientReward =
+			!empty($onboardingResult["success"]);
+
+		if (!$showClientReward) {
+			error_log(
+				"Could not create onboarding customer step for user_id: " .
+				$userId
+			);
 		}
+
+	} else {
+		$showClientReward = false;
+
+		error_log(
+			"Could not read onboarding customer state for user_id: " .
+			$userId
+		);
 	}
 
 	log_activity(
@@ -144,7 +218,11 @@ try {
 		"success"		=> true,
 		"message"		=> "Customer created successfully!",
 		"img_gif"		=> "../images/sys-img/loading1.gif",
-		"redirect_url"	=> ""
+		"redirect_url"	=> "",
+		"show_reward_modal" => $showClientReward,
+		"reward_type" => $showClientReward ? "first_client" : null,
+		"customer_id" => $insertResult["id"] ?? null,
+		"customer_name" => trim($name . " " . $surname)
 	];
 
 } catch (Exception $e) {

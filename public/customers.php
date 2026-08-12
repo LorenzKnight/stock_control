@@ -24,6 +24,7 @@
 </head>
 
 <body>
+	<?php include("components/modal_onboarding.php"); ?>
 	<?php include("components/modal_customers_options.php"); ?>
 	<?php include("components/modal_add_customers.php"); ?>
 	<?php include("components/message.php"); ?>

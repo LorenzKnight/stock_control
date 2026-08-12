@@ -3,83 +3,86 @@ document.addEventListener("DOMContentLoaded", async function () {
 	const customerContainer = document.getElementById('customers-list');
 	const searchCustomerField = document.getElementById('customersSearchField');
 
-	if (customerContainer || searchCustomerField) {
-		async function fetchAndRenderCustomers() {
-			try {
-				const searchTerm = searchCustomerField?.value.trim() || "";
+	async function fetchAndRenderCustomers() {
+		if (!customerContainer) return;
 
-				const params = new URLSearchParams();
-				if (searchTerm) params.append('search', searchTerm);
+		try {
+			const searchTerm = searchCustomerField?.value.trim() || "";
 
-				const res = await fetch(`api/get_customers.php?${params.toString()}`, {
-					method: 'GET',
-					headers: { 'Accept': 'application/json' }
-				});
-				const data = await res.json();
+			const params = new URLSearchParams();
+			if (searchTerm) params.append('search', searchTerm);
 
-				customerContainer.innerHTML = "";
+			const res = await fetch(`api/get_customers.php?${params.toString()}`, {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			});
+			const data = await res.json();
 
-				if (data.success && data.data.length > 0) {
-					data.data.forEach(customer => {
-						const row = document.createElement('div');
-						row.className = 'customer-row';
+			customerContainer.innerHTML = "";
 
-						const profileImg = customer.image && customer.image.trim() !== ""
-							? `images/customers/${customer.image}`
-							: `images/sys-img/NonProfilePic.png`;
+			if (data.success && data.data.length > 0) {
+				data.data.forEach(customer => {
+					const row = document.createElement('div');
+					row.className = 'customer-row';
+					row.dataset.customerId = String(customer.customer_id);
 
-						row.innerHTML = `
-							<table width="100%" align="center" cellspacing="0">
-								<tr valign="baseline" class="form_height">
-									<td width="5%" align="center" valign="middle">
-										<div class="customers-profile">
-											<img src="${profileImg}" alt="profile picture">
-										</div>
-									</td>
-									<td width="25%" align="left" valign="middle">
-										${customer.full_name}
-									</td>
-									<td width="15%" align="left" valign="middle">
-										<p class="mini-title">${customer.document_type}:</p>
-										${customer.document_no}
-									</td>
-									<td width="40%" align="left" valign="middle">
-										<p class="mini-title">${window.i18n?.address}:</p>
-										${customer.address}
-									</td>
-									<td width="10%" align="center" valign="middle">
-										${customer.status}
-									</td>
-									<td width="5%" align="center" valign="middle">
-										<div class="customers-menu">
-											<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
-										</div>
-									</td>
-								</tr>
-							</table>
-						`;
+					const profileImg = customer.image && customer.image.trim() !== ""
+						? `images/customers/${customer.image}`
+						: `images/sys-img/NonProfilePic.png`;
 
-						customerContainer.appendChild(row);
-
-						const customersMenuBtn = row.querySelector('.customers-menu');
-						customersMenuBtn.addEventListener('click', () => {
-							openCusomersForm(customer.customer_id);
-
-							handlePopupClose("customers-options", ".formular-frame", []);
-						});
-					});
-				} else {
-					customerContainer.innerHTML = `
-						<p class="isNotLinkedToCompany hidden" style="text-align: center; color: var(--warning-orange);">To activate this section you must complete the company details <a href="profile.php">here.</a></p>
-						<p style="text-align:center;">No customers found.</p>
+					row.innerHTML = `
+						<table width="100%" align="center" cellspacing="0">
+							<tr valign="baseline" class="form_height">
+								<td width="5%" align="center" valign="middle">
+									<div class="customers-profile">
+										<img src="${profileImg}" alt="profile picture">
+									</div>
+								</td>
+								<td width="25%" align="left" valign="middle">
+									${customer.full_name}
+								</td>
+								<td width="15%" align="left" valign="middle">
+									<p class="mini-title">${customer.document_type}:</p>
+									${customer.document_no}
+								</td>
+								<td width="40%" align="left" valign="middle">
+									<p class="mini-title">${window.i18n?.address}:</p>
+									${customer.address}
+								</td>
+								<td width="10%" align="center" valign="middle">
+									${customer.status}
+								</td>
+								<td width="5%" align="center" valign="middle">
+									<div class="customers-menu">
+										<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
+									</div>
+								</td>
+							</tr>
+						</table>
 					`;
-				}
-			} catch (err) {
-				console.error("Error loading customers:", err);
-				customerContainer.innerHTML = `<p style="text-align:center;">Error loading customers</p>`;
-			}
-		}
 
+					customerContainer.appendChild(row);
+
+					const customersMenuBtn = row.querySelector('.customers-menu');
+					customersMenuBtn.addEventListener('click', () => {
+						openCusomersForm(customer.customer_id);
+
+						handlePopupClose("customers-options", ".formular-frame", []);
+					});
+				});
+			} else {
+				customerContainer.innerHTML = `
+					<p class="isNotLinkedToCompany hidden" style="text-align: center; color: var(--warning-orange);">To activate this section you must complete the company details <a href="profile.php">here.</a></p>
+					<p style="text-align:center;">No customers found.</p>
+				`;
+			}
+		} catch (err) {
+			console.error("Error loading customers:", err);
+			customerContainer.innerHTML = `<p style="text-align:center;">Error loading customers</p>`;
+		}
+	}
+
+	if (customerContainer) {
 		searchCustomerField?.addEventListener('keyup', fetchAndRenderCustomers);
 
 		fetchAndRenderCustomers();
@@ -148,6 +151,212 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
+	let firstClientRewardState = {
+		customerId: null,
+		customerName: ''
+	};
+
+	function openFirstClientRewardModal(customerId, customerName) {
+		const modal =
+			document.getElementById('first-client-reward-modal');
+
+		const customerNameElement =
+			document.getElementById('first-client-reward-name');
+
+		const card =
+			modal?.querySelector('.onboarding-reward-card');
+
+		if (!modal || !card) return;
+
+		bindFirstClientRewardButtons();
+
+		firstClientRewardState = {
+			customerId: customerId ?? null,
+			customerName: customerName ?? ''
+		};
+
+		if (customerNameElement) {
+			customerNameElement.textContent =
+				customerName || 'Customer';
+		}
+
+		modal.style.display = 'block';
+		modal.style.opacity = '0';
+
+		card.style.opacity = '0';
+		card.style.transform =
+			'translateY(20px) scale(0.96)';
+
+		requestAnimationFrame(() => {
+			modal.style.transition =
+				'opacity 280ms ease';
+
+			card.style.transition =
+				'opacity 320ms ease, transform 320ms ease';
+
+			modal.style.opacity = '1';
+			card.style.opacity = '1';
+			card.style.transform =
+				'translateY(0) scale(1)';
+		});
+
+		document.body.classList.add('onboarding-open');
+
+		setTimeout(() => {
+			document
+				.getElementById('view-first-client')
+				?.focus();
+		}, 350);
+	}
+
+	function closeFirstClientRewardModal() {
+		const modal =
+			document.getElementById('first-client-reward-modal');
+
+		const card =
+			modal?.querySelector('.onboarding-reward-card');
+
+		if (!modal || !card) return;
+
+		modal.style.opacity = '0';
+		card.style.opacity = '0';
+		card.style.transform =
+			'translateY(12px) scale(0.98)';
+
+		document.body.classList.remove('onboarding-open');
+
+		setTimeout(() => {
+			modal.style.display = 'none';
+		}, 320);
+	}
+
+	async function markClientRewardAsSeen() {
+		try {
+			const formData = new FormData();
+
+			formData.append(
+				'reward_type',
+				'first_client'
+			);
+
+			const response = await fetch(
+				'/api/mark_onboarding_reward_seen.php',
+				{
+					method: 'POST',
+					headers: {
+						Accept: 'application/json'
+					},
+					body: formData
+				}
+			);
+
+			const data = await response.json();
+
+			if (!data.success) {
+				console.warn(
+					'Could not mark client reward as seen:',
+					data.message
+				);
+			}
+
+			return data.success === true;
+
+		} catch (error) {
+			console.error(
+				'Error marking client reward as seen:',
+				error
+			);
+
+			return false;
+		}
+	}
+
+	function highlightCreatedCustomer(customerId) {
+		if (!customerId) return;
+
+		const customerRow = document.querySelector(
+			`.customer-row[data-customer-id="${customerId}"]`
+		);
+
+		if (!customerRow) return;
+
+		customerRow.scrollIntoView({
+			behavior: 'smooth',
+			block: 'center'
+		});
+
+		customerRow.classList.add(
+			'new-customer-highlight'
+		);
+
+		setTimeout(() => {
+			customerRow.classList.remove(
+				'new-customer-highlight'
+			);
+		}, 2200);
+	}
+
+	function bindFirstClientRewardButtons() {
+		const viewFirstClientBtn =
+			document.getElementById('view-first-client');
+
+		const createAnotherClientBtn =
+			document.getElementById('create-another-client');
+
+		if (
+			viewFirstClientBtn &&
+			viewFirstClientBtn.dataset.bound !== '1'
+		) {
+			viewFirstClientBtn.dataset.bound = '1';
+
+			viewFirstClientBtn.addEventListener(
+				'click',
+				async () => {
+					const customerId =
+						firstClientRewardState.customerId;
+
+					await markClientRewardAsSeen();
+
+					closeFirstClientRewardModal();
+
+					setTimeout(() => {
+						highlightCreatedCustomer(customerId);
+					}, 340);
+				}
+			);
+		}
+
+		if (
+			createAnotherClientBtn &&
+			createAnotherClientBtn.dataset.bound !== '1'
+		) {
+			createAnotherClientBtn.dataset.bound = '1';
+
+			createAnotherClientBtn.addEventListener(
+				'click',
+				async () => {
+					await markClientRewardAsSeen();
+
+					closeFirstClientRewardModal();
+
+					setTimeout(() => {
+						const addCustomerBtn =
+							document.getElementById(
+								'add-customers-button'
+							);
+
+						if (
+							addCustomerBtn &&
+							!addCustomerBtn.disabled
+						) {
+							addCustomerBtn.click();
+						}
+					}, 340);
+				}
+			);
+		}
+	}
+
 	// 📌 Manejo del formulario para crear Customers
 	const formAddCustomer = document.getElementById('formCustomers');
 	if (formAddCustomer) {
@@ -175,10 +384,54 @@ document.addEventListener("DOMContentLoaded", async function () {
 	
 				if (data.success) {
 					setTimeout(() => {
-						hideBanner(banner, () => {
-							window.location.href = data.redirect_url || window.location.href;
+						hideBanner(banner, async () => {
+
+							const shouldShowReward =
+								data.show_reward_modal === true &&
+								data.reward_type === 'first_client';
+
+							if (shouldShowReward) {
+								const addCustomersForm =
+									document.getElementById('add-customers-form');
+
+								if (addCustomersForm) {
+									addCustomersForm.style.display = 'none';
+									addCustomersForm.style.opacity = '';
+								}
+
+								formAddCustomer.reset();
+
+								await Promise.all([
+									fetchAndRenderCustomers(),
+									window.refreshOnboardingProgress()
+								]);
+
+								openFirstClientRewardModal(
+									data.customer_id,
+									data.customer_name
+								);
+
+								return;
+							}
+
+							formAddCustomer.reset();
+
+							await Promise.all([
+								fetchAndRenderCustomers(),
+								window.refreshOnboardingProgress()
+							]);
+
+							const addCustomersForm =
+								document.getElementById(
+									'add-customers-form'
+								);
+
+							if (addCustomersForm) {
+								addCustomersForm.style.display = 'none';
+								addCustomersForm.style.opacity = '';
+							}
 						});
-					}, 3000);
+					}, 1400);
 				}
 			} catch (error) {
 				console.error("Error submitting customer form:", error);
@@ -382,7 +635,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				const selectedr1CcFromDB = customer.r1_country_code || '';
 				await populateCountryPhoneCodes('edit_references_1_country_code', 'edit_references_1_phone', selectedr1CcFromDB);
 
-				const selectedr2CcFromDB = customer.r1_country_code || '';
+				const selectedr2CcFromDB = customer.r2_country_code || '';
 				await populateCountryPhoneCodes('edit_references_2_country_code', 'edit_references_2_phone', selectedr2CcFromDB);
 
 				handlePopupClose("customers-options", ".formular-frame", []);
@@ -456,7 +709,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 
 		editReferenceTab.addEventListener('click', () => {
-			activateTab(referenceTab, editDataTab, editReferenceSection, editDataSection);
+			activateTab(editReferenceTab, editDataTab, editReferenceSection, editDataSection);
 		});
 	}
 //############################################################# END CUSTOMERS ##################################################################

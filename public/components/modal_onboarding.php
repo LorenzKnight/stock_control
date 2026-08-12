@@ -152,6 +152,57 @@
 	</div>
 </div>
 
+<!-- Modal de recompensa: primer cliente -->
+<div class="bg-popup" id="first-client-reward-modal">
+    <div class="onboarding-reward-card">
+
+        <div class="onboarding-reward-icon" aria-hidden="true">
+            <span class="reward-icon">👤</span>
+        </div>
+
+        <p class="onboarding-reward-eyebrow">
+            <?= tr('first_client_reward_eyebrow') ?>
+        </p>
+
+        <h2 id="first-client-reward-title">
+            <?= tr('first_client_reward_title') ?>
+        </h2>
+
+        <p
+            class="onboarding-reward-description"
+            id="first-client-reward-description"
+        >
+            <?= tr('first_client_reward_description') ?>
+        </p>
+
+        <div class="onboarding-reward-product">
+            <span><?= tr('customer') ?>:</span>
+
+            <strong id="first-client-reward-name">
+                —
+            </strong>
+        </div>
+
+        <button
+            type="button"
+            class="onboarding-reward-primary"
+            id="view-first-client"
+        >
+            <?= tr('view_my_customer') ?>
+            <span aria-hidden="true">→</span>
+        </button>
+
+        <button
+            type="button"
+            class="onboarding-reward-secondary"
+            id="create-another-client"
+        >
+            <?= tr('create_another_customer') ?>
+        </button>
+
+    </div>
+</div>
+
 <!-- Futuro: recompensa primera venta -->
 <div class="bg-popup" id="first-sale-reward-modal">
 	<!-- contenido futuro -->
