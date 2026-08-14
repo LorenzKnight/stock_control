@@ -1,206 +1,105 @@
-## ALL STOCK CONTROL
+# AllStockControl
 
-Modern SaaS platform for inventory, warehouse, shipping, and business management.
+**A SaaS inventory and business management platform built for companies that need to manage products, stock, logistics and day-to-day operations from one system.**
 
-Overview
+🌐 **Live product:** https://www.allstockcontrol.com/
 
-AllStockControl is a fullstack SaaS platform designed to help companies manage inventory, products, shipping flows, customers, reports, and business operations through a scalable web-based system.
+---
 
-The platform was built with a strong focus on:
+## About the project
 
-- Scalable backend architecture
-- API-first development
-- Real-time communication
-- Authentication & security
-- Multi-company support
-- Long-term maintainability
-- SaaS-oriented architecture
+AllStockControl is a full-stack SaaS platform that I design and develop end-to-end.
 
-This project reflects my experience building and maintaining production-oriented systems using PHP, PostgreSQL, JavaScript, Docker, and modern web technologies.
+The project started from the idea of creating a flexible inventory management system and has evolved into a broader business platform covering inventory, logistics, customers, reporting, subscriptions and multi-company workflows.
+
+As the developer and product owner, I work across the complete technical lifecycle — from architecture and database design to backend development, APIs, integrations, security, frontend and deployment.
+
+The project also involves continuously evolving and refactoring the platform as new requirements and use cases emerge.
 
 ## Tech Stack
-- Backend
+
+### Backend
 - PHP 8
 - PostgreSQL
 - REST APIs
-- JWT Authentication
-- WebSocket integration
-- Stripe subscriptions & payments
-- Frontend
+- JWT authentication
+- WebSockets
+- Stripe API integration
+
+### Frontend
 - JavaScript
 - HTML5
 - CSS3
 - Dynamic UI rendering
-- Infrastructure
-- Docker & Docker Compose
-- Apache
-- Linux environment
+
+### Infrastructure & Development
+- Docker / Docker Compose
+- PHP 8 FPM
+- Nginx (local development)
+- Apache (production)
+- Linux
+- Git
+- PHPUnit
 - Environment-based configuration
-- Main Features
+
+## Core Features
+
 - Inventory and stock management
-- Product/category/brand management
-- Shipping & logistics management
+- Product, category and brand management
+- Shipping and logistics workflows
 - Customer management
-- Role & permission system
-- Real-time notifications
-- Subscription/payment integration with Stripe
-- API-based architecture
-- Reporting system
 - Multi-company support
-- WebSocket communication
-- Architecture Focus
+- Role and permission management
+- Real-time notifications
+- Reporting
+- Stripe subscriptions and payments
+- REST API integrations
+- WebSocket-based communication
+- Authentication and authorization
 
-The project was designed with a strong focus on:
+## Engineering Focus
 
-Separation of concerns
-Modular backend structure
-Secure authentication flows
-Scalable database modeling
-Real-time communication handling
-API-driven architecture
-Maintainable and extensible codebase
+The platform is designed around:
 
+- Maintainable and modular backend architecture
+- Clear separation of concerns
+- Secure authentication and authorization
+- Relational database design
+- API-driven integrations
+- Real-time communication
+- Incremental modernization and refactoring
+- Extensible SaaS architecture
 
+## What this project demonstrates
 
-## Docker with PHP
-Docker with PHP 8 fpm, Nginx, Composer, PhpUnit and postgresDB
+Building AllStockControl has required me to work beyond individual features and take ownership of the product as a whole.
 
-## Starting app
+This includes making architectural decisions, designing database structures, building APIs and integrations, debugging production issues, implementing security and permissions, evolving existing code and balancing technical improvements with actual product needs.
+
+It represents the type of product-oriented backend/full-stack engineering I enjoy working with.
+
+## Local Development
+
+The local development environment is containerized using Docker,
+with PHP 8 FPM, Nginx and PostgreSQL.
+
+Production runs on an Apache-based environment.
+
+### Start
 make start
 
-## other command to start the app
-docker-compose up -d
-or
-docker-compose up --build --force-recreate -d
-
-## short down the app
+### Stop
 make down
 
-## other command to short down the app
-docker-compose down 
-
-## Migrate or create the tables in the data-base
+### Database migrations
 make migrate
 
-## create the local environment
-*For macOS:
-1. You can install with Homebrew (if you have it):
-
-brew install node
-composer require phpmailer/phpmailer
-npm install -g ngrok
-ngrok http 8889
-
-2. Create your free account
-Go to 👉 https://dashboard.ngrok.com/signup
-
-Create an account (you can use your email or your GitHub/Google account)
-
-3. Get your Authtoken
-Once you're in the ngrok dashboard, go to:
-👉 https://dashboard.ngrok.com/get-started/your-authtoken
-
-You'll see a line similar to:
-
-ngrok config add-authtoken 2Ktxb2XXXXXXXXXXXXXXX
-
-4. Run this command in your terminal.
-Copy and paste exactly as you see it in ngrok, for example:
-
-ngrok config add-authtoken 2Ktxb2XXXXXXXXXXXXXXX
-This links your local installation to your free account.
-
-5. Rerun ngrok
-
-ngrok http 8889
-
-And you will see something like this:
-
-Forwarding https://abc123.ngrok-free.app -> http://localhost:8889
-
-6. Copy the public URL:
-👉 https://abc123.ngrok-free.app
-
-Go to Stripe → Webhooks → Add endpoint
-Use:
-
-https://abc123.ngrok-free.app/api/stripe_webhook.php
-Done! You can now test webhooks locally as if you were in production. 🎯
-
-7. update stripe_webhook.php
-
-this line:
-<!-- $endpointSecret = 'REMOVED_STRIPE_WEBHOOK_SECRET'; -->
-
-## install (WebSocket) ws and express
-From your terminal, go to the folder where ws-server.js is, for example:
-cd /Users/lorenzoknight/Documents/Projects/stock_control/public
-
-npm init -y
-npm install ws express
-
-Add pg (the PostgreSQL client for Node.js):
-
-npm install pg
-
-npm install cors
-
-## Run WebSocket
-From your terminal, in the folder where ws-server.js is, for example:
-cd /Users/lorenzoknight/Documents/Projects/stock_control/public
-
-node ws-server.js
-
-Or productión:
-
-pm2 start ws-server.js --name allstock-ws
-
-## test enviroment for "webSocket"
-http://localhost:8000/public/test-environment/frontend-test.html
-
-## "Token"
-composer require firebase/php-jwt
-
-## Main page - localhost
-http://localhost:8889/
-
-## Php info
-http://localhost:8889/php_info.php
-
-## Xdebug info
-http://localhost:8889/xdebug_info.php
-
-## Running tests
+### Run tests
 docker-compose run php vendor/bin/phpunit
 
-## Namespaces
-change namespace "Example" in composer.json line 7 for your project name
 
-## Connecting to MySql
-1. User: admin
-2. Passwd: REMOVED_PASSWORD
-3. Port 5433
-4. DB: stock_control_db
+Author
+Lorenz Knight
+Senior Backend / Full-stack Developer
 
-## Using PhpUnit in PhpStorm
-1. PhpUnit By Remote Interpreter
-2. Provide full docker path to autoloader.php /opt/project/vendor/autoload.php
-
-## Problems and solusions
-1. database issues: "Access denied for user 'root'@'localhost' (using password: YES)"
-   Solusion: 
-            Warning: this will permanently delete the contents in your db_data volume, wiping out any previous database you had there.
-
-            docker-compose down -v
-            docker-compose up -d
-
-## How to know the ip of you db in docker
-1. docker inspect name_of_your_db | grep IPAddress
-
-## Enable nginx logs
-in default.conf uncomment the lines:
-access_log /var/log/nginx/default.log;
-error_log /var/log/nginx/default.log;
-
-## Author
-## Lorenz Knight
+🌐 https://www.allstockcontrol.com/
