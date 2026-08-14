@@ -86,16 +86,28 @@ with PHP 8 FPM, Nginx and PostgreSQL.
 Production runs on an Apache-based environment.
 
 ### Start
+
+```bash
 make start
+```
 
 ### Stop
+
+```bash
 make down
+```
 
 ### Database migrations
+
+```bash
 make migrate
+```
 
 ### Run tests
+
+```bash
 docker-compose run php vendor/bin/phpunit
+```
 
 
 Author
