@@ -22,6 +22,14 @@ The project also involves continuously evolving and refactoring the platform as 
 
 ![AllStockControl Dashboard](docs/screenshots/dashboard.png)
 
+### Product Management
+
+![AllStockControl Product Management](docs/screenshots/products.png)
+
+### Reports
+
+![AllStockControl Reports](docs/screenshots/reports.png)
+
 ## Tech Stack
 
 ### Backend
