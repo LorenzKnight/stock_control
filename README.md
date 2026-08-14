@@ -99,7 +99,9 @@ docker-compose run php vendor/bin/phpunit
 
 
 Author
+
 Lorenz Knight
+
 Senior Backend / Full-stack Developer
 
 🌐 https://www.allstockcontrol.com/
