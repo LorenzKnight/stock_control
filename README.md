@@ -16,6 +16,12 @@ As the developer and product owner, I work across the complete technical lifecyc
 
 The project also involves continuously evolving and refactoring the platform as new requirements and use cases emerge.
 
+## Product Preview
+
+### Dashboard
+
+![AllStockControl Dashboard](docs/screenshots/dashboard.png)
+
 ## Tech Stack
 
 ### Backend
@@ -110,7 +116,7 @@ docker-compose run php vendor/bin/phpunit
 ```
 
 
-Author
+## Author
 
 Lorenz Knight
 
