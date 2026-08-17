@@ -26,6 +26,137 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 
+	let firstCompanyRewardState = {
+		companyId: null,
+		companyName: ''
+	};
+
+	function openFirstCompanyRewardModal(companyId, companyName) {
+		const modal =
+			document.getElementById('first-company-reward-modal');
+
+		const companyNameElement =
+			document.getElementById('first-company-reward-name');
+
+		const card =
+			modal?.querySelector('.onboarding-reward-card');
+
+		if (!modal || !card) return;
+
+		bindFirstCompanyRewardButtons();
+
+		firstCompanyRewardState = {
+			companyId: companyId ?? null,
+			companyName: companyName ?? ''
+		};
+
+		if (companyNameElement) {
+			companyNameElement.textContent =
+				companyName || 'Company';
+		}
+
+		modal.style.display = 'block';
+		modal.style.opacity = '0';
+
+		card.style.opacity = '0';
+		card.style.transform =
+			'translateY(20px) scale(0.96)';
+
+		requestAnimationFrame(() => {
+			modal.style.opacity = '1';
+			card.style.opacity = '1';
+			card.style.transform =
+				'translateY(0) scale(1)';
+		});
+
+		document.body.classList.add('onboarding-open');
+	}
+
+	function closeFirstCompanyRewardModal() {
+		const modal =
+			document.getElementById('first-company-reward-modal');
+
+		const card =
+			modal?.querySelector('.onboarding-reward-card');
+
+		if (!modal || !card) return;
+
+		modal.style.opacity = '0';
+		card.style.opacity = '0';
+		card.style.transform =
+			'translateY(12px) scale(0.98)';
+
+		document.body.classList.remove('onboarding-open');
+
+		setTimeout(() => {
+			modal.style.display = 'none';
+		}, 320);
+	}
+
+	async function markCompanyRewardAsSeen() {
+		try {
+			const formData = new FormData();
+
+			formData.append(
+				'reward_type',
+				'first_company'
+			);
+
+			const response = await fetch(
+				'/api/mark_onboarding_reward_seen.php',
+				{
+					method: 'POST',
+					headers: {
+						Accept: 'application/json'
+					},
+					body: formData
+				}
+			);
+
+			const data = await response.json();
+
+			if (!data.success) {
+				console.warn(
+					'Could not mark company reward as seen:',
+					data.message
+				);
+			}
+
+			return data.success === true;
+
+		} catch (error) {
+			console.error(
+				'Error marking company reward as seen:',
+				error
+			);
+
+			return false;
+		}
+	}
+
+	function bindFirstCompanyRewardButtons() {
+		const continueBtn =
+			document.getElementById('continue-after-company');
+
+		if (
+			continueBtn &&
+			continueBtn.dataset.bound !== '1'
+		) {
+			continueBtn.dataset.bound = '1';
+
+			continueBtn.addEventListener(
+				'click',
+				async () => {
+					await markCompanyRewardAsSeen();
+
+					closeFirstCompanyRewardModal();
+
+					await window.refreshOnboardingProgress?.();
+				}
+			);
+		}
+	}
+
 	function openWelcomeOnboardingModal() {
 		const modal =
 			document.getElementById('welcome-onboarding-modal');
@@ -1427,7 +1558,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 	let cancelButtons = document.querySelectorAll('.neutral-btn');
 	cancelButtons.forEach(function (button) {
 		button.addEventListener('click', function () {
-			let popup = button.closest('.bg-popup');
+			const popup = button.closest('.bg-popup');
+
+			if (popup?.id === 'edit-company-form') {
+				const formEditCompany = document.getElementById('formEditCompany');
+
+				if (formEditCompany) {
+					formEditCompany.dataset.mode = '';
+				}
+			}
+
 			if (popup) {
 				popup.style.display = 'none';
 			}
@@ -1631,6 +1771,25 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const editCompanyForm = document.getElementById('edit-company-form');
 			const popupContent = editCompanyForm.querySelector('.formular-medium-frame');
 
+			const notCompanyForm = document.getElementById('not-company-form');
+			const companyForm = document.getElementById('company-form');
+			const formEditCompany = document.getElementById('formEditCompany');
+
+			// ✅ Estado inicial del modal
+			if (notCompanyForm && companyForm) {
+				notCompanyForm.classList.remove('hidden');
+				companyForm.classList.add('hidden');
+			}
+
+			if (formEditCompany) {
+				formEditCompany.dataset.mode = '';
+				formEditCompany.reset();
+			}
+
+			document.querySelectorAll('input[name="company_edit_info"]').forEach(radio => {
+				radio.checked = false;
+			});
+
 			if (editCompanyForm && popupContent) {
 				editCompanyForm.style.display = 'block';
 				editCompanyForm.style.opacity = '0';
@@ -1658,8 +1817,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 	let hasChanges = false;
 
 	// 📌 Cargar la lista de empresas
-	const affList = document.getElementById('affiliate-list');
-	if (affList) {
+	async function refreshCompanyList() {
+		const affList = document.getElementById('affiliate-list');
+
+		if (!affList) return;
+
+		affList.innerHTML = '';
+
 		try {
 			let response = await fetch('api/get_company_info.php', {
 				method: 'GET',
@@ -1694,6 +1858,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			console.error("Error loading categories:", error);
 		}
 	}
+	await refreshCompanyList();
 
 	// CARGAR FORMULARIO DE COMPANY
 	document.addEventListener('change', function (e) {
@@ -1705,6 +1870,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 				notCompanyForm.classList.add('hidden');
 				companyForm.classList.remove('hidden');
 				companyActionBtn.value = "Select Company";
+
+				const formEditCompany = document.getElementById('formEditCompany');
+				if (formEditCompany) {
+					formEditCompany.dataset.mode = '';
+				}
 			}
 
 			// initImagePreview('company_logo', 'logo-preview').then((isImage) => {
@@ -1792,6 +1962,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			const companyActionBtn = document.getElementById('company-action-btn');
 			const isSelecting = companyActionBtn.value === "Select Company";
+			const isAdding = formEditCompany.dataset.mode === 'create';
 
 			const banner = document.getElementById('status-message');
 			const statusText = document.getElementById('status-text');
@@ -1824,6 +1995,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 				return;
 			}
 
+			if (isAdding) {
+				return;
+			}
+
 			let formData = new FormData(this);
 
 			try {
@@ -1840,11 +2015,38 @@ document.addEventListener("DOMContentLoaded", async function () {
 				showBanner(banner);
 
 				if (data.success) {
+					const shouldShowCompanyReward =
+						data.show_reward_modal === true &&
+						data.reward_type === 'first_company';
+
 					setTimeout(() => {
-						hideBanner(banner, () => {
-							window.location.href = data.redirect_url;
+						hideBanner(banner, async () => {
+
+							await window.refreshOnboardingProgress?.();
+
+							if (shouldShowCompanyReward) {
+								const editCompanyForm =
+									document.getElementById('edit-company-form');
+
+								if (editCompanyForm) {
+									editCompanyForm.style.display = 'none';
+									editCompanyForm.style.opacity = '';
+								}
+
+								openFirstCompanyRewardModal(
+									data.company_id,
+									data.company_name
+								);
+
+								return;
+							}
+
+							if (data.redirect_url) {
+								window.location.href =
+									data.redirect_url;
+							}
 						});
-					}, 3000);
+					}, 1400);
 				}
 			} catch (error) {
 				statusText.innerText = "Error procesando la solicitud.";
@@ -1888,7 +2090,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 				if (notCompanyForm && companyForm && companyActionBtn) {
 					notCompanyForm.classList.add('hidden');
 					companyForm.classList.remove('hidden');
+					
 					companyActionBtn.value = window.i18n?.create || "Create";
+
+					const formEditCompany = document.getElementById('formEditCompany');
+					if (formEditCompany) {
+						formEditCompany.dataset.mode = 'create';
+					}
 				}
 
 				document.querySelectorAll('input[name="company_edit_info"]').forEach(radio => {
@@ -1916,8 +2124,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		formAddCompany.addEventListener('submit', async function (e) {
 			e.preventDefault();
 
-			const companyActionBtn = document.getElementById('company-action-btn');
-			const isAdding = companyActionBtn.value === (window.i18n?.create || "Create");
+			const isAdding = formAddCompany.dataset.mode === 'create';
 
 			if (!isAdding) return;
 
@@ -1944,9 +2151,24 @@ document.addEventListener("DOMContentLoaded", async function () {
 					statusImage.src = data.img_gif;
 					showBanner(banner);
 
-					setTimeout(() => {
+					setTimeout(async () => {
 						hideBanner(banner);
-					}, 3000);
+
+						const editCompanyForm =
+							document.getElementById('edit-company-form');
+
+						if (editCompanyForm) {
+							editCompanyForm.style.display = 'none';
+							editCompanyForm.style.opacity = '';
+						}
+
+						formAddCompany.dataset.mode = '';
+						formAddCompany.reset();
+
+						loadCompanyOnDashboard();
+
+						await refreshCompanyList();
+					}, 1400);
 				} else {
 					statusText.innerText = "Error: " + data.message;
 					statusImage.src = data.img_gif;

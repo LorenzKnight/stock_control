@@ -322,21 +322,24 @@ $i18n = [
 		'add_first_customer' => 'Add your first customer',
 		'record_your_first_sale' => 'Record your first sale',
 
+		'first_company_reward_eyebrow' => 'Company profile completed.',
+		'first_company_reward_title' => 'Your company is ready!',
+		'first_company_reward_description' => 'Great! Your company profile is now set up. You\'re one step closer to getting your inventory ready.',
+
 		'track_desc' => 'Here you can see the steps needed to set up your inventory.',
 		'first_product_desc' => 'Start by adding a product to your inventory. It takes less than a minute.',
-		'first_customer_desc' => 'You can create customer profiles to manage and track your sales more easily.',
+		'first_customer_desc' => 'Create your first customer profile to manage and track your sales more easily.',
 		'first_sale_desc' => 'Record your first sale and see how your inventory updates in real time.',
 
-		'first_client_reward_eyebrow' => 'First client added.',
-		'first_client_reward_title' => 'You\'ve completed your first milestone!',
-		'first_client_reward_description' => 'Congratulations! You\'ve added your first client to your inventory system. Here\'s a small reward to celebrate this achievement.',
-		'customer' => 'Customer',
+		'first_client_reward_eyebrow' => 'First customer added.',
+		'first_client_reward_title' => 'Your first customer is ready!',
+		'first_client_reward_description' => 'Great! You\'ve added your first customer. You can now use their profile when recording sales.',
 		'view_my_customer' => 'View my customer',
 		'create_another_customer' => 'Create another customer',
 
 		'first_sale_reward_eyebrow' => 'First sale recorded.',
-		'first_sale_reward_title' => 'You\'ve completed your first milestone!',
-		'first_sale_reward_description' => 'Congratulations! You\'ve recorded your first sale in your inventory system. Here\'s a small reward to celebrate this achievement.',
+		'first_sale_reward_title' => 'You made your first sale!',
+		'first_sale_reward_description' => 'Great! You\'ve recorded your first sale and your inventory has been updated. Your setup is now complete.',
 		'view_my_sale' => 'View my sale',
 		'go_to_dashboard' => 'Go to dashboard',
 
@@ -471,7 +474,9 @@ $i18n = [
 		'slot_info' => 'Slot info',
 
 		// Global
+		'company' => 'Company',
 		'product' => 'Product',
+		'customer' => 'Customer',
 		'order' => 'Order',
 		'phone' => 'Phone',
 		'loading' => 'Loading...',
@@ -485,6 +490,7 @@ $i18n = [
 		'password' => 'Password',
 		'status' => 'Status',
 		'close' => 'Close',
+		'continue' => 'Continue',
 
 		'initial' => 'Initial',
 		'delivery_date' => 'Delivery date',
@@ -801,23 +807,26 @@ $i18n = [
 		'add_first_customer' => 'Agrega tu primer cliente',
 		'record_your_first_sale' => 'Registra tu primera venta',
 
+		'first_company_reward_eyebrow' => 'Perfil de empresa completado.',
+		'first_company_reward_title' => '¡Tu empresa está lista!',
+		'first_company_reward_description' => '¡Excelente! El perfil de tu empresa ya está configurado. Estás un paso más cerca de tener tu inventario listo.',
+
 		'track_desc' => 'Aquí puedes ver los pasos necesarios para configurar tu inventario.',
 		'first_product_desc' => 'Comienza agregando un producto a tu inventario. Toma menos de un minuto.',
-		'first_customer_desc' => 'Puedes crear perfiles de clientes para gestionar y seguir tus ventas más fácilmente.',
+		'first_customer_desc' => 'Crea el perfil de tu primer cliente para gestionar y dar seguimiento a tus ventas más fácilmente.',
 		'first_sale_desc' => 'Registra tu primera venta y observa cómo tu inventario se actualiza en tiempo real.',
 
 		'first_client_reward_eyebrow' => 'Primer cliente agregado.',
-		'first_client_reward_title' => '¡Has completado tu primer hito!',
-		'first_client_reward_description' => '¡Felicidades! Has agregado tu primer cliente a tu sistema de inventario. Aquí tienes una pequeña recompensa para celebrar este logro.',
-		'customer' => 'Cliente',
+		'first_client_reward_title' => '¡Tu primer cliente está listo!',
+		'first_client_reward_description' => '¡Excelente! Has agregado tu primer cliente. Ahora puedes usar su perfil al registrar ventas.',
 		'view_my_customer' => 'Ver mi cliente',
 		'create_another_customer' => 'Crear otro cliente',
 
 		'first_sale_reward_eyebrow' => 'Primera venta registrada.',
-		'first_sale_reward_title' => '¡Has completado tu primer hito!',
-		'first_sale_reward_description' => '¡Felicidades! Has registrado tu primera venta en tu sistema de inventario. Aquí tienes una pequeña recompensa para celebrar este logro.',
+		'first_sale_reward_title' => '¡Realizaste tu primera venta!',
+		'first_sale_reward_description' => '¡Excelente! Has registrado tu primera venta y tu inventario se ha actualizado. La configuración inicial ya está completa.',
 		'view_my_sale' => 'Ver mi venta',
-		'go_to_dashboard' => 'Ir al tablero',
+		'go_to_dashboard' => 'Ir al panel',
 
 		'next' => 'Siguiente',
 		'back' => 'Atrás',
@@ -950,7 +959,9 @@ $i18n = [
 		'slot_info' => 'Información del slot',
 
 		// Global
+		'company' => 'Compañia',
 		'product' => 'Producto',
+		'customer' => 'Cliente',
 		'order' => 'Orden',
 		'phone' => 'Teléfono',
 		'loading' => 'Cargando...',
@@ -964,6 +975,7 @@ $i18n = [
 		'password' => 'Contraseña',
 		'status' => 'Estado',
 		'close' => 'Cerrar',
+		'continue' => 'Continuar',
 
 		'initial' => 'Inicial',
 		'delivery_date' => 'Fecha de entrega',
@@ -1280,23 +1292,26 @@ $i18n = [
 		'add_first_customer' => 'Lägg till din första kund',
 		'record_your_first_sale' => 'Registrera din första försäljning',
 
-		'track_desc' => 'Här kan du se de steg som krävs för att ställa in ditt lager.',
+		'first_company_reward_eyebrow' => 'Företagsprofilen är klar.',
+		'first_company_reward_title' => 'Ditt företag är redo!',
+		'first_company_reward_description' => 'Toppen! Din företagsprofil är nu konfigurerad. Du är ett steg närmare att ha ditt lager redo.',
+
+		'track_desc' => 'Här kan du se stegen som behövs för att konfigurera ditt lager.',
 		'first_product_desc' => 'Börja med att lägga till en produkt i ditt lager. Det tar mindre än en minut.',
-		'first_customer_desc' => 'Du kan skapa kundprofiler för att hantera och följa dina försäljningar enklare.',
+		'first_customer_desc' => 'Skapa din första kundprofil för att enklare hantera och följa dina försäljningar.',
 		'first_sale_desc' => 'Registrera din första försäljning och se hur ditt lager uppdateras i realtid.',
 
 		'first_client_reward_eyebrow' => 'Första kunden tillagd.',
-		'first_client_reward_title' => 'Du har slutfört ditt första mål!',
-		'first_client_reward_description' => 'Grattis! Du har lagt till din första kund i ditt lagersystem. Här är en liten belöning för att fira detta framgångsrika steg.',
-		'customer' => 'Kund',
+		'first_client_reward_title' => 'Din första kund är klar!',
+		'first_client_reward_description' => 'Toppen! Du har lagt till din första kund. Nu kan du använda kundprofilen när du registrerar försäljningar.',
 		'view_my_customer' => 'Visa min kund',
-		'create_another_customer' => 'Skapa en annan kund',
+		'create_another_customer' => 'Skapa en ny kund',
 
 		'first_sale_reward_eyebrow' => 'Första försäljningen registrerad.',
-		'first_sale_reward_title' => 'Du har slutfört ditt första mål!',
-		'first_sale_reward_description' => 'Grattis! Du har registrerat din första försäljning i ditt lagersystem. Här är en liten belöning för att fira detta framgångsrika steg.',
+		'first_sale_reward_title' => 'Du har gjort din första försäljning!',
+		'first_sale_reward_description' => 'Toppen! Du har registrerat din första försäljning och ditt lager har uppdaterats. Den första konfigurationen är nu klar.',
 		'view_my_sale' => 'Visa min försäljning',
-		'go_to_dashboard' => 'Gå till instrumentpanelen',
+		'go_to_dashboard' => 'Gå till översikten',
 
 		'next' => 'Nästa',
 		'back' => 'Tillbaka',
@@ -1428,7 +1443,9 @@ $i18n = [
 		'slot_info' => 'Slot information',
 
 		// Global
+		'company' => 'Företag',
 		'product' => 'Produkt',
+		'customer' => 'Kund',
 		'order' => 'Order',
 		'phone' => 'Telefon',
 		'loading' => 'Laddar...',
@@ -1443,6 +1460,7 @@ $i18n = [
 		'password' => 'Lösenord',
 		'status' => 'Status',
 		'close' => 'Stäng',
+		'continue' => 'Fortsätt',
 
 		'initial' => 'Initial',
 		'delivery_date' => 'Leveransdatum',

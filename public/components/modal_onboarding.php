@@ -101,6 +101,49 @@
 	</div>
 </div>
 
+<!-- Modal de recompensa: empresa completada -->
+<div class="bg-popup" id="first-company-reward-modal">
+	<div class="onboarding-reward-card">
+
+		<div class="onboarding-reward-icon" aria-hidden="true">
+			<span class="reward-icon">🏢</span>
+		</div>
+
+		<p class="onboarding-reward-eyebrow">
+			<?= tr('first_company_reward_eyebrow') ?>
+		</p>
+
+		<h2 id="first-company-reward-title">
+			<?= tr('first_company_reward_title') ?>
+		</h2>
+
+		<p
+			class="onboarding-reward-description"
+			id="first-company-reward-description"
+		>
+			<?= tr('first_company_reward_description') ?>
+		</p>
+
+		<div class="onboarding-reward-product">
+			<span><?= tr('company') ?>:</span>
+
+			<strong id="first-company-reward-name">
+				—
+			</strong>
+		</div>
+
+		<button
+			type="button"
+			class="onboarding-reward-primary"
+			id="continue-after-company"
+		>
+			<?= tr('continue') ?>
+			<span aria-hidden="true">→</span>
+		</button>
+
+	</div>
+</div>
+
 <!-- Modal de recompensa: primer producto -->
 <div class="bg-popup" id="first-product-reward-modal">
 	<div class="onboarding-reward-card">

@@ -46,7 +46,7 @@ try {
 	$orgNo = ($orgNoRaw !== '' && is_numeric($orgNoRaw))
 		? intval($orgNoRaw)
 		: null;
-		
+
 	$address = trim($_POST['company_address'] ?? '');
 	$phone = trim($_POST['company_phone'] ?? '');
 	$countryCode = trim($_POST['company_country_code'] ?? '');
@@ -68,6 +68,8 @@ try {
 		$phone !== '' &&
 		$countryCode !== '' &&
 		strcasecmp($companyName, 'My Company') !== 0;
+
+	$showCompanyReward = false;
 
 	$updateData = [
 		"company_name" => $companyName,
@@ -161,7 +163,8 @@ try {
 			$onboardingCheck = json_decode(select_from("user_onboarding",
 					[
 						"user_id",
-						"company"
+						"company",
+						"company_reward_seen"
 					],
 					[
 						"user_id" => $altUser
@@ -183,6 +186,16 @@ try {
 					$onboardingCheck["data"]["company"] === 1 ||
 					$onboardingCheck["data"]["company"] === "1";
 
+				$rewardAlreadySeen =
+					$onboardingCheck["data"]["company_reward_seen"] === true ||
+					$onboardingCheck["data"]["company_reward_seen"] === "t" ||
+					$onboardingCheck["data"]["company_reward_seen"] === 1 ||
+					$onboardingCheck["data"]["company_reward_seen"] === "1";
+
+				$showCompanyReward =
+					!$companyAlreadyCompleted &&
+					!$rewardAlreadySeen;
+
 				/*
 				* Evitamos hacer UPDATE innecesariamente
 				* si ya estaba completado.
@@ -202,6 +215,8 @@ try {
 
 					if (empty($onboardingResult["success"])) {
 						error_log("Could not update onboarding company step for user_id: " .$altUser);
+					
+						$showCompanyReward = false;
 					}
 				}
 
@@ -214,6 +229,7 @@ try {
 						[
 							"user_id" => $altUser,
 							"company" => true,
+							"company_reward_seen" => false,
 							"created_at" => date("Y-m-d H:i:s"),
 							"updated_at" => date("Y-m-d H:i:s")
 						]
@@ -221,7 +237,9 @@ try {
 					true
 				);
 
-				if (empty($onboardingResult["success"])) {
+				$showCompanyReward = !empty($onboardingResult["success"]);
+
+				if (!$showCompanyReward) {
 					error_log("Could not create onboarding company step for user_id: " .$altUser);
 				}
 			} else {
@@ -231,6 +249,8 @@ try {
 					": " .
 					($onboardingCheck["message"] ?? "Unknown error")
 				);
+
+				$showCompanyReward = false;
 			}
 		}
 
@@ -348,7 +368,13 @@ try {
 		"success" => true,
 		"message" => "Company info {$action} successfully!",
 		"img_gif" => "../images/sys-img/loading1.gif",
-		"redirect_url" => ""
+		"redirect_url" => "",
+		"show_reward_modal" => $showCompanyReward,
+		"reward_type" => $showCompanyReward
+			? "first_company"
+			: null,
+		"company_id" => $companyId,
+		"company_name" => $companyName
 	];
 } catch (Exception $e) {
 	$response = [
