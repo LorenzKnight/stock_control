@@ -3,222 +3,225 @@ document.addEventListener("DOMContentLoaded", async function () {
 	const salesContainer = document.getElementById('sales-list');
 	const searchSalesField = document.getElementById('salesSearchField');
 
-	if (salesContainer || searchSalesField) {
-		async function fetchAndRenderSales() {
-			try {
-				const searchTerm = searchSalesField?.value.trim() || "";
+	async function fetchAndRenderSales() {
+		if (!salesContainer) return;
 
-				const params = new URLSearchParams();
-				if (searchTerm) params.append('search', searchTerm);
+		try {
+			const searchTerm = searchSalesField?.value.trim() || "";
 
-				const res = await fetch(`api/get_sales.php?${params.toString()}`, {
-					method: 'GET',
-					headers: { 'Accept': 'application/json' }
-				});
+			const params = new URLSearchParams();
+			if (searchTerm) params.append('search', searchTerm);
 
-				const data = await res.json();
-				salesContainer.innerHTML = "";
-				
-				if (data.success && data.data.length > 0) {
-					data.data.forEach(sale => {
-						const row = document.createElement('div');
-						row.className = 'sale-row';
+			const res = await fetch(`api/get_sales.php?${params.toString()}`, {
+				method: 'GET',
+				headers: { 'Accept': 'application/json' }
+			});
 
-						const customerImg = sale.customer.image?.trim() !== ''
-							? `images/customers/${sale.customer.image}`
-							: 'images/sys-img/NonProfilePic.png';
+			const data = await res.json();
+			salesContainer.innerHTML = "";
+			
+			if (data.success && data.data.length > 0) {
+				data.data.forEach(sale => {
+					const row = document.createElement('div');
+					row.className = 'sale-row';
+					row.dataset.saleId = String(sale.sales_id);
 
-						const paymentDateFormatted = sale.payment_date
-							? `Every ${new Date(sale.payment_date).getDate()}th`
-							: '-';
+					const customerImg = sale.customer.image?.trim() !== ''
+						? `images/customers/${sale.customer.image}`
+						: 'images/sys-img/NonProfilePic.png';
 
-						let productsHtml = '';
-						if (!sale.products || sale.products.length === 0) {
-							productsHtml = `
-								<tr valign="baseline" class="form_height">
-									<td width="100%" align="center" valign="middle">
-										<p>No products in this sale...</p>
-									</td>
-								</tr>
-							`;
-						} else if (sale.products.length === 1) {
-							const product = sale.products[0];
+					const paymentDateFormatted = sale.payment_date
+						? `Every ${new Date(sale.payment_date).getDate()}th`
+						: '-';
 
+					let productsHtml = '';
+					if (!sale.products || sale.products.length === 0) {
+						productsHtml = `
+							<tr valign="baseline" class="form_height">
+								<td width="100%" align="center" valign="middle">
+									<p>No products in this sale...</p>
+								</td>
+							</tr>
+						`;
+					} else if (sale.products.length === 1) {
+						const product = sale.products[0];
+
+						let unitImg = '';
+						if (product.sale_unit_type === "1" || product.sale_unit_type === null) {
+							unitImg = "images/sys-img/papel-box.png";
+						} else {
+							unitImg = "images/sys-img/wooden-box.png";
+						}
+
+						let isDefaultImage = !product.image || product.image.trim() === "";
+						const productImg = isDefaultImage
+							? unitImg
+							: `images/products/${product.image}`;
+
+						let imageClass = isDefaultImage ? "grayscale-img" : "";
+					
+						productsHtml = `
+							<tr valign="baseline" class="form_height">
+								<td width="5%" align="center" valign="top">
+									<p class="mini-title">Qty</p>
+									${product.quantity}
+								</td>
+								<td width="25%" align="left" valign="middle">
+									<div class="sale-product-pic">
+										<img src="${productImg}" alt="product picture" class="${imageClass}" />
+									</div>
+								</td>
+								<td width="80%" align="left" valign="middle">
+									<p class="mini-title">Product No:</p>
+									${product.name}
+									<h3><strong>${product.mark_name} - ${product.model_name ? product.model_name : ''}</strong></h3>
+									<p>${product.submodel_name ? product.submodel_name : ''}</p>
+									<p class="mini-title">Year</p>
+									<strong>${product.year}</strong>
+								</td>
+							</tr>
+						`;
+					} else {
+						sale.products.forEach(product => {
 							let unitImg = '';
+
 							if (product.sale_unit_type === "1" || product.sale_unit_type === null) {
 								unitImg = "images/sys-img/papel-box.png";
 							} else {
 								unitImg = "images/sys-img/wooden-box.png";
 							}
 
-							let isDefaultImage = !product.image || product.image.trim() === "";
+							const isDefaultImage = !product.image || product.image.trim() === "";
 							const productImg = isDefaultImage
 								? unitImg
 								: `images/products/${product.image}`;
+					
+							const imageClass = isDefaultImage ? "grayscale-img" : "";
 
-							let imageClass = isDefaultImage ? "grayscale-img" : "";
-						
-							productsHtml = `
+							productsHtml += `
 								<tr valign="baseline" class="form_height">
-									<td width="5%" align="center" valign="top">
-										<p class="mini-title">Qty</p>
+									<td width="3%" align="center" valign="middle">
+										<p class="mini-title">${window.i18n.qty}</p>
 										${product.quantity}
 									</td>
-									<td width="25%" align="left" valign="middle">
-										<div class="sale-product-pic">
+									<td width="15%" align="left" valign="middle">
+										<div class="sale-list-product-pic">
 											<img src="${productImg}" alt="product picture" class="${imageClass}" />
 										</div>
 									</td>
-									<td width="80%" align="left" valign="middle">
-										<p class="mini-title">Product No:</p>
-										${product.name}
-										<h3><strong>${product.mark_name} - ${product.model_name ? product.model_name : ''}</strong></h3>
-										<p>${product.submodel_name ? product.submodel_name : ''}</p>
-										<p class="mini-title">Year</p>
+									<td width="40%" align="left" valign="middle">
+										<h3 style="margin: 0; padding: 0;"><strong>${product.mark_name} - ${product.model_name ? product.model_name : ''}</strong></h3>
+										<p style="margin: 0; padding: 0;">${product.submodel_name ? product.submodel_name : ''}</p>
+									</td>
+									<td width="10%" align="left" valign="middle">
+										<p class="mini-title">${window.i18n.year}</p>
 										<strong>${product.year}</strong>
+									</td>
+									<td width="12%" align="left" valign="middle">
+										<p class="mini-title">${window.i18n.price}</p>
+										<strong>${product.price}</strong>
+									</td>
+									<td width="20%" align="left" valign="middle">
+										<p class="mini-title">${window.i18n.form_name}:</p>
+										${product.name}
 									</td>
 								</tr>
 							`;
-						} else {
-							sale.products.forEach(product => {
-								let unitImg = '';
-
-								if (product.sale_unit_type === "1" || product.sale_unit_type === null) {
-									unitImg = "images/sys-img/papel-box.png";
-								} else {
-									unitImg = "images/sys-img/wooden-box.png";
-								}
-
-								const isDefaultImage = !product.image || product.image.trim() === "";
-								const productImg = isDefaultImage
-									? unitImg
-									: `images/products/${product.image}`;
-						
-								const imageClass = isDefaultImage ? "grayscale-img" : "";
-
-								productsHtml += `
-									<tr valign="baseline" class="form_height">
-										<td width="3%" align="center" valign="middle">
-											<p class="mini-title">${window.i18n.qty}</p>
-											${product.quantity}
-										</td>
-										<td width="15%" align="left" valign="middle">
-											<div class="sale-list-product-pic">
-												<img src="${productImg}" alt="product picture" class="${imageClass}" />
-											</div>
-										</td>
-										<td width="40%" align="left" valign="middle">
-											<h3 style="margin: 0; padding: 0;"><strong>${product.mark_name} - ${product.model_name ? product.model_name : ''}</strong></h3>
-											<p style="margin: 0; padding: 0;">${product.submodel_name ? product.submodel_name : ''}</p>
-										</td>
-										<td width="10%" align="left" valign="middle">
-											<p class="mini-title">${window.i18n.year}</p>
-											<strong>${product.year}</strong>
-										</td>
-										<td width="12%" align="left" valign="middle">
-											<p class="mini-title">${window.i18n.price}</p>
-											<strong>${product.price}</strong>
-										</td>
-										<td width="20%" align="left" valign="middle">
-											<p class="mini-title">${window.i18n.form_name}:</p>
-											${product.name}
-										</td>
-									</tr>
-								`;
-							});
-						}
-
-						row.innerHTML = `
-						<table width="100%" style="border-bottom: 1px solid var(--border-light);" align="center" cellspacing="0">
-							<tr valign="baseline" class="form_height">
-								<td width="10%" align="left" valign="middle">
-									<p class="mini-title">Ord. No:</p>
-									${sale.ord_no}
-								</td>
-								<td width="87%" align="center" valign="middle"></td>
-								<td width="3%" align="center" valign="middle">
-									<div class="sale-menu">
-										<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
-									</div>
-								</td>
-							</tr>
-						</table>
-						<div class="flex" style="width: 100%; margin-top: 5px;">
-							<div style="width: 30%;">
-								<table width="100%" align="center" cellspacing="0">
-									<tr valign="baseline" class="form_height">
-										<td width="30%" align="left" valign="middle">
-											<div class="sale-profile">
-												<img src="${customerImg}" alt="profile picture">
-											</div>
-										</td>
-										<td width="70%" align="left" valign="middle">
-											<h3><strong>${sale.customer.full_name}</strong></h3>
-											<p class="mini-title">${sale.customer.document_type}:</p>
-											${sale.customer.document_no}<br><br>
-											<p class="mini-title">${window.i18n.phone}:</p>
-											${sale.customer.phone}
-										</td>
-									</tr>
-								</table>
-							</div>
-							<table width="40%" style="border-left: 1px solid var(--border-light); border-right: 1px solid var(--border-light);" align="center" cellspacing="0">
-								${productsHtml}
-							</table>
-							<div style="width: 30%;">
-								<table width="100%" align="center" cellspacing="0">
-									<tr valign="baseline" class="form_height">
-										<td colspan="2" style="padding-left: 7px;" align="left" valign="middle"><strong>${window.i18n.method_of_payment}</strong></td>
-									</tr>
-									<tr valign="baseline" class="form_height">
-										<td width="35%" align="right">${window.i18n.price} :</td><td width="65%" style="padding-left: 5px;">${sale.price_sum}</td>
-									</tr>
-									<tr valign="baseline" class="form_height">
-										<td align="right">${window.i18n.initial} :</td><td style="padding-left: 5px;">${sale.initial}</td>
-									</tr>
-									<tr valign="baseline" class="form_height">
-										<td align="right">${window.i18n.delivery_date} :</td><td style="padding-left: 5px;">${sale.delivery_date}</td>
-									</tr>
-									<tr valign="baseline" class="form_height">
-										<td align="right">${window.i18n.remaining} :</td><td style="padding-left: 5px;">${sale.remaining}</td>
-									</tr>
-									<tr valign="baseline" class="form_height">
-										<td align="right">${window.i18n.interest} :</td><td style="padding-left: 5px;">${sale.total_interest}</td>
-									</tr>
-									<tr valign="baseline" class="form_height">
-										<td align="right">${window.i18n.installments_month} :</td><td style="padding-left: 5px;">${sale.no_installments} / ${sale.payments}</td>
-									</tr>
-									<tr valign="baseline" class="form_height">
-										<td align="right">${window.i18n.payment_date} :</td><td style="padding-left: 5px;">${paymentDateFormatted}</td>
-									</tr>
-									<tr valign="baseline" class="form_height">
-										<td align="right">${window.i18n.due} :</td><td style="padding-left: 5px;">${sale.due}</td>
-									</tr>
-								</table>
-							</div>
-						</div>`;
-
-						salesContainer.appendChild(row);
-
-						const salesMenuBtn = row.querySelector('.sale-menu');
-						salesMenuBtn.addEventListener('click', () => {
-							openEditSalesForm(sale.sales_id);
-
-							handlePopupClose("sale-options", ".formular-frame", []);
 						});
-					});
-				} else {
-					salesContainer.innerHTML = `
-						<p class="isNotLinkedToCompany hidden" style="text-align: center; color: var(--warning-orange);">To activate this section you must complete the company details <a href="profile.php">here.</a></p>
-						<p style="text-align:center;">No sales found.</p>
-					`;
-				}
-			} catch (err) {
-				console.error("Error loading sales:", err);
-				salesContainer.innerHTML = `<p style="text-align:center;">Error loading sales</p>`;
-			}
-		}
+					}
 
+					row.innerHTML = `
+					<table width="100%" style="border-bottom: 1px solid var(--border-light);" align="center" cellspacing="0">
+						<tr valign="baseline" class="form_height">
+							<td width="10%" align="left" valign="middle">
+								<p class="mini-title">Ord. No:</p>
+								${sale.ord_no}
+							</td>
+							<td width="87%" align="center" valign="middle"></td>
+							<td width="3%" align="center" valign="middle">
+								<div class="sale-menu">
+									<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
+								</div>
+							</td>
+						</tr>
+					</table>
+					<div class="flex" style="width: 100%; margin-top: 5px;">
+						<div style="width: 30%;">
+							<table width="100%" align="center" cellspacing="0">
+								<tr valign="baseline" class="form_height">
+									<td width="30%" align="left" valign="middle">
+										<div class="sale-profile">
+											<img src="${customerImg}" alt="profile picture">
+										</div>
+									</td>
+									<td width="70%" align="left" valign="middle">
+										<h3><strong>${sale.customer.full_name}</strong></h3>
+										<p class="mini-title">${sale.customer.document_type}:</p>
+										${sale.customer.document_no}<br><br>
+										<p class="mini-title">${window.i18n.phone}:</p>
+										${sale.customer.phone}
+									</td>
+								</tr>
+							</table>
+						</div>
+						<table width="40%" style="border-left: 1px solid var(--border-light); border-right: 1px solid var(--border-light);" align="center" cellspacing="0">
+							${productsHtml}
+						</table>
+						<div style="width: 30%;">
+							<table width="100%" align="center" cellspacing="0">
+								<tr valign="baseline" class="form_height">
+									<td colspan="2" style="padding-left: 7px;" align="left" valign="middle"><strong>${window.i18n.method_of_payment}</strong></td>
+								</tr>
+								<tr valign="baseline" class="form_height">
+									<td width="35%" align="right">${window.i18n.price} :</td><td width="65%" style="padding-left: 5px;">${sale.price_sum}</td>
+								</tr>
+								<tr valign="baseline" class="form_height">
+									<td align="right">${window.i18n.initial} :</td><td style="padding-left: 5px;">${sale.initial}</td>
+								</tr>
+								<tr valign="baseline" class="form_height">
+									<td align="right">${window.i18n.delivery_date} :</td><td style="padding-left: 5px;">${sale.delivery_date}</td>
+								</tr>
+								<tr valign="baseline" class="form_height">
+									<td align="right">${window.i18n.remaining} :</td><td style="padding-left: 5px;">${sale.remaining}</td>
+								</tr>
+								<tr valign="baseline" class="form_height">
+									<td align="right">${window.i18n.interest} :</td><td style="padding-left: 5px;">${sale.total_interest}</td>
+								</tr>
+								<tr valign="baseline" class="form_height">
+									<td align="right">${window.i18n.installments_month} :</td><td style="padding-left: 5px;">${sale.no_installments} / ${sale.payments}</td>
+								</tr>
+								<tr valign="baseline" class="form_height">
+									<td align="right">${window.i18n.payment_date} :</td><td style="padding-left: 5px;">${paymentDateFormatted}</td>
+								</tr>
+								<tr valign="baseline" class="form_height">
+									<td align="right">${window.i18n.due} :</td><td style="padding-left: 5px;">${sale.due}</td>
+								</tr>
+							</table>
+						</div>
+					</div>`;
+
+					salesContainer.appendChild(row);
+
+					const salesMenuBtn = row.querySelector('.sale-menu');
+					salesMenuBtn.addEventListener('click', () => {
+						openEditSalesForm(sale.sales_id);
+
+						handlePopupClose("sale-options", ".formular-frame", []);
+					});
+				});
+			} else {
+				salesContainer.innerHTML = `
+					<p class="isNotLinkedToCompany hidden" style="text-align: center; color: var(--warning-orange);">To activate this section you must complete the company details <a href="profile.php">here.</a></p>
+					<p style="text-align:center;">No sales found.</p>
+				`;
+			}
+		} catch (err) {
+			console.error("Error loading sales:", err);
+			salesContainer.innerHTML = `<p style="text-align:center;">Error loading sales</p>`;
+		}
+	}
+
+	if (salesContainer) {
 		searchSalesField?.addEventListener('keyup', fetchAndRenderSales);
 		fetchAndRenderSales();
 	}
@@ -226,37 +229,78 @@ document.addEventListener("DOMContentLoaded", async function () {
 	// 📌 script para add sale popup
 	let addSaleBtn = document.getElementById('add-sale-btn');
 	if (addSaleBtn) {
-		addSaleBtn.addEventListener('click', function (e) {
-			e.preventDefault();
+		addSaleBtn.addEventListener('click', async function (e) {
+				e.preventDefault();
 
-			scrollToTopIfNeeded();
+				try {
+					/*
+					* Antes de abrir el formulario,
+					* comprobar que exista al menos un cliente.
+					*/
+					const response = await fetch('api/get_customers.php', {
+							method: 'GET',
+							headers: {Accept: 'application/json'}
+					});
 
-			const addSaleForm = document.getElementById('add-sale-form');
-			const popupContent = addSaleForm.querySelector('.formular-big-frame');
+					const data = await response.json();
 
-			if (addSaleForm && popupContent) {
-				addSaleForm.style.display = 'block';
-				addSaleForm.style.opacity = '0';
-				addSaleForm.style.transition = 'opacity 0.5s ease';
-				setTimeout(() => {
-					addSaleForm.style.opacity = '1';
-				}, 10);
+					const hasCustomers =
+						data.success &&
+						Array.isArray(data.data) &&
+						data.data.length > 0;
 
-				popupContent.style.transform = 'scale(0.7)';
-				popupContent.style.opacity = '0';
-				popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-				setTimeout(() => {
-					popupContent.style.transform = 'scale(1)';
-					popupContent.style.opacity = '1';
-				}, 50);
+					if (!hasCustomers) {
+						showConfirmModal(
+							'Customer required',
+							'You need to create a customer before recording a sale.',
+							() => {
+								window.location.href =
+									localizedPath('customers') +
+									'?open=create-customer';
+							}
+						);
+
+						return;
+					}
+
+					/*
+					* Hay clientes:
+					* abrir formulario normalmente.
+					*/
+					scrollToTopIfNeeded();
+
+					const addSaleForm = document.getElementById('add-sale-form');
+					const popupContent = addSaleForm?.querySelector('.formular-big-frame');
+
+					if (addSaleForm && popupContent) {
+						addSaleForm.style.display = 'block';
+						addSaleForm.style.opacity = '0';
+						addSaleForm.style.transition = 'opacity 0.5s ease';
+
+						setTimeout(() => {
+							addSaleForm.style.opacity = '1';
+						}, 10);
+
+						popupContent.style.transform = 'scale(0.7)';
+						popupContent.style.opacity = '0';
+						popupContent.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+
+						setTimeout(() => {
+							popupContent.style.transform = 'scale(1)'; 
+							popupContent.style.opacity = '1';
+						}, 50);
+					}
+
+					populatePaymentTerms('installments_month');
+
+					populateCurrencies('currency');
+
+					handlePopupClose('add-sale-form', '.formular-big-frame', []);
+				} catch (error) {
+					console.error('Error checking customers:', error);
+				}
 			}
-
-			populatePaymentTerms('installments_month');
-
-			populateCurrencies('currency');
-
-			handlePopupClose("add-sale-form", ".formular-big-frame", []);
-		});
+		);
 	}
 
 	const searchCustomerInput = document.getElementById('search-customer');
@@ -517,6 +561,175 @@ document.addEventListener("DOMContentLoaded", async function () {
 		interestInput.addEventListener('input', calculateInterest);
 	}
 
+	let firstSaleRewardState = {
+		saleId: null,
+		orderNo: ''
+	};
+
+	function openFirstSaleRewardModal(saleId, orderNo) {
+		const modal = document.getElementById('first-sale-reward-modal');
+		const orderElement = document.getElementById('first-sale-reward-order');
+		const card = modal?.querySelector('.onboarding-reward-card');
+
+		if (!modal || !card) return;
+
+		bindFirstSaleRewardButtons();
+
+		firstSaleRewardState = {
+			saleId: saleId ?? null,
+			orderNo: orderNo ?? ''
+		};
+
+		if (orderElement) {
+			orderElement.textContent =
+				orderNo ? `#${orderNo}` : '—';
+		}
+
+		modal.style.display = 'block';
+		modal.style.opacity = '0';
+
+		card.style.opacity = '0';
+		card.style.transform =
+			'translateY(20px) scale(0.96)';
+
+		requestAnimationFrame(() => {
+			modal.style.opacity = '1';
+			card.style.opacity = '1';
+			card.style.transform =
+				'translateY(0) scale(1)';
+		});
+
+		document.body.classList.add('onboarding-open');
+	}
+
+	function closeFirstSaleRewardModal() {
+		const modal =
+			document.getElementById('first-sale-reward-modal');
+
+		const card =
+			modal?.querySelector('.onboarding-reward-card');
+
+		if (!modal || !card) return;
+
+		modal.style.opacity = '0';
+		card.style.opacity = '0';
+		card.style.transform =
+			'translateY(12px) scale(0.98)';
+
+		document.body.classList.remove('onboarding-open');
+
+		setTimeout(() => {
+			modal.style.display = 'none';
+		}, 320);
+	}
+
+	async function markSaleRewardAsSeen() {
+		try {
+			const formData = new FormData();
+
+			formData.append(
+				'reward_type',
+				'first_sale'
+			);
+
+			const response = await fetch(
+				'/api/mark_onboarding_reward_seen.php',
+				{
+					method: 'POST',
+					headers: {
+						Accept: 'application/json'
+					},
+					body: formData
+				}
+			);
+
+			const data = await response.json();
+
+			return data.success === true;
+
+		} catch (error) {
+			console.error(
+				'Error marking sale reward as seen:',
+				error
+			);
+
+			return false;
+		}
+	}
+
+	function highlightCreatedSale(saleId) {
+		if (!saleId) return;
+
+		const saleRow = document.querySelector(
+			`.sale-row[data-sale-id="${saleId}"]`
+		);
+
+		if (!saleRow) return;
+
+		saleRow.scrollIntoView({
+			behavior: 'smooth',
+			block: 'center'
+		});
+
+		saleRow.classList.add(
+			'new-sale-highlight'
+		);
+
+		setTimeout(() => {
+			saleRow.classList.remove(
+				'new-sale-highlight'
+			);
+		}, 2200);
+	}
+
+	function bindFirstSaleRewardButtons() {
+		const viewSaleBtn =
+			document.getElementById('view-first-sale');
+
+		const dashboardBtn =
+			document.getElementById('go-to-dashboard');
+
+		if (
+			viewSaleBtn &&
+			viewSaleBtn.dataset.bound !== '1'
+		) {
+			viewSaleBtn.dataset.bound = '1';
+
+			viewSaleBtn.addEventListener(
+				'click',
+				async () => {
+					const saleId =
+						firstSaleRewardState.saleId;
+
+					await markSaleRewardAsSeen();
+
+					closeFirstSaleRewardModal();
+
+					setTimeout(() => {
+						highlightCreatedSale(saleId);
+					}, 340);
+				}
+			);
+		}
+
+		if (
+			dashboardBtn &&
+			dashboardBtn.dataset.bound !== '1'
+		) {
+			dashboardBtn.dataset.bound = '1';
+
+			dashboardBtn.addEventListener(
+				'click',
+				async () => {
+					await markSaleRewardAsSeen();
+
+					window.location.href =
+						localizedPath('profile');
+				}
+			);
+		}
+	}
+
 	const formAddSale = document.querySelector('#formAddSale');
 	if (formAddSale) {
 		formAddSale.addEventListener('submit', function (e) {
@@ -592,10 +805,36 @@ document.addEventListener("DOMContentLoaded", async function () {
 			
 					if (data.success) {
 						setTimeout(() => {
-							hideBanner(banner, () => {
-								window.location.href = data.redirect_url || window.location.href;
+							hideBanner(banner, async () => {
+								const shouldShowReward = data.show_reward_modal === true && data.reward_type === 'first_sale';
+								const addSaleForm = document.getElementById('add-sale-form');
+
+								if (addSaleForm) {
+									addSaleForm.style.display = 'none';
+									addSaleForm.style.opacity = '';
+								}
+
+								formAddSale.reset();
+
+								await Promise.all([
+									fetchAndRenderSales(),
+									window.refreshOnboardingProgress?.()
+								]);
+
+								if (shouldShowReward) {
+									openFirstSaleRewardModal(
+										data.sale_id,
+										data.order_no
+									);
+
+									return;
+								}
+
+								// Venta normal: dejamos la lista actualizada
+								// sin refrescar toda la página.
+								return;
 							});
-						}, 3000);
+						}, 1400);
 					} else {
 						alert("Failed: " + data.message);
 					}

@@ -131,6 +131,20 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 
+	// 📌 Abrir creación de cliente automáticamente
+	// Ejemplo: /customers?open=create-customer
+	const customerUrlParams = new URLSearchParams(window.location.search);
+
+	if (customerUrlParams.get('open') === 'create-customer' ) {
+		if (addCustomerButton && !addCustomerButton.disabled) {
+			addCustomerButton.click();
+
+			// Limpiamos el parámetro para evitar
+			// que el formulario vuelva a abrirse al refrescar.
+			window.history.replaceState({}, '', window.location.pathname);
+		}
+	}
+
 	// 📌 script para customers form menu
 	const dataTab = document.getElementById('tab-customer-data');
 	const referenceTab = document.getElementById('tab-customer-reference');

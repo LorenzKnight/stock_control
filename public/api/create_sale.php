@@ -38,6 +38,31 @@ try {
 		}
 	}
 
+	$customerId = (int)($input["customer_id"] ?? 0);
+
+	if ($customerId <= 0) {
+		throw new Exception(
+			"A customer is required to create a sale."
+		);
+	}
+
+	$customerCheck = json_decode(select_from("customers",
+		[
+			"customer_id"
+		],
+		[
+			"customer_id" => $customerId,
+			"company_id" => $companyId
+		],
+		[
+			"fetch_first" => true
+		]
+	), true);
+
+	if (empty($customerCheck["success"]) || empty($customerCheck["data"])) {
+		throw new Exception("The selected customer does not exist or does not belong to this company.");
+	}
+
 	$currency = $input["currency"] ?? "USD"; // Default to USD if not provided
 	$priceSum = number_format((float)$input["price_sum"], 2, '.', '');
 	$initial = number_format((float)$input["initial"], 2, '.', '');
@@ -56,9 +81,11 @@ try {
 
 	$newOrdNo = get_next_increment_value("sales", "ord_no", $companyId, 10000000);
 
+	$showSaleReward = false;
+
 	$saleData = [
 		"ord_no"				=> $newOrdNo,
-		"customer_id"			=> (int)$input["customer_id"],
+		"customer_id"			=> $customerId,
 		"company_id"			=> $companyId,
 		"currency"				=> $currency,
 		"price_sum"				=> $priceSum,
@@ -79,40 +106,6 @@ try {
 		throw new Exception("Failed to create sale record.");
 	}
 	$saleId = $saleInsert["id"];
-
-	// ✅ Validar si este es el primer producto creado
-	$salesCountRes = json_decode(select_from("sales", ["COUNT(*) AS total"], [
-		"company_id" => $companyId
-	], ["fetch_first" => true]), true);
-
-	$totalSales = intval($salesCountRes["data"]["total"] ?? 0);
-
-	if ($salesCountRes["success"] && $totalSales === 1) {
-		$onboardingCheck = json_decode(select_from("user_onboarding", ["user_id"], [
-			"user_id" => $userId
-		], ["fetch_first" => true]), true);
-
-		if ($onboardingCheck["success"] && !empty($onboardingCheck["data"])) {
-			// ✅ Existe: actualizar
-			$onboardingResult = json_decode(update_table("user_onboarding", [
-				"sale" => true,
-				"updated_at" => date("Y-m-d H:i:s")
-			], [
-				"user_id" => $userId
-			]), true);
-		} else {
-			// ✅ No existe: insertar nuevo registro
-			$onboardingResult = json_decode(insert_into("user_onboarding", [
-				"user_id" => $userId,
-				"sale" => true,
-				"created_at" => date("Y-m-d H:i:s")
-			]), true);
-		}
-
-		if (!$onboardingResult["success"]) {
-			error_log("Could not update onboarding sale step for user_id: " . $userId);
-		}
-	}
 
 	$tolerance = 0.01;
 	$sumFromFront = 0.0;
@@ -190,7 +183,7 @@ try {
 
 		$purchased = [
 			"sales_id"		=> $saleId,
-			"customer_id"	=> (int)$input["customer_id"],
+			"customer_id"	=> $customerId,
 			"product_id"	=> (int)$product["product_id"],
 			"quantity"		=> (int)($product["quantity"] ?? 1),
 			"price"			=> number_format($price, 2, '.', ''),
@@ -244,10 +237,120 @@ try {
 		}
 	}
 
+	// ✅ Onboarding: primera venta
+	$onboardingCheck = json_decode(select_from("user_onboarding",
+		[
+			"user_id",
+			"company",
+			"product",
+			"client",
+			"sale",
+			"sale_reward_seen"
+		],
+		[
+			"user_id" => $userId
+		],
+		[
+			"fetch_first" => true
+		]
+	), true);
+
+	if (
+		!empty($onboardingCheck["success"]) &&
+		!empty($onboardingCheck["data"])
+	) {
+		$saleCompleted =
+			$onboardingCheck["data"]["sale"] === true ||
+			$onboardingCheck["data"]["sale"] === "t" ||
+			$onboardingCheck["data"]["sale"] === 1 ||
+			$onboardingCheck["data"]["sale"] === "1";
+
+		$rewardAlreadySeen =
+			$onboardingCheck["data"]["sale_reward_seen"] === true ||
+			$onboardingCheck["data"]["sale_reward_seen"] === "t" ||
+			$onboardingCheck["data"]["sale_reward_seen"] === 1 ||
+			$onboardingCheck["data"]["sale_reward_seen"] === "1";
+
+		$companyCompleted =
+			$onboardingCheck["data"]["company"] === true ||
+			$onboardingCheck["data"]["company"] === "t" ||
+			$onboardingCheck["data"]["company"] === 1 ||
+			$onboardingCheck["data"]["company"] === "1";
+
+		$productCompleted =
+			$onboardingCheck["data"]["product"] === true ||
+			$onboardingCheck["data"]["product"] === "t" ||
+			$onboardingCheck["data"]["product"] === 1 ||
+			$onboardingCheck["data"]["product"] === "1";
+
+		$clientCompleted =
+			$onboardingCheck["data"]["client"] === true ||
+			$onboardingCheck["data"]["client"] === "t" ||
+			$onboardingCheck["data"]["client"] === 1 ||
+			$onboardingCheck["data"]["client"] === "1";
+
+		$completeOnboarding =
+			$companyCompleted &&
+			$productCompleted &&
+			$clientCompleted;
+
+		$showSaleReward =
+			!$saleCompleted &&
+			!$rewardAlreadySeen;
+
+		if (!$saleCompleted) {
+			$onboardingResult = json_decode(update_table("user_onboarding",
+				[
+					"sale" => true,
+					"onboarding_completed" => $completeOnboarding,
+					"updated_at" => date("Y-m-d H:i:s")
+				],
+				[
+					"user_id" => $userId
+				]
+			), true);
+
+			if (empty($onboardingResult["success"])) {
+				error_log(
+					"Could not update onboarding sale step for user_id: " .
+					$userId
+				);
+
+				$showSaleReward = false;
+			}
+		}
+
+	} elseif (
+		($onboardingCheck["message"] ?? "") === "No records found"
+	) {
+		$onboardingResult = json_decode(insert_into("user_onboarding",
+			[
+				"user_id" => $userId,
+				"sale" => true,
+				"sale_reward_seen" => false,
+				"onboarding_completed" => false,
+				"created_at" => date("Y-m-d H:i:s"),
+				"updated_at" => date("Y-m-d H:i:s")
+			]
+		), true);
+
+		$showSaleReward =
+			!empty($onboardingResult["success"]);
+
+		if (!$showSaleReward) {
+			error_log("Could not create onboarding sale step for user_id: " . $userId);
+		}
+
+	} else {
+		$showSaleReward = false;
+
+		error_log("Could not read onboarding sale state for user_id: " . $userId);
+	}
+
 	log_activity(
 		$userId,
 		"create_sale",
-		"Created new sale #$saleId with customer_id {$input["customer_id"]}",
+		"Created new sale #$saleId with customer_id {$customerId}",
 		"sales",
 		$saleInsert["id"] ?? null
 	);
@@ -256,7 +359,13 @@ try {
         "success" => true,
         "message" => "Sale created successfully",
         "img_gif" => "../images/sys-img/loading1.gif",
-        "redirect_url" => ""
+        "redirect_url" => "",
+		"show_reward_modal" => $showSaleReward,
+		"reward_type" => $showSaleReward
+			? "first_sale"
+			: null,
+		"sale_id" => $saleId,
+		"order_no" => $newOrdNo
     ];
 } catch (Exception $e) {
 	$response["message"] = $e->getMessage();

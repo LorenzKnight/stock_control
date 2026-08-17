@@ -334,6 +334,12 @@ $i18n = [
 		'view_my_customer' => 'View my customer',
 		'create_another_customer' => 'Create another customer',
 
+		'first_sale_reward_eyebrow' => 'First sale recorded.',
+		'first_sale_reward_title' => 'You\'ve completed your first milestone!',
+		'first_sale_reward_description' => 'Congratulations! You\'ve recorded your first sale in your inventory system. Here\'s a small reward to celebrate this achievement.',
+		'view_my_sale' => 'View my sale',
+		'go_to_dashboard' => 'Go to dashboard',
+
 		'next' => 'Next',
 		'back' => 'Back',
 		'done' => 'Done',
@@ -466,6 +472,7 @@ $i18n = [
 
 		// Global
 		'product' => 'Product',
+		'order' => 'Order',
 		'phone' => 'Phone',
 		'loading' => 'Loading...',
 		'branches' => 'Branches',
@@ -806,6 +813,12 @@ $i18n = [
 		'view_my_customer' => 'Ver mi cliente',
 		'create_another_customer' => 'Crear otro cliente',
 
+		'first_sale_reward_eyebrow' => 'Primera venta registrada.',
+		'first_sale_reward_title' => '¡Has completado tu primer hito!',
+		'first_sale_reward_description' => '¡Felicidades! Has registrado tu primera venta en tu sistema de inventario. Aquí tienes una pequeña recompensa para celebrar este logro.',
+		'view_my_sale' => 'Ver mi venta',
+		'go_to_dashboard' => 'Ir al tablero',
+
 		'next' => 'Siguiente',
 		'back' => 'Atrás',
 		'done' => 'Hecho',
@@ -938,6 +951,7 @@ $i18n = [
 
 		// Global
 		'product' => 'Producto',
+		'order' => 'Orden',
 		'phone' => 'Teléfono',
 		'loading' => 'Cargando...',
 		'branches' => 'Sucursales',
@@ -1278,6 +1292,12 @@ $i18n = [
 		'view_my_customer' => 'Visa min kund',
 		'create_another_customer' => 'Skapa en annan kund',
 
+		'first_sale_reward_eyebrow' => 'Första försäljningen registrerad.',
+		'first_sale_reward_title' => 'Du har slutfört ditt första mål!',
+		'first_sale_reward_description' => 'Grattis! Du har registrerat din första försäljning i ditt lagersystem. Här är en liten belöning för att fira detta framgångsrika steg.',
+		'view_my_sale' => 'Visa min försäljning',
+		'go_to_dashboard' => 'Gå till instrumentpanelen',
+
 		'next' => 'Nästa',
 		'back' => 'Tillbaka',
 		'done' => 'Klart',
@@ -1409,6 +1429,7 @@ $i18n = [
 
 		// Global
 		'product' => 'Produkt',
+		'order' => 'Order',
 		'phone' => 'Telefon',
 		'loading' => 'Laddar...',
 		'branches' => 'Filialer',

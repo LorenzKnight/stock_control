@@ -203,7 +203,53 @@
     </div>
 </div>
 
-<!-- Futuro: recompensa primera venta -->
+<!-- Modal de recompensa: primera venta -->
 <div class="bg-popup" id="first-sale-reward-modal">
-	<!-- contenido futuro -->
+	<div class="onboarding-reward-card">
+
+		<div class="onboarding-reward-icon" aria-hidden="true">
+			<span class="reward-icon">🎉</span>
+		</div>
+
+		<p class="onboarding-reward-eyebrow">
+			<?= tr('first_sale_reward_eyebrow') ?>
+		</p>
+
+		<h2 id="first-sale-reward-title">
+			<?= tr('first_sale_reward_title') ?>
+		</h2>
+
+		<p
+			class="onboarding-reward-description"
+			id="first-sale-reward-description"
+		>
+			<?= tr('first_sale_reward_description') ?>
+		</p>
+
+		<div class="onboarding-reward-product">
+			<span><?= tr('order') ?>:</span>
+
+			<strong id="first-sale-reward-order">
+				—
+			</strong>
+		</div>
+
+		<button
+			type="button"
+			class="onboarding-reward-primary"
+			id="view-first-sale"
+		>
+			<?= tr('view_my_sale') ?>
+			<span aria-hidden="true">→</span>
+		</button>
+
+		<button
+			type="button"
+			class="onboarding-reward-secondary"
+			id="go-to-dashboard"
+		>
+			<?= tr('go_to_dashboard') ?>
+		</button>
+
+	</div>
 </div>
