@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS packages (
 --   package_name, package_image, pack_color, package_description, package_price, members_limit, admins_limit, branch_affiliate_limit, products_limit, package_duration, package_status
 -- ) VALUES 
 -- ('Try Pack', 'try-pack.png', '#00ccff', 1,
---  NULL, 0, 0, 1, 50, 30, 1),
+--  NULL, 1, 0, 1, 50, 30, 1),
 
 -- ('Starter', 'starter-pack.png', '#00aeff', 2,
 --  15, 1, 1, 1, 100, NULL, 1),

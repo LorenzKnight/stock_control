@@ -1080,7 +1080,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}
 		
 				if (totalSpot) {
-					totalSpot.innerHTML = user.package_info && user.package_info.package_id ? user.package_info.members_limit : "0";
+					const membersLimit =
+						parseInt(
+							user.package_info?.members_limit || 0
+						);
+
+					totalSpot.innerHTML =
+						Math.max(1, membersLimit);
 				}
 
 				if (myName) {
