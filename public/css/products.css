@@ -21,7 +21,7 @@
     width: 100%;
 }
 
-@media (min-width: 601px) and (max-width: 1023px) {
+@media (min-width: 681px) and (max-width: 980px) {
     .product-card {
         width: 47%;
         height: 380px;
@@ -67,7 +67,7 @@
     }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 981px) {
     .product-card {
         width: 31%;
         height: 365px;

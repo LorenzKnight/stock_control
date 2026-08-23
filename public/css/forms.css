@@ -1,5 +1,5 @@
 /* form-modal */
-@media (orientation: landscape) and (max-height: 500px) and (max-width: 850px){
+@media (max-width: 850px) and (orientation: landscape){
     .formular_front {
         width: 340px;
         margin: 40px auto 20px;
@@ -108,7 +108,7 @@
     }
 }
 
-@media (max-width: 600px) and (orientation: portrait) {
+@media (max-width: 680px) {
     .formular_front {
         width: 340px;
         margin: 40px auto 20px;
@@ -218,7 +218,7 @@
 }
 
 /* iPad / Tablet (iPad mini → iPad Pro, portrait + landscape) */
-@media (min-width: 601px) and (max-width: 1023px) {
+@media (min-width: 681px) and (max-width: 980px) {
     .formular_front {
         width: 420px;
         margin: 40px auto 20px;
@@ -682,7 +682,7 @@
     }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 981px) {
     .formular_front {
 		width: 350px;
 		margin: 80px auto 20px;

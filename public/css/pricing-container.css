@@ -1,4 +1,4 @@
-@media (orientation: landscape) and (max-height: 500px) and (max-width: 850px) {
+@media (max-width: 850px) and (orientation: landscape) {
     .opcions-packages {
         color: var(--clr-border) !important;
         display: flex;
@@ -123,7 +123,7 @@
     }
 }
 
-@media (max-width: 600px) and (orientation: portrait) {
+@media (max-width: 680px) {
     .opcions-packages {
         color: var(--clr-border) !important;
         display: flex;
@@ -235,7 +235,7 @@
 }
 
 /* iPad / Tablet (iPad mini → iPad Pro, portrait + landscape) */
-@media (min-width: 601px) and (max-width: 1023px) {
+@media (min-width: 681px) and (max-width: 980px) {
     .opcions-packages {
         color: var(--clr-border) !important;
         display: flex;
@@ -360,7 +360,7 @@
     }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 981px) {
     .opcions-packages {
         color: var(--clr-border) !important;
         display: flex;

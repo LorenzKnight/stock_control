@@ -51,13 +51,38 @@ $i18n = [
 		'signup_message'	 => 'Create your free account and start managing your company inventory easily and securely.',
 
 		// catch container
+		'excel_eyebrow' => 'Simple inventory management software',
+
 		'excel_h2' => 'Still managing inventory with spreadsheets?',
-		'excel_p1' => 'Spreadsheets may work at the beginning, but as your business grows, they often lead to outdated stock numbers, manual errors, and wasted time.',
-		'excel_p2' => 'AllStockControl helps small businesses move from Excel and manual tracking to simple, real-time inventory control from any device.',
+
+		'excel_p1' => 'Spreadsheets can work for basic inventory tracking, but as your business grows, they often lead to outdated stock levels, manual errors, and time-consuming inventory updates.',
+
+		'excel_p2' => 'AllStockControl is a simple inventory management system for small businesses that helps you replace Excel and manual stock tracking with real-time inventory control from any device.',
+
+		'excel_cta' => 'Start managing your inventory',
+
+		'cta_no_card' => 'No credit card required',
+		'cta_cancel_anytime' => 'Cancel anytime',
+
+		'excel_before_title' => 'Inventory with Excel',
+
+		'excel_problem_1_title' => 'Outdated stock levels',
+		'excel_problem_1_desc' => 'Spreadsheet inventory can quickly become outdated when stock moves throughout the day.',
+
+		'excel_problem_2_title' => 'Manual inventory errors',
+		'excel_problem_2_desc' => 'Manual stock entries and exits increase the risk of inventory errors.',
+
+		'excel_problem_3_title' => 'Hard to scale',
+		'excel_problem_3_desc' => 'Spreadsheets become harder to manage as your products, users, and locations grow.',
+
 		'excel_li_1' => 'Know your real stock levels in real time',
-		'excel_li_2' => 'Reduce mistakes in stock entries and exits',
-		'excel_li_3' => 'Keep inventory organized across users and locations',
-		'excel_cta' => 'Start with a simpler inventory system',
+		'excel_solution_1_desc' => 'Keep inventory levels accurate and updated as stock moves.',
+
+		'excel_li_2' => 'Track stock entries and exits',
+		'excel_solution_2_desc' => 'Track inventory movements and reduce manual stock errors.',
+
+		'excel_li_3' => 'Manage inventory across users and locations',
+		'excel_solution_3_desc' => 'Keep inventory organized across multiple users and business locations.',
 
 		// descriptions container
 		'desc_1_title' => 'Cloud-based inventory control from anywhere',
@@ -536,13 +561,39 @@ $i18n = [
 		'signup_message'	 => 'Crea tu cuenta gratis y empieza a controlar el inventario de tu empresa de forma simple y segura.',
 	
 		// catch container
+		'excel_eyebrow' => 'Software de gestión de inventario',
+
 		'excel_h2' => '¿Sigues controlando tu inventario con Excel?',
-		'excel_p1' => 'Las hojas de cálculo pueden funcionar al principio, pero a medida que tu empresa crece suelen generar stock desactualizado, errores manuales y pérdida de tiempo.',
-		'excel_p2' => 'AllStockControl ayuda a pequeñas empresas a pasar de Excel y del control manual a un sistema de inventario simple y en tiempo real, accesible desde cualquier dispositivo.',
+
+		'excel_p1' => 'Las hojas de cálculo pueden funcionar para un control de inventario básico, pero a medida que tu empresa crece suelen generar niveles de stock desactualizados, errores manuales y más tiempo dedicado a actualizar el inventario.',
+
+		'excel_p2' => 'AllStockControl es un sistema de gestión de inventario para pequeñas empresas que te ayuda a sustituir Excel y el control manual por un inventario en tiempo real, accesible desde cualquier dispositivo.',
+
+		'excel_cta' => 'Empieza a gestionar tu inventario',
+
+		'cta_no_card' => 'Sin tarjeta de crédito',
+		'cta_cancel_anytime' => 'Cancela cuando quieras',
+
+		'excel_before_title' => 'Inventario con Excel',
+
+		'excel_problem_1_title' => 'Stock desactualizado',
+		'excel_problem_1_desc' => 'El inventario en hojas de cálculo puede quedar desactualizado rápidamente cuando se producen movimientos de stock.',
+
+		'excel_problem_2_title' => 'Errores manuales de inventario',
+		'excel_problem_2_desc' => 'Registrar manualmente las entradas y salidas de stock aumenta el riesgo de errores.',
+
+		'excel_problem_3_title' => 'Difícil de escalar',
+		'excel_problem_3_desc' => 'Las hojas de cálculo se vuelven más difíciles de gestionar cuando aumentan tus productos, usuarios y sucursales.',
+
 		'excel_li_1' => 'Conoce tu stock real en tiempo real',
-		'excel_li_2' => 'Reduce errores en entradas y salidas de inventario',
-		'excel_li_3' => 'Mantén el control del inventario entre usuarios y sucursales',
-		'excel_cta' => 'Empieza con un sistema de inventario más simple',
+		'excel_solution_1_desc' => 'Mantén los niveles de inventario actualizados y precisos a medida que se mueve el stock.',
+
+		'excel_li_2' => 'Controla entradas y salidas de stock',
+		'excel_solution_2_desc' => 'Registra los movimientos de inventario y reduce los errores manuales.',
+
+		'excel_li_3' => 'Gestiona el inventario entre usuarios y sucursales',
+		'excel_solution_3_desc' => 'Mantén organizado el inventario entre múltiples usuarios y ubicaciones.',
+
 
 		// descriptions container
 		'desc_1_title' => 'Control de inventario en la nube, desde cualquier lugar',
@@ -998,7 +1049,7 @@ $i18n = [
 	],
 	'sv' => [
 		'title'       => 'Lagerprogram och lagerkontroll för småföretag | AllStockControl',
-		'meta_description' => 'Har ditt företag dålig lagerkontroll? All Stock Control hjälper småföretag att följa lagersaldo i realtid, hantera flera platser och få bättre kontroll utan kalkylblad.',
+		'meta_description' => 'Enkelt lagerprogram för småföretag. Följ lagersaldo i realtid, hantera flera platser och få full lagerkontroll. Testa gratis – inget kreditkort krävs.',
 		'features_h2' => 'Viktigaste funktionerna',
 		'pricing_h2'  => 'Priser och paket',
 		'content_language' => 'sv',
@@ -1021,13 +1072,39 @@ $i18n = [
 		'signup_message'	 => 'Skapa ett gratis konto och börja kontrollera företagets lager enkelt och säkert.',
 
 		// catch container
+		'excel_eyebrow' => 'Enkelt lagerprogram för småföretag',
+
 		'excel_h2' => 'Använder du fortfarande Excel för att hålla koll på lagret?',
-		'excel_p1' => 'Kalkylblad kan fungera i början, men när företaget växer leder de ofta till felaktigt lagersaldo, manuella misstag och onödigt extraarbete.',
-		'excel_p2' => 'AllStockControl hjälper småföretag att gå från Excel och manuell hantering till ett enkelt lagerhanteringssystem i realtid, tillgängligt från valfri enhet.',
+
+		'excel_p1' => 'Kalkylblad kan fungera för enkel lagerkontroll, men när företaget växer leder de ofta till felaktigt lagersaldo, manuella misstag och onödigt extraarbete.',
+
+		'excel_p2' => 'AllStockControl är ett enkelt lagerhanteringssystem för småföretag som hjälper dig att gå från Excel och manuell lagerhantering till lagerkontroll i realtid, tillgänglig från valfri enhet.',
+
+		'excel_cta' => 'Börja hantera ditt lager enklare',
+
+		'cta_no_card' => 'Inget kreditkort krävs',
+		'cta_cancel_anytime' => 'Avsluta när du vill',
+
+		'excel_before_title' => 'Lagerhantering med Excel',
+
+		'excel_problem_1_title' => 'Felaktigt lagersaldo',
+		'excel_problem_1_desc' => 'Lagersaldot i kalkylblad kan snabbt bli inaktuellt när varor rör sig in och ut ur lagret.',
+
+		'excel_problem_2_title' => 'Manuella lagerfel',
+		'excel_problem_2_desc' => 'Manuell registrering av in- och utleveranser ökar risken för fel i lagret.',
+
+		'excel_problem_3_title' => 'Svårt att skala',
+		'excel_problem_3_desc' => 'Kalkylblad blir svårare att hantera när antalet produkter, användare och platser växer.',
+
 		'excel_li_1' => 'Se ditt verkliga lagersaldo i realtid',
-		'excel_li_2' => 'Minska fel i in- och utleveranser',
-		'excel_li_3' => 'Behåll kontrollen över lagret mellan användare och platser',
-		'excel_cta' => 'Börja med ett enklare lagerhanteringssystem',
+		'excel_solution_1_desc' => 'Håll lagersaldot uppdaterat när varor rör sig in och ut ur lagret.',
+
+		'excel_li_2' => 'Hantera in- och utleveranser',
+		'excel_solution_2_desc' => 'Registrera lagerrörelser och minska manuella fel.',
+
+		'excel_li_3' => 'Hantera lager mellan användare och platser',
+		'excel_solution_3_desc' => 'Håll lagret organiserat mellan flera användare och platser.',
+
 
 		// descriptions container
 		'desc_1_title' => 'Molnbaserad lagerkontroll – var du än är',

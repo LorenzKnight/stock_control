@@ -26,7 +26,7 @@
     color: var(--clr-neutral-dark);
 }
 
-@media (min-width: 601px) and (max-width: 1023px) {
+@media (min-width: 681px) and (max-width: 980px) {
 	.notification-detail-card {
 		width: 335px;
 		background-color: var(--clr-white);
@@ -63,7 +63,7 @@
 	}
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 981px) {
 	.notification-detail-card {
 		width: 96%;
 		background-color: var(--clr-white);

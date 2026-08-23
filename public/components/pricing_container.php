@@ -1,7 +1,7 @@
 <div id="pricing-container">
 	<div class="container">
 		<div class="title">
-			<p class="pricing-title"><?= htmlspecialchars(tr('pricing_title_main')) ?></p>
+			<h2 class="pricing-title"><?= htmlspecialchars(tr('pricing_title_main')) ?></h2>
 		</div>
 		<div class="subtitle">
 			<p><?= htmlspecialchars(tr('pricing_subtitle')) ?></p>

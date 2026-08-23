@@ -1,4 +1,4 @@
-@media (orientation: landscape) and (max-height: 500px) and (max-width: 850px) {
+@media (max-width: 850px) and (orientation: landscape) {
 	footer {
 		background-color: var(--main-bg-dark-blue);
 		color: white;
@@ -124,7 +124,7 @@
 	}
 }
 
-@media (max-width: 600px) and (orientation: portrait) {
+@media (max-width: 680px) {
 	footer {
 		background-color: var(--main-bg-dark-blue);
 		color: white;
@@ -251,7 +251,7 @@
 }
 
 /* iPad / Tablet (iPad mini → iPad Pro, portrait + landscape) */
-@media (min-width: 601px) and (max-width: 1023px) {
+@media (min-width: 681px) and (max-width: 980px) {
 	footer {
 		background-color: var(--main-bg-dark-blue);
 		color: white;
@@ -377,7 +377,7 @@
 	}
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 981px) {
 	footer {
 		background-color: var(--main-bg-dark-blue);
 		color: white;

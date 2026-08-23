@@ -1,4 +1,4 @@
-@media (orientation: landscape) and (max-height: 500px) and (max-width: 850px) {
+@media (max-width: 850px) and (orientation: landscape) {
     .button-style-agree {
         width: 95%;
         background: var(--agree-blue); 
@@ -421,7 +421,7 @@
     }
 }
 
-@media (max-width: 600px) and (orientation: portrait) {
+@media (max-width: 680px) {
     .button-style-agree {
         width: 95%;
         background: var(--agree-blue); 
@@ -845,7 +845,7 @@
 }
 
 /* iPad / Tablet (iPad mini → iPad Pro, portrait + landscape) */
-@media (min-width: 601px) and (max-width: 1023px) {
+@media (min-width: 681px) and (max-width: 980px) {
     .button-style-agree {
         width: 95%;
         background: var(--agree-blue); 
@@ -1268,7 +1268,7 @@
     }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 981px) {
     .button-style-agree {
         width: 95%;
         background: var(--agree-blue); 

@@ -369,6 +369,7 @@ try {
 		"message" => "Company info {$action} successfully!",
 		"img_gif" => "../images/sys-img/loading1.gif",
 		"redirect_url" => "",
+		"action" => $action,
 		"show_reward_modal" => $showCompanyReward,
 		"reward_type" => $showCompanyReward
 			? "first_company"
