@@ -1192,40 +1192,73 @@ function buildEmailTemplate(string $content): string
     ";
 }
 
-function tooManyEmailsFromIP(string $ip): bool
+function tooManyEmailsFromIP(string $ip, string $context = 'default'): bool
 {
     $maxAttempts = 3;
     $windowSeconds = 3600; // 1 hora
+
     $dir = __DIR__ . '/rate_limits';
 
     if (!is_dir($dir)) {
         mkdir($dir, 0755, true);
     }
 
-    $key = md5($ip);
-    $file = "$dir/$key.json";
-    $now = time();
+    /*
+     * La clave combina IP + contexto.
+     *
+     * Así el límite del formulario de contacto
+     * no interfiere con otros posibles usos.
+     */
+    $key = hash(
+        'sha256',
+        $context . '|' . $ip
+    );
 
+    $file = $dir . '/' . $key . '.json';
+
+    $now = time();
     $attempts = [];
 
     if (file_exists($file)) {
-        $attempts = json_decode(file_get_contents($file), true) ?? [];
-        // limpiar intentos viejos
-        $attempts = array_filter(
-            $attempts,
-            fn($t) => ($now - $t) <= $windowSeconds
+        $contents = file_get_contents($file);
+
+        if ($contents !== false) {
+            $decoded = json_decode(
+                $contents,
+                true
+            );
+
+            if (is_array($decoded)) {
+                $attempts = $decoded;
+            }
+        }
+
+        // Eliminar intentos fuera de la ventana de tiempo.
+        $attempts = array_values(
+            array_filter(
+                $attempts,
+                static fn($timestamp) =>
+                    is_numeric($timestamp) &&
+                    ($now - (int)$timestamp) <= $windowSeconds
+            )
         );
     }
 
+    // Si ya llegó al máximo, no registramos otro intento.
     if (count($attempts) >= $maxAttempts) {
-        return true; // 🚫 bloquear
+        return true;
     }
 
-    // registrar intento
+    // Registrar intento permitido.
     $attempts[] = $now;
-    file_put_contents($file, json_encode($attempts));
 
-    return false; // ✅ permitir
+    file_put_contents(
+        $file,
+        json_encode($attempts),
+        LOCK_EX
+    );
+
+    return false;
 }
 
 

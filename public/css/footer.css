@@ -421,6 +421,7 @@
 	}
 
 	.contact-us form {
+		position: relative;
 		display: none;
 		flex-direction: column;
 		width: 100%;
@@ -439,7 +440,9 @@
 		background-color: transparent;
 		border: 1px solid var(--cancel-red);
 		position: absolute;
-		top: 20px;
+		top: 10px;
+		left: 0px;
+		z-index: 20;
 		color: var(--cancel-red);
 		font-size: 20px;
 		cursor: pointer;

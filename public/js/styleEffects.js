@@ -92,31 +92,55 @@ document.addEventListener("DOMContentLoaded", async function () {
 	const contactBox = document.getElementById('contactBox');
 	let originalImg = null;
 	if (contactBox) {
-		contactBox.addEventListener('click', function () {
+		contactBox.addEventListener('click', function (e) {
+			// ✅ Cerrar formulario
+			const closeBtn = e.target.closest('#closeContactForm');
+			if (closeBtn) {
+				e.preventDefault();
+				e.stopPropagation();
+
+				contactBox.classList.remove('expanded');
+
+				const form = contactBox.querySelector('#contactForm');
+
+				if (form) {
+					form.style.opacity = '0';
+
+					setTimeout(() => {
+						form.style.display = 'none';
+					}, 200);
+				}
+
+				if (originalImg) {
+					contactBox.prepend(originalImg);
+					originalImg = null;
+				}
+
+				return;
+			}
+
+			// ✅ Abrir formulario
 			if (!contactBox.classList.contains('expanded')) {
 				const img = contactBox.querySelector('img');
-				if (img) { originalImg = img.cloneNode(true); img.remove(); }
+
+				if (img) {
+					originalImg = img.cloneNode(true);
+					img.remove();
+				}
 
 				contactBox.classList.add('expanded');
+
 				const form = contactBox.querySelector('form');
+
 				if (form) {
 					form.style.display = 'flex';
-					setTimeout(() => { form.style.opacity = 1; }, 10);
+
+					setTimeout(() => {
+						form.style.opacity = '1';
+					}, 10);
 				}
 			}
 		});
-
-		const closeBtn = document.getElementById('closeContactForm');
-		if (closeBtn) {
-			closeBtn.addEventListener('click', function (e) {
-				e.preventDefault();
-				e.stopPropagation();
-				contactBox.classList.remove('expanded');
-				const form = contactBox.querySelector('form');
-				if (form) { form.style.display = 'none'; form.style.opacity = 0; }
-				if (originalImg) { contactBox.prepend(originalImg); originalImg = null; }
-			});
-		}
 	}
 
 	// ############################ FUNCTIONS ############################
