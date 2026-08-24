@@ -42,6 +42,7 @@
 	}
 
 	.contact-us form {
+		position: relative;
 		display: none;
 		flex-direction: column;
 		width: 100%;
@@ -61,6 +62,8 @@
 		border: 1px solid var(--cancel-red);
 		position: absolute;
 		top: 20px;
+		left: 0px;
+		z-index: 20;
 		color: var(--cancel-red);
 		font-size: 20px;
 		cursor: pointer;
@@ -87,6 +90,22 @@
 	.contact-us.expanded form {
 		display: flex;
 		opacity: 1;
+	}
+
+	.contact-hp {
+		position: absolute;
+		left: -9999px;
+		top: auto;
+
+		width: 1px;
+		height: 1px;
+
+		overflow: hidden;
+	}
+
+	.contact-hp input {
+		width: 1px;
+		height: 1px;
 	}
 
 	/* SEO Links Section */
@@ -168,6 +187,7 @@
 	}
 
 	.contact-us form {
+		position: relative;
 		display: none;
 		flex-direction: column;
 		width: 100%;
@@ -187,6 +207,8 @@
 		border: 1px solid var(--cancel-red);
 		position: absolute;
 		top: 20px;
+		left: 0px;
+		z-index: 20;
 		color: var(--cancel-red);
 		font-size: 20px;
 		cursor: pointer;
@@ -213,6 +235,22 @@
 	.contact-us.expanded form {
 		display: flex;
 		opacity: 1;
+	}
+
+	.contact-hp {
+		position: absolute;
+		left: -9999px;
+		top: auto;
+
+		width: 1px;
+		height: 1px;
+
+		overflow: hidden;
+	}
+
+	.contact-hp input {
+		width: 1px;
+		height: 1px;
 	}
 
 	/* SEO Links Section */
@@ -295,6 +333,7 @@
 	}
 
 	.contact-us form {
+		position: relative;
 		display: none;
 		flex-direction: column;
 		width: 100%;
@@ -314,6 +353,8 @@
 		border: 1px solid var(--cancel-red);
 		position: absolute;
 		top: 20px;
+		left: 0px;
+		z-index: 20;
 		color: var(--cancel-red);
 		font-size: 20px;
 		cursor: pointer;
@@ -340,6 +381,22 @@
 	.contact-us.expanded form {
 		display: flex;
 		opacity: 1;
+	}
+
+	.contact-hp {
+		position: absolute;
+		left: -9999px;
+		top: auto;
+
+		width: 1px;
+		height: 1px;
+
+		overflow: hidden;
+	}
+
+	.contact-hp input {
+		width: 1px;
+		height: 1px;
 	}
 
 	/* SEO Links Section */
@@ -469,6 +526,22 @@
 	.contact-us.expanded form {
 		display: flex;
 		opacity: 1;
+	}
+
+	.contact-hp {
+		position: absolute;
+		left: -9999px;
+		top: auto;
+
+		width: 1px;
+		height: 1px;
+
+		overflow: hidden;
+	}
+
+	.contact-hp input {
+		width: 1px;
+		height: 1px;
 	}
 
 	/* SEO Links Section */

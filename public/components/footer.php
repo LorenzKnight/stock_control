@@ -93,8 +93,19 @@
 					</td>
 				</tr>
 			</table>
-			<!-- Honeypot field for spam prevention -->
-			<input type="text" name="company" style="display:none">
+			<div class="contact-hp" aria-hidden="true">
+				<label for="contact-company">
+					Company website
+				</label>
+
+				<input
+					type="text"
+					id="contact-company"
+					name="company"
+					tabindex="-1"
+					autocomplete="off"
+				>
+			</div>
 		</form>
 	</div>
 </footer>
