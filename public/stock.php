@@ -2,6 +2,27 @@
 <?php include('logic/mini_language_switcher.php'); ?>
 <?php include('logic/slug.php'); ?>
 
+<?php
+/**
+ * Variables provided by:
+ * - mini_language_switcher.php
+ * - slug.php
+ *
+ * @var string $lang
+ * @var string $metaTitle
+ * @var string $metaDesc
+ * @var string $canon
+ */
+?>
+
+<?php
+// Asset versions
+$stylesVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/css/styles.css');
+$functionsVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/functions.js');
+$actionsVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/actions.js');
+$styleEffectsVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/styleEffects.js');
+?>
+
 <!DOCTYPE html>
 <html class="no-js" lang="<?= htmlspecialchars($lang) ?>">
 
@@ -27,9 +48,9 @@
 	<meta property="og:url" content="<?= htmlspecialchars($canon) ?>">
 	<meta property="og:image" content="https://allstockcontrol.com/images/sys-img/asc-favicon.png">
 
-	<link rel="stylesheet" href="/css/styles.css">
+	<link rel="stylesheet" href="/css/styles.css?v=<?= $stylesVersion ?>">
 
-	<script defer src="/js/functions.js"></script>
+	<script defer src="/js/functions.js?v=<?= $functionsVersion ?>"></script>
 	<script>
 		window.APP_LANG = "<?= htmlspecialchars($lang) ?>";
 		window.APP_LANG_FROM_URL = <?= in_array(substr(trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'), 0, 2), ['en','es','sv'], true) ? 'true' : 'false' ?>;
@@ -63,8 +84,8 @@
 		gtag('config', 'G-0WS3W1169B');
 	</script>
 
-	<script defer src="/js/actions.js"></script>
-	<script defer src="/js/styleEffects.js"></script>
+	<script defer src="/js/actions.js?v=<?= $actionsVersion ?>"></script>
+	<script defer src="/js/styleEffects.js?v=<?= $styleEffectsVersion ?>"></script>
 </head>
 
 <body>

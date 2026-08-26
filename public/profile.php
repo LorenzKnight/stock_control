@@ -18,6 +18,15 @@ $isLocalHost = (
 $isProduction = function_exists('isProductionEnv') ? isProductionEnv() : (!$isLocalHost);
 
 $stripeJsSrc = $isProduction ? 'https://js.stripe.com/v3/' : 'http://js.stripe.com/v3/';
+
+// Asset versions
+$stylesVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/css/styles.css');
+$functionsVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/functions.js');
+$subscriptionsVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/subscriptions.js');
+$actionsVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/actions.js');
+$realtimeVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/realtimeClient.js');
+$checkPermissionVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/checkPermission.js');
+$paymentMessageVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/logic/payment_message.php');
 ?>
 
 <!DOCTYPE html>
@@ -30,23 +39,23 @@ $stripeJsSrc = $isProduction ? 'https://js.stripe.com/v3/' : 'http://js.stripe.c
 	<title>All Stock Control</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="/css/styles.css">
+	<link rel="stylesheet" href="/css/styles.css?v=<?= $stylesVersion ?>">
 
 	<!-- Hotjar Tracking Code for https://allstockcontrol.com -->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.3.6/dist/driver.css">
 	<script src="https://cdn.jsdelivr.net/npm/driver.js@1.3.6/dist/driver.js.iife.js"></script>
 
-	<script defer src="/js/functions.js"></script>
+	<script defer src="/js/functions.js?v=<?= $functionsVersion ?>"></script>
 	<script src="<?= htmlspecialchars($stripeJsSrc) ?>"></script>
-	<script defer src="/js/subscriptions.js"></script>
+	<script defer src="/js/subscriptions.js?v=<?= $subscriptionsVersion ?>"></script>
 	<script>
 		window.APP_LANG = <?= json_encode($lang ?? 'en') ?>;
 		window.i18n = <?= json_encode($t ?? [], JSON_UNESCAPED_UNICODE) ?>;
 	</script>
-	<script defer src="/js/actions.js"></script>
-	<script defer src="/js/realtimeClient.js"></script>
-	<script defer src="/js/checkPermission.js"></script>
-	<script src="/logic/payment_message.php"></script>
+	<script defer src="/js/actions.js?v=<?= $actionsVersion ?>"></script>
+	<script defer src="/js/realtimeClient.js?v=<?= $realtimeVersion ?>"></script>
+	<script defer src="/js/checkPermission.js?v=<?= $checkPermissionVersion ?>"></script>
+	<script src="/logic/payment_message.php?v=<?= $paymentMessageVersion ?>"></script>
 </head>
 
 <body>

@@ -1,5 +1,15 @@
 <?php include('logic/mini_language_switcher.php'); ?>
 
+<?php
+// Asset versions
+$stylesVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/css/styles.css');
+$functionsVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/functions.js');
+$actionsVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/actions.js');
+$reportsVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/raports.js');
+$realtimeVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/realtimeClient.js');
+$checkPermissionVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/checkPermission.js');
+?>
+
 <!DOCTYPE html>
 <html class="no-js" lang="sw">
 
@@ -10,12 +20,12 @@
 	<title>All Stock Control</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="css/styles.css">
-	<script defer src="js/functions.js"></script>
-	<script defer src="js/actions.js"></script>
-    <script defer src="js/raports.js"></script>
-	<script defer src="js/realtimeClient.js"></script>
-	<script defer src="js/checkPermission.js"></script>
+	<link rel="stylesheet" href="css/styles.css?v=<?= $stylesVersion ?>">
+	<script defer src="js/functions.js?v=<?= $functionsVersion ?>"></script>
+	<script defer src="js/actions.js?v=<?= $actionsVersion ?>"></script>
+    <script defer src="js/raports.js?v=<?= $reportsVersion ?>"></script>
+	<script defer src="js/realtimeClient.js?v=<?= $realtimeVersion ?>"></script>
+	<script defer src="js/checkPermission.js?v=<?= $checkPermissionVersion ?>"></script>
 	<script src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
 
