@@ -2,7 +2,30 @@
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
-function select_from($tableName, array $columns = [], array $whereClause = [], array $options = []) : string
+function format_db_response(array $response, array $options = []): array|string
+{
+	$returnType = strtolower(trim($options['return_type'] ?? 'json'));
+
+	if ($returnType === 'array') {
+		return $response;
+	}
+
+	if ($returnType === 'json') {
+		$json = json_encode($response);
+
+		if ($json === false) {
+			return '{"success":false,"message":"Failed to encode database response as JSON"}';
+		}
+
+		return $json;
+	}
+
+	throw new InvalidArgumentException(
+		"Invalid return_type '{$returnType}'. Allowed values are 'json' or 'array'."
+	);
+}
+
+function select_from(string $tableName, array $columns = [], array $whereClause = [], array $options = []) : array|string
 {
 	global $sql;
 
@@ -11,7 +34,12 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 	}
 
 	if (empty($tableName)) {
-		return json_encode(["success" => false, "message" => "Table name is required"]);
+		return format_db_response([
+			"success" => false,
+			"message" => "Table name is required",
+			"count"   => 0,
+			"data"    => []
+		], $options);
 	}
 
 	$columnNames = empty($columns)
@@ -186,37 +214,39 @@ function select_from($tableName, array $columns = [], array $whereClause = [], a
 	$result = pg_query($sql, $query);
 
 	if (!$result) {
-		return json_encode([
+		return format_db_response([
 			"success"	=> false,
 			"message"	=> "Error executing query: " . pg_last_error($sql),
 			"query"		=> (isset($options['echo_query']) && $options['echo_query']) ? $query : null,
-			"count"		=> 0
-		]);
+			"count"		=> 0,
+			"data"		=> []
+		], $options);
 	}
 
 	if (!empty($options['fetch_first'])) {
 		$row = pg_fetch_assoc($result);
-		return json_encode([
+
+		return format_db_response([
 			"success"	=> !empty($row),
 			"message"	=> empty($row) ? "No records found" : "Record retrieved successfully",
 			"query"		=> (isset($options['echo_query']) && $options['echo_query']) ? $query : null,
 			"count"		=> !empty($row) ? 1 : 0,
 			"data"		=> $row ?: []
-		]);
+		], $options);
 	}
 
 	$data = pg_fetch_all($result) ?: [];
 
-	return json_encode([
+	return format_db_response([
 		"success"	=> !empty($data),
 		"message"	=> empty($data) ? "No records found" : "Records retrieved successfully",
 		"query"		=> (isset($options['echo_query']) && $options['echo_query']) ? $query : null,
 		"count"		=> count($data),
 		"data"		=> $data
-	]);
+	], $options);
 }
 
-function insert_into($tableName, array $queryData = [], array $options = []) : string
+function insert_into(string $tableName, array $queryData = [], array $options = []) : array|string
 {
 	global $sql;
 	if (!$sql) {
@@ -224,7 +254,10 @@ function insert_into($tableName, array $queryData = [], array $options = []) : s
 	}
 
 	if (empty($queryData)) {
-		return json_encode(["success" => false, "message" => "There is no data to insert"]);
+		return format_db_response([
+			"success" => false,
+			"message" => "There is no data to insert"
+		], $options);
 	}
 
 	$columnNames = implode(', ', array_keys($queryData));
@@ -257,30 +290,31 @@ function insert_into($tableName, array $queryData = [], array $options = []) : s
 	$result = pg_query($sql, $query);
 
 	if (!$result) {
-		return json_encode([
+		return format_db_response([
 			"success" => false,
-			"message" => pg_last_error(), // Mensaje real del error de PostgreSQL
+			"message" => pg_last_error($sql),
 			"query" => $query
-		]);
+		], $options);
 	}
 	
 	if (!empty($returningId)) {
 		$row = pg_fetch_assoc($result);
 		$insertedId = $row[$options['id']] ?? null;
-		return json_encode([
+
+		return format_db_response([
 			"success" => true,
 			"id" => $insertedId,
 			"message" => "Record inserted successfully"
-		]);
+		], $options);
 	}
 	
-	return json_encode([
+	return format_db_response([
 		"success" => true,
 		"message" => "Record inserted successfully"
-	]);
+	], $options);
 }
 
-function update_table($tableName, array $queryData = [], array $whereClause = [], array $options = []) : string
+function update_table(string $tableName, array $queryData = [], array $whereClause = [], array $options = []) : array|string
 {
 	global $sql;
 
@@ -289,18 +323,31 @@ function update_table($tableName, array $queryData = [], array $whereClause = []
 	}
 
 	if (empty($tableName)) {
-		return json_encode(["success" => false, "message" => "Table name is required", "count" => 0]);
+		return format_db_response([
+			"success" => false,
+			"message" => "Table name is required",
+			"count" => 0
+		], $options);
 	}
 
 	if (empty($queryData)) {
-		return json_encode(["success" => false, "message" => "No data to update", "count" => 0]);
+		return format_db_response([
+			"success" => false,
+			"message" => "No data to update",
+			"count" => 0
+		], $options);
 	}
 
 	if (empty($whereClause)) {
-		return json_encode(["success" => false, "message" => "Update condition is missing", "count" => 0]);
+		return format_db_response([
+			"success" => false,
+			"message" => "Update condition is missing",
+			"count" => 0
+		], $options);
 	}
 
 	$setParts = [];
+
 	foreach ($queryData as $column => $value) {
 		if ($value === "NULL" || is_null($value)) {
             $setParts[] = "$column = NULL";
@@ -332,25 +379,25 @@ function update_table($tableName, array $queryData = [], array $whereClause = []
 	$result = pg_query($sql, $query);
 
 	if (!$result) {
-		return json_encode([
+		return format_db_response([
 			"success" => false,
 			"message" => "Error executing update query",
 			"count" => 0,
 			"query" => $returnQuery
-		]);
+		], $options);
 	}
 
 	$affectedRows = pg_affected_rows($result);
 
-	return json_encode([
+	return format_db_response([
 		"success" => $affectedRows > 0,
 		"message" => $affectedRows > 0 ? "Row(s) updated successfully" : "No rows were updated",
 		"count" => $affectedRows,
 		"query" => $returnQuery
-	]);
+	], $options);
 }
 
-function delete_from(string $tableName, array $whereClause = [], array $options = []) : string
+function delete_from(string $tableName, array $whereClause = [], array $options = []) : array|string
 {
 	global $sql;
 
@@ -359,22 +406,23 @@ function delete_from(string $tableName, array $whereClause = [], array $options 
 	}
 
 	if (empty($tableName)) {
-		return json_encode([
-			"success" => false, 
+		return format_db_response([
+			"success" => false,
 			"message" => "Table name is required.",
 			"count" => 0
-		]);
+		], $options);
 	}
 
 	if (empty($whereClause)) {
-		return json_encode([
-			"success" => false, 
+		return format_db_response([
+			"success" => false,
 			"message" => "Delete condition missing.",
 			"count" => 0
-		]);
+		], $options);
 	}
 
 	$whereParts = [];
+
 	foreach ($whereClause as $column => $value) {
 		$escapedValue = is_numeric($value) ? $value : "'" . pg_escape_string($sql, $value) . "'";
 		$whereParts[] = "$column = $escapedValue";
@@ -389,16 +437,19 @@ function delete_from(string $tableName, array $whereClause = [], array $options 
 
 	$result = pg_query($sql, $query);
 	if (!$result) {
-		return json_encode(["success" => false, "message" => "Query execution failed."]);
+		return format_db_response([
+			"success" => false,
+			"message" => "Query execution failed."
+		], $options);
 	}
 
 	$affected = pg_affected_rows($result);
 
-	return json_encode([
+	return format_db_response([
 		"success"	=> true,
 		"message"	=> $affected > 0 ? "Deleted successfully." : "No record deleted.",
 		"count"		=> $affected
-	]);
+	], $options);
 }
 
 function log_activity($userId, $actionType, $description, $relatedTable = null, $relatedId = null) {
