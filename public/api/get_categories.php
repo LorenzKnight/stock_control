@@ -1,4 +1,7 @@
 <?php
+use App\Categories\CategoryRepository;
+use App\Categories\CategoryService;
+
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
@@ -11,12 +14,23 @@ $response = [
 
 try {
 	$userId = $_SESSION["sc_UserId"] ?? null;
+
 	if (!$userId) throw new Exception("User session not found.");
 
-	$userData = json_decode(select_from("users", ["parent_user", "company_id"], ["user_id" => $userId], ["fetch_first" => true]), true);
+	$userData = select_from(
+		"users",
+		["parent_user", "company_id"],
+		["user_id" => $userId],
+		[
+			"fetch_first" => true,
+			"return_type" => "array"
+		]
+	);
+
 	if (!$userData["success"] || empty($userData["data"])) {
         throw new Exception("No user data found.");
     }
+
 	$userInfo = $userData["data"];
 
 	$altUser = empty($userInfo["parent_user"] ?? null) ? $userId : $userInfo["parent_user"];
@@ -24,35 +38,22 @@ try {
 
 	$company = $_GET["company"] ?? '';
 	
-	$where = [
-		"cat_parent_sub"	=> null,
-		"sub_parent"		=> null,
-		"user_id"			=> $altUser
-	];
+	$effectiveCompanyId = !empty($company)
+		? (int)$company
+		: (int)$companyId;
 
-	if (!empty($company)) {
-		$where["company_id"] = $company;
-	} else {
-		$where["company_id"] = $companyId;
-	}
+	$repository = new CategoryRepository();
+	$service = new CategoryService($repository);
 
-	$categoriesResponse = select_from("category", [
-		"category_id",
-		"category_name"
-	], $where, [
-		"order_by" => "category_name"
-	]);
-
-	$categories = json_decode($categoriesResponse, true);
-
-	if (!$categories["success"] || empty($categories["data"])) {
-		throw new Exception("No categories available.");
-	}
+	$categories = $service->getRootCategories(
+		(int)$altUser,
+		$effectiveCompanyId
+	);
 
 	$response = [
 		"success"	=> true,
 		"message"	=> "Categories loaded successfully.",
-		"data"		=> $categories["data"]
+		"data"		=> $categories
 	];
 } catch (Exception $e) {
 	$response["message"] = $e->getMessage();
