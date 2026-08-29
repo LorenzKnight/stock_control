@@ -32,6 +32,11 @@
 /var/
 
 # =========================
+# Entorno de pruebas local
+# =========================
+/public/test-environment/
+
+# =========================
 # OS / editor (opcional pero recomendado)
 # =========================
 .DS_Store
