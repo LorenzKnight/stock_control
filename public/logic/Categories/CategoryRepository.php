@@ -35,6 +35,42 @@ class CategoryRepository
 		return $result;
 	}
 
+	public function findSubCategories(
+		int $userId,
+		int $parentCategoryId,
+		?int $companyId = null
+	): array {
+		$where = [
+			"cat_parent_sub" => $parentCategoryId,
+			"user_id"       => $userId
+		];
+
+		if ($companyId !== null) {
+			$where["company_id"] = $companyId;
+		}
+
+		$result = \select_from(
+			"category",
+			[
+				"category_id",
+				"category_name"
+			],
+			$where,
+			[
+				"order_by" => "category_name",
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"CategoryRepository expected an array response."
+			);
+		}
+
+		return $result;
+	}
+
     public function create(array $data): int
 	{
 		$result = \insert_into(

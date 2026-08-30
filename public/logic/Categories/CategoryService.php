@@ -30,6 +30,29 @@ class CategoryService
 		return $result["data"];
 	}
 
+    public function getSubCategories(
+        int $userId,
+        int $parentCategoryId,
+        ?int $companyId = null
+    ): array {
+        $result = $this->repository->findSubCategories(
+            $userId,
+            $parentCategoryId,
+            $companyId
+        );
+
+        if (
+            empty($result["success"]) ||
+            empty($result["data"])
+        ) {
+            throw new \Exception(
+                "No subcategories available for this mark."
+            );
+        }
+
+        return $result["data"];
+    }
+
     public function createCategory(
         int $userId,
         int $ownerUserId,
