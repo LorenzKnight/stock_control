@@ -34,4 +34,28 @@ class CategoryRepository
 
 		return $result;
 	}
+
+    public function create(array $data): int
+	{
+		$result = \insert_into(
+			"category",
+			$data,
+			[
+				"id" => "category_id",
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"]) ||
+			empty($result["id"])
+		) {
+			throw new \RuntimeException(
+				"Failed to insert category."
+			);
+		}
+
+		return (int)$result["id"];
+	}
 }

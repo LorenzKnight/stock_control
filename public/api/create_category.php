@@ -1,4 +1,7 @@
 <?php
+use App\Categories\CategoryRepository;
+use App\Categories\CategoryService;
+
 require_once('../logic/stock_be.php');
 header("Content-Type: application/json");
 
@@ -21,47 +24,58 @@ try {
 		throw new Exception("Access denied. You do not have permission to create data.");
 	}
 
-	$userData = json_decode(select_from("users", ["parent_user"], ["user_id" => $userId], ["fetch_first" => true]), true);
+	$userData = select_from(
+		"users",
+		["parent_user"],
+		["user_id" => $userId],
+		[
+			"fetch_first" => true,
+			"return_type" => "array"
+		]
+	);
+
 	if (!$userData["success"] || empty($userData["data"])) {
         throw new Exception("No user data found.");
     }
+
 	$userInfo = $userData["data"];
 
-	$altUser = empty($userInfo["parent_user"] ?? null) ? $userId : $userInfo["parent_user"];
+	$altUser = empty($userInfo["parent_user"] ?? null) 
+		? $userId
+		: $userInfo["parent_user"];
 
-	$companyId		= intval($_POST["company_id"] ?? '');
+	$companyId		= (int)($_POST["company_id"] ?? 0);
 	$categoryName	= trim($_POST["category_name"] ?? '');
 	$catParentSub	= trim($_POST["cat_parent_sub"] ?? '');
 	$subParent		= trim($_POST["sub_parent"] ?? '');
+	
+	$catParentSub = $catParentSub !== ''
+		? (int)$catParentSub
+		: null;
 
-	if ($categoryName === '') {
-		throw new Exception("Category name is required.");
-	}
+	$subParent = $subParent !== ''
+		? (int)$subParent
+		: null;
 
-	$data = [
-		"category_name" => $categoryName,
-		"user_id"		=> $altUser,
-		"company_id"    => $companyId,
-		"create_by"     => $userId,
-		"created_at"    => date("Y-m-d H:i:s")
-	];
+	$repository = new CategoryRepository();
+	$service = new CategoryService($repository);
 
-	if ($catParentSub !== '' && $subParent == '') {
-		$data["cat_parent_sub"] = intval($catParentSub);
-	}
+	$categoryId = $service->createCategory(
+		(int)$userId,
+		(int)$altUser,
+		$companyId,
+		$categoryName,
+		$catParentSub,
+		$subParent
+	);
 
-	if ($subParent !== '') {
-		$data["sub_parent"] = intval($subParent);
-	}
-
-	$insertResponse = insert_into("category", $data, ["id" => "category_id"]);
-	$insertResult = json_decode($insertResponse, true);
-
-	if (!$insertResult["success"]) {
-		throw new Exception("Failed to insert category.");
-	}
-
-	log_activity($userId, "create_category", "Created new category: $categoryName", "category", $insertResult["id"]);
+	log_activity(
+		$userId,
+		"create_category",
+		"Created new category: $categoryName",
+		"category",
+		$categoryId
+	);
 
 	$response = [
 		"success" => true,
@@ -80,4 +94,3 @@ try {
 
 echo json_encode($response);
 exit;
-?>

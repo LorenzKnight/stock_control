@@ -29,4 +29,42 @@ class CategoryService
 
 		return $result["data"];
 	}
+
+    public function createCategory(
+        int $userId,
+        int $ownerUserId,
+        int $companyId,
+        string $categoryName,
+        ?int $catParentSub = null,
+        ?int $subParent = null
+    ): int {
+        $categoryName = trim($categoryName);
+
+        if ($categoryName === '') {
+            throw new \InvalidArgumentException(
+                "Category name is required."
+            );
+        }
+
+        $data = [
+            "category_name" => $categoryName,
+            "user_id"       => $ownerUserId,
+            "company_id"    => $companyId,
+            "create_by"     => $userId,
+            "created_at"    => date("Y-m-d H:i:s")
+        ];
+
+        if (
+            $catParentSub !== null &&
+            $subParent === null
+        ) {
+            $data["cat_parent_sub"] = $catParentSub;
+        }
+
+        if ($subParent !== null) {
+            $data["sub_parent"] = $subParent;
+        }
+
+        return $this->repository->create($data);
+    }
 }
