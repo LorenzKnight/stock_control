@@ -53,6 +53,29 @@ class CategoryService
         return $result["data"];
     }
 
+    public function getSubModels(
+        int $userId,
+        int $parentModelId,
+        ?int $companyId = null
+    ): array {
+        $result = $this->repository->findSubModels(
+            $userId,
+            $parentModelId,
+            $companyId
+        );
+
+        if (
+            empty($result["success"]) ||
+            empty($result["data"])
+        ) {
+            throw new \Exception(
+                "No subcategories available for this mark."
+            );
+        }
+
+        return $result["data"];
+    }
+
     public function createCategory(
         int $userId,
         int $ownerUserId,

@@ -1,4 +1,7 @@
 <?php
+use App\Categories\CategoryRepository;
+use App\Categories\CategoryService;
+
 require_once('../logic/stock_be.php');
 header("Content-Type: application/json");
 
@@ -12,51 +15,59 @@ try {
 	$userId = $_SESSION["sc_UserId"] ?? null;
 	if (!$userId) throw new Exception("User session not found.");
 
-	$userData = json_decode(select_from("users", ["parent_user"], ["user_id" => $userId], ["fetch_first" => true]), true);
+	$userData = select_from(
+		"users",
+		["parent_user"],
+		["user_id" => $userId],
+		[
+			"fetch_first" => true,
+			"return_type" => "array"
+		]
+	);
+
 	if (!$userData["success"] || empty($userData["data"])) {
         throw new Exception("No user data found.");
     }
+
 	$userInfo = $userData["data"];
 
-	$altUser = empty($userInfo["parent_user"] ?? null) ? $userId : $userInfo["parent_user"];
-	$companyId = $_GET["company"] ?? '';
+	$altUser = empty($userInfo["parent_user"] ?? null) 
+		? $userId
+		: $userInfo["parent_user"];
 
-	$modelId = isset($_GET["model_id"]) ? intval($_GET["model_id"]) : null;
-	if (!$modelId || !is_numeric($modelId)) {
+	$company = trim($_GET["company"] ?? '');
+
+	$companyId = $company !== ''
+		? (int)$company
+		: null;
+
+	$parentModelId = isset($_GET["model_id"])
+		? intval($_GET["model_id"])
+		: null;
+
+	
+	if (!$parentModelId || !is_numeric($parentModelId)) {
 		throw new Exception("Invalid model ID.");
 	}
 
-	$where = [
-		"sub_parent"	=> $modelId,
-		"user_id"		=> $altUser
-	];
+	$repository = new CategoryRepository();
+	$service = new CategoryService($repository);
 
-	if (!empty($companyId)) {
-		$where["company_id"] = $companyId;
-	}
-
-	$categoriesResponse = select_from("category", [
-		"category_id",
-		"category_name"
-	], $where, [
-		"order_by" => "category_name"
-	]);
-
-	$categories = json_decode($categoriesResponse, true);
-
-	if (!$categories["success"] || empty($categories["data"])) {
-		throw new Exception("No subcategories available for this mark.");
-	}
+	$categories = $service->getSubModels(
+		(int)$altUser,
+		(int)$parentModelId,
+		$companyId
+	);
 
 	$response = [
 		"success" => true,
 		"message" => "Subcategories loaded successfully.",
-		"data" => $categories["data"]
+		"data" => $categories
 	];
+	
 } catch (Exception $e) {
 	$response["message"] = $e->getMessage();
 }
 
 echo json_encode($response);
 exit;
-?>
