@@ -49,6 +49,7 @@ class ExtraServiceRepository
 		return $result;
 	}
 
+    
     public function create(array $data): int
     {
         $result = \insert_into(
@@ -71,5 +72,98 @@ class ExtraServiceRepository
         }
 
         return (int)$result["id"];
+    }
+
+
+    public function findById(int $serviceId): ?array
+    {
+        $result = \select_from(
+            "extra_services",
+            [
+                "service_id",
+                "user_id"
+            ],
+            [
+                "service_id" => $serviceId
+            ],
+            [
+                "fetch_first" => true,
+                "return_type" => "array"
+            ]
+        );
+
+        if (!is_array($result)) {
+            throw new \RuntimeException(
+                "ExtraServiceRepository expected an array response."
+            );
+        }
+
+        if (
+            empty($result["success"]) ||
+            empty($result["data"])
+        ) {
+            return null;
+        }
+
+        return $result["data"];
+    }
+
+
+    public function findByUserAndName(
+        int $userId,
+        string $serviceName
+    ): array {
+        $result = \select_from(
+            "extra_services",
+            ["service_id"],
+            [
+                "user_id" => $userId,
+                "service_name" => $serviceName
+            ],
+            [
+                "return_type" => "array"
+            ]
+        );
+
+        if (!is_array($result)) {
+            throw new \RuntimeException(
+                "ExtraServiceRepository expected an array response."
+            );
+        }
+
+        if (
+            empty($result["success"]) ||
+            empty($result["data"])
+        ) {
+            return [];
+        }
+
+        return array_values($result["data"]);
+    }
+
+
+    public function update(
+        int $serviceId,
+        array $data
+    ): void {
+        $result = \update_table(
+            "extra_services",
+            $data,
+            [
+                "service_id" => $serviceId
+            ],
+            [
+                "return_type" => "array"
+            ]
+        );
+
+        if (
+            !is_array($result) ||
+            empty($result["success"])
+        ) {
+            throw new \RuntimeException(
+                "Failed to update extra service. Please try again."
+            );
+        }
     }
 }

@@ -75,4 +75,73 @@ class ExtraServiceService
 
         return $this->repository->create($data);
     }
+
+    public function updateExtraService(
+        int $serviceId,
+        string $serviceName,
+        string $servicePrice,
+        int $status
+    ): void {
+        $serviceName = trim($serviceName);
+        $servicePrice = trim($servicePrice);
+
+        if ($serviceId <= 0) {
+            throw new \InvalidArgumentException(
+                "Invalid or missing service ID."
+            );
+        }
+
+        if ($serviceName === '') {
+            throw new \InvalidArgumentException(
+                "Service name is required."
+            );
+        }
+
+        if (
+            $servicePrice === '' ||
+            !is_numeric($servicePrice)
+        ) {
+            throw new \InvalidArgumentException(
+                "Valid service price is required."
+            );
+        }
+
+        $existingService = $this->repository->findById(
+            $serviceId
+        );
+
+        if ($existingService === null) {
+            throw new \Exception(
+                "Service not found or already deleted."
+            );
+        }
+
+        $userId = (int)$existingService["user_id"];
+
+        $duplicates = $this->repository->findByUserAndName(
+            $userId,
+            $serviceName
+        );
+
+        foreach ($duplicates as $duplicate) {
+            if (
+                (int)$duplicate["service_id"] !== $serviceId
+            ) {
+                throw new \Exception(
+                    "This user already has an extra service with the same name."
+                );
+            }
+        }
+
+        $status = $status === 1 ? 1 : 0;
+
+        $this->repository->update(
+            $serviceId,
+            [
+                "service_name" => $serviceName,
+                "service_price" => $servicePrice,
+                "status" => $status
+            ]
+        );
+    }
 }
