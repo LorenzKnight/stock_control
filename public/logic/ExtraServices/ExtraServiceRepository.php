@@ -48,4 +48,28 @@ class ExtraServiceRepository
 
 		return $result;
 	}
+
+    public function create(array $data): int
+    {
+        $result = \insert_into(
+            "extra_services",
+            $data,
+            [
+                "id" => "service_id",
+                "return_type" => "array"
+            ]
+        );
+
+        if (
+            !is_array($result) ||
+            empty($result["success"]) ||
+            empty($result["id"])
+        ) {
+            throw new \RuntimeException(
+                "Failed to create service. Please try again."
+            );
+        }
+
+        return (int)$result["id"];
+    }
 }

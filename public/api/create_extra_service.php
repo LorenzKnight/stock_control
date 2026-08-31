@@ -1,4 +1,7 @@
 <?php
+use App\ExtraServices\ExtraServiceRepository;
+use App\ExtraServices\ExtraServiceService;
+
 require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
@@ -19,36 +22,37 @@ try {
 
     // 🔒 Autenticación por token JWT
     $authUser = requireAuth();
-    $creatorId = $authUser["user_id"];
+    $creatorId = $authUser["user_id"] ?? null;
+
+    if (!$creatorId) {
+		throw new Exception("Unauthorized access.");
+	}
 
     // 🧩 Recibir datos del formulario
-    $userId = intval($_POST["user_id"] ?? 0);
+    $userId = (int)($_POST["user_id"] ?? 0);
     $serviceName = trim($_POST["service_name"] ?? "");
-    $servicePrice = floatval($_POST["service_price"] ?? 0);
+    $servicePrice = (float)($_POST["service_price"] ?? 0);
     $status = isset($_POST["service_status"]) && $_POST["service_status"] == 1 ? 1 : 0;
 
-    // 🧠 Validaciones
-    if ($userId <= 0) throw new Exception("Invalid or missing user ID.");
-    if (empty($serviceName)) throw new Exception("Service name is required.");
-    if ($servicePrice <= 0) throw new Exception("Service price must be greater than zero.");
+    $repository = new ExtraServiceRepository();
+	$service = new ExtraServiceService($repository);
 
-    // 🧭 Insertar nuevo servicio
-    $insert = insert_into("extra_services", [
-        "user_id"       => $userId,
-        "service_name"  => $serviceName,
-        "service_price" => $servicePrice,
-        "status"        => $status,
-        "create_by"     => $creatorId,
-        "created_at"    => date("Y-m-d H:i:s")
-    ]);
-
-    $insertResult = json_decode($insert, true);
-    if (!$insertResult["success"]) {
-        throw new Exception("Failed to create service. Please try again.");
-    }
+	$serviceId = $service->createExtraService(
+		$userId,
+		(int)$creatorId,
+		$serviceName,
+		$servicePrice,
+		$status
+	);
 
     // 📝 Registrar actividad (opcional)
-    log_activity($creatorId, "create_service", "Created service: {$serviceName}", "extra_services", $insertResult["insert_id"] ?? null);
+    log_activity(
+        $creatorId,
+        "create_service",
+        "Created service: {$serviceName}",
+        "extra_services", 
+        $serviceId
+    );
 
     $response = [
         "success" => true,
