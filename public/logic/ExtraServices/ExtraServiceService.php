@@ -144,4 +144,31 @@ class ExtraServiceService
             ]
         );
     }
+
+    public function deleteExtraService(
+		int $serviceId
+	): string {
+		if ($serviceId <= 0) {
+			throw new \InvalidArgumentException(
+				"Invalid or missing service ID."
+			);
+		}
+
+		$existingService = $this->repository->findById(
+			$serviceId
+		);
+
+		if ($existingService === null) {
+			throw new \Exception(
+				"Extra service not found or already deleted."
+			);
+		}
+
+		$serviceName =
+			$existingService["service_name"] ?? "Unknown";
+
+		$this->repository->delete($serviceId);
+
+		return $serviceName;
+	}
 }

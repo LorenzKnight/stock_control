@@ -49,7 +49,7 @@ class ExtraServiceRepository
 		return $result;
 	}
 
-    
+
     public function create(array $data): int
     {
         $result = \insert_into(
@@ -81,6 +81,7 @@ class ExtraServiceRepository
             "extra_services",
             [
                 "service_id",
+                "service_name",
                 "user_id"
             ],
             [
@@ -163,6 +164,29 @@ class ExtraServiceRepository
         ) {
             throw new \RuntimeException(
                 "Failed to update extra service. Please try again."
+            );
+        }
+    }
+
+
+    public function delete(int $serviceId): void
+    {
+        $result = \delete_from(
+            "extra_services",
+            [
+                "service_id" => $serviceId
+            ],
+            [
+                "return_type" => "array"
+            ]
+        );
+
+        if (
+            !is_array($result) ||
+            empty($result["success"])
+        ) {
+            throw new \RuntimeException(
+                "Failed to delete extra service. Please try again."
             );
         }
     }

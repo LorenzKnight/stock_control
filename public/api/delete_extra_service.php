@@ -1,4 +1,7 @@
 <?php
+use App\ExtraServices\ExtraServiceRepository;
+use App\ExtraServices\ExtraServiceService;
+
 require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
@@ -23,31 +26,15 @@ try {
         throw new Exception("Unauthorized access.");
     }
 
-    $serviceId = intval($_POST["service_id"] ?? 0);
-    if ($serviceId <= 0) {
-        throw new Exception("Invalid or missing service ID.");
-    }
+    $serviceId = (int)($_POST["service_id"] ?? 0);
 
-    $check = json_decode(select_from(
-        "extra_services",
-        ["service_id", "service_name", "user_id"],
-        ["service_id" => $serviceId],
-        ["fetch_first" => true]
-    ), true);
+    $repository = new ExtraServiceRepository();
+	$service = new ExtraServiceService($repository);
 
-    if (empty($check["success"]) || empty($check["data"])) {
-        throw new Exception("Extra service not found or already deleted.");
-    }
-
-    $serviceName = $check["data"]["service_name"] ?? "Unknown";
-
-    $delete = delete_from("extra_services", ["service_id" => $serviceId]);
-    $deleteResult = json_decode($delete, true);
-
-    if (empty($deleteResult["success"]) || !$deleteResult["success"]) {
-        throw new Exception("Failed to delete extra service. Please try again.");
-    }
-
+    $serviceName = $service->deleteExtraService(
+		$serviceId
+	);
+    
     log_activity(
         $deleterId,
         "delete extra service",
