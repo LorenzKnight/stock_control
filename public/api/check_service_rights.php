@@ -1,4 +1,7 @@
 <?php
+use App\ServiceRights\ServiceRightRepository;
+use App\ServiceRights\ServiceRightService;
+
 require_once ('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
@@ -30,31 +33,17 @@ try {
 		throw new Exception("Unauthorized access. User not found or invalid token.");
 	}
 
-    if (empty($_GET["service_name"])) {
-        throw new Exception("Missing 'service_name' parameter.");
-    }
+    $serviceName = trim($_GET["service_name"] ?? "");
 
-    $serviceName = pg_escape_string($sql, $_GET["service_name"]);
+    $repository = new ServiceRightRepository();
+	$service = new ServiceRightService($repository);
 
-    $rightsResponse = select_from(
-        "service_rights",
-        ["can_access"],
-        [
-            "user_id" => $userId,
-            "service_name" => $serviceName
-        ],
-        ["fetch_first" => true]
-    );
+    $canAccess = $service->canAccessService(
+		(int)$userId,
+		$serviceName
+	);
 
-    $data = json_decode($rightsResponse, true);
-
-    if (
-        !empty($data["success"]) &&
-        $data["success"] &&
-        !empty($data["data"]) &&
-        isset($data["data"]["can_access"]) &&
-        (int)$data["data"]["can_access"] === 1
-    ) {
+    if ($canAccess) {
         $response = [
             "success" => true,
             "message" => "Access granted for service: $serviceName",
