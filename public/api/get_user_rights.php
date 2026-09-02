@@ -1,4 +1,7 @@
 <?php
+use App\ServiceRights\ServiceRightRepository;
+use App\ServiceRights\ServiceRightService;
+
 require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
@@ -23,55 +26,27 @@ try {
     // 📥 Si se envía un user_id en GET, se usa ese; si no, el del token
     $paramUserId = $_GET["user_id"] ?? $authUserId;
     $rightId = isset($_GET['right_id']) ? (int)$_GET['right_id'] : null;
-    $canAccess = isset($_GET["can_access"]) ? $_GET["can_access"] : '';
 
-    $where = [];
+    $canAccessParam = $_GET["can_access"] ?? '';
+	$canAccess = $canAccessParam !== ''
+		? (int)$canAccessParam
+		: null;
 
-    if (!empty($rightId)) {
-        $where["right_id"] = $rightId;
-    } else {
-        $where = ["user_id" => intval($paramUserId)];
+    $repository = new ServiceRightRepository();
+	$service = new ServiceRightService($repository);
 
-        if ($canAccess !== '') {
-            $where["can_access"] = intval($canAccess);
-        }
-    }
+	$rights = $service->getUserRights(
+		$paramUserId,
+		$rightId,
+		$canAccess
+	);
 
-    // 📋 Consultar derechos de servicio
-    $rightsResponse = select_from(
-        "service_rights",
-        [
-            "right_id",
-            "user_id",
-            "service_name",
-            "can_access",
-            "create_by",
-            "created_at"
-        ],
-        $where,
-        [
-            "order_by" => "right_id",
-            "order_direction" => "DESC"
-        ]
-    );
-
-    $rightsData = json_decode($rightsResponse, true) ?? [];
-
-    if (!empty($rightsData["success"]) && !empty($rightsData["data"])) {
-        $response = [
-            "success"   => true,
-            "message"   => "Service rights loaded successfully.",
-            "count"     => $rightsData["count"] ?? count($rightsData["data"]),
-            "data"      => array_values($rightsData["data"])
-        ];
-    } else {
-        $response = [
-            "success" => false,
-            "message" => "No active service rights found.",
-            "count"   => 0,
-            "data"    => []
-        ];
-    }
+	$response = [
+		"success"   => true,
+		"message"   => "Service rights loaded successfully.",
+		"count"     => count($rights),
+		"data"      => $rights
+	];
 
 } catch (Exception $e) {
     $response["message"] = $e->getMessage();

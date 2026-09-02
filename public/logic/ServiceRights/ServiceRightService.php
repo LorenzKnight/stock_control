@@ -42,4 +42,33 @@ class ServiceRightService
 		return isset($right["can_access"]) &&
 			(int)$right["can_access"] === 1;
 	}
+
+    public function getUserRights(
+        int $userId,
+        ?int $rightId = null,
+        ?int $canAccess = null
+    ): array {
+        if ($userId <= 0) {
+            throw new \InvalidArgumentException(
+                "Invalid user ID."
+            );
+        }
+
+        $result = $this->repository->findRights(
+            $userId,
+            $rightId,
+            $canAccess
+        );
+
+        if (
+            empty($result["success"]) ||
+            empty($result["data"])
+        ) {
+            throw new \Exception(
+                "No active service rights found."
+            );
+        }
+
+        return array_values($result["data"]);
+    }
 }
