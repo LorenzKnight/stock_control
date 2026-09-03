@@ -11,6 +11,7 @@ class ServiceRightRepository
 		$result = \select_from(
 			"service_rights",
 			[
+                "right_id",
 				"can_access"
 			],
 			[
@@ -81,5 +82,69 @@ class ServiceRightRepository
         }
 
         return $result;
+    }
+
+    public function create(array $data): int
+    {
+        $result = \insert_into(
+            "service_rights",
+            $data,
+            [
+                "id" => "right_id",
+                "return_type" => "array"
+            ]
+        );
+
+        if (
+            !is_array($result) ||
+            empty($result["success"]) ||
+            empty($result["id"])
+        ) {
+            throw new \RuntimeException(
+                "Failed to create user right. Please try again."
+            );
+        }
+
+        return (int)$result["id"];
+    }
+
+    public function findCollaboratorIds( //deuda arquitectónica controlada
+        int $parentUserId
+    ): array {
+        $result = \select_from(
+            "users",
+            ["user_id"],
+            [
+                "parent_user" => $parentUserId
+            ],
+            [
+                "return_type" => "array"
+            ]
+        );
+
+        if (!is_array($result)) {
+            throw new \RuntimeException(
+                "ServiceRightRepository expected an array response."
+            );
+        }
+
+        if (
+            empty($result["success"]) ||
+            empty($result["data"])
+        ) {
+            return [];
+        }
+
+        $collaboratorIds = [];
+
+        foreach ($result["data"] as $row) {
+            $collaboratorId = (int)($row["user_id"] ?? 0);
+
+            if ($collaboratorId > 0) {
+                $collaboratorIds[] = $collaboratorId;
+            }
+        }
+
+        return $collaboratorIds;
     }
 }

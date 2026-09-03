@@ -1,4 +1,7 @@
 <?php
+use App\ServiceRights\ServiceRightRepository;
+use App\ServiceRights\ServiceRightService;
+
 require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
@@ -18,89 +21,48 @@ try {
 
     $authUser = requireAuth();
     $creatorId = $authUser["user_id"];
+
     if (!$creatorId) throw new Exception("Unauthorized access.");
 
     $userId = intval($_POST["user_id"] ?? 0);
     $serviceName = trim($_POST["service_name"] ?? "");
     $canAccess = isset($_POST["can_access"]) && $_POST["can_access"] == 1 ? 1 : 0;
 
-    if ($userId <= 0) throw new Exception("Invalid or missing user ID.");
-    if (empty($serviceName)) throw new Exception("Service name is required.");
+    $repository = new ServiceRightRepository();
+	$service = new ServiceRightService($repository);
 
-    $duplicateCheck = json_decode(select_from(
-        "service_rights",
-        ["right_id"],
-        [
-            "user_id"      => $userId,
-            "service_name" => $serviceName
-        ]
-    ), true);
+	$result = $service->createUserRight(
+		$userId,
+		(int)$creatorId,
+		$serviceName,
+		$canAccess
+	);
 
-    if (!empty($duplicateCheck["success"]) && !empty($duplicateCheck["data"])) {
-        throw new Exception("This user already has a right with the same service name.");
-    }
-
-    $insert = insert_into("service_rights", [
-        "user_id"      => $userId,
-        "service_name" => $serviceName,
-        "can_access"   => $canAccess,
-        "create_by"    => $creatorId,
-        "created_at"   => date("Y-m-d H:i:s")
-    ]);
-
-    $insertResult = json_decode($insert, true);
-    if (empty($insertResult["success"]) || !$insertResult["success"]) {
-        throw new Exception("Failed to create user right. Please try again.");
-    }
+	$rightId = (int)$result["right_id"];
 
     log_activity(
         $creatorId,
         "create user right",
         "Created user right '{$serviceName}' with can_access={$canAccess}",
         "service_rights",
-        $insertResult["insert_id"] ?? null
+        $rightId
     );
 
-    $collaborators = json_decode(select_from(
-        "users",
-        ["user_id"],
-        ["parent_user" => $userId]
-    ), true);
+    foreach ($result["cloned_rights"] as $clonedRight) {
+		$collaboratorId =
+			(int)$clonedRight["user_id"];
 
-    if (!empty($collaborators["success"]) && !empty($collaborators["data"])) {
-        foreach ($collaborators["data"] as $col) {
-            $collabId = intval($col["user_id"]);
-            if ($collabId <= 0) continue;
+		$collaboratorRightId =
+			(int)$clonedRight["right_id"];
 
-            $exists = json_decode(select_from(
-                "service_rights",
-                ["right_id"],
-                [
-                    "user_id"      => $collabId,
-                    "service_name" => $serviceName
-                ],
-                ["fetch_first" => true]
-            ), true);
-
-            if (empty($exists["success"]) || empty($exists["data"])) {
-                insert_into("service_rights", [
-                    "user_id"      => $collabId,
-                    "service_name" => $serviceName,
-                    "can_access"   => $canAccess,
-                    "create_by"    => $creatorId,
-                    "created_at"   => date("Y-m-d H:i:s")
-                ]);
-
-                log_activity(
-                    $creatorId,
-                    "auto-clone user right",
-                    "Cloned right '{$serviceName}' for collaborator (user_id={$collabId}) from parent user {$userId}",
-                    "service_rights",
-                    null
-                );
-            }
-        }
-    }
+		log_activity(
+			$creatorId,
+			"auto-clone user right",
+			"Cloned right '{$serviceName}' for collaborator (user_id={$collaboratorId}) from parent user {$userId}",
+			"service_rights",
+			$collaboratorRightId
+		);
+	}
 
     $response = [
         "success" => true,

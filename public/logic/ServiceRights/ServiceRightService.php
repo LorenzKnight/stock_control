@@ -71,4 +71,85 @@ class ServiceRightService
 
         return array_values($result["data"]);
     }
+
+    public function createUserRight(
+		int $userId,
+		int $creatorId,
+		string $serviceName,
+		int $canAccess
+	): array {
+		$serviceName = trim($serviceName);
+
+		if ($userId <= 0) {
+			throw new \InvalidArgumentException(
+				"Invalid or missing user ID."
+			);
+		}
+
+		if ($serviceName === '') {
+			throw new \InvalidArgumentException(
+				"Service name is required."
+			);
+		}
+
+		$canAccess = $canAccess === 1 ? 1 : 0;
+
+		$existingRight =
+			$this->repository->findByUserAndService(
+				$userId,
+				$serviceName
+			);
+
+		if ($existingRight !== null) {
+			throw new \Exception(
+				"This user already has a right with the same service name."
+			);
+		}
+
+		$rightId = $this->repository->create([
+			"user_id"      => $userId,
+			"service_name" => $serviceName,
+			"can_access"   => $canAccess,
+			"create_by"    => $creatorId,
+			"created_at"   => date("Y-m-d H:i:s")
+		]);
+
+		$clonedRights = [];
+
+		$collaboratorIds =
+			$this->repository->findCollaboratorIds(
+				$userId
+			);
+
+		foreach ($collaboratorIds as $collaboratorId) {
+			$existingCollaboratorRight =
+				$this->repository->findByUserAndService(
+					$collaboratorId,
+					$serviceName
+				);
+
+			if ($existingCollaboratorRight !== null) {
+				continue;
+			}
+
+			$collaboratorRightId =
+				$this->repository->create([
+					"user_id"      => $collaboratorId,
+					"service_name" => $serviceName,
+					"can_access"   => $canAccess,
+					"create_by"    => $creatorId,
+					"created_at"   => date("Y-m-d H:i:s")
+				]);
+
+			$clonedRights[] = [
+				"user_id" => $collaboratorId,
+				"right_id" => $collaboratorRightId
+			];
+		}
+
+		return [
+			"right_id" => $rightId,
+			"cloned_rights" => $clonedRights
+		];
+	}
 }
