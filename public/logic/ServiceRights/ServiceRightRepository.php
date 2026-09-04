@@ -84,29 +84,72 @@ class ServiceRightRepository
         return $result;
     }
 
-    public function create(array $data): int
-    {
-        $result = \insert_into(
-            "service_rights",
-            $data,
-            [
-                "id" => "right_id",
-                "return_type" => "array"
-            ]
-        );
+	public function findById(int $rightId): ?array
+	{
+		$result = \select_from(
+			"service_rights",
+			[
+				"right_id",
+				"user_id",
+				"service_name",
+				"can_access"
+			],
+			[
+				"right_id" => $rightId
+			],
+			[
+				"fetch_first" => true,
+				"return_type" => "array"
+			]
+		);
 
-        if (
-            !is_array($result) ||
-            empty($result["success"]) ||
-            empty($result["id"])
-        ) {
-            throw new \RuntimeException(
-                "Failed to create user right. Please try again."
-            );
-        }
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"ServiceRightRepository expected an array response."
+			);
+		}
 
-        return (int)$result["id"];
-    }
+		if (
+			empty($result["success"]) ||
+			empty($result["data"])
+		) {
+			return null;
+		}
+
+		return $result["data"];
+	}
+
+	public function findAllByUserAndService(
+		int $userId,
+		string $serviceName
+	): array {
+		$result = \select_from(
+			"service_rights",
+			["right_id"],
+			[
+				"user_id" => $userId,
+				"service_name" => $serviceName
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"ServiceRightRepository expected an array response."
+			);
+		}
+
+		if (
+			empty($result["success"]) ||
+			empty($result["data"])
+		) {
+			return [];
+		}
+
+		return array_values($result["data"]);
+	}
 
     public function findCollaboratorIds( //deuda arquitectónica controlada
         int $parentUserId
@@ -147,4 +190,53 @@ class ServiceRightRepository
 
         return $collaboratorIds;
     }
+
+	public function create(array $data): int
+    {
+        $result = \insert_into(
+            "service_rights",
+            $data,
+            [
+                "id" => "right_id",
+                "return_type" => "array"
+            ]
+        );
+
+        if (
+            !is_array($result) ||
+            empty($result["success"]) ||
+            empty($result["id"])
+        ) {
+            throw new \RuntimeException(
+                "Failed to create user right. Please try again."
+            );
+        }
+
+        return (int)$result["id"];
+    }
+
+	public function update(
+		int $rightId,
+		array $data
+	): void {
+		$result = \update_table(
+			"service_rights",
+			$data,
+			[
+				"right_id" => $rightId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Failed to update user right. Please try again."
+			);
+		}
+	}
 }

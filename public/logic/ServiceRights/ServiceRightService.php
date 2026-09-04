@@ -152,4 +152,119 @@ class ServiceRightService
 			"cloned_rights" => $clonedRights
 		];
 	}
+
+	public function updateUserRight(
+		int $rightId,
+		int $editorId,
+		string $serviceName,
+		int $canAccess
+	): array {
+		$serviceName = trim($serviceName);
+
+		if ($rightId <= 0) {
+			throw new \InvalidArgumentException(
+				"Invalid or missing right ID."
+			);
+		}
+
+		if ($serviceName === '') {
+			throw new \InvalidArgumentException(
+				"Service name is required."
+			);
+		}
+
+		$canAccess = $canAccess === 1 ? 1 : 0;
+
+		$existingRight = $this->repository->findById(
+			$rightId
+		);
+
+		if ($existingRight === null) {
+			throw new \Exception(
+				"Service right not found or already deleted."
+			);
+		}
+
+		$userId = (int)$existingRight["user_id"];
+
+		$duplicates =
+			$this->repository->findAllByUserAndService(
+				$userId,
+				$serviceName
+			);
+
+		foreach ($duplicates as $duplicate) {
+			if (
+				(int)$duplicate["right_id"] !== $rightId
+			) {
+				throw new \Exception(
+					"This user already has a right with the same service name."
+				);
+			}
+		}
+
+		$this->repository->update(
+			$rightId,
+			[
+				"service_name" => $serviceName,
+				"can_access" => $canAccess
+			]
+		);
+
+		$collaboratorChanges = [];
+
+		$collaboratorIds =
+			$this->repository->findCollaboratorIds(
+				$userId
+			);
+
+		foreach ($collaboratorIds as $collaboratorId) {
+			$collaboratorRight =
+				$this->repository->findByUserAndService(
+					$collaboratorId,
+					$serviceName
+				);
+
+			if ($collaboratorRight !== null) {
+				$collaboratorRightId =
+					(int)$collaboratorRight["right_id"];
+
+				$this->repository->update(
+					$collaboratorRightId,
+					[
+						"service_name" => $serviceName,
+						"can_access" => $canAccess
+					]
+				);
+
+				$collaboratorChanges[] = [
+					"action" => "updated",
+					"user_id" => $collaboratorId,
+					"right_id" => $collaboratorRightId
+				];
+
+				continue;
+			}
+
+			$collaboratorRightId =
+				$this->repository->create([
+					"user_id" => $collaboratorId,
+					"service_name" => $serviceName,
+					"can_access" => $canAccess,
+					"create_by" => $editorId,
+					"created_at" => date("Y-m-d H:i:s")
+				]);
+
+			$collaboratorChanges[] = [
+				"action" => "created",
+				"user_id" => $collaboratorId,
+				"right_id" => $collaboratorRightId
+			];
+		}
+
+		return [
+			"user_id" => $userId,
+			"collaborator_changes" => $collaboratorChanges
+		];
+	}
 }
