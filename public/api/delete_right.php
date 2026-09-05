@@ -1,4 +1,7 @@
 <?php
+use App\ServiceRights\ServiceRightRepository;
+use App\ServiceRights\ServiceRightService;
+
 require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
@@ -23,31 +26,16 @@ try {
         throw new Exception("Unauthorized access.");
     }
 
-    $rightId = intval($_POST["right_id"] ?? 0);
-    if ($rightId <= 0) {
-        throw new Exception("Invalid or missing right ID.");
-    }
+    $rightId = (int)($_POST["right_id"] ?? 0);
 
-    $check = json_decode(select_from(
-        "service_rights",
-        ["right_id", "service_name", "user_id"],
-        ["right_id" => $rightId],
-        ["fetch_first" => true]
-    ), true);
+    $repository = new ServiceRightRepository();
+	$service = new ServiceRightService($repository);
 
-    if (empty($check["success"]) || empty($check["data"])) {
-        throw new Exception("Right not found or already deleted.");
-    }
+	$result = $service->deleteUserRight(
+		$rightId
+	);
 
-    $serviceName = $check["data"]["service_name"] ?? "Unknown";
-    $userId = intval($check["data"]["user_id"]);
-
-    $delete = delete_from("service_rights", ["right_id" => $rightId]);
-    $deleteResult = json_decode($delete, true);
-
-    if (empty($deleteResult["success"]) || !$deleteResult["success"]) {
-        throw new Exception("Failed to delete right. Please try again.");
-    }
+	$serviceName = $result["service_name"];
 
     log_activity(
         $deleterId,
@@ -57,45 +45,24 @@ try {
         $rightId
     );
 
-    $collaborators = json_decode(select_from(
-        "users",
-        ["user_id"],
-        ["parent_user" => $userId]
-    ), true);
+    foreach (
+		$result["deleted_collaborator_rights"]
+		as $deletedRight
+	) {
+		$collaboratorId =
+			(int)$deletedRight["user_id"];
 
-    if (!empty($collaborators["success"]) && !empty($collaborators["data"])) {
-        foreach ($collaborators["data"] as $col) {
-            $collabId = intval($col["user_id"]);
-            if ($collabId <= 0) continue;
+		$collaboratorRightId =
+			(int)$deletedRight["right_id"];
 
-            $collabRight = json_decode(select_from(
-                "service_rights",
-                ["right_id"],
-                [
-                    "user_id"      => $collabId,
-                    "service_name" => $serviceName
-                ],
-                ["fetch_first" => true]
-            ), true);
-
-            if (!empty($collabRight["success"]) && !empty($collabRight["data"])) {
-                $collabRightId = intval($collabRight["data"]["right_id"]);
-
-                $deleteCollab = delete_from("service_rights", ["right_id" => $collabRightId]);
-                $deleteCollabResult = json_decode($deleteCollab, true);
-
-                if (!empty($deleteCollabResult["success"])) {
-                    log_activity(
-                        $deleterId,
-                        "delete collaborator right",
-                        "Deleted collaborator right '{$serviceName}' (user_id={$collabId})",
-                        "service_rights",
-                        $collabRightId
-                    );
-                }
-            }
-        }
-    }
+		log_activity(
+			$deleterId,
+			"delete collaborator right",
+			"Deleted collaborator right '{$serviceName}' (user_id={$collaboratorId})",
+			"service_rights",
+			$collaboratorRightId
+		);
+	}
 
     $response = [
         "success" => true,

@@ -239,4 +239,25 @@ class ServiceRightRepository
 			);
 		}
 	}
+
+	public function delete(int $rightId): bool
+	{
+		$result = \delete_from(
+			"service_rights",
+			[
+				"right_id" => $rightId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"ServiceRightRepository expected an array response."
+			);
+		}
+
+		return !empty($result["success"]);
+	}
 }

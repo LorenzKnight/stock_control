@@ -267,4 +267,87 @@ class ServiceRightService
 			"collaborator_changes" => $collaboratorChanges
 		];
 	}
+
+	public function deleteUserRight(
+		int $rightId
+	): array {
+		if ($rightId <= 0) {
+			throw new \InvalidArgumentException(
+				"Invalid or missing right ID."
+			);
+		}
+
+		$existingRight = $this->repository->findById(
+			$rightId
+		);
+
+		if ($existingRight === null) {
+			throw new \Exception(
+				"Right not found or already deleted."
+			);
+		}
+
+		$serviceName =
+			$existingRight["service_name"] ?? "Unknown";
+
+		$userId =
+			(int)$existingRight["user_id"];
+
+		$deleted = $this->repository->delete(
+			$rightId
+		);
+
+		if (!$deleted) {
+			throw new \RuntimeException(
+				"Failed to delete right. Please try again."
+			);
+		}
+
+		$deletedCollaboratorRights = [];
+
+		$collaboratorIds =
+			$this->repository->findCollaboratorIds(
+				$userId
+			);
+
+		foreach ($collaboratorIds as $collaboratorId) {
+			$collaboratorRight =
+				$this->repository->findByUserAndService(
+					$collaboratorId,
+					$serviceName
+				);
+
+			if ($collaboratorRight === null) {
+				continue;
+			}
+
+			$collaboratorRightId =
+				(int)$collaboratorRight["right_id"];
+
+			if ($collaboratorRightId <= 0) {
+				continue;
+			}
+
+			$deletedCollaborator =
+				$this->repository->delete(
+					$collaboratorRightId
+				);
+
+			if (!$deletedCollaborator) {
+				continue;
+			}
+
+			$deletedCollaboratorRights[] = [
+				"user_id" => $collaboratorId,
+				"right_id" => $collaboratorRightId
+			];
+		}
+
+		return [
+			"user_id" => $userId,
+			"service_name" => $serviceName,
+			"deleted_collaborator_rights" =>
+				$deletedCollaboratorRights
+		];
+	}
 }
