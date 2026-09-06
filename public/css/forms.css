@@ -702,19 +702,13 @@
     }
 
     form label {
-        position: absolute;
-        top: 12px;
-        left: 12px;
-
-        margin: 0;
-        padding: 0;
-
         font-size: 9px;
-        line-height: 1;
         color: var(--main-text-color);
-        text-align: left;
-
-        pointer-events: none;
+        text-align: center;
+        display: block;
+        margin-bottom: 5px;
+        position: fixed;
+        margin: 8px 0 0 12px;
     }
 
     .form-input-style,
