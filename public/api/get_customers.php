@@ -1,4 +1,7 @@
 <?php
+use App\Customers\CustomerRepository;
+use App\Customers\CustomerService;
+
 require_once('../logic/stock_be.php');
 header("Content-Type: application/json");
 
@@ -10,72 +13,24 @@ $response = [
 
 try {
 	$userId = $_SESSION["sc_UserId"] ?? null;
+
 	if (!$userId) throw new Exception("User session not found.");
 
-	$userInfo = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
-	$companyId = json_decode($userInfo, true)["data"]["company_id"] ?? null;
+	$search = trim($_GET["search"] ?? '');
 
-	$search = $_GET["search"] ?? '';
+	$repository = new CustomerRepository();
+	$service = new CustomerService($repository);
 
-    $where = [
-		"company_id" => $companyId,
+	$customers = $service->getCustomers(
+		(int)$userId,
+		$search
+	);
+
+	$response = [
+		"success" => true,
+		"message" => "Customers loaded.",
+		"data" => $customers
 	];
-
-	if (!empty($search)) {
-		$where["OR"] = [
-			"customer_name ILIKE" => "%{$search}%",
-			"customer_surname ILIKE" => "%{$search}%",
-			"customer_document_no ILIKE" => "%{$search}%"
-		];
-	}
-
-	$customers = select_from("customers", [
-		"customer_id",
-		"customer_name",
-		"customer_surname",
-        "customer_email",
-		"cu_country_code",
-        "customer_phone",
-        "customer_birthday",
-        "customer_type",
-        "customer_image",
-        "customer_document_type",
-		"customer_document_no",
-		"customer_address",
-		"customer_status",
-        "references_1",
-		"r1_country_code",
-        "references_1_phone",
-        "references_2",
-		"r2_country_code",
-        "references_2_phone"
-	], $where, [
-		"order_by" => "created_at",
-		"order_direction" => "DESC"
-	]);
-
-	$parsed = json_decode($customers, true);
-	if (!$parsed["success"] || empty($parsed["data"])) {
-		throw new Exception("No customers available.");
-	}
-
-	$documentTypes = GlobalArrays::documentTypes();
-	$generalStatus = GlobalArrays::generalStatus();
-
-	foreach ($parsed["data"] as &$customer) {
-		$customer["full_name"] = trim($customer["customer_name"] . ' ' . $customer["customer_surname"]);
-		$customer["document_no"] = $customer["customer_document_no"];
-		$customer["address"] = $customer["customer_address"];
-		$customer["status"] = $generalStatus[$customer["customer_status"]] ?? tr("unknown", "Unknown");
-		$customer["image"] = $customer["customer_image"] ?? "";
-
-        $docType = $customer["customer_document_type"] ?? null;
-		$customer["document_type"] = $documentTypes[$docType] ?? tr("unknown", "Unknown");
-	}
-
-	$response["success"] = true;
-	$response["data"] = $parsed["data"];
-	$response["message"] = "Customers loaded.";
 
 } catch (Exception $e) {
 	$response["message"] = $e->getMessage();
@@ -83,4 +38,3 @@ try {
 
 echo json_encode($response);
 exit;
-?>
