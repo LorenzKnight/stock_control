@@ -1,0 +1,44 @@
+name: PHP CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  quality:
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: ['8.3', '8.4']
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: PHP syntax check
+        run: |
+          find public/logic/Categories \
+               public/logic/ExtraServices \
+               public/logic/ServiceRights \
+               public/logic/Customers \
+               tests \
+               -name "*.php" -print0 | xargs -0 -n1 php -l
+
+          php -l public/api/get_customers.php
+
+      - name: PHPUnit
+        run: vendor/bin/phpunit
+
+      - name: PHPStan
+        run: vendor/bin/phpstan analyse --no-progress

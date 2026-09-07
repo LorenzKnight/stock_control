@@ -46,3 +46,9 @@ Thumbs.db
 .idea/
 .vscode/
 readmeInternal.md
+
+# =========================
+# PHPUnit
+# =========================
+/.phpunit.cache/
+.phpunit.result.cache
