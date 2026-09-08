@@ -86,6 +86,17 @@ The platform is designed around:
 
 The production system is being modernized incrementally to reduce operational risk. New modules use Service/Repository separation while legacy infrastructure is gradually replaced without breaking existing API behavior.
 
+## Architecture Overview
+
+```text
+Web Application ─┐
+                 ├── REST API ──► Services ──► Repositories ──► PostgreSQL
+React PWA ───────┘
+                       │
+                       ├──► Stripe
+                       ├──► WebSockets
+                       └──► Web Push
+
 ## What this project demonstrates
 
 Building AllStockControl has required me to work beyond individual features and take ownership of the product as a whole.
