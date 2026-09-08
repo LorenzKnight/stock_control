@@ -96,6 +96,7 @@ React PWA ───────┘
                        ├──► Stripe
                        ├──► WebSockets
                        └──► Web Push
+```
 
 ## What this project demonstrates
 
