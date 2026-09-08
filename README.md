@@ -84,6 +84,8 @@ The platform is designed around:
 - Incremental modernization and refactoring
 - Extensible SaaS architecture
 
+The production system is being modernized incrementally to reduce operational risk. New modules use Service/Repository separation while legacy infrastructure is gradually replaced without breaking existing API behavior.
+
 ## What this project demonstrates
 
 Building AllStockControl has required me to work beyond individual features and take ownership of the product as a whole.

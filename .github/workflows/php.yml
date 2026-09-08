@@ -38,7 +38,15 @@ jobs:
           php -l public/api/get_customers.php
 
       - name: PHPUnit
-        run: vendor/bin/phpunit
+        run: vendor/bin/phpunit --testdox
 
       - name: PHPStan
-        run: vendor/bin/phpstan analyse --no-progress
+        run: vendor/bin/phpstan analyse --no-progress --error-format=github
+
+      - name: CI summary
+        if: always()
+        run: |
+          echo "## AllStockControl PHP CI" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- PHP version: ${{ matrix.php }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Job status: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
