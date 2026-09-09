@@ -87,4 +87,131 @@ class CustomerService
 
 		return $customers;
 	}
+
+    public function createCustomer(
+        int $userId,
+        ?int $companyId,
+        array $data,
+        ?string $imageName = null
+    ): array {
+        if ($userId <= 0) {
+            throw new \InvalidArgumentException(
+                "Invalid user ID."
+            );
+        }
+
+        $name = trim(
+            (string)($data["customer_name"] ?? '')
+        );
+
+        $birthday = trim(
+            (string)($data["customer_birthday"] ?? '')
+        );
+
+        if ($name === '') {
+            throw new \InvalidArgumentException(
+                "Customer name is required."
+            );
+        }
+
+        if ($birthday === '') {
+            throw new \InvalidArgumentException(
+                "Customer birthday is required."
+            );
+        }
+
+        $data["customer_name"] = $name;
+        $data["customer_birthday"] = $birthday;
+        $data["company_id"] = $companyId;
+        $data["create_by"] = $userId;
+        $data["created_at"] = date("Y-m-d H:i:s");
+
+        if (
+            $imageName !== null &&
+            $imageName !== ''
+        ) {
+            $data["customer_image"] = $imageName;
+        }
+
+        $customerId =
+            $this->repository->create($data);
+
+        $showClientReward = false;
+
+        try {
+            $onboarding =
+                $this->repository
+                    ->findOnboardingByUserId($userId);
+
+            if ($onboarding === null) {
+                $showClientReward =
+                    $this->repository
+                        ->createCustomerOnboarding($userId);
+            } else {
+                $clientCompleted =
+                    $this->isDatabaseTrue(
+                        $onboarding["client"] ?? false
+                    );
+
+                $rewardAlreadySeen =
+                    $this->isDatabaseTrue(
+                        $onboarding["client_reward_seen"]
+                            ?? false
+                    );
+
+                $showClientReward =
+                    !$clientCompleted &&
+                    !$rewardAlreadySeen;
+
+                if (!$clientCompleted) {
+                    $updated =
+                        $this->repository
+                            ->markCustomerOnboardingComplete(
+                                $userId
+                            );
+
+                    if (!$updated) {
+                        $showClientReward = false;
+
+                        error_log(
+                            "Could not update onboarding customer step for user_id: " .
+                            $userId
+                        );
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            $showClientReward = false;
+
+            error_log(
+                "Could not process onboarding customer state for user_id: " .
+                $userId .
+                " - " .
+                $e->getMessage()
+            );
+        }
+
+        return [
+            "customer_id" => $customerId,
+            "customer_name" => trim(
+                $name . " " .
+                (string)($data["customer_surname"] ?? '')
+            ),
+            "show_reward_modal" => $showClientReward,
+            "reward_type" =>
+                $showClientReward
+                    ? "first_client"
+                    : null
+        ];
+    }
+
+
+    private function isDatabaseTrue(mixed $value): bool
+    {
+        return
+            $value === true ||
+            $value === "t" ||
+            $value === 1 ||
+            $value === "1";
+    }
 }

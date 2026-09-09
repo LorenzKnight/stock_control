@@ -89,4 +89,139 @@ final class CustomerServiceTest extends TestCase
 			$customers[0]["document_type"]
 		);
 	}
+
+	public function testRejectsCustomerWithoutName(): void
+	{
+		$repository =
+			$this->createMock(CustomerRepository::class);
+
+		$repository
+			->expects($this->never())
+			->method('create');
+
+		$service =
+			new CustomerService($repository);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Customer name is required."
+		);
+
+		$service->createCustomer(
+			10,
+			5,
+			[
+				"customer_name" => "   ",
+				"customer_birthday" => "1984-09-03"
+			]
+		);
+	}
+
+
+	public function testCreatesCustomer(): void
+	{
+		$repository =
+			$this->createMock(CustomerRepository::class);
+
+		$repository
+			->expects($this->once())
+			->method('create')
+			->with(
+				$this->callback(
+					function (array $data): bool {
+						return
+							$data["customer_name"]
+								=== "John" &&
+							$data["customer_surname"]
+								=== "Doe" &&
+							$data["company_id"] === 5 &&
+							$data["create_by"] === 10;
+					}
+				)
+			)
+			->willReturn(42);
+
+		$repository
+			->method('findOnboardingByUserId')
+			->with(10)
+			->willReturn([
+				"client" => true,
+				"client_reward_seen" => false
+			]);
+
+		$service =
+			new CustomerService($repository);
+
+		$result = $service->createCustomer(
+			10,
+			5,
+			[
+				"customer_name" => " John ",
+				"customer_surname" => "Doe",
+				"customer_birthday" =>
+					"1984-09-03"
+			]
+		);
+
+		$this->assertSame(
+			42,
+			$result["customer_id"]
+		);
+
+		$this->assertSame(
+			"John Doe",
+			$result["customer_name"]
+		);
+
+		$this->assertFalse(
+			$result["show_reward_modal"]
+		);
+	}
+
+
+	public function testFirstCustomerShowsReward(): void
+	{
+		$repository =
+			$this->createMock(CustomerRepository::class);
+
+		$repository
+			->method('create')
+			->willReturn(50);
+
+		$repository
+			->method('findOnboardingByUserId')
+			->willReturn(null);
+
+		$repository
+			->expects($this->once())
+			->method('createCustomerOnboarding')
+			->with(10)
+			->willReturn(true);
+
+		$service =
+			new CustomerService($repository);
+
+		$result = $service->createCustomer(
+			10,
+			5,
+			[
+				"customer_name" => "Jane",
+				"customer_surname" => "Doe",
+				"customer_birthday" =>
+					"1990-01-01"
+			]
+		);
+
+		$this->assertTrue(
+			$result["show_reward_modal"]
+		);
+
+		$this->assertSame(
+			"first_client",
+			$result["reward_type"]
+		);
+	}
 }
