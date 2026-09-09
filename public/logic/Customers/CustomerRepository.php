@@ -90,121 +90,182 @@ class CustomerRepository
 		return $result;
 	}
 
-    public function create(array $data): int
-    {
-        $result = \insert_into(
-            "customers",
-            $data,
-            [
-                "id" => "customer_id",
-                "return_type" => "array"
-            ]
-        );
+	public function create(array $data): int
+	{
+		$result = \insert_into(
+			"customers",
+			$data,
+			[
+				"id" => "customer_id",
+				"return_type" => "array"
+			]
+		);
 
-        if (
-            !is_array($result) ||
-            empty($result["success"]) ||
-            empty($result["id"])
-        ) {
-            throw new \RuntimeException(
-                "Error saving customer data."
-            );
-        }
+		if (
+			!is_array($result) ||
+			empty($result["success"]) ||
+			empty($result["id"])
+		) {
+			throw new \RuntimeException(
+				"Error saving customer data."
+			);
+		}
 
-        return (int)$result["id"];
-    }
-
-
-    public function findOnboardingByUserId(
-        int $userId
-    ): ?array {
-        $result = \select_from(
-            "user_onboarding",
-            [
-                "user_id",
-                "client",
-                "client_reward_seen"
-            ],
-            [
-                "user_id" => $userId
-            ],
-            [
-                "fetch_first" => true,
-                "return_type" => "array"
-            ]
-        );
-
-        if (!is_array($result)) {
-            throw new \RuntimeException(
-                "CustomerRepository expected an array response."
-            );
-        }
-
-        if (
-            !empty($result["success"]) &&
-            !empty($result["data"])
-        ) {
-            return $result["data"];
-        }
-
-        if (
-            ($result["message"] ?? "") === "No records found" ||
-            (
-                !empty($result["success"]) &&
-                empty($result["data"])
-            )
-        ) {
-            return null;
-        }
-
-        throw new \RuntimeException(
-            "Could not read onboarding customer state."
-        );
-    }
+		return (int)$result["id"];
+	}
 
 
-    public function markCustomerOnboardingComplete(
-        int $userId
-    ): bool {
-        $result = \update_table(
-            "user_onboarding",
-            [
-                "client" => true,
-                "updated_at" => date("Y-m-d H:i:s")
-            ],
-            [
-                "user_id" => $userId
-            ],
-            [
-                "return_type" => "array"
-            ]
-        );
+	public function findOnboardingByUserId(
+		int $userId
+	): ?array {
+		$result = \select_from(
+			"user_onboarding",
+			[
+				"user_id",
+				"client",
+				"client_reward_seen"
+			],
+			[
+				"user_id" => $userId
+			],
+			[
+				"fetch_first" => true,
+				"return_type" => "array"
+			]
+		);
 
-        return
-            is_array($result) &&
-            !empty($result["success"]);
-    }
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"CustomerRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			!empty($result["data"])
+		) {
+			return $result["data"];
+		}
+
+		if (
+			($result["message"] ?? "") === "No records found" ||
+			(
+				!empty($result["success"]) &&
+				empty($result["data"])
+			)
+		) {
+			return null;
+		}
+
+		throw new \RuntimeException(
+			"Could not read onboarding customer state."
+		);
+	}
 
 
-    public function createCustomerOnboarding(
-        int $userId
-    ): bool {
-        $result = \insert_into(
-            "user_onboarding",
-            [
-                "user_id" => $userId,
-                "client" => true,
-                "client_reward_seen" => false,
-                "created_at" => date("Y-m-d H:i:s"),
-                "updated_at" => date("Y-m-d H:i:s")
-            ],
-            [
-                "return_type" => "array"
-            ]
-        );
+	public function markCustomerOnboardingComplete(
+		int $userId
+	): bool {
+		$result = \update_table(
+			"user_onboarding",
+			[
+				"client" => true,
+				"updated_at" => date("Y-m-d H:i:s")
+			],
+			[
+				"user_id" => $userId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
 
-        return
-            is_array($result) &&
-            !empty($result["success"]);
-    }
+		return
+			is_array($result) &&
+			!empty($result["success"]);
+	}
+
+
+	public function createCustomerOnboarding(
+		int $userId
+	): bool {
+		$result = \insert_into(
+			"user_onboarding",
+			[
+				"user_id" => $userId,
+				"client" => true,
+				"client_reward_seen" => false,
+				"created_at" => date("Y-m-d H:i:s"),
+				"updated_at" => date("Y-m-d H:i:s")
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		return
+			is_array($result) &&
+			!empty($result["success"]);
+	}
+
+	public function findImageById(
+		int $customerId
+	): ?string {
+		$result = \select_from(
+			"customers",
+			["customer_image"],
+			["customer_id" => $customerId],
+			[
+				"fetch_first" => true,
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"CustomerRepository expected an array response."
+			);
+		}
+
+		if (
+			empty($result["success"]) ||
+			empty($result["data"])
+		) {
+			return null;
+		}
+
+		$image = trim(
+			(string)($result["data"]["customer_image"] ?? '')
+		);
+
+		return $image !== ''
+			? $image
+			: null;
+	}
+
+
+	public function update(
+		int $customerId,
+		array $data
+	): void {
+		$result = \update_table(
+			"customers",
+			$data,
+			[
+				"customer_id" => $customerId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Update failed."
+			);
+		}
+	}
 }

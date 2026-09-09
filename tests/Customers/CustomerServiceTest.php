@@ -224,4 +224,127 @@ final class CustomerServiceTest extends TestCase
 			$result["reward_type"]
 		);
 	}
+
+	public function testRejectsUpdateWithoutCustomerId(): void
+	{
+		$repository =
+			$this->createMock(CustomerRepository::class);
+
+		$repository
+			->expects($this->never())
+			->method('update');
+
+		$service =
+			new CustomerService($repository);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Missing customer ID."
+		);
+
+		$service->updateCustomer(
+			0,
+			[
+				"customer_name" => "John"
+			]
+		);
+	}
+
+
+	public function testRejectsUpdateWithoutCustomerName(): void
+	{
+		$repository =
+			$this->createMock(CustomerRepository::class);
+
+		$repository
+			->expects($this->never())
+			->method('update');
+
+		$service =
+			new CustomerService($repository);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Customer name is required."
+		);
+
+		$service->updateCustomer(
+			42,
+			[
+				"customer_name" => "   "
+			]
+		);
+	}
+
+
+	public function testReturnsExistingCustomerImage(): void
+	{
+		$repository =
+			$this->createMock(CustomerRepository::class);
+
+		$repository
+			->expects($this->once())
+			->method('findImageById')
+			->with(42)
+			->willReturn("customer_42.webp");
+
+		$service =
+			new CustomerService($repository);
+
+		$image =
+			$service->getCustomerImage(42);
+
+		$this->assertSame(
+			"customer_42.webp",
+			$image
+		);
+	}
+
+
+	public function testUpdatesCustomerWithImage(): void
+	{
+		$repository =
+			$this->createMock(CustomerRepository::class);
+
+		$repository
+			->expects($this->once())
+			->method('update')
+			->with(
+				42,
+				$this->callback(
+					function (array $data): bool {
+						return
+							$data["customer_name"]
+								=== "John" &&
+							$data["customer_surname"]
+								=== "Doe" &&
+							$data["customer_status"]
+								=== 1 &&
+							$data["customer_image"]
+								=== "new_image.webp";
+					}
+				)
+			);
+
+		$service =
+			new CustomerService($repository);
+
+		$service->updateCustomer(
+			42,
+			[
+				"customer_name" => " John ",
+				"customer_surname" => "Doe",
+				"customer_status" => 1
+			],
+			"new_image.webp"
+		);
+
+		$this->assertTrue(true);
+	}
 }

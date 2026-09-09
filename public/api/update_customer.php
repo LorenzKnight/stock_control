@@ -1,4 +1,7 @@
 <?php
+use App\Customers\CustomerRepository;
+use App\Customers\CustomerService;
+
 require_once ('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
@@ -19,7 +22,7 @@ try {
 	$authUser = requireAuth();
     $userId = $authUser["user_id"];
 
-	if (!$userId) {
+	if ($userId <= 0) {
 		throw new Exception("Unauthorized access. User not found or invalid token.");
     }
 
@@ -27,61 +30,71 @@ try {
 		throw new Exception("Access denied. You do not have permission to edit data.");
 	}
 
-	$customerId = intval($_POST["edit_customer_id"] ?? 0);
-	if (!$customerId) throw new Exception("Missing customer ID.");
+	$customerId = (int)($_POST["edit_customer_id"] ?? 0);
+	if ($customerId <= 0) throw new Exception("Missing customer ID.");
 
-	$name       = trim($_POST["edit_customer_name"] ?? '');
-	$surname    = trim($_POST["edit_customer_surname"] ?? '');
-	$email      = trim($_POST["edit_customer_email"] ?? '');
-	$address    = trim($_POST["edit_customer_address"] ?? '');
-	$cuCountry	= trim($_POST["edit_customer_country_code"] ?? '');
-	$phone      = trim($_POST["edit_customer_phone"] ?? '');
-	$birthday   = trim($_POST["edit_customer_birthday"] ?? '');
-	$docType    = intval($_POST["edit_customer_document_type"] ?? 0);
-	$docNo      = trim($_POST["edit_customer_document_no"] ?? '');
-	$type       = intval($_POST["edit_customer_type"] ?? 0);
-	$status 	= isset($_POST["edit_customer_status"]) ? 1 : 0;
-	$ref1       = trim($_POST["edit_references_1"] ?? '');
-	$r1Country  = trim($_POST["edit_references_1_country_code"] ?? '');
-	$ref1Phone  = trim($_POST["edit_references_1_phone"] ?? '');
-	$ref2       = trim($_POST["edit_references_2"] ?? '');
-	$r2Country  = trim($_POST["edit_references_2_country_code"] ?? '');
-	$ref2Phone  = trim($_POST["edit_references_2_phone"] ?? '');
+	$customerData = [
+		"customer_name" =>
+			trim($_POST["edit_customer_name"] ?? ''),
 
-	if ($name === '') throw new Exception("Customer name is required.");
+		"customer_surname" =>
+			trim($_POST["edit_customer_surname"] ?? ''),
 
-	$updateData = [
-		"customer_name"            => $name,
-		"customer_surname"         => $surname,
-		"customer_email"           => $email,
-		"customer_address"         => $address,
-		"cu_country_code"          => $cuCountry,
-		"customer_phone"           => $phone,
-		"customer_birthday"        => $birthday,
-		"customer_document_type"   => $docType,
-		"customer_document_no"     => $docNo,
-		"customer_type"            => $type,
-		"customer_status"          => $status,
-		"references_1"             => $ref1,
-		"r1_country_code"          => $r1Country,
-		"references_1_phone"       => $ref1Phone,
-		"references_2"             => $ref2,
-		"r2_country_code"          => $r2Country,
-		"references_2_phone"       => $ref2Phone
+		"customer_email" =>
+			trim($_POST["edit_customer_email"] ?? ''),
+
+		"customer_address" =>
+			trim($_POST["edit_customer_address"] ?? ''),
+
+		"cu_country_code" =>
+			trim($_POST["edit_customer_country_code"] ?? ''),
+
+		"customer_phone" =>
+			trim($_POST["edit_customer_phone"] ?? ''),
+
+		"customer_birthday" =>
+			trim($_POST["edit_customer_birthday"] ?? ''),
+
+		"customer_document_type" =>
+			(int)($_POST["edit_customer_document_type"] ?? 0),
+
+		"customer_document_no" =>
+			trim($_POST["edit_customer_document_no"] ?? ''),
+
+		"customer_type" =>
+			(int)($_POST["edit_customer_type"] ?? 0),
+
+		"customer_status" =>
+			isset($_POST["edit_customer_status"])
+				? 1
+				: 0,
+
+		"references_1" =>
+			trim($_POST["edit_references_1"] ?? ''),
+
+		"r1_country_code" =>
+			trim($_POST["edit_references_1_country_code"] ?? ''),
+
+		"references_1_phone" =>
+			trim($_POST["edit_references_1_phone"] ?? ''),
+
+		"references_2" =>
+			trim($_POST["edit_references_2"] ?? ''),
+
+		"r2_country_code" =>
+			trim($_POST["edit_references_2_country_code"] ?? ''),
+
+		"references_2_phone" =>
+			trim($_POST["edit_references_2_phone"] ?? '')
 	];
 
-	$previousData = json_decode(select_from(
-		"customers",
-		["customer_image"],
-		["customer_id" => $customerId],
-        ["fetch_first" => true]
-	),true);
+	$repository = new CustomerRepository();
+	$service = new CustomerService($repository);
 
-	$previousImage = null;
-	if (!empty($previousData["success"]) && !empty($previousData["data"]) && isset($previousData["data"]["customer_image"])) {
-		$tmp = trim((string)$previousData["data"]["customer_image"]);
-		$previousImage = $tmp !== '' ? $tmp : null;
-	}
+	$previousImage =
+		$service->getCustomerImage(
+			$customerId
+		);
 
 	try {
 		$imageName = handle_uploaded_image(
@@ -92,21 +105,15 @@ try {
 			["jpg", "jpeg", "png", "webp"],
 			$previousImage
 		);
-
-		if ($imageName) {
-			$updateData["customer_image"] = $imageName;
-		}
-	} catch (Exception $imgEx) {
-		throw new Exception("Image upload failed: " . $imgEx->getMessage());
+	} catch (Exception $e) {
+		throw new Exception("Image upload failed: " . $e->getMessage());
 	}
 
-	$where = ["customer_id" => $customerId];
-	$updateResponse = update_table("customers", $updateData, $where);
-	$updateResult = json_decode($updateResponse, true);
-
-	if (!$updateResult["success"]) {
-		throw new Exception("Update failed.");
-	}
+	$service->updateCustomer(
+		$customerId,
+		$customerData,
+		$imageName
+	);
 
 	log_activity(
 		$userId,

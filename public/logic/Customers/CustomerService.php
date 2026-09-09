@@ -89,129 +89,179 @@ class CustomerService
 	}
 
     public function createCustomer(
-        int $userId,
-        ?int $companyId,
-        array $data,
-        ?string $imageName = null
-    ): array {
-        if ($userId <= 0) {
-            throw new \InvalidArgumentException(
-                "Invalid user ID."
-            );
-        }
+		int $userId,
+		?int $companyId,
+		array $data,
+		?string $imageName = null
+	): array {
+		if ($userId <= 0) {
+			throw new \InvalidArgumentException(
+				"Invalid user ID."
+			);
+		}
 
-        $name = trim(
-            (string)($data["customer_name"] ?? '')
-        );
+		$name = trim(
+			(string)($data["customer_name"] ?? '')
+		);
 
-        $birthday = trim(
-            (string)($data["customer_birthday"] ?? '')
-        );
+		$birthday = trim(
+			(string)($data["customer_birthday"] ?? '')
+		);
 
-        if ($name === '') {
-            throw new \InvalidArgumentException(
-                "Customer name is required."
-            );
-        }
+		if ($name === '') {
+			throw new \InvalidArgumentException(
+				"Customer name is required."
+			);
+		}
 
-        if ($birthday === '') {
-            throw new \InvalidArgumentException(
-                "Customer birthday is required."
-            );
-        }
+		if ($birthday === '') {
+			throw new \InvalidArgumentException(
+				"Customer birthday is required."
+			);
+		}
 
-        $data["customer_name"] = $name;
-        $data["customer_birthday"] = $birthday;
-        $data["company_id"] = $companyId;
-        $data["create_by"] = $userId;
-        $data["created_at"] = date("Y-m-d H:i:s");
+		$data["customer_name"] = $name;
+		$data["customer_birthday"] = $birthday;
+		$data["company_id"] = $companyId;
+		$data["create_by"] = $userId;
+		$data["created_at"] = date("Y-m-d H:i:s");
 
-        if (
-            $imageName !== null &&
-            $imageName !== ''
-        ) {
-            $data["customer_image"] = $imageName;
-        }
+		if (
+			$imageName !== null &&
+			$imageName !== ''
+		) {
+			$data["customer_image"] = $imageName;
+		}
 
-        $customerId =
-            $this->repository->create($data);
+		$customerId =
+			$this->repository->create($data);
 
-        $showClientReward = false;
+		$showClientReward = false;
 
-        try {
-            $onboarding =
-                $this->repository
-                    ->findOnboardingByUserId($userId);
+		try {
+			$onboarding =
+				$this->repository
+					->findOnboardingByUserId($userId);
 
-            if ($onboarding === null) {
-                $showClientReward =
-                    $this->repository
-                        ->createCustomerOnboarding($userId);
-            } else {
-                $clientCompleted =
-                    $this->isDatabaseTrue(
-                        $onboarding["client"] ?? false
-                    );
+			if ($onboarding === null) {
+				$showClientReward =
+					$this->repository
+						->createCustomerOnboarding($userId);
+			} else {
+				$clientCompleted =
+					$this->isDatabaseTrue(
+						$onboarding["client"] ?? false
+					);
 
-                $rewardAlreadySeen =
-                    $this->isDatabaseTrue(
-                        $onboarding["client_reward_seen"]
-                            ?? false
-                    );
+				$rewardAlreadySeen =
+					$this->isDatabaseTrue(
+						$onboarding["client_reward_seen"]
+							?? false
+					);
 
-                $showClientReward =
-                    !$clientCompleted &&
-                    !$rewardAlreadySeen;
+				$showClientReward =
+					!$clientCompleted &&
+					!$rewardAlreadySeen;
 
-                if (!$clientCompleted) {
-                    $updated =
-                        $this->repository
-                            ->markCustomerOnboardingComplete(
-                                $userId
-                            );
+				if (!$clientCompleted) {
+					$updated =
+						$this->repository
+							->markCustomerOnboardingComplete(
+								$userId
+							);
 
-                    if (!$updated) {
-                        $showClientReward = false;
+					if (!$updated) {
+						$showClientReward = false;
 
-                        error_log(
-                            "Could not update onboarding customer step for user_id: " .
-                            $userId
-                        );
-                    }
-                }
-            }
-        } catch (\Throwable $e) {
-            $showClientReward = false;
+						error_log(
+							"Could not update onboarding customer step for user_id: " .
+							$userId
+						);
+					}
+				}
+			}
+		} catch (\Throwable $e) {
+			$showClientReward = false;
 
-            error_log(
-                "Could not process onboarding customer state for user_id: " .
-                $userId .
-                " - " .
-                $e->getMessage()
-            );
-        }
+			error_log(
+				"Could not process onboarding customer state for user_id: " .
+				$userId .
+				" - " .
+				$e->getMessage()
+			);
+		}
 
-        return [
-            "customer_id" => $customerId,
-            "customer_name" => trim(
-                $name . " " .
-                (string)($data["customer_surname"] ?? '')
-            ),
-            "show_reward_modal" => $showClientReward,
-            "reward_type" =>
-                $showClientReward
-                    ? "first_client"
-                    : null
-        ];
-    }
+		return [
+			"customer_id" => $customerId,
+			"customer_name" => trim(
+				$name . " " .
+				(string)($data["customer_surname"] ?? '')
+			),
+			"show_reward_modal" => $showClientReward,
+			"reward_type" =>
+				$showClientReward
+					? "first_client"
+					: null
+		];
+	}
 
 
-    private function isDatabaseTrue(mixed $value): bool
-    {
-        return
-            $value === true ||
-            $value === "t" ||
-            $value === 1 ||
-            $value === "1";
-    }
+	private function isDatabaseTrue(mixed $value): bool
+	{
+		return
+			$value === true ||
+			$value === "t" ||
+			$value === 1 ||
+			$value === "1";
+	}
+
+	public function getCustomerImage(
+		int $customerId
+	): ?string {
+		if ($customerId <= 0) {
+			throw new \InvalidArgumentException(
+				"Missing customer ID."
+			);
+		}
+
+		return $this->repository
+			->findImageById($customerId);
+	}
+
+
+	public function updateCustomer(
+		int $customerId,
+		array $data,
+		?string $imageName = null
+	): void {
+		if ($customerId <= 0) {
+			throw new \InvalidArgumentException(
+				"Missing customer ID."
+			);
+		}
+
+		$name = trim(
+			(string)($data["customer_name"] ?? '')
+		);
+
+		if ($name === '') {
+			throw new \InvalidArgumentException(
+				"Customer name is required."
+			);
+		}
+
+		$data["customer_name"] = $name;
+
+		if (
+			$imageName !== null &&
+			$imageName !== ''
+		) {
+			$data["customer_image"] = $imageName;
+		}
+
+		$this->repository->update(
+			$customerId,
+			$data
+		);
+	}
 }
