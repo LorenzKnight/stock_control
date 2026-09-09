@@ -1,4 +1,7 @@
 <?php
+use App\Customers\CustomerRepository;
+use App\Customers\CustomerService;
+
 require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
@@ -17,9 +20,9 @@ try {
 	}
 
 	$authUser = requireAuth();
-    $userId = intval($authUser["user_id"] ?? 0);
+    $userId = (int)($authUser["user_id"] ?? 0);
 
-    if (!$userId) {
+    if ($userId <= 0) {
 		throw new Exception("Unauthorized access. User not found or invalid token.");
     }
 
@@ -27,35 +30,34 @@ try {
 		throw new Exception("Access denied. You do not have permission to delete data.");
 	}
 
-	if (empty($_POST["customer_id"]) || !is_numeric($_POST["customer_id"])) {
+	$customerIdRaw = $_POST["customer_id"] ?? null;
+
+	if (empty($customerIdRaw) || !is_numeric($customerIdRaw)) {
 		throw new Exception("Missing or invalid customer ID.");
 	}
 
-	$customerId = (int)($_POST["customer_id"]);
+	$customerId = (int)$customerIdRaw;
 
-	$deleteImgResult = delete_image_from_record([
-		"table"        => "customers",
-		"id_column"    => "customer_id",
-		"id_value"     => $customerId,
-		"image_column" => "customer_image",
-		"image_folder" => "images/customers",
-		"clear_db"     => false
-	]);
+	$deleteImgResult =
+		delete_image_from_record([
+			"table" => "customers",
+			"id_column" => "customer_id",
+			"id_value" => $customerId,
+			"image_column" => "customer_image",
+			"image_folder" => "images/customers",
+			"clear_db" => false
+		]);
 
-	if (!$deleteImgResult["success"]) {
-		throw new Exception("Image deletion failed: " . $deleteImgResult["message"]);
+	if (empty($deleteImgResult["success"])) {
+		throw new Exception("Image deletion failed: " . ($deleteImgResult["message"] ?? "Unknown error"));
 	}
 
-	$deleteResponse = delete_from("customers", ["customer_id" => $customerId]);
-	$deleteResult = json_decode($deleteResponse, true);
+	$repository = new CustomerRepository();
+	$service = new CustomerService($repository);
 
-	if (!$deleteResult["success"]) {
-		throw new Exception("Database error while deleting customer.");
-	}
-
-	if (empty($deleteResult["count"])) {
-		throw new Exception("No customer found with the provided ID.");
-	}
+	$service->deleteCustomer(
+		$customerId
+	);
 
 	log_activity(
 		$userId,
@@ -65,10 +67,12 @@ try {
 		$customerId
 	);
 
-	$response["success"] = true;
-	$response["message"] = "Customer deleted successfully.";
-	$response["img_gif"] = "../images/sys-img/loading1.gif";
-	$response["redirect_url"] = "";
+	$response = [
+		"success" => true,
+		"message" => "Customer deleted successfully.",
+		"img_gif" => "../images/sys-img/loading1.gif",
+		"redirect_url" => ""
+	];
 
 } catch (Exception $e) {
 	$response["message"] = $e->getMessage();

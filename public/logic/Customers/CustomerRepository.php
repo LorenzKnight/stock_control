@@ -268,4 +268,29 @@ class CustomerRepository
 			);
 		}
 	}
+
+	public function delete(
+		int $customerId
+	): bool {
+		$result = \delete_from(
+			"customers",
+			[
+				"customer_id" => $customerId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Database error while deleting customer."
+			);
+		}
+
+		return !empty($result["count"]);
+	}
 }

@@ -264,4 +264,25 @@ class CustomerService
 			$data
 		);
 	}
+
+	public function deleteCustomer(
+		int $customerId
+	): void {
+		if ($customerId <= 0) {
+			throw new \InvalidArgumentException(
+				"Missing or invalid customer ID."
+			);
+		}
+
+		$deleted =
+			$this->repository->delete(
+				$customerId
+			);
+
+		if (!$deleted) {
+			throw new \Exception(
+				"No customer found with the provided ID."
+			);
+		}
+	}
 }

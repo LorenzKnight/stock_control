@@ -347,4 +347,79 @@ final class CustomerServiceTest extends TestCase
 
 		$this->assertTrue(true);
 	}
+
+	public function testRejectsDeleteWithoutCustomerId(): void
+	{
+		$repository =
+			$this->createMock(
+				CustomerRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('delete');
+
+		$service =
+			new CustomerService($repository);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Missing or invalid customer ID."
+		);
+
+		$service->deleteCustomer(0);
+	}
+
+
+	public function testDeletesCustomer(): void
+	{
+		$repository =
+			$this->createMock(
+				CustomerRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('delete')
+			->with(42)
+			->willReturn(true);
+
+		$service =
+			new CustomerService($repository);
+
+		$service->deleteCustomer(42);
+
+		$this->assertTrue(true);
+	}
+
+
+	public function testThrowsWhenCustomerToDeleteDoesNotExist(): void
+	{
+		$repository =
+			$this->createMock(
+				CustomerRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('delete')
+			->with(999)
+			->willReturn(false);
+
+		$service =
+			new CustomerService($repository);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"No customer found with the provided ID."
+		);
+
+		$service->deleteCustomer(999);
+	}
 }
