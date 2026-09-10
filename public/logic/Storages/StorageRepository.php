@@ -232,4 +232,80 @@ class StorageRepository
 			? array_values($data)
 			: [];
 	}
+
+    public function findCompanyIdByUserId(
+		int $userId
+	): ?int {
+		$result = \select_from(
+			"users",
+			["company_id"],
+			["user_id" => $userId],
+			[
+				"fetch_first" => true,
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"StorageRepository expected an array response."
+			);
+		}
+
+		if (
+			empty($result["success"]) ||
+			empty($result["data"])
+		) {
+			return null;
+		}
+
+		return (int)(
+			$result["data"]["company_id"] ?? 0
+		);
+	}
+
+
+	public function createStorage(
+		array $data
+	): void {
+		$result = \insert_into(
+			"storage",
+			$data,
+			[
+				"id" => "storage_id",
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Error saving storage data."
+			);
+		}
+	}
+
+
+	public function deleteStorage(
+		int $storageId
+	): void {
+		$result = \delete_from(
+			"storage",
+			["storage_id" => $storageId],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Error deleting old storage data."
+			);
+		}
+	}
 }

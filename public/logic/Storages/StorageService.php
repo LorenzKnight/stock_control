@@ -429,4 +429,121 @@ class StorageService
 			] = true;
 		}
 	}
+
+    public function saveStorageSelection(
+		int $userId,
+		int $slotId,
+		array $productIds
+	): array {
+		if ($userId <= 0) {
+			throw new \InvalidArgumentException(
+				"Unauthorized access."
+			);
+		}
+
+		if ($slotId <= 0) {
+			throw new \InvalidArgumentException(
+				"Slot is required."
+			);
+		}
+
+		$companyId =
+			$this->repository
+				->findCompanyIdByUserId($userId);
+
+		if ($companyId === null) {
+			throw new \Exception(
+				"User data not found."
+			);
+		}
+
+		if ($companyId <= 0) {
+			throw new \Exception(
+				"Invalid company."
+			);
+		}
+
+		$newSelection = [];
+
+		foreach ($productIds as $productIdRaw) {
+			$productId = (int)$productIdRaw;
+
+			if ($productId <= 0) {
+				continue;
+			}
+
+			$newSelection[$productId] = true;
+		}
+
+		if (empty($newSelection)) {
+			throw new \InvalidArgumentException(
+				"At least one product is required."
+			);
+		}
+
+		$currentStorage =
+			$this->repository
+				->findStoragesBySlotId(
+					$companyId,
+					$slotId
+				);
+
+		$currentMap = [];
+
+		foreach ($currentStorage as $row) {
+			$currentProductId =
+				(int)($row["product_id"] ?? 0);
+
+			$currentStorageId =
+				(int)($row["storage_id"] ?? 0);
+
+			if (
+				$currentProductId > 0 &&
+				$currentStorageId > 0
+			) {
+				$currentMap[$currentProductId] = [
+					"storage_id" =>
+						$currentStorageId
+				];
+			}
+		}
+
+		$insertedCount = 0;
+		$deletedCount = 0;
+
+		foreach (
+			$newSelection as $productId => $selected
+		) {
+			if (isset($currentMap[$productId])) {
+				unset($currentMap[$productId]);
+				continue;
+			}
+
+			$this->repository->createStorage([
+				"company_id" => $companyId,
+				"slot_id" => $slotId,
+				"product_id" => $productId,
+				"created_by" => $userId,
+				"created_at" => date(
+					"Y-m-d H:i:s"
+				)
+			]);
+
+			$insertedCount++;
+		}
+
+		foreach ($currentMap as $row) {
+			$storageId = $row["storage_id"];
+
+			$this->repository
+				->deleteStorage($storageId);
+
+			$deletedCount++;
+		}
+
+		return [
+			"inserted_count" => $insertedCount,
+			"deleted_count" => $deletedCount
+		];
+	}
 }
