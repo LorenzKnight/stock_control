@@ -32,10 +32,12 @@ jobs:
                public/logic/ExtraServices \
                public/logic/ServiceRights \
                public/logic/Customers \
+               public/logic/Storages \
                tests \
                -name "*.php" -print0 | xargs -0 -n1 php -l
 
           php -l public/api/get_customers.php
+          php -l public/api/get_storages.php
 
       - name: PHPUnit
         run: vendor/bin/phpunit --testdox

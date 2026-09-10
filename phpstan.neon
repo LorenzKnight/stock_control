@@ -6,6 +6,7 @@ parameters:
         - public/logic/ExtraServices
         - public/logic/ServiceRights
         - public/logic/Customers
+        - public/logic/Storages
 
     scanFiles:
         - public/inc/functions.php
