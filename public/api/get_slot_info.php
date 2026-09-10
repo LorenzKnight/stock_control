@@ -1,4 +1,7 @@
 <?php
+use App\Slots\SlotRepository;
+use App\Slots\SlotService;
+
 require_once ('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
@@ -17,54 +20,35 @@ try {
     }
 
     $authUser = requireAuth();
-	$userId = $authUser["user_id"] ?? null;
+	$userId = (int)($authUser["user_id"] ?? 0);
+    $companyId = (int)($authUser["company_id"] ?? 0);
 
-    if (!$userId) {
+    if ($userId <= 0) {
         throw new Exception("Unauthorized access. User not found or invalid token.");
     }
 
-    $where = [];
-
-    $search        = $_GET["search"] ?? '';
-    $selectSlot = $_GET["select_slot"] ?? '';
-
-    if (!empty($selectSlot)) {
-        $where["slot_id"] = $selectSlot;
-    }
-    
-    if (!empty($search)) {
-		$where["OR"] = [
-			"slot_name ILIKE"    => "%{$search}%"
-		];
+    if ($companyId <= 0) {
+		throw new Exception("Unauthorized access: company not found.");
 	}
 
-    $slotResponse = select_from(
-        "slot", 
-        [
-            "slot_id",
-            "company_id",
-            "slot_name",
-            "slot_description",
-            "max_capacity",
-            "current_capacity",
-            "status"
-        ],
-        $where, 
-        [
-            "order_by"          => "slot_name",
-            "oder_direction"    => "ASC",
-            "fetch_all"         => true
-        ]
-    );
+    $search = trim($_GET["search"] ?? '');
+    $selectSlot = isset($_GET["select_slot"]) ? (int)$_GET["select_slot"] : 0;
 
-    $slotData = json_decode($slotResponse, true);
+    $repository = new SlotRepository();
+	$service = new SlotService($repository);
 
-    if ($slotData["success"] && !empty($slotData["data"])) {
+	$slots = $service->getSlots(
+		$companyId,
+		$search,
+		$selectSlot
+	);
+
+    if (!empty($slots)) {
         $response = [
             "success"   => true,
             "message"   => "Slot info loaded.",
-            "count"     => $slotData["count"],
-            "data"      => array_values($slotData["data"])
+            "count"     => count($slots),
+            "data"      => $slots
         ];
     }
 } catch (Exception $e) {

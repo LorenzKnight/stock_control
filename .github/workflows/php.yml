@@ -39,6 +39,7 @@ jobs:
           php -l public/api/get_customers.php
           php -l public/api/get_storages.php
           php -l public/api/create_storage.php
+          php -l public/api/get_slot_info.php
 
       - name: PHPUnit
         run: vendor/bin/phpunit --testdox
