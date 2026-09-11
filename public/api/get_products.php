@@ -1,4 +1,7 @@
 <?php
+use App\Products\ProductRepository;
+use App\Products\ProductService;
+
 require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
@@ -37,40 +40,42 @@ try {
 	$companyFilter = null;
 
 	if (is_numeric($company) && intval($company) > 0) {
-		$companyFilter = intval($company);
+		$companyFilter = (int)$company;
 	} elseif (is_numeric($companyId) && intval($companyId) > 0) {
-		$companyFilter = intval($companyId);
+		$companyFilter = (int)$companyId;
 	}
 
 	if (empty($companyFilter)) {
 		throw new Exception("No company selected or linked to this user.");
 	}
+
+	$repository = new ProductRepository();
+	$service = new ProductService($repository);
+
 	/*
 	-------------------------------------------------------------------
 	🔎 BÚSQUEDA POR CÓDIGO DE BARRAS (modo individual)
 	-------------------------------------------------------------------
 	*/
 	if (!empty($barcode)) {
+		$result =
+			$service->getProductByBarcode(
+				$companyFilter,
+				(string)$barcode
+			);
 
-		$productQuery = select_from("products", ["*"], [
-			"hs_code" => $barcode,   // CAMBIA A "barcode" si tu DB lo maneja así
-			"company_id"=> $companyFilter
-		], ["fetch_first" => true]);
-
-		$parsed = json_decode($productQuery, true);
-
-		if (!$parsed["success"] || empty($parsed["data"])) {
+		if (!$result["found"]) {
 			echo json_encode([
 				"success" => true,
-				"message" => "Product not found.",
+				"message" =>
+					"Product not found.",
 				"product" => null
 			]);
+
 			exit;
 		}
 
-		$product = mapProductRelations($parsed["data"], $companyFilter);
-
-		if (!$product) {
+		if ($result["product"] === null) {
 			echo json_encode([
 				"success" => true,
 				"message" => "Product not found in this company.",
@@ -81,70 +86,31 @@ try {
 
 		echo json_encode([
 			"success" => true,
-			"message" => $product ? "Product found." : "Product not found in this company.",
-			"product" => $product
+			"message" => "Product found.",
+			"product" => $result["product"]
 		]);
+
 		exit;
 	}
 
-	/*
-	-------------------------------------------------------------------
-	📦 LISTADO NORMAL DE PRODUCTOS
-	-------------------------------------------------------------------
-	*/
-
-	$where = [];
-
-	if (!empty($mark))       $where["product_mark"]		 = $mark;
-	if (!empty($model))      $where["product_model"]	 = $model;
-	if (!empty($submodel))   $where["product_sub_model"] = $submodel;
-	if (!empty($purpose))    $where["purpose"]			 = $purpose;
-
-	if (!empty($productId) && is_numeric($productId)) {
-		$where["product_id"] = (int)$productId;
-	}
-
-	$where["company_id"] = $companyFilter;
-	
-
-	if (!empty($search)) {
-		$where["OR"] = [
-			"product_name ILIKE" => "%{$search}%",
-			"hs_code ILIKE"      => "%{$search}%"
-		];
-	}
-
-	// Listado completo
-	$productsQuery = select_from("products", ["*"], $where, [
-		"order_by" => "created_at",
-		"order_direction" => "DESC"
-	]);
-	
-	$parsed = json_decode($productsQuery, true);
-	
-	if (!$parsed["success"]) {
-		throw new Exception("Error loading products.");
-	}
-
-	$productsData = [];
-
-	foreach ($parsed["data"] ?? [] as $product) {
-		$enriched = mapProductRelations($product, $companyFilter);
-
-		if ($enriched) {
-			$productsData[] = $enriched;
-		}
-
-		if (!$enriched) {
-			error_log("Product discarded. Product company_id: " . ($product["company_id"] ?? 'NULL') . " / companyFilter: " . $companyFilter);
-		}
-	}
+	$products =
+		$service->getProducts(
+			$companyFilter,
+			[
+				"search" => $search,
+				"mark" => $mark,
+				"model" => $model,
+				"submodel" => $submodel,
+				"product_id" => $productId,
+				"purpose" => $purpose
+			]
+		);
 
 	$response = [
 		"success" => true,
 		"message" => "Products loaded.",
-		"count"   => count($productsData),
-		"data"    => array_values($productsData)
+		"count"   => count($products),
+		"data"    => $products
 	];
 } catch (Exception $e) {
 	$response = [

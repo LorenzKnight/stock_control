@@ -8,6 +8,7 @@ parameters:
         - public/logic/Customers
         - public/logic/Storages
         - public/logic/Slots
+        - public/logic/Products
 
     scanFiles:
         - public/inc/functions.php

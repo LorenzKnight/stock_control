@@ -33,6 +33,8 @@ jobs:
                public/logic/ServiceRights \
                public/logic/Customers \
                public/logic/Storages \
+               public/logic/Slots \
+               public/logic/Products \
                tests \
                -name "*.php" -print0 | xargs -0 -n1 php -l
 
@@ -42,6 +44,7 @@ jobs:
           php -l public/api/get_slot_info.php
           php -l public/api/create_slot.php
           php -l public/api/delete_slot.php
+          php -l public/api/get_products.php
 
       - name: PHPUnit
         run: vendor/bin/phpunit --testdox
