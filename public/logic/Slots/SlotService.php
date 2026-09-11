@@ -171,4 +171,38 @@ class SlotService
 			$slotData
 		);
 	}
+
+	public function deleteSlot(
+		int $companyId,
+		int $slotId
+	): void {
+		if ($companyId <= 0) {
+			throw new \InvalidArgumentException(
+				"Company ID not found for user."
+			);
+		}
+
+		if ($slotId <= 0) {
+			throw new \InvalidArgumentException(
+				"Slot ID is required."
+			);
+		}
+
+		$slot = $this->repository->findSlots(
+			$companyId,
+			'',
+			$slotId
+		);
+
+		if (empty($slot)) {
+			throw new \Exception(
+				"Slot not found."
+			);
+		}
+
+		$this->repository->delete(
+			$companyId,
+			$slotId
+		);
+	}
 }

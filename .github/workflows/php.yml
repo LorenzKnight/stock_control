@@ -41,6 +41,7 @@ jobs:
           php -l public/api/create_storage.php
           php -l public/api/get_slot_info.php
           php -l public/api/create_slot.php
+          php -l public/api/delete_slot.php
 
       - name: PHPUnit
         run: vendor/bin/phpunit --testdox

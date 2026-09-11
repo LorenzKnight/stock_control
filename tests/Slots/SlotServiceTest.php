@@ -481,4 +481,138 @@ final class SlotServiceTest extends TestCase
 			]
 		);
 	}
+
+	public function testRejectsDeleteWithInvalidCompanyId(): void
+	{
+		$repository =
+			$this->createMock(
+				SlotRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('findSlots');
+
+		$service =
+			new SlotService($repository);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Company ID not found for user."
+		);
+
+		$service->deleteSlot(
+			0,
+			12
+		);
+	}
+
+	public function testRejectsDeleteWithInvalidSlotId(): void
+	{
+		$repository =
+			$this->createMock(
+				SlotRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('findSlots');
+
+		$service =
+			new SlotService($repository);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Slot ID is required."
+		);
+
+		$service->deleteSlot(
+			5,
+			0
+		);
+	}
+
+	public function testRejectsDeleteWhenSlotDoesNotExist(): void
+	{
+		$repository =
+			$this->createMock(
+				SlotRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findSlots')
+			->with(
+				5,
+				'',
+				12
+			)
+			->willReturn([]);
+
+		$repository
+			->expects($this->never())
+			->method('delete');
+
+		$service =
+			new SlotService($repository);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"Slot not found."
+		);
+
+		$service->deleteSlot(
+			5,
+			12
+		);
+	}
+
+	public function testDeletesSlot(): void
+	{
+		$repository =
+			$this->createMock(
+				SlotRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findSlots')
+			->with(
+				5,
+				'',
+				12
+			)
+			->willReturn([
+				[
+					"slot_id" => 12,
+					"company_id" => 5,
+					"slot_name" => "Rack A"
+				]
+			]);
+
+		$repository
+			->expects($this->once())
+			->method('delete')
+			->with(
+				5,
+				12
+			);
+
+		$service =
+			new SlotService($repository);
+
+		$service->deleteSlot(
+			5,
+			12
+		);
+	}
 }

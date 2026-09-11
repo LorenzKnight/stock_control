@@ -169,4 +169,29 @@ class SlotRepository
 			);
 		}
 	}
+
+	public function delete(
+		int $companyId,
+		int $slotId
+	): void {
+		$result = \delete_from(
+			"slot",
+			[
+				"slot_id" => $slotId,
+				"company_id" => $companyId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Failed to delete slot ID: {$slotId}"
+			);
+		}
+	}
 }
