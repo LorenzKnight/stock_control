@@ -101,4 +101,74 @@ class SlotService
 		return $this->repository
 			->create($slotData);
 	}
+
+	public function updateSlot(
+		int $companyId,
+		int $slotId,
+		array $data
+	): void {
+		if ($companyId <= 0) {
+			throw new \InvalidArgumentException(
+				"Invalid company."
+			);
+		}
+
+		if ($slotId <= 0) {
+			throw new \InvalidArgumentException(
+				"Invalid slot ID."
+			);
+		}
+
+		$slotName = trim(
+			(string)($data["slot_name"] ?? '')
+		);
+
+		if ($slotName === '') {
+			throw new \InvalidArgumentException(
+				"Slot Name is required."
+			);
+		}
+
+		$currentSlot =
+			$this->repository->findSlots(
+				$companyId,
+				'',
+				$slotId
+			);
+
+		if (empty($currentSlot)) {
+			throw new \Exception(
+				"Slot not found."
+			);
+		}
+
+		$existingSlotId =
+			$this->repository->findIdByName(
+				$companyId,
+				$slotName
+			);
+
+		if (
+			$existingSlotId !== null &&
+			$existingSlotId !== $slotId
+		) {
+			throw new \Exception(
+				"A slot with this name already exists."
+			);
+		}
+
+		$slotData = [
+			"slot_name" => $slotName,
+			"current_capacity" => (int)($data["current_capacity"] ?? 0),
+			"max_capacity" => (int)($data["max_capacity"] ?? 0),
+			"slot_description" => trim((string)($data["slot_description"] ?? '')),
+			"status" => (int)($data["status"] ?? 0)
+		];
+
+		$this->repository->update(
+			$companyId,
+			$slotId,
+			$slotData
+		);
+	}
 }

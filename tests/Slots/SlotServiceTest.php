@@ -288,4 +288,197 @@ final class SlotServiceTest extends TestCase
                 $result
             );
     }
+
+    public function testRejectsUpdateWithInvalidSlotId(): void
+	{
+		$repository =
+			$this->createMock(
+				SlotRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('findSlots');
+
+		$service =
+			new SlotService($repository);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Invalid slot ID."
+		);
+
+		$service->updateSlot(
+			5,
+			0,
+			[
+				"slot_name" => "Rack A"
+			]
+		);
+	}
+
+
+	public function testRejectsUpdateWhenSlotDoesNotExist(): void
+	{
+		$repository =
+			$this->createMock(
+				SlotRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findSlots')
+			->with(5, '', 12)
+			->willReturn([]);
+
+		$repository
+			->expects($this->never())
+			->method('update');
+
+		$service =
+			new SlotService($repository);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"Slot not found."
+		);
+
+		$service->updateSlot(
+			5,
+			12,
+			[
+				"slot_name" => "Rack A"
+			]
+		);
+	}
+
+
+	public function testRejectsDuplicateSlotNameOnUpdate(): void
+	{
+		$repository =
+			$this->createMock(
+				SlotRepository::class
+			);
+
+		$repository
+			->method('findSlots')
+			->with(5, '', 12)
+			->willReturn([
+				[
+					"slot_id" => 12,
+					"company_id" => 5,
+					"slot_name" => "Rack A"
+				]
+			]);
+
+		$repository
+			->expects($this->once())
+			->method('findIdByName')
+			->with(5, 'Rack B')
+			->willReturn(20);
+
+		$repository
+			->expects($this->never())
+			->method('update');
+
+		$service =
+			new SlotService($repository);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"A slot with this name already exists."
+		);
+
+		$service->updateSlot(
+			5,
+			12,
+			[
+				"slot_name" => "Rack B"
+			]
+		);
+	}
+
+
+	public function testUpdatesSlot(): void
+	{
+		$repository =
+			$this->createMock(
+				SlotRepository::class
+			);
+
+		$repository
+			->method('findSlots')
+			->with(5, '', 12)
+			->willReturn([
+				[
+					"slot_id" => 12,
+					"company_id" => 5,
+					"slot_name" => "Rack A"
+				]
+			]);
+
+		$repository
+			->method('findIdByName')
+			->with(5, 'Rack A')
+			->willReturn(12);
+
+		$repository
+			->expects($this->once())
+			->method('update')
+			->with(
+				5,
+				12,
+				$this->callback(
+					function (array $data): bool {
+						return
+							$data["slot_name"] ===
+								"Rack A" &&
+
+							$data["current_capacity"] ===
+								20 &&
+
+							$data["max_capacity"] ===
+								150 &&
+
+							$data["slot_description"] ===
+								"Updated rack" &&
+
+							$data["status"] === 1;
+					}
+				)
+			);
+
+		$service =
+			new SlotService($repository);
+
+		
+		$service->updateSlot(
+			5,
+			12,
+			[
+				"slot_name" =>
+					" Rack A ",
+
+				"current_capacity" =>
+					20,
+
+				"max_capacity" =>
+					150,
+
+				"slot_description" =>
+					" Updated rack ",
+
+				"status" => 1
+			]
+		);
+	}
 }

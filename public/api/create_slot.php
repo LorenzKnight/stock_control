@@ -52,61 +52,34 @@ try {
 		throw new Exception("Slot Name is required.");
 	}
 
+	$repository = new SlotRepository();
+	$service = new SlotService($repository);
+
+	$slotData = [
+		"slot_name"                 => $slotName,
+		"current_capacity"          => $currentCapacity,
+		"max_capacity"              => $maxCapacity,
+		"slot_description"			=> $slotDescription,
+		"status"					=> $status
+	];
+
 	if ($slotId > 0) {
-		$existingSlot = json_decode(
-			select_from(
-				"slot",
-				["slot_id"],
-				[
-					"company_id" => $companyId,
-					"slot_name"  => $slotName
-				],
-				["fetch_first" => true]
-			),
-			true
+		$service->updateSlot(
+			$companyId,
+			$slotId,
+			$slotData
 		);
 
-    	$existingSlotId = (int)($existingSlot["data"]["slot_id"] ?? 0);
-
-		if ($existingSlotId > 0 && $existingSlotId !== $slotId) {
-			throw new Exception("A slot with this name already exists.");
-		}
-
-		$updateData = [
-			"company_id"				=> $companyId,
-			"slot_name"                 => $slotName,
-			"current_capacity"          => $currentCapacity,
-			"max_capacity"              => $maxCapacity,
-			"slot_description"			=> $slotDescription,
-			"status"					=> $status
-		];
-	
-        $updateResponse = update_table("slot", $updateData, ["slot_id" => $slotId]);
-        $updateResult = json_decode($updateResponse, true);
-
-	    if (empty($updateResult["success"])) {
-			throw new Exception("Update failed.");
-		}
-
-        $recordId = $slotId;
+		$recordId = $slotId;
 		$activityType = "update_slot";
 		$description = "Slot updated";
 		$successMessage = "Slot updated successfully!";
     } else {
-		$repository = new SlotRepository();
-		$service = new SlotService($repository);
-
         $recordId =
 			$service->createSlot(
 				$userId,
 				$companyId,
-				[
-					"slot_name" => $slotName,
-					"current_capacity" => $currentCapacity,
-					"max_capacity" => $maxCapacity,
-					"slot_description" => $slotDescription,
-					"status" => $status
-				]
+				$slotData
 			);
 
 		$activityType = "create_slot";

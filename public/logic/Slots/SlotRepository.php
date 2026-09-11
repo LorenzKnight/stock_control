@@ -142,4 +142,31 @@ class SlotRepository
 
         return $slotId;
     }
+
+    public function update(
+		int $companyId,
+		int $slotId,
+		array $data
+	): void {
+		$result = \update_table(
+			"slot",
+			$data,
+			[
+				"slot_id" => $slotId,
+				"company_id" => $companyId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Update failed."
+			);
+		}
+	}
 }
