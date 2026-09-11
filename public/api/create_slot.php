@@ -1,4 +1,7 @@
 <?php
+use App\Slots\SlotRepository;
+use App\Slots\SlotService;
+
 require_once ('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
@@ -17,84 +20,67 @@ try {
 	}
 
 	$authUser = requireAuth();
-	$userId = $authUser["user_id"] ?? null;
+	$userId = (int)($authUser["user_id"] ?? 0);
+	$companyId = (int)($authUser["company_id"] ?? 0);
 	
-	if (!$userId) {
+	if ($userId <= 0) {
         throw new Exception("Unauthorized access.");
     }
+
+	if ($companyId <= 0) {
+		throw new Exception("Invalid company.");
+	}
 
     // if (!check_user_permission($userId, 'process_handler')) {
 	// 	throw new Exception("Access denied. You do not have permission to create data.");
 	// }
 
     $slotIdRaw = $_POST["slot_id"] ?? '';
-    $slotId = intval($slotIdRaw);
+    $slotId = (int)($slotIdRaw);
 
     if ($slotIdRaw !== '' && $slotId <= 0) {
 		throw new Exception("Invalid slot ID.");
 	}
 
-    $userInfo = json_decode(
-        select_from(
-            "users",
-            ["company_id"],
-            [
-                "user_id" => $userId
-            ], ["fetch_first" => true]
-        ),
-        true
-    );
-
-    if (empty($userInfo["success"]) || empty($userInfo["data"])) {
-        throw new Exception("User data not found.");
-    }
-	$userData = $userInfo["data"];
-
-    $companyId			= intval($userData["company_id"] ?? 0);
 	$slotName           = trim($_POST["slot_name"] ?? '');
-    $currentCapacity    = intval($_POST["current_capacity"] ?? 0);
-    $maxCapacity        = intval($_POST["max_capacity"] ?? 0);
+    $currentCapacity    = (int)($_POST["current_capacity"] ?? 0);
+    $maxCapacity        = (int)($_POST["max_capacity"] ?? 0);
 	$slotDescription	= trim($_POST["slot_description"] ?? '');
-	$status             = intval($_POST["slot_status"] ?? 0);
-
-    if ($companyId <= 0) {
-        throw new Exception("Invalid company.");
-    }
+	$status             = (int)($_POST["slot_status"] ?? 0);
 
     if ($slotName === '') {
 		throw new Exception("Slot Name is required.");
 	}
 
-    $existingSlot = json_decode(
-		select_from(
-			"slot",
-			["slot_id"],
-			[
-				"company_id" => $companyId,
-				"slot_name"  => $slotName
-			],
-			["fetch_first" => true]
-		),
-		true
-	);
+	if ($slotId > 0) {
+		$existingSlot = json_decode(
+			select_from(
+				"slot",
+				["slot_id"],
+				[
+					"company_id" => $companyId,
+					"slot_name"  => $slotName
+				],
+				["fetch_first" => true]
+			),
+			true
+		);
 
-    $existingSlotId = intval($existingSlot["data"]["slot_id"] ?? 0);
+    	$existingSlotId = (int)($existingSlot["data"]["slot_id"] ?? 0);
 
-	if ($existingSlotId > 0 && $existingSlotId !== $slotId) {
-		throw new Exception("A slot with this name already exists.");
-	}
+		if ($existingSlotId > 0 && $existingSlotId !== $slotId) {
+			throw new Exception("A slot with this name already exists.");
+		}
 
-    $slotData = [
-		"company_id"				=> $companyId,
-		"slot_name"                 => $slotName,
-        "current_capacity"          => $currentCapacity,
-        "max_capacity"              => $maxCapacity,
-		"slot_description"			=> $slotDescription,
-		"status"					=> $status
-	];
+		$updateData = [
+			"company_id"				=> $companyId,
+			"slot_name"                 => $slotName,
+			"current_capacity"          => $currentCapacity,
+			"max_capacity"              => $maxCapacity,
+			"slot_description"			=> $slotDescription,
+			"status"					=> $status
+		];
 	
-    if ($slotId > 0) {
-        $updateData = $slotData;
         $updateResponse = update_table("slot", $updateData, ["slot_id" => $slotId]);
         $updateResult = json_decode($updateResponse, true);
 
@@ -107,18 +93,22 @@ try {
 		$description = "Slot updated";
 		$successMessage = "Slot updated successfully!";
     } else {
-        $insertData = $slotData;
-		$insertData["created_by"] = $userId;
-		$insertData["created_at"] = date("Y-m-d H:i:s");
+		$repository = new SlotRepository();
+		$service = new SlotService($repository);
 
-        $insertResponse = insert_into("slot", $insertData, ["id" => "slot_id"]);
-        $insertResult = json_decode($insertResponse, true);
+        $recordId =
+			$service->createSlot(
+				$userId,
+				$companyId,
+				[
+					"slot_name" => $slotName,
+					"current_capacity" => $currentCapacity,
+					"max_capacity" => $maxCapacity,
+					"slot_description" => $slotDescription,
+					"status" => $status
+				]
+			);
 
-        if (empty($insertResult["success"])) {
-            throw new Exception("Error saving slot data.");
-        }
-
-        $recordId = $insertResult["id"] ?? null;
 		$activityType = "create_slot";
 		$description = "New slot created";
 		$successMessage = "Slot created successfully!";

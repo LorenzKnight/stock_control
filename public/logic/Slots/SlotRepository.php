@@ -77,4 +77,69 @@ class SlotRepository
 			"Error loading slot data."
 		);
 	}
+
+    public function findIdByName(
+        int $companyId,
+        string $slotName
+    ): ?int {
+        $result = \select_from(
+            "slot",
+            ["slot_id"],
+            [
+                "company_id" => $companyId,
+                "slot_name" => $slotName
+            ],
+            [
+                "fetch_first" => true,
+                "return_type" => "array"
+            ]
+        );
+
+        if (!is_array($result)) {
+            throw new \RuntimeException(
+                "SlotRepository expected an array response."
+            );
+        }
+
+        $slotId =
+            (int)($result["data"]["slot_id"] ?? 0);
+
+        return $slotId > 0
+            ? $slotId
+            : null;
+    }
+
+
+    public function create(
+        array $data
+    ): int {
+        $result = \insert_into(
+            "slot",
+            $data,
+            [
+                "id" => "slot_id",
+                "return_type" => "array"
+            ]
+        );
+
+        if (
+            !is_array($result) ||
+            empty($result["success"])
+        ) {
+            throw new \RuntimeException(
+                "Error saving slot data."
+            );
+        }
+
+        $slotId =
+            (int)($result["id"] ?? 0);
+
+        if ($slotId <= 0) {
+            throw new \RuntimeException(
+                "Slot ID was not returned."
+            );
+        }
+
+        return $slotId;
+    }
 }

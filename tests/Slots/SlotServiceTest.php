@@ -146,4 +146,146 @@ final class SlotServiceTest extends TestCase
 			$result[0]["slot_id"]
 		);
 	}
+
+    public function testRejectsCreateWithoutName(): void
+    {
+        $repository =
+            $this->createMock(
+                SlotRepository::class
+            );
+
+        $repository
+            ->expects($this->never())
+            ->method('create');
+
+        $service =
+            new SlotService($repository);
+
+        $this->expectException(
+            InvalidArgumentException::class
+        );
+
+        $this->expectExceptionMessage(
+            "Slot Name is required."
+        );
+
+        $service->createSlot(
+            10,
+            5,
+            [
+                "slot_name" => " "
+            ]
+        );
+    }
+
+
+    public function testRejectsDuplicateSlotName(): void
+    {
+        $repository =
+            $this->createMock(
+                SlotRepository::class
+            );
+
+        $repository
+            ->expects($this->once())
+            ->method('findIdByName')
+            ->with(
+                5,
+                'Rack A'
+            )
+            ->willReturn(12);
+
+        $repository
+            ->expects($this->never())
+            ->method('create');
+
+        $service =
+            new SlotService($repository);
+
+        $this->expectException(
+            Exception::class
+        );
+
+        $this->expectExceptionMessage(
+            "A slot with this name already exists."
+        );
+
+        $service->createSlot(
+            10,
+            5,
+            [
+                "slot_name" => "Rack A"
+            ]
+        );
+    }
+
+
+    public function testCreatesSlot(): void
+    {
+        $repository =
+            $this->createMock(
+                SlotRepository::class
+            );
+
+        $repository
+            ->expects($this->once())
+            ->method('findIdByName')
+            ->with(
+                5,
+                'Rack A'
+            )
+            ->willReturn(null);
+
+        $repository
+            ->expects($this->once())
+            ->method('create')
+            ->with(
+                $this->callback(
+                    function (array $data): bool {
+                        return
+                            $data["company_id"] === 5 &&
+                            $data["slot_name"] ===
+                                "Rack A" &&
+                            $data["current_capacity"] ===
+                                10 &&
+                            $data["max_capacity"] ===
+                                100 &&
+                            $data["slot_description"] ===
+                                "Main rack" &&
+                            $data["status"] === 1 &&
+                            $data["created_by"] === 10;
+                    }
+                )
+            )
+            ->willReturn(22);
+
+        $service =
+            new SlotService($repository);
+
+        $result =
+            $service->createSlot(
+                10,
+                5,
+                [
+                    "slot_name" =>
+                        " Rack A ",
+
+                    "current_capacity" =>
+                        10,
+
+                    "max_capacity" =>
+                        100,
+
+                    "slot_description" =>
+                        " Main rack ",
+
+                    "status" => 1
+                ]
+            );
+
+        $this->assertSame(
+                22,
+                $result
+            );
+    }
 }
