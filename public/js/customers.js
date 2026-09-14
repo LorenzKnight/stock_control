@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 					row.innerHTML = `
 						<table width="100%" align="center" cellspacing="0">
-							<tr valign="baseline" class="form_height">
+							<tr valign="baseline" >
 								<td width="5%" align="center" valign="middle">
 									<div class="customers-profile">
 										<img src="${profileImg}" alt="profile picture">

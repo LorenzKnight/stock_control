@@ -432,7 +432,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 																	<input type="hidden" name="notification_id" value="${notif.notification_id}">
 																</td>
 															</tr>
-															<tr valign="baseline" class="form_height" >
+															<tr valign="baseline"  >
 																<td width="50%" align="left" valign="middle">
 																	<button type="button" class="neutral-btn">${window.i18n?.cancel || 'Cancel'}</button>
 																</td>
@@ -492,12 +492,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 										detailsDiv.innerHTML = `
 										<div>
 											<table class="message-details" id="messageDetails" width="90%" align="center" cellspacing="0" style="margin-top: 15px;">
-												<tr valign="baseline" class="form_height">
+												<tr valign="baseline" >
 													<td colspan="2" style="border-bottom: 1px solid #ccc; padding-bottom: 5px;" align="center" valign="middle">
 														<h3>${notif.notification_type}</h3>
 													</td>
 												</tr>
-												<tr class="form_height" valign="baseline">
+												<tr  valign="baseline">
 													<td width="50%" align="left" valign="middle" style="border-bottom: 1px solid #ccc; padding: 10px 0;"><strong>${window.i18n?.from || 'From'}:</strong> ${notif.from_user_name}</td>
 													<td width="50%" align="right" valign="middle" style="border-bottom: 1px solid #ccc; padding: 10px 0;"><strong>${window.i18n?.date || 'Date'}: </strong><span id="notif-from-user">${formatFullDateTime(notif.created_at)}</span></td>
 												</tr>

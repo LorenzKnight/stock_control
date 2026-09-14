@@ -101,7 +101,7 @@
 										<input type="hidden" name="slot_id" id="slot_id" value="">
 									</table>
 									<table id="not-slot-form" width="100%" align="center" cellspacing="0">
-										<tr valign="baseline" class="form_height">
+										<tr valign="baseline" >
 											<td colspan="2" align="center" valign="middle">
 												<p><?= tr('slot_info') ?></p>
 											</td>

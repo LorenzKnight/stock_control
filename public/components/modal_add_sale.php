@@ -43,7 +43,7 @@
 								</div>
 								<div class="cat-all-list">
 									<table width="100%" align="center" cellspacing="0">
-										<tr valign="baseline" class="form_height">
+										<tr valign="baseline" >
 											<td width="50%" align="center" valign="middle">
 												<label for="currency"><?= tr('currency') ?>:</label>
 												<select class="form-input-style" name="currency" id="currency" required></select>
@@ -53,25 +53,25 @@
 												<input class="form-medium-input-style" type="text" name="price_sum" id="price_sum" placeholder="<?= tr('price_sum') ?>..." disabled/>
 											</td>
 										</tr>
-										<tr valign="baseline" class="form_height">
+										<tr valign="baseline" >
 											<td colspan="2" align="center" valign="middle">
 												<label for="initial"><?= tr('initial') ?>:</label>
 												<input class="form-input-style" type="text" name="initial" id="initial" placeholder="<?= tr('initial') ?>..."/>
 											</td>
 										</tr>
-										<tr valign="baseline" class="form_height">
+										<tr valign="baseline" >
 											<td colspan="2" align="center" valign="middle">
 												<label for="payment_date"><?= tr('payment_date') ?>:</label>
 												<input class="form-input-style" type="date" name="payment_date" id="payment_date" placeholder="<?= tr('payment_date') ?>..."/>
 											</td>
 										</tr>
-										<tr valign="baseline" class="form_height">
+										<tr valign="baseline" >
 											<td colspan="2" align="center" valign="middle">
 												<label for="remaining"><?= tr('remaining') ?>:</label>
 												<input class="form-input-style" type="text" name="remaining" id="remaining" placeholder="<?= tr('remaining') ?>..." disabled/>
 											</td>
 										</tr>
-										<tr valign="baseline" class="form_height">
+										<tr valign="baseline" >
 											<td width="50%" align="center" valign="middle">
 												<label for="interest">% <?= tr('interest') ?>:</label>
 												<input class="form-medium-input-style" type="text" name="interest" id="interest" value="10" placeholder="<?= tr('percent') ?>..."/>
@@ -81,7 +81,7 @@
 												<input class="form-medium-input-style" type="text" name="total_interest" id="total_interest" placeholder="<?= tr('total_interest') ?>..." disabled/>
 											</td>
 										</tr>
-										<tr valign="baseline" class="form_height">
+										<tr valign="baseline" >
 											<td width="50%" align="center" valign="middle">
 												<label for="installments_month"><?= tr('installments_month') ?>:</label>
 												<select class="form-input-style" name="installments_month" id="installments_month"></select>
@@ -91,7 +91,7 @@
 												<input class="form-medium-input-style" type="date" name="delivery_date" id="delivery_date" placeholder="<?= tr('delivery_date') ?>..."/>
 											</td>
 										</tr>
-										<tr valign="baseline" class="form_height">
+										<tr valign="baseline" >
 											<td colspan="2" align="center" valign="middle">
 												<label for="due"><?= tr('due') ?>:</label>
 												<input class="form-input-style" type="text" name="due" id="due" placeholder="<?= tr('due') ?>..." disabled/>
@@ -103,7 +103,7 @@
 						</div>
 					</td>
 				</tr>
-				<tr valign="baseline" class="form_height">
+				<tr valign="baseline" >
 					<td colspan="6" align="center" valign="middle">
 						<div class="footer-buttons">
 							<button

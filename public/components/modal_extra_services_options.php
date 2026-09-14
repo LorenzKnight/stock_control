@@ -36,20 +36,20 @@
 							<h2>Edit Extra Service</h2>
 						</td>      
 					</tr>
-                    <tr valign="baseline" class="form_height">
+                    <tr valign="baseline" >
 						<td colspan="6" align="center" valign="middle">
 							<label for="edit_extra_service_name">Extra Service Name:</label>
 							<input class="form-input-style" type="text" name="edit_extra_service_name" id="edit_extra_service_name" placeholder="Name the service." title="Name the service."/>
 						</td>
 					</tr>
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td colspan="6" align="center" valign="middle">
 							<label for="edit_extra_service_price">Extra Service Price:</label>
 							<input class="form-input-style" type="text" name="edit_extra_service_price" id="edit_extra_service_price" placeholder="Enter a amount..." title="Enter a amount" required/>
 						</td>
 					</tr>
 					
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td width="50%" style="border-block: 1px solid var(--clr-border); padding: 5px 10px;" align="left" valign="middle">
 							<span style="display: block;">Status</span>
 						</td>
@@ -60,7 +60,7 @@
 							</label>
 						</td>
 					</tr>
-                    <tr valign="baseline" class="form_height">
+                    <tr valign="baseline" >
                         <td width="50%" style="padding: 15px 0" align="center" valign="middle">
                             <button type="button" class="neutral-btn">Cancel</button>
                         </td>

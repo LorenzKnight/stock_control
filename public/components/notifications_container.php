@@ -7,7 +7,7 @@
 		<div class="product-table flex">
 			<div class="notifications-sidebar">
 					<table width="95%" align="center" cellspacing="0" style="margin-top: 15px; border-bottom: 1px solid var(--clr-border);">
-						<tr valign="baseline" class="form_height">
+						<tr valign="baseline" >
 							<td width="85%" style="padding-bottom: 5px;" align="center" valign="middle">
 								<input type="text" name="messageSearchField" id="messageSearchField" class="search-field" placeholder="<?= tr('search_messages') ?>...">
 							</td>

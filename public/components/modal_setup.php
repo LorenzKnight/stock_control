@@ -2,17 +2,17 @@
 	<div class="formular-frame">
         <form method="post" name="formAgree" id="formAgree">
             <table width="80%" align="center" cellspacing="0">
-                <tr valign="baseline" class="form_height">
+                <tr valign="baseline" >
                     <td colspan="6" align="center" valign="middle">
                         <h2>Welcome to AllStockControl</h2>
                     </td>
                 </tr>
-                <tr valign="baseline" class="form_height">
+                <tr valign="baseline" >
                     <td colspan="6" align="center" valign="middle">
                         <p>To get started, please fill in your company information.</p>
                     </td>
                 </tr>
-                <tr valign="baseline" class="form_height">
+                <tr valign="baseline" >
                     <td style="font-size: 12px;" colspan="6" align="center" valign="middle">
                         <table width="90%" align="center" cellspacing="0">
                             <tr valign="baseline" height="60px">

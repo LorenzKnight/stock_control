@@ -37,13 +37,13 @@
 											<input class="form-input-style" type="text" name="customer_email" id="customer_email" placeholder="Email..." title="Email"/>
 										</td>
 									</tr>
-									<tr valign="baseline" class="form_height">
+									<tr valign="baseline" >
 										<td colspan="2" align="center" valign="middle">
 											<label for="customer_address"><?= tr('address') ?>:</label>
 											<input class="form-input-style" type="text" name="customer_address" id="customer_address" placeholder="<?= tr('address') ?>..." title="<?= tr('address') ?>"/>
 										</td>
 									</tr>
-									<tr valign="baseline" class="form_height">
+									<tr valign="baseline" >
 										<td width="50%" align="center" valign="middle">
 											<label for="customer_country_code"><?= tr('form_country_code') ?>:</label>
 											<select class="form-medium-input-style" name="customer_country_code" id="customer_country_code" required></select>
@@ -53,7 +53,7 @@
 											<input class="form-medium-input-style" type="text" name="customer_phone" id="customer_phone" placeholder="<?= tr('phone') ?>..." title="<?= tr('phone') ?>"/>
 										</td>
 									</tr>
-									<tr valign="baseline" class="form_height">
+									<tr valign="baseline" >
 										<td width="50%" align="center" valign="middle">
 											<label for="customer_type"><?= tr('customer_type') ?>:</label>
 											<select class="form-input-style" name="customer_type" id="customer_type"></select>
@@ -63,7 +63,7 @@
 											<input class="form-medium-input-style" type="date" name="customer_birthday" id="customer_birthday" placeholder="<?= tr('birthdate') ?>..." title="<?= tr('birthdate') ?>"/>
 										</td>
 									</tr>
-									<tr valign="baseline" class="form_height">
+									<tr valign="baseline" >
 										<td width="50%" align="center" valign="middle">
 											<label for="customer_document_type"><?= tr('document_type') ?>:</label>
 											<select class="form-input-style" name="customer_document_type" id="customer_document_type"></select>
@@ -77,13 +77,13 @@
 							</div>
 							<div class="formular-list">
 								<table width="95%" align="center" cellspacing="0">
-									<tr valign="baseline" class="form_height">
+									<tr valign="baseline" >
 										<td colspan="2" align="center" valign="middle">
 											<label for="references_1"><?= tr('references_1') ?>:</label>
 											<input class="form-input-style" type="text" name="references_1" id="references_1" placeholder="<?= tr('references_1') ?>..." title="<?= tr('references_1') ?>"/>
 										</td>
 									</tr>
-									<tr valign="baseline" class="form_height">
+									<tr valign="baseline" >
 										<td width="50%" align="center" valign="middle">
 											<label for="references_1_country_code"><?= tr('form_country_code') ?>:</label>
 											<select class="form-medium-input-style" name="references_1_country_code" id="references_1_country_code" required></select>
@@ -93,13 +93,13 @@
 											<input class="form-medium-input-style" type="text" name="references_1_phone" id="references_1_phone" placeholder="<?= tr('references_1_phone') ?>..." title="<?= tr('references_1_phone') ?>"/>
 										</td>
 									</tr>
-									<tr valign="baseline" class="form_height">
+									<tr valign="baseline" >
 										<td colspan="2" align="center" valign="middle">
 											<label for="references_2"><?= tr('references_2') ?>:</label>
 											<input class="form-input-style" type="text" name="references_2" id="references_2" placeholder="<?= tr('references_2') ?>..." title="<?= tr('references_2') ?>"/>
 										</td>
 									</tr>
-									<tr valign="baseline" class="form_height">
+									<tr valign="baseline" >
 										<td width="50%" align="center" valign="middle">
 											<label for="references_2_country_code"><?= tr('form_country_code') ?>:</label>
 											<select class="form-medium-input-style" name="references_2_country_code" id="references_2_country_code" required></select>
@@ -109,7 +109,7 @@
 											<input class="form-medium-input-style" type="text" name="references_2_phone" id="references_2_phone" placeholder="<?= tr('references_2_phone') ?>..." title="<?= tr('references_2_phone') ?>"/>
 										</td>
 									</tr>
-									<tr valign="baseline" class="form_height">
+									<tr valign="baseline" >
 										<td width="50%" style="border-block: 1px solid var(--clr-border); padding: 5px 10px;" align="left" valign="middle">
 											<span style="display: block;"><?= tr('status') ?>:</span>
 										</td>
@@ -125,7 +125,7 @@
 						</div>
 					</td>
 				</tr>
-				<tr valign="baseline" class="form_height">
+				<tr valign="baseline" >
 					<td colspan="6" align="center" valign="middle">
 						<div class="footer-buttons">
 							<button

@@ -4258,7 +4258,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		shippingDetails.innerHTML = `
 			<div class="shipping-header">
 				<table width="100%" align="center" cellspacing="0">
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td width="47%" align="left" valign="middle">
 							<p class="mini-title">Shipping No.:</p>
 							<strong>${shipping.shipping_no}</strong>
@@ -4270,7 +4270,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							</div>
 						</td>
 					</tr>
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td width="47%" align="left" valign="middle">
 							<p class="mini-title">Destination:</p>
 							${shipping.destination || '—'}
@@ -4284,7 +4284,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 						</td>
 						<td width="3%" align="center" valign="middle"></td>
 					</tr>
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td colspan="6" align="left" valign="middle">
 							<p class="mini-title">Description:</p>
 							${shipping.description || '—'}
@@ -6441,7 +6441,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							return`
 								<div class="sys-admin-table">
 									<table width="100%" align="center" cellspacing="0">
-										<tr data-id="${right.service_id}" valign="baseline" class="form_height">
+										<tr data-id="${right.service_id}" valign="baseline" >
 											<td width="70%" align="left" valign="middle" style="padding-left:15px;">
 												${right.service_name}
 											</td>
@@ -6465,7 +6465,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				} else {
 					html += `
 						<table width="100%" align="center" cellspacing="0">
-							<tr valign="baseline" class="form_height">
+							<tr valign="baseline" >
 								<td width="100%" align="center" valign="middle">
 									<p style="color:gray; margin-top:10px;">No rights found for this user.</p>
 								</td>
@@ -6497,7 +6497,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							return`
 								<div class="sys-admin-table">
 									<table width="100%" align="center" cellspacing="0">
-										<tr data-id="${service.service_id}" valign="baseline" class="form_height">
+										<tr data-id="${service.service_id}" valign="baseline" >
 											<td width="50%" align="left" valign="middle" style="padding-left:15px;">
 												${service.service_name}
 											</td>
@@ -6524,7 +6524,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				} else {
 					html += `
 						<table width="100%" align="center" cellspacing="0">
-							<tr valign="baseline" class="form_height">
+							<tr valign="baseline" >
 								<td width="100%" align="center" valign="middle">
 									<p style="color:gray; margin-top:10px;">No extra services found for this user.</p>
 								</td>
@@ -7539,17 +7539,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 							<input type="hidden" name="company_id" id="company_id" value="${selectedId}">
 						
 							<table style="margin: 0px auto 50px" width="95%" cellspacing="0">
-								<tr valign="baseline" class="form_height">
+								<tr valign="baseline" >
 									<td colspan="6" style="border-bottom: 1px solid var(--clr-border);" align="center" valign="middle">
 										<h2 style="margin: 20px 0 10px;">${sectionTitle}</h2>
 									</td>
 								</tr>
-								<tr valign="baseline" class="form_height">
+								<tr valign="baseline" >
 									<td colspan="6" style="border-bottom: 1px solid var(--clr-border);" align="center" valign="middle">
 										<h4 style="margin-bottom: 10px;">Regional</h4>
 									</td>
 								</tr>
-								<tr valign="baseline" class="form_height">
+								<tr valign="baseline" >
 									<td width="50%" style="border-bottom: 1px solid var(--clr-light-border); padding: 5px 10px;" align="left" valign="middle">
 										<span style="display: block;">Company Currency</span>
 									</td>
@@ -7557,7 +7557,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 										<select class="form-input-style" id="company_currency" name="company_currency"></select>
 									</td>
 								</tr>
-								<tr valign="baseline" class="form_height">
+								<tr valign="baseline" >
 									<td width="50%" style="border-bottom: 1px solid var(--clr-light-border); padding: 5px 10px;" align="left" valign="middle">
 										<span style="display: block;">Shipping Price/kg</span>
 									</td>
@@ -7586,12 +7586,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 							<input type="hidden" name="user_id" id="user_id" value="${selectedId}">
 
 							<table style="margin: 0px auto 50px" width="95%" cellspacing="0">
-								<tr valign="baseline" class="form_height">
+								<tr valign="baseline" >
 									<td colspan="6" style="border-bottom: 1px solid var(--clr-border);" align="center" valign="middle">
 										<h2 style="margin: 20px 0 10px;">${sectionTitle}</h2>
 									</td>
 								</tr>
-								<tr valign="baseline" class="form_height">
+								<tr valign="baseline" >
 									<td width="50%" style="border-bottom: 1px solid var(--clr-light-border); padding: 5px 10px;" align="left" valign="middle">
 										<span style="display: block;">Shipping Access</span>
 									</td>
@@ -7602,7 +7602,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 										</label>
 									</td>
 								</tr>
-								<tr valign="baseline" class="form_height">
+								<tr valign="baseline" >
 									<td width="50%" style="border-bottom: 1px solid var(--clr-light-border); padding: 5px 10px;" align="left" valign="middle">
 										<span style="display: block;">Sale Access</span>
 									</td>
@@ -7613,12 +7613,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 										</label>
 									</td>
 								</tr>
-								<tr valign="baseline" class="form_height">
+								<tr valign="baseline" >
 									<td colspan="6" style="border-bottom: 1px solid var(--clr-border);" align="center" valign="middle">
 										<h4 style="margin-bottom: 10px;">Mobile</h4>
 									</td>
 								</tr>
-								<tr valign="baseline" class="form_height">
+								<tr valign="baseline" >
 									<td width="50%" style="border-bottom: 1px solid var(--clr-light-border); padding: 5px 10px;" align="left" valign="middle">
 										<span style="display: block;">Shipping Status Notice</span>
 									</td>

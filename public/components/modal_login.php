@@ -7,7 +7,7 @@
 						<h2><?= htmlspecialchars(tr('login_title')) ?></h2>
 					</td>      
 				</tr>
-				<tr valign="baseline" class="form_height">
+				<tr valign="baseline" >
 					<td colspan="6" align="center" valign="middle">
 						<input 
 							class="form-input-style" 
@@ -20,7 +20,7 @@
 						/>
 					</td>
 				</tr>
-				<tr valign="baseline" class="form_height">
+				<tr valign="baseline" >
 					<td colspan="6" align="center" valign="middle">
 						<input 
 							class="form-input-style" 
@@ -32,7 +32,7 @@
 						/>
 					</td>
 				</tr>
-				<tr valign="baseline" class="form_height">
+				<tr valign="baseline" >
 					<td nowrap="nowrap" align="center" valign="middle">
 						<input 
 							type="submit" 

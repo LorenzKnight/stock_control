@@ -3,18 +3,18 @@
 		<form method="post" name="formAddRights" id="formAddRights">
 			<input type="hidden" name="user_id" id="right_user_id" value="">
 			
-			<table width="80%" align="center" cellspacing="0">
+			<table width="85%" align="center" cellspacing="0">
 				<tr valign="baseline">
 					<td colspan="6" align="center" valign="middle">
 						<h2>Create a Service</h2>
 					</td>      
 				</tr>
-                <tr valign="baseline" class="form_height">
+                <tr valign="baseline" >
 					<td colspan="6" align="center" valign="middle">
 						<select class="form-input-style" name="service_name" id="service_name"></select>
 					</td>
 				</tr>
-				<tr valign="baseline" class="form_height">
+				<tr valign="baseline" >
 					<td width="50%" style="border-block: 1px solid var(--clr-border); padding: 5px 10px;" align="left" valign="middle">
 						<span style="display: block;">Status</span>
 					</td>
@@ -25,7 +25,7 @@
 						</label>
 					</td>
 				</tr>
-				<tr valign="baseline" class="form_height">
+				<tr valign="baseline" >
 					<td width="50%" style="padding: 15px 0" align="center" valign="middle">
 						<button type="button" class="neutral-btn">Cancel</button>
 					</td>

@@ -56,7 +56,7 @@
 							<h2>Edit Shipping</h2>
 						</td>      
 					</tr>
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td colspan="3" align="center" valign="middle">
 							<div class="product-type-selection">
 								<input type="radio" id="edit_unit_type_1" name="edit_shipping_method" value="1">
@@ -70,26 +70,26 @@
 							</div>
 						</td>
 					</tr>
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td colspan="6" align="center" valign="middle">
 							<label for="edit_destination">Destination:</label>
 							<input class="form-input-style" type="text" name="edit_destination" id="edit_destination" placeholder="Shipping Destination..." title="Shipping Destination"/>
 						</td>
 					</tr>
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td colspan="6" align="center" valign="middle">
 							<label for="edit_delivery_date">Estimate Arrival Date:</label>
 							<input class="form-input-style" type="date" name="edit_delivery_date" id="edit_delivery_date" placeholder="Enter a Estimate date..."/>
 						</td>
 					</tr>
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td colspan="6" align="center" valign="middle">
 							<label for="edit_description">Description:</label>
 							<textarea class="form-input-style" id="edit_description" name="edit_description" rows="5" cols="35">
 							</textarea>
 						</td>
 					</tr>
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td colspan="3" style="border-block: 1px solid var(--clr-border); padding: 5px 10px;" align="left" valign="middle">
 							<span style="display: block;">Status</span>
 						</td>
@@ -100,7 +100,7 @@
 							</label>
 						</td>
 					</tr>
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td colspan="3" align="center" valign="middle" style="padding-top: 10px;">
 							<button type="button" class="neutral-btn">Cancel</button>
 						</td>
@@ -158,13 +158,13 @@
 									</div>
 									<div class="cat-all-list">
 										<table width="100%" align="center" cellspacing="0">
-											<tr valign="baseline" class="form_height">
+											<tr valign="baseline" >
 												<td colspan="2" align="center" valign="middle">
 													<label for="shipping_from_currency">From currency:</label>
 													<select class="form-input-style" name="shipping_from_currency" id="shipping_from_currency" required></select>
 												</td>
 											</tr>
-											<tr valign="baseline" class="form_height">
+											<tr valign="baseline" >
 												<td width="50%" align="center" valign="middle">
 													<label for="shipping_price">Price/kg:</label>
 													<input class="form-medium-input-style" type="text" name="shipping_price" id="shipping_price" placeholder="Price/kg..."/>
@@ -174,7 +174,7 @@
 													<input class="form-medium-input-style" type="text" name="total_kg" id="total_kg" placeholder="Total kg..." disabled/>
 												</td>
 											</tr>
-											<tr valign="baseline" class="form_height">
+											<tr valign="baseline" >
 												<td width="50%" align="center" valign="middle">
 													<label for="price_sum">Price Sum:</label>
 													<input class="form-medium-input-style" type="text" name="price_sum" id="price_sum" placeholder="Price sum..." disabled/>
@@ -184,7 +184,7 @@
 													<input class="form-medium-input-style" type="text" name="discount" id="discount" placeholder="Discount..."/>
 												</td>
 											</tr>
-											<tr valign="baseline" class="form_height">
+											<tr valign="baseline" >
 												<td width="50%" align="center" valign="middle">
 													<label for="taxes">Taxes %:</label>
 													<input class="form-medium-input-style" type="text" name="taxes" id="taxes" placeholder="Taxes %..."/>
@@ -194,7 +194,7 @@
 													<input class="form-medium-input-style" type="text" name="total" id="total" placeholder="Total..." disabled/>
 												</td>
 											</tr>
-											<tr valign="baseline" class="form_height">
+											<tr valign="baseline" >
 												<td width="50%" align="center" valign="middle">
 													<label for="shipping_to_currency">To Currency:</label>
 													<select class="form-medium-input-style" name="shipping_to_currency" id="shipping_to_currency" required></select>
@@ -204,13 +204,13 @@
 													<input class="form-medium-input-style" type="text" name="total_exchanged" id="total_exchanged" placeholder="Total exchanged..." disabled/>
 												</td>
 											</tr>
-											<tr valign="baseline" class="form_height">
+											<tr valign="baseline" >
 												<td colspan="2" align="center" valign="middle">
 													<label for="destination">Customer destination:</label>
 													<input class="form-input-style" type="text" name="destination" id="destination" placeholder="Customer destination..."/>
 												</td>
 											</tr>
-											<tr valign="baseline" class="form_height">
+											<tr valign="baseline" >
 												<td colspan="2" align="center" valign="middle">
 													<label for="comment">Comment:</label>
 													<textarea class="form-input-style" id="comment" name="comment" rows="5" cols="35">
@@ -223,7 +223,7 @@
 							</div>
 						</td>
 					</tr>
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td colspan="2" align="center" valign="middle">
 							<div class="footer-buttons">
 								<button

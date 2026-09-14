@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 						row.innerHTML = `
 							<table width="100%" align="center" cellspacing="0">
-								<tr valign="baseline" class="form_height">
+								<tr valign="baseline" >
 									<td width="12%" align="center" valign="middle">
 										<p class="mini-title">HS Code:</p>
 										${report.hs_code || '-'}

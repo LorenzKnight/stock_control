@@ -77,31 +77,31 @@
 									</div>
 									<div class="cat-all-list">
 										<table width="100%" align="center" cellspacing="0">
-											<tr valign="baseline" class="form_height">
+											<tr valign="baseline" >
 												<td colspan="2" align="center" valign="middle">
 													<label for="edit_price_sum"><?= tr('price_sum') ?>:</label>
 													<input class="form-input-style" type="text" name="edit_price_sum" id="edit_price_sum" placeholder="<?= tr('price_sum') ?>..." disabled/>
 												</td>
 											</tr>
-											<tr valign="baseline" class="form_height">
+											<tr valign="baseline" >
 												<td colspan="2" align="center" valign="middle">
 													<label for="edit_initial"><?= tr('initial') ?>:</label>
 													<input class="form-input-style" type="text" name="edit_initial" id="edit_initial" placeholder="<?= tr('initial') ?>..."/>
 												</td>
 											</tr>
-											<tr valign="baseline" class="form_height">
+											<tr valign="baseline" >
 												<td colspan="2" align="center" valign="middle">
 													<label for="edit_payment_date"><?= tr('payment_date') ?>:</label>
 													<input class="form-input-style" type="date" name="edit_payment_date" id="edit_payment_date" placeholder="<?= tr('payment_date') ?>..."/>
 												</td>
 											</tr>
-											<tr valign="baseline" class="form_height">
+											<tr valign="baseline" >
 												<td colspan="2" align="center" valign="middle">
 													<label for="edit_remaining"><?= tr('remaining') ?>:</label>
 													<input class="form-input-style" type="text" name="edit_remaining" id="edit_remaining" placeholder="<?= tr('remaining') ?>..." disabled/>
 												</td>
 											</tr>
-											<tr valign="baseline" class="form_height">
+											<tr valign="baseline" >
 												<td width="50%" align="center" valign="middle">
 													<label for="edit_interest">% <?= tr('interest') ?>:</label>
 													<input class="form-medium-input-style" type="text" name="edit_interest" id="edit_interest" value="10" placeholder="<?= tr('percent') ?>..."/>
@@ -111,7 +111,7 @@
 													<input class="form-medium-input-style" type="text" name="edit_total_interest" id="edit_total_interest" placeholder="<?= tr('total_interest') ?>..." disabled/>
 												</td>
 											</tr>
-											<tr valign="baseline" class="form_height">
+											<tr valign="baseline" >
 												<td width="50%" align="center" valign="middle">
 													<label for="edit_installments_month"><?= tr('installments_month') ?>:</label>
 													<select class="form-input-style" name="edit_installments_month" id="edit_installments_month"></select>
@@ -121,7 +121,7 @@
 													<input class="form-medium-input-style" type="date" name="edit_delivery_date" id="edit_delivery_date" placeholder="<?= tr('delivery_date') ?>..."/>
 												</td>
 											</tr>
-											<tr valign="baseline" class="form_height">
+											<tr valign="baseline" >
 												<td colspan="2" align="center" valign="middle">
 													<label for="edit_due"><?= tr('due') ?>:</label>
 													<input class="form-input-style" type="text" name="edit_due" id="edit_due" placeholder="<?= tr('due') ?>..." disabled/>
@@ -133,7 +133,7 @@
 							</div>
 						</td>
 					</tr>
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td colspan="6" align="center" valign="middle">
 							<div class="footer-buttons">
 								<button type="button" class="neutral-btn"><?= tr('cancel') ?></button>

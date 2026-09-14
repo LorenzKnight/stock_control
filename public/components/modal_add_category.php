@@ -75,7 +75,7 @@
 						</div>
 					</td>
 				</tr>
-				<tr valign="baseline" class="form_height">
+				<tr valign="baseline" >
 					<td colspan="6" align="center" valign="middle">
 						<div class="footer-buttons">
 							<button type="button" class="neutral-btn"><?= tr('cancel') ?></button>

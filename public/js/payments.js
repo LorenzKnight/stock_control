@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 						row.innerHTML = `
 							<table width="100%" align="center" cellspacing="0">
-								<tr valign="baseline" class="form_height">
+								<tr valign="baseline" >
 									<td width="8%" align="center" valign="middle">
 										<p class="mini-title">${window.i18n?.payment_no}:</p>
 										${payment.payment_no || ''}

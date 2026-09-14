@@ -23,7 +23,7 @@
 						
 							<div class="formular-list">
 								<table class="hidden" id="company-form" width="100%" align="center" cellspacing="0">
-									<tr valign="baseline" class="form_height">
+									<tr valign="baseline" >
 										<td colspan="2" align="center" valign="middle">
 											<div class="drop-area" id="company-logo-drop-area">
 												<img class="image-preview" id="logo-preview" src="" alt="Logo preview">
@@ -32,7 +32,7 @@
 											</div>
 										</td>
 									</tr>
-									<tr valign="baseline" class="form_height">
+									<tr valign="baseline" >
 										<td colspan="2" align="center" valign="middle">
 											<label for="company_name">
 												<?= tr('company_name') ?> <span class="required-field">*</span>
@@ -40,19 +40,19 @@
 											<input class="form-input-style" type="text" name="company_name" id="company_name" placeholder="Company Name..." title="Company name"/>
 										</td>
 									</tr>
-									<tr valign="baseline" class="form_height">
+									<tr valign="baseline" >
 										<td colspan="2" align="center" valign="middle">
 											<label for="organization_no"><?= tr('organization_no') ?>:</label>
 											<input class="form-input-style" type="text" name="organization_no" id="organization_no" placeholder="Organization No." title="Organization No."/>
 										</td>
 									</tr>
-									<tr valign="baseline" class="form_height">
+									<tr valign="baseline" >
 										<td colspan="2" align="center" valign="middle">
 											<label for="company_address"><?= tr('company_address') ?>:</label>
 											<input class="form-input-style" type="text" name="company_address" id="company_address" placeholder="Company Address..." title="Company Address"/>
 										</td>
 									</tr>
-									<tr valign="baseline" class="form_height">
+									<tr valign="baseline" >
 										<td width="50%" align="center" valign="middle">
 											<label for="company_country_code">
 												<?= tr('company_country_code') ?> <span class="required-field">*</span>
@@ -70,7 +70,7 @@
 									<input type="hidden" name="company_id" id="company_id" value="">
 								</table>
 								<table id="not-company-form" width="100%" align="center" cellspacing="0">
-									<tr valign="baseline" class="form_height">
+									<tr valign="baseline" >
 										<td colspan="2" align="center" valign="middle">
 											<p><?= tr('company_info') ?></p>
 										</td>
@@ -80,7 +80,7 @@
 						</div>
 					</td>
 				</tr>
-				<tr valign="baseline" class="form_height">
+				<tr valign="baseline" >
 					<td colspan="6" align="center" valign="middle">
 						<div class="footer-buttons">
 							<button type="button" class="neutral-btn">

@@ -47,12 +47,12 @@
 		<form id="contactForm" method="POST" action="/api/send_email.php">
 			<button type="button" id="closeContactForm" class="close-btn">&times;</button>
 			<table width="100%" align="center" cellspacing="0">
-				<tr valign="baseline" class="form_height">
+				<tr valign="baseline" >
 					<td colspan="2" align="center" valign="middle">
 						<h2><?= htmlspecialchars(tr('footer_contact_title')) ?></h2>
 					</td>
 				</tr>
-				<tr valign="baseline" class="form_height">
+				<tr valign="baseline" >
 					<td colspan="2" align="center" valign="middle">
 						<input
 							class="form-input-style"
@@ -63,7 +63,7 @@
 						/>
 					</td>
 				</tr>
-				<tr valign="baseline" class="form_height">
+				<tr valign="baseline" >
 					<td colspan="2" align="center" valign="middle">
 						<input
 							class="form-input-style"
@@ -74,7 +74,7 @@
 						/>
 					</td>
 				</tr>
-				<tr valign="baseline" class="form_height">
+				<tr valign="baseline" >
 					<td colspan="2" align="center" valign="middle">
 						<textarea
 							class="form-input-style"
@@ -85,7 +85,7 @@
 						></textarea>
 					</td>
 				</tr>
-				<tr valign="baseline" class="form_height">
+				<tr valign="baseline" >
 					<td colspan="2" align="center" valign="middle">
 						<button type="submit" class="button-style-agree">
 							<?= htmlspecialchars(tr('footer_send')) ?>

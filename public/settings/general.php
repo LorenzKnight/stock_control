@@ -1,6 +1,6 @@
 <div class="general-sidebar">
 	<table width="90%" align="center" cellspacing="0">
-		<tr valign="baseline" class="form_height">
+		<tr valign="baseline" >
 			<td colspan="4" style="border-bottom: 1px solid var(--clr-border); padding-bottom: 10px;" align="center" valign="middle">
 				<input type="text" name="searchAffiliateField" id="searchAffiliateField" class="big-search-field" placeholder="Search Affiliate..." title="Search Affiliate">
 			</td>

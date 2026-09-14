@@ -432,7 +432,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			storageDetails.innerHTML = `
 				<div class="storage-header">
 					<table width="100%" align="center" cellspacing="0">
-						<tr valign="baseline" class="form_height">
+						<tr valign="baseline" >
 							<td width="47%" align="left" valign="middle">
 								<p class="mini-title">${window.i18n?.slot_name || "Slot Name"}:</p>
 								<strong>${sharedSlotName || '—'}</strong>
@@ -444,7 +444,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 								</div>
 							</td>
 						</tr>
-						<tr class="form_height">
+						<tr >
 							<td colspan="2" align="left" valign="middle">
 								<p class="mini-title">${window.i18n?.product_found || "Products found"}:</p>
 								<strong>${products.length}</strong>

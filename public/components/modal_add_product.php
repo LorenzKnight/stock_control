@@ -367,7 +367,7 @@
 
 			<table width="90%" align="center" cellspacing="0">
 				<!-- BOTÓN PARA MOSTRAR CAMPOS AVANZADOS -->
-				<tr valign="baseline" class="form_height">
+				<tr valign="baseline" >
 					<td colspan="6" align="center" valign="middle">
 						<button
 							type="button"

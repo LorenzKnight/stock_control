@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					let productsHtml = '';
 					if (!sale.products || sale.products.length === 0) {
 						productsHtml = `
-							<tr valign="baseline" class="form_height">
+							<tr valign="baseline" >
 								<td width="100%" align="center" valign="middle">
 									<p>No products in this sale...</p>
 								</td>
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 						let imageClass = isDefaultImage ? "grayscale-img" : "";
 					
 						productsHtml = `
-							<tr valign="baseline" class="form_height">
+							<tr valign="baseline" >
 								<td width="5%" align="center" valign="top">
 									<p class="mini-title">Qty</p>
 									${product.quantity}
@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 							const imageClass = isDefaultImage ? "grayscale-img" : "";
 
 							productsHtml += `
-								<tr valign="baseline" class="form_height">
+								<tr valign="baseline" >
 									<td width="3%" align="center" valign="middle">
 										<p class="mini-title">${window.i18n.qty}</p>
 										${product.quantity}
@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 					row.innerHTML = `
 					<table width="100%" style="border-bottom: 1px solid var(--gray-200);" align="center" cellspacing="0">
-						<tr valign="baseline" class="form_height">
+						<tr valign="baseline" >
 							<td width="10%" align="left" valign="middle">
 								<p class="mini-title">Ord. No:</p>
 								${sale.ord_no}
@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					<div class="flex" style="width: 100%; margin-top: 5px;">
 						<div style="width: 30%;">
 							<table width="100%" align="center" cellspacing="0">
-								<tr valign="baseline" class="form_height">
+								<tr valign="baseline" >
 									<td width="30%" align="left" valign="middle">
 										<div class="sale-profile">
 											<img src="${customerImg}" alt="profile picture">
@@ -169,31 +169,31 @@ document.addEventListener("DOMContentLoaded", async function () {
 						</table>
 						<div style="width: 30%;">
 							<table width="100%" align="center" cellspacing="0">
-								<tr valign="baseline" class="form_height">
+								<tr valign="baseline" >
 									<td colspan="2" style="padding-left: 7px;" align="left" valign="middle"><strong>${window.i18n.method_of_payment}</strong></td>
 								</tr>
-								<tr valign="baseline" class="form_height">
+								<tr valign="baseline" >
 									<td width="35%" align="right">${window.i18n.price} :</td><td width="65%" style="padding-left: 5px;">${sale.price_sum}</td>
 								</tr>
-								<tr valign="baseline" class="form_height">
+								<tr valign="baseline" >
 									<td align="right">${window.i18n.initial} :</td><td style="padding-left: 5px;">${sale.initial}</td>
 								</tr>
-								<tr valign="baseline" class="form_height">
+								<tr valign="baseline" >
 									<td align="right">${window.i18n.delivery_date} :</td><td style="padding-left: 5px;">${sale.delivery_date}</td>
 								</tr>
-								<tr valign="baseline" class="form_height">
+								<tr valign="baseline" >
 									<td align="right">${window.i18n.remaining} :</td><td style="padding-left: 5px;">${sale.remaining}</td>
 								</tr>
-								<tr valign="baseline" class="form_height">
+								<tr valign="baseline" >
 									<td align="right">${window.i18n.interest} :</td><td style="padding-left: 5px;">${sale.total_interest}</td>
 								</tr>
-								<tr valign="baseline" class="form_height">
+								<tr valign="baseline" >
 									<td align="right">${window.i18n.installments_month} :</td><td style="padding-left: 5px;">${sale.no_installments} / ${sale.payments}</td>
 								</tr>
-								<tr valign="baseline" class="form_height">
+								<tr valign="baseline" >
 									<td align="right">${window.i18n.payment_date} :</td><td style="padding-left: 5px;">${paymentDateFormatted}</td>
 								</tr>
-								<tr valign="baseline" class="form_height">
+								<tr valign="baseline" >
 									<td align="right">${window.i18n.due} :</td><td style="padding-left: 5px;">${sale.due}</td>
 								</tr>
 							</table>

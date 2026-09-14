@@ -41,7 +41,7 @@
 							<h2><?= tr('edit_product_title') ?></h2>
 						</td>      
 					</tr>
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td colspan="6" align="center" valign="middle">
 							<div class="drop-area" id="edit-drop-product-area">
 								<img class="image-preview" id="edit-product-image-preview" src="" alt="Product Image Preview">
@@ -50,7 +50,7 @@
 							</div>
 						</td>
 					</tr>
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td colspan="3" align="center" valign="middle">
 							<div class="product-type-selection">
 								<input type="radio" id="edit_unit_type_1" name="edit_unit_type" value="1" checked>
@@ -64,7 +64,7 @@
 							</div>
 						</td>
 					</tr>
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td colspan="2" align="center" valign="middle">
 							<label for="edit_units"><?= tr('units') ?>:</label>
 							<input class="form-small-input-style" type="number" name="edit_units" id="edit_units" placeholder="1 <?= tr('units') ?>" title="<?= tr('units') ?>" disabled/>
@@ -78,7 +78,7 @@
 							<input class="form-small-input-style" type="text" name="edit_total_weight" id="edit_total_weight" placeholder="<?= tr('total_weight') ?>" title="<?= tr('total_weight') ?>" disabled/>
 						</td>
 					</tr>
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td colspan="3" align="center" valign="middle">
 							<label for="edit_product_name"><?= tr('product_name') ?>:</label>
 							<input class="form-medium-input-style" type="text" name="edit_product_name" id="edit_product_name" placeholder="<?= tr('product_name') ?>" title="<?= tr('product_name') ?>"/>
@@ -88,7 +88,7 @@
 							<input class="form-medium-input-style" type="text" name="edit_hs_code" id="edit_hs_code" placeholder="<?= tr('hs_code') ?>" title="<?= tr('hs_code') ?>"/>
 						</td>
 					</tr>
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td colspan="3" align="center" valign="middle">
 							<label for="edit_product_type"><?= tr('type') ?>:</label>
 							<select class="form-input-style" name="edit_product_type" id="edit_product_type"></select>
@@ -98,7 +98,7 @@
 							<input class="form-medium-input-style input-year-only" type="number" name="edit_product_year" id="edit_product_year" placeholder="<?= tr('year') ?>" title="<?= tr('year') ?>"/>
 						</td>
 					</tr>
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td colspan="2" align="center" valign="middle">
 							<label for="edit_product_mark"><?= tr('mark_category') ?>:</label>
 							<select class="form-input-style" name="edit_product_mark" id="edit_product_mark"></select>
@@ -112,7 +112,7 @@
 							<select class="form-input-style" name="edit_product_sub_model" id="edit_product_sub_model"></select>
 						</td>
 					</tr>
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td colspan="2" align="center" valign="middle">
 							<label for="edit_product_purpose"><?= tr('purpose') ?>:</label>
 							<select class="form-medium-input-style" name="edit_product_purpose" id="edit_product_purpose" required></select>
@@ -126,7 +126,7 @@
 							<input class="form-medium-input-style" type="number" name="edit_min_quantity" id="edit_min_quantity" placeholder="<?= tr('min_quantity') ?>" title="<?= tr('min_quantity') ?>"/>
 						</td>
 					</tr>
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td colspan="3" align="center" valign="middle">
 							<label for="edit_currency"><?= tr('currency') ?>:</label>
 							<select class="form-input-style" name="edit_currency" id="edit_currency" disabled></select>
@@ -136,14 +136,14 @@
 							<input class="form-medium-input-style" type="number" name="edit_price" id="edit_price" placeholder="<?= tr('price') ?>" title="<?= tr('price') ?>"/>
 						</td>
 					</tr>
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td colspan="6" align="center" valign="middle">
 							<label for="edit_description"><?= tr('description') ?>:</label>
 							<textarea class="form-input-style" id="edit_description" name="edit_description" rows="2" cols="35">
 							</textarea>
 						</td>
 					</tr>
-					<tr valign="baseline" class="form_height">
+					<tr valign="baseline" >
 						<td colspan="3" align="center" valign="middle">
 							<button type="button" class="neutral-btn"><?= tr('cancel') ?></button>
 						</td>

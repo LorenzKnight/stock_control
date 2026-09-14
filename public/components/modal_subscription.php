@@ -8,22 +8,22 @@
 						<p><?= tr('select_a_subscription_pack') ?></p>
 					</td>      
 				</tr>
-				<tr valign="baseline" class="form_height">
+				<tr valign="baseline" >
 					<td colspan="4" align="center" valign="middle">
 						<div class="pack-container" id="packs"></div> 
 					</td>
 				</tr>
-				<tr valign="baseline" class="form_height">
+				<tr valign="baseline" >
 					<td colspan="4" align="center" valign="middle">
 						<select class="form-input-style" name="extra_pack" id="extra_pack"></select>
 					</td>
 				</tr>
-				<tr valign="baseline" class="form_height">
+				<tr valign="baseline" >
 					<td colspan="4" align="center" valign="middle">
 						<div class="estimated" id="estimated"><?= tr('estimated_cost'); ?>: <strong>$ 0</strong></div>
 					</td>
 				</tr>
-				<tr valign="baseline" class="form_height">
+				<tr valign="baseline" >
 					<td width="25%" align="center" valign="middle">
 					</td>
 					<td width="25%" align="center" valign="middle">

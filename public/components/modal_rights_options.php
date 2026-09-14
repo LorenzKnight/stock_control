@@ -36,12 +36,12 @@
 							<h2>Edit Right</h2>
 						</td>      
 					</tr>
-                    <tr valign="baseline" class="form_height">
+                    <tr valign="baseline" >
                         <td colspan="6" align="center" valign="middle">
                             <select class="form-input-style" name="edit_service_name" id="edit_service_name"></select>
                         </td>
                     </tr>
-                    <tr valign="baseline" class="form_height">
+                    <tr valign="baseline" >
                         <td width="50%" style="border-block: 1px solid var(--clr-border); padding: 5px 10px;" align="left" valign="middle">
                             <span style="display: block;">Status</span>
                         </td>
@@ -52,7 +52,7 @@
                             </label>
                         </td>
                     </tr>
-                    <tr valign="baseline" class="form_height">
+                    <tr valign="baseline" >
                         <td width="50%" style="padding: 15px 0" align="center" valign="middle">
                             <button type="button" class="neutral-btn">Cancel</button>
                         </td>
