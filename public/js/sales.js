@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					}
 
 					row.innerHTML = `
-					<table width="100%" style="border-bottom: 1px solid var(--border-light);" align="center" cellspacing="0">
+					<table width="100%" style="border-bottom: 1px solid var(--gray-200);" align="center" cellspacing="0">
 						<tr valign="baseline" class="form_height">
 							<td width="10%" align="left" valign="middle">
 								<p class="mini-title">Ord. No:</p>
@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 								</tr>
 							</table>
 						</div>
-						<table width="40%" style="border-left: 1px solid var(--border-light); border-right: 1px solid var(--border-light);" align="center" cellspacing="0">
+						<table width="40%" style="border-left: 1px solid var(--gray-200); border-right: 1px solid var(--gray-200);" align="center" cellspacing="0">
 							${productsHtml}
 						</table>
 						<div style="width: 30%;">
@@ -273,7 +273,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					const popupContent = addSaleForm?.querySelector('.formular-big-frame');
 
 					if (addSaleForm && popupContent) {
-						addSaleForm.style.display = 'block';
+						addSaleForm.style.display = 'flex';
 						addSaleForm.style.opacity = '0';
 						addSaleForm.style.transition = 'opacity 0.5s ease';
 
@@ -350,23 +350,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 						`;
 
 						// 🟢 Seleccionar al hacer clic en toda la fila
-						row.addEventListener('click', () => {
-							const radio = row.querySelector('input[type="radio"]');
-							if (!radio.disabled) {
-								radio.checked = true;
+						makeRadioRowSelectable(row, {
+							rowSelector: '.sales-customer-row',
+							selectedClass: 'selected-customer',
 
-								// Desmarcar visualmente otros clientes
-								document.querySelectorAll('.sales-customer-row').forEach(r => r.classList.remove('selected-customer'));
-
-								// Marcar visualmente este
-								row.classList.add('selected-customer');
-
-								// Simular evento de selección (por si tienes una función para manejarlo)
-								if (typeof handleCustomerSelect === "function") {
+							onSelect: (radio) => {
+								if (typeof handleCustomerSelect === 'function') {
 									handleCustomerSelect({ target: radio });
 								}
 							}
 						});
+
 						customerListTable.appendChild(row);
 					});
 				} else {
@@ -872,7 +866,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					'edit-sales-modal'
 				]);
 	
-				saleOptions.style.display = 'block';
+				saleOptions.style.display = 'flex';
 				saleOptions.style.opacity = '0';
 				saleOptions.style.transition = 'opacity 0.5s ease';
 				setTimeout(() => {
@@ -1061,11 +1055,22 @@ document.addEventListener("DOMContentLoaded", async function () {
 											</div>
 										</td>
 									`;
+
+									// 🟢 Hacer seleccionable toda la fila
+									makeRadioRowSelectable(row, {
+										rowSelector:
+											`#${customerListTable.id} .sales-customer-row`,
+										selectedClass: 'selected-customer'
+									});
+
 									customerListTable.appendChild(row);
 
 									if (String(customer.customer_id) === String(sale.customer.customer_id)) {
-										const customerRadio = document.getElementById(uniqueId);
-										if (customerRadio) customerRadio.checked = true;
+										const customerRadio = row.querySelector('input[type="radio"]');
+										if (customerRadio) {
+											customerRadio.checked = true;
+											row.classList.add('selected-customer');
+										}
 									}
 								});
 							} else {

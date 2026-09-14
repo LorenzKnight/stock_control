@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					'edit-sales-modal'
 				]);
 
-				paymentsOptions.style.display = 'block';
+				paymentsOptions.style.display = 'flex';
 				paymentsOptions.style.opacity = '0';
 				paymentsOptions.style.transition = 'opacity 0.5s ease';
 				setTimeout(() => {
@@ -229,7 +229,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const popupContent = addPaymentForm.querySelector('.formular-frame');
 
 			if (addPaymentForm && popupContent) {
-			    addPaymentForm.style.display = 'block';
+			    addPaymentForm.style.display = 'flex';
 			    addPaymentForm.style.opacity = '0';
 			    addPaymentForm.style.transition = 'opacity 0.5s ease';
 			    setTimeout(() => {

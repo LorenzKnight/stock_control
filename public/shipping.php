@@ -23,7 +23,7 @@ $checkPermissionVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/checkPermis
 	<title>All Stock Control</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="css/styles.css?v=<?= $stylesVersion ?>">
+	<link rel="stylesheet" href="/css/styles.css?v=<?= $stylesVersion ?>">
 	<script defer src="js/functions.js?v=<?= $functionsVersion ?>"></script>
 	<script defer src="js/actions.js?v=<?= $actionsVersion ?>"></script>
 	<script defer src="js/realtimeClient.js?v=<?= $realtimeVersion ?>"></script>

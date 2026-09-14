@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					slotName.textContent = slot.slot_name || 'Unnamed slot';
 				}
 
-				slotOptions.style.display = 'block';
+				slotOptions.style.display = 'flex';
 				slotOptions.style.opacity = '0';
 				slotOptions.style.transition = 'opacity 0.5s ease';
 				setTimeout(() => {
@@ -592,7 +592,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				const manageSlotBtn = document.getElementById('manageSlotBtn');
 				const manageStorageBtn = document.getElementById('manageStorageBtn');
 
-				storageOptions.style.display = 'block';
+				storageOptions.style.display = 'flex';
 				storageOptions.style.opacity = '0';
 				storageOptions.style.transition = 'opacity 0.5s ease';
 				setTimeout(() => {
@@ -733,6 +733,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 								</div>
 							</td>
 						`;
+
+						// 🟢 Hacer seleccionable toda la fila
+						makeRadioRowSelectable(row, {
+							rowSelector: `#${slotList.id} .categoryContainer`,
+							selectedClass: 'selected-category'
+						});
 
 						slotList.appendChild(row);
 					});

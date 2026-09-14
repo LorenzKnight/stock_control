@@ -66,7 +66,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 					const customersMenuBtn = row.querySelector('.customers-menu');
 					customersMenuBtn.addEventListener('click', () => {
 						openCusomersForm(customer.customer_id);
-
 						handlePopupClose("customers-options", ".formular-frame", []);
 					});
 				});
@@ -96,10 +95,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 			scrollToTopIfNeeded();
 			
 			const addCustomersForm = document.getElementById('add-customers-form');
-			const popupContent = addCustomersForm.querySelector('.formular-frame');
+			const popupContent = addCustomersForm.querySelector('.formular-medium-frame');
 
 			if (addCustomersForm && popupContent) {
-			    addCustomersForm.style.display = 'block';
+			    addCustomersForm.style.display = 'flex';
 			    addCustomersForm.style.opacity = '0';
 			    addCustomersForm.style.transition = 'opacity 0.5s ease';
 			    setTimeout(() => {
@@ -127,7 +126,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			await populateCountryPhoneCodes('references_2_country_code', 'references_2_phone');
 
-			handlePopupClose("add-customers-form", ".formular-frame", []);
+			handlePopupClose("add-customers-form", ".formular-medium-frame", []);
 		});
 	}
 
@@ -143,26 +142,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			// que el formulario vuelva a abrirse al refrescar.
 			window.history.replaceState({}, '', window.location.pathname);
 		}
-	}
-
-	// 📌 script para customers form menu
-	const dataTab = document.getElementById('tab-customer-data');
-	const referenceTab = document.getElementById('tab-customer-reference');
-
-	const dataSection = document.getElementById('customer-data');
-	const referenceSection = document.getElementById('customer-reference');
-
-	// Mostrar por defecto la sección de "data"
-	if (dataTab && referenceTab && dataSection && referenceSection) {
-		activateTab(dataTab, referenceTab, dataSection, referenceSection);
-
-		dataTab.addEventListener('click', () => {
-			activateTab(dataTab, referenceTab, dataSection, referenceSection);
-		});
-
-		referenceTab.addEventListener('click', () => {
-			activateTab(referenceTab, dataTab, referenceSection, dataSection);
-		});
 	}
 
 	let firstClientRewardState = {
@@ -462,7 +441,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		const customersOptions = document.getElementById('customers-options');
 		const popupContent = customersOptions.querySelector('.formular-frame');
 		const customerName = document.getElementById('customers-name');
-	
+
 		if (!customerId) return;
 
 		try {
@@ -477,13 +456,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 
 			if (customersOptions && popupContent) {
-				resetPopupView(['customers-menu-buttons', 'sale-menu-buttons'], [
+				resetPopupView(['customers-menu-buttons'], [
 					'edit-customers-modal', 
-					'assign-sale-section', 
+					'assign-customers-sale-section', 
 					'edit-sales-modal'
 				]);
 
-				customersOptions.style.display = 'block';
+				customersOptions.style.display = 'flex';
 				customersOptions.style.opacity = '0';
 				customersOptions.style.transition = 'opacity 0.5s ease';
 				setTimeout(() => {
@@ -503,8 +482,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 				if (assignBtn) {
 					assignBtn.onclick = () => {
 						const menuDiv = document.getElementById('product-menu-buttons');
-						const assignDiv = document.getElementById('assign-sale-section');
-				
+						const assignDiv = document.getElementById('assign-customers-sale-section');
+
 						animateHeightChange(popupContent, assignDiv, () => {
 							fadeOutAndHide(menuDiv, () => {
 								showWithFadeIn(assignDiv);
@@ -519,14 +498,29 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 					editBtn.setAttribute('data-customer-id', customerId);
 
-					editBtn.onclick = () => {
+					editBtn.onclick = async () => {
 						const menuDiv = document.getElementById('customers-menu-buttons');
 						const editDiv = document.getElementById('edit-customers-modal');
 
-						const customerId = editBtn.getAttribute('data-customer-id');
-						if (!customerId) return;
+						if (editDiv) {
+							editDiv.style.display = 'none';
+						}
 
-						openEditCustomerForm(customerId);
+						// initSlotList({
+						// 	listId: 'slot-list',
+						// 	searchId: 'input-search-slot',
+						// 	radioName: 'slot_edit_info'
+						// });
+
+						const selectedCustomerId = editBtn.getAttribute('data-customer-id');
+						if (!selectedCustomerId) return;
+						
+						await openEditCustomerForm(selectedCustomerId);
+
+						const formFrame = document.getElementById('formular-medium-frame');
+						if (formFrame) {
+							formFrame.classList.add('expanded-medium');
+						}
 			
 						animateHeightChange(popupContent, editDiv, () => {
 							fadeOutAndHide(menuDiv, () => {
@@ -652,7 +646,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				const selectedr2CcFromDB = customer.r2_country_code || '';
 				await populateCountryPhoneCodes('edit_references_2_country_code', 'edit_references_2_phone', selectedr2CcFromDB);
 
-				handlePopupClose("customers-options", ".formular-frame", []);
+				handlePopupClose("customers-options", ".formular-medium-frame", []);
 			}
 		} catch (error) {
 			console.error("Error loading customer data:", error);
@@ -713,18 +707,5 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	const editDataSection = document.getElementById('edit-customer-data');
 	const editReferenceSection = document.getElementById('edit-customer-reference');
-
-	// Mostrar por defecto la sección de "edit data"
-	if (editDataTab && editReferenceTab && editDataSection && editReferenceSection) {
-		activateTab(editDataTab, editReferenceTab, editDataSection, editReferenceSection);
-
-		editDataTab.addEventListener('click', () => {
-			activateTab(editDataTab, editReferenceTab, editDataSection, editReferenceSection);
-		});
-
-		editReferenceTab.addEventListener('click', () => {
-			activateTab(editReferenceTab, editDataTab, editReferenceSection, editDataSection);
-		});
-	}
 //############################################################# END CUSTOMERS ##################################################################
 });

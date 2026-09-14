@@ -453,7 +453,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}
 	
 				if (optionsDiv) {
-					optionsDiv.style.display = 'block';
+					optionsDiv.style.display = 'flex';
 				}
 
 				const formFrame = document.getElementById('formular-frame');
@@ -883,15 +883,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 	window.showChangeAlert = showChangeAlert;
 
-	function activateTab(activeTab, inactiveTab, showSection, hideSection) {
-		activeTab.classList.add('tab-active');
-		inactiveTab.classList.remove('tab-active');
-
-		showSection.style.display = 'block';
-		hideSection.style.display = 'none';
-	}
-	window.activateTab = activateTab;
-
 	// Drag & Drop + click
 	function initDragAndDrop(dropAreaId, inputFileId, previewImgId = null) {
 		const dropArea = document.getElementById(dropAreaId);
@@ -1277,4 +1268,42 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 	window.populatePaymentMethods = populatePaymentMethods;
+
+	// 📌 hacer seleccionable una fila con radio button
+	function makeRadioRowSelectable(row, {
+		rowSelector,
+		selectedClass = 'selected',
+		onSelect = null
+	} = {}) {
+		if (!row) return;
+
+		row.addEventListener('click', () => {
+			const radio = row.querySelector('input[type="radio"]');
+
+			if (!radio || radio.disabled) return;
+
+			radio.checked = true;
+
+			// 🔹 Quitar selección visual de las demás filas
+			if (rowSelector) {
+				document.querySelectorAll(rowSelector).forEach(otherRow => {
+					otherRow.classList.remove(selectedClass);
+				});
+			}
+
+			// 🔹 Marcar visualmente la fila actual
+			row.classList.add(selectedClass);
+
+			// 🔹 Disparar change real
+			radio.dispatchEvent(
+				new Event('change', { bubbles: true })
+			);
+
+			// 🔹 Ejecutar callback específico del módulo
+			if (typeof onSelect === 'function') {
+				onSelect(radio, row);
+			}
+		});
+	}
+	window.makeRadioRowSelectable = makeRadioRowSelectable;
 });

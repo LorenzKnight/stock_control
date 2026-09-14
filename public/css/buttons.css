@@ -1,4 +1,14 @@
 @media (max-width: 850px) and (orientation: landscape) {
+	.footer-buttons {
+		max-width: 400px;
+
+		display: flex;
+		gap: 12px;
+
+		align-items: center;
+		justify-content: center;
+	}
+
     .button-style-agree {
         width: 95%;
         background: var(--agree-blue); 
@@ -190,11 +200,11 @@
 
 
     /*BUTTON-RADIO*/
-    /* .formular-category-list .opcion-radio input[type=radio] {
+    /* .formular-list .opcion-radio input[type=radio] {
         opacity: 0;
     } */
 
-    /* .formular-category-list .opcion-radio input[type=radio] + label:before {
+    /* .formular-list .opcion-radio input[type=radio] + label:before {
         content: '';
         background: #F4F5F8;
         border-radius: 100%;
@@ -211,12 +221,12 @@
         transition: all 250ms ease;
     } */
 
-    /* .formular-category-list .opcion-radio input[type=radio]:checked + label:before {
+    /* .formular-list .opcion-radio input[type=radio]:checked + label:before {
         background-color: var(--main-bg-blue);
         box-shadow: inset 0 0 0 4px #F4F5F8;
     } */
 
-    .formular-category-list .opcion-radio label {
+    .formular-list .opcion-radio label {
         display: inline-block;
         vertical-align: middle;
         line-height: 32px;
@@ -259,7 +269,6 @@
     .card-menu:hover {
         background-color: var(--main-bg-dark-blue);
         box-shadow: 0 0 4px 3px rgb(47 48 63 / 19%);
-        transition: all 1.0s ease;
     }
 
     .card-menu img {
@@ -423,6 +432,16 @@
 }
 
 @media (max-width: 680px) {
+	.footer-buttons {
+		max-width: 400px;
+
+		display: flex;
+		gap: 12px;
+
+		align-items: center;
+		justify-content: center;
+	}
+
     .button-style-agree {
         width: 95%;
         background: var(--agree-blue); 
@@ -614,11 +633,11 @@
 
 
     /*BUTTON-RADIO*/
-    /* .formular-category-list .opcion-radio input[type=radio] {
+    /* .formular-list .opcion-radio input[type=radio] {
         opacity: 0;
     } */
 
-    /* .formular-category-list .opcion-radio input[type=radio] + label:before {
+    /* .formular-list .opcion-radio input[type=radio] + label:before {
         content: '';
         background: #F4F5F8;
         border-radius: 100%;
@@ -635,12 +654,12 @@
         transition: all 250ms ease;
     } */
 
-    /* .formular-category-list .opcion-radio input[type=radio]:checked + label:before {
+    /* .formular-list .opcion-radio input[type=radio]:checked + label:before {
         background-color: var(--main-bg-blue);
         box-shadow: inset 0 0 0 4px #F4F5F8;
     } */
 
-    .formular-category-list .opcion-radio label {
+    .formular-list .opcion-radio label {
         display: inline-block;
         vertical-align: middle;
         line-height: 32px;
@@ -683,7 +702,6 @@
     .card-menu:hover {
         background-color: var(--main-bg-dark-blue);
         box-shadow: 0 0 4px 3px rgb(47 48 63 / 19%);
-        transition: all 1.0s ease;
     }
 
     .card-menu img {
@@ -848,6 +866,17 @@
 
 /* iPad / Tablet (iPad mini → iPad Pro, portrait + landscape) */
 @media (min-width: 681px) and (max-width: 980px) {
+	.footer-buttons {
+		max-width: 400px;
+
+		margin-top: 10px;
+		display: flex;
+		gap: 12px;
+
+		align-items: center;
+		justify-content: center;
+	}
+
     .button-style-agree {
         width: 95%;
         background: var(--agree-blue); 
@@ -874,7 +903,7 @@
         margin: 5px 0;
         padding: 16px 0;
         border: 0;
-        border-radius: 5px;
+        border-radius: 10px;
         box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
         transition: background-color 0.3s ease;
         cursor: pointer;
@@ -914,14 +943,15 @@
         border: 0;
         border-radius: 10px;
         box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
-        transition: all 1.0s ease;
+        transition:
+			background-position 0.9s ease,
+        	transform 0.5s ease;
         cursor: pointer;
     }
 
     .button-style-neutral:hover {
         background: var(--main-bg-dark-blue);
         color: var(--clr-white);
-        transition: all 1.0s ease;
     }
 
     .access-btn {
@@ -955,12 +985,12 @@
     }
 
     *::-webkit-scrollbar-track {
-        background: var(--main-bg-color); 
+        background: var(--clr-light-border); 
         border-radius: 10px;
     }
 
     *::-webkit-scrollbar-thumb {
-        background-color: var(--clr-neutral); 
+        background-color: var(--scroll-blue); 
         border-radius: 10px;
         box-shadow: 0px 0px 8px var(--main-bg-pop-up);
         transition: all 1.0s ease;
@@ -1039,11 +1069,11 @@
 
 
     /*BUTTON-RADIO*/
-    /* .formular-category-list .opcion-radio input[type=radio] {
+    /* .formular-list .opcion-radio input[type=radio] {
         opacity: 0;
     } */
 
-    /* .formular-category-list .opcion-radio input[type=radio] + label:before {
+    /* .formular-list .opcion-radio input[type=radio] + label:before {
         content: '';
         background: #F4F5F8;
         border-radius: 100%;
@@ -1060,12 +1090,12 @@
         transition: all 250ms ease;
     } */
 
-    /* .formular-category-list .opcion-radio input[type=radio]:checked + label:before {
+    /* .formular-list .opcion-radio input[type=radio]:checked + label:before {
         background-color: var(--main-bg-blue);
         box-shadow: inset 0 0 0 4px #F4F5F8;
     } */
 
-    .formular-category-list .opcion-radio label {
+    .formular-list .opcion-radio label {
         display: inline-block;
         vertical-align: middle;
         line-height: 32px;
@@ -1108,7 +1138,6 @@
     .card-menu:hover {
         background-color: var(--main-bg-dark-blue);
         box-shadow: 0 0 4px 3px rgb(47 48 63 / 19%);
-        transition: all 1.0s ease;
     }
 
     .card-menu img {
@@ -1272,22 +1301,35 @@
 }
 
 @media (min-width: 981px) {
+	.footer-buttons {
+		max-width: 400px;
+
+		margin-top: 10px;
+		display: flex;
+		gap: 12px;
+
+		align-items: center;
+		justify-content: center;
+	}
+
     .button-style-agree {
         width: 95%;
-        background: var(--agree-blue); 
+        background: var(--agree-blue);
         color: var(--clr-white);
         font-size: 12px;
         margin: 5px 0;
         padding: 11px 0;
         border: 0;
         border-radius: 10px;
-        box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
-        transition: background-color 0.3s ease;
+        box-shadow: 0 .15rem 1.75rem 0 var(--main-box-light-shadow)!important;
+        transition: 
+			background-position 0.9s ease,
+        	transform 0.5s ease;
         cursor: pointer;
     }
 
     .button-style-agree:hover {
-        background-color: var(--main-bg-dark-blue);
+        background: var(--main-bg-dark-blue);
     }
 
     .neutral-btn {
@@ -1299,8 +1341,10 @@
         padding: 11px 0;
         border: 0;
         border-radius: 10px;
-        box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
-        transition: background-color 0.3s ease;
+        box-shadow: 0 .15rem 1.75rem 0 var(--main-box-light-shadow)!important;
+        transition:
+			background-position 0.9s ease,
+        	transform 0.5s ease;
         cursor: pointer;
     }
 
@@ -1338,14 +1382,15 @@
         border: 0;
         border-radius: 10px;
         box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
-        transition: all 1.0s ease;
+        transition:
+			background-position 0.9s ease,
+        	transform 0.5s ease;
         cursor: pointer;
     }
 
     .button-style-neutral:hover {
         background: var(--main-bg-dark-blue);
         color: var(--clr-white);
-        transition: all 1.0s ease;
     }
 
     .access-btn {
@@ -1379,12 +1424,12 @@
     }
 
     *::-webkit-scrollbar-track {
-        background: var(--main-bg-color); 
+        background: var(--clr-light-border); 
         border-radius: 10px;
     }
 
     *::-webkit-scrollbar-thumb {
-        background-color: var(--clr-neutral); 
+        background-color: var(--scroll-blue); 
         border-radius: 10px;
         box-shadow: 0px 0px 8px var(--main-bg-pop-up);
         transition: all 1.0s ease;
@@ -1463,11 +1508,11 @@
 
 
     /*BUTTON-RADIO*/
-    /* .formular-category-list .opcion-radio input[type=radio] {
+    /* .formular-list .opcion-radio input[type=radio] {
         opacity: 0;
     } */
 
-    /* .formular-category-list .opcion-radio input[type=radio] + label:before {
+    /* .formular-list .opcion-radio input[type=radio] + label:before {
         content: '';
         background: #F4F5F8;
         border-radius: 100%;
@@ -1484,12 +1529,12 @@
         transition: all 250ms ease;
     } */
 
-    /* .formular-category-list .opcion-radio input[type=radio]:checked + label:before {
+    /* .formular-list .opcion-radio input[type=radio]:checked + label:before {
         background-color: var(--main-bg-blue);
         box-shadow: inset 0 0 0 4px #F4F5F8;
     } */
 
-    .formular-category-list .opcion-radio label {
+    .formular-list .opcion-radio label {
         display: inline-block;
         vertical-align: middle;
         line-height: 32px;
@@ -1548,7 +1593,6 @@
     .card-menu:hover {
         background-color: var(--main-bg-dark-blue);
         box-shadow: 0 0 4px 3px rgb(47 48 63 / 19%);
-        transition: all 1.0s ease;
     }
 
     .card-menu img {

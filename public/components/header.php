@@ -51,23 +51,23 @@
 								<a href="<?= htmlspecialchars(localized_url('profile')) ?>" style="margin: 0 auto; font-weight: bold;" id="my-name"></a>
 							</li>
 
-							<li id="reports-site" data-page="reports">
-								<a href="<?= htmlspecialchars(localized_url('reports')) ?>">
+							<a href="<?= htmlspecialchars(localized_url('reports')) ?>">
+								<li id="reports" data-page="reports">
 									<?= htmlspecialchars(tr('header_reports', 'Reports')) ?>
-								</a>
-							</li>
+								</li>
+							</a>
 
-							<li>
-								<a href="<?= htmlspecialchars(localized_url('settings')) ?>">
+							<a href="<?= htmlspecialchars(localized_url('settings')) ?>">
+								<li id="settings" data-page="settings">
 									<?= htmlspecialchars(tr('header_settings', 'Settings')) ?>
-								</a>
-							</li>
-
-							<li id="system-admin-site">
-								<a href="<?= htmlspecialchars(localized_url('system-admin')) ?>">
+								</li>
+							</a>
+							
+							<a href="<?= htmlspecialchars(localized_url('system-admin')) ?>">
+								<li id="system-admin" data-page="system-admin">
 									<?= htmlspecialchars(tr('header_system_admin', 'System-Admin')) ?>
-								</a>
-							</li>
+								</li>
+							</a>
 
 							<li class="no-redirect" style="border-top: 1px solid var(--clr-light-border);">
 								<a href="#" style="margin: 0 auto;" class="logout-button turn-off">

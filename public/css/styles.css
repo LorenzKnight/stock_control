@@ -307,7 +307,7 @@ body {
     padding: 5px 1%;
     margin: 10px auto 0;
     background-color: var(--bg-surface);
-    border: 1px solid var(--border-light);
+    border: 1px solid var(--gray-200);
     box-shadow: 0px 5px 10px var(--shadow-color);
     border-radius: 16px;
 }
@@ -323,14 +323,22 @@ body {
 
 .bg-popup {
     width: 100%;
-    height: 100vh;
+    height: 100dvh;
     background-color: var(--main-bg-pop-up);
+
     position: fixed;
+    inset: 0;
+
     display: none;
+    align-items: center;
+    justify-content: center;
+
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
+
     opacity: 0;
     transition: opacity 280ms ease;
+
     z-index: 3;
 }
 

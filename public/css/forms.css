@@ -89,8 +89,9 @@
         width: 90%;
         margin: 5px 0;
         border: 0;
-        border-radius: 10px;
-        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-soft-dark);
         padding: 4% 2%;
         font-size: 12px;
         text-align: center;
@@ -98,8 +99,9 @@
 
     .big-search-field {
         width: 98%;
-        border-radius: 10px;
-        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-soft-dark);
         font-size: 12px;
         text-align: center;
         margin: 0;
@@ -198,8 +200,9 @@
         width: 90%;
         margin: 5px 0;
         border: 0;
-        border-radius: 10px;
-        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-soft-dark);
         padding: 4% 2%;
         font-size: 12px;
         text-align: center;
@@ -207,8 +210,9 @@
 
     .big-search-field {
         width: 98%;
-        border-radius: 10px;
-        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-soft-dark);
         font-size: 12px;
         text-align: center;
         margin: 0;
@@ -233,24 +237,31 @@
         align-content: center;
     }
 
-    form label {
+    form label:not(.switch) {
         font-size: 9px;
         color: var(--main-text-color);
         text-align: center;
         display: block;
         margin-bottom: 5px;
-        position: fixed;
+        position: absolute;
         margin: 8px 0 0 12px;
     }
 
     .form-input-style {
-        width: 90%;
+        width: 100%;
         margin: 5px 0;
         padding: 15px 0;
         font-size: 14px;
-        border-radius: 10px;
-        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        background:var(--bg-surface);
+        border: 1px solid var(--border-soft-dark);
+
         text-align: center;
+
+        transition:
+            border-color 180ms ease,
+            box-shadow 180ms ease,
+            background 180ms ease;
         -moz-appearance: inherit; 
         -o-appearance: inherit;
         -ms-appearance: inherit;
@@ -259,13 +270,21 @@
     }
 
     .form-medium-input-style {
-        width: 80%;
+        width: 70%;
         margin: 5px 0;
         padding: 15px;
         font-size: 12px;
         border-radius: 10px;
-        border: 1px solid var(--border-light);
+        background:var(--bg-surface);
+        border: 1px solid var(--border-soft-dark);
+
         text-align: center;
+
+        transition:
+            border-color 180ms ease,
+            box-shadow 180ms ease,
+            background 180ms ease;
+
         -moz-appearance:inherit; 
         -o-appearance:inherit;
         -ms-appearance:inherit;
@@ -308,8 +327,9 @@
         width: 90%;
         margin: 5px 0;
         border: 0;
-        border-radius: 10px;
-        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-soft-dark);
         padding: 4% 2%;
         font-size: 12px;
         text-align: center;
@@ -317,13 +337,282 @@
 
     .big-search-field {
         width: 98%;
-        border-radius: 10px;
-        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-soft-dark);
         font-size: 14px;
         text-align: center;
         margin: 0;
         padding: 15px 0;
         
+    }
+
+
+    .onboarding-reward-card {
+        width: min(92vw, 420px);
+        margin: 60px auto;
+        padding: 40px 30px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+
+        text-align: center;
+
+        border-radius: 28px;
+
+        background: rgba(255,255,255,.82);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+
+        border: 1px solid rgba(255,255,255,.45);
+
+        box-shadow:
+            0 30px 60px rgba(0,0,0,.18),
+            inset 0 1px 0 rgba(255,255,255,.6);
+
+        animation: rewardAppear .35s ease;
+    }
+
+    .onboarding-reward-icon{
+        width:90px;
+        height:90px;
+
+        display:flex;
+        align-items:center;
+        justify-content:center;
+
+        border-radius:50%;
+
+        background:linear-gradient(
+            135deg,
+            #4facfe,
+            #00c6fb
+        );
+
+        font-size:42px;
+
+        box-shadow:
+            0 12px 30px rgba(0,198,251,.35);
+
+        animation:
+            rewardAppear .35s ease,
+            rewardPulse 2.5s infinite;
+    }
+
+    @keyframes rewardPulse {
+
+        0%{
+            transform:scale(1);
+        }
+
+        50%{
+            transform:scale(1.08);
+        }
+
+        100%{
+            transform:scale(1);
+        }
+
+    }
+
+    .onboarding-reward-eyebrow{
+        margin:0;
+
+        font-size:11px;
+        font-weight:700;
+        letter-spacing:2px;
+        text-transform:uppercase;
+
+        color:#4facfe;
+    }
+
+    .onboarding-reward-card h2{
+        margin:0;
+
+        font-size:30px;
+        font-weight:700;
+
+        color:var(--main-text-color);
+    }
+
+    .onboarding-reward-description{
+        margin:0;
+
+        font-size:15px;
+        line-height:1.6;
+
+        color:var(--clr-neutral);
+    }
+
+    .onboarding-reward-product{
+        width:100%;
+
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+
+        padding:14px 18px;
+
+        border-radius:16px;
+
+        background:rgba(255,255,255,.45);
+        border:1px solid rgba(255,255,255,.55);
+
+        box-sizing:border-box;
+    }
+
+    .onboarding-reward-product span{
+        color:var(--clr-neutral);
+        font-size:13px;
+    }
+
+    .onboarding-reward-product strong{
+        font-size:15px;
+        font-weight:600;
+
+        color:var(--main-text-color);
+    }
+
+    .onboarding-reward-primary,
+    .onboarding-reward-secondary{
+        width:100%;
+
+        height:48px;
+
+        border:none;
+        border-radius:14px;
+
+        cursor:pointer;
+
+        transition:.25s;
+    }
+
+    .onboarding-reward-primary{
+        background:#007AFF;
+        color:#fff;
+
+        font-weight:600;
+        font-size:15px;
+    }
+
+    .onboarding-reward-primary:hover{
+        transform:translateY(-2px);
+
+        box-shadow:
+            0 12px 25px rgba(0,122,255,.30);
+    }
+
+    .onboarding-reward-secondary{
+        background:transparent;
+
+        color:var(--main-text-color);
+
+        border:1px solid rgba(0,0,0,.08);
+    }
+
+    .onboarding-reward-secondary:hover{
+        background:rgba(255,255,255,.35);
+    }
+
+    @keyframes rewardAppear{
+
+        from{
+            opacity:0;
+            transform:translateY(25px) scale(.95);
+        }
+
+        to{
+            opacity:1;
+            transform:translateY(0) scale(1);
+        }
+
+    }
+
+    /* =====================================
+        FORMULARIO DINÁMICO DE PRODUCTOS
+    ===================================== */
+
+    #add-product-form .product-advanced-row {
+        display: none;
+    }
+
+    #add-product-form .product-advanced-row.is-visible {
+        display: table-row;
+    }
+
+    #add-product-form .product-pack-row {
+        display: none;
+    }
+
+    #add-product-form .product-pack-row.is-visible {
+        display: table-row;
+    }
+
+    #add-product-form .product-advanced-toggle {
+        width: min(100%, 350px);
+        min-height: 44px;
+        margin: 8px auto 4px;
+        padding: 11px 18px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+
+        border: 1px solid rgba(120, 137, 160, 0.28);
+        border-radius: 13px;
+
+        background: rgba(255, 255, 255, 0.72);
+        color: #526075;
+
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+
+        box-shadow:
+            0 12px 915px rgba(15, 23, 42, 0.26),
+            0 8px 22px rgba(15, 23, 42, 0.13),
+            inset 0 1px 0 rgba(255, 255, 255, 0.96);
+
+        cursor: pointer;
+
+        transition:
+            background 180ms ease,
+            border-color 180ms ease,
+            color 180ms ease,
+            transform 180ms ease;
+    }
+
+    #add-product-form .product-advanced-toggle:hover {
+        background: #ffffff;
+        border-color: rgba(47, 126, 232, 0.38);
+        color: #1d4f91;
+        transform: translateY(-1px);
+    }
+
+    #add-product-form .product-advanced-toggle-icon {
+        display: inline-flex;
+        font-size: 18px;
+        line-height: 0;
+
+        transition: transform 220ms ease;
+    }
+
+    #add-product-form
+    .product-advanced-toggle[aria-expanded="true"]
+    .product-advanced-toggle-icon {
+        transform: rotate(180deg);
+    }
+
+    #add-product-form .product-basic-row td {
+        padding-top: 7px;
+        padding-bottom: 7px;
+    }
+
+    #add-product-form .product-form-actions td {
+        padding-top: 16px;
     }
 
     
@@ -701,13 +990,13 @@
         position: relative;
     }
 
-    form label {
+    form label:not(.switch) {
         font-size: 9px;
         color: var(--main-text-color);
         text-align: center;
         display: block;
         margin-bottom: 5px;
-        position: fixed;
+        position: absolute;
         margin: 8px 0 0 12px;
     }
 
@@ -723,9 +1012,16 @@
         margin: 5px 0;
         padding: 10px;
         font-size: 12px;
-        border-radius: 10px;
-        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-soft-dark);
+
         text-align: center;
+
+        transition:
+            border-color 180ms ease,
+            box-shadow 180ms ease,
+            background 180ms ease;
         -moz-appearance: inherit; 
         -o-appearance: inherit;
         -ms-appearance: inherit;
@@ -738,9 +1034,16 @@
         margin: 5px 0;
         padding: 10px;
         font-size: 12px;
-        border-radius: 10px;
-        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        background:var(--bg-surface);
+        border: 1px solid var(--border-soft-dark);
+
         text-align: center;
+
+        transition:
+            border-color 180ms ease,
+            box-shadow 180ms ease,
+            background 180ms ease;
         -moz-appearance:inherit; 
         -o-appearance:inherit;
         -ms-appearance:inherit;
@@ -779,12 +1082,28 @@
         -webkit-appearance: inherit;
     }
 
+    .form-input-style:focus,
+    .form-medium-input-style:focus,
+    .form-small-input-style:focus {
+        outline: none;
+
+        background: #ffffff;
+
+        border-color:
+            rgba(64, 142, 237, 0.55);
+
+        box-shadow:
+            0 0 0 3px
+            rgba(64, 142, 237, 0.10);
+    }
+
     .search-field {
         width: 90%;
         margin: 5px 0;
         border: 0;
-        border-radius: 10px;
-        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-soft-dark);
         padding: 4% 4%;
         font-size: 12px;
         text-align: center;
@@ -792,8 +1111,9 @@
 
     .big-search-field {
         width: 98%;
-        border-radius: 10px;
-        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-soft-dark);
         font-size: 12px;
         text-align: center;
         margin: 0;
@@ -1015,7 +1335,7 @@
         justify-content: center;
         gap: 10px;
 
-        border: 1px solid rgba(120, 137, 160, 0.28);
+        border: 0;
         border-radius: 13px;
 
         background: rgba(255, 255, 255, 0.72);
@@ -1024,6 +1344,11 @@
         font-family: inherit;
         font-size: 14px;
         font-weight: 600;
+
+        box-shadow:
+            0 12px 915px rgba(15, 23, 42, 0.26),
+            0 8px 22px rgba(15, 23, 42, 0.13),
+            inset 0 1px 0 rgba(255, 255, 255, 0.96);
 
         cursor: pointer;
 
@@ -1044,7 +1369,7 @@
     #add-product-form .product-advanced-toggle-icon {
         display: inline-flex;
         font-size: 18px;
-        line-height: 1;
+        line-height: 0;
 
         transition: transform 220ms ease;
     }
@@ -1424,8 +1749,8 @@
 .drop-area {
     width: 94%;
     border: 1px solid #CCC;
-    border-radius: 4px;
-    color: #FFF;
+    border-radius: 10px;
+    color: var(--basic-green);
     font-size: 0.8em;
     display: flex;
     text-align: center;
@@ -1471,6 +1796,10 @@
     background-color: var(--frm-bg-transparent-grey);
     border-radius: 5px;
     border: 1px solid var(--frm-border-semi-transparent);
+    box-shadow:
+            0 12px 915px rgba(15, 23, 42, 0.26),
+            0 8px 22px rgba(15, 23, 42, 0.13),
+            inset 0 1px 0 rgba(255, 255, 255, 0.96);
     text-align: center;
     -moz-appearance: inherit; 
     -o-appearance: inherit;
@@ -1490,22 +1819,52 @@
     color: var(--clr-white);
 }
 
+.formular-frame::before {
+    content: "";
+
+    position: absolute;
+
+    top: -170px;
+    left: 50%;
+
+    width: 420px;
+    height: 320px;
+
+    transform: translateX(-50%);
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(89, 199, 199, 0.14) 0%,
+            rgba(79, 134, 245, 0.07) 42%,
+            transparent 72%
+        );
+
+    pointer-events: none;
+}
+
 .formular-frame {
+    position: relative;
 	width: 400px;
 	max-height: 84vh;
-	margin: 50px auto auto;
+	margin: 0;
 	padding: 5px 0 20px;
 
 	display: flex;
 	flex-direction: column;
 
-	background-color: var(--frm-bg-transparent-grey);
-    /* background-color: var(--clr-white); */
-	box-shadow: 0 4px 10px 0 rgba(37, 37, 37, 0.388);
-	backdrop-filter: blur(5px);
-	-webkit-backdrop-filter: blur(5px);
+    background: var(--form-white-bg);
+
+    box-shadow: var(--shadow-degreade);
+
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+
+
 	border-radius: 20px;
-	border: 1px solid var(--frm-border-semi-transparent);
+    border: 1px solid var(--border-light);
 
 	font-weight: 200;
 
@@ -1519,6 +1878,36 @@
 
 	overflow: hidden;
 	box-sizing: border-box;
+}
+
+/* .formular-frame h2 {
+    position: relative;
+    z-index: 1;
+
+    margin: 0 0 8px;
+
+    color: #172033;
+
+    font-size: 20px;
+    font-weight: 700;
+} */
+
+.product-form-intro {
+    position: relative;
+    z-index: 1;
+
+    max-width: 340px;
+
+    margin:
+        0 auto
+        20px;
+
+    color: #6f7d91;
+
+    font-size: 12px;
+    line-height: 1.45;
+
+    text-align: center;
 }
 
 #formAddProduct {
@@ -1542,38 +1931,82 @@
 
 	scrollbar-gutter: stable;
 	overscroll-behavior: contain;
+
+    background: linear-gradient(
+		90deg,
+		rgba(249, 252, 255, 0.65) 0%,
+		rgba(225, 232, 240, 0.85) 20%,
+		rgba(249, 255, 255, 0.65) 100%
+	);
 }
 
 .formular-medium-frame {
+    position: relative;
     width: 750px;
-    margin: 50px auto auto;
+    margin: 0;
     padding: 10px 0 30px;
-    background-color: var(--frm-bg-transparent-grey);
-    box-shadow: 0 4px 10px 0 rgba(37, 37, 37, 0.388);
+
+    background: var(--form-white-bg);
+
+    box-shadow:
+        0 42px 95px rgba(15, 23, 42, 0.26),
+        0 18px 42px rgba(15, 23, 42, 0.13),
+        inset 0 1px 0 rgba(255, 255, 255, 0.96);
+
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
-    border-radius: 20px;
+
+    border-radius: 30px;
     border: 1px solid var(--frm-border-semi-transparent);
+
     font-weight: 200;
+
     transform: scale(0.7);
     opacity: 0;
-    transition: transform 0.5s ease, opacity 0.5s ease;
+
+    transition:
+        transform 0.5s ease,
+        opacity 0.5s ease;
 }
 
 .formular-big-frame {
-    width: 1100px;
-    margin: 50px auto auto;
+    position: relative;
+    width: min(95%, 1100px);
+    margin: 0;
     padding: 20px 0 50px;
-    background-color: var(--frm-bg-transparent-grey);
-    box-shadow: 0 4px 10px 0 rgba(37, 37, 37, 0.388);
+
+    background: var(--form-white-bg);
+
+    box-shadow:
+        0 42px 95px rgba(15, 23, 42, 0.26),
+        0 18px 42px rgba(15, 23, 42, 0.13),
+        inset 0 1px 0 rgba(255, 255, 255, 0.96);
+
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
-    border-radius: 10px;
-    border: 1px solid var(--frm-border-semi-transparent);
+
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.88);
+
     font-weight: 200;
+
     transform: scale(0.7);
     opacity: 0;
-    transition: transform 0.5s ease, opacity 0.5s ease;
+
+    transition:
+        transform 0.5s ease,
+        opacity 0.5s ease;
+}
+
+.lists-container {
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+
+    gap: 10px;
+
+    box-sizing: border-box;
 }
 
 .create-list-holder {
@@ -1583,14 +2016,24 @@
 	border-bottom: 1px solid #f0f0f0;
 }
 
-.formular-category-list {
-    width: 330px;
-    height: 458px;
-    background-color: var(--frm-bg-transparent-grey);
-    margin: 0 auto 10px;
-    padding: 10px;
-    border: 1px solid var(--frm-border-semi-transparent);
-    border-radius: 15px;
+.formular-list {
+	width: 100%;
+	min-width: 0;
+
+	background: var(--form-white-bg);
+
+	box-shadow:
+			0 18px 38px rgba(15, 23, 42, 0.08),
+			0 2px 7px rgba(15, 23, 42, 0.04),
+			inset 0 1px 0 rgba(255, 255, 255, 0.98);
+
+	margin: 0;
+	padding: 10px;
+
+	border: 1px solid rgba(216, 223, 232, 0.9);
+	border-radius: 20px;
+
+	box-sizing: border-box;
 }
 
 .auxlabel label {

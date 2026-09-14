@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		const companyPopupContent = editCompanyForm?.querySelector('.formular-medium-frame');
 
 		if (editCompanyForm && companyPopupContent) {
-			editCompanyForm.style.display = 'block';
+			editCompanyForm.style.display = 'flex';
 			editCompanyForm.style.opacity = '0';
 			editCompanyForm.style.transition = 'opacity 300ms ease';
 
@@ -271,7 +271,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			if (setUp && popupContent) {
 				setUp.style.transition = 'opacity 300ms ease';
-				setUp.style.display = 'block';
+				setUp.style.display = 'flex';
 				void setUp.offsetWidth;
 				setUp.style.opacity = '0';
 
@@ -444,7 +444,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				// 1) Si NO aceptó gdpr/terms -> mostrar setup
 				if (user.gdpr === "0" || user.terms === "0") {
-					setUp.style.display = 'block';
+					setUp.style.display = 'flex';
 					setUp.style.opacity = '0';
 					setUp.style.transition = 'opacity 0.5s ease';
 					setTimeout(() => {
@@ -1127,7 +1127,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					const activatePackForm = document.getElementById('activate-pack-form');
 					const popupContent = activatePackForm.querySelector('.formular-frame');
 					if (activatePackForm && popupContent) {
-						activatePackForm.style.display = 'block';
+						activatePackForm.style.display = 'flex';
 						activatePackForm.style.opacity = '0';
 						activatePackForm.style.transition = 'opacity 0.5s ease';
 						setTimeout(() => {
@@ -1149,7 +1149,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					const activatePackForm = document.getElementById('reactivate-subscription-form');
 					const popupContent = activatePackForm.querySelector('.formular-frame');
 					if (activatePackForm && popupContent) {
-						activatePackForm.style.display = 'block';
+						activatePackForm.style.display = 'flex';
 						activatePackForm.style.opacity = '0';
 						activatePackForm.style.transition = 'opacity 0.5s ease';
 						setTimeout(() => {
@@ -1187,7 +1187,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			if (activatePackForm && popupContent) {
 				activatePackForm.style.transition = 'opacity 300ms ease';
-				activatePackForm.style.display = 'block';
+				activatePackForm.style.display = 'flex';
 				void activatePackForm.offsetWidth;
 				activatePackForm.style.opacity = '0';
 
@@ -1422,7 +1422,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	
 		if (addMembersForm && popupContent) {
 			
-			addMembersForm.style.display = 'block';
+			addMembersForm.style.display = 'flex';
 			addMembersForm.style.opacity = '0';
 			addMembersForm.style.transition = 'opacity 0.5s ease';
 			setTimeout(() => {
@@ -1592,7 +1592,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const popupContent = editMyInfoForm.querySelector('.formular-frame');
 
 			if (editMyInfoForm && popupContent) {
-				editMyInfoForm.style.display = 'block';
+				editMyInfoForm.style.display = 'flex';
 				editMyInfoForm.style.opacity = '0';
 				editMyInfoForm.style.transition = 'opacity 0.5s ease';
 				setTimeout(() => {
@@ -1674,7 +1674,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const formSubscription = document.getElementById('formSubscription');
 
 			if (subscForm && popupContent && formSubscription) {
-				subscForm.style.display = 'block';
+				subscForm.style.display = 'flex';
 				subscForm.style.opacity = '0';
 				subscForm.style.transition = 'opacity 0.5s ease';
 				setTimeout(() => {
@@ -1797,7 +1797,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			});
 
 			if (editCompanyForm && popupContent) {
-				editCompanyForm.style.display = 'block';
+				editCompanyForm.style.display = 'flex';
 				editCompanyForm.style.opacity = '0';
 				editCompanyForm.style.transition = 'opacity 0.5s ease';
 				setTimeout(() => {
@@ -1857,6 +1857,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 							</div>
 						</td>
 					`;
+
+					// 🟢 Seleccionar al hacer clic en toda la fila
+					makeRadioRowSelectable(row, {
+						rowSelector: '.company-row',
+						selectedClass: 'selected-company',
+
+						onSelect: (radio) => {
+							console.log('Company selected:', radio.value);
+						}
+					});
+
 					affList.appendChild(row);
 				});
 			}
@@ -2225,7 +2236,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				const popupContent = addMembersForm.querySelector('.formular-frame');
 
 				if (addMembersForm && popupContent) {
-					addMembersForm.style.display = 'block';
+					addMembersForm.style.display = 'flex';
 					addMembersForm.style.opacity = '0';
 					addMembersForm.style.transition = 'opacity 0.5s ease';
 					setTimeout(() => {
@@ -2508,7 +2519,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				const popupContent = addProductForm.querySelector('.formular-frame');
 
 				if (addProductForm && popupContent) {
-					addProductForm.style.display = 'block';
+					addProductForm.style.display = 'flex';
 					addProductForm.style.opacity = '0';
 					addProductForm.style.transition = 'opacity 0.5s ease';
 					setTimeout(() => {
@@ -3021,7 +3032,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const popupContent = addProductForm.querySelector('.formular-big-frame');
 
 			if (addProductForm && popupContent) {
-				addProductForm.style.display = 'block';
+				addProductForm.style.display = 'flex';
 				addProductForm.style.opacity = '0';
 				addProductForm.style.transition = 'opacity 0.5s ease';
 				setTimeout(() => {
@@ -3072,6 +3083,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 								</div>
 							</td>
 						`;
+
+						makeRadioRowSelectable(row, {
+							rowSelector: '#mark-list .categoryContainer',
+							selectedClass: 'selected-category'
+						});
+
 						markList.appendChild(row);
 					});
 				}
@@ -3139,9 +3156,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 					return;
 				}
 
-				const existingRadios = document.querySelectorAll('input[name="product_mark"]');
-				existingRadios.forEach(r => r.checked = false);
-
 				const uniqueId = `mark-${Date.now()}`;
 				const row = document.createElement('tr');
 				row.className = "categoryContainer";
@@ -3159,6 +3173,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 						</div>
 					</td>
 				`;
+
+				// 🟢 Hacer seleccionable toda la fila
+				makeRadioRowSelectable(row, {
+					rowSelector: '#mark-list .categoryContainer',
+					selectedClass: 'selected-category'
+				});
+
+				// 🟢 Seleccionar automáticamente la marca recién creada
+				row.click();
+		
 				markList.appendChild(row);
 				inputProductMark.value = '';
 			}
@@ -3207,9 +3231,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 					emptyRow.remove();
 				}
 
-				const existingRadios = document.querySelectorAll('input[name="product_model"]');
-				existingRadios.forEach(r => r.checked = false);
-
 				const uniqueId = `model-${Date.now()}`;
 				const row = document.createElement('tr');
 				row.className = "categoryContainer";
@@ -3227,6 +3248,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 						</div>
 					</td>
 				`;
+
+				// 🟢 Hacer seleccionable toda la fila
+				makeRadioRowSelectable(row, {
+					rowSelector: `#${modelList.id} .categoryContainer`,
+					selectedClass: 'selected-category'
+				});
+
+				// 🟢 Seleccionar automáticamente el modelo recién creado
+				row.click();
+
 				modelList.appendChild(row);
 				inputProductModel.value = '';
 			}
@@ -3276,6 +3307,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 									</div>
 								</td>
 							`;
+
+							// 🟢 Hacer seleccionable toda la fila
+							makeRadioRowSelectable(row, {
+								rowSelector: `#${modelList.id} .categoryContainer`,
+								selectedClass: 'selected-category'
+							});
+
 							modelList.appendChild(row);
 						});
 					} else {
@@ -3331,9 +3369,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 					emptyRow.remove();
 				}
 
-				const existingRadios = document.querySelectorAll('input[name="product_sub_model"]');
-				existingRadios.forEach(r => r.checked = false);
-
 				const uniqueId = `submodel-${Date.now()}`;
 				const row = document.createElement('tr');
 				row.className = "categoryContainer";
@@ -3351,6 +3386,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 						</div>
 					</td>
 				`;
+
+				// 🟢 Hacer seleccionable toda la fila
+				makeRadioRowSelectable(row, {
+					rowSelector: `#${submodelList.id} .categoryContainer`,
+					selectedClass: 'selected-category'
+				});
+
+				// 🟢 Seleccionar automáticamente el submodelo recién creado
+				row.click();
+
 				submodelList.appendChild(row);
 				inputSubmodel.value = '';
 			}
@@ -3400,6 +3445,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 									</div>
 								</td>
 							`;
+
+							// 🟢 Hacer seleccionable toda la fila
+							makeRadioRowSelectable(row, {
+								rowSelector: `#${submodelList.id} .categoryContainer`,
+								selectedClass: 'selected-category'
+							});
+
 							submodelList.appendChild(row);
 						});
 					} else {
@@ -3768,7 +3820,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				}
 				
 
-				productOptions.style.display = 'block';
+				productOptions.style.display = 'flex';
 				productOptions.style.opacity = '0';
 				productOptions.style.transition = 'opacity 0.5s ease';
 				setTimeout(() => {
@@ -4579,7 +4631,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const popupContent = addShippingForm.querySelector('.formular-frame');
 
 			if (addShippingForm && popupContent) {
-			    addShippingForm.style.display = 'block';
+			    addShippingForm.style.display = 'flex';
 			    addShippingForm.style.opacity = '0';
 			    addShippingForm.style.transition = 'opacity 0.5s ease';
 			    setTimeout(() => {
@@ -4690,7 +4742,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					shippingNo.textContent = shipping.shipping_no || 'Unnamed shipping';
 				}
 
-				shippingOptions.style.display = 'block';
+				shippingOptions.style.display = 'flex';
 				shippingOptions.style.opacity = '0';
 				shippingOptions.style.transition = 'opacity 0.5s ease';
 				setTimeout(() => {
@@ -4895,7 +4947,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					loadNo.textContent = 'Load No: ' + foundLoad.load_no || 'Unnamed load';
 				}
 				
-				loadOptions.style.display = 'block';
+				loadOptions.style.display = 'flex';
 				loadOptions.style.opacity = '0';
 				loadOptions.style.transition = 'opacity 0.5s ease';
 				setTimeout(() => {
@@ -5165,6 +5217,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 									</div>
 								</td>
 							`;
+
+							makeRadioRowSelectable(row, {
+								rowSelector: `#${customerListTable.id} .categoryContainer`,
+								selectedClass: 'selected-category'
+							});
+
 							customerListTable.appendChild(row);
 						});
 					} else {
@@ -5546,11 +5604,22 @@ document.addEventListener("DOMContentLoaded", async function () {
 										</div>
 									</td>
 								`;
+
+								// 🟢 Hacer seleccionable toda la fila
+								makeRadioRowSelectable(row, {
+									rowSelector:
+										`#${editCustomerListTable.id} .categoryContainer`,
+									selectedClass: 'selected-customer'
+								});
+
 								editCustomerListTable.appendChild(row);
 
 								if (String(customer.customer_id) === String(load.customer.customer_id)) {
-									const customerRadio = document.getElementById(uniqueId);
-									if (customerRadio) customerRadio.checked = true;
+									const customerRadio = row.querySelector('input[type="radio"]');
+									if (customerRadio) {
+										customerRadio.checked = true;
+										row.classList.add('selected-customer');
+									}
 								}
 							});
 						} else {
@@ -6186,59 +6255,59 @@ document.addEventListener("DOMContentLoaded", async function () {
 									</td>
 								</tr>
 								<tr valign="baseline">
-									<td width="40%" align="left" valign="middle" style="height: 20px; border-top: 1px solid var(--border-light);">
+									<td width="40%" align="left" valign="middle" style="height: 20px; border-top: 1px solid var(--gray-200);">
 										<strong>Subscription Date</strong>
 									</td>
-									<td width="40%" align="left" valign="middle" style="height: 20px; border-top: 1px solid var(--border-light);">
+									<td width="40%" align="left" valign="middle" style="height: 20px; border-top: 1px solid var(--gray-200);">
 										<strong>Expiration Date</strong>
 									</td>
-									<td width="20%" align="center" valign="middle" style="height: 20px; border-top: 1px solid var(--border-light);">
+									<td width="20%" align="center" valign="middle" style="height: 20px; border-top: 1px solid var(--gray-200);">
 										<strong>Price</strong>
 									</td>
 								</tr>
 								<tr valign="baseline">
-									<td width="40%" align="left" valign="middle" style="height: 20px; border-top: 1px solid var(--border-light);">
+									<td width="40%" align="left" valign="middle" style="height: 20px; border-top: 1px solid var(--gray-200);">
 										${formatFullDateTime(subs?.subscription_date) ?? '-'}
 									</td>
-									<td width="40%" align="left" valign="middle" style="height: 20px; border-top: 1px solid var(--border-light);">
+									<td width="40%" align="left" valign="middle" style="height: 20px; border-top: 1px solid var(--gray-200);">
 										${formatFullDateTime(subs?.expiration_date) ?? '-'}
 									</td>
-									<td width="20%" align="center" valign="middle" style="height: 20px; border-top: 1px solid var(--border-light);">
+									<td width="20%" align="center" valign="middle" style="height: 20px; border-top: 1px solid var(--gray-200);">
 										$${subs?.estimated_cost ?? '-'}
 									</td>
 								</tr>
 							</table>
 							<table width="100%" align="center" cellspacing="0">
 								<tr valign="baseline">
-									<td colspan="6" align="center" valign="middle" style="border-top: 1px solid var(--border-light);">
+									<td colspan="6" align="center" valign="middle" style="border-top: 1px solid var(--gray-200);">
 										<h3>Extra Pack</h3>
 									</td>
 								</tr>
 								<tr valign="baseline">
-									<td width="50%" align="center" valign="middle" style="height: 20px; border-top: 1px solid var(--border-light);">
+									<td width="50%" align="center" valign="middle" style="height: 20px; border-top: 1px solid var(--gray-200);">
 										<strong>Name</strong>
 									</td>
-									<td width="50%" align="center" valign="middle" style="height: 20px; border-top: 1px solid var(--border-light);">
+									<td width="50%" align="center" valign="middle" style="height: 20px; border-top: 1px solid var(--gray-200);">
 										<strong>Access</strong>
 									</td>
 								</tr>
 								${extraPack.length
 									? extraPack.map(service => `
 										<tr valign="baseline">
-											<td width="50%" align="center" valign="middle" style="height: 20px; border-top: 1px solid var(--border-light);">
+											<td width="50%" align="center" valign="middle" style="height: 20px; border-top: 1px solid var(--gray-200);">
 												${service.service_name ?? '-'}
 											</td>
-											<td width="50%" align="center" valign="middle" style="height: 20px; border-top: 1px solid var(--border-light);">
+											<td width="50%" align="center" valign="middle" style="height: 20px; border-top: 1px solid var(--gray-200);">
 												${Number(service.can_access) === 1 ? 'Active' : 'Inactive'}
 											</td>
 										</tr>
 									`).join('')
 									: `
 										<tr valign="baseline">
-											<td width="50%" align="center" valign="middle" style="height: 20px; border-top: 1px solid var(--border-light);">
+											<td width="50%" align="center" valign="middle" style="height: 20px; border-top: 1px solid var(--gray-200);">
 												-
 											</td>
-											<td width="50%" align="center" valign="middle" style="height: 20px; border-top: 1px solid var(--border-light);">
+											<td width="50%" align="center" valign="middle" style="height: 20px; border-top: 1px solid var(--gray-200);">
 												-
 											</td>
 										</tr>
@@ -6497,7 +6566,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 						document.getElementById("right_user_id").value = selectedUserId;
 
 						if (addRightsForm && popupContent) {
-						    addRightsForm.style.display = 'block';
+						    addRightsForm.style.display = 'flex';
 						    addRightsForm.style.opacity = '0';
 						    addRightsForm.style.transition = 'opacity 0.5s ease';
 						    setTimeout(() => {
@@ -6550,7 +6619,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 						document.getElementById("service_user_id").value = selectedUserId;
 
 						if (addServicesForm && popupContent) {
-						    addServicesForm.style.display = 'block';
+						    addServicesForm.style.display = 'flex';
 						    addServicesForm.style.opacity = '0';
 						    addServicesForm.style.transition = 'opacity 0.5s ease';
 						    setTimeout(() => {
@@ -6737,7 +6806,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					// 'edit-sales-modal'
 				]);
 
-				rightsOptions.style.display = 'block';
+				rightsOptions.style.display = 'flex';
 				rightsOptions.style.opacity = '0';
 				rightsOptions.style.transition = 'opacity 0.5s ease';
 				setTimeout(() => {
@@ -6933,7 +7002,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					// 'edit-sales-modal'
 				]);
 
-				extraServicesOptions.style.display = 'block';
+				extraServicesOptions.style.display = 'flex';
 				extraServicesOptions.style.opacity = '0';
 				extraServicesOptions.style.transition = 'opacity 0.5s ease';
 				setTimeout(() => {

@@ -13,7 +13,7 @@
 .sale-row {
 	width: 98%;
     background-color: var(--clr-white);
-    border: 1px solid var(--border-light);
+    border: 1px solid var(--gray-200);
     box-shadow: 0px 20px 30px var(--shadow-color);
 	margin: 0 auto 10px;
 	padding: 0 0.5% 5px;
@@ -77,12 +77,12 @@
 .sales-customer-row:hover,
 .sales-product-row:hover
 {
-	background-color: var(--frm-bg-transparent-grey);
+	background-color: var(--gray-300);
 	transition: all 0.7s ease;
 }
 
 .sales-customer-row.selected-customer {
-	background-color: var(--frm-bg-transparent-grey);
+	background-color: var(--gray-300);
 	transition: all 0.7s ease;
 }
 /* hasta aqui */
@@ -167,17 +167,6 @@
 	height: auto;
 	object-fit: cover;
 }
-
-.formular-customers-list {
-    width: 330px;
-    height: 458px;
-    background-color: var(--frm-bg-transparent-grey);
-    margin: 0 auto 10px;
-    padding: 10px;
-    border: 1px solid var(--frm-border-semi-transparent);
-    border-radius: 8px;
-}
-
 
 .new-sale-highlight {
 	position: relative;

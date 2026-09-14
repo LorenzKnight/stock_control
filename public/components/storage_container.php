@@ -23,7 +23,7 @@
                 </div>
             </div>
             <div class="storage-details" id="storageDetails"></div>
-            <div class="shipping-sidebar" id="storageSummary"></div>
+            <div class="product-sidebar"></div>
         </div>
     </div>
 </div>

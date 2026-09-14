@@ -6,7 +6,7 @@
     width: 25%;
     height: 82.5vh;
     background-color: var(--clr-white);
-    border: 1px solid var(--border-light);
+    border: 1px solid var(--gray-200);
     box-shadow: 0px 20px 30px var(--shadow-color);
     border-radius: 15px;
 }
@@ -30,7 +30,7 @@
 	.notification-detail-card {
 		width: 335px;
 		background-color: var(--clr-white);
-		border: 1px solid var(--border-light);
+		border: 1px solid var(--gray-200);
 		box-shadow: 0px 20px 30px var(--shadow-color);
 		border-radius: 15px;
 		margin: 20px auto;
@@ -67,7 +67,7 @@
 	.notification-detail-card {
 		width: 96%;
 		background-color: var(--clr-white);
-		border: 1px solid var(--border-light);
+		border: 1px solid var(--gray-200);
 		box-shadow: 0px 20px 30px var(--shadow-color);
 		border-radius: 15px;
 		margin: 20px auto;
@@ -169,12 +169,12 @@
 
 .dm-user-row:hover
 {
-	background-color: var(--frm-bg-transparent-grey);
+	background-color: var(--gray-300);
 	transition: all 0.7s ease;
 }
 
 .dm-user-row.selected-dm-user {
-	background-color: var(--frm-bg-transparent-grey);
+	background-color: var(--gray-300);
 	transition: all 0.7s ease;
 }
 

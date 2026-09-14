@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const popupContent = editCompanyForm.querySelector('.formular-frame');
 
 			if (editCompanyForm && popupContent) {
-				editCompanyForm.style.display = 'block';
+				editCompanyForm.style.display = 'flex';
 				editCompanyForm.style.opacity = '0';
 				editCompanyForm.style.transition = 'opacity 0.5s ease';
 				setTimeout(() => {
