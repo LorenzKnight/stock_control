@@ -40,10 +40,22 @@
 					<div class="notifications-no" id="notif-count" style="display: none;"></div>
 				</li>
 
-				<li class="no-redirect">
-					<div class="profile" id="profileTrigger">
+				<li class="no-redirect profile-frame" id="profileTrigger">
+					<div class="profile">
 						<img id="header-profile-pic" src="" alt="header profile pic">
 					</div>
+
+					<svg
+						class="profile-arrow"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2.5"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<path d="M6 9l6 6 6-6"></path>
+					</svg>
 
 					<div id="profileDropdown" style="display: none;">
 						<ul>
