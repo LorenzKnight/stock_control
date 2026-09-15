@@ -252,7 +252,7 @@
     .card-menu {
         width: 44px;
         height: 44px;
-        background-color: var(--gray-500);
+        background-color: var(--gray-300);
         color: #FFF;
         font-size: 18px;
         border-radius: 50%;
@@ -685,7 +685,7 @@
     .card-menu {
         width: 44px;
         height: 44px;
-        background-color: var(--gray-500);
+        background-color: var(--gray-300);
         color: #FFF;
         font-size: 18px;
         border-radius: 50%;
@@ -1121,7 +1121,7 @@
     .card-menu {
         width: 44px;
         height: 44px;
-        background-color: var(--gray-500);
+        background-color: var(--gray-300);
         color: #FFF;
         font-size: 18px;
         border-radius: 50%;
@@ -1374,8 +1374,8 @@
 
     .button-style-neutral {
         width: 80%;
-        background: var(--clr-neutral);
-        color: var(--clr-white);
+        background: var(--gray-300);
+        color: var(--text-secondary);
         font-size: 12px;
         margin: 5px 0;
         padding: 10px 0;
@@ -1389,7 +1389,7 @@
     }
 
     .button-style-neutral:hover {
-        background: var(--main-bg-dark-blue);
+        background: var(--agree-blue);
         color: var(--clr-white);
     }
 
@@ -1576,8 +1576,8 @@
     .card-menu {
         width: 44px;
         height: 44px;
-        background-color: var(--gray-500);
-        color: #FFF;
+        background-color: var(--gray-300);
+        color: var(--gray-500);
         font-size: 18px;
         border-radius: 50%;
         position: absolute;
@@ -1591,13 +1591,14 @@
     }
 
     .card-menu:hover {
-        background-color: var(--main-bg-dark-blue);
+        background: var(--agree-blue);
+        color: var(--gray-100);
         box-shadow: 0 0 4px 3px rgb(47 48 63 / 19%);
     }
 
-    .card-menu img {
-        width: 20px;
-        filter: brightness(0) saturate(100%) invert(100%);
+    .card-menu svg {
+        width: 23px;
+        height: 23px;
         opacity: 0.9;
         transition: filter 0.3s ease;
     }

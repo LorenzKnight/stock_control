@@ -7,12 +7,12 @@
         <div class="product-table flex">
             <div class="product-sidebar">
                 <table width="90%" align="center" cellspacing="0" style="margin-top: 15px;">
-                    <tr valign="baseline" >
+                    <tr valign="baseline">
                         <td colspan="4" style="padding-bottom: 5px;" align="center" valign="middle">
                             <input type="text" name="searchFieldStorage" id="searchFieldStorage" class="search-field" placeholder="<?= tr('storage_or_product_no') ?>">
                         </td>
                     </tr>
-                    <tr valign="baseline" >
+                    <tr valign="baseline">
                         <td colspan="4" style="border-bottom: 1px solid var(--border-light); padding: 10px 0;" align="center" valign="middle">
                             <button class="button-style-agree" id="storageMenuBtns"><?= tr('storage_menu') ?></button>
                         </td>

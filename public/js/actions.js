@@ -1391,7 +1391,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 								<p><strong>${window.i18n?.phone || "Phone"}:</strong> ${user.phone ? user.phone : "No Phone Number"}</p>
 							</div>
 							<div class="card-menu">
-								<img src="images/sys-img/edit-icon.png" alt="edit-card">
+								<svg
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<path d="M12 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-6"></path>
+									<path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"></path>
+								</svg>
 							</div>
 						`;
 

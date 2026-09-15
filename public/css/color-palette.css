@@ -40,10 +40,11 @@
         rgb(1, 84, 144) 100%
     );
     --agree-green: rgb(0, 151, 0);
-    --alert-green: rgb(231, 251, 231);
+    --alert-green: rgb(216, 252, 216);
+    --alert-blue: rgb(184, 229, 253);
     --warning-orange: rgb(236, 103, 38);
     --warning-yellow: rgb(250, 223, 183);
-    --warning-red: rgb(251, 165, 165);
+    --warning-red: rgb(253, 198, 198);
     --main-text-color: #333;
 
     --basic-green: rgb(62 165 139);
