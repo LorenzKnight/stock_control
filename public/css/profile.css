@@ -255,6 +255,24 @@
     .card-info {
         margin: 40px 0 0 0;
     }
+
+	.card-info h3 {
+		margin: 8px 0;
+	}
+
+	.card-info p {
+		display: flex;
+		text-align: center;
+		gap: 5px;
+		margin: 0;
+		line-height: 1.8;
+	}
+
+	.card-info p strong svg {
+		width: 20px;
+		height: 20px;
+		color: var(--text-secondary);
+	}
 }
 
 

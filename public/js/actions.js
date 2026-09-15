@@ -1387,8 +1387,38 @@ document.addEventListener("DOMContentLoaded", async function () {
 							</div>
 							<div class="card-info">
 								<h3>${user.name} ${user.surname}</h3>
-								<p><strong>Email:</strong> ${user.email}</p>
-								<p><strong>${window.i18n?.phone || "Phone"}:</strong> ${user.phone ? user.phone : "No Phone Number"}</p>
+								<p>
+									<strong>
+										<svg
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										>
+											<rect x="3" y="5" width="18" height="14" rx="2"></rect>
+											<path d="M3 7l9 6 9-6"></path>
+										</svg>
+									</strong>
+
+									${user.email}
+								</p>
+								<p>
+									<strong>
+										<svg
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										>
+											<path d="M5 4h4l2 5-3 2a15 15 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2C10.3 21 3 13.7 3 6a2 2 0 0 1 2-2z"></path>
+										</svg>
+									</strong>
+									
+									${user.phone ? user.phone : "No Phone Number"}</p>
 							</div>
 							<div class="card-menu">
 								<svg
