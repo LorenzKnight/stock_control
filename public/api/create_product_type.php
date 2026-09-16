@@ -1,4 +1,7 @@
 <?php
+use App\ProductTypes\ProductTypeRepository;
+use App\ProductTypes\ProductTypeService;
+
 require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
@@ -19,7 +22,7 @@ try {
 	$authUser = requireAuth();
     $userId = $authUser["user_id"];
 	
-	if (empty($userId)) {
+	if ($userId <= 0) {
         throw new Exception("Unauthorized access: invalid or missing token.");
     }
 
@@ -32,73 +35,36 @@ try {
 	$payload = json_decode($raw, true);
 	if (!is_array($payload)) $payload = $_POST;
 
-	$name      = isset($payload['name']) ? trim($payload['name']) : '';
-	// Puede venir '' (=> NULL) o numérico
-	$companyId = isset($payload['company_id']) && $payload['company_id'] !== '' ? (int)$payload['company_id'] : null;
+	$name = (string)($payload["name"] ?? '');
+	
+	$companyId = isset($payload['company_id']) && $payload['company_id'] !== ''
+		? (int)$payload['company_id']
+		: null;
 
-	if ($name === '') throw new Exception("Type name is required.");
-	if (mb_strlen($name) > 100) throw new Exception("Type name too long (max 100).");
+	$repository = new ProductTypeRepository();
+	$service = new ProductTypeService($repository);
 
-	// Unicidad (case-insensitive) por usuario y company_id (null-safe)
-	// Usamos select_from con LOWER(col) = valor
-	$where = [
-		'create_by' => $userId
-	];
-
-	if ($companyId === null) {
-		$where['company_id'] = null;
-	} else {
-		$where['company_id'] = $companyId;
-	}
-	// Comparación case-insensitive exacta: LOWER(product_type_name) = lower($name)
-	$where['LOWER(product_type_name)'] = [
-		'condition' => '=',
-		'value'     => mb_strtolower($name)
-	];
-
-	$existsRes = json_decode(select_from(
-		"product_type",
-		["product_type_id","product_type_name"],
-		$where,
-		["fetch_first" => true]
-	), true);
-
-	if (!empty($existsRes['success']) && !empty($existsRes['data'])) {
-		// Ya existe -> devolver success=true con el id para que la UI lo seleccione
-		echo json_encode([
-			"success" => true,
-			"id"      => $existsRes['data']['product_type_id'],
-			"name"    => $existsRes['data']['product_type_name'],
-			"message" => "Type already exists"
-		], JSON_UNESCAPED_UNICODE);
-		exit;
-	}
-
-	// Insertar
-	$insertData = [
-		"user_id"           => $userId,
-		"product_type_name" => $name,
-		"create_by"         => $userId,
-		"created_at"        => date("Y-m-d H:i:s")
-	];
-	// company_id es opcional/nullable
-	if ($companyId !== null) $insertData["company_id"] = $companyId;
-
-	$ins = json_decode(insert_into("product_type", $insertData, ["id" => "product_type_id"]), true);
-	if (empty($ins['success'])) {
-		throw new Exception($ins['message'] ?? "Error inserting product type.");
-	}
+	$result = $service->createProductType(
+		$userId,
+		$name,
+		$companyId
+	);
 
 	echo json_encode([
 		"success" => true,
-		"id"      => $ins['id'],
-		"name"    => $name,
-		"message" => "Type created successfully"
+		"id"      => $result['id'],
+		"name"    => $result['name'],
+		"message" => $result["already_exists"]
+			? "Type already exists"
+			: "Type created successfully"
 	], JSON_UNESCAPED_UNICODE);
+
 	exit;
+
 } catch (Exception $e) {
 	$response["success"] = false;
 	$response["message"] = $e->getMessage();
 	echo json_encode($response, JSON_UNESCAPED_UNICODE);
+
 	exit;
 }
