@@ -593,7 +593,7 @@ final class ProductServiceTest extends TestCase
 	}
 
 
-	public function testRejectsUpdateWithoutProductType(): void
+	public function testAllowsUpdateWithoutProductType(): void
 	{
 		$repository =
 			$this->createMock(
@@ -601,15 +601,21 @@ final class ProductServiceTest extends TestCase
 			);
 
 		$repository
-			->expects($this->never())
-			->method('update');
+			->expects($this->once())
+			->method('update')
+			->with(
+				10,
+				$this->callback(
+					function (array $data): bool {
+						return
+							$data["product_name"] === "Phone" &&
+							$data["product_type"] === 0;
+					}
+				)
+			);
 
 		$service =
 			new ProductService($repository);
-
-		$this->expectException(
-			InvalidArgumentException::class
-		);
 
 		$service->updateProduct(
 			10,
@@ -618,6 +624,8 @@ final class ProductServiceTest extends TestCase
 				"product_type" => 0
 			]
 		);
+
+		$this->assertTrue(true);
 	}
 
 

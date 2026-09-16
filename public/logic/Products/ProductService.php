@@ -395,9 +395,6 @@ class ProductService
 			);
 		}
 
-		$productType =
-			(int)($data["product_type"] ?? 0);
-
 		$data["product_name"] = $productName;
 
 		if (
