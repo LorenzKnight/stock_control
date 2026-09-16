@@ -696,4 +696,79 @@ final class ProductServiceTest extends TestCase
 			$result
 		);
 	}
+
+	public function testRejectsDeleteWithInvalidProductId(): void
+	{
+		$repository =
+			$this->createMock(
+				ProductRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('delete');
+
+		$service =
+			new ProductService($repository);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Missing or invalid product ID."
+		);
+
+		$service->deleteProduct(0);
+	}
+
+
+	public function testDeletesProduct(): void
+	{
+		$repository =
+			$this->createMock(
+				ProductRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('delete')
+			->with(10)
+			->willReturn(true);
+
+		$service =
+			new ProductService($repository);
+
+		$service->deleteProduct(10);
+
+		$this->assertTrue(true);
+	}
+
+
+	public function testThrowsWhenProductToDeleteDoesNotExist(): void
+	{
+		$repository =
+			$this->createMock(
+				ProductRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('delete')
+			->with(10)
+			->willReturn(false);
+
+		$service =
+			new ProductService($repository);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"No product found with the provided ID."
+		);
+
+		$service->deleteProduct(10);
+	}
 }

@@ -1,4 +1,7 @@
 <?php
+use App\Products\ProductRepository;
+use App\Products\ProductService;
+
 require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
@@ -46,16 +49,23 @@ try {
 		throw new Exception("Image deletion failed: " . $deleteImgResult["message"]);
 	}
 
-	$deleteResponse = delete_from("products", ["product_id" => $productId]);
-	$deleteResult = json_decode($deleteResponse, true);
+	// $deleteResponse = delete_from("products", ["product_id" => $productId]);
+	// $deleteResult = json_decode($deleteResponse, true);
 
-	if (!$deleteResult) {
-		throw new Exception("Database error while deleting product.");
-	}
+	// if (!$deleteResult) {
+	// 	throw new Exception("Database error while deleting product.");
+	// }
 
-	if (empty($deleteResult["count"])) {
-		throw new Exception("No product found with the provided ID.");
-	}
+	// if (empty($deleteResult["count"])) {
+	// 	throw new Exception("No product found with the provided ID.");
+	// }
+
+	$repository = new ProductRepository();
+	$service = new ProductService($repository);
+
+	$service->deleteProduct(
+		$productId
+	);
 
 	log_activity(
 		$userId,

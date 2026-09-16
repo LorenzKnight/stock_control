@@ -460,4 +460,29 @@ class ProductRepository
 			);
 		}
 	}
+
+	public function delete(
+		int $productId
+	): bool {
+		$result = \delete_from(
+			"products",
+			[
+				"product_id" => $productId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Database error while deleting product."
+			);
+		}
+
+		return !empty($result["count"]);
+	}
 }

@@ -409,4 +409,25 @@ class ProductService
 			$data
 		);
 	}
+
+	public function deleteProduct(
+		int $productId
+	): void {
+		if ($productId <= 0) {
+			throw new \InvalidArgumentException(
+				"Missing or invalid product ID."
+			);
+		}
+
+		$deleted =
+			$this->repository->delete(
+				$productId
+			);
+
+		if (!$deleted) {
+			throw new \Exception(
+				"No product found with the provided ID."
+			);
+		}
+	}
 }
