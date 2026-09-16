@@ -934,9 +934,9 @@
     }
 
     .button-style-neutral {
-        width: 80%;
-        background: var(--clr-neutral);
-        color: var(--clr-white);
+        width: 95%;
+        background: var(--gray-300);
+        color: var(--text-secondary);
         font-size: 16px;
         margin: 5px 0;
         padding: 16px 0;
@@ -1122,7 +1122,7 @@
         width: 44px;
         height: 44px;
         background-color: var(--gray-300);
-        color: #FFF;
+        color: var(--text-secondary);
         font-size: 18px;
         border-radius: 50%;
         position: absolute;
@@ -1136,16 +1136,17 @@
     }
 
     .card-menu:hover {
-        background-color: var(--main-bg-dark-blue);
+        background: var(--agree-blue);
+        color: var(--gray-100);
         box-shadow: 0 0 4px 3px rgb(47 48 63 / 19%);
     }
 
-    .card-menu img {
-        width: 20px;
-        filter: brightness(0) saturate(100%) invert(100%);
-        opacity: 0.9;
-        transition: filter 0.3s ease;
-    }
+	.card-menu svg {
+		width: 23px;
+		height: 23px;
+		opacity: 0.9;
+		transition: filter 0.3s ease;
+	}
 
     .product-menu {
         width: 38px;

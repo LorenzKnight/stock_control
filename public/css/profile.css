@@ -57,6 +57,8 @@
     font-weight: 500;
 }
 
+/* ###################### eliminar preliminar 👆 ###################### */
+
 #subsc {
     width: 100%;
     /* height: 200px; */
@@ -99,7 +101,6 @@
 .members-table {
     min-height: 363px;
     height: 45vh;
-    padding-top: 5px;
     border-top: 1px solid var(--gray-200);
     overflow: auto;
     display: flex;
@@ -108,18 +109,79 @@
 }
 
 @media (min-width: 681px) and (max-width: 980px) {
+	.box-title {
+		width: 90%;
+		border-bottom: 1px solid var(--gray-200);
+		position: absolute;
+		top: 0;
+
+		display: flex;
+		flex-direction: row;
+		gap: 7px;
+
+		align-items: center;
+	}
+
+	.box-title-icon {
+		width: 25px;
+		height: 25px;
+		border-radius: 50%;
+		background: var(--alert-green);
+		padding: 5px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.box-title-icon svg {
+		width: 20px;
+		height: 20px;
+	}
+
+	.info-box {
+		width: 280px;
+		height: 25vh;
+		min-height: 217px;
+		margin: 5px 10px;
+		padding: 10px;
+	}
+
+	.small-box {
+		width: 180px;
+		height: 20vh;
+		min-height: 217px;
+		border-radius: 15px;
+		padding: 10px;
+		background-color: var(--clr-white);
+		border: 1px solid var(--gray-200);
+		box-shadow: 0px 20px 30px var(--shadow-color);
+		font-size: 12px;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+		justify-self: center;
+		position: relative;
+	}
+
+	.small-box h1, h2, h3 {
+		font-weight: 500;
+	}
+
     .profile-detail-height {
         min-height: 400px;
     }
 
     .info-box-container {
-        width: 40%;
+        width: 44%;
         float: left;
     }
 
     .small-box-container {
-        width: 60%;
-        float: left;
+        width: 50%;
+        display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 13px;
+		justify-items: center;
     }
 
     .members-card {
@@ -131,7 +193,6 @@
         background-color: var(--clr-white);
         border: 1px solid var(--gray-200);
         box-shadow: 0px 20px 30px var(--shadow-color);
-        float: left;
         position: relative;
     }
 
@@ -179,9 +240,102 @@
     .card-info {
         margin: 40px 0 0 0;
     }
+
+	.card-info h3 {
+		margin: 8px 0;
+	}
+
+	.card-info p {
+		display: flex;
+		text-align: center;
+		gap: 5px;
+		margin: 0;
+		line-height: 1.8;
+	}
+
+	.card-info p strong svg {
+		width: 20px;
+		height: 20px;
+		color: var(--text-secondary);
+	}
+
+	.members-container-height {
+		min-height: 423px;
+		height: 40vh;
+	}
+
+	.members-table {
+		min-height: 363px;
+		height: 34.5vh;
+		padding-top: 5px;
+		border-top: 1px solid var(--gray-200);
+		overflow: auto;
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+        gap: 13px;
+	}
 }
 
 @media (min-width: 981px) {
+	.box-title {
+		width: 90%;
+		border-bottom: 1px solid var(--gray-200);
+		position: absolute;
+		top: 0;
+
+		display: flex;
+		flex-direction: row;
+		gap: 7px;
+
+		align-items: center;
+	}
+
+	.box-title-icon {
+		width: 25px;
+		height: 25px;
+		border-radius: 50%;
+		background: var(--alert-green);
+		padding: 5px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.box-title-icon svg {
+		width: 20px;
+		height: 20px;
+	}
+
+	.info-box {
+		width: 280px;
+		height: 25vh;
+		min-height: 217px;
+		margin: 5px 10px;
+		padding: 10px;
+	}
+
+	.small-box {
+		width: 180px;
+		height: 25vh;
+		min-height: 217px;
+		border-radius: 15px;
+		margin: 5px;
+		padding: 10px;
+		background-color: var(--clr-white);
+		border: 1px solid var(--gray-200);
+		box-shadow: 0px 20px 30px var(--shadow-color);
+		font-size: 12px;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+		
+		position: relative;
+	}
+
+	.small-box h1, h2, h3 {
+		font-weight: 500;
+	}
+
     .profile-detail-height {
         min-height: 240px;
         height: 29vh;
@@ -194,20 +348,22 @@
 
     .small-box-container {
         width: 75%;
-        float: left;
+        display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 5px;
+		justify-items: center;
+		justify-content: center;
     }
 
     .members-card {
         width: 253px;
         height: 160px;
         border-radius: 15px;
-        margin: 0 7px 10px;
+        margin-bottom: 5px;
         padding: 10px;
-        /* font-size: 12px; */
         background-color: var(--clr-white);
         border: 1px solid var(--gray-200);
         box-shadow: 0px 20px 30px var(--shadow-color);
-        float: left;
         position: relative;
     }
 
@@ -272,6 +428,24 @@
 		width: 20px;
 		height: 20px;
 		color: var(--text-secondary);
+	}
+
+	.members-container-height {
+		min-height: 423px;
+		height: 51vh;
+	}
+
+	.members-table {
+		min-height: 363px;
+		height: 45.5vh;
+		padding-top: 5px;
+		border-top: 1px solid var(--gray-200);
+		overflow: auto;
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 0px;
+		justify-items: center;
+		justify-content: center;
 	}
 }
 
