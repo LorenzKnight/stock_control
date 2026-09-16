@@ -62,7 +62,7 @@
 {
     width: 30%;
     height: 82.5vh;
-    border-right: 1px solid var(--gray-300);
+    border-right: 1px solid var(--gray-200);
 }
 
 .affiliate-list,

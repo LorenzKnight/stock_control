@@ -1306,4 +1306,167 @@ document.addEventListener("DOMContentLoaded", async function () {
 		});
 	}
 	window.makeRadioRowSelectable = makeRadioRowSelectable;
+
+	// LOGICA DE CAMBIO DE MONEDAS CON CACHÉ EN LOCALSTORAGE
+	let exchangeRatesCache = {};
+
+	// 🔐 Cargar el caché desde localStorage (si existe)
+	function loadExchangeCache() {
+		try {
+			const data = localStorage.getItem("exchangeRatesCache");
+			if (data) exchangeRatesCache = JSON.parse(data);
+		} catch (err) {
+			console.warn("⚠️ No se pudo cargar cache de tasas:", err);
+		}
+	}
+	window.loadExchangeCache = loadExchangeCache;
+
+	// 💾 Guardar caché en localStorage
+	function saveExchangeCache() {
+		try {
+			localStorage.setItem("exchangeRatesCache", JSON.stringify(exchangeRatesCache));
+		} catch (err) {
+			console.warn("⚠️ No se pudo guardar cache de tasas:", err);
+		}
+	}
+	window.saveExchangeCache = saveExchangeCache;
+
+	// Cargar cache al inicio
+	loadExchangeCache();
+
+	async function updateTotalExchange(sourceTotalId, targetUsdId, fromCurrencyId, currencyId = null) {
+		const total = parseFloat(document.getElementById(sourceTotalId)?.value) || 0;
+		const targetField = document.getElementById(targetUsdId);
+		const fromCurrency = document.getElementById(fromCurrencyId)?.value || "USD";
+		const toCurrency = currencyId ? (document.getElementById(currencyId)?.value || "USD") : "USD";
+
+		if (!targetField) return total;
+
+		// Si las monedas son iguales
+		if (fromCurrency === toCurrency) {
+			targetField.value = total.toFixed(2);
+			return total;
+		}
+
+		try {
+			const converted = await convertCurrency(total, fromCurrency, toCurrency);
+			targetField.value = converted.toFixed(2);
+			return converted; // ⬅️ devuelve también el valor convertido si lo necesitas
+		} catch (error) {
+			console.error("Error updating exchange:", error);
+			targetField.value = "Error";
+			return total;
+		}
+	}
+	window.updateTotalExchange = updateTotalExchange;
+
+	async function fetchExchangeRate(fromCurrency, toCurrency) {
+		const endpoints = [
+			{
+				url: `https://api.frankfurter.dev/v2/rate/${fromCurrency}/${toCurrency}`,
+				parse: data => data?.rate
+			},
+			{
+				url: `https://api.frankfurter.dev/v1/latest?base=${fromCurrency}&symbols=${toCurrency}`,
+				parse: data => data?.rates?.[toCurrency]
+			}
+		];
+
+		for (const endpoint of endpoints) {
+			try {
+				const res = await fetch(endpoint.url);
+
+				if (!res.ok) {
+					continue;
+				}
+
+				const data = await res.json();
+
+				const rate = endpoint.parse(data);
+
+				if (
+					typeof rate === "number" &&
+					Number.isFinite(rate)
+				) {
+					return rate;
+				}
+
+			} catch (err) {
+				console.warn(
+					"Exchange endpoint failed:",
+					endpoint.url,
+					err
+				);
+			}
+		}
+
+		return null;
+	}
+	window.fetchExchangeRate = fetchExchangeRate;
+
+	async function convertCurrency(amount, fromCurrency, toCurrency) {
+		if (fromCurrency === toCurrency) return amount;
+
+		const rateKey = `${fromCurrency}_${toCurrency}`;
+		const now = Date.now();
+		let rateInfo = exchangeRatesCache[rateKey];
+		const cacheExpired = !rateInfo || now - rateInfo.timestamp > 12 * 60 * 60 * 1000;
+
+		// Verificar caché (12 horas)
+		if (cacheExpired) {
+			const rate = await fetchExchangeRate(
+				fromCurrency,
+				toCurrency
+			);
+
+			if (rate !== null) {
+				rateInfo = {
+					rate,
+					timestamp: now
+				};
+
+				exchangeRatesCache[rateKey] = rateInfo;
+
+				saveExchangeCache();
+			} else if (rateInfo) {
+				/*
+				* Todas las APIs fallaron,
+				* pero tenemos una tasa vieja.
+				*/
+				console.warn("Using expired exchange rate cache:", rateKey);
+			} else {
+				console.error("No exchange rate available:", rateKey);
+				return amount;
+			}
+		}
+
+		return amount * rateInfo.rate;
+	}
+	window.convertCurrency = convertCurrency;
+
+	async function updateTotalExchange(sourceTotalId, targetUsdId, fromCurrencyId, currencyId = null) {
+		const total = parseFloat(document.getElementById(sourceTotalId)?.value) || 0;
+		const targetField = document.getElementById(targetUsdId);
+		const fromCurrency = document.getElementById(fromCurrencyId)?.value || "USD";
+		const toCurrency = currencyId ? (document.getElementById(currencyId)?.value || "USD") : "USD";
+
+		if (!targetField) return total;
+
+		// Si las monedas son iguales
+		if (fromCurrency === toCurrency) {
+			targetField.value = total.toFixed(2);
+			return total;
+		}
+
+		try {
+			const converted = await convertCurrency(total, fromCurrency, toCurrency);
+			targetField.value = converted.toFixed(2);
+			return converted; // ⬅️ devuelve también el valor convertido si lo necesitas
+		} catch (error) {
+			console.error("Error updating exchange:", error);
+			targetField.value = "Error";
+			return total;
+		}
+	}
+	window.updateTotalExchange = updateTotalExchange;
 });

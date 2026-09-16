@@ -9,6 +9,7 @@ enforce_service_right("shipping_access");
 $stylesVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/css/styles.css');
 $functionsVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/functions.js');
 $actionsVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/actions.js');
+$shippingVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/shipping.js');
 $realtimeVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/realtimeClient.js');
 $checkPermissionVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/checkPermission.js');
 ?>
@@ -26,6 +27,7 @@ $checkPermissionVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/checkPermis
 	<link rel="stylesheet" href="/css/styles.css?v=<?= $stylesVersion ?>">
 	<script defer src="js/functions.js?v=<?= $functionsVersion ?>"></script>
 	<script defer src="js/actions.js?v=<?= $actionsVersion ?>"></script>
+	<script defer src="js/shipping.js?v=<?= $shippingVersion ?>"></script>
 	<script defer src="js/realtimeClient.js?v=<?= $realtimeVersion ?>"></script>
 	<script defer src="js/checkPermission.js?v=<?= $checkPermissionVersion ?>"></script>
 </head>

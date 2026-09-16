@@ -437,8 +437,8 @@
 
 	.members-table {
 		min-height: 363px;
-		height: 45.5vh;
-		padding-top: 5px;
+		height: 44vh;
+		padding-top: 3px;
 		border-top: 1px solid var(--gray-200);
 		overflow: auto;
 		display: grid;

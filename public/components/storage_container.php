@@ -13,7 +13,7 @@
                         </td>
                     </tr>
                     <tr valign="baseline">
-                        <td colspan="4" style="border-bottom: 1px solid var(--border-light); padding: 10px 0;" align="center" valign="middle">
+                        <td colspan="4" style="border-bottom: 1px solid var(--gray-200); padding: 10px 0;" align="center" valign="middle">
                             <button class="button-style-agree" id="storageMenuBtns"><?= tr('storage_menu') ?></button>
                         </td>
                     </tr>

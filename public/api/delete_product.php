@@ -49,17 +49,6 @@ try {
 		throw new Exception("Image deletion failed: " . $deleteImgResult["message"]);
 	}
 
-	// $deleteResponse = delete_from("products", ["product_id" => $productId]);
-	// $deleteResult = json_decode($deleteResponse, true);
-
-	// if (!$deleteResult) {
-	// 	throw new Exception("Database error while deleting product.");
-	// }
-
-	// if (empty($deleteResult["count"])) {
-	// 	throw new Exception("No product found with the provided ID.");
-	// }
-
 	$repository = new ProductRepository();
 	$service = new ProductService($repository);
 

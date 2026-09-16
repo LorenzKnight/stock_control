@@ -1,7 +1,7 @@
 <div class="service-sidebar">
 	<table width="90%" align="center" cellspacing="0">
 		<tr valign="baseline" >
-			<td colspan="4" style="border-bottom: 1px solid var(--border-light); padding-bottom: 10px;" align="center" valign="middle">
+			<td colspan="4" style="border-bottom: 1px solid var(--gray-300); padding-bottom: 10px;" align="center" valign="middle">
 				<input type="text" name="searchUserField" id="searchUserField" class="big-search-field" placeholder="Search User..." title="Search User">
 			</td>
 		</tr>
