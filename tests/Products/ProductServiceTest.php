@@ -528,4 +528,164 @@ final class ProductServiceTest extends TestCase
 			$result["reward_type"]
 		);
 	}
+
+	public function testRejectsUpdateWithInvalidProductId(): void
+	{
+		$repository =
+			$this->createMock(
+				ProductRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('update');
+
+		$service =
+			new ProductService($repository);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Missing product ID."
+		);
+
+		$service->updateProduct(
+			0,
+			[
+				"product_name" => "Phone",
+				"product_type" => 1
+			]
+		);
+	}
+
+
+	public function testRejectsUpdateWithoutProductName(): void
+	{
+		$repository =
+			$this->createMock(
+				ProductRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('update');
+
+		$service =
+			new ProductService($repository);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Product name is required."
+		);
+
+		$service->updateProduct(
+			10,
+			[
+				"product_name" => " ",
+				"product_type" => 1
+			]
+		);
+	}
+
+
+	public function testRejectsUpdateWithoutProductType(): void
+	{
+		$repository =
+			$this->createMock(
+				ProductRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('update');
+
+		$service =
+			new ProductService($repository);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$service->updateProduct(
+			10,
+			[
+				"product_name" => "Phone",
+				"product_type" => 0
+			]
+		);
+	}
+
+
+	public function testUpdatesProduct(): void
+	{
+		$repository =
+			$this->createMock(
+				ProductRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('update')
+			->with(
+				10,
+				$this->callback(
+					function (array $data): bool {
+						return
+							$data["product_name"] === "Phone" &&
+							$data["product_type"] === 2 &&
+							$data["quantity"] === 5 &&
+							$data["product_image"] ===
+								"phone.webp";
+					}
+				)
+			);
+
+		$service =
+			new ProductService($repository);
+
+		$service->updateProduct(
+			10,
+			[
+				"product_name" => " Phone ",
+				"product_type" => 2,
+				"quantity" => 5
+			],
+			"phone.webp"
+		);
+
+		$this->assertTrue(true);
+	}
+
+
+	public function testReturnsProductImage(): void
+	{
+		$repository =
+			$this->createMock(
+				ProductRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findImageById')
+			->with(10)
+			->willReturn(
+				"product-10.webp"
+			);
+
+		$service =
+			new ProductService($repository);
+
+		$result =
+			$service->getProductImage(10);
+
+		$this->assertSame(
+			"product-10.webp",
+			$result
+		);
+	}
 }

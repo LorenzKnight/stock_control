@@ -359,4 +359,57 @@ class ProductService
 			$value === 1 ||
 			$value === "1";
 	}
+
+	public function getProductImage(
+		int $productId
+	): ?string {
+		if ($productId <= 0) {
+			throw new \InvalidArgumentException(
+				"Missing product ID."
+			);
+		}
+
+		return $this->repository
+			->findImageById($productId);
+	}
+
+
+	public function updateProduct(
+		int $productId,
+		array $data,
+		?string $imageName = null
+	): void {
+		if ($productId <= 0) {
+			throw new \InvalidArgumentException(
+				"Missing product ID."
+			);
+		}
+
+		$productName = trim(
+			(string)($data["product_name"] ?? '')
+		);
+
+		if ($productName === '') {
+			throw new \InvalidArgumentException(
+				"Product name is required."
+			);
+		}
+
+		$productType =
+			(int)($data["product_type"] ?? 0);
+
+		$data["product_name"] = $productName;
+
+		if (
+			$imageName !== null &&
+			$imageName !== ''
+		) {
+			$data["product_image"] = $imageName;
+		}
+
+		$this->repository->update(
+			$productId,
+			$data
+		);
+	}
 }

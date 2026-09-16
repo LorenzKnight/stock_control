@@ -394,4 +394,70 @@ class ProductRepository
 			is_array($result) &&
 			!empty($result["success"]);
 	}
+
+	public function findImageById(
+		int $productId
+	): ?string {
+		$result = \select_from(
+			"products",
+			["product_image"],
+			[
+				"product_id" => $productId
+			],
+			[
+				"fetch_first" => true,
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"ProductRepository expected an array response."
+			);
+		}
+
+		if (
+			empty($result["success"]) ||
+			empty($result["data"])
+		) {
+			return null;
+		}
+
+		$image = trim(
+			(string)(
+				$result["data"]["product_image"]
+				?? ''
+			)
+		);
+
+		return $image !== ''
+			? $image
+			: null;
+	}
+
+
+	public function update(
+		int $productId,
+		array $data
+	): void {
+		$result = \update_table(
+			"products",
+			$data,
+			[
+				"product_id" => $productId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Database update failed."
+			);
+		}
+	}
 }

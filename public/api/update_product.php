@@ -1,4 +1,7 @@
 <?php
+use App\Products\ProductRepository;
+use App\Products\ProductService;
+
 require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
@@ -58,26 +61,10 @@ try {
 		"updated_at"		=> date("Y-m-d H:i:s")
 	];
 
-	if ($productData["product_name"] === '') {
-		throw new Exception("Product name is required.");
-	}
+	$repository = new ProductRepository();
+	$service = new ProductService($repository);
 
-	if ($productData["product_type"] === 0) {
-		throw new Exception("Product type is required.");
-	}
-
-	$previousData = json_decode(select_from(
-		"products",
-		["product_image"],
-		["product_id" => $productId],
-        ["fetch_first" => true]
-	),true);
-
-	$previousImage = null;
-	if (!empty($previousData["success"]) && !empty($previousData["data"]) && isset($previousData["data"]["product_image"])) {
-		$tmp = trim((string)$previousData["data"]["product_image"]);
-		$previousImage = $tmp !== '' ? $tmp : null;
-	}
+	$previousImage = $service->getProductImage($productId);
 
 	try {
 		$imageName = handle_uploaded_image(
@@ -96,13 +83,11 @@ try {
 		throw new Exception("Product image upload failed: " . $imgEx->getMessage());
 	}
 
-	$updateResult = json_decode(update_table("products", $productData, ["product_id" => $productId]), true);
-	if (!$updateResult["success"]) {
-		throw new Exception("Database update failed.");
-	}
-
-	// AQUI
-	// triggerRealtimeNotification($userId);
+	$service->updateProduct(
+		$productId,
+		$productData,
+		$imageName
+	);
 
 	log_activity(
 		$userId,
