@@ -17,7 +17,7 @@
         margin: 5px 0;
         padding: 11px 0;
         border: 0;
-        border-radius: 10px;
+        border-radius: 12px;
         box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
         transition: background-color 0.3s ease;
         cursor: pointer;
@@ -35,7 +35,7 @@
         margin: 5px 0;
         padding: 11px 0;
         border: 0;
-        border-radius: 5px;
+        border-radius: 12px;
         box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
         transition: background-color 0.3s ease;
         cursor: pointer;
@@ -54,7 +54,7 @@
         margin: 10px auto;
         padding: 11px 0;
         border: 0;
-        border-radius: 10px;
+        border-radius: 12px;
         box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
         transition: background-color 0.3s ease;
         cursor: pointer;
@@ -450,7 +450,7 @@
         margin: 5px 0;
         padding: 11px 0;
         border: 0;
-        border-radius: 10px;
+        border-radius: 12px;
         box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
         transition: background-color 0.3s ease;
         cursor: pointer;
@@ -468,7 +468,7 @@
         margin: 5px 0;
         padding: 11px 0;
         border: 0;
-        border-radius: 5px;
+        border-radius: 12px;
         box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
         transition: background-color 0.3s ease;
         cursor: pointer;
@@ -487,7 +487,7 @@
         margin: 10px auto;
         padding: 11px 0;
         border: 0;
-        border-radius: 10px;
+        border-radius: 12px;
         box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
         transition: background-color 0.3s ease;
         cursor: pointer;
@@ -885,7 +885,7 @@
         margin: 5px 0;
         padding: 16px 0;
         border: 0;
-        border-radius: 10px;
+        border-radius: 12px;
         box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
         transition: background-color 0.3s ease;
         cursor: pointer;
@@ -903,7 +903,7 @@
         margin: 5px 0;
         padding: 16px 0;
         border: 0;
-        border-radius: 10px;
+        border-radius: 12px;
         box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
         transition: background-color 0.3s ease;
         cursor: pointer;
@@ -922,7 +922,7 @@
         margin: 10px auto;
         padding: 16px 0;
         border: 0;
-        border-radius: 10px;
+        border-radius: 12px;
         box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
         transition: background-color 0.3s ease;
         cursor: pointer;
@@ -1321,7 +1321,7 @@
         margin: 5px 0;
         padding: 11px 0;
         border: 0;
-        border-radius: 10px;
+        border-radius: 12px;
         box-shadow: 0 .15rem 1.75rem 0 var(--main-box-light-shadow)!important;
         transition: 
 			background-position 0.9s ease,
@@ -1341,7 +1341,7 @@
         margin: 5px 0;
         padding: 11px 0;
         border: 0;
-        border-radius: 10px;
+        border-radius: 12px;
         box-shadow: 0 .15rem 1.75rem 0 var(--main-box-light-shadow)!important;
         transition:
 			background-position 0.9s ease,
@@ -1362,7 +1362,7 @@
         margin: 10px auto;
         padding: 11px 0;
         border: 0;
-        border-radius: 10px;
+        border-radius: 12px;
         box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
         transition: background-color 0.3s ease;
         cursor: pointer;

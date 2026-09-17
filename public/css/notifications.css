@@ -148,7 +148,7 @@
 }
 
 .message-user-profile-pic img {
-	background-color: #fff;
+	background-color: var(--gray-400);
 	width: 35px;
 	height: 35px;
 	border-radius: 50%;

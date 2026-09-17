@@ -384,4 +384,32 @@ class InventoryService
 				$newStock
 		];
 	}
+
+	public function restoreStockFromSale(
+		array $products
+	): void {
+		foreach ($products as $product) {
+			$productId =
+				(int)($product["product_id"] ?? 0);
+
+			$quantityToAdd =
+				(int)($product["quantity"] ?? 0);
+
+			try {
+				$this->repository
+					->increaseStock(
+						$productId,
+						$quantityToAdd
+					);
+
+			} catch (\Throwable $e) {
+				throw new \RuntimeException(
+					"Failed to update product quantity for product ID: " .
+					"{$productId}. {$e->getMessage()}",
+					0,
+					$e
+				);
+			}
+		}
+	}
 }
