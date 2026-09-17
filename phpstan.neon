@@ -10,6 +10,7 @@ parameters:
         - public/logic/Slots
         - public/logic/Products
         - public/logic/ProductTypes
+        - public/logic/Inventory
 
     scanFiles:
         - public/inc/functions.php
