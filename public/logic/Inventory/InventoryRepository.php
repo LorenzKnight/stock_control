@@ -227,28 +227,61 @@ class InventoryRepository
     }
 
 
-    public function createTransferredProduct(
-        array $data
-    ): int {
-        $result = \insert_into(
-            "products",
-            $data,
-            [
-                "id" => "product_id",
-                "return_type" => "array"
-            ]
-        );
+	public function createTransferredProduct(
+		array $data
+	): int {
+		$result = \insert_into(
+			"products",
+			$data,
+			[
+				"id" => "product_id",
+				"return_type" => "array"
+			]
+		);
 
-        if (
-            !is_array($result) ||
-            empty($result["success"]) ||
-            empty($result["id"])
-        ) {
-            throw new \RuntimeException(
-                "Failed to create new product in requesting user's company."
-            );
-        }
+		if (
+			!is_array($result) ||
+			empty($result["success"]) ||
+			empty($result["id"])
+		) {
+			throw new \RuntimeException(
+				"Failed to create new product in requesting user's company."
+			);
+		}
 
-        return (int)$result["id"];
-    }
+		return (int)$result["id"];
+	}
+
+    public function updateStockAfterSale(
+		int $productId,
+		int $newStock
+	): void {
+		$data = [
+			"quantity" => $newStock
+		];
+
+		if ($newStock === 0) {
+			$data["status"] = 0;
+		}
+
+		$result = \update_table(
+			"products",
+			$data,
+			[
+				"product_id" => $productId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Failed to update stock/status for product ID: {$productId}"
+			);
+		}
+	}
 }

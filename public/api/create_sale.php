@@ -1,4 +1,7 @@
 <?php
+use App\Inventory\InventoryRepository;
+use App\Inventory\InventoryService;
+
 require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
@@ -131,47 +134,24 @@ try {
 		);
 	}
 
+	$inventoryRepository = new InventoryRepository();
+	$inventoryService = new InventoryService($inventoryRepository);
+
 	foreach ($input["products"] as $product) {
 		$productId = (int)($product["product_id"] ?? 0);
         if ($productId <= 0) throw new Exception("Invalid product_id in products array.");
 
         $quantity = max(1, (int)($product["quantity"] ?? 1));
 
-		$productInfoJson = select_from(
-			"products", 
-			["product_id", "quantity", "min_quantity", "company_id", "product_name"], 
-			["product_id" => $productId], 
-			["fetch_first" => true]
+		$stockResult = $inventoryService->consumeStockForSale(
+			$productId,
+			$quantity
 		);
-		$productInfo = json_decode($productInfoJson, true);
 
-		if (!$productInfo["success"] || empty($productInfo["data"])) {
-			throw new Exception("Error fetching product stock for ID: $productId");
-		}
-
-		$pData = $productInfo["data"];
-
-		$currentStock	= (int)($pData["quantity"] ?? 0);
-		$minQty			= isset($pData["min_quantity"]) ? (int)$pData["min_quantity"] : null;
-		$prodCompany	= $pData["company_id"] ?? $companyId;
-		$productName	= $pData["product_name"] ?? "Unknown Product";
-
-		if ($currentStock < $quantity) {
-			throw new Exception("Insufficient stock for product ID: $productId. Available: $currentStock, Requested: $quantity");
-		}
-
-		$newStock = $currentStock - $quantity;
-
-		$updateData = ["quantity" => $newStock];
-		if ($newStock === 0) {
-			$updateData["status"] = 0;
-		}
-
-		$updateResult = json_decode(update_table("products", $updateData, ["product_id" => $productId]), true);
-		
-		if (!$updateResult["success"]) {
-			throw new Exception("Failed to update stock/status for product ID: $productId");
-		}
+		$newStock = $stockResult["new_stock"];
+		$minQty = $stockResult["min_quantity"];
+		$prodCompany = $stockResult["company_id"] ?? $companyId;
+		$productName = $stockResult["product_name"];
 
 		$price    = (float)($product["price"] ?? 0);
 		$discount = (float)($product["discount"] ?? 0);

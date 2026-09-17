@@ -308,4 +308,80 @@ class InventoryService
                 $requestCompany
         ];
     }
+
+    public function consumeStockForSale(
+		int $productId,
+		int $quantity
+	): array {
+		if ($productId <= 0) {
+			throw new \InvalidArgumentException(
+				"Invalid product_id in products array."
+			);
+		}
+
+		if ($quantity <= 0) {
+			throw new \InvalidArgumentException(
+				"Quantity must be greater than zero."
+			);
+		}
+
+		$product =
+			$this->repository
+				->findProductById(
+					$productId
+				);
+
+		if ($product === null) {
+			throw new \Exception(
+				"Error fetching product stock for ID: {$productId}"
+			);
+		}
+
+		$currentStock =
+			(int)($product["quantity"] ?? 0);
+
+		if ($currentStock < $quantity) {
+			throw new \Exception(
+				"Insufficient stock for product ID: {$productId}. " .
+				"Available: {$currentStock}, Requested: {$quantity}"
+			);
+		}
+
+		$newStock =
+			$currentStock - $quantity;
+
+		$this->repository
+			->updateStockAfterSale(
+				$productId,
+				$newStock
+			);
+
+		return [
+			"product_id" =>
+				$productId,
+
+			"product_name" =>
+				(string)(
+					$product["product_name"]
+					?? "Unknown Product"
+				),
+
+			"company_id" =>
+				$product["company_id"] ?? null,
+
+			"min_quantity" =>
+				isset($product["min_quantity"])
+					? (int)$product["min_quantity"]
+					: null,
+
+			"previous_stock" =>
+				$currentStock,
+
+			"quantity_sold" =>
+				$quantity,
+
+			"new_stock" =>
+				$newStock
+		];
+	}
 }

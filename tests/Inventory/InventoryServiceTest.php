@@ -748,4 +748,236 @@ final class InventoryServiceTest extends TestCase
 			5
 		);
 	}
+
+	public function testRejectsInvalidProductIdForSale(): void
+	{
+		$repository =
+			$this->createMock(
+				InventoryRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('findProductById');
+
+		$service =
+			new InventoryService($repository);
+
+		$this->expectException(
+			\InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Invalid product_id in products array."
+		);
+
+		$service->consumeStockForSale(
+			0,
+			5
+		);
+	}
+
+
+	public function testRejectsInvalidQuantityForSale(): void
+	{
+		$repository =
+			$this->createMock(
+				InventoryRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('findProductById');
+
+		$service =
+			new InventoryService($repository);
+
+		$this->expectException(
+			\InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Quantity must be greater than zero."
+		);
+
+		$service->consumeStockForSale(
+			25,
+			0
+		);
+	}
+
+
+	public function testThrowsWhenSaleProductDoesNotExist(): void
+	{
+		$repository =
+			$this->createMock(
+				InventoryRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findProductById')
+			->with(25)
+			->willReturn(null);
+
+		$repository
+			->expects($this->never())
+			->method('updateStockAfterSale');
+
+		$service =
+			new InventoryService($repository);
+
+		$this->expectException(
+			\Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"Error fetching product stock for ID: 25"
+		);
+
+		$service->consumeStockForSale(
+			25,
+			5
+		);
+	}
+
+
+	public function testRejectsSaleWhenStockIsInsufficient(): void
+	{
+		$repository =
+			$this->createMock(
+				InventoryRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findProductById')
+			->with(25)
+			->willReturn([
+				"product_id" => 25,
+				"quantity" => 3,
+				"min_quantity" => 2,
+				"company_id" => 7,
+				"product_name" => "Electronics"
+			]);
+
+		$repository
+			->expects($this->never())
+			->method('updateStockAfterSale');
+
+		$service =
+			new InventoryService($repository);
+
+		$this->expectException(
+			\Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"Insufficient stock for product ID: 25. Available: 3, Requested: 5"
+		);
+
+		$service->consumeStockForSale(
+			25,
+			5
+		);
+	}
+
+
+	public function testConsumesStockForSaleSuccessfully(): void
+	{
+		$repository =
+			$this->createMock(
+				InventoryRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findProductById')
+			->with(25)
+			->willReturn([
+				"product_id" => 25,
+				"quantity" => 20,
+				"min_quantity" => 5,
+				"company_id" => 7,
+				"product_name" => "Electronics"
+			]);
+
+		$repository
+			->expects($this->once())
+			->method('updateStockAfterSale')
+			->with(
+				25,
+				15
+			);
+
+		$service =
+			new InventoryService($repository);
+
+		$result =
+			$service->consumeStockForSale(
+				25,
+				5
+			);
+
+		$this->assertSame(
+			[
+				"product_id" => 25,
+				"product_name" => "Electronics",
+				"company_id" => 7,
+				"min_quantity" => 5,
+				"previous_stock" => 20,
+				"quantity_sold" => 5,
+				"new_stock" => 15
+			],
+			$result
+		);
+	}
+
+
+	public function testSaleCanReduceStockToZero(): void
+	{
+		$repository =
+			$this->createMock(
+				InventoryRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findProductById')
+			->with(25)
+			->willReturn([
+				"product_id" => 25,
+				"quantity" => 5,
+				"min_quantity" => 1,
+				"company_id" => 7,
+				"product_name" => "Electronics"
+			]);
+
+		$repository
+			->expects($this->once())
+			->method('updateStockAfterSale')
+			->with(
+				25,
+				0
+			);
+
+		$service =
+			new InventoryService($repository);
+
+		$result =
+			$service->consumeStockForSale(
+				25,
+				5
+			);
+
+		$this->assertSame(
+				0,
+				$result["new_stock"]
+			);
+
+		$this->assertSame(
+				5,
+				$result["quantity_sold"]
+			);
+	}
 }
