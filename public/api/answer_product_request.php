@@ -1,4 +1,7 @@
 <?php
+use App\Inventory\InventoryRepository;
+use App\Inventory\InventoryService;
+
 require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
@@ -69,154 +72,31 @@ try {
 		throw new Exception("Invalid notification type.");
 	}
 
-	$fromUserId = intval($notif["from_user_id"]);
+	$fromUserId = (int)($notif["from_user_id"]);
 
 	if ($fromUserId <= 0) {
         throw new Exception("Invalid requesting user.");
     }
 
-	// 5) Get origin product (supplier/origin company)
-    $productData = json_decode(select_from(
-        "products",
-        ["*"],
-        ["product_id" => $productId],
-        ["fetch_first" => true]
-    ), true);
+    $repository = new InventoryRepository();
+    $service = new InventoryService($repository);
 
-    if (empty($productData["success"]) || empty($productData["data"])) {
-        throw new Exception("Product not found.");
-    }
-
-    $productInfo = $productData["data"];
-
-    if (isset($productInfo["company_id"]) && intval($productInfo["company_id"]) !== $companyId) {
-        throw new Exception("This product does not belong to your company.");
-    }
-
-	$originQty = intval($productInfo["quantity"] ?? 0);
-    if ($quantity > $originQty) {
-        throw new Exception("Requested quantity exceeds available stock.");
-    }
-
-    $requestUser = json_decode(select_from(
-        "users",
-        ["company_id"],
-        ["user_id" => $fromUserId],
-        ["fetch_first" => true]
-    ), true);
-
-    if (empty($requestUser["success"]) || empty($requestUser["data"])) {
-        throw new Exception("Requesting user not found.");
-    }
-
-    $requestCompany = intval($requestUser["data"]["company_id"] ?? 0);
-
-	if (!$requestCompany) {
-        throw new Exception("Requesting user's company not found.");
-    }
-
-	if ($requestCompany === $companyId) {
-        throw new Exception("Cannot transfer stock to the same company.");
-    }
-
-    $productToUpdate = json_decode(select_from(
-        "products",
-        ["*"],
-        [
-            "product_name" => $productInfo["product_name"],
-            "company_id" => $requestCompany
-        ],
-        ["fetch_first" => true]
-    ), true);
-
-	$newOriginQty = $originQty - $quantity;
-
-	$originProduct = update_table(
-		"products",
-		[
-			"quantity" => $newOriginQty
-		],
-		[
-			"product_id" => $productId,
-			"company_id" => $companyId
-		]
+	$transfer = $service->transferStock(
+		$userId,
+		$companyId,
+		$fromUserId,
+		$productId,
+		$quantity
 	);
 
-	$originProductResult = json_decode($originProduct, true);
+	$productName = $transfer["product_name"];
 
-	if (empty($originProductResult["success"]) || !$originProductResult["success"]) {
-		throw new Exception("Failed to update origin product stock.");
-	}
-
-    if (!empty($productToUpdate["success"]) && !empty($productToUpdate["data"])) {
-		$destCurrentQty = intval($productToUpdate["data"]["quantity"] ?? 0);
-		
-        $destUpdate = update_table(
-            "products",
-            [
-                "quantity" => $destCurrentQty + $quantity
-            ],
-            [
-                "product_name" => $productInfo["product_name"],
-                "company_id" => $requestCompany
-            ]
-        );
-
-		$destUpdateResult = json_decode($destUpdate, true);
-
-        if (empty($destUpdateResult["success"]) || !$destUpdateResult["success"]) {
-			update_table(
-                "products",
-                ["quantity" => $originQty],
-                ["product_id" => $productId, "company_id" => $companyId]
-            );
-            throw new Exception("Failed to update product quantity. Please try again.");
-        }
-    } else {
-        $newProductData = [
-			"company_id"		=> $requestCompany,
-			"created_by"			=> $userId,
-			"sale_unit_type"	=> $productInfo["sale_unit_type"] ?? null,
-			"units_per_pack"	=> $productInfo["units_per_pack"] ?? null,
-			"product_image"		=> $productInfo["product_image"] ?? null,
-			"product_name"		=> $productInfo["product_name"] ?? null,
-			"hs_code"			=> $productInfo["hs_code"] ?? null,
-			"product_type"		=> $productInfo["product_type"] ?? null,
-			// "product_mark"		=> $productInfo["product_mark"] ?? null,
-			// "product_model"		=> $productInfo["product_model"] ?? null,
-			// "product_sub_model" => $productInfo["product_sub_model"] ?? null,
-			"product_year"		=> $productInfo["product_year"] ?? null,
-			"description"		=> $productInfo["description"] ?? null,
-			"currency"			=> $productInfo["currency"] ?? null,
-			"price"				=> $productInfo["price"] ?? null,
-			"purpose"			=> $productInfo["purpose"] ?? null,
-			"quantity"			=> $quantity,
-			"min_quantity"		=> $productInfo["min_quantity"] ?? null,
-			"weight_per_unit"	=> $productInfo["weight_per_unit"] ?? null,
-			"total_weight"		=> $productInfo["total_weight"] ?? null,
-			"status"			=> 1,
-			"created_at"		=> date("Y-m-d H:i:s")
-        ];
-
-        $newProductResult = json_decode(insert_into("products", $newProductData, ["id" => "product_id"]), true);
-
-        if (!$newProductResult["success"] || empty($newProductResult["id"])) {
-			update_table(
-                "products",
-                ["quantity" => $originQty],
-                ["product_id" => $productId, "company_id" => $companyId]
-            );
-            throw new Exception("Failed to create new product in requesting user's company.");
-        }
-    }
-
-    // 6️⃣ Marcar notificación como leída / respondida
 	$notifUpdate = update_table("notifications",
 		["handled" => 1],
 		[
 			"from_user_id"			=> $fromUserId,
 			"notification_type"		=> "Product Request",
-			"notification_content"	=> "{$productInfo["product_name"]} was requested",
+			"notification_content"	=> "{$productName} was requested",
 			"handled"				=> 0
 		]
 	);
