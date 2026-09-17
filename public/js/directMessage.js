@@ -85,13 +85,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 							</td>
 						`;
 
-						row.addEventListener('click', () => {
-							document.querySelectorAll('.dm-user-row')
-								.forEach(r => r.classList.remove('selected-dm-user'));
-							row.classList.add('selected-dm-user');
+						// este script hay que corregirlo para que funcione
+						makeRadioRowSelectable(row, {
+							rowSelector: '#select-dm-users-list .dm-user-row',
+							selectedClass: 'selected-dm-user',
 
-							window.selectedDMUserId = Number(user.user_id);
-							// console.log("Selected DM User ID:", window.selectedDMUserId);
+							onSelect: (radio) => {
+								window.selectedDMUserId =
+									Number(radio.dataset.id);
+							}
 						});
 
 						userListTable.appendChild(row);
