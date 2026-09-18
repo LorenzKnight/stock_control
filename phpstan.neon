@@ -11,6 +11,7 @@ parameters:
         - public/logic/Products
         - public/logic/ProductTypes
         - public/logic/Inventory
+        - public/logic/Shippings
 
     scanFiles:
         - public/inc/functions.php

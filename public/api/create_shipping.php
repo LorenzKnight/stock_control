@@ -1,6 +1,15 @@
 <?php
+use App\Shippings\ShippingRepository;
+use App\Shippings\ShippingService;
+
 require_once ('../inc/cors.php');
 require_once('../logic/stock_be.php');
+
+global $sql;
+
+if (!$sql) {
+	$sql = get_pg_connection();
+}
 
 header("Content-Type: application/json");
 
@@ -11,81 +20,88 @@ $response = [
 	"redirect_url"	=> ""
 ];
 
+$transactionStarted = false;
+$qrPath = null;
+
 try {
 	if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 		throw new Exception("Method not allowed");
 	}
 
 	$authUser = requireAuth();
-	$userId = $authUser["user_id"] ?? null;
+	$userId = (int)($authUser["user_id"] ?? 0);
+	$companyId = (int)($authUser["company_id"] ?? 0);
 	
-	if (!$userId) {
+	if ($userId <= 0) {
         throw new Exception("Unauthorized access.");
     }
+
+	if ($companyId <= 0) {
+		throw new Exception("Company ID is required.");
+	}
 
 	if (!check_user_permission($userId, 'process_handler')) {
 		throw new Exception("Access denied. You do not have permission to create data.");
 	}
 
-	$userInfo = json_decode(select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]), true);
-	$userData = $userInfo["data"];
+	$repository = new ShippingRepository();
+	$service = new ShippingService($repository);
 
-	$companyId		= intval($_POST["shipping_company_id"] ?? $userData["company_id"]);
-
-	$method			= intval($_POST["shipping_method"] ?? 1);
-	$destination	= trim($_POST["destination"] ?? '');
-	$estimate_date	= trim($_POST["delivery_date"] ?? null);
-	$description	= trim($_POST["description"] ?? '');
-	$status			= intval($_POST["status"] ?? 0);
-
-	$newOrdNo = get_next_increment_value("shippings", "shipping_no", $companyId, $companyId."30000");
-
-	if ($destination === '') {
-		throw new Exception("Destination is required.");
+	if (!pg_query($sql, "BEGIN")) {
+		throw new RuntimeException("Could not start shipping creation transaction.");
 	}
 
-	$insertShippingData = [
-		"shipping_no"				=> $newOrdNo,
-		"company_id"				=> $companyId,
-		"shipping_img"				=> null,
-		"shipping_method"			=> $method,
-		"destination"				=> $destination,
-		"delivery_date"				=> $estimate_date,
-		"description"				=> $description,
-		"status"					=> $status,
-		"create_by"					=> $userId,
-		"created_at"				=> date("Y-m-d H:i:s")
-	];
-	
-	$insertResponse = insert_into("shippings", $insertShippingData, ["id" => "shippings_id"]);
-	$insertResult = json_decode($insertResponse, true);
+	$transactionStarted = true;
 
-	// Generar código QR para el shipping
-	$qrText = (string)$newOrdNo; // El texto que irá en el QR
-	$qrPath = "../images/shippings-code/" . $qrText . ".png"; // Ruta relativa
-	$qrImgName = $qrText . ".png";
+	$shipping = $service->createShipping(
+		$userId,
+		$companyId,
+		$_POST
+	);
 
-	// Asegúrate que la carpeta ../uploads/qr exista y tenga permisos de escritura
-	QRcode::png($qrText, $qrPath, QR_ECLEVEL_L, 15, 2);
+	$shippingId = (int)$shipping["shipping_id"];
+	$shippingNo = (int)$shipping["shipping_no"];
+	$qrImageName = (string)$shipping["qr_image"];
+	$qrDirectory = __DIR__ . "/../images/shippings-code";
 
-	// Actualizar el shipping_img con la ruta al QR generado
-	update_table("shippings", [
-	"shipping_img" => $qrImgName
-	], [
-		"shippings_id" => $insertResult["id"]
-	]);
-
-
-	if (!$insertResult["success"]) {
-		throw new Exception("Error saving customer data.");
+	if (!is_dir($qrDirectory)) {
+		throw new RuntimeException(
+			"Shipping QR directory not found."
+		);
 	}
+
+	$qrPath = $qrDirectory . "/" . $qrImageName;
+
+	QRcode::png(
+		(string)$shippingNo,
+		$qrPath,
+		QR_ECLEVEL_L,
+		15,
+		2
+	);
+
+	if (!is_file($qrPath) || filesize($qrPath) === 0) {
+		throw new RuntimeException( "Failed to generate shipping QR code.");
+	}
+
+	$service->attachQrImage(
+		$shippingId,
+		$companyId,
+		$qrImageName
+	);
+
+	if (!pg_query($sql, "COMMIT")) {
+		throw new RuntimeException("Could not complete shipping creation.");
+	}
+
+	$transactionStarted = false;
 
 	log_activity(
 		$userId,
-		"create_customer",
+		"create_shipping",
 		"New shipment is added",
 		"shippings",
-		$insertResult["id"] ?? null
+		$shippingId
 	);
 
 	$response = [
@@ -96,6 +112,14 @@ try {
 	];
 
 } catch (Exception $e) {
+	if ($transactionStarted) {
+		pg_query($sql, "ROLLBACK");
+	}
+
+	if ($qrPath !== null && is_file($qrPath)) {
+		unlink($qrPath);
+	}
+
 	$response = [
 		"success"		=> false,
 		"message"		=> $e->getMessage(),
