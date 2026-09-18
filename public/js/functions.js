@@ -1469,4 +1469,31 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 	}
 	window.updateTotalExchange = updateTotalExchange;
+
+	function showSalesStatus(
+		message,
+		image = 'images/sys-img/error.gif'
+	) {
+		const banner =
+			document.getElementById('status-message');
+
+		const statusText =
+			document.getElementById('status-text');
+
+		const statusImage =
+			document.getElementById('status-image');
+
+		if (!banner || !statusText || !statusImage) {
+			console.error(message);
+			return;
+		}
+
+		statusText.innerText =
+			message || 'Unknown response';
+
+		statusImage.src = image;
+
+		showBanner(banner);
+	}
+	window.showSalesStatus = showSalesStatus;
 });

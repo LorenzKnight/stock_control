@@ -829,11 +829,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 								return;
 							});
 						}, 1400);
-					} else {
-						alert("Failed: " + data.message);
 					}
 				} catch (error) {
-					alert("Error: " + error.message);
+					console.error("Error updating sale:", error);
+
+					const banner = document.getElementById('status-message');
+					const statusText = document.getElementById('status-text');
+					const statusImage = document.getElementById('status-image');
+
+					if (banner && statusText && statusImage) {
+						statusText.innerText = error.message || "Error updating sale.";
+						statusImage.src = "images/sys-img/error.gif";
+						showBanner(banner);
+					}
 				}
 			})();
 		});
@@ -919,7 +927,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 						const saleId = deleteSaleBtn.getAttribute('data-sale-id');
 
 						if (!saleId) {
-							alert("Sale ID not found.");
+							showSalesStatus(
+								"Sale ID not found."
+							);
+
 							return;
 						}
 
@@ -935,13 +946,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 								const data = await response.json();
 
-								const banner = document.getElementById('status-message');
-								const statusText = document.getElementById('status-text');
-								const statusImage = document.getElementById('status-image');
-				
-								statusText.innerText = data.message;
-								statusImage.src = data.img_gif;
-								showBanner(banner);
+								showSalesStatus(
+									data.message,
+									data.img_gif
+								);
 
 								if (data.success) {
 									setTimeout(() => {
@@ -952,7 +960,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 								}
 							} catch (error) {
 								console.error("Error deleting sale:", error);
-								alert("Error deleting sale. Check console.");
+								
+								showSalesStatus(
+									error.message ||
+									"Error deleting sale."
+								);
 							}
 						});
 					};
@@ -960,7 +972,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 			}
 		} catch (error) {
 			console.error("Error loading sale info:", error);
-			alert("Failed to load sale information.");
+			
+			showSalesStatus(
+				"Failed to load sale information."
+			);
 		}
 	}
 
@@ -1357,11 +1372,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 							window.location.href = data.redirect_url || window.location.href;
 						});
 					}, 3000);
-				} else {
-					alert("Failed: " + data.message);
 				}
 			} catch (error) {
-				alert("Error: " + error.message);
+				showSalesStatus(
+					error.message ||
+					"Error updating sale."
+				);
 			}
 		});
 	}

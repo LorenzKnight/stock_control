@@ -43,7 +43,7 @@
 		width: 250px;
 		height: 550px;
 		background-color: var(--clr-white);
-		border-radius: 10px;
+		border-radius: 28px;
 		margin: 0 auto;
 		box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 		text-align: center;
@@ -69,7 +69,7 @@
         background-color: var(--main-bg-dark-blue);
         color: var(--clr-white);
         padding: 35px 0 0;
-        border-radius: 10px 10px 0 0;
+        border-radius: 28px 28px 0 0;
         clip-path: polygon(0 0, 100% 0, 100% 80%, 0 100%);
     }
 
@@ -166,7 +166,7 @@
 		width: 380px;
 		height: 580px;
 		background-color: var(--clr-white);
-		border-radius: 10px;
+		border-radius: 28px;
 		margin: 20px auto;
 		/* padding: 20px; */
 		box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
@@ -179,7 +179,7 @@
         background-color: var(--main-bg-dark-blue);
         color: var(--clr-white);
         padding: 40px 10px 0;
-        border-radius: 10px 10px 0 0;
+        border-radius: 28px 28px 0 0;
         clip-path: polygon(0 0, 100% 0, 100% 80%, 0 100%);
     }
 
@@ -279,7 +279,7 @@
 		width: 380px;
 		height: 620px;
 		background-color: var(--clr-white);
-		border-radius: 10px;
+		border-radius: 28px;
 		margin: 0 5px;
 		box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 		text-align: center;
@@ -305,7 +305,7 @@
         background-color: var(--main-bg-dark-blue);
         color: var(--clr-white);
         padding: 10px;
-        border-radius: 10px 10px 0 0;
+        border-radius: 28px 28px 0 0;
         clip-path: polygon(0 0, 100% 0, 100% 80%, 0 100%);
     }
 
@@ -404,7 +404,7 @@
 		width: 380px;
 		height: 580px;
 		background-color: var(--clr-white);
-		border-radius: 10px;
+		border-radius: 28px;
 		margin: 0 10px;
 		box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 		text-align: center;
@@ -430,7 +430,7 @@
         background-color: var(--main-bg-dark-blue);
         color: var(--clr-white);
         padding: 10px;
-        border-radius: 10px 10px 0 0;
+        border-radius: 28px 28px 0 0;
         clip-path: polygon(0 0, 100% 0, 100% 80%, 0 100%);
     }
 

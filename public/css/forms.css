@@ -8,7 +8,7 @@
         /* box-shadow: var(--main-box-shadow); */
         backdrop-filter: blur( 4px );
         -webkit-backdrop-filter: blur( 4px );
-        border-radius: 20px;
+        border-radius: 25px;
         font-weight: 200;
         align-items: center;
         align-content: center;
@@ -119,7 +119,7 @@
         /* box-shadow: var(--main-box-shadow); */
         backdrop-filter: blur( 4px );
         -webkit-backdrop-filter: blur( 4px );
-        border-radius: 20px;
+        border-radius: 25px;
         font-weight: 200;
         align-items: center;
         align-content: center;
@@ -231,7 +231,7 @@
         /* box-shadow: var(--main-box-shadow); */
         backdrop-filter: blur( 4px );
         -webkit-backdrop-filter: blur( 4px );
-        border-radius: 20px;
+        border-radius: 25px;
         font-weight: 200;
         align-items: center;
         align-content: center;
@@ -980,7 +980,7 @@
 		/* box-shadow: var(--main-box-shadow); */
 		backdrop-filter: blur( 4px );
 		-webkit-backdrop-filter: blur( 4px );
-		border-radius: 20px;
+		border-radius: 25px;
 		font-weight: 200;
 		align-items: center;
 		align-content: center;
