@@ -379,4 +379,139 @@ class ShippingService
 			? $imageName
 			: null;
 	}
+
+
+	public function checkShipping(
+		int $userId,
+		int $companyId,
+		int $shippingId,
+		?float $latitude = null,
+		?float $longitude = null,
+		bool $checkOnly = false
+	): array {
+		if ($userId <= 0) {
+			throw new \InvalidArgumentException(
+				"Unauthorized access."
+			);
+		}
+
+		if ($companyId <= 0) {
+			throw new \InvalidArgumentException(
+				"Company ID not found for user."
+			);
+		}
+
+		if ($shippingId <= 0) {
+			throw new \InvalidArgumentException(
+				"Invalid shipping ID."
+			);
+		}
+
+		$shipping =
+			$this->repository->findById(
+				$shippingId,
+				$companyId
+			);
+
+		if ($shipping === null) {
+			throw new \Exception(
+				"Shipping not found."
+			);
+		}
+
+		$currentStatus =
+			(int)($shipping["status"] ?? 0);
+
+		if ($currentStatus >= 3) {
+			throw new \Exception(
+				"Shipping already delivered."
+			);
+		}
+
+		/*
+		* La comprobación se hace también en el
+		* scan real, no solamente en check_only.
+		*/
+		if (
+			$this->repository
+				->hasBeenScannedByUser(
+					$shippingId,
+					$userId
+				)
+		) {
+			throw new \Exception(
+				"Already checked by this user."
+			);
+		}
+
+		if ($checkOnly) {
+			return [
+				"check_only" => true,
+				"checkpoint" => null,
+				"status_changed" => false,
+				"notification_user_ids" => []
+			];
+		}
+
+		$checkpointName =
+			$this->repository
+				->findLatestCheckpointLocation(
+					$userId
+				)
+			?? "Scanned at checkpoint";
+
+		$this->repository->createTracking([
+			"shipping_id" =>
+				$shippingId,
+
+			"checkpoint_name" =>
+				$checkpointName,
+
+			/*
+			* Preservamos el comportamiento anterior:
+			* tracking guarda el estado previo al cambio.
+			*/
+			"status" =>
+				$currentStatus,
+
+			"scanned_by" =>
+				$userId,
+
+			"latitude" =>
+				$latitude,
+
+			"longitude" =>
+				$longitude,
+
+			"created_at" =>
+				date("Y-m-d H:i:s")
+		]);
+
+		$statusChanged = false;
+		$notificationUserIds = [];
+
+		if ($currentStatus < 2) {
+			$this->repository->updateStatus(
+				$shippingId,
+				$companyId,
+				2
+			);
+
+			$statusChanged = true;
+
+			$notificationUserIds =
+				$this->repository
+					->findStatusNoticeUserIds(
+						$companyId
+					);
+		}
+
+		return [
+			"check_only" => false,
+			"checkpoint" => $checkpointName,
+			"status_changed" => $statusChanged,
+			"notification_user_ids" =>
+				$notificationUserIds
+		];
+	}
 }

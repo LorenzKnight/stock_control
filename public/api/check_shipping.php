@@ -1,6 +1,15 @@
 <?php
+use App\Shippings\ShippingRepository;
+use App\Shippings\ShippingService;
+
 require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
+
+global $sql;
+
+if (!$sql) {
+	$sql = get_pg_connection();
+}
 
 header("Content-Type: application/json");
 
@@ -9,6 +18,8 @@ $response = [
     "message" => "Invalid request",
 ];
 
+$transactionStarted = false;
+
 try {
     if ($_SERVER["REQUEST_METHOD"] !== "POST") {
         throw new Exception("Method not allowed");
@@ -16,134 +27,90 @@ try {
 
     // 🔒 Autenticación con token JWT
     $authUser = requireAuth();
-    $userId = $authUser["user_id"];
-    $companyId = $authUser["company_id"] ?? null;
+    $userId = (int)($authUser["user_id"] ?? 0);
+    $companyId = (int)($authUser["company_id"] ?? 0);
 
     // 🔍 Validar shipping_id recibido
-    $shippingId = intval($_POST["shipping_id"] ?? 0);
-    if ($shippingId <= 0) throw new Exception("Invalid shipping ID.");
+    $shippingId = (int)($_POST["shipping_id"] ?? 0);
 
     // 📍 Coordenadas opcionales
-    $latitude = isset($_POST["latitude"]) ? floatval($_POST["latitude"]) : null;
-    $longitude = isset($_POST["longitude"]) ? floatval($_POST["longitude"]) : null;
+    $latitude = isset($_POST["latitude"]) ? (float)($_POST["latitude"]) : null;
+    $longitude = isset($_POST["longitude"]) ? (float)($_POST["longitude"]) : null;
 
-    $tokenData = json_decode(select_from(
-        "user_tokens",
-        ["location"],
-        [
-            "user_id" => $userId,
-            "status"  => "active"
-        ],
-        [
-            "order_by" => "created_at",
-            "order_direction" => "DESC",
-            "fetch_first" => true
-        ]
-    ), true);
+    $checkOnly = isset($_POST["test_mode"]) && $_POST["test_mode"] === "check_only";
 
-    $checkpointName = "Scanned at checkpoint";
-    if ($tokenData["success"] && !empty($tokenData["data"]["location"])) {
-        $checkpointName = $tokenData["data"]["location"];
-    }
+    $repository = new ShippingRepository();
+	$service = new ShippingService($repository);
 
-    // 🔎 Obtener estado actual del envío
-    $shippingInfo = json_decode(select_from("shippings", ["status"], ["shippings_id" => $shippingId], ["fetch_first" => true]), true);
-    if (!$shippingInfo["success"] || empty($shippingInfo["data"])) {
-        throw new Exception("Shipping not found.");
-    }
-    $currentStatus = intval($shippingInfo["data"]["status"]);
-
-    if ($currentStatus >= 3) {
-        throw new Exception("Shipping already delivered.");
-    }
-
-    $testMode = isset($_POST["test_mode"]) && $_POST["test_mode"] === "check_only";
-
-    if ($testMode) {
-        // 🧭 Verificar si este usuario ya escaneó este envío
-        $exists = json_decode(select_from(
-            "shipping_tracking",
-            ["tracking_id"],
-            ["shipping_id" => $shippingId, "scanned_by" => $userId],
-            ["fetch_first" => true]
-        ), true);
-
-        if ($exists["success"] && !empty($exists["data"])) {
-            throw new Exception("Already checked by this user.");
-        }
-
-        echo json_encode(["success" => true, "message" => "User can check this shipping."]);
-        exit;
-    }
-
-    // 🧩 Insertar nuevo checkpoint
-    $insert = insert_into("shipping_tracking", [
-        "shipping_id"       => $shippingId,
-        "checkpoint_name"   => $checkpointName,
-        "status"            => $currentStatus,
-        "scanned_by"        => $userId,
-        "latitude"          => $latitude,
-        "longitude"         => $longitude,
-        "created_at"        => date("Y-m-d H:i:s")
-    ]);
-
-    $insertResult = json_decode($insert, true);
-    if (!$insertResult["success"]) {
-        throw new Exception("Tracking record failed to insert.");
-    }
-
-    // 🚚 Actualizar estado del envío si está pendiente
-    if ($currentStatus < 2) {
-		// ✅ Actualizar estado
-		update_table(
-			"shippings",
-			["status" => 2],
-			["shippings_id" => $shippingId]
+    if ($checkOnly) {
+		$service->checkShipping(
+			$userId,
+			$companyId,
+			$shippingId,
+			$latitude,
+			$longitude,
+			true
 		);
 
-		// ✅ Validar company_id desde el token
-		if (empty($companyId)) {
-			throw new Exception("Company ID not found for user.");
-		}
+        $response = [
+			"success" => true,
+			"message" =>
+				"User can check this shipping."
+		];
 
-		// 🔎 1️⃣ Usuarios de la empresa con rank <= 4
-		$rankUsersQuery = select_from(
-			"users",
-			["user_id"],
-			[
-				"company_id" => $companyId,
-				"RAW" => "\"rank\" <= 4"
-			]
-		);
-
-		$rankUsers = json_decode($rankUsersQuery, true)["data"] ?? [];
-
-		// 🔎 2️⃣ Usuarios con permiso explícito
-		$rightsUsersQuery = select_from(
-			"service_rights",
-			["user_id"],
-			[
-				"service_name" => "shipping_status_notice",
-				"can_access"   => 1
-			]
-		);
-
-		$rightsUsers = json_decode($rightsUsersQuery, true)["data"] ?? [];
-
-		// 🔗 3️⃣ Unificar user_ids (sin duplicados)
-		$allowedUserIds = array_unique(array_merge(
-			array_column($rankUsers, "user_id"),
-			array_column($rightsUsers, "user_id")
-		));
-
-		// 🔔 4️⃣ Enviar push SOLO a usuarios autorizados
-		if (!empty($allowedUserIds)) {
-			sendShippingStatusPush($shippingId, 2, $allowedUserIds, $userId);
-		}
+		echo json_encode($response);
+		exit;
 	}
 
+    if (!pg_query($sql, "BEGIN")) {
+		throw new RuntimeException("Could not start shipping check transaction.");
+	}
+
+	$transactionStarted = true;
+
+	$result = $service->checkShipping(
+		$userId,
+		$companyId,
+		$shippingId,
+		$latitude,
+		$longitude
+	);
+
+	if (!pg_query($sql, "COMMIT")) {
+		throw new RuntimeException("Could not complete shipping check.");
+	}
+
+	$transactionStarted = false;
+
+	/*
+	 * Push después del COMMIT:
+	 * una falla externa no debe revertir
+	 * un tracking ya guardado correctamente.
+	 */
+	if (
+		!empty($result["status_changed"]) &&
+		!empty($result["notification_user_ids"])
+	) {
+		sendShippingStatusPush(
+			$shippingId,
+			2,
+			$result[
+				"notification_user_ids"
+			],
+			$userId
+		);
+	}
+
+	$checkpointName = (string)($result["checkpoint"] ?? "Scanned at checkpoint");
+
     // 📝 Registrar actividad
-    log_activity($userId, "check_shipping", "Shipping checked at $checkpointName", "shippings", $shippingId);
+    log_activity(
+		$userId,
+		"check_shipping",
+		"Shipping checked at {$checkpointName}",
+		"shippings",
+		$shippingId
+	);
 
     $response = [
         "success"    => true,
@@ -151,6 +118,10 @@ try {
         "checkpoint" => $checkpointName
     ];
 } catch (Exception $e) {
+	if ($transactionStarted) {
+		pg_query($sql, "ROLLBACK");
+	}
+
     $response["success"] = false;
     $response["message"] = $e->getMessage();
 }

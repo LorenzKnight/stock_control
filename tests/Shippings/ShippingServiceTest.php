@@ -815,4 +815,311 @@ final class ShippingServiceTest extends TestCase
 				$image
 			);
 	}
+
+
+	public function testRejectsCheckWithInvalidShippingId(): void
+	{
+		$repository =
+			$this->createMock(
+				ShippingRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('findById');
+
+		$service =
+			new ShippingService(
+				$repository
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Invalid shipping ID."
+		);
+
+		$service->checkShipping(
+			10,
+			5,
+			0
+		);
+	}
+
+
+	public function testRejectsCheckWhenShippingDoesNotExist(): void
+	{
+		$repository =
+			$this->createMock(
+				ShippingRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findById')
+			->with(42, 5)
+			->willReturn(null);
+
+		$service =
+			new ShippingService(
+				$repository
+			);
+
+		$this->expectException(
+				Exception::class
+		);
+
+		$this->expectExceptionMessage(
+				"Shipping not found."
+		);
+
+		$service->checkShipping(
+			10,
+			5,
+			42
+		);
+	}
+
+
+	public function testRejectsAlreadyDeliveredShipping(): void
+	{
+		$repository =
+			$this->createMock(
+				ShippingRepository::class
+			);
+
+		$repository
+			->method('findById')
+			->with(42, 5)
+			->willReturn([
+				"shippings_id" => 42,
+				"company_id" => 5,
+				"status" => 3
+			]);
+
+		$repository
+			->expects($this->never())
+			->method('createTracking');
+
+		$service =
+			new ShippingService(
+				$repository
+			);
+
+		$this->expectException(
+				Exception::class
+		);
+
+		$this->expectExceptionMessage(
+				"Shipping already delivered."
+		);
+
+		$service->checkShipping(
+			10,
+			5,
+			42
+		);
+	}
+
+
+	public function testRejectsShippingAlreadyCheckedByUser(): void
+	{
+		$repository =
+			$this->createMock(
+				ShippingRepository::class
+			);
+
+		$repository
+			->method('findById')
+			->with(42, 5)
+			->willReturn([
+				"shippings_id" => 42,
+				"company_id" => 5,
+				"status" => 1
+			]);
+
+		$repository
+			->expects($this->once())
+			->method('hasBeenScannedByUser')
+			->with(42, 10)
+			->willReturn(true);
+
+		$repository
+			->expects($this->never())
+			->method('createTracking');
+
+		$service =
+			new ShippingService(
+				$repository
+			);
+
+		$this->expectException(
+				Exception::class
+		);
+
+		$this->expectExceptionMessage(
+				"Already checked by this user."
+		);
+
+		$service->checkShipping(
+			10,
+			5,
+			42
+		);
+	}
+
+
+	public function testChecksShippingAndChangesStatus(): void
+	{
+		$repository =
+			$this->createMock(
+				ShippingRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findById')
+			->with(42, 5)
+			->willReturn([
+				"shippings_id" => 42,
+				"company_id" => 5,
+				"status" => 1
+			]);
+
+		$repository
+			->expects($this->once())
+			->method('hasBeenScannedByUser')
+			->with(42, 10)
+			->willReturn(false);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findLatestCheckpointLocation'
+			)
+			->with(10)
+			->willReturn("Göteborg");
+
+		$repository
+			->expects($this->once())
+			->method('createTracking')
+			->with(
+				$this->callback(
+					function (array $data): bool {
+						return
+							$data["shipping_id"] === 42 &&
+							$data["checkpoint_name"] ===
+								"Göteborg" &&
+							$data["status"] === 1 &&
+							$data["scanned_by"] === 10 &&
+							$data["latitude"] === 57.7 &&
+							$data["longitude"] === 11.97;
+					}
+				)
+			);
+
+		$repository
+			->expects($this->once())
+			->method('updateStatus')
+			->with(
+				42,
+				5,
+				2
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findStatusNoticeUserIds'
+			)
+			->with(5)
+			->willReturn([
+				20,
+				21
+			]);
+
+		$service =
+			new ShippingService(
+				$repository
+			);
+
+		$result =
+				$service->checkShipping(
+					10,
+					5,
+					42,
+					57.7,
+					11.97
+				);
+
+		$this->assertSame(
+				"Göteborg",
+				$result["checkpoint"]
+			);
+
+		$this->assertTrue(
+				$result["status_changed"]
+			);
+
+		$this->assertSame(
+				[20, 21],
+				$result[
+					"notification_user_ids"
+				]
+			);
+	}
+
+
+	public function testCheckOnlyDoesNotCreateTracking(): void
+	{
+		$repository =
+			$this->createMock(
+				ShippingRepository::class
+			);
+
+		$repository
+			->method('findById')
+			->willReturn([
+				"shippings_id" => 42,
+				"company_id" => 5,
+				"status" => 1
+			]);
+
+		$repository
+			->method('hasBeenScannedByUser')
+			->willReturn(false);
+
+		$repository
+			->expects($this->never())
+			->method('createTracking');
+
+		$repository
+			->expects($this->never())
+			->method('updateStatus');
+
+		$service =
+			new ShippingService(
+				$repository
+			);
+
+		$result =
+				$service->checkShipping(
+					10,
+					5,
+					42,
+					null,
+					null,
+					true
+				);
+
+		$this->assertTrue(
+				$result["check_only"]
+			);
+
+		$this->assertFalse(
+				$result["status_changed"]
+			);
+	}
 }

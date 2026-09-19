@@ -83,7 +83,8 @@ class ShippingRepository
 			[
 				"shippings_id",
 				"company_id",
-				"shipping_img"
+				"shipping_img",
+				"status"
 			],
 			[
 				"shippings_id" => $shippingId,
@@ -323,5 +324,243 @@ class ShippingRepository
 				"Failed to delete shipping."
 			);
 		}
+	}
+
+
+	public function findLatestCheckpointLocation(
+		int $userId
+	): ?string {
+		$result = \select_from(
+			"user_tokens",
+			["location"],
+			[
+				"user_id" => $userId,
+				"status" => "active"
+			],
+			[
+				"order_by" => "created_at",
+				"order_direction" => "DESC",
+				"fetch_first" => true,
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"ShippingRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			!empty($result["data"])
+		) {
+			$location = trim(
+				(string)(
+					$result["data"]["location"]
+					?? ''
+				)
+			);
+
+			return $location !== ''
+				? $location
+				: null;
+		}
+
+		if (
+			($result["message"] ?? "") === "No records found" ||
+			(
+				!empty($result["success"]) &&
+				empty($result["data"])
+			)
+		) {
+			return null;
+		}
+
+		throw new \RuntimeException(
+			"Could not read checkpoint location."
+		);
+	}
+
+
+	public function hasBeenScannedByUser(
+		int $shippingId,
+		int $userId
+	): bool {
+		$result = \select_from(
+			"shipping_tracking",
+			["tracking_id"],
+			[
+				"shipping_id" => $shippingId,
+				"scanned_by" => $userId
+			],
+			[
+				"fetch_first" => true,
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"ShippingRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			!empty($result["data"])
+		) {
+			return true;
+		}
+
+		if (
+			($result["message"] ?? "") === "No records found" ||
+			(
+				!empty($result["success"]) &&
+				empty($result["data"])
+			)
+		) {
+			return false;
+		}
+
+		throw new \RuntimeException(
+			"Could not check shipping tracking."
+		);
+	}
+
+
+	public function createTracking(
+		array $data
+	): void {
+		$result = \insert_into(
+			"shipping_tracking",
+			$data,
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Tracking record failed to insert."
+			);
+		}
+	}
+
+
+	public function updateStatus(
+		int $shippingId,
+		int $companyId,
+		int $status
+	): void {
+		$result = \update_table(
+			"shippings",
+			[
+				"status" => $status
+			],
+			[
+				"shippings_id" => $shippingId,
+				"company_id" => $companyId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Failed to update shipping status."
+			);
+		}
+	}
+
+
+	public function findStatusNoticeUserIds(
+		int $companyId
+	): array {
+		$rankResult = \select_from(
+			"users",
+			["user_id"],
+			[
+				"company_id" => $companyId,
+				"RAW" => "\"rank\" <= 4"
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($rankResult)) {
+			throw new \RuntimeException(
+				"ShippingRepository expected an array response."
+			);
+		}
+
+		$rankUsers =
+			!empty($rankResult["success"]) &&
+			is_array($rankResult["data"] ?? null)
+				? $rankResult["data"]
+				: [];
+
+		/*
+		* Los permisos explícitos también deben
+		* pertenecer a usuarios de esta compañía.
+		*/
+		$rightsResult = \select_from(
+			"service_rights sr
+			JOIN users u
+				ON sr.user_id = u.user_id",
+			["sr.user_id"],
+			[
+				"sr.service_name" =>
+					"shipping_status_notice",
+
+				"sr.can_access" => 1,
+
+				"u.company_id" =>
+					$companyId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($rightsResult)) {
+			throw new \RuntimeException(
+				"ShippingRepository expected an array response."
+			);
+		}
+
+		$rightsUsers =
+			!empty($rightsResult["success"]) &&
+			is_array($rightsResult["data"] ?? null)
+				? $rightsResult["data"]
+				: [];
+
+		$userIds = array_merge(
+			array_column(
+				$rankUsers,
+				"user_id"
+			),
+			array_column(
+				$rightsUsers,
+				"user_id"
+			)
+		);
+
+		$userIds = array_map(
+			'intval',
+			$userIds
+		);
+
+		return array_values(
+			array_unique($userIds)
+		);
 	}
 }
