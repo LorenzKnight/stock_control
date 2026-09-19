@@ -213,7 +213,7 @@
 											<tr valign="baseline" >
 												<td colspan="2" align="center" valign="middle">
 													<label for="comment">Comment:</label>
-													<textarea class="form-input-style" id="comment" name="comment" rows="5" cols="35">
+													<textarea class="form-input-style" id="comment" name="comment" rows="4" cols="35">
 													</textarea>
 												</td>
 											</tr>

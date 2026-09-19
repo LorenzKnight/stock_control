@@ -132,4 +132,63 @@ class ShippingService
 			$imageName
 		);
 	}
+
+    public function updateShipping(
+		int $shippingId,
+		int $companyId,
+		array $data
+	): void {
+		if ($shippingId <= 0) {
+			throw new \InvalidArgumentException(
+				"Missing shipping ID."
+			);
+		}
+
+		if ($companyId <= 0) {
+			throw new \InvalidArgumentException(
+				"Company ID is required."
+			);
+		}
+
+		$shipping =
+			$this->repository->findById(
+				$shippingId,
+				$companyId
+			);
+
+		if ($shipping === null) {
+			throw new \Exception(
+				"Shipping not found."
+			);
+		}
+
+		$shippingData = [
+			"shipping_method" =>
+				(int)($data["shipping_method"] ?? 1),
+
+			"destination" =>
+				trim(
+					(string)($data["destination"] ?? '')
+				),
+
+			"delivery_date" =>
+				trim(
+					(string)($data["delivery_date"] ?? '')
+				),
+
+			"description" =>
+				trim(
+					(string)($data["description"] ?? '')
+				),
+
+			"status" =>
+				(int)($data["status"] ?? 0)
+		];
+
+		$this->repository->update(
+			$shippingId,
+			$companyId,
+			$shippingData
+		);
+	}
 }

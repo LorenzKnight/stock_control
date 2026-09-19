@@ -214,4 +214,162 @@ final class ShippingServiceTest extends TestCase
 
 		$this->assertTrue(true);
 	}
+
+    public function testRejectsUpdateWithInvalidShippingId(): void
+	{
+		$repository =
+			$this->createMock(
+				ShippingRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('update');
+
+		$service =
+			new ShippingService(
+				$repository
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Missing shipping ID."
+		);
+
+		$service->updateShipping(
+			0,
+			5,
+			[]
+		);
+	}
+
+
+	public function testRejectsUpdateWithInvalidCompanyId(): void
+	{
+		$repository =
+			$this->createMock(
+				ShippingRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('findById');
+
+		$service =
+			new ShippingService(
+				$repository
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Company ID is required."
+		);
+
+		$service->updateShipping(
+			42,
+			0,
+			[]
+		);
+	}
+
+
+	public function testRejectsUpdateWhenShippingDoesNotExist(): void
+	{
+		$repository =
+			$this->createMock(
+				ShippingRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findById')
+			->with(42, 5)
+			->willReturn(null);
+
+		$repository
+			->expects($this->never())
+			->method('update');
+
+		$service =
+			new ShippingService(
+				$repository
+			);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"Shipping not found."
+		);
+
+		$service->updateShipping(
+			42,
+			5,
+			[]
+		);
+	}
+
+
+	public function testUpdatesShipping(): void
+	{
+		$repository =
+			$this->createMock(
+				ShippingRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findById')
+			->with(42, 5)
+			->willReturn([
+				"shippings_id" => 42,
+				"company_id" => 5
+			]);
+
+		$repository
+			->expects($this->once())
+			->method('update')
+			->with(
+				42,
+				5,
+				$this->callback(
+					function (array $data): bool {
+						return
+							$data["shipping_method"] === 2 &&
+							$data["destination"] === "Stockholm" &&
+							$data["delivery_date"] === "2026-10-05" &&
+							$data["description"] === "Updated shipment" &&
+							$data["status"] === 1;
+					}
+				)
+			);
+
+		$service =
+			new ShippingService(
+				$repository
+			);
+
+		$service->updateShipping(
+				42,
+				5,
+				[
+					"shipping_method" => 2,
+					"destination" => " Stockholm ",
+					"delivery_date" =>
+						"2026-10-05",
+					"description" =>
+						" Updated shipment ",
+					"status" => 1
+				]
+			);
+
+		$this->assertTrue(true);
+	}
 }
