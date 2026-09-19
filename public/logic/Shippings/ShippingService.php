@@ -191,4 +191,141 @@ class ShippingService
 			$shippingData
 		);
 	}
+
+
+	public function getShippings(
+		int $companyId,
+		string $status = ''
+	): array {
+		if ($companyId <= 0) {
+			throw new \InvalidArgumentException(
+				"Company ID is required."
+			);
+		}
+
+		$status = trim($status);
+
+		$shippings =
+			$this->repository->findShippings(
+				$companyId,
+				$status
+			);
+
+		if (empty($shippings)) {
+			throw new \Exception(
+				"No shippings available."
+			);
+		}
+
+		return $shippings;
+	}
+
+
+	public function getShippingTracking(
+		int $shippingId
+	): array {
+		if ($shippingId <= 0) {
+			throw new \InvalidArgumentException(
+				"Invalid shipping ID."
+			);
+		}
+
+		$tracking =
+			$this->repository
+				->findTrackingByShippingId(
+					$shippingId
+				);
+
+		return [
+			"all_tracking" => $tracking,
+			"tracking" =>
+				$tracking[0] ?? null
+		];
+	}
+
+
+	public function buildProductSummary(
+		array $loads
+	): array {
+		$summary = [];
+
+		foreach ($loads as $load) {
+			$products =
+				$load["products"] ?? [];
+
+			if (!is_array($products)) {
+				continue;
+			}
+
+			foreach ($products as $product) {
+				$productId =
+					(int)(
+						$product["product_id"]
+						?? 0
+					);
+
+				if ($productId <= 0) {
+					continue;
+				}
+
+				if (!isset($summary[$productId])) {
+					$summary[$productId] = [
+						"product_id" =>
+							$productId,
+
+						"name" =>
+							$product["name"]
+							?? '',
+
+						"mark_name" =>
+							$product["mark_name"]
+							?? null,
+
+						"model_name" =>
+							$product["model_name"]
+							?? null,
+
+						"submodel_name" =>
+							$product["submodel_name"]
+							?? null,
+
+						"image" =>
+							$product["image"]
+							?? '',
+
+						"quantity" => 0,
+						"total_price" => 0.0,
+						"total_exchanged" => 0.0,
+						"total_weight" => 0.0
+					];
+				}
+
+				$summary[$productId]["quantity"] +=
+					(int)(
+						$product["quantity"]
+						?? 0
+					);
+
+				$summary[$productId]["total_price"] +=
+					(float)(
+						$product["total_kg_price"]
+						?? 0
+					);
+
+				$summary[$productId]["total_exchanged"] +=
+					(float)(
+						$product["total_price_exchanged"]
+						?? 0
+					);
+
+				$summary[$productId]["total_weight"] +=
+					(float)(
+						$product["total_kg"]
+						?? 0
+					);
+			}
+		}
+
+		return array_values($summary);
+	}
 }

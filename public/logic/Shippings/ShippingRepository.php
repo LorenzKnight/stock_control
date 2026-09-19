@@ -149,4 +149,127 @@ class ShippingRepository
 			);
 		}
 	}
+
+
+	public function findShippings(
+		int $companyId,
+		string $status = ''
+	): array {
+		$where = [
+			"company_id" => $companyId
+		];
+
+		// Conservamos exactamente el comportamiento actual.
+		if (!empty($status)) {
+			$where["status"] = $status;
+		}
+
+		$result = \select_from(
+			"shippings",
+			[
+				"shippings_id",
+				"shipping_no",
+				"company_id",
+				"shipping_img",
+				"shipping_method",
+				"destination",
+				"delivery_date",
+				"description",
+				"status",
+				"created_at"
+			],
+			$where,
+			[
+				"order_by" => "created_at",
+				"order_direction" => "DESC",
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"ShippingRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			!empty($result["data"]) &&
+			is_array($result["data"])
+		) {
+			return array_values(
+				$result["data"]
+			);
+		}
+
+		if (
+			($result["message"] ?? "") === "No records found" ||
+			(
+				!empty($result["success"]) &&
+				empty($result["data"])
+			)
+		) {
+			return [];
+		}
+
+		throw new \RuntimeException(
+			"Could not read shippings."
+		);
+	}
+
+
+	public function findTrackingByShippingId(
+		int $shippingId
+	): array {
+		$result = \select_from(
+			"shipping_tracking",
+			[
+				"tracking_id",
+				"checkpoint_name",
+				"status",
+				"scanned_by",
+				"latitude",
+				"longitude",
+				"created_at"
+			],
+			[
+				"shipping_id" => $shippingId
+			],
+			[
+				"order_by" => "created_at",
+				"order_direction" => "DESC",
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"ShippingRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			!empty($result["data"]) &&
+			is_array($result["data"])
+		) {
+			return array_values(
+				$result["data"]
+			);
+		}
+
+		if (
+			($result["message"] ?? "") === "No records found" ||
+			(
+				!empty($result["success"]) &&
+				empty($result["data"])
+			)
+		) {
+			return [];
+		}
+
+		throw new \RuntimeException(
+			"Could not read shipping tracking."
+		);
+	}
 }

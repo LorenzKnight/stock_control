@@ -1,4 +1,9 @@
 <?php
+use App\Shippings\ShippingRepository;
+use App\Shippings\ShippingService;
+use App\Shippings\LoadRepository;
+use App\Shippings\LoadService;
+
 require_once ('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
@@ -12,15 +17,14 @@ $response = [
 
 try {
 	$authUser = requireAuth();
-	$userId = $authUser["user_id"] ?? null;
-	$companyId = $authUser["company_id"] ?? null;
+	$companyId = (int)($authUser["company_id"] ?? 0);
 
-	// 🔹 Permitir acceso por parámetro "company" (modo lectura pública)
-	if (empty($companyId)) {
-		$companyId = $_GET["company"] ?? null;
+	// Fallback de company_id cuando no viene en el contexto autenticado
+	if ($companyId <= 0) {
+		$companyId = (int)($_GET["company"] ?? 0);
 	}
 
-	if (empty($companyId)) {
+	if ($companyId <= 0) {
 		throw new Exception("Company ID is required or user not authenticated.");
 	}
 
@@ -28,123 +32,54 @@ try {
 	$filterBySearch = !empty($search);
 	$searchLower = strtolower($search);
 
-	$status = $_GET["status"] ?? '';
+	$status = (string)($_GET["status"] ?? '');
 
-	$where = [
-		"company_id" => $companyId
-	];
+	$repository = new ShippingRepository();
+	$service = new ShippingService($repository);
 
-	if (!empty($status)) {
-		$where["status"] = $status;
-	}
+	$loadRepository = new LoadRepository();
+	$loadService = new LoadService($loadRepository);
 
-	// 1️⃣ Traer shippings
-	$shippingsResult = select_from("shippings", [
-		"shippings_id", "shipping_no", "company_id",
-		"shipping_img", "shipping_method", "destination", "delivery_date",
-		"description", "status", "created_at"
-	], $where, [
-		"order_by" => "created_at",
-		"order_direction" => "DESC"
-	]);
-
-	$parsedShippings = json_decode($shippingsResult, true);
-	if (!$parsedShippings["success"] || empty($parsedShippings["data"])) {
-		throw new Exception("No shippings available.");
-	}
+	$shippings = $service->getShippings(
+		$companyId,
+		$status
+	);
 
 	$dataList = [];
 
-	foreach ($parsedShippings["data"] as $shipping) {
+	foreach ($shippings as $shipping) {
+		// Loads asociados al shipping
+		$loads = $loadService->getLoadsForShipping(
+			$companyId,
+			(int)$shipping["shippings_id"]
+		);
 
-		// 2️⃣ Buscar loads asociados a este shipping
-		$loadsQuery = select_from("loads", [
-			"load_id", "load_no", "customer_id", "from_currency", "to_currency",
-			"price_per_kg", "total_kg", "price_sum", "taxes", "discount",
-			"price_total", "price_total_exchanged", "destination",
-			"status", "created_at"
-		], [
-			"company_id"   => $companyId,
-			"shippings_id" => $shipping["shippings_id"]
-		]);
-
-		$parsedLoads = json_decode($loadsQuery, true)["data"] ?? [];
 		$loadsData = [];
 
-		$firstCustomer = null;
-		$customerFullName = '';
+		$customerMatchesSearch = false;
 
-		foreach ($parsedLoads as $load) {
-			// cliente de cada load
-			$loadCustomerInfo = select_from("customers", [
-				"customer_name", "customer_surname", "customer_phone",
-				"customer_image", "customer_document_no"
-			], ["customer_id" => $load["customer_id"]], ["fetch_first" => true]);
-			$loadCustomer = json_decode($loadCustomerInfo, true)["data"] ?? [];
+		if ($filterBySearch) {
+			foreach ($loads as $load) {
+				$customerFullName = strtolower(trim((string)($load["customer"]["full_name"] ?? '')));
 
-			if (!$firstCustomer) {
-				$firstCustomer = $loadCustomer;
-				$customerFullName = strtolower(trim(($loadCustomer["customer_name"] ?? '') . ' ' . ($loadCustomer["customer_surname"] ?? '')));
+				if (
+					$customerFullName !== '' &&
+					strpos($customerFullName, $searchLower) !== false
+				) {
+					$customerMatchesSearch = true;
+					break;
+				}
 			}
+		}
 
-			// 3️⃣ Productos dentro de cada load
-			$loadedProductsQuery = select_from("loaded_products", [
-				"product_id", "quantity", "total_kg", "from_currency", "total_kg_price",
-				"to_currency", "total_price_exchanged"
-			], ["load_id" => $load["load_id"]]);
-			$parsedProducts = json_decode($loadedProductsQuery, true)["data"] ?? [];
+		foreach ($loads as $load) {
+			// Productos asociados al load
+			$loadProducts = $loadService->getProductsForLoad(
+				(int)$load["load_id"]
+			);
 
-			$productsData = [];
-			$loadWeightTotal = 0.0;
-
-			foreach ($parsedProducts as $prod) {
-				// info del producto
-				$productInfo = select_from("products", [
-					"product_image", "product_name", "product_year",
-					"product_mark", "product_model", "product_sub_model",
-					"price", "weight_per_unit", "total_weight"
-				], ["product_id" => $prod["product_id"]], ["fetch_first" => true]);
-				$product = json_decode($productInfo, true)["data"] ?? [];
-
-				$qty				= (int)($prod["quantity"] ?? 0);
-				$totalKg			= (float)($prod["total_kg"] ?? 0);
-				$totalKgPrice		= (float)($prod["total_kg_price"] ?? 0);
-				$totalExchanged		= (float)($prod["total_price_exchanged"] ?? 0);
-				$loadWeightTotal	+= $totalKg;
-
-				// nombres de marca, modelo, submodelo
-				$markName = $modelName = $submodelName = null;
-				if (!empty($product['product_mark'])) {
-					$mark = select_from("category", ["category_name"], ["category_id" => $product['product_mark']], ["fetch_first" => true]);
-					$markName = json_decode($mark, true)["data"]["category_name"] ?? null;
-				}
-				if (!empty($product['product_model'])) {
-					$model = select_from("category", ["category_name"], ["category_id" => $product['product_model']], ["fetch_first" => true]);
-					$modelName = json_decode($model, true)["data"]["category_name"] ?? null;
-				}
-				if (!empty($product['product_sub_model'])) {
-					$sub = select_from("category", ["category_name"], ["category_id" => $product['product_sub_model']], ["fetch_first" => true]);
-					$submodelName = json_decode($sub, true)["data"]["category_name"] ?? null;
-				}
-
-				$productsData[] = [
-					"product_id"   			=> $prod["product_id"] ?? '',
-					"name"         			=> $product["product_name"] ?? '',
-					"year"         			=> $product["product_year"] ?? '',
-					"image"        			=> $product["product_image"] ?? '',
-					"mark_name"    			=> $markName,
-					"model_name"   			=> $modelName,
-					"submodel_name"			=> $submodelName,
-					"quantity"				=> $qty,
-					"price"        			=> $product["price"] ?? 0,
-					"total_kg"         		=> $totalKg,
-					"from_currency"        	=> $prod["from_currency"] ?? '',
-                    "total_kg_price"   		=> $totalKgPrice,
-					"to_currency"          	=> $prod["to_currency"] ?? '',
-					"total_price_exchanged"	=> $totalExchanged,
-                    "weight_per_unit"  		=> (float)($product["total_weight"] ?? 0),
-				];
-			}
+			$productsData = $loadProducts["products"];
+			$loadWeightTotal = (float)$loadProducts["total_weight"];
 
 			$loadsData[] = [
 				"load_id"              	=> $load["load_id"],
@@ -162,56 +97,23 @@ try {
 				"total_weight"         	=> $loadWeightTotal,
 				"status"               	=> $load["status"],
 				"created_at"           	=> $load["created_at"],
-				"customer" => [
-					"customer_id" => $load["customer_id"],
-					"full_name"   => trim(($loadCustomer["customer_name"] ?? '') . ' ' . ($loadCustomer["customer_surname"] ?? '')),
-					"phone"       => $loadCustomer["customer_phone"] ?? '',
-					"image"       => $loadCustomer["customer_image"] ?? ''
-				],
+				"customer" 				=> $load["customer"],
 				"products"				=> $productsData
 			];
 		}
 
-		// 🧮 2️⃣ RESUMEN DE PRODUCTOS EN ESTE SHIPPING
-		$shippingProductSummary = []; // key: product_id
+		// Resumen de productos del shipping
+		$shippingProductSummary = $service->buildProductSummary(
+			$loadsData
+		);
 
-		foreach ($loadsData as $loadEntry) {
-			foreach ($loadEntry["products"] as $p) {
-				// var_dump($p);
-				$key = $p["product_id"];
-				if (!isset($shippingProductSummary[$key])) {
-					$shippingProductSummary[$key] = [
-						"product_id"		=> $p["product_id"],
-						"name"				=> $p["name"],
-						"mark_name"			=> $p["mark_name"],
-						"model_name"		=> $p["model_name"],
-						"submodel_name"		=> $p["submodel_name"],
-						"image"				=> $p["image"],
-						"quantity"			=> 0,
-						"total_price"		=> 0.0,
-						"total_exchanged"	=> 0.0,
-						"total_weight"		=> 0
-					];
-				}
+		// Tracking asociado al shipping
+		$trackingData = $service->getShippingTracking(
+			(int)$shipping["shippings_id"]
+		);
 
-				$shippingProductSummary[$key]["quantity"]			+= (int)$p["quantity"];
-				$shippingProductSummary[$key]["total_price"]		+= (float)$p["total_kg_price"];
-				$shippingProductSummary[$key]["total_exchanged"]	+= (float)$p["total_price_exchanged"];
-				$shippingProductSummary[$key]["total_weight"]		+= (float)$p["total_kg"];
-			}
-		}
-
-		// 🆕 3️⃣ Tracking asociado al shipping
-		$trackingQuery = select_from("shipping_tracking", [
-			"tracking_id", "checkpoint_name", "status", "scanned_by",
-			"latitude", "longitude", "created_at"
-		], ["shipping_id" => $shipping["shippings_id"]], [
-			"order_by" => "created_at",
-			"order_direction" => "DESC"
-		]);
-
-		$parsedTracking = json_decode($trackingQuery, true);
-		$latestTracking = $parsedTracking["data"][0] ?? null;
+		$allTracking = $trackingData["all_tracking"];
+		$latestTracking = $trackingData["tracking"];
 
 		$statusText = GlobalArrays::$shippingStatus[$shipping["status"]] ?? "Unknown";
 
@@ -219,7 +121,7 @@ try {
 		if (
 			!$filterBySearch ||
 			strpos(strtolower((string)$shipping["shipping_no"]), $searchLower) !== false ||
-			strpos($customerFullName, $searchLower) !== false ||
+			$customerMatchesSearch ||
 			strtolower((string)$shipping["shippings_id"]) === $searchLower
 		) {
 			$dataList[] = [
@@ -236,9 +138,9 @@ try {
 				"shipping_method"	=> $shipping["shipping_method"],
 				"loads"				=> $loadsData,
 				"loadsQty"			=> count($loadsData),
-				"all_tracking"		=> $parsedTracking["data"] ?? [],
+				"all_tracking"		=> $allTracking,
 				"tracking"			=> $latestTracking,
-				"product_summary"	=> array_values($shippingProductSummary)
+				"product_summary"	=> $shippingProductSummary
 			];
 		}
 	}
@@ -248,7 +150,7 @@ try {
 		"message"	=> "Shippings loaded successfully.",
 		"data"		=> $dataList
 	];
-} catch (Exception $e) {
+} catch (Throwable $e) {
 	$response["message"] = $e->getMessage();
 }
 

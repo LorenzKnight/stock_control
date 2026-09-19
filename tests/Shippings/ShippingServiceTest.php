@@ -372,4 +372,332 @@ final class ShippingServiceTest extends TestCase
 
 		$this->assertTrue(true);
 	}
+
+
+	public function testRejectsGetShippingsWithInvalidCompanyId(): void
+	{
+		$repository =
+			$this->createMock(
+				ShippingRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('findShippings');
+
+		$service =
+			new ShippingService(
+				$repository
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Company ID is required."
+		);
+
+		$service->getShippings(0);
+	}
+
+
+	public function testThrowsWhenNoShippingsExist(): void
+	{
+		$repository =
+			$this->createMock(
+				ShippingRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findShippings')
+			->with(5, '')
+			->willReturn([]);
+
+		$service =
+			new ShippingService(
+				$repository
+			);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"No shippings available."
+		);
+
+		$service->getShippings(5);
+	}
+
+
+	public function testReturnsShippings(): void
+	{
+		$repository =
+			$this->createMock(
+				ShippingRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findShippings')
+			->with(5, '1')
+			->willReturn([
+				[
+					"shippings_id" => 42,
+					"shipping_no" => 530000,
+					"company_id" => 5,
+					"destination" => "Stockholm",
+					"status" => 1
+				]
+			]);
+
+		$service =
+			new ShippingService(
+				$repository
+			);
+
+		$result =
+				$service->getShippings(
+					5,
+					' 1 '
+				);
+
+		$this->assertCount(
+				1,
+				$result
+			);
+
+		$this->assertSame(
+				42,
+				$result[0]["shippings_id"]
+			);
+
+		$this->assertSame(
+				530000,
+				$result[0]["shipping_no"]
+			);
+	}
+
+
+	public function testRejectsTrackingWithInvalidShippingId(): void
+	{
+		$repository =
+			$this->createMock(
+				ShippingRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('findTrackingByShippingId');
+
+		$service =
+			new ShippingService(
+				$repository
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Invalid shipping ID."
+		);
+
+		$service->getShippingTracking(0);
+	}
+
+
+	public function testReturnsShippingTracking(): void
+	{
+		$repository =
+			$this->createMock(
+				ShippingRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findTrackingByShippingId')
+			->with(42)
+			->willReturn([
+				[
+					"tracking_id" => 10,
+					"checkpoint_name" =>
+						"Göteborg",
+					"status" => 1
+				],
+				[
+					"tracking_id" => 9,
+					"checkpoint_name" =>
+						"Stockholm",
+					"status" => 1
+				]
+			]);
+
+		$service =
+			new ShippingService(
+				$repository
+			);
+
+		$result =
+				$service
+					->getShippingTracking(42);
+
+		$this->assertCount(
+				2,
+				$result["all_tracking"]
+			);
+
+		$this->assertSame(
+				10,
+				$result["tracking"]["tracking_id"]
+			);
+
+		$this->assertSame(
+				"Göteborg",
+				$result["tracking"]["checkpoint_name"]
+			);
+	}
+
+
+	public function testReturnsEmptyShippingTracking(): void
+	{
+		$repository =
+			$this->createMock(
+				ShippingRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findTrackingByShippingId')
+			->with(42)
+			->willReturn([]);
+
+		$service =
+			new ShippingService(
+				$repository
+			);
+
+		$result =
+				$service
+					->getShippingTracking(42);
+
+		$this->assertSame(
+				[],
+				$result["all_tracking"]
+			);
+
+		$this->assertNull(
+				$result["tracking"]
+			);
+	}
+
+
+	public function testReturnsEmptyProductSummary(): void
+	{
+		$repository =
+			$this->createMock(
+				ShippingRepository::class
+			);
+
+		$service =
+			new ShippingService(
+				$repository
+			);
+
+		$result =
+				$service->buildProductSummary([]);
+
+		$this->assertSame(
+			[],
+			$result
+		);
+	}
+
+
+	public function testBuildsProductSummary(): void
+	{
+		$repository =
+			$this->createMock(
+				ShippingRepository::class
+			);
+
+		$service =
+			new ShippingService(
+				$repository
+			);
+
+		$result =
+				$service->buildProductSummary([
+					[
+						"products" => [
+							[
+								"product_id" => 8,
+								"name" => "Laptop",
+								"mark_name" => "Apple",
+								"model_name" =>
+									"MacBook Pro",
+								"submodel_name" => "M4",
+								"image" =>
+									"laptop.webp",
+								"quantity" => 2,
+								"total_kg_price" => 35,
+								"total_price_exchanged" =>
+									350,
+								"total_kg" => 3.5
+							]
+						]
+					],
+					[
+						"products" => [
+							[
+								"product_id" => 8,
+								"name" => "Laptop",
+								"mark_name" => "Apple",
+								"model_name" =>
+									"MacBook Pro",
+								"submodel_name" => "M4",
+								"image" =>
+									"laptop.webp",
+								"quantity" => 1,
+								"total_kg_price" => 20,
+								"total_price_exchanged" =>
+									200,
+								"total_kg" => 1.5
+							]
+						]
+					]
+				]);
+
+		$this->assertCount(
+			1,
+			$result
+		);
+
+		$this->assertSame(
+			8,
+			$result[0]["product_id"]
+		);
+
+		$this->assertSame(
+			3,
+			$result[0]["quantity"]
+		);
+
+		$this->assertSame(
+			55.0,
+			$result[0]["total_price"]
+		);
+
+		$this->assertSame(
+			550.0,
+			$result[0]["total_exchanged"]
+		);
+
+		$this->assertSame(
+			5.0,
+			$result[0]["total_weight"]
+		);
+	}
 }
