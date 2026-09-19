@@ -317,4 +317,81 @@ final class LoadServiceTest extends TestCase
 				$result["total_weight"]
 			);
 	}
+
+
+	public function testDeletesLoadsForShipping(): void
+	{
+		$repository =
+			$this->createMock(
+				LoadRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findIdsByShippingId')
+			->with(5, 42)
+			->willReturn([
+				100,
+				101
+			]);
+
+		$repository
+			->expects($this->exactly(2))
+			->method(
+				'deleteLoadedProductsByLoadId'
+			);
+
+		$repository
+			->expects($this->exactly(2))
+			->method('deleteById');
+
+		$service =
+			new LoadService(
+				$repository
+			);
+
+		$service->deleteLoadsForShipping(
+				5,
+				42
+			);
+
+		$this->assertTrue(true);
+	}
+
+
+	public function testDeleteShippingWithNoLoadsDoesNothing(): void
+	{
+		$repository =
+			$this->createMock(
+				LoadRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findIdsByShippingId')
+			->with(5, 42)
+			->willReturn([]);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'deleteLoadedProductsByLoadId'
+			);
+
+		$repository
+			->expects($this->never())
+			->method('deleteById');
+
+		$service =
+			new LoadService(
+				$repository
+			);
+
+		$service->deleteLoadsForShipping(
+				5,
+				42
+			);
+
+		$this->assertTrue(true);
+	}
 }

@@ -279,4 +279,105 @@ class LoadRepository
 			"Could not read product category."
 		);
 	}
+
+
+	public function findIdsByShippingId(
+		int $companyId,
+		int $shippingId
+	): array {
+		$result = \select_from(
+			"loads",
+			["load_id"],
+			[
+				"company_id" => $companyId,
+				"shippings_id" => $shippingId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"LoadRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			!empty($result["data"]) &&
+			is_array($result["data"])
+		) {
+			return array_map(
+				static fn(array $load): int =>
+					(int)$load["load_id"],
+				array_values($result["data"])
+			);
+		}
+
+		if (
+			($result["message"] ?? "") === "No records found" ||
+			(
+				!empty($result["success"]) &&
+				empty($result["data"])
+			)
+		) {
+			return [];
+		}
+
+		throw new \RuntimeException(
+			"Could not read shipping load IDs."
+		);
+	}
+
+
+	public function deleteLoadedProductsByLoadId(
+		int $loadId
+	): void {
+		$result = \delete_from(
+			"loaded_products",
+			[
+				"load_id" => $loadId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Failed to delete loaded products for load ID: {$loadId}"
+			);
+		}
+	}
+
+
+	public function deleteById(
+		int $loadId,
+		int $companyId
+	): void {
+		$result = \delete_from(
+			"loads",
+			[
+				"load_id" => $loadId,
+				"company_id" => $companyId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"]) ||
+			empty($result["count"])
+		) {
+			throw new \RuntimeException(
+				"Failed to delete load ID: {$loadId}"
+			);
+		}
+	}
 }

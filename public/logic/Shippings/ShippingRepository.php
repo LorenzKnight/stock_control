@@ -82,7 +82,8 @@ class ShippingRepository
 			"shippings",
 			[
 				"shippings_id",
-				"company_id"
+				"company_id",
+				"shipping_img"
 			],
 			[
 				"shippings_id" => $shippingId,
@@ -271,5 +272,56 @@ class ShippingRepository
 		throw new \RuntimeException(
 			"Could not read shipping tracking."
 		);
+	}
+
+
+	public function deleteTrackingByShippingId(
+		int $shippingId
+	): void {
+		$result = \delete_from(
+			"shipping_tracking",
+			[
+				"shipping_id" => $shippingId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Failed to delete shipping tracking."
+			);
+		}
+	}
+
+
+	public function delete(
+		int $shippingId,
+		int $companyId
+	): void {
+		$result = \delete_from(
+			"shippings",
+			[
+				"shippings_id" => $shippingId,
+				"company_id" => $companyId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"]) ||
+			empty($result["count"])
+		) {
+			throw new \RuntimeException(
+				"Failed to delete shipping."
+			);
+		}
 	}
 }

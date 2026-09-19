@@ -328,4 +328,55 @@ class ShippingService
 
 		return array_values($summary);
 	}
+
+
+	public function deleteShipping(
+		int $shippingId,
+		int $companyId
+	): ?string {
+		if ($shippingId <= 0) {
+			throw new \InvalidArgumentException(
+				"Shipping ID is required."
+			);
+		}
+
+		if ($companyId <= 0) {
+			throw new \InvalidArgumentException(
+				"Company ID is required."
+			);
+		}
+
+		$shipping =
+			$this->repository->findById(
+				$shippingId,
+				$companyId
+			);
+
+		if ($shipping === null) {
+			throw new \Exception(
+				"Shipping not found."
+			);
+		}
+
+		$imageName = trim(
+			(string)(
+				$shipping["shipping_img"]
+				?? ''
+			)
+		);
+
+		$this->repository
+			->deleteTrackingByShippingId(
+				$shippingId
+			);
+
+		$this->repository->delete(
+			$shippingId,
+			$companyId
+		);
+
+		return $imageName !== ''
+			? $imageName
+			: null;
+	}
 }

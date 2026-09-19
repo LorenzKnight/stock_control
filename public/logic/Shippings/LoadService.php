@@ -254,4 +254,41 @@ class LoadService
 			"total_weight" => $loadWeightTotal
 		];
 	}
+
+
+	public function deleteLoadsForShipping(
+		int $companyId,
+		int $shippingId
+	): void {
+		if ($companyId <= 0) {
+			throw new \InvalidArgumentException(
+				"Company ID is required."
+			);
+		}
+
+		if ($shippingId <= 0) {
+			throw new \InvalidArgumentException(
+				"Invalid shipping ID."
+			);
+		}
+
+		$loadIds =
+			$this->repository
+				->findIdsByShippingId(
+					$companyId,
+					$shippingId
+				);
+
+		foreach ($loadIds as $loadId) {
+			$this->repository
+				->deleteLoadedProductsByLoadId(
+					$loadId
+				);
+
+			$this->repository->deleteById(
+				$loadId,
+				$companyId
+			);
+		}
+	}
 }

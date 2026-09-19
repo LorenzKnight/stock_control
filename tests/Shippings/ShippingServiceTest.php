@@ -700,4 +700,119 @@ final class ShippingServiceTest extends TestCase
 			$result[0]["total_weight"]
 		);
 	}
+
+
+	public function testRejectsDeleteWithInvalidShippingId(): void
+	{
+		$repository =
+			$this->createMock(
+				ShippingRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('findById');
+
+		$service =
+			new ShippingService(
+				$repository
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Shipping ID is required."
+		);
+
+		$service->deleteShipping(
+			0,
+			5
+		);
+	}
+
+
+	public function testRejectsDeleteWhenShippingDoesNotExist(): void
+	{
+		$repository =
+			$this->createMock(
+				ShippingRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findById')
+			->with(42, 5)
+			->willReturn(null);
+
+		$repository
+			->expects($this->never())
+			->method('delete');
+
+		$service =
+			new ShippingService(
+				$repository
+			);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"Shipping not found."
+		);
+
+		$service->deleteShipping(
+			42,
+			5
+		);
+	}
+
+
+	public function testDeletesShippingAndReturnsQrImage(): void
+	{
+		$repository =
+			$this->createMock(
+				ShippingRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findById')
+			->with(42, 5)
+			->willReturn([
+				"shippings_id" => 42,
+				"company_id" => 5,
+				"shipping_img" => "530000.png"
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'deleteTrackingByShippingId'
+			)
+			->with(42);
+
+		$repository
+			->expects($this->once())
+			->method('delete')
+			->with(42, 5);
+
+		$service =
+			new ShippingService(
+				$repository
+			);
+
+		$image =
+				$service->deleteShipping(
+					42,
+					5
+				);
+
+		$this->assertSame(
+				"530000.png",
+				$image
+			);
+	}
 }

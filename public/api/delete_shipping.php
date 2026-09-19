@@ -1,6 +1,17 @@
 <?php
+use App\Shippings\ShippingRepository;
+use App\Shippings\ShippingService;
+use App\Shippings\LoadRepository;
+use App\Shippings\LoadService;
+
 require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
+
+global $sql;
+
+if (!$sql) {
+	$sql = get_pg_connection();
+}
 
 header("Content-Type: application/json");
 
@@ -11,17 +22,24 @@ $response = [
     "redirect_url" => null
 ];
 
+$transactionStarted = false;
+
 try {
     if ($_SERVER["REQUEST_METHOD"] !== "POST") {
         throw new Exception("Method not allowed");
     }
 
     $authUser = requireAuth();
-    $userId = intval($authUser["user_id"] ?? 0);
+    $userId = (int)($authUser["user_id"] ?? 0);
+    $companyId = (int)($authUser["company_id"] ?? 0);
 
-    if (!$userId) {
+    if ($userId <= 0) {
 		throw new Exception("Unauthorized access. User not found or invalid token.");
     }
+
+    if ($companyId <= 0) {
+		throw new Exception("Company ID not found for user.");
+	}
 
     // 🔒 Verificar permisos
     if (!check_user_permission($userId, 'platform_admin')) {
@@ -32,88 +50,74 @@ try {
         throw new Exception("Shipping ID is required.");
     }
 
-    $shippingId = (int)$_POST["shippings_id"];
+    $shippingId = (int)$_POST["shippings_id"] ?? 0;
 
-	$deleteImgResult = delete_image_from_record([
-		"table"        => "shippings",
-		"id_column"    => "shippings_id",
-		"id_value"     => $shippingId,
-		"image_column" => "shipping_img",
-		"image_folder" => "images/shippings-code",
-        "clear_db"     => false
-	]);
+    if ($shippingId <= 0) {
+		throw new Exception("Shipping ID is required.");
+	}
 
-    // 🔍 Obtener company_id del usuario
-	$userInfo = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
-	$companyId = json_decode($userInfo, true)["data"]["company_id"] ?? null;
+    $shippingRepository = new ShippingRepository();
+	$shippingService = new ShippingService($shippingRepository);
 
-    if (!$companyId) {
-        throw new Exception("Company ID not found for user.");
-    }
+	$loadRepository = new LoadRepository();
+	$loadService = new LoadService($loadRepository);
 
-    // 🔎 Validar que el shipping pertenezca a la empresa del usuario
-    $shippingInfo = json_decode(select_from(
-        "shippings",
-        ["company_id"],
-        ["shippings_id" => $shippingId],
-        ["fetch_first" => true]
-    ), true);
+    if (!pg_query($sql, "BEGIN")) {
+		throw new RuntimeException("Could not start shipping deletion transaction.");
+	}
 
-    $shippingCompanyId = $shippingInfo["data"]["company_id"] ?? null;
-    if (!$shippingCompanyId) {
-        throw new Exception("Shipping not found.");
-    }
+    $transactionStarted = true;
 
-    if ((int)$shippingCompanyId !== (int)$companyId) {
-        throw new Exception("Access denied. This shipping does not belong to your company.");
-    }
+    $loadService->deleteLoadsForShipping(
+		$companyId,
+		$shippingId
+	);
 
-    // 🔍 Obtener loads asociados al shipping
-    $loadsResult = json_decode(select_from("loads", ["load_id"], [
-		"shippings_id" => $shippingId, 
-		"company_id" => $companyId
-	]), true);
+	$qrImageName = $shippingService->deleteShipping(
+		$shippingId,
+		$companyId
+	);
 
-    if ($loadsResult["success"] && !empty($loadsResult["data"])) {
-        foreach ($loadsResult["data"] as $load) {
-            $loadId = (int)$load["load_id"];
+	if (!pg_query($sql, "COMMIT")) {
+		throw new RuntimeException("Could not complete shipping deletion.");
+	}
 
-            // 🧹 1️⃣ Borrar los productos cargados dentro de cada load
-            $deleteLoadedProducts = json_decode(delete_from("loaded_products", [
-				"load_id" => $loadId
-			]), true);
+	$transactionStarted = false;
 
-            if (!$deleteLoadedProducts["success"]) {
-                throw new Exception("Failed to delete loaded products for load ID: $loadId");
-            }
+	/*
+	 * El archivo se borra después del COMMIT.
+	 * Así nunca perdemos el QR si la operación
+	 * de base de datos termina haciendo ROLLBACK.
+	 */
+	if (
+		$qrImageName !== null &&
+		$qrImageName !== '' &&
+		$qrImageName !== '.gitkeep'
+	) {
+		$baseDirectory = realpath(__DIR__ . "/../images/shippings-code");
 
-            // 🧹 2️⃣ Borrar el load en sí (solo si pertenece a la misma compañía)
-            $deleteLoad = json_decode(delete_from("loads", [
-				"load_id" => $loadId, 
-				"company_id" => $companyId
-			]), true);
+		if ($baseDirectory !== false) {
+			$targetPath = $baseDirectory . DIRECTORY_SEPARATOR . basename($qrImageName);
 
-            if (!$deleteLoad["success"]) {
-                throw new Exception("Failed to delete load ID: $loadId");
-            }
-        }
-    }
+			$realTarget = realpath($targetPath);
 
-    // 🧹 3️⃣ Borrar el shipping principal (solo si pertenece a la misma compañía)
-    $deleteShipping = json_decode(delete_from("shippings",[
-		"shippings_id" => $shippingId, 
-		"company_id" => $companyId
-	]), true);
-
-    if (!$deleteShipping["success"]) {
-        throw new Exception("Failed to delete shipping ID: $shippingId");
-    }
+			if (
+				$realTarget !== false &&
+				strpos($realTarget, $baseDirectory) === 0 &&
+				is_file($realTarget)
+			) {
+				if (!@unlink($realTarget)) {
+					error_log("Could not delete shipping QR: " . $realTarget);
+				}
+			}
+		}
+	}
 
     // 🧾 Registrar la acción
     log_activity(
         $userId,
         "delete shipping",
-        "Shipping ID $shippingId and all associated loads and loaded products deleted for company $companyId.",
+        "Shipping ID {$shippingId} and all associated loads and loaded products deleted for company {$companyId}.",
         "shippings",
         $shippingId
     );
@@ -126,7 +130,11 @@ try {
         "redirect_url" => ""
     ];
 
-} catch (Exception $e) {
+} catch (Throwable $e) {
+	if ($transactionStarted) {
+		pg_query($sql, "ROLLBACK");
+	}
+
     $response["message"] = $e->getMessage();
 }
 
