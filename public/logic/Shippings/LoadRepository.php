@@ -175,8 +175,21 @@ class LoadRepository
 
 
 	public function findProductById(
-		int $productId
+		int $productId,
+		?int $companyId = null
 	): ?array {
+		$where = [
+			"product_id" => $productId
+		];
+
+		if (
+			$companyId !== null &&
+			$companyId > 0
+		) {
+			$where["company_id"] =
+				$companyId;
+		}
+
 		$result = \select_from(
 			"products",
 			[
@@ -190,9 +203,7 @@ class LoadRepository
 				"weight_per_unit",
 				"total_weight"
 			],
-			[
-				"product_id" => $productId
-			],
+			$where,
 			[
 				"fetch_first" => true,
 				"return_type" => "array"
@@ -536,5 +547,69 @@ class LoadRepository
 				"Error adding product to load."
 			);
 		}
+	}
+
+	public function findById(
+		int $loadId,
+		int $companyId
+	): ?array {
+		$result = \select_from(
+			"loads",
+			[
+				"load_id",
+				"load_no",
+				"company_id",
+				"shippings_id",
+				"customer_id",
+				"from_currency",
+				"to_currency",
+				"price_per_kg",
+				"total_kg",
+				"price_sum",
+				"taxes",
+				"discount",
+				"price_total",
+				"price_total_exchanged",
+				"destination",
+				"comment",
+				"status",
+				"created_at"
+			],
+			[
+				"load_id" => $loadId,
+				"company_id" => $companyId
+			],
+			[
+				"fetch_first" => true,
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"LoadRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			!empty($result["data"])
+		) {
+			return $result["data"];
+		}
+
+		if (
+			($result["message"] ?? "") === "No records found" ||
+			(
+				!empty($result["success"]) &&
+				empty($result["data"])
+			)
+		) {
+			return null;
+		}
+
+		throw new \RuntimeException(
+			"Could not read load data."
+		);
 	}
 }

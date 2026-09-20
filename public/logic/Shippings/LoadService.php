@@ -692,4 +692,208 @@ class LoadService
 			"load_no" => $loadNo
 		];
 	}
+
+
+	public function getLoadById(
+		int $companyId,
+		int $loadId
+	): array {
+		if ($companyId <= 0) {
+			throw new \InvalidArgumentException(
+				"Company ID is required."
+			);
+		}
+
+		if ($loadId <= 0) {
+			throw new \InvalidArgumentException(
+				"Load ID is required."
+			);
+		}
+
+		$load =
+			$this->repository->findById(
+				$loadId,
+				$companyId
+			);
+
+		if ($load === null) {
+			throw new \Exception(
+				"Load not found."
+			);
+		}
+
+		$customerId =
+			(int)($load["customer_id"] ?? 0);
+
+		$customer = null;
+
+		if ($customerId > 0) {
+			$customer =
+				$this->repository
+					->findCustomerById(
+						$customerId,
+						$companyId
+					);
+		}
+
+		$loadedProducts =
+			$this->repository
+				->findLoadedProductsByLoadId(
+					$loadId
+				);
+
+		$productsData = [];
+
+		foreach ($loadedProducts as $loadedProduct) {
+			$productId =
+				(int)(
+					$loadedProduct["product_id"]
+					?? 0
+				);
+
+			$product = [];
+
+			if ($productId > 0) {
+				$product =
+					$this->repository
+						->findProductById(
+							$productId,
+							$companyId
+						)
+					?? [];
+			}
+
+			/*
+			* Conservamos el contrato original de
+			* get_load.php utilizado por shipping.js.
+			*/
+			$productsData[] = [
+				"product_id" =>
+					$productId,
+
+				"quantity" =>
+					(int)(
+						$loadedProduct["quantity"]
+						?? 0
+					),
+
+				"total_kg" =>
+					$loadedProduct["total_kg"]
+					?? 0,
+
+				"from_currency" =>
+					$loadedProduct["from_currency"]
+					?? '',
+
+				"total_kg_price" =>
+					$loadedProduct["total_kg_price"]
+					?? 0,
+
+				"to_currency" =>
+					$loadedProduct["to_currency"]
+					?? '',
+
+				"total_price_exchanged" =>
+					$loadedProduct[
+						"total_price_exchanged"
+					] ?? 0,
+
+				"product_name" =>
+					$product["product_name"]
+					?? '',
+
+				"product_image" =>
+					$product["product_image"]
+					?? '',
+
+				"product_mark" =>
+					$product["product_mark"]
+					?? null,
+
+				"product_model" =>
+					$product["product_model"]
+					?? null,
+
+				"product_sub_model" =>
+					$product["product_sub_model"]
+					?? null
+			];
+		}
+
+		return [
+			"load_id" =>
+				$load["load_id"],
+
+			"shipping_id" =>
+				$load["shippings_id"],
+
+			"customer" => [
+				"customer_id" =>
+					$customerId,
+
+				"full_name" =>
+					trim(
+						(string)(
+							$customer["customer_name"]
+							?? ''
+						) .
+						' ' .
+						(string)(
+							$customer["customer_surname"]
+							?? ''
+						)
+					),
+
+				"phone" =>
+					$customer["customer_phone"]
+					?? '',
+
+				"image" =>
+					$customer["customer_image"]
+					?? ''
+			],
+
+			"products" =>
+				$productsData,
+
+			"from_currency" =>
+				$load["from_currency"],
+
+			"to_currency" =>
+				$load["to_currency"],
+
+			"price_per_kg" =>
+				$load["price_per_kg"],
+
+			"total_kg" =>
+				$load["total_kg"],
+
+			"price_sum" =>
+				$load["price_sum"],
+
+			"taxes" =>
+				$load["taxes"],
+
+			"discount" =>
+				$load["discount"],
+
+			"price_total" =>
+				$load["price_total"],
+
+			"price_total_exchanged" =>
+				$load["price_total_exchanged"],
+
+			"destination" =>
+				$load["destination"],
+
+			"comment" =>
+				$load["comment"],
+
+			"status" =>
+				$load["status"],
+
+			"created_at" =>
+				$load["created_at"]
+		];
+	}
 }

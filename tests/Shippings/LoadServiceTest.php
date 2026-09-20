@@ -652,4 +652,178 @@ final class LoadServiceTest extends TestCase
 			$result["load_no"]
 		);
 	}
+
+
+	public function testRejectsGetLoadWithInvalidLoadId(): void
+	{
+		$repository =
+			$this->createMock(
+				LoadRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('findById');
+
+		$service =
+			new LoadService(
+				$repository
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Load ID is required."
+		);
+
+		$service->getLoadById(
+			5,
+			0
+		);
+	}
+
+
+	public function testRejectsGetLoadWhenItDoesNotExist(): void
+	{
+		$repository =
+			$this->createMock(
+				LoadRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findById')
+			->with(100, 5)
+			->willReturn(null);
+
+		$service =
+			new LoadService(
+				$repository
+			);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"Load not found."
+		);
+
+		$service->getLoadById(
+			5,
+			100
+		);
+	}
+
+
+	public function testReturnsLoadById(): void
+	{
+		$repository =
+			$this->createMock(
+				LoadRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findById')
+			->with(100, 5)
+			->willReturn([
+				"load_id" => 100,
+				"load_no" => 540000,
+				"company_id" => 5,
+				"shippings_id" => 42,
+				"customer_id" => 7,
+				"from_currency" => "USD",
+				"to_currency" => "SEK",
+				"price_per_kg" => "10.00",
+				"total_kg" => "3.500",
+				"price_sum" => "35.00",
+				"taxes" => "10.00",
+				"discount" => "5.00",
+				"price_total" => "33.00",
+				"price_total_exchanged" =>
+					"330.00",
+				"destination" => "Göteborg",
+				"comment" => "Test load",
+				"status" => 1,
+				"created_at" =>
+					"2026-09-20 10:00:00"
+			]);
+
+		$repository
+			->expects($this->once())
+			->method('findCustomerById')
+			->with(7, 5)
+			->willReturn([
+				"customer_name" => "John",
+				"customer_surname" => "Doe",
+				"customer_phone" => "12345",
+				"customer_image" => "john.webp"
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findLoadedProductsByLoadId'
+			)
+			->with(100)
+			->willReturn([
+				[
+					"product_id" => 8,
+					"quantity" => 2,
+					"total_kg" => "3.500",
+					"from_currency" => "USD",
+					"total_kg_price" => "35.00",
+					"to_currency" => "SEK",
+					"total_price_exchanged" =>
+						"350.00"
+				]
+			]);
+
+		$repository
+			->expects($this->once())
+			->method('findProductById')
+			->with(8, 5)
+			->willReturn([
+				"product_name" => "Laptop",
+				"product_image" =>
+					"laptop.webp",
+				"product_mark" => 11,
+				"product_model" => 12,
+				"product_sub_model" => 13
+			]);
+
+		$service =
+			new LoadService(
+				$repository
+			);
+
+		$result =
+				$service->getLoadById(
+					5,
+					100
+				);
+
+		$this->assertSame(
+				100,
+				$result["load_id"]
+			);
+
+		$this->assertSame(
+				42,
+				$result["shipping_id"]
+			);
+
+		$this->assertSame(
+				"John Doe",
+				$result["customer"]["full_name"]
+			);
+
+		$this->assertSame(
+				"Laptop",
+				$result["products"][0]["product_name"]
+			);
+	}
 }
