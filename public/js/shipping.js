@@ -1301,7 +1301,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					const discount = formatDecimal(document.getElementById('discount')?.value);
 					const taxes = formatDecimal(document.getElementById('taxes')?.value);
 					const totalExchanged = formatDecimal(document.getElementById('total_exchanged')?.value);
-					const destination = document.getElementById('destination')?.value.trim() || '';
+					const destination = document.getElementById('load_destination')?.value.trim() || '';
 					const comment = document.getElementById('comment')?.value.trim() || '';
 
 					if (pricePerKg <= 0 || totalKg <= 0) {

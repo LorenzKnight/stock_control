@@ -380,4 +380,161 @@ class LoadRepository
 			);
 		}
 	}
+
+
+	public function getNextLoadNumber(
+		int $companyId
+	): int {
+		$startFrom =
+			(int)($companyId . "40000");
+
+		return \get_next_increment_value(
+			"loads",
+			"load_no",
+			$companyId,
+			$startFrom
+		);
+	}
+
+
+	public function findShippingById(
+		int $shippingId,
+		int $companyId
+	): ?array {
+		$result = \select_from(
+			"shippings",
+			["shippings_id"],
+			[
+				"shippings_id" => $shippingId,
+				"company_id" => $companyId
+			],
+			[
+				"fetch_first" => true,
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"LoadRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			!empty($result["data"])
+		) {
+			return $result["data"];
+		}
+
+		if (
+			($result["message"] ?? "") ===
+				"No records found" ||
+			(
+				!empty($result["success"]) &&
+				empty($result["data"])
+			)
+		) {
+			return null;
+		}
+
+		throw new \RuntimeException(
+			"Could not read shipping data."
+		);
+	}
+
+
+	public function productBelongsToCompany(
+		int $productId,
+		int $companyId
+	): bool {
+		$result = \select_from(
+			"products",
+			["product_id"],
+			[
+				"product_id" => $productId,
+				"company_id" => $companyId
+			],
+			[
+				"fetch_first" => true,
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"LoadRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			!empty($result["data"])
+		) {
+			return true;
+		}
+
+		if (
+			($result["message"] ?? "") ===
+				"No records found" ||
+			(
+				!empty($result["success"]) &&
+				empty($result["data"])
+			)
+		) {
+			return false;
+		}
+
+		throw new \RuntimeException(
+			"Could not validate loaded product."
+		);
+	}
+
+
+	public function create(
+		array $data
+	): int {
+		$result = \insert_into(
+			"loads",
+			$data,
+			[
+				"id" => "load_id",
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"]) ||
+			empty($result["id"])
+		) {
+			throw new \RuntimeException(
+				"Failed to create load record."
+			);
+		}
+
+		return (int)$result["id"];
+	}
+
+
+	public function createLoadedProduct(
+		array $data
+	): void {
+		$result = \insert_into(
+			"loaded_products",
+			$data,
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Error adding product to load."
+			);
+		}
+	}
 }

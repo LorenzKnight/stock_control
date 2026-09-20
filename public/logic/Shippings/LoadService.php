@@ -291,4 +291,405 @@ class LoadService
 			);
 		}
 	}
+
+
+	public function createLoad(
+		int $userId,
+		int $companyId,
+		array $data
+	): array {
+		if ($userId <= 0) {
+			throw new \InvalidArgumentException(
+				"Unauthorized access."
+			);
+		}
+
+		if ($companyId <= 0) {
+			throw new \InvalidArgumentException(
+				"Company ID is required."
+			);
+		}
+
+		$required = [
+			"customer_id",
+			"shippings_id",
+			"from_currency",
+			"to_currency",
+			"price_per_kg",
+			"total_kg"
+		];
+
+		foreach ($required as $field) {
+			if (
+				!isset($data[$field]) ||
+				$data[$field] === ""
+			) {
+				throw new \InvalidArgumentException(
+					"Missing required field: {$field}"
+				);
+			}
+		}
+
+		$shippingId =
+			(int)$data["shippings_id"];
+
+		$customerId =
+			(int)$data["customer_id"];
+
+		if ($shippingId <= 0) {
+			throw new \InvalidArgumentException(
+				"Invalid shipping ID."
+			);
+		}
+
+		if ($customerId <= 0) {
+			throw new \InvalidArgumentException(
+				"Invalid customer ID."
+			);
+		}
+
+		$shipping =
+			$this->repository
+				->findShippingById(
+					$shippingId,
+					$companyId
+				);
+
+		if ($shipping === null) {
+			throw new \Exception(
+				"The selected shipping does not exist or does not belong to this company."
+			);
+		}
+
+		$customer =
+			$this->repository
+				->findCustomerById(
+					$customerId,
+					$companyId
+				);
+
+		if ($customer === null) {
+			throw new \Exception(
+				"The selected customer does not exist or does not belong to this company."
+			);
+		}
+
+		$fromCurrency =
+			strtoupper(
+				trim(
+					(string)$data["from_currency"]
+				)
+			);
+
+		$toCurrency =
+			strtoupper(
+				trim(
+					(string)$data["to_currency"]
+				)
+			);
+
+		if ($fromCurrency === '') {
+			throw new \InvalidArgumentException(
+				"From currency is required."
+			);
+		}
+
+		if ($toCurrency === '') {
+			throw new \InvalidArgumentException(
+				"To currency is required."
+			);
+		}
+
+		$pricePerKg =
+			(float)$data["price_per_kg"];
+
+		$totalKg =
+			(float)$data["total_kg"];
+
+		if ($pricePerKg <= 0) {
+			throw new \InvalidArgumentException(
+				"Price per kg must be greater than 0."
+			);
+		}
+
+		if ($totalKg <= 0) {
+			throw new \InvalidArgumentException(
+				"Total kg must be greater than 0."
+			);
+		}
+
+		$discount =
+			(float)($data["discount"] ?? 0);
+
+		$taxes =
+			(float)($data["taxes"] ?? 0);
+
+		$destination =
+			trim(
+				(string)($data["destination"] ?? '')
+			);
+
+		$comment =
+			trim(
+				(string)($data["comment"] ?? '')
+			);
+
+		$priceSum =
+			$pricePerKg * $totalKg;
+
+		$subtotal =
+			$priceSum - $discount;
+
+		$taxAmount =
+			($subtotal * $taxes) / 100;
+
+		$priceTotal =
+			$subtotal + $taxAmount;
+
+		$priceTotalExchanged =
+			isset(
+				$data["price_total_exchanged"]
+			)
+				? (float)
+					$data["price_total_exchanged"]
+				: $priceTotal;
+
+		/*
+		* Validamos productos antes de crear el load.
+		*/
+		$normalizedProducts = [];
+
+		$products =
+			$data["products"] ?? [];
+
+		if (is_array($products)) {
+			foreach ($products as $product) {
+				$productId =
+					(int)(
+						$product["product_id"]
+						?? 0
+					);
+
+				/*
+				* Preservamos el comportamiento
+				* anterior: IDs inválidos se ignoran.
+				*/
+				if ($productId <= 0) {
+					continue;
+				}
+
+				if (
+					!$this->repository
+						->productBelongsToCompany(
+							$productId,
+							$companyId
+						)
+				) {
+					throw new \Exception(
+						"Product ID {$productId} does not belong to this company."
+					);
+				}
+
+				$quantity =
+					max(
+						1,
+						(int)(
+							$product["quantity"]
+							?? 1
+						)
+					);
+
+				$productTotalKg =
+					(float)(
+						$product["total_kg"]
+						?? 0
+					);
+
+				$totalKgPrice =
+					(float)(
+						$product["total_kg_price"]
+						?? 0
+					);
+
+				$convertedPrice =
+					isset(
+						$product[
+							"total_price_exchanged"
+						]
+					)
+						? (float)
+							$product[
+								"total_price_exchanged"
+							]
+						: $totalKgPrice;
+
+				$normalizedProducts[] = [
+					"product_id" =>
+						$productId,
+
+					"quantity" =>
+						$quantity,
+
+					"total_kg" =>
+						number_format(
+							$productTotalKg,
+							3,
+							'.',
+							''
+						),
+
+					"total_kg_price" =>
+						number_format(
+							$totalKgPrice,
+							2,
+							'.',
+							''
+						),
+
+					"total_price_exchanged" =>
+						number_format(
+							$convertedPrice,
+							2,
+							'.',
+							''
+						)
+				];
+			}
+		}
+
+		$loadNo =
+			$this->repository
+				->getNextLoadNumber(
+					$companyId
+				);
+
+		$loadId =
+			$this->repository->create([
+				"shippings_id" =>
+					$shippingId,
+
+				"customer_id" =>
+					$customerId,
+
+				"company_id" =>
+					$companyId,
+
+				"load_no" =>
+					$loadNo,
+
+				"from_currency" =>
+					$fromCurrency,
+
+				"to_currency" =>
+					$toCurrency,
+
+				"price_per_kg" =>
+					number_format(
+						$pricePerKg,
+						2,
+						'.',
+						''
+					),
+
+				"total_kg" =>
+					number_format(
+						$totalKg,
+						3,
+						'.',
+						''
+					),
+
+				"price_sum" =>
+					number_format(
+						$priceSum,
+						2,
+						'.',
+						''
+					),
+
+				"taxes" =>
+					number_format(
+						$taxes,
+						2,
+						'.',
+						''
+					),
+
+				"discount" =>
+					number_format(
+						$discount,
+						2,
+						'.',
+						''
+					),
+
+				"price_total" =>
+					number_format(
+						$priceTotal,
+						2,
+						'.',
+						''
+					),
+
+				"price_total_exchanged" =>
+					number_format(
+						$priceTotalExchanged,
+						2,
+						'.',
+						''
+					),
+
+				"destination" =>
+					$destination,
+
+				"comment" =>
+					$comment,
+
+				"status" => 1,
+
+				"create_by" =>
+					$userId
+			]);
+
+		foreach ($normalizedProducts as $product) {
+			$this->repository
+				->createLoadedProduct([
+					"load_id" =>
+						$loadId,
+
+					"product_id" =>
+						$product["product_id"],
+
+					"quantity" =>
+						$product["quantity"],
+
+					"total_kg" =>
+						$product["total_kg"],
+
+					"from_currency" =>
+						$fromCurrency,
+
+					"total_kg_price" =>
+						$product[
+							"total_kg_price"
+						],
+
+					"to_currency" =>
+						$toCurrency,
+
+					"total_price_exchanged" =>
+						$product[
+							"total_price_exchanged"
+						],
+
+					"create_by" =>
+						$userId
+				]);
+		}
+
+		return [
+			"load_id" => $loadId,
+			"load_no" => $loadNo
+		];
+	}
 }

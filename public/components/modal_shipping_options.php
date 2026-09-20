@@ -206,8 +206,8 @@
 											</tr>
 											<tr valign="baseline" >
 												<td colspan="2" align="center" valign="middle">
-													<label for="destination">Customer destination:</label>
-													<input class="form-input-style" type="text" name="destination" id="destination" placeholder="Customer destination..."/>
+													<label for="load_destination">Customer destination:</label>
+													<input class="form-input-style" type="text" name="load_destination" id="load_destination" placeholder="Customer destination..."/>
 												</td>
 											</tr>
 											<tr valign="baseline" >
