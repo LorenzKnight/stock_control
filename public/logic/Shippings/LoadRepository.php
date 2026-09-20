@@ -612,4 +612,32 @@ class LoadRepository
 			"Could not read load data."
 		);
 	}
+
+
+	public function update(
+		int $loadId,
+		int $companyId,
+		array $data
+	): void {
+		$result = \update_table(
+			"loads",
+			$data,
+			[
+				"load_id" => $loadId,
+				"company_id" => $companyId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Failed to update load details."
+			);
+		}
+	}
 }

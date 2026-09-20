@@ -1496,7 +1496,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			const editMarkSelect = document.getElementById('search-edit-product-mark-for-shipping');
 			const editShippingProductListTable = document.getElementById('edit-select-product-list-for-shipping');
 
-			if ((searchEditProductInput || editShippingMarkSelect) && editShippingProductListTable) {
+			if ((searchEditProductInput || editMarkSelect) && editShippingProductListTable) {
 				async function fetchAndRenderProductsForShipping(search = "", mark = "") {
 					try {
 						const params = new URLSearchParams();
@@ -1509,7 +1509,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 						if (productData.success && productData.data.length > 0) {
 							productData.data.forEach(product => {
-								const uniqueId = `edit-product-${product.product_id}`;
+								const uniqueId = `edit-load-product-${product.product_id}`;
 								const productImg = product.product_image && product.product_image.trim() !== ''
 									? `images/products/${product.product_image}`
 									: `images/sys-img/wooden-box.png`;
@@ -1538,11 +1538,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 								`;
 								editShippingProductListTable.appendChild(row);
 
-								const checkbox = document.getElementById(uniqueId);
-								const quantityInput = document.getElementById(`qty-${uniqueId}`);
+								const checkbox = row.querySelector('.shipping-product-checkbox');
+								const quantityInput = row.querySelector('input[type="number"]');
 								
 								// ✅ marcar los productos que ya están en este load
-								const selectedProduct = load.products.find(p => p.product_id === product.product_id);
+								const selectedProduct = load.products.find(p => Number(p.product_id) === Number(product.product_id));
 								if (selectedProduct) {
 									checkbox.checked = true;
 									quantityInput.disabled = false;
@@ -1562,7 +1562,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									sumByWeight();
 								});
 
-								document.getElementById(uniqueId).addEventListener('change', sumByWeight);
+								checkbox.addEventListener('change', sumByWeight);
 							});
 						} else {
 							editShippingProductListTable.innerHTML = `
@@ -1603,12 +1603,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			// Llenar campos del formulario
 			function sumByWeight() {
-				const checkboxes = document.querySelectorAll('.shipping-product-checkbox:checked');
+				const checkboxes = formEditLoad.querySelectorAll('.shipping-product-checkbox:checked');
 				let total = 0;
 			
 				checkboxes.forEach(cb => {
 					const weight = parseFloat(cb.getAttribute('data-weight')) || 0;
-					const qtyInput = document.getElementById(`qty-${cb.id}`);
+					const qtyInput = formEditLoad.querySelector(`#qty-${cb.id}`);
 					const quantity = parseInt(qtyInput.value) || 1;
 					total += weight * quantity;
 				});
@@ -1671,7 +1671,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					const loadId = formEditLoad.getAttribute('data-load-id');
 					if (!loadId) throw new Error("Load ID not found.");
 
-					const customerId = document.querySelector('input[name="customer_select"]:checked')?.dataset.id;
+					const customerId = formEditLoad.querySelector('input[name="customer_select"]:checked')?.dataset.id;
 					if (!customerId) throw new Error("Please select a customer.");
 
 					// Obtener valores del formulario
@@ -1690,11 +1690,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 					}
 
 					// Obtener productos seleccionados
-					const productCheckboxes = Array.from(document.querySelectorAll('.shipping-product-checkbox:checked'));
+					const productCheckboxes = Array.from(formEditLoad.querySelectorAll('.shipping-product-checkbox:checked'));
 					const products = await Promise.all(productCheckboxes.map(async cb => {
 						const productId = parseInt(cb.value);
 						const weight = parseFloat(cb.dataset.weight) || 0;
-						const qtyInput = document.getElementById(`qty-${cb.id}`);
+						const qtyInput = formEditLoad.querySelector(`#qty-${cb.id}`);
 						const quantity = parseInt(qtyInput?.value) || 1;
 						const totalKgProduct = weight * quantity;
 						const totalKgPrice = totalKgProduct * pricePerKg;
