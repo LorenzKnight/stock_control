@@ -1,6 +1,15 @@
 <?php
+use App\Shippings\LoadRepository;
+use App\Shippings\LoadService;
+
 require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
+
+global $sql;
+
+if (!$sql) {
+	$sql = get_pg_connection();
+}
 
 header("Content-Type: application/json");
 
@@ -11,6 +20,8 @@ $response = [
     "redirect_url" => null
 ];
 
+$transactionStarted = false;
+
 try {
     // 🔒 Verificar método
     if ($_SERVER["REQUEST_METHOD"] !== "POST") {
@@ -19,11 +30,16 @@ try {
 
     // 🔒 Verificar sesión de usuario
     $authUser = requireAuth();
-    if (!isset($authUser["user_id"]) || !$authUser["user_id"]) {
+    $userId = (int)($authUser["user_id"] ?? 0);
+    $companyId = (int)($authUser["company_id"] ?? 0);
+
+    if ($userId <= 0) {
         throw new Exception("Authentication failed. User not identified.");
     }
 
-    $userId = $authUser["user_id"];
+    if ($companyId <= 0) {
+        throw new Exception("Authentication failed. Company not identified.");
+    }
 
     // 🔒 Verificar permisos (usa el permiso adecuado de tu sistema)
     if (!check_user_permission($userId, 'platform_admin')) {
@@ -31,76 +47,34 @@ try {
     }
 
     // 📦 Validar parámetro recibido
-    $loadId = isset($_POST["load_id"]) ? (int)$_POST["load_id"] : 0;
-    if ($loadId <= 0) {
-        throw new Exception("Invalid load ID.");
-    }
+    $loadId = (int)($_POST["load_id"] ?? 0);
+    if ($loadId <= 0) throw new Exception("Invalid load ID.");
 
-    // 🔍 Obtener información del load
-    $loadInfo = json_decode(select_from(
-        "loads", 
-        ["company_id", "shippings_id"], 
-        ["load_id" => $loadId], 
-        ["fetch_first" => true]
-    ), true);
+    $repository = new LoadRepository();
+	$service = new LoadService($repository);
 
-    if (!$loadInfo["success"] || empty($loadInfo["data"])) {
-        throw new Exception("Load not found.");
-    }
+    if (!pg_query($sql, "BEGIN")) {
+		throw new RuntimeException("Could not start load deletion transaction.");
+	}
 
-    $loadData = $loadInfo["data"];
-    $companyId = $loadData["company_id"] ?? null;
-    $shippingId = $loadData["shippings_id"] ?? null;
+	$transactionStarted = true;
 
-    if (!$companyId) {
-        throw new Exception("Company ID missing for this load.");
-    }
+	$service->deleteLoad(
+		$companyId,
+		$loadId
+	);
 
-    $userInfo = json_decode(select_from(
-        "users",
-        ["company_id"],
-        ["user_id" => $userId],
-        ["fetch_first" => true]
-    ), true);
+    if (!pg_query($sql, "COMMIT")) {
+		throw new RuntimeException("Could not complete load deletion.");
+	}
 
-    $userCompanyId = $userInfo["data"]["company_id"] ?? null;
-
-    if ((int)$userCompanyId !== (int)$companyId) {
-        throw new Exception("Access denied. This load does not belong to your company.");
-    }
-
-    if ($shippingId) {
-         $shippingInfo = json_decode(select_from(
-            "shippings",
-            ["status"],
-            ["shippings_id" => $shippingId],
-            ["fetch_first" => true]
-        ), true);
-
-        $shippingStatus = $shippingInfo["data"]["status"] ?? null;
-
-        if ($shippingStatus && (int)$shippingStatus >= 3) {
-            throw new Exception("Cannot delete loads from completed or delivered shippings.");
-        }
-    }
-
-    // 🧹 1️⃣ Eliminar productos asociados al load
-    $deleteProducts = json_decode(delete_from("loaded_products", ["load_id" => $loadId]), true);
-    if (!$deleteProducts["success"]) {
-        throw new Exception("Failed to delete loaded products for this load.");
-    }
-
-    // 🧹 2️⃣ Eliminar el load principal
-    $deleteLoad = json_decode(delete_from("loads", ["load_id" => $loadId]), true);
-    if (!$deleteLoad["success"]) {
-        throw new Exception("Failed to delete load record.");
-    }
+	$transactionStarted = false;
 
     // 🧾 Registrar la acción
     log_activity(
         $userId,
         "delete load",
-        "Deleted load ID $loadId (company $companyId) and its loaded products.",
+        "Deleted load ID {$loadId} and its loaded products for company {$companyId}.",
         "loads",
         $loadId
     );
@@ -113,7 +87,11 @@ try {
         "redirect_url" => ""
     ];
 
-} catch (Exception $e) {
+} catch (Throwable $e) {
+    if ($transactionStarted) {
+		pg_query($sql, "ROLLBACK");
+	}
+
     $response["message"] = $e->getMessage();
 }
 

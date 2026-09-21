@@ -846,7 +846,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 						deleteLoadBtn.setAttribute('data-load-id', loadId);
 						
 						if (!loadId) {
-							alert("Shipping ID not found.");
+							alert("Load ID not found.");
 							return;
 						}
 

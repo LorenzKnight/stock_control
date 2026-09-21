@@ -414,7 +414,10 @@ class LoadRepository
 	): ?array {
 		$result = \select_from(
 			"shippings",
-			["shippings_id"],
+			[
+				"shippings_id",
+				"status"
+			],
 			[
 				"shippings_id" => $shippingId,
 				"company_id" => $companyId

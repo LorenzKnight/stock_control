@@ -1088,4 +1088,217 @@ final class LoadServiceTest extends TestCase
 
 		$this->assertTrue(true);
 	}
+
+
+	public function testRejectsDeleteLoadWithInvalidLoadId(): void
+	{
+		$repository =
+			$this->createMock(
+				LoadRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('findById');
+
+		$service =
+			new LoadService(
+				$repository
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Invalid load ID."
+		);
+
+		$service->deleteLoad(
+			5,
+			0
+		);
+	}
+
+
+	public function testRejectsDeleteLoadWhenLoadDoesNotExist(): void
+	{
+		$repository =
+			$this->createMock(
+				LoadRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findById')
+			->with(100, 5)
+			->willReturn(null);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'deleteLoadedProductsByLoadId'
+			);
+
+		$repository
+			->expects($this->never())
+			->method('deleteById');
+
+		$service =
+			new LoadService(
+				$repository
+			);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"Load not found."
+		);
+
+		$service->deleteLoad(
+			5,
+			100
+		);
+	}
+
+
+	public function testRejectsDeleteLoadFromCompletedShipping(): void
+	{
+		$repository =
+			$this->createMock(
+				LoadRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findById')
+			->with(100, 5)
+			->willReturn([
+				"load_id" => 100,
+				"company_id" => 5,
+				"shippings_id" => 42
+			]);
+
+		$repository
+			->expects($this->once())
+			->method('findShippingById')
+			->with(42, 5)
+			->willReturn([
+				"shippings_id" => 42,
+				"status" => 3
+			]);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'deleteLoadedProductsByLoadId'
+			);
+
+		$repository
+			->expects($this->never())
+			->method('deleteById');
+
+		$service =
+			new LoadService(
+				$repository
+			);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"Cannot delete loads from completed or delivered shippings."
+		);
+
+		$service->deleteLoad(
+			5,
+			100
+		);
+	}
+
+
+	public function testDeletesLoadAndItsProducts(): void
+	{
+		$repository =
+			$this->createMock(
+				LoadRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findById')
+			->with(100, 5)
+			->willReturn([
+				"load_id" => 100,
+				"company_id" => 5,
+				"shippings_id" => 42
+			]);
+
+		$repository
+			->expects($this->once())
+			->method('findShippingById')
+			->with(42, 5)
+			->willReturn([
+				"shippings_id" => 42,
+				"status" => 1
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'deleteLoadedProductsByLoadId'
+			)
+			->with(100);
+
+		$repository
+			->expects($this->once())
+			->method('deleteById')
+			->with(100, 5);
+
+		$service =
+			new LoadService(
+				$repository
+			);
+
+		$service->deleteLoad(
+				5,
+				100
+			);
+
+		$this->assertTrue(true);
+	}
+
+
+	public function testRejectsDeleteLoadWithInvalidCompanyId(): void
+	{
+		$repository =
+			$this->createMock(
+				LoadRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('findById');
+
+		$service =
+			new LoadService(
+				$repository
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Company ID is required."
+		);
+
+		$service->deleteLoad(
+			0,
+			100
+		);
+	}
 }

@@ -1296,4 +1296,73 @@ class LoadService
 				]);
 		}
 	}
+
+
+	public function deleteLoad(
+		int $companyId,
+		int $loadId
+	): void {
+		if ($companyId <= 0) {
+			throw new \InvalidArgumentException(
+				"Company ID is required."
+			);
+		}
+
+		if ($loadId <= 0) {
+			throw new \InvalidArgumentException(
+				"Invalid load ID."
+			);
+		}
+
+		$load =
+			$this->repository->findById(
+				$loadId,
+				$companyId
+			);
+
+		if ($load === null) {
+			throw new \Exception(
+				"Load not found."
+			);
+		}
+
+		$shippingId =
+			(int)(
+				$load["shippings_id"]
+				?? 0
+			);
+
+		if ($shippingId > 0) {
+			$shipping =
+				$this->repository
+					->findShippingById(
+						$shippingId,
+						$companyId
+					);
+
+			if ($shipping !== null) {
+				$shippingStatus =
+					(int)(
+						$shipping["status"]
+						?? 0
+					);
+
+				if ($shippingStatus >= 3) {
+					throw new \Exception(
+						"Cannot delete loads from completed or delivered shippings."
+					);
+				}
+			}
+		}
+
+		$this->repository
+			->deleteLoadedProductsByLoadId(
+				$loadId
+			);
+
+		$this->repository->deleteById(
+			$loadId,
+			$companyId
+		);
+	}
 }
