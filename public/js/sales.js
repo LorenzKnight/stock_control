@@ -946,6 +946,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 								const data = await response.json();
 
+								const banner = document.getElementById('status-message');
+
 								showSalesStatus(
 									data.message,
 									data.img_gif
@@ -953,9 +955,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 								if (data.success) {
 									setTimeout(() => {
-										hideBanner(banner, () => {
+										if (banner) {
+											hideBanner(banner, () => {
+												window.location.href = data.redirect_url || window.location.href;
+											});
+										} else {
 											window.location.href = data.redirect_url || window.location.href;
-										});
+										}
 									}, 3000);
 								}
 							} catch (error) {
