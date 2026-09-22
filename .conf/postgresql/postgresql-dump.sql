@@ -597,3 +597,191 @@ CREATE TABLE IF NOT EXISTS user_onboarding (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
+-- AI SALES MODULE
+-- Companies discovered manually or by AI
+CREATE TABLE IF NOT EXISTS sales_companies (
+	sales_company_id SERIAL PRIMARY KEY,
+	company_name VARCHAR(255) NOT NULL,
+	website VARCHAR(500) NULL,
+	domain VARCHAR(255) NULL,
+	market VARCHAR(20) NULL, -- LATAM | SWEDEN | OTHER
+	country VARCHAR(100) NULL,
+	country_code VARCHAR(10) NULL,
+	city VARCHAR(150) NULL,
+	industry VARCHAR(150) NULL,
+	language VARCHAR(10) NULL,
+	description TEXT NULL,
+	source VARCHAR(100) NULL, -- AI | MANUAL | WEB | LINKEDIN | OTHER
+	source_url TEXT NULL,
+	ai_researched BOOLEAN DEFAULT FALSE,
+	created_by INTEGER NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- Contacts found inside potential client companies
+CREATE TABLE IF NOT EXISTS sales_contacts (
+	sales_contact_id SERIAL PRIMARY KEY,
+	sales_company_id INTEGER NOT NULL,
+	first_name VARCHAR(150) NULL,
+	last_name VARCHAR(150) NULL,
+	job_title VARCHAR(255) NULL,
+	email VARCHAR(255) NULL,
+	phone VARCHAR(100) NULL,
+	linkedin_url TEXT NULL,
+	language VARCHAR(10) NULL,
+	is_primary BOOLEAN DEFAULT FALSE,
+	do_not_contact BOOLEAN DEFAULT FALSE,
+	created_by INTEGER NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT fk_sales_contact_company
+		FOREIGN KEY (sales_company_id) REFERENCES sales_companies(sales_company_id)
+		ON DELETE CASCADE
+);
+
+
+-- Potential clients and sales pipeline
+CREATE TABLE IF NOT EXISTS sales_leads (
+	sales_lead_id SERIAL PRIMARY KEY,
+	sales_company_id INTEGER NOT NULL,
+	primary_contact_id INTEGER NULL,
+	market VARCHAR(20) NULL, -- LATAM | SWEDEN | OTHER
+	country VARCHAR(100) NULL,
+	language VARCHAR(10) NULL,
+	stage VARCHAR(30) DEFAULT 'NEW', -- NEW | RESEARCHING | CONTACTED | REPLIED | INTERESTED | DEMO | NEGOTIATION | WON | LOST
+	score INTEGER DEFAULT 0, -- 0 - 100
+	score_reason TEXT NULL,
+	source VARCHAR(100) NULL,
+	next_action VARCHAR(255) NULL,
+	next_action_at TIMESTAMP NULL,
+	last_contact_at TIMESTAMP NULL,
+	notes TEXT NULL,
+	ai_summary TEXT NULL,
+	created_by INTEGER NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT fk_sales_lead_company
+		FOREIGN KEY (sales_company_id) REFERENCES sales_companies(sales_company_id)
+		ON DELETE CASCADE,
+	CONSTRAINT fk_sales_lead_contact
+		FOREIGN KEY (primary_contact_id) REFERENCES sales_contacts(sales_contact_id)
+		ON DELETE SET NULL
+);
+
+
+-- Conversations with potential clients
+CREATE TABLE IF NOT EXISTS sales_conversations (
+	conversation_id SERIAL PRIMARY KEY,
+	sales_lead_id INTEGER NOT NULL,
+	sales_contact_id INTEGER NULL,
+	channel VARCHAR(30) DEFAULT 'EMAIL', -- EMAIL | LINKEDIN | WHATSAPP | PHONE | OTHER
+	subject VARCHAR(500) NULL,
+	external_thread_id VARCHAR(500) NULL,
+	status VARCHAR(30) DEFAULT 'OPEN', -- OPEN | WAITING_REPLY | CLOSED
+	started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	last_message_at TIMESTAMP NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT fk_sales_conversation_lead
+		FOREIGN KEY (sales_lead_id) REFERENCES sales_leads(sales_lead_id)
+		ON DELETE CASCADE,
+	CONSTRAINT fk_sales_conversation_contact
+		FOREIGN KEY (sales_contact_id) REFERENCES sales_contacts(sales_contact_id)
+		ON DELETE SET NULL
+);
+
+
+-- Messages sent and received
+CREATE TABLE IF NOT EXISTS sales_messages (
+	sales_message_id SERIAL PRIMARY KEY,
+	conversation_id INTEGER NOT NULL,
+	direction VARCHAR(20) NOT NULL, -- INBOUND | OUTBOUND
+	sender_type VARCHAR(20) NOT NULL, -- AI | USER | CONTACT | SYSTEM
+	subject VARCHAR(500) NULL,
+	message TEXT NOT NULL,
+	provider_message_id VARCHAR(500) NULL,
+	status VARCHAR(30) DEFAULT 'DRAFT', -- DRAFT | PENDING_APPROVAL | APPROVED | SENT | DELIVERED | RECEIVED | FAILED
+	ai_generated BOOLEAN DEFAULT FALSE,
+	ai_model VARCHAR(100) NULL,
+	approved BOOLEAN DEFAULT FALSE,
+	approved_by_user_id INTEGER NULL,
+	approved_at TIMESTAMP NULL,
+	sent_at TIMESTAMP NULL,
+	received_at TIMESTAMP NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT fk_sales_message_conversation
+		FOREIGN KEY (conversation_id) REFERENCES sales_conversations(conversation_id)
+		ON DELETE CASCADE,
+	CONSTRAINT fk_sales_message_approved_user
+		FOREIGN KEY (approved_by_user_id) REFERENCES users(user_id)
+		ON DELETE SET NULL
+);
+
+
+-- Complete activity history for every lead
+CREATE TABLE IF NOT EXISTS sales_activities (
+	activity_id SERIAL PRIMARY KEY,
+	sales_lead_id INTEGER NOT NULL,
+	activity_type VARCHAR(100) NOT NULL, -- lead_created | research | message_generated | email_sent | reply_received | stage_changed | etc.
+	description TEXT NULL,
+	metadata JSONB NULL,
+	created_by_type VARCHAR(20) DEFAULT 'SYSTEM', -- USER | AI | SYSTEM
+	created_by_user_id INTEGER NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT fk_sales_activity_lead
+		FOREIGN KEY (sales_lead_id) REFERENCES sales_leads(sales_lead_id)
+		ON DELETE CASCADE,
+	CONSTRAINT fk_sales_activity_user
+		FOREIGN KEY (created_by_user_id) REFERENCES users(user_id)
+		ON DELETE SET NULL
+);
+
+
+-- AI SALES MODULE INDEXES
+
+CREATE INDEX IF NOT EXISTS idx_sales_companies_market
+ON sales_companies(market);
+
+CREATE INDEX IF NOT EXISTS idx_sales_companies_country
+ON sales_companies(country);
+
+CREATE INDEX IF NOT EXISTS idx_sales_companies_domain
+ON sales_companies(domain);
+
+CREATE INDEX IF NOT EXISTS idx_sales_contacts_company
+ON sales_contacts(sales_company_id);
+
+CREATE INDEX IF NOT EXISTS idx_sales_contacts_email
+ON sales_contacts(email);
+
+CREATE INDEX IF NOT EXISTS idx_sales_leads_company
+ON sales_leads(sales_company_id);
+
+CREATE INDEX IF NOT EXISTS idx_sales_leads_market
+ON sales_leads(market);
+
+CREATE INDEX IF NOT EXISTS idx_sales_leads_stage
+ON sales_leads(stage);
+
+CREATE INDEX IF NOT EXISTS idx_sales_leads_score
+ON sales_leads(score);
+
+CREATE INDEX IF NOT EXISTS idx_sales_leads_next_action
+ON sales_leads(next_action_at);
+
+CREATE INDEX IF NOT EXISTS idx_sales_conversations_lead
+ON sales_conversations(sales_lead_id);
+
+CREATE INDEX IF NOT EXISTS idx_sales_messages_conversation
+ON sales_messages(conversation_id);
+
+CREATE INDEX IF NOT EXISTS idx_sales_messages_status
+ON sales_messages(status);
+
+CREATE INDEX IF NOT EXISTS idx_sales_activities_lead
+ON sales_activities(sales_lead_id);

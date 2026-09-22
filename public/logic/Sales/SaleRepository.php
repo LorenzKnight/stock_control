@@ -296,4 +296,308 @@ class SaleRepository
 			"Could not validate sale product."
 		);
 	}
+
+
+	public function findSalesByCompanyId(
+		int $companyId
+	): array {
+		$result = \select_from(
+			"sales",
+			[
+				"sales_id",
+				"ord_no",
+				"customer_id",
+				"price_sum",
+				"initial",
+				"delivery_date",
+				"currency",
+				"remaining",
+				"interest",
+				"installments_month",
+				"no_installments",
+				"payment_date",
+				"due",
+				"created_at"
+			],
+			[
+				"company_id" => $companyId
+			],
+			[
+				"order_by" => "created_at",
+				"order_direction" => "DESC",
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"SaleRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			isset($result["data"]) &&
+			is_array($result["data"])
+		) {
+			return array_values(
+				$result["data"]
+			);
+		}
+
+		if (
+			($result["message"] ?? "") ===
+				"No records found"
+		) {
+			return [];
+		}
+
+		throw new \RuntimeException(
+			"Could not load sales."
+		);
+	}
+
+
+	public function findCustomerDetailsById(
+		int $customerId,
+		int $companyId
+	): ?array {
+		$result = \select_from(
+			"customers",
+			[
+				"customer_name",
+				"customer_surname",
+				"customer_phone",
+				"customer_document_type",
+				"customer_document_no",
+				"customer_image"
+			],
+			[
+				"customer_id" => $customerId,
+				"company_id" => $companyId
+			],
+			[
+				"fetch_first" => true,
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"SaleRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			!empty($result["data"])
+		) {
+			return $result["data"];
+		}
+
+		if (
+			($result["message"] ?? "") ===
+				"No records found"
+		) {
+			return null;
+		}
+
+		throw new \RuntimeException(
+			"Could not load sale customer."
+		);
+	}
+
+
+	public function findPurchasedProductsBySaleId(
+		int $saleId
+	): array {
+		$result = \select_from(
+			"purchased_products",
+			[
+				"product_id",
+				"quantity",
+				"price",
+				"discount",
+				"total"
+			],
+			[
+				"sales_id" => $saleId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"SaleRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			isset($result["data"]) &&
+			is_array($result["data"])
+		) {
+			return array_values(
+				$result["data"]
+			);
+		}
+
+		if (
+			($result["message"] ?? "") ===
+				"No records found"
+		) {
+			return [];
+		}
+
+		throw new \RuntimeException(
+			"Could not load purchased products."
+		);
+	}
+
+
+	public function findProductDetailsById(
+		int $productId,
+		int $companyId
+	): ?array {
+		$result = \select_from(
+			"products",
+			[
+				"sale_unit_type",
+				"units_per_pack",
+				"weight_per_unit",
+				"total_weight",
+				"product_image",
+				"product_name",
+				"product_year",
+				"product_mark",
+				"product_model",
+				"product_sub_model",
+				"price"
+			],
+			[
+				"product_id" => $productId,
+				"company_id" => $companyId
+			],
+			[
+				"fetch_first" => true,
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"SaleRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			!empty($result["data"])
+		) {
+			return $result["data"];
+		}
+
+		if (
+			($result["message"] ?? "") ===
+				"No records found"
+		) {
+			return null;
+		}
+
+		throw new \RuntimeException(
+			"Could not load sale product."
+		);
+	}
+
+
+	public function findCategoryNameById(
+		int $categoryId
+	): ?string {
+		$result = \select_from(
+			"category",
+			["category_name"],
+			[
+				"category_id" => $categoryId
+			],
+			[
+				"fetch_first" => true,
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"SaleRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			!empty($result["data"])
+		) {
+			return
+				(string)(
+					$result["data"]["category_name"]
+					?? ''
+				);
+		}
+
+		if (
+			($result["message"] ?? "") ===
+				"No records found"
+		) {
+			return null;
+		}
+
+		throw new \RuntimeException(
+			"Could not load sale category."
+		);
+	}
+
+
+	public function countPaymentsForSale(
+		int $saleId
+	): int {
+		$result = \select_from(
+			"payments",
+			["ord_no"],
+			[
+				"sales_id" => $saleId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"SaleRepository expected an array response."
+			);
+		}
+
+		if (!empty($result["success"])) {
+			if (isset($result["count"])) {
+				return (int)$result["count"];
+			}
+
+			return is_array(
+				$result["data"] ?? null
+			)
+				? count($result["data"])
+				: 0;
+		}
+
+		if (
+			($result["message"] ?? "") ===
+				"No records found"
+		) {
+			return 0;
+		}
+
+		throw new \RuntimeException(
+			"Could not count sale payments."
+		);
+	}
 }

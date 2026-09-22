@@ -969,4 +969,667 @@ final class SaleServiceTest extends TestCase
 			$result
 		);
 	}
+
+
+    public function testRejectsReadWithInvalidCompanyId(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'findSalesByCompanyId'
+			);
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Company ID is required."
+		);
+
+		$service->getSales(
+			0
+		);
+	}
+
+
+	public function testReadThrowsWhenNoSalesExist(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findSalesByCompanyId'
+			)
+			->with(5)
+			->willReturn([]);
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"No sales available."
+		);
+
+		$service->getSales(
+			5
+		);
+	}
+
+
+	public function testReadsSaleWithCustomerProductsCategoriesAndPayments(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findSalesByCompanyId'
+			)
+			->with(5)
+			->willReturn([
+				[
+					"sales_id" => 50,
+					"ord_no" => 10000001,
+					"customer_id" => 7,
+					"price_sum" => 100,
+					"initial" => 20,
+					"delivery_date" =>
+						"2026-09-22 00:00:00",
+					"currency" => "SEK",
+					"remaining" => 80,
+					"interest" => 10,
+					"installments_month" => 1,
+					"no_installments" => 4,
+					"payment_date" =>
+						"2026-10-22 00:00:00",
+					"due" => 20,
+					"created_at" =>
+						"2026-09-22 10:00:00"
+				]
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findCustomerDetailsById'
+			)
+			->with(7, 5)
+			->willReturn([
+				"customer_name" =>
+					"John",
+				"customer_surname" =>
+					"Doe",
+				"customer_phone" =>
+					"0700000000",
+				"customer_document_type" =>
+					null,
+				"customer_document_no" =>
+					"ABC123",
+				"customer_image" =>
+					"john.jpg"
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findPurchasedProductsBySaleId'
+			)
+			->with(50)
+			->willReturn([
+				[
+					"product_id" => 8,
+					"quantity" => 2,
+					"price" => 40,
+					"discount" => 5,
+					"total" => 80
+				]
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findProductDetailsById'
+			)
+			->with(8, 5)
+			->willReturn([
+				"sale_unit_type" => "1",
+				"units_per_pack" => 1,
+				"weight_per_unit" => 2.5,
+				"total_weight" => 5,
+				"product_image" =>
+					"product.jpg",
+				"product_name" =>
+					"Laptop",
+				"product_year" =>
+					2026,
+				"product_mark" =>
+					10,
+				"product_model" =>
+					11,
+				"product_sub_model" =>
+					12,
+				"price" => 45
+			]);
+
+		$repository
+			->expects($this->exactly(3))
+			->method(
+				'findCategoryNameById'
+			)
+			->willReturnMap([
+				[10, "Apple"],
+				[11, "MacBook"],
+				[12, "Pro"]
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'countPaymentsForSale'
+			)
+			->with(50)
+			->willReturn(2);
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$result =
+			$service->getSales(
+				5
+			);
+
+		$this->assertCount(
+				1,
+				$result
+			);
+
+		$this->assertSame(
+				50,
+				$result[0]["sales_id"]
+			);
+
+		$this->assertSame(
+				10000001,
+				$result[0]["ord_no"]
+			);
+
+		$this->assertSame(
+				"2026-09-22",
+				$result[0]["delivery_date"]
+			);
+
+		$this->assertSame(
+				"2026-10-22",
+				$result[0]["payment_date"]
+			);
+
+		$this->assertSame(
+				10.0,
+				$result[0]["total_interest"]
+			);
+
+		$this->assertSame(
+				2,
+				$result[0]["payments"]
+			);
+
+		$this->assertSame(
+				7,
+				$result[0]["customer"][
+					"customer_id"
+				]
+			);
+
+		$this->assertSame(
+				"John Doe",
+				$result[0]["customer"][
+					"full_name"
+				]
+			);
+
+		$this->assertSame(
+				"ABC123",
+				$result[0]["customer"][
+					"document_no"
+				]
+			);
+
+		$this->assertSame(
+				8,
+				$result[0]["products"][0][
+					"product_id"
+				]
+			);
+
+		$this->assertSame(
+				"Laptop",
+				$result[0]["products"][0][
+					"name"
+				]
+			);
+
+		$this->assertSame(
+				"Apple",
+				$result[0]["products"][0][
+					"mark_name"
+				]
+			);
+
+		$this->assertSame(
+				"MacBook",
+				$result[0]["products"][0][
+					"model_name"
+				]
+			);
+
+		$this->assertSame(
+				"Pro",
+				$result[0]["products"][0][
+					"submodel_name"
+				]
+			);
+
+		/*
+		* Debemos preservar el comportamiento
+		* anterior de get_sales.php:
+		* price viene del producto actual.
+		*/
+		$this->assertSame(
+				45,
+				$result[0]["products"][0][
+					"price"
+				]
+			);
+
+		$this->assertSame(
+				80,
+				$result[0]["products"][0][
+					"total"
+				]
+			);
+	}
+
+
+	public function testSearchesSaleByCustomerName(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method(
+				'findSalesByCompanyId'
+			)
+			->willReturn([
+				[
+					"sales_id" => 50,
+					"ord_no" => 10000001,
+					"customer_id" => 7,
+					"price_sum" => 100,
+					"initial" => 20,
+					"delivery_date" =>
+						"2026-09-22",
+					"remaining" => 80,
+					"interest" => 0,
+					"installments_month" => 1,
+					"no_installments" => 4,
+					"payment_date" =>
+						"2026-10-22",
+					"due" => 20
+				]
+			]);
+
+		$repository
+			->method(
+				'findCustomerDetailsById'
+			)
+			->willReturn([
+				"customer_name" =>
+					"John",
+				"customer_surname" =>
+					"Doe",
+				"customer_document_type" =>
+					null,
+				"customer_document_no" =>
+					"ABC123"
+			]);
+
+		$repository
+			->method(
+				'findPurchasedProductsBySaleId'
+			)
+			->willReturn([]);
+
+		$repository
+			->method(
+				'countPaymentsForSale'
+			)
+			->willReturn(0);
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$result =
+			$service->getSales(
+				5,
+				"john"
+			);
+
+		$this->assertCount(
+				1,
+				$result
+			);
+
+		$this->assertSame(
+				"John Doe",
+				$result[0]["customer"][
+					"full_name"
+				]
+			);
+	}
+
+
+	public function testSearchesSaleByCustomerDocument(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method(
+				'findSalesByCompanyId'
+			)
+			->willReturn([
+				[
+					"sales_id" => 50,
+					"ord_no" => 10000001,
+					"customer_id" => 7,
+					"price_sum" => 100,
+					"initial" => 20,
+					"delivery_date" =>
+						"2026-09-22",
+					"remaining" => 80,
+					"interest" => 0,
+					"installments_month" => 1,
+					"no_installments" => 4,
+					"payment_date" =>
+						"2026-10-22",
+					"due" => 20
+				]
+			]);
+
+		$repository
+			->method(
+				'findCustomerDetailsById'
+			)
+			->willReturn([
+				"customer_name" =>
+					"John",
+				"customer_surname" =>
+					"Doe",
+				"customer_document_type" =>
+					null,
+				"customer_document_no" =>
+					"ABC123"
+			]);
+
+		$repository
+			->method(
+				'findPurchasedProductsBySaleId'
+			)
+			->willReturn([]);
+
+		$repository
+			->method(
+				'countPaymentsForSale'
+			)
+			->willReturn(0);
+
+		$service =
+				new SaleService(
+					$repository,
+					$inventoryService
+				);
+
+		$result =
+			$service->getSales(
+				5,
+				"abc123"
+			);
+
+		$this->assertCount(
+				1,
+				$result
+			);
+	}
+
+
+	public function testSearchesSaleByOrderNumber(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method(
+				'findSalesByCompanyId'
+			)
+			->willReturn([
+				[
+					"sales_id" => 50,
+					"ord_no" => 10000001,
+					"customer_id" => 7,
+					"price_sum" => 100,
+					"initial" => 20,
+					"delivery_date" =>
+						"2026-09-22",
+					"remaining" => 80,
+					"interest" => 0,
+					"installments_month" => 1,
+					"no_installments" => 4,
+					"payment_date" =>
+						"2026-10-22",
+					"due" => 20
+				]
+			]);
+
+		$repository
+			->method(
+				'findCustomerDetailsById'
+			)
+			->willReturn([
+				"customer_name" =>
+					"John",
+				"customer_surname" =>
+					"Doe",
+				"customer_document_type" =>
+					null,
+				"customer_document_no" =>
+					"ABC123"
+			]);
+
+		$repository
+			->method(
+				'findPurchasedProductsBySaleId'
+			)
+			->willReturn([]);
+
+		$repository
+			->method(
+				'countPaymentsForSale'
+			)
+			->willReturn(0);
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$result =
+			$service->getSales(
+				5,
+				"10000001"
+			);
+
+		$this->assertCount(
+				1,
+				$result
+			);
+
+		$this->assertSame(
+				10000001,
+				$result[0]["ord_no"]
+			);
+	}
+
+
+	public function testSearchReturnsEmptyArrayWhenNothingMatches(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method(
+				'findSalesByCompanyId'
+			)
+			->willReturn([
+				[
+					"sales_id" => 50,
+					"ord_no" => 10000001,
+					"customer_id" => 7,
+					"price_sum" => 100,
+					"initial" => 20,
+					"delivery_date" =>
+						"2026-09-22",
+					"remaining" => 80,
+					"interest" => 0,
+					"installments_month" => 1,
+					"no_installments" => 4,
+					"payment_date" =>
+						"2026-10-22",
+					"due" => 20
+				]
+			]);
+
+		$repository
+			->method(
+				'findCustomerDetailsById'
+			)
+			->willReturn([
+				"customer_name" =>
+					"John",
+				"customer_surname" =>
+					"Doe",
+				"customer_document_type" =>
+					null,
+				"customer_document_no" =>
+					"ABC123"
+			]);
+
+		/*
+		* Como la venta no coincide con search,
+		* no debemos cargar productos ni pagos.
+		*/
+		$repository
+			->expects($this->never())
+			->method(
+				'findPurchasedProductsBySaleId'
+			);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'countPaymentsForSale'
+			);
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$result =
+			$service->getSales(
+				5,
+				"nothing-here"
+			);
+
+		$this->assertSame(
+				[],
+				$result
+			);
+	}
 }
