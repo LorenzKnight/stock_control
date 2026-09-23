@@ -783,4 +783,91 @@ class SaleRepository
 			)
 		);
 	}
+
+
+	public function findSaleForDelete(
+		int $saleId,
+		int $companyId
+	): ?array {
+		$result = \select_from(
+			"sales",
+			[
+				"sales_id"
+			],
+			[
+				"sales_id" => $saleId,
+				"company_id" => $companyId
+			],
+			[
+				"fetch_first" => true,
+				"for_update" => true,
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"SaleRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			!empty($result["data"])
+		) {
+			return $result["data"];
+		}
+
+		if (
+			($result["message"] ?? "") ===
+				"No records found" ||
+			(
+				!empty($result["success"]) &&
+				empty($result["data"])
+			)
+		) {
+			return null;
+		}
+
+		throw new \RuntimeException(
+			"Could not verify sale."
+		);
+	}
+
+
+	public function deleteSale(
+		int $saleId,
+		int $companyId
+	): void {
+		$result = \delete_from(
+			"sales",
+			[
+				"sales_id" => $saleId,
+				"company_id" => $companyId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Failed to delete sale."
+			);
+		}
+
+		if (
+			(int)(
+				$result["count"]
+				?? 0
+			) !== 1
+		) {
+			throw new \RuntimeException(
+				"Sale was not deleted."
+			);
+		}
+	}
 }

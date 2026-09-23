@@ -2579,4 +2579,536 @@ final class SaleServiceTest extends TestCase
 			$this->validSaleUpdateData()
 		);
 	}
+
+
+	public function testRejectsDeleteWithInvalidUserId(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('findSaleForDelete');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"User session not found."
+		);
+
+		$service->deleteSale(
+			0,
+			5,
+			50
+		);
+	}
+
+
+	public function testRejectsDeleteWithInvalidCompanyId(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('findSaleForDelete');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"User company not found."
+		);
+
+		$service->deleteSale(
+			10,
+			0,
+			50
+		);
+	}
+
+
+	public function testRejectsDeleteWithInvalidSaleId(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('findSaleForDelete');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Sale ID is required."
+		);
+
+		$service->deleteSale(
+			10,
+			5,
+			0
+		);
+	}
+
+
+	public function testRejectsDeleteWhenSaleDoesNotExist(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findSaleForDelete')
+			->with(50, 5)
+			->willReturn(null);
+
+		$repository
+			->expects($this->never())
+			->method('countPaymentsForSale');
+
+		$repository
+			->expects($this->never())
+			->method('deleteSale');
+
+		$inventoryService
+			->expects($this->never())
+			->method('restoreStockFromSale');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"Sale not found."
+		);
+
+		$service->deleteSale(
+			10,
+			5,
+			50
+		);
+	}
+
+
+	public function testRejectsDeleteWhenSaleHasPayments(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findSaleForDelete')
+			->willReturn([
+				"sales_id" => 50
+			]);
+
+		$repository
+			->expects($this->once())
+			->method('countPaymentsForSale')
+			->with(50)
+			->willReturn(1);
+
+		$repository
+			->expects($this->never())
+			->method('hasInterestEarnings');
+
+		$repository
+			->expects($this->never())
+			->method('findPurchasedProductsBySaleId');
+
+		$repository
+			->expects($this->never())
+			->method('deleteSale');
+
+		$inventoryService
+			->expects($this->never())
+			->method('restoreStockFromSale');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"This sale cannot be deleted because it has registered payments."
+		);
+
+		$service->deleteSale(
+			10,
+			5,
+			50
+		);
+	}
+
+
+	public function testRejectsDeleteWhenSaleHasInterestEarnings(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findSaleForDelete')
+			->willReturn([
+				"sales_id" => 50
+			]);
+
+		$repository
+			->method('countPaymentsForSale')
+			->willReturn(0);
+
+		$repository
+			->expects($this->once())
+			->method('hasInterestEarnings')
+			->with(50)
+			->willReturn(true);
+
+		$repository
+			->expects($this->never())
+			->method('findPurchasedProductsBySaleId');
+
+		$repository
+			->expects($this->never())
+			->method('deleteSale');
+
+		$inventoryService
+			->expects($this->never())
+			->method('restoreStockFromSale');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"This sale cannot be deleted because it has financial records."
+		);
+
+		$service->deleteSale(
+			10,
+			5,
+			50
+		);
+	}
+
+
+	public function testDeletesSaleAndRestoresStock(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findSaleForDelete')
+			->with(50, 5)
+			->willReturn([
+				"sales_id" => 50
+			]);
+
+		$repository
+			->expects($this->once())
+			->method('countPaymentsForSale')
+			->with(50)
+			->willReturn(0);
+
+		$repository
+			->expects($this->once())
+			->method('hasInterestEarnings')
+			->with(50)
+			->willReturn(false);
+
+		$products = [
+				[
+					"product_id" => 8,
+					"quantity" => 2,
+					"price" => 50,
+					"discount" => 0,
+					"total" => 100
+				],
+				[
+					"product_id" => 9,
+					"quantity" => 3,
+					"price" => 20,
+					"discount" => 0,
+					"total" => 60
+				]
+			];
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findPurchasedProductsBySaleId'
+			)
+			->with(50)
+			->willReturn($products);
+
+		$inventoryService
+			->expects($this->once())
+			->method('restoreStockFromSale')
+			->with($products);
+
+		$repository
+			->expects($this->once())
+			->method('deletePurchasedProducts')
+			->with(50);
+
+		$repository
+			->expects($this->once())
+			->method('deleteSale')
+			->with(50, 5);
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$result =
+			$service->deleteSale(
+				10,
+				5,
+				50
+			);
+
+		$this->assertSame(
+			50,
+			$result["sale_id"]
+		);
+	}
+
+
+	public function testDeletesSaleWithoutProducts(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findSaleForDelete')
+			->willReturn([
+				"sales_id" => 50
+			]);
+
+		$repository
+			->method('countPaymentsForSale')
+			->willReturn(0);
+
+		$repository
+			->method('hasInterestEarnings')
+			->willReturn(false);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findPurchasedProductsBySaleId'
+			)
+			->with(50)
+			->willReturn([]);
+
+		$inventoryService
+			->expects($this->never())
+			->method('restoreStockFromSale');
+
+		$repository
+			->expects($this->never())
+			->method('deletePurchasedProducts');
+
+		$repository
+			->expects($this->once())
+			->method('deleteSale')
+			->with(50, 5);
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$result =
+			$service->deleteSale(
+				10,
+				5,
+				50
+			);
+
+		$this->assertSame(
+			50,
+			$result["sale_id"]
+		);
+	}
+
+
+	public function testDeleteStopsWhenStockCannotBeRestored(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findSaleForDelete')
+			->willReturn([
+				"sales_id" => 50
+			]);
+
+		$repository
+			->method('countPaymentsForSale')
+			->willReturn(0);
+
+		$repository
+			->method('hasInterestEarnings')
+			->willReturn(false);
+
+		$products = [
+				[
+					"product_id" => 8,
+					"quantity" => 2
+				]
+			];
+
+		$repository
+			->method(
+				'findPurchasedProductsBySaleId'
+			)
+			->willReturn($products);
+
+		$inventoryService
+			->expects($this->once())
+			->method('restoreStockFromSale')
+			->with($products)
+			->willThrowException(
+				new RuntimeException(
+					"Could not restore stock."
+				)
+			);
+
+		/*
+		* Si falla la restauración del inventario,
+		* no debemos borrar ninguna información.
+		*/
+		$repository
+			->expects($this->never())
+			->method('deletePurchasedProducts');
+
+		$repository
+			->expects($this->never())
+			->method('deleteSale');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			RuntimeException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Could not restore stock."
+		);
+
+		$service->deleteSale(
+			10,
+			5,
+			50
+		);
+	}
 }

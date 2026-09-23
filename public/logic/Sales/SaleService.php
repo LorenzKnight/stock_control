@@ -1344,4 +1344,121 @@ class SaleService
 
 		return $salesData;
 	}
+
+
+	public function deleteSale(
+		int $userId,
+		int $companyId,
+		int $saleId
+	): array {
+		if ($userId <= 0) {
+			throw new \InvalidArgumentException(
+				"User session not found."
+			);
+		}
+
+		if ($companyId <= 0) {
+			throw new \InvalidArgumentException(
+				"User company not found."
+			);
+		}
+
+		if ($saleId <= 0) {
+			throw new \InvalidArgumentException(
+				"Sale ID is required."
+			);
+		}
+
+		/*
+		* El endpoint debe haber iniciado una
+		* transacción antes de llamar este método.
+		*
+		* FOR UPDATE evita que la venta cambie
+		* mientras la estamos eliminando.
+		*/
+		$sale =
+			$this->repository
+				->findSaleForDelete(
+					$saleId,
+					$companyId
+				);
+
+		if ($sale === null) {
+			throw new \Exception(
+				"Sale not found."
+			);
+		}
+
+		/*
+		* Una venta con pagos registrados
+		* no puede eliminarse.
+		*/
+		$paymentCount =
+			$this->repository
+				->countPaymentsForSale(
+					$saleId
+				);
+
+		if ($paymentCount > 0) {
+			throw new \Exception(
+				"This sale cannot be deleted because it has registered payments."
+			);
+		}
+
+		/*
+		* Tampoco eliminamos ventas que tengan
+		* historial financiero de intereses.
+		*/
+		if (
+			$this->repository
+				->hasInterestEarnings(
+					$saleId
+				)
+		) {
+			throw new \Exception(
+				"This sale cannot be deleted because it has financial records."
+			);
+		}
+
+		/*
+		* Recuperamos los productos vendidos para
+		* devolver sus cantidades al inventario.
+		*/
+		$products =
+			$this->repository
+				->findPurchasedProductsBySaleId(
+					$saleId
+				);
+
+		if (!empty($products)) {
+			$this->inventoryService
+				->restoreStockFromSale(
+					$products
+				);
+
+			/*
+			* Una vez restaurado el inventario,
+			* eliminamos las relaciones de productos.
+			*/
+			$this->repository
+				->deletePurchasedProducts(
+					$saleId
+				);
+		}
+
+		/*
+		* Finalmente eliminamos la venta.
+		* También está limitada por company_id.
+		*/
+		$this->repository
+			->deleteSale(
+				$saleId,
+				$companyId
+			);
+
+		return [
+			"sale_id" =>
+				$saleId
+		];
+	}
 }
