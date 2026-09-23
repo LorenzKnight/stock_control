@@ -40,6 +40,37 @@ final class SaleServiceTest extends TestCase
 	}
 
 
+	private function validSaleUpdateData(
+		array $overrides = []
+	): array {
+		return array_replace(
+			[
+				"customer_id" => 7,
+				"price_sum" => 100,
+				"initial" => 20,
+				"delivery_date" =>
+					"2026-09-23",
+				"remaining" => 80,
+				"interest" => 10,
+				"installments_month" => 4,
+				"payment_date" =>
+					"2026-10-23",
+				"due" => 88,
+				"products" => [
+					[
+						"product_id" => 8,
+						"quantity" => 2,
+						"price" => 50,
+						"discount" => 0,
+						"total" => 100
+					]
+				]
+			],
+			$overrides
+		);
+	}
+
+
 	public function testRejectsCreateWithInvalidUserId(): void
 	{
 		$repository =
@@ -1631,5 +1662,921 @@ final class SaleServiceTest extends TestCase
 				[],
 				$result
 			);
+	}
+
+
+	public function testRejectsUpdateWithInvalidUserId(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('findCustomerById');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"User session not found."
+		);
+
+		$service->updateSale(
+			0,
+			5,
+			50,
+			$this->validSaleUpdateData()
+		);
+	}
+
+
+	public function testRejectsUpdateWithInvalidCompanyId(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('findCustomerById');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"User company not found."
+		);
+
+		$service->updateSale(
+			10,
+			0,
+			50,
+			$this->validSaleUpdateData()
+		);
+	}
+
+
+	public function testRejectsUpdateWithInvalidSaleId(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('findCustomerById');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Incomplete data to update the sale."
+		);
+
+		$service->updateSale(
+			10,
+			5,
+			0,
+			$this->validSaleUpdateData()
+		);
+	}
+
+
+	public function testRejectsUpdateWithoutProducts(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method('findCustomerById');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"No products received."
+		);
+
+		$service->updateSale(
+			10,
+			5,
+			50,
+			$this->validSaleUpdateData([
+				"products" => []
+			])
+		);
+	}
+
+
+	public function testRejectsUpdateWhenCustomerDoesNotBelongToCompany(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findCustomerById')
+			->with(7, 5)
+			->willReturn(null);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'productBelongsToCompany'
+			);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'findSaleForUpdate'
+			);
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"The selected customer does not exist or does not belong to this company."
+		);
+
+		$service->updateSale(
+			10,
+			5,
+			50,
+			$this->validSaleUpdateData()
+		);
+	}
+
+
+	public function testRejectsUpdateWhenProductDoesNotBelongToCompany(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findCustomerById')
+			->willReturn([
+				"customer_id" => 7
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'productBelongsToCompany'
+			)
+			->with(8, 5)
+			->willReturn(false);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'findSaleForUpdate'
+			);
+
+		$inventoryService
+			->expects($this->never())
+			->method(
+				'restoreStockFromSale'
+			);
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"Product ID 8 does not belong to this company."
+		);
+
+		$service->updateSale(
+			10,
+			5,
+			50,
+			$this->validSaleUpdateData()
+		);
+	}
+
+
+	public function testRejectsUpdateWhenSaleDoesNotExist(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findCustomerById')
+			->willReturn([
+				"customer_id" => 7
+			]);
+
+		$repository
+			->method(
+				'productBelongsToCompany'
+			)
+			->willReturn(true);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findSaleForUpdate'
+			)
+			->with(50, 5)
+			->willReturn(null);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'countPaymentsForSale'
+			);
+
+		$inventoryService
+			->expects($this->never())
+			->method(
+				'restoreStockFromSale'
+			);
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"Sale not found."
+		);
+
+		$service->updateSale(
+			10,
+			5,
+			50,
+			$this->validSaleUpdateData()
+		);
+	}
+
+
+	public function testRejectsUpdateWhenSaleHasPayments(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findCustomerById')
+			->willReturn([
+				"customer_id" => 7
+			]);
+
+		$repository
+			->method(
+				'productBelongsToCompany'
+			)
+			->willReturn(true);
+
+		$repository
+			->method(
+				'findSaleForUpdate'
+			)
+			->willReturn([
+				"sales_id" => 50
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'countPaymentsForSale'
+			)
+			->with(50)
+			->willReturn(1);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'hasInterestEarnings'
+			);
+
+		$inventoryService
+			->expects($this->never())
+			->method(
+				'restoreStockFromSale'
+			);
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"This sale cannot be edited because it has registered payments."
+		);
+
+		$service->updateSale(
+			10,
+			5,
+			50,
+			$this->validSaleUpdateData()
+		);
+	}
+
+
+	public function testRejectsUpdateWhenSaleHasInterestEarnings(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findCustomerById')
+			->willReturn([
+				"customer_id" => 7
+			]);
+
+		$repository
+			->method(
+				'productBelongsToCompany'
+			)
+			->willReturn(true);
+
+		$repository
+			->method(
+				'findSaleForUpdate'
+			)
+			->willReturn([
+				"sales_id" => 50
+			]);
+
+		$repository
+			->method(
+				'countPaymentsForSale'
+			)
+			->willReturn(0);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'hasInterestEarnings'
+			)
+			->with(50)
+			->willReturn(true);
+
+		$inventoryService
+			->expects($this->never())
+			->method(
+				'restoreStockFromSale'
+			);
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"This sale cannot be edited because it has financial records."
+		);
+
+		$service->updateSale(
+			10,
+			5,
+			50,
+			$this->validSaleUpdateData()
+		);
+	}
+
+
+	public function testUpdatesSaleAndReplacesProducts(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findCustomerById')
+			->with(7, 5)
+			->willReturn([
+				"customer_id" => 7
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'productBelongsToCompany'
+			)
+			->with(8, 5)
+			->willReturn(true);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findSaleForUpdate'
+			)
+			->with(50, 5)
+			->willReturn([
+				"sales_id" => 50
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'countPaymentsForSale'
+			)
+			->with(50)
+			->willReturn(0);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'hasInterestEarnings'
+			)
+			->with(50)
+			->willReturn(false);
+
+		$oldProducts = [
+			[
+				"product_id" => 9,
+				"quantity" => 3,
+				"price" => 20,
+				"discount" => 0,
+				"total" => 60
+			]
+		];
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findPurchasedProductsBySaleId'
+			)
+			->with(50)
+			->willReturn(
+				$oldProducts
+			);
+
+		$inventoryService
+			->expects($this->once())
+			->method(
+				'restoreStockFromSale'
+			)
+			->with(
+				$oldProducts
+			);
+
+		$inventoryService
+			->expects($this->once())
+			->method(
+				'consumeStockForSale'
+			)
+			->with(8, 2);
+
+		$repository
+			->expects($this->once())
+			->method('updateSale')
+			->with(
+				50,
+				5,
+				$this->callback(
+					function (
+						array $data
+					): bool {
+						return
+							$data[
+								"customer_id"
+							] === 7 &&
+							$data[
+								"price_sum"
+							] === "100.00" &&
+							$data[
+								"initial"
+							] === "20.00" &&
+							$data[
+								"delivery_date"
+							] ===
+								"2026-09-23 00:00:00" &&
+							$data[
+								"remaining"
+							] === "80.00" &&
+							$data[
+								"interest"
+							] === 10 &&
+							$data[
+								"installments_month"
+							] === 4 &&
+							$data[
+								"no_installments"
+							] === 4 &&
+							$data[
+								"payment_date"
+							] ===
+								"2026-10-23 00:00:00" &&
+							$data[
+								"due"
+							] === "88.00";
+					}
+				)
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'deletePurchasedProducts'
+			)
+			->with(50);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'createPurchasedProduct'
+			)
+			->with(
+				$this->callback(
+					function (
+						array $data
+					): bool {
+						return
+							$data[
+								"sales_id"
+							] === 50 &&
+							$data[
+								"customer_id"
+							] === 7 &&
+							$data[
+								"product_id"
+							] === 8 &&
+							$data[
+								"quantity"
+							] === 2 &&
+							$data[
+								"price"
+							] === "50.00" &&
+							$data[
+								"discount"
+							] === "0.00" &&
+							$data[
+								"total"
+							] === "100.00" &&
+							$data[
+								"create_by"
+							] === 10;
+					}
+				)
+			);
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$result =
+			$service->updateSale(
+				10,
+				5,
+				50,
+				$this->validSaleUpdateData()
+			);
+
+		$this->assertSame(
+				50,
+				$result["sale_id"]
+			);
+	}
+
+
+	public function testUpdateDoesNotRestoreStockWhenSaleHasNoProducts(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findCustomerById')
+			->willReturn([
+				"customer_id" => 7
+			]);
+
+		$repository
+			->method(
+				'productBelongsToCompany'
+			)
+			->willReturn(true);
+
+		$repository
+			->method(
+				'findSaleForUpdate'
+			)
+			->willReturn([
+				"sales_id" => 50
+			]);
+
+		$repository
+			->method(
+				'countPaymentsForSale'
+			)
+			->willReturn(0);
+
+		$repository
+			->method(
+				'hasInterestEarnings'
+			)
+			->willReturn(false);
+
+		$repository
+			->method(
+				'findPurchasedProductsBySaleId'
+			)
+			->willReturn([]);
+
+		$inventoryService
+			->expects($this->never())
+			->method(
+				'restoreStockFromSale'
+			);
+
+		$inventoryService
+			->expects($this->once())
+			->method(
+				'consumeStockForSale'
+			)
+			->with(8, 2);
+
+		$repository
+			->expects($this->once())
+			->method('updateSale');
+
+		$repository
+			->expects($this->once())
+			->method(
+				'deletePurchasedProducts'
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'createPurchasedProduct'
+			);
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$result =
+			$service->updateSale(
+				10,
+				5,
+				50,
+				$this->validSaleUpdateData()
+			);
+
+		$this->assertSame(
+				50,
+				$result["sale_id"]
+			);
+	}
+
+
+	public function testUpdateStopsWhenNewStockCannotBeConsumed(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findCustomerById')
+			->willReturn([
+				"customer_id" => 7
+			]);
+
+		$repository
+			->method(
+				'productBelongsToCompany'
+			)
+			->willReturn(true);
+
+		$repository
+			->method(
+				'findSaleForUpdate'
+			)
+			->willReturn([
+				"sales_id" => 50
+			]);
+
+		$repository
+			->method(
+				'countPaymentsForSale'
+			)
+			->willReturn(0);
+
+		$repository
+			->method(
+				'hasInterestEarnings'
+			)
+			->willReturn(false);
+
+		$oldProducts = [
+				[
+					"product_id" => 9,
+					"quantity" => 1
+				]
+		];
+
+		$repository
+			->method(
+				'findPurchasedProductsBySaleId'
+			)
+			->willReturn(
+				$oldProducts
+			);
+
+		$inventoryService
+			->expects($this->once())
+			->method(
+				'restoreStockFromSale'
+			)
+			->with(
+				$oldProducts
+			);
+
+		$inventoryService
+			->expects($this->once())
+			->method(
+				'consumeStockForSale'
+			)
+			->with(8, 2)
+			->willThrowException(
+				new Exception(
+					"Insufficient stock for product ID: 8."
+				)
+			);
+
+		/*
+		* Si falla inventario, todavía no debemos
+		* haber modificado la venta ni sus relaciones.
+		*/
+		$repository
+			->expects($this->never())
+			->method('updateSale');
+
+		$repository
+			->expects($this->never())
+			->method(
+				'deletePurchasedProducts'
+			);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'createPurchasedProduct'
+			);
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"Insufficient stock for product ID: 8."
+		);
+
+		$service->updateSale(
+			10,
+			5,
+			50,
+			$this->validSaleUpdateData()
+		);
 	}
 }

@@ -600,4 +600,187 @@ class SaleRepository
 			"Could not count sale payments."
 		);
 	}
+
+
+	public function findSaleForUpdate(
+		int $saleId,
+		int $companyId
+	): ?array {
+		$result = \select_from(
+			"sales",
+			[
+				"sales_id"
+			],
+			[
+				"sales_id" => $saleId,
+				"company_id" => $companyId
+			],
+			[
+				"fetch_first" => true,
+				"for_update" => true,
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"SaleRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			!empty($result["data"])
+		) {
+			return $result["data"];
+		}
+
+		if (
+			($result["message"] ?? "") ===
+				"No records found" ||
+			(
+				!empty($result["success"]) &&
+				empty($result["data"])
+			)
+		) {
+			return null;
+		}
+
+		throw new \RuntimeException(
+			"Could not verify sale."
+		);
+	}
+
+
+	public function hasInterestEarnings(
+		int $saleId
+	): bool {
+		$result = \select_from(
+			"interest_earnings",
+			[
+				"earnings_id"
+			],
+			[
+				"sales_id" => $saleId
+			],
+			[
+				"fetch_first" => true,
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"SaleRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			!empty($result["data"])
+		) {
+			return true;
+		}
+
+		if (
+			($result["message"] ?? "") ===
+				"No records found" ||
+			(
+				!empty($result["success"]) &&
+				empty($result["data"])
+			)
+		) {
+			return false;
+		}
+
+		throw new \RuntimeException(
+			"Unable to verify sale financial records."
+		);
+	}
+
+
+	public function updateSale(
+		int $saleId,
+		int $companyId,
+		array $data
+	): void {
+		$result = \update_table(
+			"sales",
+			$data,
+			[
+				"sales_id" => $saleId,
+				"company_id" => $companyId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Failed to update sale. " .
+				(
+					is_array($result)
+						? (
+							$result["message"]
+							?? "Unknown error."
+						)
+						: "Invalid database response."
+				)
+			);
+		}
+	}
+
+
+	public function deletePurchasedProducts(
+		int $saleId
+	): void {
+		$result = \delete_from(
+			"purchased_products",
+			[
+				"sales_id" => $saleId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"SaleRepository expected an array response."
+			);
+		}
+
+		if (!empty($result["success"])) {
+			return;
+		}
+
+		/*
+		* Preservamos el comportamiento actual:
+		* una venta sin purchased_products anteriores
+		* no debe hacer fallar el UPDATE.
+		*/
+		if (
+			stripos(
+				(string)(
+					$result["message"]
+					?? ''
+				),
+				'No records deleted'
+			) !== false
+		) {
+			return;
+		}
+
+		throw new \RuntimeException(
+			"Failed to delete old products. " .
+			(
+				$result["message"]
+				?? "Unknown error."
+			)
+		);
+	}
 }

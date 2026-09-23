@@ -433,6 +433,432 @@ class SaleService
 	}
 
 
+	public function updateSale(
+		int $userId,
+		int $companyId,
+		int $saleId,
+		array $data
+	): array {
+		if ($userId <= 0) {
+			throw new \InvalidArgumentException(
+				"User session not found."
+			);
+		}
+
+		if ($companyId <= 0) {
+			throw new \InvalidArgumentException(
+				"User company not found."
+			);
+		}
+
+		if ($saleId <= 0) {
+			throw new \InvalidArgumentException(
+				"Incomplete data to update the sale."
+			);
+		}
+
+		$required = [
+			"customer_id",
+			"price_sum",
+			"initial",
+			"delivery_date",
+			"remaining",
+			"interest",
+			"installments_month",
+			"payment_date",
+			"due",
+			"products"
+		];
+
+		foreach ($required as $field) {
+			if (!array_key_exists($field, $data)) {
+				throw new \InvalidArgumentException(
+					"Missing required field: {$field}"
+				);
+			}
+		}
+
+		$customerId =
+			(int)$data["customer_id"];
+
+		if ($customerId <= 0) {
+			throw new \InvalidArgumentException(
+				"Incomplete data to update the sale."
+			);
+		}
+
+		$products =
+			$data["products"];
+
+		if (
+			!is_array($products) ||
+			empty($products)
+		) {
+			throw new \InvalidArgumentException(
+				"No products received."
+			);
+		}
+
+		$customer =
+			$this->repository
+				->findCustomerById(
+					$customerId,
+					$companyId
+				);
+
+		if ($customer === null) {
+			throw new \Exception(
+				"The selected customer does not exist or does not belong to this company."
+			);
+		}
+
+		$deliveryTimestamp =
+			strtotime(
+				(string)$data[
+					"delivery_date"
+				]
+			);
+
+		if ($deliveryTimestamp === false) {
+			throw new \InvalidArgumentException(
+				"Invalid delivery_date."
+			);
+		}
+
+		$paymentTimestamp =
+			strtotime(
+				(string)$data[
+					"payment_date"
+				]
+			);
+
+		if ($paymentTimestamp === false) {
+			throw new \InvalidArgumentException(
+				"Invalid payment_date."
+			);
+		}
+
+		/*
+		* Validamos TODOS los productos antes
+		* de modificar inventario.
+		*/
+		$normalizedProducts = [];
+
+		foreach ($products as $product) {
+			if (
+				!isset(
+					$product["product_id"],
+					$product["quantity"],
+					$product["price"],
+					$product["discount"],
+					$product["total"]
+				)
+			) {
+				throw new \InvalidArgumentException(
+					"Invalid product data."
+				);
+			}
+
+			$productId =
+				(int)$product[
+					"product_id"
+				];
+
+			$quantity =
+				(int)$product[
+					"quantity"
+				];
+
+			if ($productId <= 0) {
+				throw new \InvalidArgumentException(
+					"Invalid product ID."
+				);
+			}
+
+			if ($quantity <= 0) {
+				throw new \InvalidArgumentException(
+					"Product quantity must be greater than zero."
+				);
+			}
+
+			if (
+				!$this->repository
+					->productBelongsToCompany(
+						$productId,
+						$companyId
+					)
+			) {
+				throw new \Exception(
+					"Product ID {$productId} does not belong to this company."
+				);
+			}
+
+			$normalizedProducts[] = [
+				"product_id" =>
+					$productId,
+
+				"quantity" =>
+					$quantity,
+
+				"price" =>
+					(float)$product[
+						"price"
+					],
+
+				"discount" =>
+					(float)$product[
+						"discount"
+					],
+
+				"total" =>
+					(float)$product[
+						"total"
+					]
+			];
+		}
+
+		/*
+		* Este método debe ejecutarse dentro de
+		* la transacción iniciada por update_sale.php.
+		*
+		* FOR UPDATE protege la venta mientras
+		* modificamos venta + inventario + productos.
+		*/
+		$sale =
+			$this->repository
+				->findSaleForUpdate(
+					$saleId,
+					$companyId
+				);
+
+		if ($sale === null) {
+			throw new \Exception(
+				"Sale not found."
+			);
+		}
+
+		/*
+		* Una venta con historial financiero
+		* ya no puede ser reescrita.
+		*/
+		$paymentCount =
+			$this->repository
+				->countPaymentsForSale(
+					$saleId
+				);
+
+		if ($paymentCount > 0) {
+			throw new \Exception(
+				"This sale cannot be edited because it has registered payments."
+			);
+		}
+
+		if (
+			$this->repository
+				->hasInterestEarnings(
+					$saleId
+				)
+		) {
+			throw new \Exception(
+				"This sale cannot be edited because it has financial records."
+			);
+		}
+
+		/*
+		* Guardamos el movimiento anterior para
+		* poder restaurar primero el inventario.
+		*/
+		$oldProducts =
+			$this->repository
+				->findPurchasedProductsBySaleId(
+					$saleId
+				);
+
+		if (!empty($oldProducts)) {
+			$this->inventoryService
+				->restoreStockFromSale(
+					$oldProducts
+				);
+		}
+
+		/*
+		* Aplicamos la nueva composición
+		* de productos de la venta.
+		*/
+		foreach (
+			$normalizedProducts
+			as $product
+		) {
+			$this->inventoryService
+				->consumeStockForSale(
+					$product[
+						"product_id"
+					],
+					$product[
+						"quantity"
+					]
+				);
+		}
+
+		$installmentsMonth =
+			(int)$data[
+				"installments_month"
+			];
+
+		/*
+		* Preservamos el comportamiento actual
+		* del frontend y del endpoint anterior:
+		* no_installments = installments_month.
+		*/
+		$noInstallments =
+			$installmentsMonth;
+
+		$this->repository
+			->updateSale(
+				$saleId,
+				$companyId,
+				[
+					"customer_id" =>
+						$customerId,
+
+					"price_sum" =>
+						number_format(
+							(float)$data[
+								"price_sum"
+							],
+							2,
+							'.',
+							''
+						),
+
+					"initial" =>
+						number_format(
+							(float)$data[
+								"initial"
+							],
+							2,
+							'.',
+							''
+						),
+
+					"delivery_date" =>
+						date(
+							'Y-m-d H:i:s',
+							$deliveryTimestamp
+						),
+
+					"remaining" =>
+						number_format(
+							(float)$data[
+								"remaining"
+							],
+							2,
+							'.',
+							''
+						),
+
+					"interest" =>
+						(int)$data[
+							"interest"
+						],
+
+					"installments_month" =>
+						$installmentsMonth,
+
+					"no_installments" =>
+						$noInstallments,
+
+					"payment_date" =>
+						date(
+							'Y-m-d H:i:s',
+							$paymentTimestamp
+						),
+
+					"due" =>
+						number_format(
+							(float)$data[
+								"due"
+							],
+							2,
+							'.',
+							''
+						)
+				]
+			);
+
+		/*
+		* Reemplazamos los purchased_products
+		* anteriores por la nueva selección.
+		*/
+		$this->repository
+			->deletePurchasedProducts(
+				$saleId
+			);
+
+		foreach (
+			$normalizedProducts
+			as $product
+		) {
+			$this->repository
+				->createPurchasedProduct([
+					"sales_id" =>
+						$saleId,
+
+					"customer_id" =>
+						$customerId,
+
+					"product_id" =>
+						$product[
+							"product_id"
+						],
+
+					"quantity" =>
+						$product[
+							"quantity"
+						],
+
+					"price" =>
+						number_format(
+							$product[
+								"price"
+							],
+							2,
+							'.',
+							''
+						),
+
+					"discount" =>
+						number_format(
+							$product[
+								"discount"
+							],
+							2,
+							'.',
+							''
+						),
+
+					"total" =>
+						number_format(
+							$product[
+								"total"
+							],
+							2,
+							'.',
+							''
+						),
+
+					"create_by" =>
+						$userId
+				]);
+		}
+
+		return [
+			"sale_id" =>
+				$saleId
+		];
+	}
+
+
 	public function processSaleOnboarding(
 		int $userId
 	): bool {
