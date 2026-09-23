@@ -4215,15 +4215,31 @@ document.addEventListener("DOMContentLoaded", async function () {
 				systemContent.innerHTML = html;
 
 				if (section === "user-overview") {
-					loadAllUsers('searchUserOverviewField', 'userOverviewTable', 'user-overview');
+					loadAllUsers(
+						'searchUserOverviewField',
+						'userOverviewTable',
+						'user-overview'
+					);
 				}
 
 				if (section === "service-rights") {
-					loadAllUsers('searchServiceRightsField', 'serviceRightsTable', 'service-rights');
+					loadAllUsers(
+						'searchServiceRightsField',
+						'serviceRightsTable',
+						'service-rights'
+					);
 				}
 
 				if (section === "extra-service") {
-					loadAllUsers('searchUserField', 'userTable', 'extra-service');
+					loadAllUsers(
+						'searchUserField',
+						'userTable',
+						'extra-service'
+					);
+				}
+
+				if (section === "ai-sales") {
+					await window.loadAiSales?.();
 				}
 			} catch (err) {
 				systemContent.innerHTML = `<p style="color:red;">Error loading section: ${err.message}</p>`;
@@ -4239,15 +4255,31 @@ document.addEventListener("DOMContentLoaded", async function () {
 					systemContent.innerHTML = html
 				
 					if (savedSection === "user-overview") {
-						loadAllUsers('searchUserOverviewField', 'userOverviewTable', 'user-overview');
+						loadAllUsers(
+							'searchUserOverviewField',
+							'userOverviewTable',
+							'user-overview'
+						);
 					}
 
 					if (savedSection === "service-rights") {
-						loadAllUsers('searchServiceRightsField', 'serviceRightsTable', 'service-rights');
+						loadAllUsers(
+							'searchServiceRightsField',
+							'serviceRightsTable',
+							'service-rights'
+						);
 					}
 
 					if (savedSection === "extra-service") {
-						loadAllUsers('searchUserField', 'userTable', 'extra-service');
+						loadAllUsers(
+							'searchUserField',
+							'userTable',
+							'extra-service'
+						);
+					}
+
+					if (savedSection === "ai-sales") {
+						window.loadAiSales?.();
 					}
 				})
 				.catch(err => {
@@ -5461,7 +5493,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		'extra-services-menu-buttons',
 		'extra-services-options'
 	);
-	//############################################################# END SYS-ADMIN ##################################################################
+//############################################################# END SYS-ADMIN ##################################################################
 
 	//############################################################# SETTINGS ##################################################################
 	const settingsMenuItems = document.querySelectorAll(".settings-menu li");

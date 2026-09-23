@@ -5,6 +5,7 @@
 // Asset versions
 $stylesVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/css/styles.css');
 $functionsVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/functions.js');
+$aiSalesVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/sys-admin/aiSales.js');
 $actionsVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/actions.js');
 $realtimeVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/realtimeClient.js');
 $checkPermissionVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/checkPermission.js');
@@ -22,6 +23,7 @@ $checkPermissionVersion = filemtime($_SERVER['DOCUMENT_ROOT'] . '/js/checkPermis
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="css/styles.css?v=<?= $stylesVersion ?>">
 	<script defer src="js/functions.js?v=<?= $functionsVersion ?>"></script>
+	<script defer src="js/sys-admin/aiSales.js?v=<?= $aiSalesVersion ?>"></script>
 	<script defer src="js/actions.js?v=<?= $actionsVersion ?>"></script>
 	<script defer src="js/realtimeClient.js?v=<?= $realtimeVersion ?>"></script>
 	<script defer src="js/checkPermission.js?v=<?= $checkPermissionVersion ?>"></script>

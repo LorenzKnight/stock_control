@@ -12,6 +12,14 @@
     margin-top: 10px;
 }
 
+.system-menu-separator {
+	margin: 0 !important;
+	padding: 0 !important;
+	height: 1px;
+	border-radius: 0 !important;
+	border-top: 1px solid var(--gray-200);
+}
+
 .system-menu ul {
     list-style: none;
     margin: 0 10px;
@@ -58,7 +66,8 @@
 .co-workers-sidebar,
 .overview-sidebar,
 .rights-sidebar,
-.service-sidebar
+.service-sidebar,
+.ai-sales-sidebar
 {
     width: 30%;
     height: 82.5vh;
@@ -69,7 +78,8 @@
 .co-workers-list,
 .overview-list,
 .rights-list,
-.service-list
+.service-list,
+.ai-sales-company-list
 {
 	width: 99%;
 	height: 76.5vh;
@@ -116,7 +126,8 @@
 
 .overview-details,
 .rights-details,
-.service-details
+.service-details,
+.ai-sales-details
 {
     width: 70%;
     height: 82.5vh;
@@ -334,4 +345,31 @@
 	height: 35px;
 	border-radius: 50%;
 	object-fit: cover;
+}
+
+/* #### ai-sales #### */
+/* .ai-sales-sidebar {
+	width: 30%;
+	height: 82.5vh;
+	border-right: 1px solid var(--gray-200);
+} */
+
+/* .ai-sales-company-list {
+	width: 99%;
+	height: 76.5vh;
+	overflow-y: auto;
+} */
+
+/* .ai-sales-details {
+	width: 70%;
+	height: 82.5vh;
+	overflow: auto;
+} */
+
+.ai-sales-company-row {
+	cursor: pointer;
+}
+
+.ai-sales-company-row.selected-company {
+	background-color: var(--gray-300);
 }

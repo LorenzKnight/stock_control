@@ -744,44 +744,44 @@ CREATE TABLE IF NOT EXISTS sales_activities (
 
 -- AI SALES MODULE INDEXES
 
-CREATE INDEX IF NOT EXISTS idx_sales_companies_market
-ON sales_companies(market);
+-- CREATE INDEX IF NOT EXISTS idx_sales_companies_market
+-- ON sales_companies(market);
 
-CREATE INDEX IF NOT EXISTS idx_sales_companies_country
-ON sales_companies(country);
+-- CREATE INDEX IF NOT EXISTS idx_sales_companies_country
+-- ON sales_companies(country);
 
-CREATE INDEX IF NOT EXISTS idx_sales_companies_domain
-ON sales_companies(domain);
+-- CREATE INDEX IF NOT EXISTS idx_sales_companies_domain
+-- ON sales_companies(domain);
 
-CREATE INDEX IF NOT EXISTS idx_sales_contacts_company
-ON sales_contacts(sales_company_id);
+-- CREATE INDEX IF NOT EXISTS idx_sales_contacts_company
+-- ON sales_contacts(sales_company_id);
 
-CREATE INDEX IF NOT EXISTS idx_sales_contacts_email
-ON sales_contacts(email);
+-- CREATE INDEX IF NOT EXISTS idx_sales_contacts_email
+-- ON sales_contacts(email);
 
-CREATE INDEX IF NOT EXISTS idx_sales_leads_company
-ON sales_leads(sales_company_id);
+-- CREATE INDEX IF NOT EXISTS idx_sales_leads_company
+-- ON sales_leads(sales_company_id);
 
-CREATE INDEX IF NOT EXISTS idx_sales_leads_market
-ON sales_leads(market);
+-- CREATE INDEX IF NOT EXISTS idx_sales_leads_market
+-- ON sales_leads(market);
 
-CREATE INDEX IF NOT EXISTS idx_sales_leads_stage
-ON sales_leads(stage);
+-- CREATE INDEX IF NOT EXISTS idx_sales_leads_stage
+-- ON sales_leads(stage);
 
-CREATE INDEX IF NOT EXISTS idx_sales_leads_score
-ON sales_leads(score);
+-- CREATE INDEX IF NOT EXISTS idx_sales_leads_score
+-- ON sales_leads(score);
 
-CREATE INDEX IF NOT EXISTS idx_sales_leads_next_action
-ON sales_leads(next_action_at);
+-- CREATE INDEX IF NOT EXISTS idx_sales_leads_next_action
+-- ON sales_leads(next_action_at);
 
-CREATE INDEX IF NOT EXISTS idx_sales_conversations_lead
-ON sales_conversations(sales_lead_id);
+-- CREATE INDEX IF NOT EXISTS idx_sales_conversations_lead
+-- ON sales_conversations(sales_lead_id);
 
-CREATE INDEX IF NOT EXISTS idx_sales_messages_conversation
-ON sales_messages(conversation_id);
+-- CREATE INDEX IF NOT EXISTS idx_sales_messages_conversation
+-- ON sales_messages(conversation_id);
 
-CREATE INDEX IF NOT EXISTS idx_sales_messages_status
-ON sales_messages(status);
+-- CREATE INDEX IF NOT EXISTS idx_sales_messages_status
+-- ON sales_messages(status);
 
-CREATE INDEX IF NOT EXISTS idx_sales_activities_lead
-ON sales_activities(sales_lead_id);
+-- CREATE INDEX IF NOT EXISTS idx_sales_activities_lead
+-- ON sales_activities(sales_lead_id);
