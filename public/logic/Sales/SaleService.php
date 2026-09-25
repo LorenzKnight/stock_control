@@ -55,12 +55,10 @@ class SaleService
 			"price_sum",
 			"initial",
 			"delivery_date",
-			"remaining",
+			"interest_type",
 			"interest",
 			"installments_month",
-			"no_installments",
-			"payment_date",
-			"due"
+			"payment_date"
 		];
 
 		foreach ($required as $field) {
@@ -135,20 +133,64 @@ class SaleService
 		$initial =
 			(float)$data["initial"];
 
+		if ($priceSum <= 0) {
+			throw new \InvalidArgumentException(
+				"Sale price must be greater than zero."
+			);
+		}
+
+		if ($initial < 0) {
+			throw new \InvalidArgumentException(
+				"Initial payment cannot be negative."
+			);
+		}
+
+		if ($initial > $priceSum) {
+			throw new \InvalidArgumentException(
+				"Initial payment cannot exceed the sale total."
+			);
+		}
+
 		$remaining =
-			(float)$data["remaining"];
+			$priceSum - $initial;
+
+		$interestType =
+			(int)$data["interest_type"];
+
+		if (
+			$interestType !== 1 &&
+			$interestType !== 2
+		) {
+			throw new \InvalidArgumentException(
+				"Invalid interest type."
+			);
+		}
 
 		$interest =
 			(int)$data["interest"];
 
+		if ($interest < 0) {
+			throw new \InvalidArgumentException(
+				"Interest cannot be negative."
+			);
+		}
+
 		$installmentsMonth =
 			(int)$data["installments_month"];
 
-		$noInstallments =
-			(int)$data["no_installments"];
+		if ($installmentsMonth <= 0) {
+			throw new \InvalidArgumentException(
+				"Installments must be greater than zero."
+			);
+		}
 
+		/*
+		* Due represents outstanding principal only.
+		* Interest never reduces or increases principal.
+		*/
 		$due =
-			(float)$data["due"];
+			$remaining;
+
 
 		/*
 		 * Validamos todos los productos ANTES
@@ -283,14 +325,14 @@ class SaleService
 						''
 					),
 
+				"interest_type" =>
+					$interestType,
+
 				"interest" =>
 					$interest,
 
 				"installments_month" =>
 					$installmentsMonth,
-
-				"no_installments" =>
-					$noInstallments,
 
 				"payment_date" =>
 					date(
@@ -462,11 +504,10 @@ class SaleService
 			"price_sum",
 			"initial",
 			"delivery_date",
-			"remaining",
+			"interest_type",
 			"interest",
 			"installments_month",
 			"payment_date",
-			"due",
 			"products"
 		];
 
@@ -537,6 +578,70 @@ class SaleService
 				"Invalid payment_date."
 			);
 		}
+
+		$priceSum =
+			(float)$data["price_sum"];
+
+		$initial =
+			(float)$data["initial"];
+
+		if ($priceSum <= 0) {
+			throw new \InvalidArgumentException(
+				"Sale price must be greater than zero."
+			);
+		}
+
+		if ($initial < 0) {
+			throw new \InvalidArgumentException(
+				"Initial payment cannot be negative."
+			);
+		}
+
+		if ($initial > $priceSum) {
+			throw new \InvalidArgumentException(
+				"Initial payment cannot exceed the sale total."
+			);
+		}
+
+		$remaining =
+			$priceSum - $initial;
+
+		$interestType =
+			(int)$data["interest_type"];
+
+		if (
+			$interestType !== 1 &&
+			$interestType !== 2
+		) {
+			throw new \InvalidArgumentException(
+				"Invalid interest type."
+			);
+		}
+
+		$interest =
+			(int)$data["interest"];
+
+		if ($interest < 0) {
+			throw new \InvalidArgumentException(
+				"Interest cannot be negative."
+			);
+		}
+
+		$installmentsMonth =
+			(int)$data["installments_month"];
+
+		if ($installmentsMonth <= 0) {
+			throw new \InvalidArgumentException(
+				"Installments must be greater than zero."
+			);
+		}
+
+		/*
+		* Due represents outstanding principal only.
+		* Interest never reduces or increases principal.
+		*/
+		$due =
+			$remaining;
 
 		/*
 		* Validamos TODOS los productos antes
@@ -700,19 +805,6 @@ class SaleService
 				);
 		}
 
-		$installmentsMonth =
-			(int)$data[
-				"installments_month"
-			];
-
-		/*
-		* Preservamos el comportamiento actual
-		* del frontend y del endpoint anterior:
-		* no_installments = installments_month.
-		*/
-		$noInstallments =
-			$installmentsMonth;
-
 		$this->repository
 			->updateSale(
 				$saleId,
@@ -723,9 +815,7 @@ class SaleService
 
 					"price_sum" =>
 						number_format(
-							(float)$data[
-								"price_sum"
-							],
+							$priceSum,
 							2,
 							'.',
 							''
@@ -733,9 +823,7 @@ class SaleService
 
 					"initial" =>
 						number_format(
-							(float)$data[
-								"initial"
-							],
+							$initial,
 							2,
 							'.',
 							''
@@ -749,24 +837,20 @@ class SaleService
 
 					"remaining" =>
 						number_format(
-							(float)$data[
-								"remaining"
-							],
+							$remaining,
 							2,
 							'.',
 							''
 						),
 
+					"interest_type" =>
+						$interestType,
+
 					"interest" =>
-						(int)$data[
-							"interest"
-						],
+						$interest,
 
 					"installments_month" =>
 						$installmentsMonth,
-
-					"no_installments" =>
-						$noInstallments,
 
 					"payment_date" =>
 						date(
@@ -776,9 +860,7 @@ class SaleService
 
 					"due" =>
 						number_format(
-							(float)$data[
-								"due"
-							],
+							$due,
 							2,
 							'.',
 							''
@@ -1268,27 +1350,23 @@ class SaleService
 				"remaining" =>
 					$sale["remaining"],
 
+				"interest_type" =>
+					(int)$sale["interest_type"],
+
 				"interest" =>
 					$sale["interest"],
 
 				"total_interest" =>
-					(
-						(float)$sale[
-							"price_sum"
-						] *
-						(float)$sale[
-							"interest"
-						]
-					) / 100,
+					(int)$sale["interest_type"] === 1
+					? (
+						(float)$sale["remaining"] *
+						(float)$sale["interest"]
+					) / 100
+					: null,
 
 				"installments_month" =>
 					$sale[
 						"installments_month"
-					],
-
-				"no_installments" =>
-					$sale[
-						"no_installments"
 					],
 
 				"payment_date" =>

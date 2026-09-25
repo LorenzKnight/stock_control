@@ -76,11 +76,10 @@ try {
 		"edit_price_sum" => "price_sum",
 		"edit_initial" => "initial",
 		"edit_delivery_date" => "delivery_date",
-		"edit_remaining" => "remaining",
+		"edit_interest_type" => "interest_type",
 		"edit_interest" => "interest",
 		"edit_installments_month" => "installments_month",
-		"edit_payment_date" => "payment_date",
-		"edit_due" => "due"
+		"edit_payment_date" => "payment_date"
 	];
 
 	foreach ($fieldMap as $postField => $serviceField) {

@@ -18,13 +18,11 @@ final class SaleServiceTest extends TestCase
 				"initial" => 5,
 				"delivery_date" =>
 					"2026-09-22",
-				"remaining" => 15,
+				"interest_type" => 1,
 				"interest" => 0,
 				"installments_month" => 1,
-				"no_installments" => 1,
 				"payment_date" =>
 					"2026-10-22",
-				"due" => 15,
 				"products" => [
 					[
 						"product_id" => 8,
@@ -50,12 +48,11 @@ final class SaleServiceTest extends TestCase
 				"initial" => 20,
 				"delivery_date" =>
 					"2026-09-23",
-				"remaining" => 80,
+				"interest_type" => 1,
 				"interest" => 10,
 				"installments_month" => 4,
 				"payment_date" =>
 					"2026-10-23",
-				"due" => 88,
 				"products" => [
 					[
 						"product_id" => 8,
@@ -505,14 +502,12 @@ final class SaleServiceTest extends TestCase
 								"2026-09-22 00:00:00" &&
 							$data["remaining"] ===
 								"15.00" &&
+							$data["interest_type"] ===
+								1 &&
 							$data["interest"] ===
 								0 &&
-							$data[
-								"installments_month"
-							] === 1 &&
-							$data[
-								"no_installments"
-							] === 1 &&
+							$data["installments_month"] === 
+								1 &&
 							$data["payment_date"] ===
 								"2026-10-22 00:00:00" &&
 							$data["due"] ===
@@ -1109,12 +1104,12 @@ final class SaleServiceTest extends TestCase
 						"2026-09-22 00:00:00",
 					"currency" => "SEK",
 					"remaining" => 80,
+					"interest_type" => 1,
 					"interest" => 10,
 					"installments_month" => 1,
-					"no_installments" => 4,
 					"payment_date" =>
 						"2026-10-22 00:00:00",
-					"due" => 20,
+					"due" => 80,
 					"created_at" =>
 						"2026-09-22 10:00:00"
 				]
@@ -1239,9 +1234,19 @@ final class SaleServiceTest extends TestCase
 			);
 
 		$this->assertSame(
-				10.0,
+				8.0,
 				$result[0]["total_interest"]
 			);
+
+		$this->assertSame(
+			1,
+			$result[0]["interest_type"]
+		);
+
+		$this->assertSame(
+			80,
+			$result[0]["due"]
+		);
 
 		$this->assertSame(
 				2,
@@ -1351,12 +1356,12 @@ final class SaleServiceTest extends TestCase
 					"delivery_date" =>
 						"2026-09-22",
 					"remaining" => 80,
+					"interest_type" => 1,
 					"interest" => 0,
 					"installments_month" => 1,
-					"no_installments" => 4,
 					"payment_date" =>
 						"2026-10-22",
-					"due" => 20
+					"due" => 80
 				]
 			]);
 
@@ -1439,12 +1444,12 @@ final class SaleServiceTest extends TestCase
 					"delivery_date" =>
 						"2026-09-22",
 					"remaining" => 80,
+					"interest_type" => 1,
 					"interest" => 0,
 					"installments_month" => 1,
-					"no_installments" => 4,
 					"payment_date" =>
 						"2026-10-22",
-					"due" => 20
+					"due" => 80
 				]
 			]);
 
@@ -1520,12 +1525,12 @@ final class SaleServiceTest extends TestCase
 					"delivery_date" =>
 						"2026-09-22",
 					"remaining" => 80,
+					"interest_type" => 1,
 					"interest" => 0,
 					"installments_month" => 1,
-					"no_installments" => 4,
 					"payment_date" =>
 						"2026-10-22",
-					"due" => 20
+					"due" => 80
 				]
 			]);
 
@@ -1606,12 +1611,12 @@ final class SaleServiceTest extends TestCase
 					"delivery_date" =>
 						"2026-09-22",
 					"remaining" => 80,
+					"interest_type" => 1,
 					"interest" => 0,
 					"installments_month" => 1,
-					"no_installments" => 4,
 					"payment_date" =>
 						"2026-10-22",
-					"due" => 20
+					"due" => 80
 				]
 			]);
 
@@ -2272,13 +2277,13 @@ final class SaleServiceTest extends TestCase
 								"remaining"
 							] === "80.00" &&
 							$data[
+								"interest_type"
+							] === 1 &&
+							$data[
 								"interest"
 							] === 10 &&
 							$data[
 								"installments_month"
-							] === 4 &&
-							$data[
-								"no_installments"
 							] === 4 &&
 							$data[
 								"payment_date"
@@ -2286,7 +2291,7 @@ final class SaleServiceTest extends TestCase
 								"2026-10-23 00:00:00" &&
 							$data[
 								"due"
-							] === "88.00";
+							] === "80.00";
 					}
 				)
 			);
@@ -3109,6 +3114,662 @@ final class SaleServiceTest extends TestCase
 			10,
 			5,
 			50
+		);
+	}
+
+
+	public function testReducingBalanceSaleReturnsNullTotalInterest(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findSalesByCompanyId'
+			)
+			->with(5)
+			->willReturn([
+				[
+					"sales_id" => 50,
+					"ord_no" => 10000001,
+					"customer_id" => 7,
+					"price_sum" => 100,
+					"initial" => 20,
+					"delivery_date" =>
+						"2026-09-22 00:00:00",
+					"currency" => "SEK",
+					"remaining" => 80,
+					"interest_type" => 2,
+					"interest" => 10,
+					"installments_month" => 4,
+					"payment_date" =>
+						"2026-10-22 00:00:00",
+					"due" => 80,
+					"created_at" =>
+						"2026-09-22 10:00:00"
+				]
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findCustomerDetailsById'
+			)
+			->with(7, 5)
+			->willReturn([
+				"customer_name" => "John",
+				"customer_surname" => "Doe",
+				"customer_document_type" => null,
+				"customer_document_no" => "ABC123"
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findPurchasedProductsBySaleId'
+			)
+			->with(50)
+			->willReturn([]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'countPaymentsForSale'
+			)
+			->with(50)
+			->willReturn(0);
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$result =
+			$service->getSales(
+				5
+			);
+
+		$this->assertSame(
+			2,
+			$result[0]["interest_type"]
+		);
+
+		$this->assertNull(
+			$result[0]["total_interest"]
+		);
+
+		$this->assertSame(
+			80,
+			$result[0]["due"]
+		);
+	}
+
+
+	public function testRejectsCreateWithNonPositivePriceSum(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findCustomerById')
+			->willReturn([
+				"customer_id" => 7
+			]);
+
+		$repository
+			->expects($this->never())
+			->method('create');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Sale price must be greater than zero."
+		);
+
+		$service->createSale(
+			10,
+			5,
+			$this->validSaleData([
+				"price_sum" => 0
+			])
+		);
+	}
+
+
+	public function testRejectsCreateWithNegativeInitial(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findCustomerById')
+			->willReturn([
+				"customer_id" => 7
+			]);
+
+		$repository
+			->expects($this->never())
+			->method('create');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Initial payment cannot be negative."
+		);
+
+		$service->createSale(
+			10,
+			5,
+			$this->validSaleData([
+				"initial" => -1
+			])
+		);
+	}
+
+
+	public function testRejectsCreateWhenInitialExceedsPriceSum(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findCustomerById')
+			->willReturn([
+				"customer_id" => 7
+			]);
+
+		$repository
+			->expects($this->never())
+			->method('create');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Initial payment cannot exceed the sale total."
+		);
+
+		$service->createSale(
+			10,
+			5,
+			$this->validSaleData([
+				"price_sum" => 20,
+				"initial" => 21
+			])
+		);
+	}
+
+
+	public function testRejectsCreateWithInvalidInterestType(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findCustomerById')
+			->willReturn([
+				"customer_id" => 7
+			]);
+
+		$repository
+			->expects($this->never())
+			->method('create');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Invalid interest type."
+		);
+
+		$service->createSale(
+			10,
+			5,
+			$this->validSaleData([
+				"interest_type" => 3
+			])
+		);
+	}
+
+
+	public function testRejectsCreateWithNegativeInterest(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findCustomerById')
+			->willReturn([
+				"customer_id" => 7
+			]);
+
+		$repository
+			->expects($this->never())
+			->method('create');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Interest cannot be negative."
+		);
+
+		$service->createSale(
+			10,
+			5,
+			$this->validSaleData([
+				"interest" => -1
+			])
+		);
+	}
+
+
+	public function testRejectsCreateWithNonPositiveInstallments(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findCustomerById')
+			->willReturn([
+				"customer_id" => 7
+			]);
+
+		$repository
+			->expects($this->never())
+			->method('create');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Installments must be greater than zero."
+		);
+
+		$service->createSale(
+			10,
+			5,
+			$this->validSaleData([
+				"installments_month" => 0
+			])
+		);
+	}
+
+
+	public function testRejectsUpdateWithNonPositivePriceSum(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findCustomerById')
+			->willReturn([
+				"customer_id" => 7
+			]);
+
+		$repository
+			->expects($this->never())
+			->method('findSaleForUpdate');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Sale price must be greater than zero."
+		);
+
+		$service->updateSale(
+			10,
+			5,
+			50,
+			$this->validSaleUpdateData([
+				"price_sum" => 0
+			])
+		);
+	}
+
+
+	public function testRejectsUpdateWithNegativeInitial(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findCustomerById')
+			->willReturn([
+				"customer_id" => 7
+			]);
+
+		$repository
+			->expects($this->never())
+			->method('findSaleForUpdate');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Initial payment cannot be negative."
+		);
+
+		$service->updateSale(
+			10,
+			5,
+			50,
+			$this->validSaleUpdateData([
+				"initial" => -1
+			])
+		);
+	}
+
+
+	public function testRejectsUpdateWhenInitialExceedsPriceSum(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findCustomerById')
+			->willReturn([
+				"customer_id" => 7
+			]);
+
+		$repository
+			->expects($this->never())
+			->method('findSaleForUpdate');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Initial payment cannot exceed the sale total."
+		);
+
+		$service->updateSale(
+			10,
+			5,
+			50,
+			$this->validSaleUpdateData([
+				"price_sum" => 100,
+				"initial" => 101
+			])
+		);
+	}
+
+
+	public function testRejectsUpdateWithInvalidInterestType(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findCustomerById')
+			->willReturn([
+				"customer_id" => 7
+			]);
+
+		$repository
+			->expects($this->never())
+			->method('findSaleForUpdate');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Invalid interest type."
+		);
+
+		$service->updateSale(
+			10,
+			5,
+			50,
+			$this->validSaleUpdateData([
+				"interest_type" => 3
+			])
+		);
+	}
+
+
+	public function testRejectsUpdateWithNegativeInterest(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findCustomerById')
+			->willReturn([
+				"customer_id" => 7
+			]);
+
+		$repository
+			->expects($this->never())
+			->method('findSaleForUpdate');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Interest cannot be negative."
+		);
+
+		$service->updateSale(
+			10,
+			5,
+			50,
+			$this->validSaleUpdateData([
+				"interest" => -1
+			])
+		);
+	}
+
+
+	public function testRejectsUpdateWithNonPositiveInstallments(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findCustomerById')
+			->willReturn([
+				"customer_id" => 7
+			]);
+
+		$repository
+			->expects($this->never())
+			->method('findSaleForUpdate');
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Installments must be greater than zero."
+		);
+
+		$service->updateSale(
+			10,
+			5,
+			50,
+			$this->validSaleUpdateData([
+				"installments_month" => 0
+			])
 		);
 	}
 }

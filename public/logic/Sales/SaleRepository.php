@@ -312,9 +312,9 @@ class SaleRepository
 				"delivery_date",
 				"currency",
 				"remaining",
+				"interest_type",
 				"interest",
 				"installments_month",
-				"no_installments",
 				"payment_date",
 				"due",
 				"created_at"

@@ -188,7 +188,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 									<td align="right">${window.i18n.interest} :</td><td style="padding-left: 5px;">${sale.total_interest}</td>
 								</tr>
 								<tr valign="baseline" >
-									<td align="right">${window.i18n.installments_month} :</td><td style="padding-left: 5px;">${sale.no_installments} / ${sale.payments}</td>
+									<td align="right">${window.i18n.installments_month} :</td><td style="padding-left: 5px;">${sale.payments} / ${sale.installments_month}</td>
 								</tr>
 								<tr valign="baseline" >
 									<td align="right">${window.i18n.payment_date} :</td><td style="padding-left: 5px;">${paymentDateFormatted}</td>
@@ -525,24 +525,46 @@ document.addEventListener("DOMContentLoaded", async function () {
 		const remaining = priceSum - initial;
 	
 		document.getElementById('remaining').value = remaining.toFixed(2);
-		calculateDue();
+		calculateInterest();
 	}
 
 	function calculateInterest() {
-		const priceSum = parseFloat(document.getElementById('remaining').value.replace(/,/g, '')) || 0;
+		const remaining = parseFloat(document.getElementById('remaining').value.replace(/,/g, '')) || 0;
 		const interestPercent = parseFloat(document.getElementById('interest').value) || 0;
-	
-		const totalInterest = (priceSum * interestPercent) / 100;
-		document.getElementById('total_interest').value = totalInterest.toFixed(2);
+		const interestType = parseInt(document.getElementById('interest_type')?.value) || 0;
+		const totalInterestInput = document.getElementById('total_interest');
+
+		/*
+		* 1 = Fixed
+		* 2 = Reducing Balance
+		*
+		* Reducing Balance todavía no tiene
+		* cálculo periódico definido.
+		*/
+		if (interestType !== 1) {
+			totalInterestInput.value = '';
+
+			calculateDue();
+
+			return;
+		}
+
+		const totalInterest = (remaining * interestPercent) / 100;
+
+		totalInterestInput.value = totalInterest.toFixed(2);
+
 		calculateDue();
 	}
 
 	function calculateDue() {
-		const remaining = parseFloat(document.getElementById('remaining').value.replace(/,/g, '')) || 0;
-		const totalInterest = parseFloat(document.getElementById('total_interest').value.replace(/,/g, '')) || 0;
-		const due = remaining + totalInterest;
-	
-		document.getElementById('due').value = due.toFixed(2);
+		const remaining =
+			parseFloat(
+				document.getElementById('remaining')
+					.value.replace(/,/g, '')
+			) || 0;
+
+		document.getElementById('due').value =
+			remaining.toFixed(2);
 	}
 
 	const initialInput = document.getElementById('initial');
@@ -553,6 +575,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 	const interestInput = document.getElementById('interest');
 	if (interestInput) {
 		interestInput.addEventListener('input', calculateInterest);
+	}
+
+	const interestTypeInput = document.getElementById('interest_type');
+	if (interestTypeInput) {
+		interestTypeInput.addEventListener('change', calculateInterest);
 	}
 
 	let firstSaleRewardState = {
@@ -733,15 +760,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 					const formatDecimal = val => parseFloat((val || '').toString().replace(',', '').trim()) || 0;
 
 					const customerId = document.querySelector('input[name="customer_select"]:checked')?.dataset.id;
+					const currency = document.getElementById( 'currency').value;
 					const priceSum = formatDecimal(document.getElementById('price_sum').value);
 					const initial = formatDecimal(document.getElementById('initial').value);
 					const deliveryDate = document.getElementById('delivery_date').value;
-					const remaining = formatDecimal(document.getElementById('remaining').value);
+					const interestType = parseInt(document.getElementById('interest_type').value) || 0;
 					const interest = parseInt(document.getElementById('interest').value) || 0;
 					const installmentsMonth = parseInt(document.getElementById('installments_month').value) || 0;
-					const noInstallments = installmentsMonth;
 					const paymentDate = document.getElementById('payment_date').value;
-					const due = formatDecimal(document.getElementById('due').value);
 			
 					// Validación mínima
 					if (!customerId) throw new Error("Select a customer");
@@ -767,15 +793,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 			
 					const payload = {
 						customer_id: parseInt(customerId),
+						currency: currency,
 						price_sum: priceSum,
 						initial: initial,
 						delivery_date: deliveryDate,
-						remaining: remaining,
+						interest_type: interestType,
 						interest: interest,
 						installments_month: installmentsMonth,
-						no_installments: noInstallments,
 						payment_date: paymentDate,
-						due: due,
 						products: products
 					};
 			
@@ -1256,7 +1281,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 					document.getElementById('edit_price_sum').value = total.toFixed(2);
 
 					editCalculateRemaining();
-					editCalculateInterest();
 				}
 
 				function editCalculateRemaining() {
@@ -1265,24 +1289,34 @@ document.addEventListener("DOMContentLoaded", async function () {
 					const remaining = priceSum - initial;
 				
 					document.getElementById('edit_remaining').value = remaining.toFixed(2);
-					editCalculateDue();
+					
+					editCalculateInterest();
 				}
 
 				function editCalculateInterest() {
-					const priceSum = parseFloat(document.getElementById('edit_remaining').value.replace(/,/g, '')) || 0;
+					const remaining = parseFloat(document.getElementById('edit_remaining').value.replace(/,/g, '')) || 0;
 					const interestPercent = parseFloat(document.getElementById('edit_interest').value) || 0;
+					const interestType = parseInt(document.getElementById('edit_interest_type')?.value) || 0;
+					const totalInterestInput =document.getElementById('edit_total_interest');
+
+					if (interestType !== 1) {
+						totalInterestInput.value = '';
+
+						editCalculateDue();
+
+						return;
+					}
 				
-					const totalInterest = (priceSum * interestPercent) / 100;
-					document.getElementById('edit_total_interest').value = totalInterest.toFixed(2);
+					const totalInterest = (remaining * interestPercent) / 100;
+					totalInterestInput.value = totalInterest.toFixed(2);
+
 					editCalculateDue();
 				}
 
 				function editCalculateDue() {
 					const remaining = parseFloat(document.getElementById('edit_remaining').value.replace(/,/g, '')) || 0;
-					const totalInterest = parseFloat(document.getElementById('edit_total_interest').value.replace(/,/g, '')) || 0;
-					const due = remaining + totalInterest;
-				
-					document.getElementById('edit_due').value = due.toFixed(2);
+					
+					document.getElementById('edit_due').value = remaining.toFixed(2);
 				}
 
 				const initialInput = document.getElementById('edit_initial');
@@ -1295,10 +1329,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 					interestInput.addEventListener('input', editCalculateInterest);
 				}
 
+				const editInterestTypeInput = document.getElementById('edit_interest_type');
+				if (editInterestTypeInput) {
+					editInterestTypeInput.addEventListener('change', editCalculateInterest);
+				}
+
 				document.getElementById('edit_price_sum').value = sale.price_sum || '';
 				document.getElementById('edit_initial').value = sale.initial || '';
 				document.getElementById('edit_delivery_date').value = sale.delivery_date || '';
 				document.getElementById('edit_remaining').value = sale.remaining || '';
+				document.getElementById('edit_interest_type').value = sale.interest_type || 1;
 				document.getElementById('edit_interest').value = sale.interest || '';
 				document.getElementById('edit_total_interest').value = sale.total_interest || '';
 				document.getElementById('edit_due').value = sale.due || '';
@@ -1320,7 +1360,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 			e.preventDefault();
 
 			try {
-				const customerId = document.querySelector('input[name="customer_select"]:checked')?.dataset.id;
+				const customerId = formEditSale.querySelector('input[name="customer_select"]:checked')?.dataset.id;
 				if (!customerId) throw new Error("Select a customer");
 
 				const saleId = parseInt(formEditSale.getAttribute('data-sale-id'));
@@ -1329,8 +1369,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 				formData.append('sale_id', saleId);
 				formData.append('customer_id', customerId);
 
-				const fields = ['edit_price_sum', 'edit_initial', 'edit_delivery_date', 'edit_remaining', 
-								'edit_interest', 'edit_installments_month', 'edit_payment_date', 'edit_due'];
+				const fields = [
+					'edit_price_sum',
+					'edit_initial',
+					'edit_delivery_date',
+					'edit_interest_type',
+					'edit_interest',
+					'edit_installments_month',
+					'edit_payment_date'
+				];
 
 				fields.forEach(field => {
 					const value = document.getElementById(field).value;
