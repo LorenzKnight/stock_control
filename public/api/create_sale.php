@@ -181,7 +181,8 @@ try {
 		"show_reward_modal" => $showSaleReward,
 		"reward_type" => $showSaleReward ? "first_sale" : null,
 		"sale_id" => $saleId,
-		"order_no" => $orderNo
+		"order_no" => $orderNo,
+		"total_interest" => $result["total_interest"] ?? 0.0
 	];
 } catch (Throwable $e) {
 	if ($transactionStarted) {

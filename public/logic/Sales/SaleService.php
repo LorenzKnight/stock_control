@@ -184,6 +184,14 @@ class SaleService
 			);
 		}
 
+		$totalInterest =
+			$this->calculateTotalInterest(
+				$remaining,
+				$interestType,
+				$interest,
+				$installmentsMonth
+			);
+
 		/*
 		* Due represents outstanding principal only.
 		* Interest never reduces or increases principal.
@@ -460,6 +468,9 @@ class SaleService
 			"order_no" =>
 				$orderNo,
 
+			"total_interest" =>
+				$totalInterest,
+
 			"sum_mismatch" =>
 				abs(
 					$sumFromProducts -
@@ -635,6 +646,14 @@ class SaleService
 				"Installments must be greater than zero."
 			);
 		}
+
+		$totalInterest =
+			$this->calculateTotalInterest(
+				$remaining,
+				$interestType,
+				$interest,
+				$installmentsMonth
+			);
 
 		/*
 		* Due represents outstanding principal only.
@@ -936,7 +955,10 @@ class SaleService
 
 		return [
 			"sale_id" =>
-				$saleId
+				$saleId,
+
+			"total_interest" =>
+				$totalInterest
 		];
 	}
 
@@ -1357,12 +1379,12 @@ class SaleService
 					$sale["interest"],
 
 				"total_interest" =>
-					(int)$sale["interest_type"] === 1
-					? (
-						(float)$sale["remaining"] *
-						(float)$sale["interest"]
-					) / 100
-					: null,
+					$this->calculateTotalInterest(
+						(float)$sale["remaining"],
+						(int)$sale["interest_type"],
+						(int)$sale["interest"],
+						(int)$sale["installments_month"]
+					),
 
 				"installments_month" =>
 					$sale[
@@ -1538,5 +1560,87 @@ class SaleService
 			"sale_id" =>
 				$saleId
 		];
+	}
+
+
+	private function calculateTotalInterest(
+		float $remaining,
+		int $interestType,
+		int $interest,
+		int $installmentsMonth
+	): float {
+		if (
+			$remaining <= 0 ||
+			$interest <= 0
+		) {
+			return 0.0;
+		}
+
+		$monthlyRate =
+			$interest / 100;
+
+		/*
+		* Fixed interest.
+		*/
+		if ($interestType === 1) {
+			return round(
+				$remaining *
+					$monthlyRate,
+				2
+			);
+		}
+
+		/*
+		* Reducing Balance.
+		*
+		* La tasa se aplica mensualmente
+		* sobre el principal pendiente.
+		*/
+		if ($interestType === 2) {
+			if ($installmentsMonth <= 0) {
+				return 0.0;
+			}
+
+			$principalPerInstallment =
+				$remaining /
+				$installmentsMonth;
+
+			$balance =
+				$remaining;
+
+			$totalInterest =
+				0.0;
+
+			for (
+				$installment = 1;
+				$installment <=
+					$installmentsMonth;
+				$installment++
+			) {
+				$installmentInterest =
+					round(
+						$balance *
+							$monthlyRate,
+						2
+					);
+
+				$totalInterest +=
+					$installmentInterest;
+
+				$balance -=
+					$principalPerInstallment;
+
+				if ($balance < 0) {
+					$balance = 0.0;
+				}
+			}
+
+			return round(
+				$totalInterest,
+				2
+			);
+		}
+
+		return 0.0;
 	}
 }

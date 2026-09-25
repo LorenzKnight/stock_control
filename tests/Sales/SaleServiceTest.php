@@ -607,6 +607,157 @@ final class SaleServiceTest extends TestCase
 	}
 
 
+	public function testCreatesReducingBalanceSaleWithMonthlyInterest(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method('findCustomerById')
+			->with(7, 5)
+			->willReturn([
+				"customer_id" => 7
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'productBelongsToCompany'
+			)
+			->with(8, 5)
+			->willReturn(true);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'getNextOrderNumber'
+			)
+			->with(5)
+			->willReturn(10000001);
+
+		$repository
+			->expects($this->once())
+			->method('create')
+			->with(
+				$this->callback(
+					function (
+						array $data
+					): bool {
+						return
+							$data["price_sum"] ===
+								"100.00" &&
+
+							$data["initial"] ===
+								"20.00" &&
+
+							$data["remaining"] ===
+								"80.00" &&
+
+							$data["interest_type"] ===
+								2 &&
+
+							$data["interest"] ===
+								10 &&
+
+							$data["installments_month"] ===
+								4 &&
+
+							$data["due"] ===
+								"80.00";
+					}
+				)
+			)
+			->willReturn(50);
+
+		$inventoryService
+			->expects($this->once())
+			->method(
+				'consumeStockForSale'
+			)
+			->with(8, 2)
+			->willReturn([
+				"product_id" => 8,
+				"product_name" => "Laptop",
+				"company_id" => 5,
+				"min_quantity" => 5,
+				"previous_stock" => 10,
+				"quantity_sold" => 2,
+				"new_stock" => 8
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'createPurchasedProduct'
+			);
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$result =
+			$service->createSale(
+				10,
+				5,
+				$this->validSaleData([
+					"price_sum" => 100,
+					"initial" => 20,
+					"interest_type" => 2,
+					"interest" => 10,
+					"installments_month" => 4,
+					"products" => [
+						[
+							"product_id" => 8,
+							"quantity" => 2,
+							"price" => 50,
+							"discount" => 0,
+							"total" => 100
+						]
+					]
+				])
+			);
+
+		/*
+		* Remaining principal:
+		* 100 - 20 = 80
+		*
+		* Principal per installment:
+		* 80 / 4 = 20
+		*
+		* Monthly interest:
+		* 80 × 10% = 8
+		* 60 × 10% = 6
+		* 40 × 10% = 4
+		* 20 × 10% = 2
+		*
+		* Total interest = 20
+		*/
+		$this->assertSame(
+			20.0,
+			$result["total_interest"]
+		);
+
+		$this->assertFalse(
+			$result["sum_mismatch"]
+		);
+
+		$this->assertSame(
+			100.0,
+			$result["products_sum"]
+		);
+	}
+
+
 	public function testDetectsSaleSumMismatch(): void
 	{
 		$repository =
@@ -2363,6 +2514,152 @@ final class SaleServiceTest extends TestCase
 	}
 
 
+	public function testUpdatesReducingBalanceSaleWithMonthlyInterest(): void
+	{
+		$repository =
+			$this->createMock(
+				SaleRepository::class
+			);
+
+		$inventoryService =
+			$this->createMock(
+				InventoryService::class
+			);
+
+		$repository
+			->method('findCustomerById')
+			->willReturn([
+				"customer_id" => 7
+			]);
+
+		$repository
+			->method(
+				'productBelongsToCompany'
+			)
+			->willReturn(true);
+
+		$repository
+			->method(
+				'findSaleForUpdate'
+			)
+			->willReturn([
+				"sales_id" => 50
+			]);
+
+		$repository
+			->method(
+				'countPaymentsForSale'
+			)
+			->willReturn(0);
+
+		$repository
+			->method(
+				'hasInterestEarnings'
+			)
+			->willReturn(false);
+
+		$repository
+			->method(
+				'findPurchasedProductsBySaleId'
+			)
+			->willReturn([]);
+
+		$inventoryService
+			->expects($this->once())
+			->method(
+				'consumeStockForSale'
+			)
+			->with(8, 2);
+
+		$repository
+			->expects($this->once())
+			->method('updateSale')
+			->with(
+				50,
+				5,
+				$this->callback(
+					function (
+						array $data
+					): bool {
+						return
+							$data["price_sum"] ===
+								"100.00" &&
+
+							$data["initial"] ===
+								"20.00" &&
+
+							$data["remaining"] ===
+								"80.00" &&
+
+							$data["interest_type"] ===
+								2 &&
+
+							$data["interest"] ===
+								10 &&
+
+							$data["installments_month"] ===
+								4 &&
+
+							$data["due"] ===
+								"80.00";
+					}
+				)
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'deletePurchasedProducts'
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'createPurchasedProduct'
+			);
+
+		$service =
+			new SaleService(
+				$repository,
+				$inventoryService
+			);
+
+		$result =
+			$service->updateSale(
+				10,
+				5,
+				50,
+				$this->validSaleUpdateData([
+					"price_sum" => 100,
+					"initial" => 20,
+					"interest_type" => 2,
+					"interest" => 10,
+					"installments_month" => 4
+				])
+			);
+
+		/*
+		* Remaining = 80
+		*
+		* 80 × 10% = 8
+		* 60 × 10% = 6
+		* 40 × 10% = 4
+		* 20 × 10% = 2
+		*
+		* Total interest = 20
+		*/
+		$this->assertSame(
+			50,
+			$result["sale_id"]
+		);
+
+		$this->assertSame(
+			20.0,
+			$result["total_interest"]
+		);
+	}
+
+
 	public function testUpdateDoesNotRestoreStockWhenSaleHasNoProducts(): void
 	{
 		$repository =
@@ -3118,7 +3415,7 @@ final class SaleServiceTest extends TestCase
 	}
 
 
-	public function testReducingBalanceSaleReturnsNullTotalInterest(): void
+	public function testReducingBalanceSaleCalculatesTotalInterest(): void
 	{
 		$repository =
 			$this->createMock(
@@ -3203,7 +3500,8 @@ final class SaleServiceTest extends TestCase
 			$result[0]["interest_type"]
 		);
 
-		$this->assertNull(
+		$this->assertSame(
+			20.0,
 			$result[0]["total_interest"]
 		);
 

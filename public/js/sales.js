@@ -532,26 +532,79 @@ document.addEventListener("DOMContentLoaded", async function () {
 		const remaining = parseFloat(document.getElementById('remaining').value.replace(/,/g, '')) || 0;
 		const interestPercent = parseFloat(document.getElementById('interest').value) || 0;
 		const interestType = parseInt(document.getElementById('interest_type')?.value) || 0;
+		const installmentsMonth = parseInt(document.getElementById('installments_month')?.value) || 0;
 		const totalInterestInput = document.getElementById('total_interest');
 
-		/*
-		* 1 = Fixed
-		* 2 = Reducing Balance
-		*
-		* Reducing Balance todavía no tiene
-		* cálculo periódico definido.
-		*/
-		if (interestType !== 1) {
-			totalInterestInput.value = '';
+		if (remaining <= 0 || interestPercent <= 0) {
+			totalInterestInput.value = '0.00';
 
 			calculateDue();
 
 			return;
 		}
 
-		const totalInterest = (remaining * interestPercent) / 100;
+		/*
+		* 1 = Fixed
+		*/
+		if (interestType === 1) {
+			const totalInterest = (remaining * interestPercent) / 100;
 
-		totalInterestInput.value = totalInterest.toFixed(2);
+			totalInterestInput.value = totalInterest.toFixed(2);
+
+			calculateDue();
+
+			return;
+		}
+
+		/*
+		* 2 = Reducing Balance
+		*
+		* La tasa es mensual.
+		* El principal se divide en cuotas iguales
+		* y el interés se calcula sobre el saldo
+		* pendiente antes de cada cuota.
+		*/
+		if (interestType === 2) {
+			if (installmentsMonth <= 0) {
+				totalInterestInput.value = '0.00';
+
+				calculateDue();
+
+				return;
+			}
+
+			const monthlyRate = interestPercent / 100;
+
+			const principalPerInstallment = remaining / installmentsMonth;
+
+			let balance = remaining;
+
+			let totalInterest = 0;
+
+			for (
+				let installment = 1;
+				installment <= installmentsMonth;
+				installment++
+			) {
+				const installmentInterest = balance * monthlyRate;
+
+				totalInterest += installmentInterest;
+
+				balance -= principalPerInstallment;
+
+				if (balance < 0) {
+					balance = 0;
+				}
+			}
+
+			totalInterestInput.value = totalInterest.toFixed(2);
+
+			calculateDue();
+
+			return;
+		}
+
+		totalInterestInput.value = '0.00';
 
 		calculateDue();
 	}
@@ -580,6 +633,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 	const interestTypeInput = document.getElementById('interest_type');
 	if (interestTypeInput) {
 		interestTypeInput.addEventListener('change', calculateInterest);
+	}
+
+	const installmentsInput = document.getElementById('installments_month');
+	if (installmentsInput) {
+		installmentsInput.addEventListener('change', calculateInterest);
 	}
 
 	let firstSaleRewardState = {
@@ -1297,18 +1355,71 @@ document.addEventListener("DOMContentLoaded", async function () {
 					const remaining = parseFloat(document.getElementById('edit_remaining').value.replace(/,/g, '')) || 0;
 					const interestPercent = parseFloat(document.getElementById('edit_interest').value) || 0;
 					const interestType = parseInt(document.getElementById('edit_interest_type')?.value) || 0;
-					const totalInterestInput =document.getElementById('edit_total_interest');
+					const installmentsMonth = parseInt(document.getElementById('edit_installments_month')?.value) || 0;
+					const totalInterestInput = document.getElementById('edit_total_interest');
 
-					if (interestType !== 1) {
-						totalInterestInput.value = '';
+					if (remaining <= 0 || interestPercent <= 0) {
+						totalInterestInput.value ='0.00';
 
 						editCalculateDue();
 
 						return;
 					}
-				
-					const totalInterest = (remaining * interestPercent) / 100;
-					totalInterestInput.value = totalInterest.toFixed(2);
+
+					/*
+					* 1 = Fixed
+					*/
+					if (interestType === 1) {
+						const totalInterest = (remaining * interestPercent) / 100;
+						totalInterestInput.value = totalInterest.toFixed(2);
+
+						editCalculateDue();
+
+						return;
+					}
+
+					/*
+					* 2 = Reducing Balance
+					*/
+					if (interestType === 2) {
+						if (installmentsMonth <= 0) {
+							totalInterestInput.value = '0.00';
+
+							editCalculateDue();
+
+							return;
+						}
+
+						const monthlyRate = interestPercent / 100;
+
+						const principalPerInstallment = remaining / installmentsMonth;
+
+						let balance = remaining;
+
+						let totalInterest = 0;
+
+						for (
+							let installment = 1;
+							installment <= installmentsMonth;
+							installment++
+						) {
+							const installmentInterest = balance * monthlyRate;
+							totalInterest += installmentInterest;
+							balance -= principalPerInstallment;
+
+							if (balance < 0) {
+								balance = 0;
+							}
+						}
+
+						totalInterestInput.value = totalInterest.toFixed(2);
+
+						editCalculateDue();
+
+						return;
+					}
+
+					totalInterestInput.value = '0.00';
 
 					editCalculateDue();
 				}
@@ -1332,6 +1443,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 				const editInterestTypeInput = document.getElementById('edit_interest_type');
 				if (editInterestTypeInput) {
 					editInterestTypeInput.addEventListener('change', editCalculateInterest);
+				}
+
+				const editInstallmentsInput = document.getElementById('edit_installments_month');
+				if (editInstallmentsInput) {
+					editInstallmentsInput.addEventListener('change', editCalculateInterest);
 				}
 
 				document.getElementById('edit_price_sum').value = sale.price_sum || '';
