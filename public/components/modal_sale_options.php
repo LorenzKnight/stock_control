@@ -83,6 +83,26 @@
 													<input class="form-input-style" type="text" name="edit_price_sum" id="edit_price_sum" placeholder="<?= tr('price_sum') ?>..." disabled/>
 												</td>
 											</tr>
+											<tr valign="baseline">
+												<td colspan="2" align="center" valign="middle">
+													<label for="edit_interest_type"><?= tr('interest_type') ?? 'Interés type' ?>:</label>
+													<select class="form-input-style" name="edit_interest_type" id="edit_interest_type">
+														<option value=""><?= tr('select_interest_rate') ?? 'Select interest rate' ?></option>
+														<option value="1"><?= tr('fixed') ?? 'Fixed interest' ?></option>
+														<option value="2"><?= tr('reducing_balance') ?? 'Interest on a decreasing balance' ?></option>
+													</select>
+												</td>
+											</tr>
+											<tr valign="baseline" >
+												<td width="50%" align="center" valign="middle">
+													<label for="edit_interest">% <?= tr('interest') ?>:</label>
+													<input class="form-medium-input-style" type="text" name="edit_interest" id="edit_interest" value="10" placeholder="<?= tr('percent') ?>..."/>
+												</td>
+												<td width="50%" align="center" valign="middle">
+													<label for="edit_total_interest"><?= tr('total_interest') ?>:</label>
+													<input class="form-medium-input-style" type="text" name="edit_total_interest" id="edit_total_interest" placeholder="<?= tr('total_interest') ?>..." disabled/>
+												</td>
+											</tr>
 											<tr valign="baseline" >
 												<td colspan="2" align="center" valign="middle">
 													<label for="edit_initial"><?= tr('initial') ?>:</label>
@@ -99,16 +119,6 @@
 												<td colspan="2" align="center" valign="middle">
 													<label for="edit_remaining"><?= tr('remaining') ?>:</label>
 													<input class="form-input-style" type="text" name="edit_remaining" id="edit_remaining" placeholder="<?= tr('remaining') ?>..." disabled/>
-												</td>
-											</tr>
-											<tr valign="baseline" >
-												<td width="50%" align="center" valign="middle">
-													<label for="edit_interest">% <?= tr('interest') ?>:</label>
-													<input class="form-medium-input-style" type="text" name="edit_interest" id="edit_interest" value="10" placeholder="<?= tr('percent') ?>..."/>
-												</td>
-												<td width="50%" align="center" valign="middle">
-													<label for="edit_total_interest"><?= tr('total_interest') ?>:</label>
-													<input class="form-medium-input-style" type="text" name="edit_total_interest" id="edit_total_interest" placeholder="<?= tr('total_interest') ?>..." disabled/>
 												</td>
 											</tr>
 											<tr valign="baseline" >
