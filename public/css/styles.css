@@ -347,6 +347,7 @@ body {
 
 .expanded {
     width: 1100px;
+    border-radius: 30px;
 }
 
 .expanded-medium {

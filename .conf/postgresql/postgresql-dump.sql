@@ -234,6 +234,7 @@ CREATE TABLE IF NOT EXISTS sales (
 	Initial NUMERIC(10,2) NULL,
 	delivery_date TIMESTAMP NULL,
 	remaining NUMERIC(10,2) NULL,
+	interest_type INTEGER NULL,
 	interest INTEGER NULL,
 	installments_month INTEGER NULL,
 	no_installments INTEGER NULL,
