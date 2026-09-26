@@ -14,6 +14,135 @@ class PaymentService
 	}
 
 
+	public function getOrderInfo(
+		int $companyId,
+		int $ordNo
+	): array {
+		if ($companyId <= 0) {
+			throw new \InvalidArgumentException(
+				"User company not found."
+			);
+		}
+
+		if ($ordNo <= 0) {
+			throw new \InvalidArgumentException(
+				"Invalid order number."
+			);
+		}
+
+		$sale =
+			$this->repository
+				->findSaleInfoByOrderNumber(
+					$ordNo,
+					$companyId
+				);
+
+		if ($sale === null) {
+			throw new \Exception(
+				"No matching order found."
+			);
+		}
+
+		$customerId =
+			(int)(
+				$sale["customer_id"]
+				?? 0
+			);
+
+		if ($customerId <= 0) {
+			throw new \RuntimeException(
+				"Invalid sale customer."
+			);
+		}
+
+		$customer =
+			$this->repository
+				->findCustomerInfoById(
+					$customerId,
+					$companyId
+				);
+
+		if ($customer === null) {
+			throw new \Exception(
+				"Customer not found."
+			);
+		}
+
+		return [
+			"ord_no" =>
+				(int)$sale["ord_no"],
+
+			"currency" =>
+				(string)(
+					$sale["currency"]
+					?? ''
+				),
+
+			"interest_type" =>
+				(int)(
+					$sale["interest_type"]
+					?? 0
+				),
+
+			"interest" =>
+				(float)(
+					$sale["interest"]
+					?? 0
+				),
+
+			"installments_month" =>
+				(int)(
+					$sale["installments_month"]
+					?? 0
+				),
+
+			"due" =>
+				(float)(
+					$sale["due"]
+					?? 0
+				),
+
+			"customer_id" =>
+				$customerId,
+
+			"customer_name" =>
+				trim(
+					(string)(
+						$customer[
+							"customer_name"
+						] ?? ''
+					) .
+					' ' .
+					(string)(
+						$customer[
+							"customer_surname"
+						] ?? ''
+					)
+				),
+
+			"document_type" =>
+				$customer[
+					"customer_document_type"
+				] ?? '',
+
+			"document_no" =>
+				$customer[
+					"customer_document_no"
+				] ?? '',
+
+			"phone" =>
+				$customer[
+					"customer_phone"
+				] ?? '',
+
+			"email" =>
+				$customer[
+					"customer_email"
+				] ?? ''
+		];
+	}
+
+
 	public function createPayment(
 		int $userId,
 		int $companyId,
@@ -433,4 +562,7 @@ class PaymentService
 
 		return 0.0;
 	}
+
+
+	
 }

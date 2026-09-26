@@ -1,4 +1,8 @@
 <?php
+use App\Payments\PaymentRepository;
+use App\Payments\PaymentService;
+
+require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 header('Content-Type: application/json');
@@ -14,39 +18,36 @@ try {
 		throw new Exception("Invalid order number.");
 	}
 
-	$ordNo = (int)$_GET["ord_no"];
+	$authUser = requireAuth();
+	$userId = (int)($authUser["user_id"] ?? 0);
+	$companyId = (int)($authUser["company_id"] ?? 0);
 
-	// Supón que tienes una tabla `sales` o similar
-	$saleResult = json_decode(select_from("sales", [
-        "sales_id", "ord_no", "customer_id", "interest", "currency"
-	], ["ord_no" => $ordNo], ["fetch_first" => true]), true);
-
-	if (!$saleResult["success"]) {
-		throw new Exception("No matching order found.");
+	if ($userId <= 0) {
+		throw new Exception("Unauthorized access. User not found or invalid token.");
 	}
 
-    $sale = $saleResult["data"];
-    $customerId = $sale["customer_id"];
+	if ($companyId <= 0) {
+		throw new Exception("User company not found.");
+	}
 
-    $customerResult = json_decode(select_from("customers", [
-        "customer_name", "customer_surname", "customer_phone",
-        "customer_document_type", "customer_document_no", "customer_image",
-        "customer_email"
-    ], ["customer_id" =>  $customerId], ["fetch_first" => true]), true);
+	if (!isset($_GET["ord_no"]) || !is_numeric($_GET["ord_no"])) {
+		throw new InvalidArgumentException("Invalid order number.");
+	}
 
-	$customer = $customerResult["data"] ?? [];
+	$ordNo = (int)$_GET["ord_no"];
 
-    $order = [
-        "ord_no"            => $sale["ord_no"],
-		"currency"          => $sale["currency"],
-        "interest"          => $sale["interest"],
-        "customer_id"       => $customerId,
-        "customer_name"     => trim(($customer["customer_name"] ?? '') . ' ' . ($customer["customer_surname"] ?? '')),
-        "document_type"     => $customer["customer_document_type"] ?? '',
-		"document_no"       => $customer["customer_document_no"] ?? '',
-		"phone"             => $customer["customer_phone"] ?? '',
-		"email"             => $customer["customer_email"] ?? ''
-    ];
+	if ($ordNo <= 0) {
+		throw new InvalidArgumentException("Invalid order number.");
+	}
+
+	$paymentRepository = new PaymentRepository();
+	$paymentService = new PaymentService($paymentRepository);
+
+	$order = $paymentService
+		->getOrderInfo(
+			$companyId,
+			$ordNo
+		);
 
 	$response = [
 		"success" => true,
@@ -54,7 +55,7 @@ try {
 		"data" => $order
 	];
 
-} catch (Exception $e) {
+} catch (Throwable $e) {
 	$response["message"] = $e->getMessage();
 }
 

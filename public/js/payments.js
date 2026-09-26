@@ -259,60 +259,135 @@ document.addEventListener("DOMContentLoaded", async function () {
 	const amountInput = document.getElementById('amount');
 	const payInterestInput = document.getElementById('interest');
 	let currentOrderInterest = 0;
-	if (ordNoInput && amountInput) {
-		ordNoInput.addEventListener('input', async () => {
-			const ordNo = ordNoInput.value.trim();
-			if (!ordNo || isNaN(ordNo)) return;
+	let currentOrderInterestType = 0;
+	let currentOrderDue = 0;
 
-			try {
-				const res = await fetch(`api/get_order_info.php?ord_no=${ordNo}`, {
-					method: 'GET',
-					headers: { 'Accept': 'application/json' }
-				});
-				const data = await res.json();
-				
-				if (data.success && data.data) {
-					const order = data.data;
+	function calculatePaymentInterestPreview() {
+		if (!payInterestInput) {
+			return;
+		}
 
-					currentOrderInterest = parseFloat(order.interest) || 0;
+		const amount = parseFloat(amountInput?.value);
 
-					// 🔁 Llena los campos del formulario con los datos encontrados
-					document.getElementById('customer').value = order.customer_name || '';
-					document.getElementById('payer_document_no').value = order.document_no || '';
-					document.getElementById('payer_phone').value = order.phone || '';
-					document.getElementById('customer_email').value = order.email || '';
+		if (
+			currentOrderInterest <= 0 ||
+			currentOrderInterestType <= 0
+		) {
+			payInterestInput.value = '0.00';
 
-					// Selecciona en los <select> si hay valores
-					if (order.currency) {
-						document.getElementById('currency').value = order.currency;
-					}
-					if (order.payment_method) {
-						document.getElementById('payment_method').value = order.payment_method;
-					}
-					if (order.document_type) {
-						document.getElementById('payer_document_type').value = order.document_type;
-					}
+			return;
+		}
 
-					if (amountInput.value && !isNaN(amountInput.value)) {
-						const amount = parseFloat(amountInput.value);
-						const interestAmount = amount * currentOrderInterest / 100;
-						payInterestInput.value = interestAmount.toFixed(2);
-					}
-				}
-			} catch (error) {
-				console.error("Error loading order data:", error);
-			}
-		});
+		let interestAmount = 0;
 
-		amountInput.addEventListener('input', () => {
-			const amount = parseFloat(amountInput.value);
-			if (isNaN(amount) || currentOrderInterest <= 0) {
-				payInterestInput.value = '';
+		/*
+		* Fixed interest:
+		* interés proporcional al principal pagado.
+		*/
+		if (currentOrderInterestType === 1) {
+			if (isNaN(amount) || amount <= 0) {
+				payInterestInput.value ='';
+
 				return;
 			}
-			const interestAmount = amount * currentOrderInterest / 100;
-			payInterestInput.value = interestAmount.toFixed(2);
-		});
+
+			interestAmount = amount * currentOrderInterest / 100;
+		}
+
+		/*
+		* Reducing Balance:
+		* interés calculado sobre el saldo
+		* pendiente antes del pago.
+		*/
+		if (currentOrderInterestType === 2) {
+			if (currentOrderDue <= 0) {
+				payInterestInput.value = '0.00';
+
+				return;
+			}
+
+			interestAmount =
+				currentOrderDue *
+				currentOrderInterest /
+				100;
+		}
+
+		payInterestInput.value = interestAmount.toFixed(2);
+	}
+
+	if (ordNoInput && amountInput) {
+		ordNoInput.addEventListener('input', async () => {
+				const ordNo = ordNoInput.value.trim();
+
+				if (!ordNo || isNaN(ordNo)) {
+					currentOrderInterest = 0;
+					currentOrderInterestType = 0;
+					currentOrderDue = 0;
+
+					if (payInterestInput) {
+						payInterestInput.value = '';
+					}
+
+					return;
+				}
+
+				try {
+					const res = await fetch(`api/get_order_info.php?ord_no=${encodeURIComponent(ordNo)}`, {
+						method: 'GET',
+						headers: { 'Accept': 'application/json' }
+					});
+
+					const data = await res.json();
+
+					if (data.success && data.data) {
+						const order = data.data;
+
+						currentOrderInterest = parseFloat(order.interest) || 0;
+						currentOrderInterestType = parseInt(order.interest_type, 10) || 0;
+						currentOrderDue = parseFloat(order.due) || 0;
+
+						document.getElementById('customer').value = order.customer_name || '';
+						document.getElementById('payer_document_no').value = order.document_no || '';
+						document.getElementById('payer_phone').value = order.phone || '';
+						document.getElementById('customer_email').value = order.email || '';
+
+						if (order.currency) {
+							document.getElementById('currency').value = order.currency;
+						}
+
+						if (order.document_type) {
+							document.getElementById('payer_document_type').value = order.document_type;
+						}
+
+						calculatePaymentInterestPreview();
+					} else {
+						currentOrderInterest = 0;
+						currentOrderInterestType = 0;
+						currentOrderDue = 0;
+
+						if (payInterestInput) {
+							payInterestInput.value = '';
+						}
+					}
+
+				} catch (error) {
+					currentOrderInterest = 0;
+					currentOrderInterestType = 0;
+					currentOrderDue = 0;
+
+					if (payInterestInput) {
+						payInterestInput.value = '';
+					}
+
+					console.error(
+						"Error loading order data:",
+						error
+					);
+				}
+			}
+		);
+
+		amountInput.addEventListener('input', calculatePaymentInterestPreview);
 	}
 
 	const ordSuggestions = document.getElementById('ord-no-suggestions');
@@ -369,12 +444,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			e.preventDefault();
 
 			const formData = new FormData(this);
-
-			// Asegurarse de que el campo "interest" deshabilitado también se incluya
-			const interestInput = document.getElementById('interest');
-			if (interestInput && interestInput.disabled) {
-				formData.append('interest', interestInput.value || '0');
-			}
 
 			const banner = document.getElementById('status-message');
 			const statusText = document.getElementById('status-text');

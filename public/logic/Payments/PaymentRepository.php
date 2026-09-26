@@ -194,4 +194,120 @@ class PaymentRepository
 			);
 		}
 	}
+
+
+	public function findSaleInfoByOrderNumber(
+		int $ordNo,
+		int $companyId
+	): ?array {
+		$result = \select_from(
+			"sales",
+			[
+				"sales_id",
+				"ord_no",
+				"customer_id",
+				"currency",
+				"interest_type",
+				"interest",
+				"installments_month",
+				"due"
+			],
+			[
+				"ord_no" =>
+					$ordNo,
+
+				"company_id" =>
+					$companyId
+			],
+			[
+				"fetch_first" => true,
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"PaymentRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			!empty($result["data"])
+		) {
+			return $result["data"];
+		}
+
+		if (
+			($result["message"] ?? "") ===
+				"No records found" ||
+			(
+				!empty($result["success"]) &&
+				empty($result["data"])
+			)
+		) {
+			return null;
+		}
+
+		throw new \RuntimeException(
+			"Could not read payment order information."
+		);
+	}
+
+
+	public function findCustomerInfoById(
+		int $customerId,
+		int $companyId
+	): ?array {
+		$result = \select_from(
+			"customers",
+			[
+				"customer_name",
+				"customer_surname",
+				"customer_phone",
+				"customer_document_type",
+				"customer_document_no",
+				"customer_email"
+			],
+			[
+				"customer_id" =>
+					$customerId,
+
+				"company_id" =>
+					$companyId
+			],
+			[
+				"fetch_first" => true,
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"PaymentRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			!empty($result["data"])
+		) {
+			return $result["data"];
+		}
+
+		if (
+			($result["message"] ?? "") ===
+				"No records found" ||
+			(
+				!empty($result["success"]) &&
+				empty($result["data"])
+			)
+		) {
+			return null;
+		}
+
+		throw new \RuntimeException(
+			"Could not read payment customer information."
+		);
+	}
 }

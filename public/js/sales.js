@@ -351,7 +351,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 						// 🟢 Seleccionar al hacer clic en toda la fila
 						makeRadioRowSelectable(row, {
-							rowSelector: '.sales-customer-row',
+							rowSelector: '#select-customers-list .sales-customer-row',
 							selectedClass: 'selected-customer',
 
 							onSelect: (radio) => {
@@ -817,7 +817,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				try {
 					const formatDecimal = val => parseFloat((val || '').toString().replace(',', '').trim()) || 0;
 
-					const customerId = document.querySelector('input[name="customer_select"]:checked')?.dataset.id;
+					const customerId = formAddSale.querySelector('input[name="customer_select"]:checked')?.dataset.id;
 					const currency = document.getElementById( 'currency').value;
 					const priceSum = formatDecimal(document.getElementById('price_sum').value);
 					const initial = formatDecimal(document.getElementById('initial').value);
@@ -892,6 +892,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 								}
 
 								formAddSale.reset();
+
+								document.querySelectorAll('#select-customers-list .sales-customer-row')
+									.forEach(row => {
+										row.classList.remove('selected-customer');
+									});
 
 								await Promise.all([
 									fetchAndRenderSales(),
