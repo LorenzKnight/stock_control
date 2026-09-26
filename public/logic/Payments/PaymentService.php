@@ -73,7 +73,10 @@ class PaymentService
 		}
 
 		$amount =
-			(float)$data["amount"];
+			round(
+				(float)$data["amount"],
+				2
+			);
 
 		if ($amount <= 0) {
 			throw new \InvalidArgumentException(
@@ -125,39 +128,39 @@ class PaymentService
 					$companyId
 				);
 
-		/*
-		 * Preservamos por ahora la lógica
-		 * actual de create_payment.php.
-		 *
-		 * IMPORTANTE:
-		 * Este contador se genera actualmente
-		 * a nivel de company_id, no de sale_id.
-		 * Lo revisaremos aparte para no cambiar
-		 * comportamiento durante la migración.
-		 */
-		$month =
-			$this->repository
-				->getNextInstallmentNumber(
-					$companyId
-				);
-
-		$installmentsMonth =
+        $installmentsMonth =
 			(int)(
 				$sale[
 					"installments_month"
 				] ?? 0
 			);
 
+		if ($installmentsMonth <= 0) {
+			throw new \RuntimeException(
+				"Invalid sale installment plan."
+			);
+		}
+
 		$noInstallments =
-			$month < $installmentsMonth
-				? $month
-				: 0;
+			$this->repository
+				->getNextInstallmentNumber(
+					$saleId
+				);
 
 		$saleDue =
-			(float)(
-				$sale["due"]
-				?? 0
+			round(
+				(float)(
+					$sale["due"]
+					?? 0
+				),
+				2
 			);
+
+		if ($saleDue <= 0) {
+			throw new \Exception(
+				"This sale has no outstanding debt."
+			);
+		}
 
 		if ($saleDue < $amount) {
 			throw new \Exception(
@@ -181,13 +184,45 @@ class PaymentService
 		}
 
 		$due =
-			$saleDue -
-			$amount;
+			round(
+				$saleDue -
+					$amount,
+				2
+			);
+
+		$interestType =
+			(int)(
+				$sale["interest_type"]
+				?? 0
+			);
+
+		if (
+			$interestType !== 1 &&
+			$interestType !== 2
+		) {
+			throw new \RuntimeException(
+				"Invalid sale interest type."
+			);
+		}
+
+		$interestRate =
+			(float)(
+				$sale["interest"]
+				?? 0
+			);
+
+		if ($interestRate < 0) {
+			throw new \RuntimeException(
+				"Invalid sale interest rate."
+			);
+		}
 
 		$interest =
-			(float)(
-				$data["interest"]
-				?? 0
+			$this->calculatePaymentInterest(
+				$amount,
+				$saleDue,
+				$interestType,
+				$interestRate
 			);
 
 		$status =
@@ -197,8 +232,7 @@ class PaymentService
 			);
 
 		$currency =
-			$data["currency"]
-				?? $sale["currency"]
+			$sale["currency"]
 				?? null;
 
 		$now =
@@ -320,10 +354,7 @@ class PaymentService
 					$now,
 
 				"initial_debt" =>
-					(float)(
-						$sale["price_sum"]
-						?? 0
-					),
+					$saleDue,
 
 				"created_by" =>
 					$userId,
@@ -350,8 +381,56 @@ class PaymentService
 			"ord_no" => $ordNo,
 			"previous_due" => $saleDue,
 			"amount" => $amount,
+			"interest_type" => $interestType,
+			"interest_rate" => $interestRate,
+			"interest" => $interest,
 			"due" => $due,
 			"no_installments" => $noInstallments
 		];
+	}
+
+	private function calculatePaymentInterest(
+		float $amount,
+		float $openingBalance,
+		int $interestType,
+		float $interestRate
+	): float {
+		if ($interestRate <= 0) {
+			return 0.0;
+		}
+
+		$rate =
+			$interestRate / 100;
+
+		/*
+		* Fixed interest.
+		*
+		* El interés fijo total pertenece al
+		* principal financiado. Cada pago recibe
+		* proporcionalmente su parte del interés.
+		*/
+		if ($interestType === 1) {
+			return round(
+				$amount *
+					$rate,
+				2
+			);
+		}
+
+		/*
+		* Reducing Balance.
+		*
+		* La tasa mensual se aplica al principal
+		* pendiente ANTES de registrar el pago.
+		*/
+		if ($interestType === 2) {
+			return round(
+				$openingBalance *
+					$rate,
+				2
+			);
+		}
+
+		return 0.0;
 	}
 }

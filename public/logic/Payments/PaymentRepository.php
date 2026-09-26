@@ -14,9 +14,10 @@ class PaymentRepository
 				"sales_id",
 				"customer_id",
 				"price_sum",
+                "remaining",
+	            "interest_type",
 				"interest",
 				"installments_month",
-				"no_installments",
 				"due",
 				"currency"
 			],
@@ -26,6 +27,7 @@ class PaymentRepository
 			],
 			[
 				"fetch_first" => true,
+                "for_update" => true,
 				"return_type" => "array"
 			]
 		);
@@ -73,15 +75,47 @@ class PaymentRepository
 
 
 	public function getNextInstallmentNumber(
-		int $companyId
-	): int {
-		return \get_next_increment_value(
-			"payments",
-			"no_installments",
-			$companyId,
-			1
-		);
-	}
+        int $saleId
+    ): int {
+        $result = \select_from(
+            "payments",
+            [
+                "payment_id"
+            ],
+            [
+                "sales_id" => $saleId
+            ],
+            [
+                "return_type" => "array"
+            ]
+        );
+
+        if (!is_array($result)) {
+            throw new \RuntimeException(
+                "PaymentRepository expected an array response."
+            );
+        }
+
+        if (!empty($result["success"])) {
+            $count = isset($result["count"])
+				? (int)$result["count"]
+				: (
+					is_array($result["data"] ?? null)
+						? count($result["data"])
+						: 0
+				);
+
+            return $count + 1;
+        }
+
+        if (($result["message"] ?? "") === "No records found") {
+            return 1;
+        }
+
+        throw new \RuntimeException(
+            "Could not determine the next installment number."
+        );
+    }
 
 
 	public function createPayment(

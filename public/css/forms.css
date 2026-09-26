@@ -1746,6 +1746,17 @@
     }
 }
 
+.formular-title {
+    width: 95%;
+	font-size: 14px;
+	font-weight: 600;
+	margin: 5px 0;
+	padding: 10px 0;
+	border: 0;
+	border-radius: 12px;
+	box-shadow: 0 .15rem 1.75rem 0 var(--main-box-light-shadow)!important;
+}
+
 .drop-area {
     width: 94%;
     border: 1px solid #CCC;

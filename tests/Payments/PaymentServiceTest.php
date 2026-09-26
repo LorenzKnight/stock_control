@@ -28,8 +28,6 @@ final class PaymentServiceTest extends TestCase
 					2,
 				"amount" =>
 					100,
-				"interest" =>
-					10,
 				"payment_status" =>
 					1
 			],
@@ -46,9 +44,10 @@ final class PaymentServiceTest extends TestCase
 				"sales_id" => 50,
 				"customer_id" => 7,
 				"price_sum" => 1000,
+				"remaining" => 400,
+				"interest_type" => 1,
 				"interest" => 10,
 				"installments_month" => 4,
-				"no_installments" => 4,
 				"due" => 400,
 				"currency" => "SEK"
 			],
@@ -364,7 +363,7 @@ final class PaymentServiceTest extends TestCase
 	}
 
 
-	public function testCreatesPaymentInterestAndUpdatesSaleDue(): void
+	public function testCreatesFixedInterestPaymentAndUpdatesSaleDue(): void
 	{
 		$repository =
 			$this->createMock(
@@ -399,7 +398,7 @@ final class PaymentServiceTest extends TestCase
 			->method(
 				'getNextInstallmentNumber'
 			)
-			->with(5)
+			->with(50)
 			->willReturn(2);
 
 		$repository
@@ -490,7 +489,7 @@ final class PaymentServiceTest extends TestCase
 								$data["payment_date"]
 							) &&
 							$data["initial_debt"] ===
-								1000.0 &&
+								400.0 &&
 							$data["created_by"] ===
 								10 &&
 							!empty(
@@ -554,6 +553,21 @@ final class PaymentServiceTest extends TestCase
 		);
 
 		$this->assertSame(
+			1,
+			$result["interest_type"]
+		);
+
+		$this->assertSame(
+			10.0,
+			$result["interest_rate"]
+		);
+
+		$this->assertSame(
+			10.0,
+			$result["interest"]
+		);
+
+		$this->assertSame(
 			300.0,
 			$result["due"]
 		);
@@ -565,7 +579,176 @@ final class PaymentServiceTest extends TestCase
 	}
 
 
-	public function testPreservesCurrentFinalInstallmentBehavior(): void
+	public function testCreatesReducingBalancePaymentAndUpdatesSaleDue(): void
+	{
+		$repository =
+			$this->createMock(
+				PaymentRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findSaleByOrderNumber'
+			)
+			->with(
+				10000001,
+				5
+			)
+			->willReturn(
+				$this->validSaleData([
+					"interest_type" => 2,
+					"interest" => 10,
+					"due" => 400
+				])
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'getNextPaymentNumber'
+			)
+			->with(5)
+			->willReturn(
+				20000001
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'getNextInstallmentNumber'
+			)
+			->with(50)
+			->willReturn(1);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'createPayment'
+			)
+			->with(
+				$this->callback(
+					function (
+						array $data
+					): bool {
+						return
+							$data["sales_id"] ===
+								50 &&
+
+							$data["amount"] ===
+								100.0 &&
+
+							$data["interest"] ===
+								40.0 &&
+
+							$data["installments_month"] ===
+								4 &&
+
+							$data["no_installments"] ===
+								1 &&
+
+							$data["due"] ===
+								300.0;
+					}
+				)
+			)
+			->willReturn(77);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'createInterestEarning'
+			)
+			->with(
+				$this->callback(
+					function (
+						array $data
+					): bool {
+						return
+							$data["sales_id"] ===
+								50 &&
+
+							$data["payment_id"] ===
+								77 &&
+
+							$data["interest"] ===
+								40.0 &&
+
+							$data["no_installments"] ===
+								1 &&
+
+							$data["initial_debt"] ===
+								400.0;
+					}
+				)
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'updateSaleDue'
+			)
+			->with(
+				50,
+				5,
+				300.0
+			);
+
+		$service =
+			new PaymentService(
+				$repository
+			);
+
+		$result =
+				$service->createPayment(
+					10,
+					5,
+					$this->validPaymentData()
+				);
+
+		$this->assertSame(
+			77,
+			$result["payment_id"]
+		);
+
+		$this->assertSame(
+			400.0,
+			$result["previous_due"]
+		);
+
+		$this->assertSame(
+			100.0,
+			$result["amount"]
+		);
+
+		$this->assertSame(
+			2,
+			$result["interest_type"]
+		);
+
+		$this->assertSame(
+			10.0,
+			$result["interest_rate"]
+		);
+
+		$this->assertSame(
+			40.0,
+			$result["interest"]
+		);
+
+		$this->assertSame(
+			300.0,
+			$result["due"]
+		);
+
+		$this->assertSame(
+			1,
+			$result["no_installments"]
+		);
+	}
+
+
+	public function testKeepsActualFinalInstallmentNumber(): void
 	{
 		$repository =
 			$this->createMock(
@@ -588,18 +771,12 @@ final class PaymentServiceTest extends TestCase
 				20000001
 			);
 
-		/*
-		 * Comportamiento actual:
-		 * cuando month alcanza installments_month,
-		 * no_installments pasa a 0.
-		 *
-		 * No estamos corrigiendo esta regla
-		 * durante la migración.
-		 */
 		$repository
+			->expects($this->once())
 			->method(
 				'getNextInstallmentNumber'
 			)
+			->with(50)
 			->willReturn(4);
 
 		$repository
@@ -615,7 +792,7 @@ final class PaymentServiceTest extends TestCase
 						return
 							$data[
 								"no_installments"
-							] === 0;
+							] === 4;
 					}
 				)
 			)
@@ -634,7 +811,7 @@ final class PaymentServiceTest extends TestCase
 						return
 							$data[
 								"no_installments"
-							] === 0;
+							] === 4;
 					}
 				)
 			);
@@ -651,14 +828,14 @@ final class PaymentServiceTest extends TestCase
 			);
 
 		$result =
-			$service->createPayment(
-				10,
-				5,
-				$this->validPaymentData()
-			);
+				$service->createPayment(
+					10,
+					5,
+					$this->validPaymentData()
+				);
 
 		$this->assertSame(
-			0,
+			4,
 			$result["no_installments"]
 		);
 	}

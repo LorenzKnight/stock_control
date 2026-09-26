@@ -73,7 +73,8 @@
 							
 								<div class="formular-list">
 									<div class="create-list-holder">
-										<button type="button" class="button-style-agree disabled" style="pointer-events: none" disabled><?= tr('method_of_payment') ?></button>
+										<!-- <button type="button" class="button-style-agree disabled" style="pointer-events: none" disabled><?= tr('method_of_payment') ?></button> -->
+										<div class="formular-title"><?= tr('method_of_payment') ?></div>
 									</div>
 									<div class="cat-all-list">
 										<table width="100%" align="center" cellspacing="0">
@@ -83,8 +84,14 @@
 													<input class="form-input-style" type="text" name="edit_price_sum" id="edit_price_sum" placeholder="<?= tr('price_sum') ?>..." disabled/>
 												</td>
 											</tr>
-											<tr valign="baseline">
+											<tr valign="baseline" >
 												<td colspan="2" align="center" valign="middle">
+													<label for="edit_initial"><?= tr('initial') ?>:</label>
+													<input class="form-input-style" type="text" name="edit_initial" id="edit_initial" placeholder="<?= tr('initial') ?>..."/>
+												</td>
+											</tr>
+											<tr valign="baseline">
+												<td width="50%" align="center" valign="middle">
 													<label for="edit_interest_type"><?= tr('interest_type') ?? 'Interés type' ?>:</label>
 													<select class="form-input-style" name="edit_interest_type" id="edit_interest_type">
 														<option value=""><?= tr('select_interest_rate') ?? 'Select interest rate' ?></option>
@@ -92,27 +99,19 @@
 														<option value="2"><?= tr('reducing_balance') ?? 'Interest on a decreasing balance' ?></option>
 													</select>
 												</td>
-											</tr>
-											<tr valign="baseline" >
 												<td width="50%" align="center" valign="middle">
 													<label for="edit_interest">% <?= tr('interest') ?>:</label>
 													<input class="form-medium-input-style" type="text" name="edit_interest" id="edit_interest" value="10" placeholder="<?= tr('percent') ?>..."/>
 												</td>
+											</tr>
+											<tr valign="baseline" >
 												<td width="50%" align="center" valign="middle">
 													<label for="edit_total_interest"><?= tr('total_interest') ?>:</label>
 													<input class="form-medium-input-style" type="text" name="edit_total_interest" id="edit_total_interest" placeholder="<?= tr('total_interest') ?>..." disabled/>
 												</td>
-											</tr>
-											<tr valign="baseline" >
-												<td colspan="2" align="center" valign="middle">
-													<label for="edit_initial"><?= tr('initial') ?>:</label>
-													<input class="form-input-style" type="text" name="edit_initial" id="edit_initial" placeholder="<?= tr('initial') ?>..."/>
-												</td>
-											</tr>
-											<tr valign="baseline" >
-												<td colspan="2" align="center" valign="middle">
-													<label for="edit_payment_date"><?= tr('payment_date') ?>:</label>
-													<input class="form-input-style" type="date" name="edit_payment_date" id="edit_payment_date" placeholder="<?= tr('payment_date') ?>..."/>
+												<td width="50%" align="center" valign="middle">
+													<label for="edit_installments_month"><?= tr('installments_month') ?>:</label>
+													<select class="form-input-style" name="edit_installments_month" id="edit_installments_month"></select>
 												</td>
 											</tr>
 											<tr valign="baseline" >
@@ -123,8 +122,8 @@
 											</tr>
 											<tr valign="baseline" >
 												<td width="50%" align="center" valign="middle">
-													<label for="edit_installments_month"><?= tr('installments_month') ?>:</label>
-													<select class="form-input-style" name="edit_installments_month" id="edit_installments_month"></select>
+													<label for="edit_payment_date"><?= tr('payment_date') ?>:</label>
+													<input class="form-medium-input-style" type="date" name="edit_payment_date" id="edit_payment_date" placeholder="<?= tr('payment_date') ?>..."/>
 												</td>
 												<td width="50%" align="center" valign="middle">
 													<label for="edit_delivery_date"><?= tr('delivery_date') ?>:</label>
