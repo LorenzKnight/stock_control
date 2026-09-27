@@ -360,6 +360,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				if (!ordNo || isNaN(ordNo)) {
 					currentOrderInterest = 0;
 					currentOrderInterestType = 0;
+					currentOrderRemaining = 0;
 					currentOrderDue = 0;
 
 					if (payInterestInput) {
