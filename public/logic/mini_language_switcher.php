@@ -532,6 +532,8 @@ $i18n = [
 		'total_interest' => 'Total interest',
 		'percent' => 'Percent',
 		'amount' => 'Amount',
+		'principal' => 'Principal',
+		'installment' => 'Installment',
 		'payment_no' => 'Payment No.',
 
 		'from' => 'From',
@@ -1047,6 +1049,8 @@ $i18n = [
 		'total_interest' => 'Interés total',
 		'percent' => 'Porcentaje',
 		'amount' => 'Monto',
+		'principal' => 'Principal',
+		'installment' => 'Cuota',
 		'payment_no' => 'Pago No.',
 
 		'from' => 'Desde',
@@ -1562,6 +1566,8 @@ $i18n = [
 		'total_interest' => 'Total ränta',
 		'percent' => 'Procent',
 		'amount' => 'Belopp',
+		'principal' => 'Principal',
+		'installment' => 'Avgift',
 		'payment_no' => 'Betalningsnummer',
 
 		'from' => 'Från',

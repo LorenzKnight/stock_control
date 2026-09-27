@@ -68,6 +68,37 @@ class PaymentService
 			);
 		}
 
+		$saleId =
+			(int)(
+				$sale["sales_id"]
+					?? 0
+			);
+
+		if ($saleId <= 0) {
+			throw new \RuntimeException(
+				"Invalid sale ID."
+			);
+		}
+
+		$nextInstallment =
+			$this->repository
+				->getNextInstallmentNumber(
+					$saleId
+				);
+
+		$installmentsMonth =
+			(int)(
+				$sale["installments_month"]
+					?? 0
+			);
+
+		$remainingInstallments =
+			max(
+				$installmentsMonth -
+					($nextInstallment - 1),
+				1
+			);
+
 		return [
 			"ord_no" =>
 				(int)$sale["ord_no"],
@@ -95,6 +126,12 @@ class PaymentService
 					$sale["installments_month"]
 					?? 0
 				),
+
+			"next_installment" =>
+				$nextInstallment,
+
+			"remaining_installments" =>
+				$remainingInstallments,
 
 			"remaining" =>
 				(float)(

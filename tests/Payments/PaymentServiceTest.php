@@ -56,6 +56,116 @@ final class PaymentServiceTest extends TestCase
 	}
 
 
+	public function testGetOrderInfoReturnsRemainingInstallments(): void
+	{
+		$repository =
+			$this->createMock(
+				PaymentRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findSaleInfoByOrderNumber'
+			)
+			->with(
+				10000001,
+				5
+			)
+			->willReturn([
+				"sales_id" => 50,
+				"ord_no" => 10000001,
+				"customer_id" => 7,
+				"currency" => "SEK",
+				"interest_type" => 1,
+				"interest" => 10,
+				"installments_month" => 6,
+				"remaining" => 1000,
+				"due" => 1200
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findCustomerInfoById'
+			)
+			->with(
+				7,
+				5
+			)
+			->willReturn([
+				"customer_name" => "John",
+				"customer_surname" => "Doe",
+				"customer_document_type" => 1,
+				"customer_document_no" => "ABC123",
+				"customer_phone" => "0700000000",
+				"customer_email" => "john@example.com"
+			]);
+
+		/*
+		* Ya existe un pago.
+		* El próximo será el número 2.
+		*
+		* 6 cuotas totales
+		* - 1 ya utilizada
+		* = 5 restantes.
+		*/
+		$repository
+			->expects($this->once())
+			->method(
+				'getNextInstallmentNumber'
+			)
+			->with(50)
+			->willReturn(2);
+
+		$service =
+			new PaymentService(
+				$repository
+			);
+
+		$result =
+			$service->getOrderInfo(
+				5,
+				10000001
+			);
+
+		$this->assertSame(
+			10000001,
+			$result["ord_no"]
+		);
+
+		$this->assertSame(
+			6,
+			$result["installments_month"]
+		);
+
+		$this->assertSame(
+			2,
+			$result["next_installment"]
+		);
+
+		$this->assertSame(
+			5,
+			$result["remaining_installments"]
+		);
+
+		$this->assertSame(
+			1000.0,
+			$result["remaining"]
+		);
+
+		$this->assertSame(
+			1200.0,
+			$result["due"]
+		);
+
+		$this->assertSame(
+			"John Doe",
+			$result["customer_name"]
+		);
+	}
+
+
 	public function testRejectsCreateWithInvalidUserId(): void
 	{
 		$repository =

@@ -1,4 +1,5 @@
 <?php
+require_once ('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
@@ -15,7 +16,8 @@ try {
 	}
 	
 	$authUser = requireAuth();
-	$userId = $authUser["user_id"] ?? null;
+	$userId = (int)($authUser["user_id"] ?? 0);
+	$companyId = (int)($authUser["company_id"] ?? 0);
 
 	if (empty($userId)) {
         throw new Exception("Unauthorized access: invalid or missing token.");
@@ -23,9 +25,6 @@ try {
 
     $search = $_GET['search'] ?? '';
 	$paymentId = isset($_GET['payment_id']) ? (int)$_GET['payment_id'] : null;
-
-	$userInfo = select_from("users", ["company_id"], ["user_id" => $userId], ["fetch_first" => true]);
-	$companyId = json_decode($userInfo, true)["data"]["company_id"] ?? null;
 
     $where = [
 		"company_id" => $companyId,
@@ -108,10 +107,13 @@ try {
 		$payMethod = $payment["payment_method"] ?? null;
 		$payment["payment_method"] = GlobalArrays::$paymentMethods[$payMethod] ?? "Unknown";
 
-		$payment["amount"] = number_format((float)$payment["amount"], 2, '.', '');
-		$payment["interest"] = number_format((float)$payment["interest"], 2, '.', '');
-		$payment["installments_month"] = number_format((float)$payment["installments_month"], 2, '.', '');
-		$payment["no_installments"] = number_format((float)$payment["no_installments"], 2, '.', '');
+		$amount = (float)$payment["amount"];
+		$interest = (float)$payment["interest"];
+		$payment["amount"] = number_format($amount, 2, '.', '');
+		$payment["interest"] = number_format($interest, 2, '.', '');
+		$payment["principal_paid"] = number_format($amount - $interest, 2, '.', '');
+		$payment["installments_month"] = (int)$payment["installments_month"];
+		$payment["no_installments"] = (int)$payment["no_installments"];
 		$payment["payment_date"] = date('Y-m-d', strtotime($payment["payment_date"]));
 		$payment["due"] = number_format((float)$payment["due"], 2, '.', '');
 		$payment["status"] = $payment["status"] ?? null;

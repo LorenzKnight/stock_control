@@ -27,43 +27,51 @@ document.addEventListener("DOMContentLoaded", async function () {
 						row.innerHTML = `
 							<table width="100%" align="center" cellspacing="0">
 								<tr valign="baseline" >
-									<td width="8%" align="center" valign="middle">
+									<td width="7%" align="center" valign="middle">
 										<p class="mini-title">${window.i18n?.payment_no}:</p>
 										${payment.payment_no || ''}
 									</td>
-									<td width="8%" align="center" valign="middle">
+									<td width="7%" align="center" valign="middle">
 										<p class="mini-title">Ord no:</p>
 										${payment.ord_no || ''}
 									</td>
-									<td width="13%" align="left" valign="middle" style="padding-left:2%;">
+									<td width="12%" align="left" valign="middle" style="padding-left:2%;">
 										<p class="mini-title">${window.i18n?.form_name}:</p>
 										${payment.full_name || ''}
 									</td>
-									<td width="10%" align="center" valign="middle">
+									<td width="9%" align="center" valign="middle">
 										<p class="mini-title">${payment.document_type}:</p>
 										${payment.document_no || ''}
 									</td>
-									<td width="11%" align="center" valign="middle">
+									<td width="9%" align="center" valign="middle">
 										<p class="mini-title">${window.i18n?.method_of_payment}:</p>
 										${payment.payment_method || ''}
 									</td>
-									<td width="11%" align="center" valign="middle">
+									<td width="9%" align="center" valign="middle">
 										<p class="mini-title">${window.i18n?.amount}:</p>
 										${parseFloat(payment.amount).toFixed(2)}
 									</td>
-									<td width="11%" align="center" valign="middle">
-										<p class="mini-title">${window.i18n?.interest}:</p>
-										- ${parseFloat(payment.interest).toFixed(2)}
+									<td width="9%" align="center" valign="middle">
+										<p class="mini-title">${window.i18n?.principal}:</p>
+										${parseFloat(payment.principal_paid).toFixed(2)}
 									</td>
-									<td width="11%" align="center" valign="middle">
+									<td width="9%" align="center" valign="middle">
+										<p class="mini-title">${window.i18n?.interest}:</p>
+										${parseFloat(payment.interest).toFixed(2)}
+									</td>
+									<td width="8%" align="center" valign="middle">
+										<p class="mini-title">${window.i18n?.installment}:</p>
+										${payment.no_installments || 0} / ${payment.installments_month || 0}
+									</td>
+									<td width="9%" align="center" valign="middle">
 										<p class="mini-title">${window.i18n?.due}:</p>
 										${parseFloat(payment.due).toFixed(2)}
 									</td>
-									<td width="10%" align="center" valign="middle">
+									<td width="8%" align="center" valign="middle">
 										<p class="mini-title">${window.i18n?.payment_date}:</p>
 										${payment.payment_date || ''}
 									</td>
-									<td width="5%" align="center" valign="middle">
+									<td width="4%" align="center" valign="middle">
 										<div class="payments-menu">
 											<img src="images/sys-img/hamburger-menu-icon.png" alt="menu">
 										</div>
@@ -262,6 +270,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	let currentOrderInterestType = 0;
 	let currentOrderRemaining = 0;
 	let currentOrderDue = 0;
+	let currentOrderRemainingInstallments = 0;
 
 	function calculatePaymentInterestPreview() {
 		if (!payInterestInput) {
@@ -362,6 +371,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 					currentOrderInterestType = 0;
 					currentOrderRemaining = 0;
 					currentOrderDue = 0;
+					currentOrderRemainingInstallments = 0;
+
+					if (amountInput) {
+						amountInput.value = '';
+					}
 
 					if (payInterestInput) {
 						payInterestInput.value = '';
@@ -385,6 +399,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 						currentOrderInterestType = parseInt(order.interest_type, 10) || 0;
 						currentOrderRemaining = parseFloat(order.remaining) || 0;
 						currentOrderDue = parseFloat(order.due) || 0;
+						currentOrderRemainingInstallments = parseInt(order.remaining_installments, 10) || 0;
 
 						document.getElementById('customer').value = order.customer_name || '';
 						document.getElementById('payer_document_no').value = order.document_no || '';
@@ -399,12 +414,25 @@ document.addEventListener("DOMContentLoaded", async function () {
 							document.getElementById('payer_document_type').value = order.document_type;
 						}
 
+						if (
+							currentOrderDue > 0 &&
+							currentOrderRemainingInstallments > 0
+						) {
+							const suggestedPayment = currentOrderDue / currentOrderRemainingInstallments;
+							amountInput.value = suggestedPayment.toFixed(2);
+						}
+
 						calculatePaymentInterestPreview();
 					} else {
 						currentOrderInterest = 0;
 						currentOrderInterestType = 0;
 						currentOrderRemaining = 0;
 						currentOrderDue = 0;
+						currentOrderRemainingInstallments = 0;
+
+						if (amountInput) {
+							amountInput.value = '';
+						}
 
 						if (payInterestInput) {
 							payInterestInput.value = '';
@@ -416,6 +444,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 					currentOrderInterestType = 0;
 					currentOrderRemaining = 0;
 					currentOrderDue = 0;
+					currentOrderRemainingInstallments = 0;
+
+					if (amountInput) {
+						amountInput.value = '';
+					}
 
 					if (payInterestInput) {
 						payInterestInput.value = '';

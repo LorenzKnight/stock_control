@@ -73,7 +73,6 @@
 							
 								<div class="formular-list">
 									<div class="create-list-holder">
-										<!-- <button type="button" class="button-style-agree disabled" style="pointer-events: none" disabled><?= tr('method_of_payment') ?></button> -->
 										<div class="formular-title"><?= tr('method_of_payment') ?></div>
 									</div>
 									<div class="cat-all-list">
