@@ -671,7 +671,7 @@ final class SaleServiceTest extends TestCase
 								4 &&
 
 							$data["due"] ===
-								"80.00";
+								"100.00";
 					}
 				)
 			)
@@ -2442,7 +2442,7 @@ final class SaleServiceTest extends TestCase
 								"2026-10-23 00:00:00" &&
 							$data[
 								"due"
-							] === "80.00";
+							] === "88.00";
 					}
 				)
 			);
@@ -2601,7 +2601,7 @@ final class SaleServiceTest extends TestCase
 								4 &&
 
 							$data["due"] ===
-								"80.00";
+								"100.00";
 					}
 				)
 			);
@@ -3449,7 +3449,7 @@ final class SaleServiceTest extends TestCase
 					"installments_month" => 4,
 					"payment_date" =>
 						"2026-10-22 00:00:00",
-					"due" => 80,
+					"due" => 100,
 					"created_at" =>
 						"2026-09-22 10:00:00"
 				]
@@ -3506,7 +3506,7 @@ final class SaleServiceTest extends TestCase
 		);
 
 		$this->assertSame(
-			80,
+			100,
 			$result[0]["due"]
 		);
 	}

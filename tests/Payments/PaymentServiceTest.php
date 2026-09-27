@@ -48,7 +48,7 @@ final class PaymentServiceTest extends TestCase
 				"interest_type" => 1,
 				"interest" => 10,
 				"installments_month" => 4,
-				"due" => 400,
+				"due" => 440,
 				"currency" => "SEK"
 			],
 			$overrides
@@ -306,6 +306,7 @@ final class PaymentServiceTest extends TestCase
 			)
 			->willReturn(
 				$this->validSaleData([
+					"remaining" => 70,
 					"due" => 80
 				])
 			);
@@ -339,7 +340,7 @@ final class PaymentServiceTest extends TestCase
 		$repository
 			->expects($this->never())
 			->method(
-				'updateSaleDue'
+				'updateSaleBalances'
 			);
 
 		$service =
@@ -352,7 +353,7 @@ final class PaymentServiceTest extends TestCase
 		);
 
 		$this->expectExceptionMessage(
-			"The debt (80.00 SEK) is less than the amount being paid (100.00)."
+			"The outstanding debt (80.00 SEK) is less than the amount being paid (100.00)."
 		);
 
 		$service->createPayment(
@@ -363,7 +364,7 @@ final class PaymentServiceTest extends TestCase
 	}
 
 
-	public function testCreatesFixedInterestPaymentAndUpdatesSaleDue(): void
+	public function testCreatesFixedInterestPaymentAndUpdatesSaleBalances(): void
 	{
 		$repository =
 			$this->createMock(
@@ -437,7 +438,7 @@ final class PaymentServiceTest extends TestCase
 							$data["amount"] ===
 								100.0 &&
 							$data["interest"] ===
-								10.0 &&
+								9.09 &&
 							$data["installments_month"] ===
 								4 &&
 							$data["no_installments"] ===
@@ -446,7 +447,7 @@ final class PaymentServiceTest extends TestCase
 								$data["payment_date"]
 							) &&
 							$data["due"] ===
-								300.0 &&
+								340.0 &&
 							$data["status"] ===
 								1 &&
 							$data["company_id"] ===
@@ -480,7 +481,7 @@ final class PaymentServiceTest extends TestCase
 							$data["ord_no"] ===
 								10000001 &&
 							$data["interest"] ===
-								10.0 &&
+								9.09 &&
 							$data["installments_month"] ===
 								4 &&
 							$data["no_installments"] ===
@@ -502,12 +503,13 @@ final class PaymentServiceTest extends TestCase
 		$repository
 			->expects($this->once())
 			->method(
-				'updateSaleDue'
+				'updateSaleBalances'
 			)
 			->with(
 				50,
 				5,
-				300.0
+				309.09,
+				340.0
 			);
 
 		$service =
@@ -544,12 +546,22 @@ final class PaymentServiceTest extends TestCase
 
 		$this->assertSame(
 			400.0,
+			$result["previous_remaining"]
+		);
+
+		$this->assertSame(
+			440.0,
 			$result["previous_due"]
 		);
 
 		$this->assertSame(
 			100.0,
 			$result["amount"]
+		);
+
+		$this->assertSame(
+			90.91,
+			$result["principal_paid"]
 		);
 
 		$this->assertSame(
@@ -563,12 +575,17 @@ final class PaymentServiceTest extends TestCase
 		);
 
 		$this->assertSame(
-			10.0,
+			9.09,
 			$result["interest"]
 		);
 
 		$this->assertSame(
-			300.0,
+			309.09,
+			$result["remaining"]
+		);
+
+		$this->assertSame(
+			340.0,
 			$result["due"]
 		);
 
@@ -579,7 +596,7 @@ final class PaymentServiceTest extends TestCase
 	}
 
 
-	public function testCreatesReducingBalancePaymentAndUpdatesSaleDue(): void
+	public function testCreatesReducingBalancePaymentAndUpdatesSaleBalances(): void
 	{
 		$repository =
 			$this->createMock(
@@ -599,7 +616,8 @@ final class PaymentServiceTest extends TestCase
 				$this->validSaleData([
 					"interest_type" => 2,
 					"interest" => 10,
-					"due" => 400
+					"remaining" => 400,
+					"due" => 500
 				])
 			);
 
@@ -648,7 +666,7 @@ final class PaymentServiceTest extends TestCase
 								1 &&
 
 							$data["due"] ===
-								300.0;
+								408.0;
 					}
 				)
 			)
@@ -686,12 +704,13 @@ final class PaymentServiceTest extends TestCase
 		$repository
 			->expects($this->once())
 			->method(
-				'updateSaleDue'
+				'updateSaleBalances'
 			)
 			->with(
 				50,
 				5,
-				300.0
+				340.0,
+				408.0
 			);
 
 		$service =
@@ -713,12 +732,22 @@ final class PaymentServiceTest extends TestCase
 
 		$this->assertSame(
 			400.0,
+			$result["previous_remaining"]
+		);
+
+		$this->assertSame(
+			500.0,
 			$result["previous_due"]
 		);
 
 		$this->assertSame(
 			100.0,
 			$result["amount"]
+		);
+
+		$this->assertSame(
+			60.0,
+			$result["principal_paid"]
 		);
 
 		$this->assertSame(
@@ -737,7 +766,12 @@ final class PaymentServiceTest extends TestCase
 		);
 
 		$this->assertSame(
-			300.0,
+			340.0,
+			$result["remaining"]
+		);
+
+		$this->assertSame(
+			408.0,
 			$result["due"]
 		);
 
@@ -819,7 +853,7 @@ final class PaymentServiceTest extends TestCase
 		$repository
 			->expects($this->once())
 			->method(
-				'updateSaleDue'
+				'updateSaleBalances'
 			);
 
 		$service =
@@ -898,7 +932,7 @@ final class PaymentServiceTest extends TestCase
 		$repository
 			->expects($this->never())
 			->method(
-				'updateSaleDue'
+				'updateSaleBalances'
 			);
 
 		$service =
