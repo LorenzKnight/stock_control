@@ -166,6 +166,69 @@ final class PaymentServiceTest extends TestCase
 	}
 
 
+	public function testGetOrderInfoReturnsAllInstallmentsBeforeFirstPayment(): void
+	{
+		$repository =
+			$this->createMock(
+				PaymentRepository::class
+			);
+
+		$repository
+			->method(
+				'findSaleInfoByOrderNumber'
+			)
+			->willReturn([
+				"sales_id" => 50,
+				"ord_no" => 10000001,
+				"customer_id" => 7,
+				"currency" => "SEK",
+				"interest_type" => 1,
+				"interest" => 10,
+				"installments_month" => 6,
+				"remaining" => 1000,
+				"due" => 1200
+			]);
+
+		$repository
+			->method(
+				'findCustomerInfoById'
+			)
+			->willReturn([
+				"customer_name" => "John",
+				"customer_surname" => "Doe"
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'getNextInstallmentNumber'
+			)
+			->with(50)
+			->willReturn(1);
+
+		$service =
+			new PaymentService(
+				$repository
+			);
+
+		$result =
+			$service->getOrderInfo(
+				5,
+				10000001
+			);
+
+		$this->assertSame(
+			1,
+			$result["next_installment"]
+		);
+
+		$this->assertSame(
+			6,
+			$result["remaining_installments"]
+		);
+	}
+
+
 	public function testRejectsCreateWithInvalidUserId(): void
 	{
 		$repository =
