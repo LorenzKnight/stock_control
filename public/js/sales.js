@@ -179,16 +179,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 									<td align="right">${window.i18n.initial} :</td><td style="padding-left: 5px;">${sale.initial}</td>
 								</tr>
 								<tr valign="baseline" >
-									<td align="right">${window.i18n.delivery_date} :</td><td style="padding-left: 5px;">${sale.delivery_date}</td>
+									<td align="right">${window.i18n.remaining} :</td><td style="padding-left: 5px;">${sale.remaining}</td>
 								</tr>
 								<tr valign="baseline" >
-									<td align="right">${window.i18n.remaining} :</td><td style="padding-left: 5px;">${sale.remaining}</td>
+									<td align="right">${window.i18n.installments_month} :</td><td style="padding-left: 5px;">${sale.payments} / ${sale.installments_month}</td>
 								</tr>
 								<tr valign="baseline" >
 									<td align="right">${window.i18n.interest} :</td><td style="padding-left: 5px;">${sale.total_interest}</td>
 								</tr>
 								<tr valign="baseline" >
-									<td align="right">${window.i18n.installments_month} :</td><td style="padding-left: 5px;">${sale.payments} / ${sale.installments_month}</td>
+									<td align="right">${window.i18n.delivery_date} :</td><td style="padding-left: 5px;">${sale.delivery_date}</td>
 								</tr>
 								<tr valign="baseline" >
 									<td align="right">${window.i18n.payment_date} :</td><td style="padding-left: 5px;">${paymentDateFormatted}</td>

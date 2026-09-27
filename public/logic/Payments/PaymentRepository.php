@@ -219,6 +219,7 @@ class PaymentRepository
 				"interest_type",
 				"interest",
 				"installments_month",
+				"remaining",
 				"due"
 			],
 			[

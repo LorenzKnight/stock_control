@@ -260,6 +260,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	const payInterestInput = document.getElementById('interest');
 	let currentOrderInterest = 0;
 	let currentOrderInterestType = 0;
+	let currentOrderRemaining = 0;
 	let currentOrderDue = 0;
 
 	function calculatePaymentInterestPreview() {
@@ -267,52 +268,89 @@ document.addEventListener("DOMContentLoaded", async function () {
 			return;
 		}
 
-		const amount = parseFloat(amountInput?.value);
+		const amount =
+			parseFloat(
+				amountInput?.value
+			);
 
 		if (
 			currentOrderInterest <= 0 ||
 			currentOrderInterestType <= 0
 		) {
-			payInterestInput.value = '0.00';
+			payInterestInput.value =
+				'0.00';
 
 			return;
 		}
 
 		let interestAmount = 0;
 
+		const rate =
+			currentOrderInterest /
+			100;
+
 		/*
-		* Fixed interest:
-		* interés proporcional al principal pagado.
+		* Fixed Interest
+		*
+		* amount representa el pago TOTAL.
+		*
+		* total = principal + interest
+		* interest = principal × rate
 		*/
 		if (currentOrderInterestType === 1) {
-			if (isNaN(amount) || amount <= 0) {
-				payInterestInput.value ='';
+			if (
+				isNaN(amount) ||
+				amount <= 0
+			) {
+				payInterestInput.value =
+					'';
 
 				return;
 			}
 
-			interestAmount = amount * currentOrderInterest / 100;
+			const principal =
+				Math.round(
+					(
+						amount /
+						(1 + rate)
+					) * 100
+				) / 100;
+
+			interestAmount =
+				Math.round(
+					(
+						amount -
+						principal
+					) * 100
+				) / 100;
 		}
 
 		/*
-		* Reducing Balance:
-		* interés calculado sobre el saldo
-		* pendiente antes del pago.
+		* Reducing Balance
+		*
+		* El interés se calcula sobre
+		* el capital pendiente actual,
+		* no sobre due.
 		*/
 		if (currentOrderInterestType === 2) {
-			if (currentOrderDue <= 0) {
-				payInterestInput.value = '0.00';
+			if (currentOrderRemaining <= 0) {
+				payInterestInput.value =
+					'0.00';
 
 				return;
 			}
 
 			interestAmount =
-				currentOrderDue *
-				currentOrderInterest /
-				100;
+				Math.round(
+					(
+						currentOrderRemaining *
+						rate
+					) * 100
+				) / 100;
 		}
 
-		payInterestInput.value = interestAmount.toFixed(2);
+		payInterestInput.value =
+			interestAmount.toFixed(2);
 	}
 
 	if (ordNoInput && amountInput) {
@@ -344,6 +382,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 						currentOrderInterest = parseFloat(order.interest) || 0;
 						currentOrderInterestType = parseInt(order.interest_type, 10) || 0;
+						currentOrderRemaining = parseFloat(order.remaining) || 0;
 						currentOrderDue = parseFloat(order.due) || 0;
 
 						document.getElementById('customer').value = order.customer_name || '';
@@ -363,6 +402,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					} else {
 						currentOrderInterest = 0;
 						currentOrderInterestType = 0;
+						currentOrderRemaining = 0;
 						currentOrderDue = 0;
 
 						if (payInterestInput) {
@@ -373,6 +413,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				} catch (error) {
 					currentOrderInterest = 0;
 					currentOrderInterestType = 0;
+					currentOrderRemaining = 0;
 					currentOrderDue = 0;
 
 					if (payInterestInput) {
