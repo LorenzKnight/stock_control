@@ -196,8 +196,8 @@ class SaleService
 		* Due represents outstanding principal only.
 		* Interest never reduces or increases principal.
 		*/
-		$due =
-			$remaining;
+		$due = 
+			round($remaining + $totalInterest, 2);
 
 
 		/*
@@ -660,7 +660,7 @@ class SaleService
 		* Interest never reduces or increases principal.
 		*/
 		$due =
-			$remaining;
+			round($remaining + $totalInterest, 2);
 
 		/*
 		* Validamos TODOS los productos antes

@@ -200,6 +200,26 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 	window.initCategorySelectors = initCategorySelectors;
 
+	function getLocalDateValue() {
+		const today = new Date();
+
+		const year =
+			today.getFullYear();
+
+		const month =
+			String(
+				today.getMonth() + 1
+			).padStart(2, '0');
+
+		const day =
+			String(
+				today.getDate()
+			).padStart(2, '0');
+
+		return `${year}-${month}-${day}`;
+	}
+	window.getLocalDateValue = getLocalDateValue;
+
 	// 📌 formatear fecha y hora completa
 	function formatFullDateTime(dateString) {
 		const monthsAbbr = [

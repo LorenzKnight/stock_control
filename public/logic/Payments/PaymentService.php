@@ -96,6 +96,12 @@ class PaymentService
 					?? 0
 				),
 
+			"remaining" =>
+				(float)(
+					$sale["remaining"]
+						?? 0
+				),
+
 			"due" =>
 				(float)(
 					$sale["due"]
@@ -276,48 +282,53 @@ class PaymentService
 					$saleId
 				);
 
-		$saleDue =
+		$saleRemaining =
 			round(
 				(float)(
-					$sale["due"]
-					?? 0
+					$sale["remaining"]
+						?? 0
 				),
 				2
 			);
 
-		if ($saleDue <= 0) {
+		$saleDue =
+			round(
+				(float)(
+					$sale["due"]
+						?? 0
+				),
+				2
+			);
+
+		if (
+			$saleRemaining <= 0 ||
+			$saleDue <= 0
+		) {
 			throw new \Exception(
 				"This sale has no outstanding debt."
 			);
 		}
 
-		if ($saleDue < $amount) {
+		if ($amount > $saleDue) {
 			throw new \Exception(
-				"The debt (" .
-				number_format(
-					$saleDue,
-					2
-				) .
-				" " .
-				(string)(
-					$sale["currency"]
-					?? ''
-				) .
-				") is less than the amount being paid (" .
-				number_format(
-					$amount,
-					2
-				) .
-				")."
+				"The outstanding debt (" .
+					number_format(
+						$saleDue,
+						2
+					) .
+					" " .
+					(string)(
+						$sale["currency"]
+							?? ''
+					) .
+					") is less than the amount being paid (" .
+					number_format(
+						$amount,
+						2
+					) .
+					")."
 			);
 		}
-
-		$due =
-			round(
-				$saleDue -
-					$amount,
-				2
-			);
 
 		$interestType =
 			(int)(
@@ -346,13 +357,28 @@ class PaymentService
 			);
 		}
 
-		$interest =
-			$this->calculatePaymentInterest(
+		$breakdown =
+			$this->calculatePaymentBreakdown(
 				$amount,
+				$saleRemaining,
 				$saleDue,
 				$interestType,
-				$interestRate
+				$interestRate,
+				$installmentsMonth,
+				$noInstallments
 			);
+
+		$principalPaid =
+			$breakdown["principal"];
+
+		$interest =
+			$breakdown["interest"];
+
+		$remaining =
+			$breakdown["remaining"];
+
+		$due =
+			$breakdown["due"];
 
 		$status =
 			(int)(
@@ -483,7 +509,7 @@ class PaymentService
 					$now,
 
 				"initial_debt" =>
-					$saleDue,
+					$saleRemaining,
 
 				"created_by" =>
 					$userId,
@@ -497,9 +523,10 @@ class PaymentService
 		 * pendiente de la venta.
 		 */
 		$this->repository
-			->updateSaleDue(
+			->updateSaleBalances(
 				$saleId,
 				$companyId,
+				$remaining,
 				$due
 			);
 
@@ -508,61 +535,244 @@ class PaymentService
 			"payment_no" => $newPaymentNo,
 			"sale_id" => $saleId,
 			"ord_no" => $ordNo,
+			"previous_remaining" => $saleRemaining,
 			"previous_due" => $saleDue,
 			"amount" => $amount,
+			"principal_paid" => $principalPaid,
 			"interest_type" => $interestType,
 			"interest_rate" => $interestRate,
 			"interest" => $interest,
+			"remaining" => $remaining,
 			"due" => $due,
 			"no_installments" => $noInstallments
 		];
 	}
 
-	private function calculatePaymentInterest(
-		float $amount,
-		float $openingBalance,
+	private function calculatePaymentBreakdown(
+		float $totalAmount,
+		float $openingPrincipal,
+		float $openingDue,
 		int $interestType,
-		float $interestRate
-	): float {
-		if ($interestRate <= 0) {
-			return 0.0;
+		float $interestRate,
+		int $installmentsMonth,
+		int $installmentNumber
+	): array {
+		if ($interestRate < 0) {
+			throw new \InvalidArgumentException(
+				"Invalid interest rate."
+			);
 		}
 
 		$rate =
 			$interestRate / 100;
 
 		/*
-		* Fixed interest.
+		* FIXED INTEREST
 		*
-		* El interés fijo total pertenece al
-		* principal financiado. Cada pago recibe
-		* proporcionalmente su parte del interés.
+		* amount = pago total recibido.
+		*
+		* Ese pago contiene:
+		* principal + interest.
 		*/
 		if ($interestType === 1) {
-			return round(
-				$amount *
-					$rate,
-				2
-			);
+			if ($rate > 0) {
+				$principal =
+					round(
+						$totalAmount /
+							(1 + $rate),
+						2
+					);
+
+				$interest =
+					round(
+						$totalAmount -
+							$principal,
+						2
+					);
+			} else {
+				$principal =
+					round(
+						$totalAmount,
+						2
+					);
+
+				$interest =
+					0.0;
+			}
+
+			if ($principal > $openingPrincipal) {
+				throw new \Exception(
+					"Payment exceeds the outstanding balance."
+				);
+			}
+
+			$remaining =
+				round(
+					$openingPrincipal -
+						$principal,
+					2
+				);
+
+			/*
+			* En Fixed la deuda total baja
+			* exactamente por el pago recibido.
+			*/
+			$due =
+				round(
+					$openingDue -
+						$totalAmount,
+					2
+				);
 		}
 
 		/*
-		* Reducing Balance.
+		* REDUCING BALANCE
 		*
-		* La tasa mensual se aplica al principal
-		* pendiente ANTES de registrar el pago.
+		* El interés actual se calcula sobre
+		* el capital pendiente antes del pago.
+		*
+		* El resto del pago amortiza capital.
 		*/
-		if ($interestType === 2) {
-			return round(
-				$openingBalance *
-					$rate,
-				2
+		elseif ($interestType === 2) {
+			$interest =
+				round(
+					$openingPrincipal *
+						$rate,
+					2
+				);
+
+			$principal =
+				round(
+					$totalAmount -
+						$interest,
+					2
+				);
+
+			if ($principal <= 0) {
+				throw new \Exception(
+					"Payment amount must be greater than the interest due."
+				);
+			}
+
+			if ($principal > $openingPrincipal) {
+				throw new \Exception(
+					"Payment exceeds the outstanding balance."
+				);
+			}
+
+			$remaining =
+				round(
+					$openingPrincipal -
+						$principal,
+					2
+				);
+
+			/*
+			* Después de este pago recalculamos
+			* solamente los intereses futuros.
+			*/
+			$remainingInstallments =
+				max(
+					$installmentsMonth -
+						$installmentNumber,
+					0
+				);
+
+			$futureInterest =
+				$this->calculateReducingInterest(
+					$remaining,
+					$interestRate,
+					$remainingInstallments
+				);
+
+			$due =
+				round(
+					$remaining +
+						$futureInterest,
+					2
+				);
+		} else {
+			throw new \InvalidArgumentException(
+				"Invalid interest type."
 			);
 		}
 
-		return 0.0;
+		if (abs($remaining) < 0.01) {
+			$remaining = 0.0;
+		}
+
+		if (abs($due) < 0.01) {
+			$due = 0.0;
+		}
+
+		return [
+			"principal" =>
+				$principal,
+
+			"interest" =>
+				$interest,
+
+			"remaining" =>
+				$remaining,
+
+			"due" =>
+				$due
+		];
 	}
 
 
-	
+	private function calculateReducingInterest(
+		float $principal,
+		float $interestRate,
+		int $installments
+	): float {
+		if (
+			$principal <= 0 ||
+			$interestRate <= 0 ||
+			$installments <= 0
+		) {
+			return 0.0;
+		}
+
+		$rate =
+			$interestRate / 100;
+
+		$principalPerInstallment =
+			$principal /
+			$installments;
+
+		$balance =
+			$principal;
+
+		$totalInterest =
+			0.0;
+
+		for (
+			$installment = 1;
+			$installment <= $installments;
+			$installment++
+		) {
+			$installmentInterest =
+				round(
+					$balance *
+						$rate,
+					2
+				);
+
+			$totalInterest +=
+				$installmentInterest;
+
+			$balance -=
+				$principalPerInstallment;
+
+			if ($balance < 0) {
+				$balance = 0.0;
+			}
+		}
+
+		return round(
+			$totalInterest,
+			2
+		);
+	}
 }

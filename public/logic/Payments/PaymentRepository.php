@@ -166,22 +166,31 @@ class PaymentRepository
 	}
 
 
-	public function updateSaleDue(
+	public function updateSaleBalances(
 		int $saleId,
 		int $companyId,
+		float $remaining,
 		float $due
 	): void {
 		$result = \update_table(
 			"sales",
 			[
-				"due" => $due
+				"remaining" =>
+					$remaining,
+
+				"due" =>
+					$due
 			],
 			[
-				"sales_id" => $saleId,
-				"company_id" => $companyId
+				"sales_id" =>
+					$saleId,
+
+				"company_id" =>
+					$companyId
 			],
 			[
-				"return_type" => "array"
+				"return_type" =>
+					"array"
 			]
 		);
 
@@ -190,7 +199,7 @@ class PaymentRepository
 			empty($result["success"])
 		) {
 			throw new \RuntimeException(
-				"Failed to update sales record."
+				"Failed to update sales balances."
 			);
 		}
 	}

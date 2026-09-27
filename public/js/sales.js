@@ -295,6 +295,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 					populateCurrencies('currency');
 
+					const paymentDateInput = document.getElementById('payment_date');
+					if (paymentDateInput) {
+						paymentDateInput.value = getLocalDateValue();
+					}
+
 					handlePopupClose('add-sale-form', '.formular-big-frame', []);
 				} catch (error) {
 					console.error('Error checking customers:', error);
@@ -610,14 +615,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	function calculateDue() {
-		const remaining =
-			parseFloat(
-				document.getElementById('remaining')
-					.value.replace(/,/g, '')
-			) || 0;
+		const remaining = parseFloat(document.getElementById('remaining').value.replace(/,/g, '')) || 0;
+		const totalInterest = parseFloat(document.getElementById('total_interest').value.replace(/,/g, '')) || 0;
 
-		document.getElementById('due').value =
-			remaining.toFixed(2);
+		const due = remaining + totalInterest;
+
+		document.getElementById('due').value = due.toFixed(2);
 	}
 
 	const initialInput = document.getElementById('initial');
@@ -1431,8 +1434,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 				function editCalculateDue() {
 					const remaining = parseFloat(document.getElementById('edit_remaining').value.replace(/,/g, '')) || 0;
-					
-					document.getElementById('edit_due').value = remaining.toFixed(2);
+					const totalInterest = parseFloat(document.getElementById('edit_total_interest').value.replace(/,/g, '')) || 0;
+
+					const due = remaining + totalInterest;
+
+					document.getElementById('edit_due').value = due.toFixed(2);
 				}
 
 				const initialInput = document.getElementById('edit_initial');
