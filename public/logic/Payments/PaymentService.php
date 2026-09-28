@@ -14,6 +14,228 @@ class PaymentService
 	}
 
 
+	public function getPayments(
+		int $companyId,
+		string $search = '',
+		?int $paymentId = null
+	): array {
+		if ($companyId <= 0) {
+			throw new \InvalidArgumentException(
+				"User company not found."
+			);
+		}
+
+		$search = trim($search);
+
+		if (
+			$paymentId !== null &&
+			$paymentId <= 0
+		) {
+			throw new \InvalidArgumentException(
+				"Invalid payment ID."
+			);
+		}
+
+		$payments =
+			$this->repository
+				->findPayments(
+					$companyId,
+					$search,
+					$paymentId
+				);
+
+		if (empty($payments)) {
+			throw new \Exception(
+				"No payments available."
+			);
+		}
+
+		$paymentsData = [];
+
+		foreach ($payments as $payment) {
+			$customerId =
+				(int)(
+					$payment["customer_id"]
+						?? 0
+				);
+
+			$customer = [];
+
+			if ($customerId > 0) {
+				$customer =
+					$this->repository
+						->findCustomerInfoById(
+							$customerId,
+							$companyId
+						)
+					?? [];
+			}
+
+			$customerName =
+				trim(
+					(string)(
+						$customer[
+							"customer_name"
+						] ?? ''
+					) .
+					' ' .
+					(string)(
+						$customer[
+							"customer_surname"
+						] ?? ''
+					)
+				);
+
+			$documentTypeId =
+				$customer[
+					"customer_document_type"
+				] ?? null;
+
+			$paymentMethodId =
+				$payment[
+					"payment_method"
+				] ?? null;
+
+			$amount =
+				round(
+					(float)(
+						$payment["amount"]
+							?? 0
+					),
+					2
+				);
+
+			$interest =
+				round(
+					(float)(
+						$payment["interest"]
+							?? 0
+					),
+					2
+				);
+
+			$paymentsData[] = [
+				"payment_id" =>
+					(int)(
+						$payment["payment_id"]
+							?? 0
+					),
+
+				"ord_no" =>
+					$payment["ord_no"]
+						?? '',
+
+				"payment_no" =>
+					$payment["payment_no"]
+						?? '',
+
+				"sales_id" =>
+					$payment["sales_id"]
+						?? null,
+
+				"customer_id" =>
+					$customerId,
+
+				"full_name" =>
+					$customerName,
+
+				"document_type" =>
+					\GlobalArrays::$documentTypes[
+						$documentTypeId
+					] ?? "Unknown",
+
+				"document_no" =>
+					$customer[
+						"customer_document_no"
+					] ?? '',
+
+				"currency" =>
+					$payment["currency"]
+						?? '',
+
+				"payment_method" =>
+					\GlobalArrays::$paymentMethods[
+						$paymentMethodId
+					] ?? "Unknown",
+
+				"amount" =>
+					number_format(
+						$amount,
+						2,
+						'.',
+						''
+					),
+
+				"interest" =>
+					number_format(
+						$interest,
+						2,
+						'.',
+						''
+					),
+
+				"principal_paid" =>
+					number_format(
+						$amount - $interest,
+						2,
+						'.',
+						''
+					),
+
+				"installments_month" =>
+					(int)(
+						$payment[
+							"installments_month"
+						] ?? 0
+					),
+
+				"no_installments" =>
+					(int)(
+						$payment[
+							"no_installments"
+						] ?? 0
+					),
+
+				"payment_date" =>
+					\format_date(
+						$payment[
+							"payment_date"
+						] ?? null
+					),
+
+				"due" =>
+					number_format(
+						(float)(
+							$payment["due"]
+								?? 0
+						),
+						2,
+						'.',
+						''
+					),
+
+				"status" =>
+					$payment["status"]
+						?? null,
+
+				"created_by" =>
+					$payment["created_by"]
+						?? null,
+
+				"created_at" =>
+					\format_date(
+						$payment[
+							"created_at"
+						] ?? null
+					)
+			];
+		}
+
+		return $paymentsData;
+	}
+
+
+
 	public function getOrderInfo(
 		int $companyId,
 		int $ordNo

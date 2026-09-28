@@ -1,5 +1,8 @@
 <?php
-require_once ('../inc/cors.php');
+use App\Payments\PaymentRepository;
+use App\Payments\PaymentService;
+
+require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
 
 header("Content-Type: application/json");
@@ -19,112 +22,30 @@ try {
 	$userId = (int)($authUser["user_id"] ?? 0);
 	$companyId = (int)($authUser["company_id"] ?? 0);
 
-	if (empty($userId)) {
+	if ($userId <= 0) {
         throw new Exception("Unauthorized access: invalid or missing token.");
     }
 
-    $search = $_GET['search'] ?? '';
-	$paymentId = isset($_GET['payment_id']) ? (int)$_GET['payment_id'] : null;
-
-    $where = [
-		"company_id" => $companyId,
-	];
-
-    if (!empty($search)) {
-        $where['OR'] = [
-            'CAST(ord_no AS TEXT) ILIKE' => "%$search%",
-            'CAST(payment_no AS TEXT) ILIKE' => "%$search%",
-			'CAST(payment_date AS TEXT) ILIKE' => "%$search%"
-        ];
-    } elseif ($paymentId) {
-		$where["payment_id"] = $paymentId;
+	if ($companyId <= 0) {
+		throw new Exception("User company not found.");
 	}
 
-    $paymentsResult = select_from('payments', [
-        'payment_id', 
-        'ord_no',
-        'payment_no',
-        'sales_id',
-        'customer_id',
-        'currency',
-        'payment_method',
-        'amount',
-        'interest',
-        'installments_month',
-        'no_installments',
-        'payment_date',
-        'due',
-        'status',
-        'created_by',
-        'created_at'
-    ], $where, [
-        'order_by' => 'created_at',
-        'order_direction' => 'desc'
-    ]);
+	$search = trim((string)($_GET["search"] ?? ''));
+	$paymentId = isset($_GET["payment_id"]) ? (int)$_GET["payment_id"] : null;
 
-    $parsedPayments = json_decode($paymentsResult, true);
-	if (!$parsedPayments["success"] || empty($parsedPayments["data"])) {
-		throw new Exception("No products available.");
-	}
+	$repository = new PaymentRepository();
+	$service = new PaymentService($repository);
 
-	foreach ($parsedPayments["data"] as &$payment) {
-		$customerId = $payment["customer_id"] ?? null;
-		if (!$customerId) continue;
-
-		$customerResult = json_decode(select_from("customers", [
-			"customer_name",
-			"customer_surname",
-			"customer_document_type",
-			"customer_document_no",
-			"customer_status",
-			"customer_image"
-		], ["customer_id" => $customerId], ["fetch_first" => true]), true);
-
-		if (!$customerId) {
-			error_log("No customer_id in payment_id: {$payment['payment_id']}");
-			continue;
-		}
-
-		if (!$customerResult["success"]) {
-			error_log("Customer not found for ID: $customerId");
-			continue;
-		}
-
-		$customer = $customerResult["data"];
-
-		$payment["payment_id"] = (int)$payment["payment_id"];
-		$payment["ord_no"] = $payment["ord_no"] ?? '';
-		$payment["payment_no"] = $payment["payment_no"] ?? '';
-		$payment["sales_id"] = $payment["sales_id"] ?? null;
-		$payment["full_name"] = trim(($customer["customer_name"] ?? '') . ' ' . ($customer["customer_surname"] ?? ''));
-
-		$docType = $customer["customer_document_type"] ?? null;
-	    $payment["document_type"] = GlobalArrays::$documentTypes[$docType] ?? "Unknown";
-
-		$payment["document_no"] = $customer["customer_document_no"] ?? '';
-		$payment["currency"] = $payment["currency"] ?? '';
-
-		$payMethod = $payment["payment_method"] ?? null;
-		$payment["payment_method"] = GlobalArrays::$paymentMethods[$payMethod] ?? "Unknown";
-
-		$amount = (float)$payment["amount"];
-		$interest = (float)$payment["interest"];
-		$payment["amount"] = number_format($amount, 2, '.', '');
-		$payment["interest"] = number_format($interest, 2, '.', '');
-		$payment["principal_paid"] = number_format($amount - $interest, 2, '.', '');
-		$payment["installments_month"] = (int)$payment["installments_month"];
-		$payment["no_installments"] = (int)$payment["no_installments"];
-		$payment["payment_date"] = date('Y-m-d', strtotime($payment["payment_date"]));
-		$payment["due"] = number_format((float)$payment["due"], 2, '.', '');
-		$payment["status"] = $payment["status"] ?? null;
-		$payment["created_by"] = $payment["created_by"] ?? null;
-		$payment["created_at"] = date('Y-m-d', strtotime($payment["created_at"]));
-	}
+	$payments = $service->getPayments(
+		$companyId,
+		$search,
+		$paymentId
+	);
 
     $response = [
         "success" => true,
         "message" => "Payments fetched successfully",
-        "data" => $parsedPayments["data"]
+        "data" => $payments
     ];
 
 } catch (Exception $e) {

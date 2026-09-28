@@ -25,6 +25,24 @@ function format_db_response(array $response, array $options = []): array|string
 	);
 }
 
+function format_date(mixed $value, string $format = 'Y-m-d'): string
+{
+	if ($value === null || $value === '') {
+		return '';
+	}
+
+	$timestamp = strtotime((string)$value);
+
+	if ($timestamp === false) {
+		return '';
+	}
+
+	return date(
+		$format,
+		$timestamp
+	);
+}
+
 function select_from(string $tableName, array $columns = [], array $whereClause = [], array $options = []) : array|string
 {
 	global $sql;

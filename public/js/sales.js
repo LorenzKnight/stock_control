@@ -315,10 +315,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		async function fetchAndRenderCustomers(search = "") {
 			try {
 				const params = new URLSearchParams();
-				params.append(
-					'status',
-					'1'
-				);
+				params.append('status', '1');
 
 				if (search.trim() !== "") {
 					params.append('search', search.trim());

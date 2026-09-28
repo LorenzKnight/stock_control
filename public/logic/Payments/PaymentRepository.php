@@ -4,6 +4,101 @@ namespace App\Payments;
 
 class PaymentRepository
 {
+	public function findPayments(
+		int $companyId,
+		string $search = '',
+		?int $paymentId = null
+	): array {
+		$where = [
+			"company_id" =>
+				$companyId
+		];
+
+		if ($search !== '') {
+			$where["OR"] = [
+				"CAST(ord_no AS TEXT) ILIKE" =>
+					"%{$search}%",
+
+				"CAST(payment_no AS TEXT) ILIKE" =>
+					"%{$search}%",
+
+				"CAST(payment_date AS TEXT) ILIKE" =>
+					"%{$search}%"
+			];
+		} elseif (
+			$paymentId !== null &&
+			$paymentId > 0
+		) {
+			$where["payment_id"] =
+				$paymentId;
+		}
+
+		$result =
+			\select_from(
+				"payments",
+				[
+					"payment_id",
+					"ord_no",
+					"payment_no",
+					"sales_id",
+					"customer_id",
+					"currency",
+					"payment_method",
+					"amount",
+					"interest",
+					"installments_month",
+					"no_installments",
+					"payment_date",
+					"due",
+					"status",
+					"created_by",
+					"created_at"
+				],
+				$where,
+				[
+					"order_by" =>
+						"created_at",
+
+					"order_direction" =>
+						"DESC",
+
+					"return_type" =>
+						"array"
+				]
+			);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"PaymentRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			isset($result["data"]) &&
+			is_array($result["data"])
+		) {
+			return array_values(
+				$result["data"]
+			);
+		}
+
+		if (
+			($result["message"] ?? '') ===
+				"No records found" ||
+			(
+				!empty($result["success"]) &&
+				empty($result["data"])
+			)
+		) {
+			return [];
+		}
+
+		throw new \RuntimeException(
+			"Could not load payments."
+		);
+	}
+
 	public function findSaleByOrderNumber(
 		int $ordNo,
 		int $companyId

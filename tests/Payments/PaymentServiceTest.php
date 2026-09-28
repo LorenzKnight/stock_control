@@ -56,6 +56,392 @@ final class PaymentServiceTest extends TestCase
 	}
 
 
+	private function validStoredPayment(
+		array $overrides = []
+	): array {
+		return array_replace(
+			[
+				"payment_id" => 77,
+				"ord_no" => 10000001,
+				"payment_no" => 20000001,
+				"sales_id" => 50,
+				"customer_id" => 7,
+				"currency" => "SEK",
+				"payment_method" => 2,
+				"amount" => 100,
+				"interest" => 9.09,
+				"installments_month" => 4,
+				"no_installments" => 2,
+				"payment_date" =>
+					"2026-09-28 10:30:00",
+				"due" => 340,
+				"status" => 1,
+				"created_by" => 10,
+				"created_at" =>
+					"2026-09-28 10:30:00"
+			],
+			$overrides
+		);
+	}
+
+
+	public function testGetPaymentsReturnsFormattedPayments(): void
+	{
+		$repository =
+			$this->createMock(
+				PaymentRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findPayments'
+			)
+			->with(
+				5,
+				'',
+				null
+			)
+			->willReturn([
+				$this->validStoredPayment()
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findCustomerInfoById'
+			)
+			->with(
+				7,
+				5
+			)
+			->willReturn([
+				"customer_name" =>
+					"John",
+
+				"customer_surname" =>
+					"Doe",
+
+				"customer_document_type" =>
+					1,
+
+				"customer_document_no" =>
+					"ABC123"
+			]);
+
+		$service =
+			new PaymentService(
+				$repository
+			);
+
+		$payments =
+				$service->getPayments(
+					5
+				);
+
+		$this->assertCount(
+			1,
+			$payments
+		);
+
+		$payment =
+			$payments[0];
+
+		$this->assertSame(
+			77,
+			$payment["payment_id"]
+		);
+
+		$this->assertSame(
+			10000001,
+			$payment["ord_no"]
+		);
+
+		$this->assertSame(
+			20000001,
+			$payment["payment_no"]
+		);
+
+		$this->assertSame(
+			"John Doe",
+			$payment["full_name"]
+		);
+
+		$this->assertSame(
+			"National ID / Cedula",
+			$payment["document_type"]
+		);
+
+		$this->assertSame(
+			"ABC123",
+			$payment["document_no"]
+		);
+
+		$this->assertSame(
+			"Credit Card",
+			$payment["payment_method"]
+		);
+
+		$this->assertSame(
+			"100.00",
+			$payment["amount"]
+		);
+
+		$this->assertSame(
+			"9.09",
+			$payment["interest"]
+		);
+
+		$this->assertSame(
+			"90.91",
+			$payment["principal_paid"]
+		);
+
+		$this->assertSame(
+			4,
+			$payment["installments_month"]
+		);
+
+		$this->assertSame(
+			2,
+			$payment["no_installments"]
+		);
+
+		$this->assertSame(
+			"340.00",
+			$payment["due"]
+		);
+
+		$this->assertSame(
+			"2026-09-28",
+			$payment["payment_date"]
+		);
+
+		$this->assertSame(
+			"2026-09-28",
+			$payment["created_at"]
+		);
+	}
+
+
+	public function testGetPaymentsPassesTrimmedSearchToRepository(): void
+	{
+		$repository =
+			$this->createMock(
+				PaymentRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findPayments'
+			)
+			->with(
+				5,
+				'10000001',
+				null
+			)
+			->willReturn([
+				$this->validStoredPayment()
+			]);
+
+		$repository
+			->method(
+				'findCustomerInfoById'
+			)
+			->willReturn([
+				"customer_name" =>
+					"John",
+
+				"customer_surname" =>
+					"Doe"
+			]);
+
+		$service =
+			new PaymentService(
+				$repository
+			);
+
+		$payments =
+				$service->getPayments(
+					5,
+					' 10000001 '
+				);
+
+		$this->assertCount(
+			1,
+			$payments
+		);
+	}
+
+
+	public function testGetPaymentsFiltersByPaymentId(): void
+	{
+		$repository =
+			$this->createMock(
+				PaymentRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findPayments'
+			)
+			->with(
+				5,
+				'',
+				77
+			)
+			->willReturn([
+				$this->validStoredPayment()
+			]);
+
+		$repository
+			->method(
+				'findCustomerInfoById'
+			)
+			->willReturn([
+				"customer_name" =>
+					"John",
+
+				"customer_surname" =>
+					"Doe"
+			]);
+
+		$service =
+			new PaymentService(
+				$repository
+			);
+
+		$payments =
+				$service->getPayments(
+					5,
+					'',
+					77
+				);
+
+		$this->assertCount(
+			1,
+			$payments
+		);
+
+		$this->assertSame(
+			77,
+			$payments[0]["payment_id"]
+		);
+	}
+
+
+	public function testGetPaymentsRejectsInvalidCompanyId(): void
+	{
+		$repository =
+			$this->createMock(
+				PaymentRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'findPayments'
+			);
+
+		$service =
+			new PaymentService(
+				$repository
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"User company not found."
+		);
+
+		$service->getPayments(
+			0
+		);
+	}
+
+
+	public function testGetPaymentsRejectsInvalidPaymentId(): void
+	{
+		$repository =
+			$this->createMock(
+				PaymentRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'findPayments'
+			);
+
+		$service =
+			new PaymentService(
+				$repository
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Invalid payment ID."
+		);
+
+		$service->getPayments(
+			5,
+			'',
+			0
+		);
+	}
+
+
+	public function testGetPaymentsThrowsWhenNoPaymentsExist(): void
+	{
+		$repository =
+			$this->createMock(
+				PaymentRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findPayments'
+			)
+			->with(
+				5,
+				'',
+				null
+			)
+			->willReturn([]);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'findCustomerInfoById'
+			);
+
+		$service =
+			new PaymentService(
+				$repository
+			);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"No payments available."
+		);
+
+		$service->getPayments(
+			5
+		);
+	}
+
+
 	public function testGetOrderInfoReturnsRemainingInstallments(): void
 	{
 		$repository =
