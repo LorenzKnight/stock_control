@@ -14,7 +14,8 @@ class CustomerService
 
 	public function getCustomers(
 		int $userId,
-		string $search = ''
+		string $search = '',
+		?int $status = null
 	): array {
 		if ($userId <= 0) {
 			throw new \InvalidArgumentException(
@@ -23,6 +24,10 @@ class CustomerService
 		}
 
 		$search = trim($search);
+
+		if ($status !== null && !in_array($status, [0, 1], true)) {
+			throw new \InvalidArgumentException("Invalid customer status.");
+		}
 
 		$companyId =
 			$this->repository->findCompanyIdByUserId($userId);
@@ -35,8 +40,13 @@ class CustomerService
 
 		$result = $this->repository->findCustomers(
 			$companyId,
-			$search
+			$search,
+			$status
 		);
+
+		if ($status !== null && !in_array($status, [0, 1], true)) {
+			throw new \InvalidArgumentException("Invalid customer status.");
+		}
 
 		if (
 			empty($result["success"]) ||

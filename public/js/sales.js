@@ -237,7 +237,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					* Antes de abrir el formulario,
 					* comprobar que exista al menos un cliente.
 					*/
-					const response = await fetch('api/get_customers.php', {
+					const response = await fetch('api/get_customers.php?status=1', {
 							method: 'GET',
 							headers: {Accept: 'application/json'}
 					});
@@ -315,6 +315,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 		async function fetchAndRenderCustomers(search = "") {
 			try {
 				const params = new URLSearchParams();
+				params.append(
+					'status',
+					'1'
+				);
+
 				if (search.trim() !== "") {
 					params.append('search', search.trim());
 				}

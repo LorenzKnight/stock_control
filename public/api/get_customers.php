@@ -18,12 +18,15 @@ try {
 
 	$search = trim($_GET["search"] ?? '');
 
+	$status = isset($_GET["status"]) ? (int)$_GET["status"] : null;
+
 	$repository = new CustomerRepository();
 	$service = new CustomerService($repository);
 
 	$customers = $service->getCustomers(
 		(int)$userId,
-		$search
+		$search,
+		$status
 	);
 
 	$response = [

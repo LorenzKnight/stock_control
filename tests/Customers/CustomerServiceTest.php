@@ -36,7 +36,11 @@ final class CustomerServiceTest extends TestCase
 		$repository
 			->expects($this->once())
 			->method('findCustomers')
-			->with(5, 'john')
+			->with(
+				5,
+				'john',
+				null
+			)
 			->willReturn([
 				"success" => true,
 				"data" => [
@@ -88,6 +92,178 @@ final class CustomerServiceTest extends TestCase
 			"Passport",
 			$customers[0]["document_type"]
 		);
+	}
+
+	public function testReturnsCustomersFilteredByStatus(): void
+	{
+		$repository =
+			$this->createMock(
+				CustomerRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findCompanyIdByUserId'
+			)
+			->with(10)
+			->willReturn(5);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findCustomers'
+			)
+			->with(
+				5,
+				'john',
+				1
+			)
+			->willReturn([
+				"success" => true,
+				"data" => [
+					[
+						"customer_id" => 1,
+						"customer_name" => "John",
+						"customer_surname" => "Doe",
+						"customer_document_no" => "ABC123",
+						"customer_address" => "Main Street",
+						"customer_status" => 1,
+						"customer_document_type" => 2,
+						"customer_image" => "john.webp"
+					]
+				]
+			]);
+
+		$service =
+			new CustomerService(
+				$repository
+			);
+
+		$customers =
+			$service->getCustomers(
+				10,
+				' john ',
+				1
+			);
+
+		$this->assertCount(
+			1,
+			$customers
+		);
+
+		$this->assertSame(
+			1,
+			$customers[0]["customer_status"]
+		);
+
+		$this->assertSame(
+			"Active",
+			$customers[0]["status"]
+		);
+	}
+
+	public function testRejectsInvalidCustomerStatus(): void
+	{
+		$repository =
+			$this->createMock(
+				CustomerRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'findCompanyIdByUserId'
+			);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'findCustomers'
+			);
+
+		$service =
+			new CustomerService(
+				$repository
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Invalid customer status."
+		);
+
+		$service->getCustomers(
+			10,
+			'',
+			2
+		);
+	}
+
+	public function testAcceptsInactiveCustomerStatusFilter(): void
+	{
+		$repository =
+			$this->createMock(
+				CustomerRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findCompanyIdByUserId'
+			)
+			->with(10)
+			->willReturn(5);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findCustomers'
+			)
+			->with(
+				5,
+				'',
+				0
+			)
+			->willReturn([
+				"success" => true,
+				"data" => [
+					[
+						"customer_id" => 2,
+						"customer_name" => "Jane",
+						"customer_surname" => "Doe",
+						"customer_document_no" => "XYZ123",
+						"customer_address" => "Second Street",
+						"customer_status" => 0,
+						"customer_document_type" => 2,
+						"customer_image" => ""
+					]
+				]
+			]);
+
+		$service =
+			new CustomerService(
+				$repository
+			);
+
+		$customers =
+			$service->getCustomers(
+				10,
+				'',
+				0
+			);
+
+		$this->assertCount(
+				1,
+				$customers
+			);
+
+		$this->assertSame(
+				0,
+				$customers[0]["customer_status"]
+			);
 	}
 
 	public function testRejectsCustomerWithoutName(): void

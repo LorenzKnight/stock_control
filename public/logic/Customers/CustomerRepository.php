@@ -36,11 +36,17 @@ class CustomerRepository
 
 	public function findCustomers(
 		int $companyId,
-		string $search = ''
+		string $search = '',
+		?int $status = null
 	): array {
 		$where = [
 			"company_id" => $companyId
 		];
+
+		if ($status !== null) {
+			$where["customer_status"] =
+				$status;
+		}
 
 		if ($search !== '') {
 			$where["OR"] = [
