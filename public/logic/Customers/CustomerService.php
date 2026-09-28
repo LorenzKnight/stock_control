@@ -44,10 +44,6 @@ class CustomerService
 			$status
 		);
 
-		if ($status !== null && !in_array($status, [0, 1], true)) {
-			throw new \InvalidArgumentException("Invalid customer status.");
-		}
-
 		if (
 			empty($result["success"]) ||
 			empty($result["data"])
