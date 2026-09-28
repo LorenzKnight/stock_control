@@ -491,6 +491,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 							item.addEventListener('click', () => {
 								ordNoInput.value = sale.ord_no;
 								ordNoInput.dispatchEvent(new Event('input'));
+								clearTimeout(debounceTimeout);
+								ordSuggestions.innerHTML = '';
 								ordSuggestions.style.display = 'none';
 							});
 							ordSuggestions.appendChild(item);

@@ -1,5 +1,7 @@
 <?php
+require_once ('../inc/cors.php');
 require_once('../logic/stock_be.php');
+
 header("Content-Type: application/json");
 
 $response = [
@@ -9,22 +11,35 @@ $response = [
 ];
 
 try {
-	$userId = $_SESSION["sc_UserId"] ?? null;
-	if (!$userId) throw new Exception("User session not found");
+
+	$authUser = requireAuth();
+	$userId = (int)($authUser["user_id"] ?? 0);
+	$companyId = (int)($authUser["company_id"] ?? 0);
+
+	if ($userId <= 0) throw new Exception("User session not found");
+	if ($companyId <= 0) throw new Exception("User company not found.");
 
 	$search = $_GET["search"] ?? '';
 	if (empty($search)) throw new Exception("No search term provided");
 
 	// Buscar órdenes con ord_no similar
-	$result = select_from("sales", ["ord_no", "customer_id"], [
-		"CAST(ord_no AS TEXT) ILIKE" => "%$search%"
-	], [
-		"limit" => 10,
-		"order_by" => "ord_no",
-		"order_direction" => "desc"
-	]);
+	$result = select_from(
+		"sales",
+		[
+			"ord_no",
+			"customer_id"
+		], [
+			"company_id" => $companyId,
+			"CAST(ord_no AS TEXT) ILIKE" => "%$search%"
+		], [
+			"limit" => 10,
+			"order_by" => "ord_no",
+			"order_direction" => "desc"
+		]
+	);
 
 	$parsed = json_decode($result, true);
+
 	if (!$parsed["success"] || empty($parsed["data"])) {
 		throw new Exception("No matching orders");
 	}
@@ -36,10 +51,20 @@ try {
 		$customerId = $order["customer_id"];
 
 		// Buscar datos del cliente
-		$customerRes = select_from("customers", [
-			"customer_name",
-			"customer_surname"
-		], ["customer_id" => $customerId], ["fetch_first" => true]);
+		$customerRes = select_from(
+			"customers",
+			[
+				"customer_name",
+				"customer_surname"
+			], 
+			[
+				"customer_id" => $customerId,
+				"company_id" => $companyId
+			],
+			[
+				"fetch_first" => true
+			]
+		);
 
 		$customer = json_decode($customerRes, true)["data"] ?? [];
 
