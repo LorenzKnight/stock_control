@@ -442,6 +442,339 @@ final class PaymentServiceTest extends TestCase
 	}
 
 
+	public function testGetOrderSuggestionsReturnsFormattedOrders(): void
+	{
+		$repository =
+			$this->createMock(
+				PaymentRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findOrderSuggestions'
+			)
+			->with(
+				5,
+				'1000'
+			)
+			->willReturn([
+				[
+					"ord_no" => 10000002,
+					"customer_id" => 8
+				],
+				[
+					"ord_no" => 10000001,
+					"customer_id" => 7
+				]
+			]);
+
+		$repository
+			->expects($this->exactly(2))
+			->method(
+				'findCustomerInfoById'
+			)
+			->willReturnMap([
+				[
+					8,
+					5,
+					[
+						"customer_name" =>
+							"Jane",
+
+						"customer_surname" =>
+							"Doe"
+					]
+				],
+				[
+					7,
+					5,
+					[
+						"customer_name" =>
+							"John",
+
+						"customer_surname" =>
+							"Smith"
+					]
+				]
+			]);
+
+		$service =
+			new PaymentService(
+				$repository
+			);
+
+		$result =
+				$service->getOrderSuggestions(
+					5,
+					'1000'
+				);
+
+		$this->assertCount(
+			2,
+			$result
+		);
+
+		$this->assertSame(
+			[
+				"ord_no" => 10000002,
+				"customer_id" => 8,
+				"full_name" => "Jane Doe"
+			],
+			$result[0]
+		);
+
+		$this->assertSame(
+			[
+				"ord_no" => 10000001,
+				"customer_id" => 7,
+				"full_name" => "John Smith"
+			],
+			$result[1]
+		);
+	}
+
+
+	public function testGetOrderSuggestionsPassesTrimmedSearchToRepository(): void
+	{
+		$repository =
+			$this->createMock(
+				PaymentRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findOrderSuggestions'
+			)
+			->with(
+				5,
+				'10000001'
+			)
+			->willReturn([
+				[
+					"ord_no" => 10000001,
+					"customer_id" => 7
+				]
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findCustomerInfoById'
+			)
+			->with(
+				7,
+				5
+			)
+			->willReturn([
+				"customer_name" =>
+					"John",
+
+				"customer_surname" =>
+					"Doe"
+			]);
+
+		$service =
+			new PaymentService(
+				$repository
+			);
+
+		$result =
+				$service->getOrderSuggestions(
+					5,
+					'  10000001  '
+				);
+
+		$this->assertCount(
+			1,
+			$result
+		);
+
+		$this->assertSame(
+			"John Doe",
+			$result[0]["full_name"]
+		);
+	}
+
+
+	public function testGetOrderSuggestionsKeepsOrderWhenCustomerIsMissing(): void
+	{
+		$repository =
+			$this->createMock(
+				PaymentRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findOrderSuggestions'
+			)
+			->with(
+				5,
+				'1000'
+			)
+			->willReturn([
+				[
+					"ord_no" => 10000001,
+					"customer_id" => 7
+				]
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findCustomerInfoById'
+			)
+			->with(
+				7,
+				5
+			)
+			->willReturn(null);
+
+		$service =
+			new PaymentService(
+				$repository
+			);
+
+		$result =
+				$service->getOrderSuggestions(
+					5,
+					'1000'
+				);
+
+		$this->assertCount(
+			1,
+			$result
+		);
+
+		$this->assertSame(
+			10000001,
+			$result[0]["ord_no"]
+		);
+
+		$this->assertSame(
+			7,
+			$result[0]["customer_id"]
+		);
+
+		$this->assertSame(
+			'',
+			$result[0]["full_name"]
+		);
+	}
+
+
+	public function testGetOrderSuggestionsRejectsInvalidCompanyId(): void
+	{
+		$repository =
+			$this->createMock(
+				PaymentRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'findOrderSuggestions'
+			);
+
+		$service =
+			new PaymentService(
+				$repository
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"User company not found."
+		);
+
+		$service->getOrderSuggestions(
+			0,
+			'1000'
+		);
+	}
+
+
+	public function testGetOrderSuggestionsRejectsEmptySearch(): void
+	{
+		$repository =
+			$this->createMock(
+				PaymentRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'findOrderSuggestions'
+			);
+
+		$service =
+			new PaymentService(
+				$repository
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"No search term provided"
+		);
+
+		$service->getOrderSuggestions(
+			5,
+			'   '
+		);
+	}
+
+
+	public function testGetOrderSuggestionsThrowsWhenNoOrdersMatch(): void
+	{
+		$repository =
+			$this->createMock(
+				PaymentRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findOrderSuggestions'
+			)
+			->with(
+				5,
+				'9999'
+			)
+			->willReturn([]);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'findCustomerInfoById'
+			);
+
+		$service =
+			new PaymentService(
+				$repository
+			);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"No matching orders"
+		);
+
+		$service->getOrderSuggestions(
+			5,
+			'9999'
+		);
+	}
+
+
 	public function testGetOrderInfoReturnsRemainingInstallments(): void
 	{
 		$repository =

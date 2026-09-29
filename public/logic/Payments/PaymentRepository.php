@@ -99,6 +99,70 @@ class PaymentRepository
 		);
 	}
 
+	public function findOrderSuggestions(
+		int $companyId,
+		string $search
+	): array {
+		$result =
+			\select_from(
+				"sales",
+				[
+					"ord_no",
+					"customer_id"
+				],
+				[
+					"company_id" =>
+						$companyId,
+
+					"CAST(ord_no AS TEXT) ILIKE" =>
+						"%{$search}%"
+				],
+				[
+					"limit" => 10,
+
+					"order_by" =>
+						"ord_no",
+
+					"order_direction" =>
+						"DESC",
+
+					"return_type" =>
+						"array"
+				]
+			);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"PaymentRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			isset($result["data"]) &&
+			is_array($result["data"])
+		) {
+			return array_values(
+				$result["data"]
+			);
+		}
+
+		if (
+			($result["message"] ?? '') ===
+				"No records found" ||
+			(
+				!empty($result["success"]) &&
+				empty($result["data"])
+			)
+		) {
+			return [];
+		}
+
+		throw new \RuntimeException(
+			"Could not load order suggestions."
+		);
+	}
+
 	public function findSaleByOrderNumber(
 		int $ordNo,
 		int $companyId

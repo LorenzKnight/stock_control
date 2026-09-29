@@ -235,6 +235,109 @@ class PaymentService
 	}
 
 
+	public function getOrderSuggestions(
+		int $companyId,
+		string $search
+	): array {
+		if ($companyId <= 0) {
+			throw new \InvalidArgumentException(
+				"User company not found."
+			);
+		}
+
+		$search =
+			trim(
+				$search
+			);
+
+		if ($search === '') {
+			throw new \InvalidArgumentException(
+				"No search term provided"
+			);
+		}
+
+		$orders =
+			$this->repository
+				->findOrderSuggestions(
+					$companyId,
+					$search
+				);
+
+		if (empty($orders)) {
+			throw new \Exception(
+				"No matching orders"
+			);
+		}
+
+		$orderSuggestions = [];
+
+		foreach ($orders as $order) {
+			$ordNo =
+				(int)(
+					$order["ord_no"]
+						?? 0
+				);
+
+			$customerId =
+				(int)(
+					$order["customer_id"]
+						?? 0
+				);
+
+			if (
+				$ordNo <= 0 ||
+				$customerId <= 0
+			) {
+				continue;
+			}
+
+			$customer =
+				$this->repository
+					->findCustomerInfoById(
+						$customerId,
+						$companyId
+					);
+
+			$fullName = '';
+
+			if ($customer !== null) {
+				$fullName =
+					trim(
+						(string)(
+							$customer[
+								"customer_name"
+							] ?? ''
+						) .
+						' ' .
+						(string)(
+							$customer[
+								"customer_surname"
+							] ?? ''
+						)
+					);
+			}
+
+			$orderSuggestions[] = [
+				"ord_no" =>
+					$ordNo,
+
+				"customer_id" =>
+					$customerId,
+
+				"full_name" =>
+					$fullName
+			];
+		}
+
+		if (empty($orderSuggestions)) {
+			throw new \Exception(
+				"No matching orders"
+			);
+		}
+
+		return $orderSuggestions;
+	}
+
 
 	public function getOrderInfo(
 		int $companyId,

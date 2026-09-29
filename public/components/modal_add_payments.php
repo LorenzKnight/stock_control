@@ -55,7 +55,7 @@
 				<tr valign="baseline" >
 					<td colspan="6" align="center" valign="middle">
 						<label for="payer_phone"><?= tr('phone') ?>:</label>
-						<input class="form-input-style" type="number" name="payer_phone" id="payer_phone" placeholder="Enter a phone number..." title="Enter a valid phone number"/>
+						<input class="form-input-style" type="text" name="payer_phone" id="payer_phone" placeholder="Enter a phone number..." title="Enter a valid phone number"/>
 					</td>
 				</tr>
 				<tr valign="baseline" >
