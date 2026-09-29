@@ -415,4 +415,254 @@ class PaymentRepository
 			"Could not read payment customer information."
 		);
 	}
+
+
+	public function findPaymentForDelete(
+		int $paymentId,
+		int $companyId
+	): ?array {
+		$result =
+			\select_from(
+				"payments",
+				[
+					"payment_id",
+					"sales_id",
+					"amount",
+					"interest",
+					"no_installments"
+				],
+				[
+					"payment_id" =>
+						$paymentId,
+
+					"company_id" =>
+						$companyId
+				],
+				[
+					"fetch_first" => true,
+					"for_update" => true,
+					"return_type" => "array"
+				]
+			);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"PaymentRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			!empty($result["data"])
+		) {
+			return $result["data"];
+		}
+
+		if (
+			($result["message"] ?? '') ===
+				"No records found" ||
+			(
+				!empty($result["success"]) &&
+				empty($result["data"])
+			)
+		) {
+			return null;
+		}
+
+		throw new \RuntimeException(
+			"Could not read payment."
+		);
+	}
+
+
+	public function findLatestPaymentForSale(
+		int $saleId,
+		int $companyId
+	): ?array {
+		$result =
+			\select_from(
+				"payments",
+				[
+					"payment_id",
+					"no_installments"
+				],
+				[
+					"sales_id" =>
+						$saleId,
+
+					"company_id" =>
+						$companyId
+				],
+				[
+					"order_by" =>
+						"payment_id",
+
+					"order_direction" =>
+						"DESC",
+
+					"limit" => 1,
+					"fetch_first" => true,
+					"return_type" => "array"
+				]
+			);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"PaymentRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			!empty($result["data"])
+		) {
+			return $result["data"];
+		}
+
+		if (
+			($result["message"] ?? '') ===
+				"No records found" ||
+			(
+				!empty($result["success"]) &&
+				empty($result["data"])
+			)
+		) {
+			return null;
+		}
+
+		throw new \RuntimeException(
+			"Could not determine latest payment."
+		);
+	}
+
+
+	public function findSaleForPaymentDelete(
+		int $saleId,
+		int $companyId
+	): ?array {
+		$result =
+			\select_from(
+				"sales",
+				[
+					"sales_id",
+					"remaining",
+					"due",
+					"interest_type",
+					"interest",
+					"installments_month"
+				],
+				[
+					"sales_id" =>
+						$saleId,
+
+					"company_id" =>
+						$companyId
+				],
+				[
+					"fetch_first" => true,
+					"for_update" => true,
+					"return_type" => "array"
+				]
+			);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"PaymentRepository expected an array response."
+			);
+		}
+
+		if (
+			!empty($result["success"]) &&
+			!empty($result["data"])
+		) {
+			return $result["data"];
+		}
+
+		if (
+			($result["message"] ?? '') ===
+				"No records found" ||
+			(
+				!empty($result["success"]) &&
+				empty($result["data"])
+			)
+		) {
+			return null;
+		}
+
+		throw new \RuntimeException(
+			"Could not read payment sale."
+		);
+	}
+
+
+	public function deleteInterestEarningByPaymentId(
+		int $paymentId
+	): void {
+		$result =
+			\delete_from(
+				"interest_earnings",
+				[
+					"payment_id" =>
+						$paymentId
+				],
+				[
+					"return_type" =>
+						"array"
+				]
+			);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"PaymentRepository expected an array response."
+			);
+		}
+
+		if (empty($result["success"])) {
+			throw new \RuntimeException(
+				"Failed to delete payment interest record."
+			);
+		}
+	}
+
+
+	public function deletePayment(
+		int $paymentId,
+		int $companyId
+	): void {
+		$result =
+			\delete_from(
+				"payments",
+				[
+					"payment_id" =>
+						$paymentId,
+
+					"company_id" =>
+						$companyId
+				],
+				[
+					"return_type" =>
+						"array"
+				]
+			);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Failed to delete payment."
+			);
+		}
+
+		if (
+			(int)(
+				$result["count"]
+					?? 0
+			) !== 1
+		) {
+			throw new \RuntimeException(
+				"Payment was not deleted."
+			);
+		}
+	}
 }

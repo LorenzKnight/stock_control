@@ -1513,4 +1513,470 @@ final class PaymentServiceTest extends TestCase
 			$this->validPaymentData()
 		);
 	}
+
+
+	public function testDeletesLatestFixedPaymentAndRestoresSaleBalances(): void
+	{
+		$repository =
+			$this->createMock(
+				PaymentRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findPaymentForDelete'
+			)
+			->with(
+				77,
+				5
+			)
+			->willReturn([
+				"payment_id" => 77,
+				"sales_id" => 50,
+				"amount" => 100,
+				"interest" => 9.09,
+				"no_installments" => 2
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findSaleForPaymentDelete'
+			)
+			->with(
+				50,
+				5
+			)
+			->willReturn([
+				"sales_id" => 50,
+				"remaining" => 309.09,
+				"due" => 340,
+				"interest_type" => 1,
+				"interest" => 10,
+				"installments_month" => 4
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findLatestPaymentForSale'
+			)
+			->with(
+				50,
+				5
+			)
+			->willReturn([
+				"payment_id" => 77,
+				"no_installments" => 2
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'deleteInterestEarningByPaymentId'
+			)
+			->with(77);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'deletePayment'
+			)
+			->with(
+				77,
+				5
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'updateSaleBalances'
+			)
+			->with(
+				50,
+				5,
+				400.0,
+				440.0
+			);
+
+		$service =
+			new PaymentService(
+				$repository
+			);
+
+		$result =
+				$service->deletePayment(
+					10,
+					5,
+					77
+				);
+
+		$this->assertSame(
+			77,
+			$result["payment_id"]
+		);
+
+		$this->assertSame(
+			50,
+			$result["sale_id"]
+		);
+
+		$this->assertSame(
+			400.0,
+			$result["restored_remaining"]
+		);
+
+		$this->assertSame(
+			440.0,
+			$result["restored_due"]
+		);
+	}
+
+
+	public function testDeletesLatestReducingBalancePaymentAndRestoresSaleBalances(): void
+	{
+		$repository =
+			$this->createMock(
+				PaymentRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findPaymentForDelete'
+			)
+			->with(
+				77,
+				5
+			)
+			->willReturn([
+				"payment_id" => 77,
+				"sales_id" => 50,
+				"amount" => 100,
+				"interest" => 40,
+				"no_installments" => 1
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findSaleForPaymentDelete'
+			)
+			->with(
+				50,
+				5
+			)
+			->willReturn([
+				"sales_id" => 50,
+				"remaining" => 340,
+				"due" => 408,
+				"interest_type" => 2,
+				"interest" => 10,
+				"installments_month" => 4
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findLatestPaymentForSale'
+			)
+			->with(
+				50,
+				5
+			)
+			->willReturn([
+				"payment_id" => 77,
+				"no_installments" => 1
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'deleteInterestEarningByPaymentId'
+			)
+			->with(77);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'deletePayment'
+			)
+			->with(
+				77,
+				5
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'updateSaleBalances'
+			)
+			->with(
+				50,
+				5,
+				400.0,
+				500.0
+			);
+
+		$service =
+			new PaymentService(
+				$repository
+			);
+
+		$result =
+				$service->deletePayment(
+					10,
+					5,
+					77
+				);
+
+		$this->assertSame(
+			400.0,
+			$result["restored_remaining"]
+		);
+
+		$this->assertSame(
+			500.0,
+			$result["restored_due"]
+		);
+	}
+
+
+	public function testDeletePaymentRejectsNonLatestPayment(): void
+	{
+		$repository =
+			$this->createMock(
+				PaymentRepository::class
+			);
+
+		$repository
+			->method(
+				'findPaymentForDelete'
+			)
+			->willReturn([
+				"payment_id" => 77,
+				"sales_id" => 50,
+				"amount" => 100,
+				"interest" => 9.09,
+				"no_installments" => 2
+			]);
+
+		$repository
+			->method(
+				'findSaleForPaymentDelete'
+			)
+			->willReturn([
+				"sales_id" => 50,
+				"remaining" => 200,
+				"due" => 220,
+				"interest_type" => 1,
+				"interest" => 10,
+				"installments_month" => 4
+			]);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findLatestPaymentForSale'
+			)
+			->with(
+				50,
+				5
+			)
+			->willReturn([
+				"payment_id" => 78,
+				"no_installments" => 3
+			]);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'deleteInterestEarningByPaymentId'
+			);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'deletePayment'
+			);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'updateSaleBalances'
+			);
+
+		$service =
+			new PaymentService(
+				$repository
+			);
+
+		$this->expectException(
+				Exception::class
+			);
+
+		$this->expectExceptionMessage(
+				"Only the latest payment can be deleted."
+			);
+
+		$service->deletePayment(
+				10,
+				5,
+				77
+			);
+	}
+
+
+	public function testDeletePaymentThrowsWhenPaymentDoesNotExist(): void
+	{
+		$repository =
+			$this->createMock(
+				PaymentRepository::class
+			);
+
+		$repository
+			->expects($this->once())
+			->method(
+				'findPaymentForDelete'
+			)
+			->with(
+				77,
+				5
+			)
+			->willReturn(null);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'findSaleForPaymentDelete'
+			);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'deletePayment'
+			);
+
+		$service =
+			new PaymentService(
+				$repository
+			);
+
+		$this->expectException(
+				Exception::class
+			);
+
+		$this->expectExceptionMessage(
+				"Payment record not found."
+			);
+
+		$service->deletePayment(
+				10,
+				5,
+				77
+			);
+	}
+
+
+	public function testDeletePaymentRejectsInvalidUserId(): void
+	{
+		$repository =
+			$this->createMock(
+				PaymentRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'findPaymentForDelete'
+			);
+
+		$service =
+			new PaymentService(
+				$repository
+			);
+
+		$this->expectException(
+				InvalidArgumentException::class
+			);
+
+		$this->expectExceptionMessage(
+				"User session not found."
+			);
+
+		$service->deletePayment(
+				0,
+				5,
+				77
+			);
+	}
+
+
+	public function testDeletePaymentRejectsInvalidCompanyId(): void
+	{
+		$repository =
+			$this->createMock(
+				PaymentRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'findPaymentForDelete'
+			);
+
+		$service =
+			new PaymentService(
+				$repository
+			);
+
+		$this->expectException(
+				InvalidArgumentException::class
+			);
+
+		$this->expectExceptionMessage(
+				"User company not found."
+			);
+
+		$service->deletePayment(
+				10,
+				0,
+				77
+			);
+	}
+
+
+	public function testDeletePaymentRejectsInvalidPaymentId(): void
+	{
+		$repository =
+			$this->createMock(
+				PaymentRepository::class
+			);
+
+		$repository
+			->expects($this->never())
+			->method(
+				'findPaymentForDelete'
+			);
+
+		$service =
+			new PaymentService(
+				$repository
+			);
+
+		$this->expectException(
+				InvalidArgumentException::class
+			);
+
+		$this->expectExceptionMessage(
+				"Missing or invalid payment ID."
+			);
+
+		$service->deletePayment(
+				10,
+				5,
+				0
+			);
+	}
 }

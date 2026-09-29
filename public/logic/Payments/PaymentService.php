@@ -1034,4 +1034,322 @@ class PaymentService
 			2
 		);
 	}
+
+
+	public function deletePayment(
+		int $userId,
+		int $companyId,
+		int $paymentId
+	): array {
+		if ($userId <= 0) {
+			throw new \InvalidArgumentException(
+				"User session not found."
+			);
+		}
+
+		if ($companyId <= 0) {
+			throw new \InvalidArgumentException(
+				"User company not found."
+			);
+		}
+
+		if ($paymentId <= 0) {
+			throw new \InvalidArgumentException(
+				"Missing or invalid payment ID."
+			);
+		}
+
+		/*
+		* Buscamos el pago dentro de la empresa.
+		* El endpoint debe haber iniciado
+		* una transacción antes de llegar aquí.
+		*/
+		$payment =
+			$this->repository
+				->findPaymentForDelete(
+					$paymentId,
+					$companyId
+				);
+
+		if ($payment === null) {
+			throw new \Exception(
+				"Payment record not found."
+			);
+		}
+
+		$saleId =
+			(int)(
+				$payment["sales_id"]
+					?? 0
+			);
+
+		if ($saleId <= 0) {
+			throw new \RuntimeException(
+				"Invalid payment sale."
+			);
+		}
+
+		/*
+		* Bloqueamos y recuperamos la venta
+		* a la que pertenece el pago.
+		*/
+		$sale =
+			$this->repository
+				->findSaleForPaymentDelete(
+					$saleId,
+					$companyId
+				);
+
+		if ($sale === null) {
+			throw new \Exception(
+				"Sale record not found."
+			);
+		}
+
+		/*
+		* Solo permitimos eliminar el último
+		* pago registrado para esta venta.
+		*
+		* Eliminar un pago intermedio dejaría
+		* inconsistentes los cálculos posteriores.
+		*/
+		$latestPayment =
+			$this->repository
+				->findLatestPaymentForSale(
+					$saleId,
+					$companyId
+				);
+
+		if (
+			$latestPayment === null ||
+			(int)(
+				$latestPayment["payment_id"]
+					?? 0
+			) !== $paymentId
+		) {
+			throw new \Exception(
+				"Only the latest payment can be deleted."
+			);
+		}
+
+		$amount =
+			round(
+				(float)(
+					$payment["amount"]
+						?? 0
+				),
+				2
+			);
+
+		$interest =
+			round(
+				(float)(
+					$payment["interest"]
+						?? 0
+				),
+				2
+			);
+
+		if ($amount <= 0) {
+			throw new \RuntimeException(
+				"Invalid payment amount."
+			);
+		}
+
+		$principalPaid =
+			round(
+				$amount - $interest,
+				2
+			);
+
+		if ($principalPaid <= 0) {
+			throw new \RuntimeException(
+				"Invalid payment principal."
+			);
+		}
+
+		$currentRemaining =
+			round(
+				(float)(
+					$sale["remaining"]
+						?? 0
+				),
+				2
+			);
+
+		$currentDue =
+			round(
+				(float)(
+					$sale["due"]
+						?? 0
+				),
+				2
+			);
+
+		if (
+			$currentRemaining < 0 ||
+			$currentDue < 0
+		) {
+			throw new \RuntimeException(
+				"Invalid sale balances."
+			);
+		}
+
+		/*
+		* Restauramos el capital que había
+		* antes de registrar este pago.
+		*/
+		$previousRemaining =
+			round(
+				$currentRemaining +
+					$principalPaid,
+				2
+			);
+
+		$interestType =
+			(int)(
+				$sale["interest_type"]
+					?? 0
+			);
+
+		$interestRate =
+			(float)(
+				$sale["interest"]
+					?? 0
+			);
+
+		if ($interestRate < 0) {
+			throw new \RuntimeException(
+				"Invalid sale interest rate."
+			);
+		}
+
+		/*
+		* FIXED
+		*
+		* Al crear el pago:
+		*
+		* due = openingDue - amount
+		*
+		* Por lo tanto al eliminarlo:
+		*
+		* openingDue = currentDue + amount
+		*/
+		if ($interestType === 1) {
+			$previousDue =
+				round(
+					$currentDue +
+						$amount,
+					2
+				);
+		}
+
+		/*
+		* REDUCING BALANCE
+		*
+		* No basta con sumar el pago al due,
+		* porque los intereses futuros fueron
+		* recalculados después de cada pago.
+		*
+		* Restauramos el capital anterior y
+		* volvemos a calcular los intereses que
+		* existían antes de la cuota eliminada.
+		*/
+		elseif ($interestType === 2) {
+			$installmentsMonth =
+				(int)(
+					$sale[
+						"installments_month"
+					] ?? 0
+				);
+
+			$installmentNumber =
+				(int)(
+					$payment[
+						"no_installments"
+					] ?? 0
+				);
+
+			if ($installmentsMonth <= 0) {
+				throw new \RuntimeException(
+					"Invalid sale installment plan."
+				);
+			}
+
+			if ($installmentNumber <= 0) {
+				throw new \RuntimeException(
+					"Invalid payment installment number."
+				);
+			}
+
+			$remainingInstallmentsBefore =
+				max(
+					$installmentsMonth -
+						($installmentNumber - 1),
+					0
+				);
+
+			$previousInterest =
+				$this->calculateReducingInterest(
+					$previousRemaining,
+					$interestRate,
+					$remainingInstallmentsBefore
+				);
+
+			$previousDue =
+				round(
+					$previousRemaining +
+						$previousInterest,
+					2
+				);
+		} else {
+			throw new \RuntimeException(
+				"Invalid sale interest type."
+			);
+		}
+
+		/*
+		* Eliminamos primero el registro financiero
+		* asociado y luego el pago.
+		*
+		* Todo esto quedará protegido por la
+		* transacción del endpoint.
+		*/
+		$this->repository
+			->deleteInterestEarningByPaymentId(
+				$paymentId
+			);
+
+		$this->repository
+			->deletePayment(
+				$paymentId,
+				$companyId
+			);
+
+		/*
+		* Finalmente restauramos los balances
+		* anteriores de la venta.
+		*/
+		$this->repository
+			->updateSaleBalances(
+				$saleId,
+				$companyId,
+				$previousRemaining,
+				$previousDue
+			);
+
+		return [
+			"payment_id" =>
+				$paymentId,
+
+			"sale_id" =>
+				$saleId,
+
+			"restored_remaining" =>
+				$previousRemaining,
+
+			"restored_due" =>
+				$previousDue
+		];
+	}
 }
