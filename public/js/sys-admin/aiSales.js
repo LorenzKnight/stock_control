@@ -171,10 +171,7 @@ window.loadAiSales = async function () {
 							lead.score_reason
 								? `
 									<p>
-										<strong>
-											Score reason:
-										</strong>
-
+										<strong>Score reason:</strong>
 										${escapeHtml(lead.score_reason)}
 									</p>
 								`
@@ -185,19 +182,26 @@ window.loadAiSales = async function () {
 							lead.ai_summary
 								? `
 									<p>
-										<strong>
-											AI Summary:
-										</strong>
-
+										<strong>AI Summary:</strong>
 										${escapeHtml(lead.ai_summary)}
 									</p>
 								`
 								: ''
 						}
 
+						<div
+							id="ai-sales-conversations-${lead.sales_lead_id}"
+							class="ai-sales-conversations"
+						>
+						</div>
+
 					</div>
 				`).join('')}
 			`;
+
+			data.data.forEach(lead => {
+				loadSalesConversations(lead.sales_lead_id);
+			});
 
 		} catch (error) {
 			console.error('Error loading sales leads:', error);
@@ -214,6 +218,362 @@ window.loadAiSales = async function () {
 		}
 	}
 
+
+	async function loadSalesConversations(
+		salesLeadId
+	) {
+		const conversationsContainer =
+			document.getElementById(
+				`ai-sales-conversations-${salesLeadId}`
+			);
+
+		if (!conversationsContainer) {
+			return;
+		}
+
+		conversationsContainer.innerHTML = `
+			<p>Loading conversations...</p>
+		`;
+
+		try {
+			const response = await fetch(
+				`api/get_sales_conversations.php?sales_lead_id=${salesLeadId}`,
+				{
+					method: 'GET',
+					headers: {
+						'Accept': 'application/json'
+					}
+				}
+			);
+
+			const data =
+				await response.json();
+
+			if (
+				!data.success ||
+				!Array.isArray(data.data) ||
+				data.data.length === 0
+			) {
+				conversationsContainer.innerHTML = `
+					<hr>
+
+					<h3>Conversations</h3>
+
+					<p>
+						No conversations found.
+					</p>
+				`;
+
+				return;
+			}
+
+			conversationsContainer.innerHTML = `
+				<hr>
+
+				<h3>Conversations</h3>
+
+				${data.data.map(conversation => `
+					<div class="ai-sales-conversation">
+
+						<p>
+							<strong>Channel:</strong>
+							${escapeHtml(
+								conversation.channel || '-'
+							)}
+						</p>
+
+						<p>
+							<strong>Subject:</strong>
+							${escapeHtml(
+								conversation.subject || '-'
+							)}
+						</p>
+
+						<p>
+							<strong>Status:</strong>
+							${escapeHtml(
+								conversation.status || '-'
+							)}
+						</p>
+
+						<p>
+							<strong>Started:</strong>
+							${escapeHtml(
+								conversation.started_at || '-'
+							)}
+						</p>
+
+						<div
+							id="ai-sales-messages-${conversation.conversation_id}"
+							class="ai-sales-messages"
+						>
+						</div>
+
+					</div>
+				`).join('')}
+			`;
+
+			data.data.forEach(conversation => {
+				loadSalesMessages(
+					conversation.conversation_id
+				);
+			});
+
+		} catch (error) {
+			console.error(
+				'Error loading sales conversations:',
+				error
+			);
+
+			conversationsContainer.innerHTML = `
+				<hr>
+
+				<h3>Conversations</h3>
+
+				<p style="color:red;">
+					Error loading conversations.
+				</p>
+			`;
+		}
+	}
+
+	async function loadSalesMessages(
+		conversationId
+	) {
+		const messagesContainer = document.getElementById(`ai-sales-messages-${conversationId}`);
+
+		if (!messagesContainer) {
+			return;
+		}
+
+		messagesContainer.innerHTML = `
+			<p>Loading messages...</p>
+		`;
+
+		try {
+			const response = await fetch(
+				`api/get_sales_messages.php?conversation_id=${conversationId}`,
+				{
+					method: 'GET',
+					headers: {
+						'Accept': 'application/json'
+					}
+				}
+			);
+
+			const data =
+				await response.json();
+
+			if (
+				!data.success ||
+				!Array.isArray(data.data) ||
+				data.data.length === 0
+			) {
+				messagesContainer.innerHTML = `
+					<h4>Messages</h4>
+
+					<p>
+						No messages found.
+					</p>
+				`;
+
+				return;
+			}
+
+			messagesContainer.innerHTML = `
+				<h4>Messages</h4>
+
+				${data.data.map(message => `
+					<div
+						class="ai-sales-message"
+						data-message-id="${message.sales_message_id}"
+					>
+
+						<p>
+							<strong>
+								${escapeHtml(
+									message.sender_type || 'Unknown'
+								)}
+							</strong>
+
+							<small>
+								${escapeHtml(
+									message.direction || ''
+								)}
+							</small>
+						</p>
+
+						${
+							message.subject
+								? `
+									<p>
+										<strong>Subject:</strong>
+
+										${escapeHtml(
+											message.subject
+										)}
+									</p>
+								`
+								: ''
+						}
+
+						<p style="white-space: pre-line;">
+							${escapeHtml(
+								message.message || ''
+							)}
+						</p>
+
+						<p>
+							<strong>Status:</strong>
+
+							${escapeHtml(
+								message.status || 'DRAFT'
+							)}
+						</p>
+
+						${
+							message.ai_generated
+								? `
+									<p>
+										<small>
+											AI generated
+										</small>
+									</p>
+								`
+								: ''
+						}
+
+						${
+							message.status === 'PENDING_APPROVAL'
+								? `
+									<div class="ai-sales-message-actions">
+										<button
+											type="button"
+											class="button-style-agree approve-sales-message-btn"
+											data-message-id="${message.sales_message_id}"
+										>
+											Approve
+										</button>
+									</div>
+								`
+								: ''
+						}
+
+						${
+							message.status === 'APPROVED'
+								? `
+									<p>
+										<small>
+											Message approved
+										</small>
+									</p>
+								`
+								: ''
+						}
+
+					</div>
+				`).join('')}
+			`;
+
+
+			const approveButtons = messagesContainer.querySelectorAll('.approve-sales-message-btn');
+			approveButtons.forEach(button => {
+				button.addEventListener(
+					'click',
+					async () => {
+						const salesMessageId = Number(button.dataset.messageId);
+
+						if (!salesMessageId) {
+							return;
+						}
+
+						await approveSalesMessage(
+							salesMessageId,
+							conversationId,
+							button
+						);
+					}
+				);
+
+			});
+
+		} catch (error) {
+			console.error(
+				'Error loading sales messages:',
+				error
+			);
+
+			messagesContainer.innerHTML = `
+				<h4>Messages</h4>
+
+				<p style="color:red;">
+					Error loading messages.
+				</p>
+			`;
+		}
+	}
+
+	async function approveSalesMessage(
+		salesMessageId,
+		conversationId,
+		button
+	) {
+		const originalText =
+			button.textContent;
+
+		button.disabled = true;
+		button.textContent = 'Approving...';
+
+		try {
+			const formData =
+				new FormData();
+
+			formData.append(
+				'sales_message_id',
+				salesMessageId
+			);
+
+			const response = await fetch(
+				'api/approve_sales_message.php',
+				{
+					method: 'POST',
+					headers: {
+						'Accept': 'application/json'
+					},
+					body: formData
+				}
+			);
+
+			const data =
+				await response.json();
+
+			if (!data.success) {
+				throw new Error(
+					data.message ||
+					'Could not approve message.'
+				);
+			}
+
+			await loadSalesMessages(
+				conversationId
+			);
+
+		} catch (error) {
+			console.error(
+				'Error approving sales message:',
+				error
+			);
+
+			alert(
+				error.message ||
+				'Error approving sales message.'
+			);
+
+			button.disabled = false;
+			button.textContent =
+				originalText;
+		}
+	}
 
 	async function loadSalesContacts(
 		salesCompanyId
