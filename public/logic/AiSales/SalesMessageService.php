@@ -87,6 +87,61 @@ class SalesMessageService
 	}
 
 
+	public function sendMessage(
+		int $salesMessageId
+	): void {
+		if ($salesMessageId <= 0) {
+			throw new \InvalidArgumentException(
+				"Invalid sales message ID."
+			);
+		}
+
+		$message =
+			$this->repository->findById(
+				$salesMessageId
+			);
+
+		if ($message === null) {
+			throw new \Exception(
+				"Sales message not found."
+			);
+		}
+
+		$status =
+			(string)($message["status"] ?? '');
+
+		if ($status !== "APPROVED") {
+			throw new \Exception(
+				"Only approved messages can be sent."
+			);
+		}
+
+		$direction =
+			(string)($message["direction"] ?? '');
+
+		if ($direction !== "OUTBOUND") {
+			throw new \Exception(
+				"Only outbound messages can be sent."
+			);
+		}
+
+		$approved =
+			$this->isDatabaseTrue(
+				$message["approved"] ?? false
+			);
+
+		if (!$approved) {
+			throw new \Exception(
+				"Message must be approved before sending."
+			);
+		}
+
+		$this->repository->markAsSent(
+			$salesMessageId
+		);
+	}
+
+
 	private function isDatabaseTrue(
 		mixed $value
 	): bool {

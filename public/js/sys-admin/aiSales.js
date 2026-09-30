@@ -462,11 +462,48 @@ window.loadAiSales = async function () {
 						${
 							message.status === 'APPROVED'
 								? `
+									<div class="ai-sales-message-actions">
+
+										<p>
+											<small>
+												Message approved
+											</small>
+										</p>
+
+										<button
+											type="button"
+											class="button-style-agree send-sales-message-btn"
+											data-message-id="${message.sales_message_id}"
+										>
+											Send (test)
+										</button>
+
+									</div>
+								`
+								: ''
+						}
+
+						${
+							message.status === 'SENT'
+								? `
 									<p>
 										<small>
-											Message approved
+											Message sent
 										</small>
 									</p>
+
+									${
+										message.sent_at
+											? `
+												<p>
+													<small>
+														Sent at:
+														${escapeHtml(message.sent_at)}
+													</small>
+												</p>
+											`
+											: ''
+									}
 								`
 								: ''
 						}
@@ -488,6 +525,27 @@ window.loadAiSales = async function () {
 						}
 
 						await approveSalesMessage(
+							salesMessageId,
+							conversationId,
+							button
+						);
+					}
+				);
+
+			});
+
+			const sendButtons = messagesContainer.querySelectorAll('.send-sales-message-btn');
+			sendButtons.forEach(button => {
+				button.addEventListener(
+					'click',
+					async () => {
+						const salesMessageId = Number(button.dataset.messageId);
+
+						if (!salesMessageId) {
+							return;
+						}
+
+						await sendSalesMessage(
 							salesMessageId,
 							conversationId,
 							button
@@ -567,6 +625,68 @@ window.loadAiSales = async function () {
 			alert(
 				error.message ||
 				'Error approving sales message.'
+			);
+
+			button.disabled = false;
+			button.textContent =
+				originalText;
+		}
+	}
+
+	async function sendSalesMessage(
+		salesMessageId,
+		conversationId,
+		button
+	) {
+		const originalText =
+			button.textContent;
+
+		button.disabled = true;
+		button.textContent = 'Sending...';
+
+		try {
+			const formData =
+				new FormData();
+
+			formData.append(
+				'sales_message_id',
+				salesMessageId
+			);
+
+			const response = await fetch(
+				'api/send_sales_message.php',
+				{
+					method: 'POST',
+					headers: {
+						'Accept': 'application/json'
+					},
+					body: formData
+				}
+			);
+
+			const data =
+				await response.json();
+
+			if (!data.success) {
+				throw new Error(
+					data.message ||
+					'Could not send message.'
+				);
+			}
+
+			await loadSalesMessages(
+				conversationId
+			);
+
+		} catch (error) {
+			console.error(
+				'Error sending sales message:',
+				error
+			);
+
+			alert(
+				error.message ||
+				'Error sending sales message.'
 			);
 
 			button.disabled = false;

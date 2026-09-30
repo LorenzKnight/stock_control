@@ -126,4 +126,33 @@ class SalesMessageRepository
 			);
 		}
 	}
+
+
+	public function markAsSent(
+		int $salesMessageId
+	): void {
+		$result = \update_table(
+			"sales_messages",
+			[
+				"status" => "SENT",
+				"sent_at" => date("Y-m-d H:i:s"),
+				"updated_at" => date("Y-m-d H:i:s")
+			],
+			[
+				"sales_message_id" => $salesMessageId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Could not mark sales message as sent."
+			);
+		}
+	}
 }
