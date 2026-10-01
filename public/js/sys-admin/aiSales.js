@@ -200,7 +200,7 @@ window.loadAiSales = async function () {
 			`;
 
 			data.data.forEach(lead => {
-				loadSalesConversations(lead.sales_lead_id);
+				loadSalesConversations(lead.sales_lead_id, salesCompanyId);
 			});
 
 		} catch (error) {
@@ -220,7 +220,8 @@ window.loadAiSales = async function () {
 
 
 	async function loadSalesConversations(
-		salesLeadId
+		salesLeadId,
+		salesCompanyId
 	) {
 		const conversationsContainer =
 			document.getElementById(
@@ -315,7 +316,8 @@ window.loadAiSales = async function () {
 
 			data.data.forEach(conversation => {
 				loadSalesMessages(
-					conversation.conversation_id
+					conversation.conversation_id,
+					salesCompanyId
 				);
 			});
 
@@ -338,7 +340,8 @@ window.loadAiSales = async function () {
 	}
 
 	async function loadSalesMessages(
-		conversationId
+		conversationId,
+		salesCompanyId
 	) {
 		const messagesContainer = document.getElementById(`ai-sales-messages-${conversationId}`);
 
@@ -527,6 +530,7 @@ window.loadAiSales = async function () {
 						await approveSalesMessage(
 							salesMessageId,
 							conversationId,
+							salesCompanyId,
 							button
 						);
 					}
@@ -547,7 +551,7 @@ window.loadAiSales = async function () {
 
 						await sendSalesMessage(
 							salesMessageId,
-							conversationId,
+							salesCompanyId,
 							button
 						);
 					}
@@ -574,6 +578,7 @@ window.loadAiSales = async function () {
 	async function approveSalesMessage(
 		salesMessageId,
 		conversationId,
+		salesCompanyId,
 		button
 	) {
 		const originalText =
@@ -613,7 +618,8 @@ window.loadAiSales = async function () {
 			}
 
 			await loadSalesMessages(
-				conversationId
+				conversationId,
+				salesCompanyId
 			);
 
 		} catch (error) {
@@ -635,7 +641,7 @@ window.loadAiSales = async function () {
 
 	async function sendSalesMessage(
 		salesMessageId,
-		conversationId,
+		salesCompanyId,
 		button
 	) {
 		const originalText =
@@ -674,8 +680,8 @@ window.loadAiSales = async function () {
 				);
 			}
 
-			await loadSalesMessages(
-				conversationId
+			await loadSalesLeads(
+				salesCompanyId
 			);
 
 		} catch (error) {

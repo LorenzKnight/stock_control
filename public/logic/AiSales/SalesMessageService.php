@@ -6,10 +6,23 @@ class SalesMessageService
 {
 	private SalesMessageRepository $repository;
 
+	private SalesConversationRepository $conversationRepository;
+
+	private SalesLeadRepository $leadRepository;
+
 	public function __construct(
-		SalesMessageRepository $repository
+		SalesMessageRepository $repository,
+		SalesConversationRepository $conversationRepository,
+		SalesLeadRepository $leadRepository
 	) {
-		$this->repository = $repository;
+		$this->repository =
+			$repository;
+
+		$this->conversationRepository =
+			$conversationRepository;
+
+		$this->leadRepository =
+			$leadRepository;
 	}
 
 	public function getMessagesByConversation(
@@ -89,7 +102,7 @@ class SalesMessageService
 
 	public function sendMessage(
 		int $salesMessageId
-	): void {
+	): array {
 		if ($salesMessageId <= 0) {
 			throw new \InvalidArgumentException(
 				"Invalid sales message ID."
@@ -136,9 +149,106 @@ class SalesMessageService
 			);
 		}
 
+		$conversationId =
+			(int)($message["conversation_id"] ?? 0);
+
+		if ($conversationId <= 0) {
+			throw new \Exception(
+				"Conversation not found for sales message."
+			);
+		}
+
+		$conversation =
+			$this->conversationRepository->findById(
+				$conversationId
+			);
+
+		if ($conversation === null) {
+			throw new \Exception(
+				"Sales conversation not found."
+			);
+		}
+
+		$salesLeadId =
+			(int)($conversation["sales_lead_id"] ?? 0);
+
+		if ($salesLeadId <= 0) {
+			throw new \Exception(
+				"Sales lead not found for conversation."
+			);
+		}
+
+		$lead =
+			$this->leadRepository->findById(
+				$salesLeadId
+			);
+
+		if ($lead === null) {
+			throw new \Exception(
+				"Sales lead not found."
+			);
+		}
+
+		$currentStage =
+			(string)($lead["stage"] ?? "NEW");
+
+
+		$newStage = null;
+
+		if (
+			in_array(
+				$currentStage,
+				[
+					"NEW",
+					"RESEARCHING"
+				],
+				true
+			)
+		) {
+			$newStage = "CONTACTED";
+		}
+
+		$now =
+			date("Y-m-d H:i:s");
+
 		$this->repository->markAsSent(
-			$salesMessageId
+			$salesMessageId,
+			$now
 		);
+
+		$this->conversationRepository
+			->markWaitingReply(
+				$conversationId,
+				$now
+			);
+
+
+		$this->leadRepository
+			->updateAfterContact(
+				$salesLeadId,
+				$now,
+				$newStage
+			);
+
+		return [
+			"sales_message_id" =>
+				$salesMessageId,
+
+			"conversation_id" =>
+				$conversationId,
+
+			"sales_lead_id" =>
+				$salesLeadId,
+
+			"previous_stage" =>
+				$currentStage,
+
+			"current_stage" =>
+				$newStage ?? $currentStage,
+
+			"sent_at" =>
+				$now
+		];
 	}
 
 

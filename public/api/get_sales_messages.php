@@ -1,5 +1,7 @@
 <?php
 use App\AiSales\SalesMessageRepository;
+use App\AiSales\SalesConversationRepository;
+use App\AiSales\SalesLeadRepository;
 use App\AiSales\SalesMessageService;
 
 require_once('../logic/stock_be.php');
@@ -17,12 +19,20 @@ try {
 		$_GET["conversation_id"] ?? 0
 	);
 
-	$repository =
+	$messageRepository =
 		new SalesMessageRepository();
+
+	$conversationRepository =
+		new SalesConversationRepository();
+
+	$leadRepository =
+		new SalesLeadRepository();
 
 	$service =
 		new SalesMessageService(
-			$repository
+			$messageRepository,
+			$conversationRepository,
+			$leadRepository
 		);
 
 	$messages =

@@ -1,5 +1,7 @@
 <?php
 use App\AiSales\SalesMessageRepository;
+use App\AiSales\SalesConversationRepository;
+use App\AiSales\SalesLeadRepository;
 use App\AiSales\SalesMessageService;
 
 require_once('../inc/cors.php');
@@ -58,12 +60,21 @@ try {
 		);
 	}
 
-	$repository =
+	$messageRepository =
 		new SalesMessageRepository();
+
+	$conversationRepository =
+		new SalesConversationRepository();
+
+	$leadRepository =
+		new SalesLeadRepository();
+
 
 	$service =
 		new SalesMessageService(
-			$repository
+			$messageRepository,
+			$conversationRepository,
+			$leadRepository
 		);
 
 	$service->approveMessage(
@@ -71,13 +82,20 @@ try {
 		$userId
 	);
 
-	log_activity(
-		$userId,
-		"approve_ai_sales_message",
-		"Approved AI Sales message ID: {$salesMessageId}",
-		"sales_messages",
-		$salesMessageId
-	);
+	try {
+		log_activity(
+			$userId,
+			"approve_ai_sales_message",
+			"Approved AI Sales message ID: {$salesMessageId}",
+			"sales_messages",
+			$salesMessageId
+		);
+	} catch (Throwable $e) {
+		error_log(
+			"Could not log AI Sales message approval: " .
+			$e->getMessage()
+		);
+	}
 
 	$response = [
 		"success" => true,
