@@ -35,6 +35,7 @@ jobs:
                public/logic/Storages \
                public/logic/Slots \
                public/logic/Products \
+               public/logic/AiSales \
                tests \
                -name "*.php" -print0 | xargs -0 -n1 php -l
 
