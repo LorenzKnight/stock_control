@@ -347,29 +347,135 @@
 	object-fit: cover;
 }
 
-/* #### ai-sales #### */
-/* .ai-sales-sidebar {
-	width: 30%;
-	height: 82.5vh;
-	border-right: 1px solid var(--gray-200);
-} */
+/* ################# ai sales ################# */
 
-/* .ai-sales-company-list {
-	width: 99%;
-	height: 76.5vh;
-	overflow-y: auto;
-} */
-
-/* .ai-sales-details {
-	width: 70%;
-	height: 82.5vh;
-	overflow: auto;
-} */
-
-.ai-sales-company-row {
-	cursor: pointer;
+.ai-sales-detail-layout {
+	padding: 0 10px 10px;
 }
 
-.ai-sales-company-row.selected-company {
-	background-color: var(--gray-300);
+.ai-sales-company-header {
+	display: flex;
+	/* gap: 15px; */
+	padding: 15px 10px;
+	margin-bottom: 12px;
+	background: var(--clr-white);
+	border: 1px solid var(--gray-200);
+	box-shadow: 0px 5px 30px var(--shadow-color);
+	border-radius: 15px;
+}
+
+.ai-sales-summary-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 6px;
+	margin-bottom: 15px;
+}
+
+.ai-sales-card {
+	font-size: 10px;
+	background: var(--clr-white);
+	border: 1px solid var(--gray-200);
+	box-shadow: 0px 5px 30px var(--shadow-color);
+	border-radius: 15px;
+	padding: 5px 10px;
+}
+
+.ai-sales-info-row {
+	display: grid;
+	grid-template-columns: 35% 65%;
+	gap: 10px;
+	padding: 5px 0;
+}
+
+.ai-sales-info-row span {
+	color: var(--gray-500);
+}
+
+.ai-sales-company-header h2 {
+	margin: 0 0 5px;
+}
+
+.ai-sales-company-description {
+	margin-bottom: 0;
+}
+
+.ai-sales-conversations-panel {
+	width: 100%;
+	margin-top: 12px;
+}
+
+.ai-sales-conversations {
+	width: 100%;
+	background: var(--clr-white);
+	border: 1px solid var(--gray-200);
+	box-shadow: 0px 5px 30px var(--shadow-color);
+	border-radius: 15px;
+	padding: 0 10px 10px;
+	box-sizing: border-box;
+}
+
+.ai-sales-conversation {
+	border: 1px solid var(--alert-blue);
+	border-radius: 10px;
+}
+
+.ai-sales-conversation-header {
+	background: var(--clr-light-blue);
+	padding: 8px;
+	border-radius: 10px 10px 0 0;
+	border-bottom: 1px solid var(--gray-200);
+}
+
+.ai-sales-messages {
+	padding: 0 10px 10px;
+}
+
+.ai-sales-message {
+	border: 1px solid var(--clr-light-blue);
+	border-radius: 8px;
+	padding: 12px 0;
+	margin-top: 10px;
+	background: var(--gray-000);
+	display: flex;
+}
+
+.ai-sales-message-type {
+	width: 10%;
+	text-align: center;
+	justify-items: center;
+	
+}
+
+.ai-sales-message-avatar {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background: var(--gray-300);
+	margin-bottom: 5px;
+}
+
+.ai-sales-message-content {
+	width: 63%;
+}
+
+.ai-sales-message-status {
+	width: 27%;
+}
+
+.bubble {
+	display: inline-flex;
+	width: fit-content;
+
+	align-items: center;
+	justify-content: center;
+	margin: 2px 0;
+	padding: 4px 8px;
+
+	border-radius: 999px;
+
+	font-size: 10px;
+	font-weight: 600;
+	line-height: 1;
+
+	white-space: nowrap;
 }

@@ -4345,7 +4345,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 									radio.checked = true;
 
 									// Quitar selección visual de las demás filas
-									document.querySelectorAll('.users-row').forEach(r => r.classList.remove('selected-user'));
+									document.querySelectorAll('.users-row')
+										.forEach(r => {
+											r.classList.remove(
+												'selected-user'
+											);
+										});
 
 									// Agregar selección visual a esta fila
 									row.classList.add('selected-user');

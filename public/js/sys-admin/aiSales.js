@@ -1,12 +1,8 @@
 window.loadAiSales = async function () {
-	const companyContainer =
-		document.getElementById('ai-sales-company-list');
+	const companyContainer = document.getElementById('ai-sales-company-list');
+	const searchCompanyField = document.getElementById('searchSalesCompanyField');
 
-	const searchCompanyField =
-		document.getElementById('searchSalesCompanyField');
-
-	const companyDetails =
-		document.getElementById('ai-sales-details');
+	const companyDetails = document.getElementById('ai-sales-details');
 
 	if (!companyContainer) return;
 
@@ -26,58 +22,121 @@ window.loadAiSales = async function () {
 		if (!companyDetails) return;
 
 		companyDetails.innerHTML = `
-			<div style="padding: 20px;">
+			<div class="ai-sales-detail-layout">
+				<div class="ai-sales-company-header">
 
-				<h2>
-					${escapeHtml(company.company_name)}
-				</h2>
+					<div class="ai-sales-company-icon">
+						<i class="fa-solid fa-building"></i>
+					</div>
 
-				<p>
-					<strong>Market:</strong>
-					${escapeHtml(company.market || '-')}
-				</p>
+					<div class="ai-sales-company-header-info">
+						<h2>${escapeHtml(company.company_name)}</h2>
 
-				<p>
-					<strong>Country:</strong>
-					${escapeHtml(company.country || '-')}
-				</p>
+						<div class="ai-sales-company-meta">
+							<span>
+								${escapeHtml(company.industry || '-')}
+							</span>
 
-				<p>
-					<strong>City:</strong>
-					${escapeHtml(company.city || '-')}
-				</p>
+							<span>
+								${escapeHtml(company.city || '-')}
+							</span>
 
-				<p>
-					<strong>Industry:</strong>
-					${escapeHtml(company.industry || '-')}
-				</p>
+							<span>
+								${escapeHtml(company.country || '-')}
+							</span>
+						</div>
 
-				<p>
-					<strong>Language:</strong>
-					${escapeHtml(company.language || '-')}
-				</p>
+						${
+							company.website
+								? `
+									<a
+										href="${escapeHtml(company.website)}"
+										target="_blank"
+										rel="noopener noreferrer"
+										class="ai-sales-company-website"
+									>
+										${escapeHtml(company.website)}
+									</a>
+								`
+								: ''
+						}
 
-				<p>
-					<strong>Website:</strong>
-					${escapeHtml(company.website || '-')}
-				</p>
+						<p class="ai-sales-company-description">
+							${escapeHtml(company.description || 'No description available.')}
+						</p>
+					</div>
+				</div>
 
-				<p>
-					<strong>Source:</strong>
-					${escapeHtml(company.source || '-')}
-				</p>
 
-				<p>
-					<strong>Description:</strong>
-				</p>
+				<div class="ai-sales-summary-grid">
+					<section class="ai-sales-card">
+						<h3>Company information</h3>
 
-				<p>
-					${escapeHtml(company.description || 'No description available.')}
-				</p>
+						<div class="ai-sales-info-row">
+							<span>Market</span>
+							<strong>
+								${escapeHtml(company.market || '-')}
+							</strong>
+						</div>
 
-				<div id="ai-sales-contacts"></div>
+						<div class="ai-sales-info-row">
+							<span>Country</span>
+							<strong>
+								${escapeHtml(company.country || '-')}
+							</strong>
+						</div>
 
-				<div id="ai-sales-leads"></div>
+						<div class="ai-sales-info-row">
+							<span>City</span>
+							<strong>
+								${escapeHtml(company.city || '-')}
+							</strong>
+						</div>
+
+						<div class="ai-sales-info-row">
+							<span>Industry</span>
+							<strong>
+								${escapeHtml(company.industry || '-')}
+							</strong>
+						</div>
+
+						<div class="ai-sales-info-row">
+							<span>Language</span>
+							<strong>
+								${escapeHtml(company.language || '-')}
+							</strong>
+						</div>
+
+						<div class="ai-sales-info-row">
+							<span>Source</span>
+							<strong>
+								${escapeHtml(company.source || '-')}
+							</strong>
+						</div>
+					</section>
+
+
+					<section
+						class="ai-sales-card"
+						id="ai-sales-contacts"
+					>
+						<p>Loading contacts...</p>
+					</section>
+
+
+					<section
+						class="ai-sales-card"
+						id="ai-sales-leads"
+					>
+						<p>Loading sales opportunity...</p>
+					</section>
+				</div>
+
+				<div
+					id="ai-sales-conversations-panel"
+					class="ai-sales-conversations-panel"
+				>
+				</div>
 
 			</div>
 		`;
@@ -124,8 +183,6 @@ window.loadAiSales = async function () {
 				data.data.length === 0
 			) {
 				leadsContainer.innerHTML = `
-					<hr>
-
 					<h3>Sales Opportunity</h3>
 
 					<p>No sales opportunity found.</p>
@@ -135,45 +192,48 @@ window.loadAiSales = async function () {
 			}
 
 			leadsContainer.innerHTML = `
-				<hr>
-
 				<h3>Sales Opportunity</h3>
 
 				${data.data.map(lead => `
 					<div class="ai-sales-lead">
-
-						<p>
-							<strong>Stage:</strong>
-							${escapeHtml(lead.stage || 'NEW')}
-						</p>
-
-						<p>
-							<strong>Score:</strong>
-							${Number(lead.score ?? 0)}
-						</p>
-
-						<p>
-							<strong>Source:</strong>
-							${escapeHtml(lead.source || '-')}
-						</p>
-
-						<p>
-							<strong>Next action:</strong>
+						<div class="ai-sales-info-row">
+							<span>Stage:</span>
+							<div class="bubble" style="background: var(--alert-blue); color: var(--max-blue);">
+								${escapeHtml(lead.stage || 'NEW')}
+							</div>
+						</div>
+						<div class="ai-sales-info-row">
+							<span>Score:</span>
+							<strong>
+								${Number(lead.score ?? 0)}
+							</strong>
+						</div>
+						<div class="ai-sales-info-row">
+							<span>Source:</span>
+							<strong>
+								${escapeHtml(lead.source || '-')}
+							</strong>
+						</div>
+						<div class="ai-sales-info-row">
+							<span>Next action:</span>
+							
 							${escapeHtml(lead.next_action || '-')}
-						</p>
-
-						<p>
-							<strong>Last contact:</strong>
+						</div>
+						<div class="ai-sales-info-row">
+							<span>Last contact:</span>
+							
 							${escapeHtml(lead.last_contact_at || '-')}
-						</p>
-
+						</div>
+							
 						${
 							lead.score_reason
 								? `
-									<p>
-										<strong>Score reason:</strong>
-										${escapeHtml(lead.score_reason)}
-									</p>
+									<div class="ai-sales-info-row">
+										<span>Score reason:</span>
+										<strong>
+											${escapeHtml(lead.score_reason)}
+										</strong>
+									</div>
 								`
 								: ''
 						}
@@ -181,23 +241,35 @@ window.loadAiSales = async function () {
 						${
 							lead.ai_summary
 								? `
-									<p>
-										<strong>AI Summary:</strong>
-										${escapeHtml(lead.ai_summary)}
-									</p>
+									<div class="ai-sales-info-row">
+										<span>AI Summary:</span>
+										<strong>
+											${escapeHtml(lead.ai_summary)}
+										</strong>
+									</div>
 								`
 								: ''
 						}
+						</table>
+					</div>
+				`).join('')}
+			`;
 
+			const conversationsPanel =
+				document.getElementById(
+					'ai-sales-conversations-panel'
+				);
+
+			if (conversationsPanel) {
+				conversationsPanel.innerHTML =
+					data.data.map(lead => `
 						<div
 							id="ai-sales-conversations-${lead.sales_lead_id}"
 							class="ai-sales-conversations"
 						>
 						</div>
-
-					</div>
-				`).join('')}
-			`;
+					`).join('');
+			}
 
 			data.data.forEach(lead => {
 				loadSalesConversations(lead.sales_lead_id, salesCompanyId);
@@ -207,8 +279,6 @@ window.loadAiSales = async function () {
 			console.error('Error loading sales leads:', error);
 
 			leadsContainer.innerHTML = `
-				<hr>
-
 				<h3>Sales Opportunity</h3>
 
 				<p style="color:red;">
@@ -256,8 +326,6 @@ window.loadAiSales = async function () {
 				data.data.length === 0
 			) {
 				conversationsContainer.innerHTML = `
-					<hr>
-
 					<h3>Conversations</h3>
 
 					<p>
@@ -269,47 +337,49 @@ window.loadAiSales = async function () {
 			}
 
 			conversationsContainer.innerHTML = `
-				<hr>
-
 				<h3>Conversations</h3>
 
 				${data.data.map(conversation => `
 					<div class="ai-sales-conversation">
-
-						<p>
-							<strong>Channel:</strong>
-							${escapeHtml(
-								conversation.channel || '-'
-							)}
-						</p>
-
-						<p>
-							<strong>Subject:</strong>
-							${escapeHtml(
-								conversation.subject || '-'
-							)}
-						</p>
-
-						<p>
-							<strong>Status:</strong>
-							${escapeHtml(
-								conversation.status || '-'
-							)}
-						</p>
-
-						<p>
-							<strong>Started:</strong>
-							${escapeHtml(
-								conversation.started_at || '-'
-							)}
-						</p>
-
+						<div class="ai-sales-conversation-header">
+							<table width="100%" align="center" cellspacing="0">
+								<tr valign="baseline">
+									<td colspan="1" align="left" valign="middle">
+										<div class="inline-group">
+											<strong>
+												${escapeHtml(
+													conversation.subject || '-'
+												)}
+											</strong>
+											<div class="bubble" style="background: var(--warning-yellow); color: var(--warning-orange);">
+												${escapeHtml(
+													conversation.status || '-'
+												)}
+											</div>
+										</div>
+										<div class="inline-group">
+											<div class="bubble" style="background: var(--alert-blue); color: var(--max-blue);">
+												${escapeHtml(
+													conversation.channel || '-'
+												)}
+											</div>
+										
+											<small>
+												Started: 
+												${escapeHtml(
+													conversation.started_at || '-'
+												)}
+											</small>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</div>
 						<div
 							id="ai-sales-messages-${conversation.conversation_id}"
 							class="ai-sales-messages"
 						>
 						</div>
-
 					</div>
 				`).join('')}
 			`;
@@ -328,8 +398,6 @@ window.loadAiSales = async function () {
 			);
 
 			conversationsContainer.innerHTML = `
-				<hr>
-
 				<h3>Conversations</h3>
 
 				<p style="color:red;">
@@ -391,126 +459,135 @@ window.loadAiSales = async function () {
 						class="ai-sales-message"
 						data-message-id="${message.sales_message_id}"
 					>
-
-						<p>
+						<div class="ai-sales-message-type">
+							<div class="ai-sales-message-avatar">
+							
+							</div>
 							<strong>
 								${escapeHtml(
 									message.sender_type || 'Unknown'
 								)}
 							</strong>
+						</div>
+						<div class="ai-sales-message-content">
+							${
+								message.subject
+									? `
+										<strong>
 
-							<small>
-								${escapeHtml(
-									message.direction || ''
-								)}
-							</small>
-						</p>
+											${escapeHtml(
+												message.subject
+											)}
+										</strong>
+									`
+									: ''
+							}
 
-						${
-							message.subject
-								? `
-									<p>
-										<strong>Subject:</strong>
+							<p style="padding-right: 5px;">
+								<small>
+									${escapeHtml(
+										message.message || ''
+									)}
+								</small>
+							</p>
+							${
+								message.status === 'PENDING_APPROVAL'
+									? `
+										<div class="ai-sales-message-actions">
+											<button
+												type="button"
+												class="button-style-agree approve-sales-message-btn"
+												data-message-id="${message.sales_message_id}"
+											>
+												Approve
+											</button>
+										</div>
+									`
+									: ''
+							}
 
-										${escapeHtml(
-											message.subject
-										)}
-									</p>
-								`
-								: ''
-						}
+							${
+								message.status === 'APPROVED'
+									? `
+										<div class="ai-sales-message-actions">
 
-						<p style="white-space: pre-line;">
-							${escapeHtml(
-								message.message || ''
-							)}
-						</p>
+											<p>
+												<small>
+													Message approved
+												</small>
+											</p>
 
-						<p>
-							<strong>Status:</strong>
+											<button
+												type="button"
+												class="button-style-agree send-sales-message-btn"
+												data-message-id="${message.sales_message_id}"
+											>
+												Send (test)
+											</button>
 
-							${escapeHtml(
-								message.status || 'DRAFT'
-							)}
-						</p>
-
-						${
-							message.ai_generated
-								? `
-									<p>
-										<small>
-											AI generated
-										</small>
-									</p>
-								`
-								: ''
-						}
-
-						${
-							message.status === 'PENDING_APPROVAL'
-								? `
-									<div class="ai-sales-message-actions">
-										<button
-											type="button"
-											class="button-style-agree approve-sales-message-btn"
-											data-message-id="${message.sales_message_id}"
-										>
-											Approve
-										</button>
-									</div>
-								`
-								: ''
-						}
-
-						${
-							message.status === 'APPROVED'
-								? `
-									<div class="ai-sales-message-actions">
-
-										<p>
-											<small>
-												Message approved
-											</small>
-										</p>
-
-										<button
-											type="button"
-											class="button-style-agree send-sales-message-btn"
-											data-message-id="${message.sales_message_id}"
-										>
-											Send (test)
-										</button>
-
-									</div>
-								`
-								: ''
-						}
-
-						${
-							message.status === 'SENT'
-								? `
-									<p>
-										<small>
-											Message sent
-										</small>
-									</p>
-
-									${
-										message.sent_at
-											? `
-												<p>
+										</div>
+									`
+									: ''
+							}
+						</div>
+						<div class="ai-sales-message-status">
+							<table width="100%" align="center" cellspacing="0">
+								<tr valign="baseline">
+									<td colspan="1" align="left" valign="middle" style="padding: 0 0 5px;">
+										<div class="bubble" style="background: var(--alert-blue); color: var(--max-blue);">
+											${escapeHtml(
+												message.direction || ''
+											)}
+										</div>
+									</td>
+									<td colspan="1" align="left" valign="middle" style="padding: 0 0 5px;">
+										<div class="bubble" style="background: var(--alert-green); color: var(--agree-green);">
+											${escapeHtml(
+												message.status || 'DRAFT'
+											)}
+										</div>
+									</td>
+								</tr>
+								<tr valign="baseline">
+									<td colspan="1" align="left" valign="middle" style="padding: 0 0 5px;">
+										${
+											message.ai_generated
+												? `
 													<small>
-														Sent at:
+														AI generated
+													</small>
+												`
+												: ''
+										}
+									</td>
+									<td colspan="1" align="left" valign="middle" style="padding: 0 0 5px;">
+										${
+											message.status === 'SENT'
+												? `
+													<small>
+														Message sent
+													</small>
+												`
+												: ''
+										}
+									</td>
+								</tr>
+								<tr valign="baseline">
+									<td colspan="2" align="left" valign="middle">
+										${
+											message.sent_at
+												? `
+													<small>
+														S:
 														${escapeHtml(message.sent_at)}
 													</small>
-												</p>
-											`
-											: ''
-									}
-								`
-								: ''
-						}
-
+												`
+												: ''
+										}
+									</td>
+								</tr>
+							</table>
+						</div>
 					</div>
 				`).join('')}
 			`;
@@ -736,8 +813,6 @@ window.loadAiSales = async function () {
 				data.data.length === 0
 			) {
 				contactsContainer.innerHTML = `
-					<hr>
-
 					<h3>
 						Contacts
 					</h3>
@@ -752,8 +827,6 @@ window.loadAiSales = async function () {
 
 
 			contactsContainer.innerHTML = `
-				<hr>
-
 				<h3>Contacts</h3>
 
 				${data.data.map(contact => `
@@ -774,7 +847,13 @@ window.loadAiSales = async function () {
 							${escapeHtml(contact.phone || '-')}
 						</p>
 
-						${contact.is_primary ? `<small>Primary contact</small>` : ''}
+						${
+							contact.is_primary 
+								? `<div class="bubble" style="background: var(--alert-green); color: var(--agree-green);">
+									Primary contact
+								</div>` 
+								: ''
+						}
 					</div>
 				`).join('')}
 			`;
@@ -783,8 +862,6 @@ window.loadAiSales = async function () {
 			console.error('Error loading sales contacts:', error);
 
 			contactsContainer.innerHTML = `
-				<hr>
-
 				<h3>Contacts</h3>
 
 				<p style="color:red;">
@@ -830,75 +907,46 @@ window.loadAiSales = async function () {
 			) {
 				data.data.forEach(company => {
 
-					const row =
-						document.createElement('div');
+					const row = document.createElement('tr');
+					row.className = 'users-row';
 
-					row.className =
-						'sys-admin-table ai-sales-company-row';
-
-					row.dataset.companyId =
-						String(company.sales_company_id);
+					row.dataset.companyId = String(company.sales_company_id);
 
 					row.innerHTML = `
-						<table
-							width="100%"
-							cellspacing="0"
-							cellpadding="0"
-						>
-							<tr>
-								<td
-									width="55%"
-									style="padding-left: 15px;"
-								>
-									<strong>
-										${escapeHtml(company.company_name)}
-									</strong>
+						<td valign="middle" style="width: calc(55% - 10px); padding-left: 10px;">
+							<strong>
+								${escapeHtml(company.company_name)}
+							</strong>
 
-									<p class="mini-title">
-										${escapeHtml(company.industry || 'Unknown industry')}
-									</p>
-								</td>
+							<p class="mini-title">
+								${escapeHtml(company.industry || 'Unknown industry')}
+							</p>
+						</td>
 
-								<td width="25%">
-									${escapeHtml(company.country || '-')}
-								</td>
+						<td style="width: 20%;">
+							${escapeHtml(company.country || '-')}
+						</td>
 
-								<td
-									width="20%"
-									align="center"
-								>
-									${escapeHtml(company.market || '-')}
-								</td>
-							</tr>
-						</table>
+						<td align="center" style="width: calc(20% - 10px); padding-right: 10px;">
+							${escapeHtml(company.market || '-')}
+						</td>
 					`;
 
-					row.addEventListener(
-						'click',
-						() => {
-							document
-								.querySelectorAll(
-									'.ai-sales-company-row'
-								)
+					row.addEventListener('click', () => {
+							document.querySelectorAll('.ai-sales-company-row')
 								.forEach(item => {
 									item.classList.remove(
-										'selected-company'
+										'selected-user'
 									);
 								});
 
-							row.classList.add(
-								'selected-company'
-							);
+							row.classList.add('selected-user');
 
-							renderCompanyDetails(
-								company
-							);
+							renderCompanyDetails(company);
 						}
 					);
 
-					companyContainer.appendChild(
-						row
-					);
+					companyContainer.appendChild(row);
 				});
 
 			} else {
@@ -929,7 +977,6 @@ window.loadAiSales = async function () {
 			`;
 		}
 	}
-
 
 	searchCompanyField?.addEventListener(
 		'keyup',

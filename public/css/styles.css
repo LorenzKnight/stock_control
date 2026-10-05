@@ -403,6 +403,12 @@ body {
 	gap: 0; /* sin gap para más control */  
 }
 
+.inline-group {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
 .grayscale-img {
 	filter: grayscale(75%);
 }

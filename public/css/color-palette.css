@@ -25,6 +25,7 @@
         0 14px 32px rgba(15, 23, 42, 0.12),
         inset 0 1px 0 rgba(255, 255, 255, 0.96);
     
+    /* colors clr */
     --clr-white: #fff;
     --clr-neutral: linear-gradient(
         90deg,
@@ -65,6 +66,9 @@
     --clr-border: #999;
     --clr-light-border: #d8dee4;
 
+    /* Light colors clr */
+    --clr-light-blue: #b6d4ea46;
+
     /* Texto */
     --text-primary: #1F2937;
     --text-secondary: #4B5563;
@@ -72,6 +76,7 @@
     --text-soft: #9AA3AF;
 
     /* Grises UI */
+    --gray-000: #FCFCFC;
     --gray-100: #F8F9FC;
     --gray-200: #EEF1F5;
     --gray-300: #D7DCE5;
