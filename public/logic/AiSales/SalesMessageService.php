@@ -252,6 +252,194 @@ class SalesMessageService
 	}
 
 
+	public function receiveMessage(
+		int $conversationId,
+		string $message,
+		?string $subject = null,
+		?string $providerMessageId = null
+	): array {
+		if ($conversationId <= 0) {
+			throw new \InvalidArgumentException(
+				"Invalid conversation ID."
+			);
+		}
+
+		$message =
+			trim($message);
+
+		if ($message === '') {
+			throw new \InvalidArgumentException(
+				"Message cannot be empty."
+			);
+		}
+
+
+		$conversation =
+			$this->conversationRepository->findById(
+				$conversationId
+			);
+
+		if ($conversation === null) {
+			throw new \Exception(
+				"Sales conversation not found."
+			);
+		}
+
+
+		$salesLeadId =
+			(int)(
+				$conversation["sales_lead_id"]
+				?? 0
+			);
+
+		if ($salesLeadId <= 0) {
+			throw new \Exception(
+				"Sales lead not found for conversation."
+			);
+		}
+
+
+		$lead =
+			$this->leadRepository->findById(
+				$salesLeadId
+			);
+
+		if ($lead === null) {
+			throw new \Exception(
+				"Sales lead not found."
+			);
+		}
+
+
+		$currentStage =
+			(string)(
+				$lead["stage"]
+				?? "NEW"
+			);
+
+
+		$now =
+			date("Y-m-d H:i:s");
+
+
+		$subject =
+			$subject !== null
+				? trim($subject)
+				: null;
+
+		if ($subject === '') {
+			$subject = null;
+		}
+
+
+		$providerMessageId =
+			$providerMessageId !== null
+				? trim($providerMessageId)
+				: null;
+
+		if ($providerMessageId === '') {
+			$providerMessageId = null;
+		}
+
+
+		$salesMessageId =
+			$this->repository->createInbound([
+				"conversation_id" =>
+					$conversationId,
+
+				"direction" =>
+					"INBOUND",
+
+				"sender_type" =>
+					"CONTACT",
+
+				"subject" =>
+					$subject,
+
+				"message" =>
+					$message,
+
+				"provider_message_id" =>
+					$providerMessageId,
+
+				"status" =>
+					"RECEIVED",
+
+				"ai_generated" =>
+					false,
+
+				"approved" =>
+					false,
+
+				"received_at" =>
+					$now,
+
+				"updated_at" =>
+					$now
+			]);
+
+
+		$this->conversationRepository
+			->markOpenAfterReply(
+				$conversationId,
+				$now
+			);
+
+
+		$newStage =
+			$currentStage;
+
+		if (
+			in_array(
+				$currentStage,
+				[
+					"NEW",
+					"RESEARCHING",
+					"CONTACTED"
+				],
+				true
+			)
+		) {
+			$this->leadRepository
+				->markReplied(
+					$salesLeadId,
+					$now
+				);
+
+			$newStage =
+				"REPLIED";
+
+		} else {
+			$this->leadRepository
+				->updateAfterContact(
+					$salesLeadId,
+					$now
+				);
+		}
+
+
+		return [
+			"sales_message_id" =>
+				$salesMessageId,
+
+			"conversation_id" =>
+				$conversationId,
+
+			"sales_lead_id" =>
+				$salesLeadId,
+
+			"previous_stage" =>
+				$currentStage,
+
+			"current_stage" =>
+				$newStage,
+
+			"received_at" =>
+				$now
+		];
+	}
+
+
 	private function isDatabaseTrue(
 		mixed $value
 	): bool {

@@ -109,4 +109,34 @@ class SalesConversationRepository
 			);
 		}
 	}
+
+
+	public function markOpenAfterReply(
+		int $conversationId,
+		string $lastMessageAt
+	): void {
+		$result = \update_table(
+			"sales_conversations",
+			[
+				"status" => "OPEN",
+				"last_message_at" => $lastMessageAt,
+				"updated_at" => $lastMessageAt
+			],
+			[
+				"conversation_id" => $conversationId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Could not update sales conversation after receiving reply."
+			);
+		}
+	}
 }

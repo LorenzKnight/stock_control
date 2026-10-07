@@ -347,58 +347,161 @@
 	object-fit: cover;
 }
 
-/* ################# ai sales ################# */
 
+/* ################# ai sales ################# */
 .ai-sales-detail-layout {
 	padding: 0 10px 10px;
+	box-sizing: border-box;
 }
 
+/* Company header */
 .ai-sales-company-header {
 	display: flex;
-	/* gap: 15px; */
-	padding: 15px 10px;
+	align-items: flex-start;
+	gap: 12px;
+
+	padding: 15px;
 	margin-bottom: 12px;
+
 	background: var(--clr-white);
 	border: 1px solid var(--gray-200);
-	box-shadow: 0px 5px 30px var(--shadow-color);
+	box-shadow: 0 5px 30px var(--shadow-color);
+
 	border-radius: 15px;
+	box-sizing: border-box;
 }
 
-.ai-sales-summary-grid {
-	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-	gap: 6px;
-	margin-bottom: 15px;
+.ai-sales-company-icon {
+	width: 37px;
+	height: 37px;
+
+	padding: 5px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	flex-shrink: 0;
+
+	background: var(--clr-light-blue);
+	color: var(--main-bg-dark-blue);
+
+	border-radius: 10px;
+
+	font-size: 18px;
 }
 
-.ai-sales-card {
-	font-size: 10px;
-	background: var(--clr-white);
-	border: 1px solid var(--gray-200);
-	box-shadow: 0px 5px 30px var(--shadow-color);
-	border-radius: 15px;
-	padding: 5px 10px;
-}
-
-.ai-sales-info-row {
-	display: grid;
-	grid-template-columns: 35% 65%;
-	gap: 10px;
-	padding: 5px 0;
-}
-
-.ai-sales-info-row span {
-	color: var(--gray-500);
+.ai-sales-company-header-info {
+	min-width: 0;
+	flex: 1;
 }
 
 .ai-sales-company-header h2 {
 	margin: 0 0 5px;
 }
 
-.ai-sales-company-description {
-	margin-bottom: 0;
+.ai-sales-company-meta {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 15px;
+	margin-bottom: 5px;
 }
 
+.ai-sales-company-meta span {
+	font-size: 11px;
+}
+
+.ai-sales-company-website {
+	display: inline-block;
+	margin-top: 2px;
+	font-size: 11px;
+}
+
+.ai-sales-company-description {
+	margin: 8px 0 0;
+	font-size: 11px;
+}
+
+/* Top cards */
+.ai-sales-summary-grid {
+	display: grid;
+	grid-template-columns:
+		repeat(
+			3,
+			minmax(0, 1fr)
+		);
+	gap: 10px;
+	margin-bottom: 12px;
+}
+
+.ai-sales-card {
+	min-width: 0;
+	padding: 10px 10px;
+
+	background: var(--clr-white);
+	border: 1px solid var(--gray-200);
+	box-shadow:
+		0 5px 30px
+		var(--shadow-color);
+
+	border-radius: 15px;
+
+	box-sizing: border-box;
+
+	font-size: 9.5px;
+}
+
+.ai-sales-card-title {
+	margin: 0 0 10px;
+	padding-bottom: 8px;
+
+	border-bottom:
+		1px solid
+		var(--gray-200);
+
+	font-size: 13px;
+}
+
+/* Data rows */
+.ai-sales-info-row {
+	display: grid;
+	grid-template-columns:
+		35% minmax(0, 65%);
+	gap: 8px;
+
+	padding: 4px 0;
+	align-items: start;
+}
+
+.ai-sales-info-row > span {
+	color: var(--gray-500);
+}
+
+.ai-sales-info-value {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+/* Contacts */
+.ai-sales-contact {
+	padding-bottom: 8px;
+}
+
+.ai-sales-contact-name {
+	display: block;
+	margin-bottom: 7px;
+	font-size: 12px;
+}
+
+.ai-sales-contact p {
+	margin: 7px 0;
+}
+
+.ai-sales-contact-value {
+	overflow-wrap: anywhere;
+}
+
+/* Conversations */
 .ai-sales-conversations-panel {
 	width: 100%;
 	margin-top: 12px;
@@ -406,68 +509,214 @@
 
 .ai-sales-conversations {
 	width: 100%;
+	padding: 10px;
+
 	background: var(--clr-white);
 	border: 1px solid var(--gray-200);
-	box-shadow: 0px 5px 30px var(--shadow-color);
+	box-shadow:
+		0 5px 30px
+		var(--shadow-color);
 	border-radius: 15px;
-	padding: 0 10px 10px;
+
 	box-sizing: border-box;
 }
 
+.ai-sales-conversations > h3 {
+	margin: 0 0 10px;
+}
+
 .ai-sales-conversation {
+	overflow: hidden;
 	border: 1px solid var(--alert-blue);
 	border-radius: 10px;
 }
 
 .ai-sales-conversation-header {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+
+	padding: 8px 10px;
+
 	background: var(--clr-light-blue);
-	padding: 8px;
-	border-radius: 10px 10px 0 0;
-	border-bottom: 1px solid var(--gray-200);
+	border-bottom:
+		1px solid
+		var(--gray-200);
 }
 
+.ai-sales-conversation-icon {
+	width: 26px;
+	height: 26px;
+
+	padding: 5px;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	flex-shrink: 0;
+
+	background: var(--clr-light-blue);
+	color: var(--max-blue);
+
+	border-radius: 10px;
+
+	font-size: 18px;
+}
+
+.ai-sales-conversation-header-info {
+	min-width: 0;
+	flex: 1;
+}
+
+/* Generic inline groups */
+.inline-group {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+
+	gap: 8px;
+}
+
+/* Messages */
 .ai-sales-messages {
 	padding: 0 10px 10px;
 }
 
-.ai-sales-message {
-	border: 1px solid var(--clr-light-blue);
-	border-radius: 8px;
-	padding: 12px 0;
-	margin-top: 10px;
-	background: var(--gray-000);
-	display: flex;
+.ai-sales-messages > h4 {
+	margin-bottom: 8px;
 }
 
-.ai-sales-message-type {
-	width: 10%;
-	text-align: center;
-	justify-items: center;
-	
+.ai-sales-message {
+	display: grid;
+	grid-template-columns: 42px minmax(0, 1fr);
+
+	gap: 12px;
+	align-items: start;
+
+	width: 100%;
+	margin-top: 10px;
+	padding: 14px;
+
+	background: var(--gray-000);
+
+	border: 1px solid var(--clr-light-blue);
+	border-radius: 10px;
+
+	box-sizing: border-box;
+}
+
+.ai-sales-message--inbound {
+	border-left: 3px solid var(--agree-green);
 }
 
 .ai-sales-message-avatar {
-	width: 40px;
-	height: 40px;
+	width: 37px;
+	height: 37px;
+
+	padding: 5px;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	background: var(--clr-light-blue);
+	color: var(--max-blue);
+
 	border-radius: 50%;
-	background: var(--gray-300);
-	margin-bottom: 5px;
+
+	font-size: 16px;
 }
 
-.ai-sales-message-content {
-	width: 63%;
+.ai-sales-message-main {
+	min-width: 0;
+	width: 100%;
 }
 
-.ai-sales-message-status {
-	width: 27%;
+.ai-sales-message-header {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) max-content;
+	align-items: start;
+	gap: 10px;
+
+	width: 100%;
+	margin-bottom: 8px;
 }
 
+.ai-sales-message-sender {
+	min-width: 0;
+	font-size: 12px;
+	font-weight: 600;
+	overflow-wrap: anywhere;
+}
+
+.ai-sales-message-badges {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 6px;
+
+	justify-self: end;
+	white-space: nowrap;
+}
+
+.ai-sales-message-subject {
+	display: block;
+
+	margin-bottom: 8px;
+
+	font-size: 12px;
+	line-height: 1.4;
+
+	overflow-wrap: anywhere;
+}
+
+.ai-sales-message-text {
+	margin: 8px 0 12px;
+	padding: 0;
+
+	font-size: 11px;
+	line-height: 1.6;
+
+	white-space: pre-line;
+	overflow-wrap: anywhere;
+}
+
+.ai-sales-message-meta {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+
+	gap: 8px 12px;
+
+	font-size: 10px;
+	color: var(--gray-500);
+}
+
+.ai-sales-message-meta-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.ai-sales-message-meta-item svg {
+	width: 14px;
+	height: 14px;
+	color: var(--max-blue);
+}
+
+.ai-sales-message-actions {
+	margin-top: 12px;
+}
+
+/* Badges */
 .bubble {
 	display: inline-flex;
 	width: fit-content;
 
 	align-items: center;
 	justify-content: center;
+
 	margin: 2px 0;
 	padding: 4px 8px;
 
@@ -479,3 +728,56 @@
 
 	white-space: nowrap;
 }
+
+.bubble-info {
+	background: var(--alert-blue);
+	color: var(--max-blue);
+}
+
+.bubble-success {
+	background: var(--alert-green);
+	color: var(--agree-green);
+}
+
+.bubble-warning {
+	background: var(--warning-yellow);
+	color: var(--warning-orange);
+}
+
+.bubble-danger {
+	background: var(--warning-red);
+	color: var(--cancel-dark-red);
+}
+
+.bubble-neutral {
+	background: var(--gray-200);
+	color: var(--clr-neutral-dark);
+}
+
+
+/* Responsive */
+
+/* @media (max-width: 1100px) {
+	.ai-sales-summary-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.ai-sales-message {
+		flex-wrap: wrap;
+	}
+
+	.ai-sales-message-type {
+		width: 15%;
+	}
+
+	.ai-sales-message-content {
+		width: 85%;
+	}
+
+	.ai-sales-message-status {
+		width: 100%;
+
+		padding:
+			10px 10px 0 15%;
+	}
+} */

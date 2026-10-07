@@ -123,4 +123,34 @@ class SalesLeadRepository
 			);
 		}
 	}
+
+
+	public function markReplied(
+		int $salesLeadId,
+		string $repliedAt
+	): void {
+		$result = \update_table(
+			"sales_leads",
+			[
+				"stage" => "REPLIED",
+				"last_contact_at" => $repliedAt,
+				"updated_at" => $repliedAt
+			],
+			[
+				"sales_lead_id" => $salesLeadId
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Could not update sales lead after receiving reply."
+			);
+		}
+	}
 }

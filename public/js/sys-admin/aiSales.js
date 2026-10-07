@@ -17,6 +17,111 @@ window.loadAiSales = async function () {
 			.replaceAll("'", '&#039;');
 	}
 
+	const salesContactsCache = new Map();
+
+	async function getSalesContacts(salesCompanyId) {
+		const companyId = Number(salesCompanyId);
+
+		if (!salesContactsCache.has(companyId)) {
+			const request = (async () => {
+				const response = await fetch(
+					`api/get_sales_contacts.php?sales_company_id=${companyId}`,
+					{
+						method: 'GET',
+						headers: {
+							'Accept': 'application/json'
+						}
+					}
+				);
+
+				if (!response.ok) {
+					throw new Error(
+						'Could not load sales contacts.'
+					);
+				}
+
+				const data = await response.json();
+
+				if (
+					!data.success ||
+					!Array.isArray(data.data)
+				) {
+					throw new Error(
+						data.message ||
+						'Invalid sales contacts response.'
+					);
+				}
+
+				return data.data;
+			})();
+
+			salesContactsCache.set(
+				companyId,
+				request
+			);
+		}
+
+		try {
+			return await salesContactsCache.get(companyId);
+
+		} catch (error) {
+			salesContactsCache.delete(companyId);
+			throw error;
+		}
+	}
+
+	function getBubbleClass(value) {
+		const status =
+			String(value ?? '')
+				.trim()
+				.toUpperCase();
+
+		switch (status) {
+
+			// Success
+			case 'SENT':
+			case 'DELIVERED':
+			case 'RECEIVED':
+			case 'INTERESTED':
+			case 'WON':
+			case 'INBOUND':
+				return 'bubble bubble-success';
+
+
+			// Warning / waiting
+			case 'WAITING_REPLY':
+			case 'PENDING_APPROVAL':
+			case 'RESEARCHING':
+			case 'NEGOTIATION':
+				return 'bubble bubble-warning';
+
+
+			// Error / negative
+			case 'FAILED':
+			case 'LOST':
+				return 'bubble bubble-danger';
+
+
+			// Active / information
+			case 'CONTACTED':
+			case 'APPROVED':
+			case 'OPEN':
+			case 'REPLIED':
+			case 'DEMO':
+			case 'EMAIL':
+			case 'OUTBOUND':
+				return 'bubble bubble-info';
+
+
+			// Neutral
+			case 'NEW':
+			case 'DRAFT':
+			case 'CLOSED':
+			default:
+				return 'bubble bubble-neutral';
+		}
+	}
+
 
 	function renderCompanyDetails(company) {
 		if (!companyDetails) return;
@@ -24,95 +129,225 @@ window.loadAiSales = async function () {
 		companyDetails.innerHTML = `
 			<div class="ai-sales-detail-layout">
 				<div class="ai-sales-company-header">
-
 					<div class="ai-sales-company-icon">
-						<i class="fa-solid fa-building"></i>
+						<svg
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<rect x="4" y="3" width="11" height="18" rx="1.5"></rect>
+
+							<path d="M15 9h4a1 1 0 0 1 1 1v11"></path>
+
+							<path d="M8 7h1"></path>
+							<path d="M12 7h1"></path>
+
+							<path d="M8 11h1"></path>
+							<path d="M12 11h1"></path>
+
+							<path d="M8 15h1"></path>
+							<path d="M12 15h1"></path>
+
+							<path d="M9 21v-3h2v3"></path>
+
+							<path d="M18 13h1"></path>
+							<path d="M18 17h1"></path>
+						</svg>
 					</div>
 
 					<div class="ai-sales-company-header-info">
-						<h2>${escapeHtml(company.company_name)}</h2>
+
+						<h2>
+							${escapeHtml(
+								company.company_name
+							)}
+						</h2>
 
 						<div class="ai-sales-company-meta">
-							<span>
-								${escapeHtml(company.industry || '-')}
+							<span class="ai-sales-message-meta-item">
+								<svg
+									viewBox="0 0 24 20"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<path d="M5 20V9a7 7 0 0 1 14 0v11"></path>
+									<path d="M5 14l4-3 3 3 3-3 4 3"></path>
+									<path d="M8 20v-3h8v3"></path>
+								</svg>
+								${escapeHtml(
+									company.industry || '-'
+								)}
 							</span>
 
-							<span>
-								${escapeHtml(company.city || '-')}
+							<span class="ai-sales-message-meta-item">
+								<svg
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0z"></path>
+									<circle cx="12" cy="10" r="2.5"></circle>
+								</svg>
+								${escapeHtml(
+									company.city || '-'
+								)},
+								${escapeHtml(
+									company.country || '-'
+								)}
 							</span>
 
-							<span>
-								${escapeHtml(company.country || '-')}
-							</span>
+							${
+								company.market
+									? `
+										<span
+											class="bubble"
+											style="
+												background: var(--alert-blue);
+												color: var(--max-blue);
+											"
+										>
+											${escapeHtml(company.market)}
+										</span>
+									`
+									: ''
+							}
 						</div>
 
-						${
-							company.website
-								? `
-									<a
-										href="${escapeHtml(company.website)}"
-										target="_blank"
-										rel="noopener noreferrer"
-										class="ai-sales-company-website"
-									>
-										${escapeHtml(company.website)}
-									</a>
-								`
-								: ''
-						}
+						<span class="ai-sales-message-meta-item">
+							<svg
+								viewBox="0 0 24 20"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<path d="M10 13a5 5 0 0 0 7.1 0l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1"></path>
+								<path d="M14 11a5 5 0 0 0-7.1 0l-2 2A5 5 0 0 0 12 20.1l1.1-1.1"></path>
+							</svg>
+							
+							${
+								company.website
+									? `
+										<a
+											href="${escapeHtml(company.website)}"
+											target="_blank"
+											rel="noopener noreferrer"
+											class="ai-sales-company-website"
+										>
+											${escapeHtml(company.website)}
+										</a>
+									`
+									: ''
+							}
+						</span>
 
 						<p class="ai-sales-company-description">
-							${escapeHtml(company.description || 'No description available.')}
+							${escapeHtml(
+								company.description ||
+								'No description available.'
+							)}
 						</p>
+
 					</div>
 				</div>
 
 
 				<div class="ai-sales-summary-grid">
 					<section class="ai-sales-card">
-						<h3>Company information</h3>
+						<h3 class="ai-sales-card-title">
+							<span class="ai-sales-message-meta-item">
+								<svg
+									style="width: 20px; height: 20px;"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="1.5"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<rect x="5" y="3" width="14" height="18" rx="1"></rect>
+									<path d="M9 7h2"></path>
+									<path d="M13 7h2"></path>
+									<path d="M9 11h2"></path>
+									<path d="M13 11h2"></path>
+									<path d="M9 15h2"></path>
+									<path d="M13 15h2"></path>
+									<path d="M10 21v-3h4v3"></path>
+								</svg>
+								Company information
+							</span>
+						</h3>
 
 						<div class="ai-sales-info-row">
 							<span>Market</span>
+
 							<strong>
-								${escapeHtml(company.market || '-')}
+								${escapeHtml(
+									company.market || '-'
+								)}
 							</strong>
 						</div>
 
 						<div class="ai-sales-info-row">
 							<span>Country</span>
+
 							<strong>
-								${escapeHtml(company.country || '-')}
+								${escapeHtml(
+									company.country || '-'
+								)}
 							</strong>
 						</div>
 
 						<div class="ai-sales-info-row">
 							<span>City</span>
+
 							<strong>
-								${escapeHtml(company.city || '-')}
+								${escapeHtml(
+									company.city || '-'
+								)}
 							</strong>
 						</div>
 
 						<div class="ai-sales-info-row">
 							<span>Industry</span>
+
 							<strong>
-								${escapeHtml(company.industry || '-')}
+								${escapeHtml(
+									company.industry || '-'
+								)}
 							</strong>
 						</div>
 
 						<div class="ai-sales-info-row">
 							<span>Language</span>
+
 							<strong>
-								${escapeHtml(company.language || '-')}
+								${escapeHtml(
+									company.language || '-'
+								)}
 							</strong>
 						</div>
 
 						<div class="ai-sales-info-row">
 							<span>Source</span>
+
 							<strong>
-								${escapeHtml(company.source || '-')}
+								${escapeHtml(
+									company.source || '-'
+								)}
 							</strong>
 						</div>
+
 					</section>
 
 
@@ -120,7 +355,9 @@ window.loadAiSales = async function () {
 						class="ai-sales-card"
 						id="ai-sales-contacts"
 					>
-						<p>Loading contacts...</p>
+						<p>
+							Loading contacts...
+						</p>
 					</section>
 
 
@@ -128,9 +365,13 @@ window.loadAiSales = async function () {
 						class="ai-sales-card"
 						id="ai-sales-leads"
 					>
-						<p>Loading sales opportunity...</p>
+						<p>
+							Loading sales opportunity...
+						</p>
 					</section>
+
 				</div>
+
 
 				<div
 					id="ai-sales-conversations-panel"
@@ -192,47 +433,95 @@ window.loadAiSales = async function () {
 			}
 
 			leadsContainer.innerHTML = `
-				<h3>Sales Opportunity</h3>
+				<h3 class="ai-sales-card-title">
+					<span class="ai-sales-message-meta-item">
+						<svg
+							style="width: 20px; height: 20px;"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.5"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<circle cx="10.5" cy="13.5" r="6.5"></circle>
+							<circle cx="10.5" cy="13.5" r="3"></circle>
+							<circle cx="10.5" cy="13.5" r="0.8" fill="currentColor" stroke="none"></circle>
+
+							<path d="M10.5 13.5L18 6"></path>
+							<path d="M17.5 3.5v3h3"></path>
+						</svg>
+						Sales Opportunity
+					</span>
+				</h3>
 
 				${data.data.map(lead => `
 					<div class="ai-sales-lead">
 						<div class="ai-sales-info-row">
-							<span>Stage:</span>
-							<div class="bubble" style="background: var(--alert-blue); color: var(--max-blue);">
-								${escapeHtml(lead.stage || 'NEW')}
+							<span>Stage</span>
+
+							<div
+								class="${getBubbleClass(
+									lead.stage || 'NEW'
+								)}"
+							>
+								${escapeHtml(
+									lead.stage || 'NEW'
+								)}
 							</div>
 						</div>
+
 						<div class="ai-sales-info-row">
-							<span>Score:</span>
+							<span>Score</span>
+
 							<strong>
-								${Number(lead.score ?? 0)}
+								${Number(
+									lead.score ?? 0
+								)}
 							</strong>
 						</div>
+
 						<div class="ai-sales-info-row">
-							<span>Source:</span>
+							<span>Source</span>
+
 							<strong>
-								${escapeHtml(lead.source || '-')}
+								${escapeHtml(
+									lead.source || '-'
+								)}
 							</strong>
 						</div>
+
 						<div class="ai-sales-info-row">
-							<span>Next action:</span>
-							
-							${escapeHtml(lead.next_action || '-')}
+							<span>Next action</span>
+
+							<div class="ai-sales-info-value">
+								${escapeHtml(
+									lead.next_action || '-'
+								)}
+							</div>
 						</div>
+
 						<div class="ai-sales-info-row">
-							<span>Last contact:</span>
-							
-							${escapeHtml(lead.last_contact_at || '-')}
+							<span>Last contact</span>
+
+							<div class="ai-sales-info-value">
+								${escapeHtml(
+									lead.last_contact_at || '-'
+								)}
+							</div>
 						</div>
-							
+
 						${
 							lead.score_reason
 								? `
 									<div class="ai-sales-info-row">
-										<span>Score reason:</span>
-										<strong>
-											${escapeHtml(lead.score_reason)}
-										</strong>
+										<span>Score reason</span>
+
+										<div class="ai-sales-info-value">
+											${escapeHtml(
+												lead.score_reason
+											)}
+										</div>
 									</div>
 								`
 								: ''
@@ -242,15 +531,17 @@ window.loadAiSales = async function () {
 							lead.ai_summary
 								? `
 									<div class="ai-sales-info-row">
-										<span>AI Summary:</span>
-										<strong>
-											${escapeHtml(lead.ai_summary)}
-										</strong>
+										<span>AI Summary</span>
+
+										<div class="ai-sales-info-value">
+											${escapeHtml(
+												lead.ai_summary
+											)}
+										</div>
 									</div>
 								`
 								: ''
 						}
-						</table>
 					</div>
 				`).join('')}
 			`;
@@ -326,7 +617,23 @@ window.loadAiSales = async function () {
 				data.data.length === 0
 			) {
 				conversationsContainer.innerHTML = `
-					<h3>Conversations</h3>
+					<h3>
+						<span class="ai-sales-message-meta-item">
+							<svg
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<path d="M4 5.5h10a3 3 0 0 1 3 3v3a3 3 0 0 1-3 3H9l-4 3v-3.5a3 3 0 0 1-1-2.2V8.5a3 3 0 0 1 3-3z"></path>
+								<path d="M14 9h3a3 3 0 0 1 3 3v2.5a3 3 0 0 1-3 3h-1l-3 2v-2"></path>
+								<path d="M8 9.5h5"></path>
+							</svg>
+							Conversations
+						</span>
+					</h3>
 
 					<p>
 						No conversations found.
@@ -337,43 +644,94 @@ window.loadAiSales = async function () {
 			}
 
 			conversationsContainer.innerHTML = `
-				<h3>Conversations</h3>
+				<h3>
+					<span class="ai-sales-message-meta-item">
+						<svg
+							style="width: 25px; height: 25px;"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.5"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<rect x="3" y="5" width="13" height="10" rx="3"></rect>
+
+							<path d="M6 15v3l4-3"></path>
+
+							<path d="M8 9h5"></path>
+
+							<path d="M17 9h1a3 3 0 0 1 3 3v3a3 3 0 0 1-3 3h-1v2l-3-2"></path>
+						</svg>
+						Conversations
+					</span>
+				</h3>
 
 				${data.data.map(conversation => `
 					<div class="ai-sales-conversation">
 						<div class="ai-sales-conversation-header">
-							<table width="100%" align="center" cellspacing="0">
-								<tr valign="baseline">
-									<td colspan="1" align="left" valign="middle">
-										<div class="inline-group">
-											<strong>
-												${escapeHtml(
-													conversation.subject || '-'
-												)}
-											</strong>
-											<div class="bubble" style="background: var(--warning-yellow); color: var(--warning-orange);">
-												${escapeHtml(
-													conversation.status || '-'
-												)}
-											</div>
-										</div>
-										<div class="inline-group">
-											<div class="bubble" style="background: var(--alert-blue); color: var(--max-blue);">
-												${escapeHtml(
-													conversation.channel || '-'
-												)}
-											</div>
-										
-											<small>
-												Started: 
-												${escapeHtml(
-													conversation.started_at || '-'
-												)}
-											</small>
-										</div>
-									</td>
-								</tr>
-							</table>
+							<div class="ai-sales-conversation-icon">
+								<svg
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<rect x="3" y="5" width="18" height="14" rx="2"></rect>
+									<path d="M3 7l9 6 9-6"></path>
+								</svg>
+							</div>
+							<div class="ai-sales-conversation-header-info">
+								<div class="inline-group">
+									<strong>
+										${escapeHtml(
+											conversation.subject || '-'
+										)}
+									</strong>
+									<div class="${getBubbleClass(
+											conversation.status || ''
+										)}"
+									>
+										${escapeHtml(
+											conversation.status || '-'
+										)}
+									</div>
+								</div>
+								<div class="inline-group">
+									<div class="${getBubbleClass(
+											conversation.channel || ''
+										)}"
+									>
+										${escapeHtml(
+											conversation.channel || '-'
+										)}
+									</div>
+								
+									<small>
+										<span class="ai-sales-message-meta-item">
+											<svg
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											>
+												<rect x="3" y="5" width="18" height="16" rx="2"></rect>
+												<path d="M8 3v4"></path>
+												<path d="M16 3v4"></path>
+												<path d="M3 10h18"></path>
+											</svg>
+											Started: 
+											${escapeHtml(
+												conversation.started_at || '-'
+											)}
+										</span>
+									</small>
+								</div>
+							</div>
 						</div>
 						<div
 							id="ai-sales-messages-${conversation.conversation_id}"
@@ -387,7 +745,8 @@ window.loadAiSales = async function () {
 			data.data.forEach(conversation => {
 				loadSalesMessages(
 					conversation.conversation_id,
-					salesCompanyId
+					salesCompanyId,
+					conversation.sales_contact_id
 				);
 			});
 
@@ -409,7 +768,8 @@ window.loadAiSales = async function () {
 
 	async function loadSalesMessages(
 		conversationId,
-		salesCompanyId
+		salesCompanyId,
+		salesContactId = null
 	) {
 		const messagesContainer = document.getElementById(`ai-sales-messages-${conversationId}`);
 
@@ -451,45 +811,212 @@ window.loadAiSales = async function () {
 				return;
 			}
 
+			let contactName = 'CONTACT';
+
+			if (Number(salesContactId) > 0) {
+				try {
+					const contacts = await getSalesContacts(salesCompanyId);
+
+					const contact = contacts.find(
+						item =>
+							Number(item.sales_contact_id) ===
+							Number(salesContactId)
+					);
+
+					if (
+						contact &&
+						String(contact.full_name || '').trim()
+					) {
+						contactName = String(contact.full_name).trim();
+					}
+				} catch (error) {
+					console.warn(
+						'Could not resolve sales contact:',
+						error
+					);
+				}
+			}
+
+			
 			messagesContainer.innerHTML = `
 				<h4>Messages</h4>
 
 				${data.data.map(message => `
 					<div
-						class="ai-sales-message"
+						class="ai-sales-message ${
+							message.direction === 'INBOUND'
+								? 'ai-sales-message--inbound'
+								: ''
+						}"
 						data-message-id="${message.sales_message_id}"
 					>
-						<div class="ai-sales-message-type">
-							<div class="ai-sales-message-avatar">
-							
-							</div>
-							<strong>
-								${escapeHtml(
-									message.sender_type || 'Unknown'
-								)}
-							</strong>
+
+						<div class="ai-sales-message-avatar">
+							${
+								message.sender_type === 'AI'
+									? `
+										<svg
+											viewBox="0 0 24 22"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="1.6"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										>
+											<path d="M9 3h6"></path>
+											<path d="M12 3v2"></path>
+
+											<path d="M7 6h10a3 3 0 0 1 3 3v5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V9a3 3 0 0 1 3-3z"></path>
+
+											<path d="M4 10H3"></path>
+											<path d="M21 10h-1"></path>
+
+											<path d="M9 11.5h.01"></path>
+											<path d="M15 11.5h.01"></path>
+
+											<path d="M10 15c.6.5 1 .7 2 .7s1.4-.2 2-.7"></path>
+										</svg>
+									`
+									: `
+										<svg
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="1.6"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										>
+											<circle cx="12" cy="8" r="3"></circle>
+											<path d="M5 20c0-4 3-7 7-7s7 3 7 7"></path>
+										</svg>
+									`
+							}
 						</div>
-						<div class="ai-sales-message-content">
+
+						<div class="ai-sales-message-main">
+
+							<div class="ai-sales-message-header">
+
+								<strong class="ai-sales-message-sender">
+									${escapeHtml(
+										message.sender_type === 'CONTACT'
+											? contactName
+											: (message.sender_type || 'Unknown')
+									)}
+								</strong>
+
+								<div class="ai-sales-message-badges">
+									<span class="${getBubbleClass(message.direction)}">
+										${escapeHtml(message.direction || '-')}
+									</span>
+
+									<span class="${getBubbleClass(message.status)}">
+										${escapeHtml(message.status || 'DRAFT')}
+									</span>
+								</div>
+
+							</div>
+
 							${
 								message.subject
 									? `
-										<strong>
-
-											${escapeHtml(
-												message.subject
-											)}
+										<strong class="ai-sales-message-subject">
+											${escapeHtml(message.subject)}
 										</strong>
 									`
 									: ''
 							}
 
-							<p style="padding-right: 5px;">
-								<small>
-									${escapeHtml(
-										message.message || ''
-									)}
-								</small>
-							</p>
+							<p class="ai-sales-message-text">${escapeHtml(message.message || '')}</p>
+
+							<div class="ai-sales-message-meta">
+
+								${
+									message.ai_generated
+										? `
+											<span class="ai-sales-message-meta-item">
+												<svg
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="2"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+												>
+													<path d="M12 3l1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3z"></path>
+													<path d="M18 12l.7 2.1L21 15l-2.3.9L18 18l-.7-2.1L15 15l2.3-.9L18 12z"></path>
+													<path d="M6 13l.6 1.8L8.5 15.5l-1.9.7L6 18l-.6-1.8-1.9-.7 1.9-.7L6 13z"></path>
+												</svg>
+												AI generated
+											</span>
+										`
+										: ''
+								}
+
+								${
+									message.status === 'SENT'
+										? `
+											<span class="ai-sales-message-meta-item">
+												<svg
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="2"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+												>
+													<path d="M5 12l4 4L19 6"></path>
+												</svg>
+												Message sent
+											</span>
+										`
+										: ''
+								}
+
+								${
+									message.sent_at
+										? `
+											<span class="ai-sales-message-meta-item">
+												<svg
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="2"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+												>
+													<circle cx="12" cy="12" r="8"></circle>
+													<path d="M12 8v4l3 2"></path>
+												</svg>
+												${escapeHtml(message.sent_at)}
+											</span>
+										`
+										: ''
+								}
+
+								${
+									message.received_at
+										? `
+											<span class="ai-sales-message-meta-item">
+												<svg
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="2"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+												>
+													<circle cx="12" cy="12" r="8"></circle>
+													<path d="M12 8v4l3 2"></path>
+												</svg>
+												${escapeHtml(message.received_at)}
+											</span>
+										`
+										: ''
+								}
+
+							</div>
+
 							${
 								message.status === 'PENDING_APPROVAL'
 									? `
@@ -510,11 +1037,8 @@ window.loadAiSales = async function () {
 								message.status === 'APPROVED'
 									? `
 										<div class="ai-sales-message-actions">
-
 											<p>
-												<small>
-													Message approved
-												</small>
+												<small>Message approved</small>
 											</p>
 
 											<button
@@ -524,69 +1048,11 @@ window.loadAiSales = async function () {
 											>
 												Send (test)
 											</button>
-
 										</div>
 									`
 									: ''
 							}
-						</div>
-						<div class="ai-sales-message-status">
-							<table width="100%" align="center" cellspacing="0">
-								<tr valign="baseline">
-									<td colspan="1" align="left" valign="middle" style="padding: 0 0 5px;">
-										<div class="bubble" style="background: var(--alert-blue); color: var(--max-blue);">
-											${escapeHtml(
-												message.direction || ''
-											)}
-										</div>
-									</td>
-									<td colspan="1" align="left" valign="middle" style="padding: 0 0 5px;">
-										<div class="bubble" style="background: var(--alert-green); color: var(--agree-green);">
-											${escapeHtml(
-												message.status || 'DRAFT'
-											)}
-										</div>
-									</td>
-								</tr>
-								<tr valign="baseline">
-									<td colspan="1" align="left" valign="middle" style="padding: 0 0 5px;">
-										${
-											message.ai_generated
-												? `
-													<small>
-														AI generated
-													</small>
-												`
-												: ''
-										}
-									</td>
-									<td colspan="1" align="left" valign="middle" style="padding: 0 0 5px;">
-										${
-											message.status === 'SENT'
-												? `
-													<small>
-														Message sent
-													</small>
-												`
-												: ''
-										}
-									</td>
-								</tr>
-								<tr valign="baseline">
-									<td colspan="2" align="left" valign="middle">
-										${
-											message.sent_at
-												? `
-													<small>
-														S:
-														${escapeHtml(message.sent_at)}
-													</small>
-												`
-												: ''
-										}
-									</td>
-								</tr>
-							</table>
+
 						</div>
 					</div>
 				`).join('')}
@@ -608,6 +1074,7 @@ window.loadAiSales = async function () {
 							salesMessageId,
 							conversationId,
 							salesCompanyId,
+							salesContactId,
 							button
 						);
 					}
@@ -656,6 +1123,7 @@ window.loadAiSales = async function () {
 		salesMessageId,
 		conversationId,
 		salesCompanyId,
+		salesContactId,
 		button
 	) {
 		const originalText =
@@ -696,7 +1164,8 @@ window.loadAiSales = async function () {
 
 			await loadSalesMessages(
 				conversationId,
-				salesCompanyId
+				salesCompanyId,
+				salesContactId
 			);
 
 		} catch (error) {
@@ -794,32 +1263,16 @@ window.loadAiSales = async function () {
 		`;
 
 		try {
-			const response = await fetch(
-				`api/get_sales_contacts.php?sales_company_id=${salesCompanyId}`,
-				{
-					method: 'GET',
-					headers: {
-						'Accept': 'application/json'
-					}
-				}
-			);
-
-			const data = await response.json();
+			const contacts =
+				await getSalesContacts(
+					salesCompanyId
+				);
 
 
-			if (
-				!data.success ||
-				!Array.isArray(data.data) ||
-				data.data.length === 0
-			) {
+			if (contacts.length === 0) {
 				contactsContainer.innerHTML = `
-					<h3>
-						Contacts
-					</h3>
-
-					<p>
-						No contacts found.
-					</p>
+					<h3>Contacts</h3>
+					<p>No contacts found.</p>
 				`;
 
 				return;
@@ -827,31 +1280,98 @@ window.loadAiSales = async function () {
 
 
 			contactsContainer.innerHTML = `
-				<h3>Contacts</h3>
+				<h3 class="ai-sales-card-title">
+					<span class="ai-sales-message-meta-item">
+						<svg
+							style="width: 20px; height: 20px;"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.6"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<circle cx="12" cy="7.5" r="3"></circle>
+							<path d="M6 20v-1c0-3.1 2.7-5.5 6-5.5s6 2.4 6 5.5v1"></path>
+							<path d="M6 20h12"></path>
+						</svg>
+						Contacts
+					</span>
+				</h3>
 
-				${data.data.map(contact => `
+				${contacts.map(contact => `
 					<div class="ai-sales-contact">
-						<strong>
-							${escapeHtml(contact.full_name || 'Unknown contact')}
+
+						<strong class="ai-sales-contact-name">
+							${escapeHtml(
+								contact.full_name ||
+								'Unknown contact'
+							)}
 						</strong>
 
 						<p>
-							${escapeHtml(contact.job_title || '-')}
+							${escapeHtml(
+								contact.job_title || '-'
+							)}
 						</p>
 
-						<p>
-							${escapeHtml(contact.email || '-')}
+						<p class="ai-sales-contact-value">
+							<span class="ai-sales-message-meta-item">
+								<svg
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<rect x="3" y="5" width="18" height="14" rx="2"></rect>
+									<path d="M3 7l9 6 9-6"></path>
+								</svg>
+								${escapeHtml(
+									contact.email || '-'
+								)}
+							</span>
 						</p>
 
-						<p>
-							${escapeHtml(contact.phone || '-')}
+						<p class="ai-sales-contact-value">
+							<span class="ai-sales-message-meta-item">
+								<svg
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<path d="M5 4h4l2 5-3 2a15 15 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2C10.3 21 3 13.7 3 6a2 2 0 0 1 2-2z"></path>
+								</svg>
+								${escapeHtml(
+									contact.phone || '-'
+								)}
+							</span>
 						</p>
 
 						${
-							contact.is_primary 
-								? `<div class="bubble" style="background: var(--alert-green); color: var(--agree-green);">
-									Primary contact
-								</div>` 
+							contact.is_primary
+								? `
+									<div class="bubble bubble-success">
+										<span class="ai-sales-message-meta-item">
+											<svg
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											>
+												<circle cx="12" cy="12" r="8"></circle>
+												<path d="M8.5 12.5l2.2 2.2 4.8-5"></path>
+											</svg>
+											Primary contact
+										</span>
+									</div>
+								`
 								: ''
 						}
 					</div>
@@ -908,7 +1428,7 @@ window.loadAiSales = async function () {
 				data.data.forEach(company => {
 
 					const row = document.createElement('tr');
-					row.className = 'users-row';
+					row.className = 'users-row ai-sales-company-row';
 
 					row.dataset.companyId = String(company.sales_company_id);
 

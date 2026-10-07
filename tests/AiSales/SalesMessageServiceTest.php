@@ -1631,4 +1631,672 @@ final class SalesMessageServiceTest extends TestCase
 			$result["sent_at"]
 		);
 	}
+
+	public function testReceiveRejectsInvalidConversationId(): void
+	{
+		$messageRepository =
+			$this->createMock(SalesMessageRepository::class);
+
+		$conversationRepository =
+			$this->createMock(SalesConversationRepository::class);
+
+		$leadRepository =
+			$this->createMock(SalesLeadRepository::class);
+
+		$conversationRepository
+			->expects($this->never())
+			->method('findById');
+
+		$messageRepository
+			->expects($this->never())
+			->method('createInbound');
+
+		$service = new SalesMessageService(
+			$messageRepository,
+			$conversationRepository,
+			$leadRepository
+		);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Invalid conversation ID."
+		);
+
+		$service->receiveMessage(
+			0,
+			"Hello from Anna."
+		);
+	}
+
+
+	public function testReceiveRejectsEmptyMessage(): void
+	{
+		$messageRepository =
+			$this->createMock(SalesMessageRepository::class);
+
+		$conversationRepository =
+			$this->createMock(SalesConversationRepository::class);
+
+		$leadRepository =
+			$this->createMock(SalesLeadRepository::class);
+
+		$conversationRepository
+			->expects($this->never())
+			->method('findById');
+
+		$messageRepository
+			->expects($this->never())
+			->method('createInbound');
+
+		$service = new SalesMessageService(
+			$messageRepository,
+			$conversationRepository,
+			$leadRepository
+		);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Message cannot be empty."
+		);
+
+		$service->receiveMessage(
+			20,
+			"   "
+		);
+	}
+
+
+	public function testReceiveRejectsMissingConversation(): void
+	{
+		$messageRepository =
+			$this->createMock(SalesMessageRepository::class);
+
+		$conversationRepository =
+			$this->createMock(SalesConversationRepository::class);
+
+		$leadRepository =
+			$this->createMock(SalesLeadRepository::class);
+
+		$conversationRepository
+			->expects($this->once())
+			->method('findById')
+			->with(20)
+			->willReturn(null);
+
+		$messageRepository
+			->expects($this->never())
+			->method('createInbound');
+
+		$service = new SalesMessageService(
+			$messageRepository,
+			$conversationRepository,
+			$leadRepository
+		);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"Sales conversation not found."
+		);
+
+		$service->receiveMessage(
+			20,
+			"Hello from Anna."
+		);
+	}
+
+
+	public function testReceiveRejectsInvalidLeadId(): void
+	{
+		$messageRepository =
+			$this->createMock(SalesMessageRepository::class);
+
+		$conversationRepository =
+			$this->createMock(SalesConversationRepository::class);
+
+		$leadRepository =
+			$this->createMock(SalesLeadRepository::class);
+
+		$conversationRepository
+			->method('findById')
+			->willReturn(
+				$this->validConversation([
+					"sales_lead_id" => 0
+				])
+			);
+
+		$leadRepository
+			->expects($this->never())
+			->method('findById');
+
+		$messageRepository
+			->expects($this->never())
+			->method('createInbound');
+
+		$service = new SalesMessageService(
+			$messageRepository,
+			$conversationRepository,
+			$leadRepository
+		);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"Sales lead not found for conversation."
+		);
+
+		$service->receiveMessage(
+			20,
+			"Hello from Anna."
+		);
+	}
+
+
+	public function testReceiveRejectsMissingLead(): void
+	{
+		$messageRepository =
+			$this->createMock(SalesMessageRepository::class);
+
+		$conversationRepository =
+			$this->createMock(SalesConversationRepository::class);
+
+		$leadRepository =
+			$this->createMock(SalesLeadRepository::class);
+
+		$conversationRepository
+			->method('findById')
+			->willReturn(
+				$this->validConversation()
+			);
+
+		$leadRepository
+			->expects($this->once())
+			->method('findById')
+			->with(30)
+			->willReturn(null);
+
+		$messageRepository
+			->expects($this->never())
+			->method('createInbound');
+
+		$service = new SalesMessageService(
+			$messageRepository,
+			$conversationRepository,
+			$leadRepository
+		);
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"Sales lead not found."
+		);
+
+		$service->receiveMessage(
+			20,
+			"Hello from Anna."
+		);
+	}
+
+
+	public function testReceiveCreatesInboundMessageAndMarksLeadReplied(): void
+	{
+		$messageRepository =
+			$this->createMock(SalesMessageRepository::class);
+
+		$conversationRepository =
+			$this->createMock(SalesConversationRepository::class);
+
+		$leadRepository =
+			$this->createMock(SalesLeadRepository::class);
+
+		$conversationRepository
+			->method('findById')
+			->willReturn(
+				$this->validConversation([
+					"status" => "WAITING_REPLY"
+				])
+			);
+
+		$leadRepository
+			->method('findById')
+			->willReturn(
+				$this->validLead([
+					"stage" => "CONTACTED"
+				])
+			);
+
+		$receivedAt = null;
+
+		$messageRepository
+			->expects($this->once())
+			->method('createInbound')
+			->with(
+				$this->callback(
+					function (array $data) use (&$receivedAt): bool {
+						$this->assertSame(
+							20,
+							$data["conversation_id"]
+						);
+
+						$this->assertSame(
+							"INBOUND",
+							$data["direction"]
+						);
+
+						$this->assertSame(
+							"CONTACT",
+							$data["sender_type"]
+						);
+
+						$this->assertSame(
+							"RECEIVED",
+							$data["status"]
+						);
+
+						$this->assertSame(
+							"Re: Inventory management",
+							$data["subject"]
+						);
+
+						$this->assertSame(
+							"Hi, please send pricing.",
+							$data["message"]
+						);
+
+						$this->assertSame(
+							"email-123",
+							$data["provider_message_id"]
+						);
+
+						$this->assertFalse(
+							$data["ai_generated"]
+						);
+
+						$this->assertFalse(
+							$data["approved"]
+						);
+
+						$receivedAt =
+							$data["received_at"];
+
+						$this->assertMatchesRegularExpression(
+							'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/',
+							$receivedAt
+						);
+
+						$this->assertSame(
+							$receivedAt,
+							$data["updated_at"]
+						);
+
+						return true;
+					}
+				)
+			)
+			->willReturn(77);
+
+		$conversationRepository
+			->expects($this->once())
+			->method('markOpenAfterReply')
+			->with(
+				20,
+				$this->callback(
+					function (string $timestamp) use (&$receivedAt): bool {
+						return
+							$receivedAt !== null &&
+							$timestamp === $receivedAt;
+					}
+				)
+			);
+
+		$leadRepository
+			->expects($this->once())
+			->method('markReplied')
+			->with(
+				30,
+				$this->callback(
+					function (string $timestamp) use (&$receivedAt): bool {
+						return
+							$receivedAt !== null &&
+							$timestamp === $receivedAt;
+					}
+				)
+			);
+
+		$leadRepository
+			->expects($this->never())
+			->method('updateAfterContact');
+
+		$service = new SalesMessageService(
+			$messageRepository,
+			$conversationRepository,
+			$leadRepository
+		);
+
+		$result = $service->receiveMessage(
+			20,
+			"  Hi, please send pricing.  ",
+			"  Re: Inventory management  ",
+			"  email-123  "
+		);
+
+		$this->assertSame(
+			77,
+			$result["sales_message_id"]
+		);
+
+		$this->assertSame(
+			20,
+			$result["conversation_id"]
+		);
+
+		$this->assertSame(
+			30,
+			$result["sales_lead_id"]
+		);
+
+		$this->assertSame(
+			"CONTACTED",
+			$result["previous_stage"]
+		);
+
+		$this->assertSame(
+			"REPLIED",
+			$result["current_stage"]
+		);
+
+		$this->assertSame(
+			$receivedAt,
+			$result["received_at"]
+		);
+	}
+
+
+	public function testReceiveChangesEarlyLeadStagesToReplied(): void
+	{
+		foreach (["NEW", "RESEARCHING"] as $stage) {
+
+			$messageRepository =
+				$this->createMock(SalesMessageRepository::class);
+
+			$conversationRepository =
+				$this->createMock(SalesConversationRepository::class);
+
+			$leadRepository =
+				$this->createMock(SalesLeadRepository::class);
+
+			$conversationRepository
+				->method('findById')
+				->willReturn(
+					$this->validConversation()
+				);
+
+			$leadRepository
+				->method('findById')
+				->willReturn(
+					$this->validLead([
+						"stage" => $stage
+					])
+				);
+
+			$messageRepository
+				->expects($this->once())
+				->method('createInbound')
+				->willReturn(77);
+
+			$conversationRepository
+				->expects($this->once())
+				->method('markOpenAfterReply');
+
+			$leadRepository
+				->expects($this->once())
+				->method('markReplied')
+				->with(
+					30,
+					$this->isType('string')
+				);
+
+			$service = new SalesMessageService(
+				$messageRepository,
+				$conversationRepository,
+				$leadRepository
+			);
+
+			$result = $service->receiveMessage(
+				20,
+				"Hello from Anna."
+			);
+
+			$this->assertSame(
+				$stage,
+				$result["previous_stage"]
+			);
+
+			$this->assertSame(
+				"REPLIED",
+				$result["current_stage"]
+			);
+		}
+	}
+
+
+	public function testReceivePreservesAdvancedLeadStages(): void
+	{
+		$stages = [
+			"REPLIED",
+			"INTERESTED",
+			"DEMO",
+			"NEGOTIATION",
+			"WON",
+			"LOST"
+		];
+
+		foreach ($stages as $stage) {
+
+			$messageRepository =
+				$this->createMock(SalesMessageRepository::class);
+
+			$conversationRepository =
+				$this->createMock(SalesConversationRepository::class);
+
+			$leadRepository =
+				$this->createMock(SalesLeadRepository::class);
+
+			$conversationRepository
+				->method('findById')
+				->willReturn(
+					$this->validConversation()
+				);
+
+			$leadRepository
+				->method('findById')
+				->willReturn(
+					$this->validLead([
+						"stage" => $stage
+					])
+				);
+
+			$messageRepository
+				->expects($this->once())
+				->method('createInbound')
+				->willReturn(77);
+
+			$conversationRepository
+				->expects($this->once())
+				->method('markOpenAfterReply');
+
+			$leadRepository
+				->expects($this->never())
+				->method('markReplied');
+
+			$leadRepository
+				->expects($this->once())
+				->method('updateAfterContact')
+				->with(
+					30,
+					$this->isType('string')
+				);
+
+			$service = new SalesMessageService(
+				$messageRepository,
+				$conversationRepository,
+				$leadRepository
+			);
+
+			$result = $service->receiveMessage(
+				20,
+				"Hello from Anna."
+			);
+
+			$this->assertSame(
+				$stage,
+				$result["previous_stage"]
+			);
+
+			$this->assertSame(
+				$stage,
+				$result["current_stage"]
+			);
+		}
+	}
+
+
+	public function testReceiveNormalizesEmptyOptionalFields(): void
+	{
+		$messageRepository =
+			$this->createMock(SalesMessageRepository::class);
+
+		$conversationRepository =
+			$this->createMock(SalesConversationRepository::class);
+
+		$leadRepository =
+			$this->createMock(SalesLeadRepository::class);
+
+		$conversationRepository
+			->method('findById')
+			->willReturn(
+				$this->validConversation()
+			);
+
+		$leadRepository
+			->method('findById')
+			->willReturn(
+				$this->validLead([
+					"stage" => "CONTACTED"
+				])
+			);
+
+		$messageRepository
+			->expects($this->once())
+			->method('createInbound')
+			->with(
+				$this->callback(
+					function (array $data): bool {
+						$this->assertNull(
+							$data["subject"]
+						);
+
+						$this->assertNull(
+							$data["provider_message_id"]
+						);
+
+						return true;
+					}
+				)
+			)
+			->willReturn(77);
+
+		$service = new SalesMessageService(
+			$messageRepository,
+			$conversationRepository,
+			$leadRepository
+		);
+
+		$result = $service->receiveMessage(
+			20,
+			"Hello from Anna.",
+			"   ",
+			"   "
+		);
+
+		$this->assertSame(
+			77,
+			$result["sales_message_id"]
+		);
+	}
+
+
+	public function testReceiveStopsWhenInboundCreationFails(): void
+	{
+		$messageRepository =
+			$this->createMock(SalesMessageRepository::class);
+
+		$conversationRepository =
+			$this->createMock(SalesConversationRepository::class);
+
+		$leadRepository =
+			$this->createMock(SalesLeadRepository::class);
+
+		$conversationRepository
+			->method('findById')
+			->willReturn(
+				$this->validConversation()
+			);
+
+		$leadRepository
+			->method('findById')
+			->willReturn(
+				$this->validLead([
+					"stage" => "CONTACTED"
+				])
+			);
+
+		$messageRepository
+			->expects($this->once())
+			->method('createInbound')
+			->willThrowException(
+				new RuntimeException(
+					"Database insert failed."
+				)
+			);
+
+		$conversationRepository
+			->expects($this->never())
+			->method('markOpenAfterReply');
+
+		$leadRepository
+			->expects($this->never())
+			->method('markReplied');
+
+		$service = new SalesMessageService(
+			$messageRepository,
+			$conversationRepository,
+			$leadRepository
+		);
+
+		$this->expectException(
+			RuntimeException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Database insert failed."
+		);
+
+		$service->receiveMessage(
+			20,
+			"Hello from Anna."
+		);
+	}
 }
