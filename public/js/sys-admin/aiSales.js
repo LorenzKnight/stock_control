@@ -715,14 +715,14 @@ window.loadAiSales = async function () {
 												viewBox="0 0 24 24"
 												fill="none"
 												stroke="currentColor"
-												stroke-width="2"
+												stroke-width="2.1"
 												stroke-linecap="round"
 												stroke-linejoin="round"
 											>
-												<rect x="3" y="5" width="18" height="16" rx="2"></rect>
-												<path d="M8 3v4"></path>
-												<path d="M16 3v4"></path>
-												<path d="M3 10h18"></path>
+												<rect x="4" y="5" width="16" height="15" rx="2"></rect>
+												<path d="M8 3.5v3"></path>
+												<path d="M16 3.5v3"></path>
+												<path d="M4 9.5h16"></path>
 											</svg>
 											Started: 
 											${escapeHtml(

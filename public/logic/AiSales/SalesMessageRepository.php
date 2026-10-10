@@ -183,4 +183,31 @@ class SalesMessageRepository
 
 		return (int)$result["id"];
 	}
+
+
+	public function createAiDraft(
+		array $data
+	): int {
+		$result = \insert_into(
+			"sales_messages",
+			$data,
+			[
+				"id" => "sales_message_id",
+				"return_type" => "array"
+			]
+		);
+
+		if (
+			!is_array($result) ||
+			empty($result["success"]) ||
+			empty($result["id"])
+		) {
+			throw new \RuntimeException(
+				$result["message"]
+					?? "Could not create AI sales draft."
+			);
+		}
+
+		return (int)$result["id"];
+	}
 }
