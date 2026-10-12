@@ -52,6 +52,7 @@ class SalesConversationRepository
 				"sales_lead_id",
 				"sales_contact_id",
 				"channel",
+				"subject",
 				"status",
 				"last_message_at"
 			],

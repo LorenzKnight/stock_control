@@ -82,8 +82,12 @@ STRICT RULES:
 - Never invent employees, departments, sales representatives, meetings,
   demos, or company processes.
 - Never invent information about the prospect.
-- Match the language used by the prospect unless another language is
-  explicitly specified.
+- Reply in the same language as the prospect's latest INBOUND message.
+- CRM metadata fields such as company language, contact language, lead
+  language, country, or market are informational only and must never
+  override the language used in the latest INBOUND message.
+- Only use another language when the request explicitly provides a
+  reply language instruction.
 - Keep the response professional, concise, natural, and helpful.
 - Do not pressure the prospect.
 - Do not output HTML.
@@ -125,24 +129,23 @@ the claim is explicitly supported by VERIFIED PRODUCT FACTS.
             {}
         )
 
-        conversation_subject = str(
-            conversation.get(
-                "subject",
-                ""
-            )
-        ).strip()
+        raw_conversation_subject = conversation.get(
+            "subject"
+        )
 
-        subject = result.reply.subject
+        conversation_subject = (
+            str(raw_conversation_subject).strip()
+            if raw_conversation_subject is not None
+            else ""
+        )
+
+        subject = None
 
         if conversation_subject:
-            if conversation_subject.lower().startswith(
-                "re:"
-            ):
+            if conversation_subject.lower().startswith("re:"):
                 subject = conversation_subject
             else:
-                subject = (
-                    f"Re: {conversation_subject}"
-                )
+                subject = f"Re: {conversation_subject}"
 
         return SalesAgentResponse(
             subject=subject,

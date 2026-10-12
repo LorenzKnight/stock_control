@@ -55,4 +55,46 @@ class SalesContactRepository
 
 		return $result;
 	}
+
+
+	public function findById(
+		int $salesContactId
+	): ?array {
+		$result = \select_from(
+			"sales_contacts",
+			[
+				"sales_contact_id",
+				"sales_company_id",
+				"first_name",
+				"last_name",
+				"job_title",
+				"language",
+				"is_primary",
+				"do_not_contact"
+			],
+			[
+				"sales_contact_id" =>
+					$salesContactId
+			],
+			[
+				"fetch_first" => true,
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"SalesContactRepository expected an array response."
+			);
+		}
+
+		if (
+			empty($result["success"]) ||
+			empty($result["data"])
+		) {
+			return null;
+		}
+
+		return $result["data"];
+	}
 }

@@ -106,39 +106,41 @@ class SalesAgentServiceTest(
         )
 
 
-    async def testUsesProviderSubjectWhenConversationHasNoSubject(
-        self
+    async def testReturnsNullSubjectWhenConversationHasNoSubject(
+        self,
     ) -> None:
         provider = AsyncMock()
 
-        provider.generate_reply.return_value = (
-            AIProviderResult(
-                reply=SalesReply(
-                    subject="Generated subject",
-                    message="Generated reply."
-                ),
-                model="test-model"
-            )
-        )
-
-        request = SalesAgentRequest(
-            task="generate_sales_reply",
-            context={}
+        provider.generate_reply.return_value = AIProviderResult(
+            reply=SalesReply(
+                subject="Provider generated subject",
+                message="Generated reply.",
+            ),
+            model="test-model",
         )
 
         with patch(
             "app.sales_agent_service.create_ai_provider",
-            return_value=provider
+            return_value=provider,
         ):
             service = SalesAgentService()
 
-            result = await service.generate_reply(
-                request
+            response = await service.generate_reply(
+                SalesAgentRequest(
+                    task="generate_sales_reply",
+                    context={
+                        "conversation": {
+                            "subject": None
+                        },
+                        "product": {
+                            "verified_facts": []
+                        }
+                    },
+                )
             )
 
-        self.assertEqual(
-            result.subject,
-            "Generated subject"
+        self.assertIsNone(
+            response.subject
         )
 
 

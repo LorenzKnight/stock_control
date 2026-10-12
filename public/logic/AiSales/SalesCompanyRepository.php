@@ -54,4 +54,49 @@ class SalesCompanyRepository
 
 		return $result;
 	}
+
+
+	public function findById(
+		int $salesCompanyId
+	): ?array {
+		$result = \select_from(
+			"sales_companies",
+			[
+				"sales_company_id",
+				"company_name",
+				"website",
+				"domain",
+				"market",
+				"country",
+				"country_code",
+				"city",
+				"industry",
+				"language",
+				"description"
+			],
+			[
+				"sales_company_id" =>
+					$salesCompanyId
+			],
+			[
+				"fetch_first" => true,
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"SalesCompanyRepository expected an array response."
+			);
+		}
+
+		if (
+			empty($result["success"]) ||
+			empty($result["data"])
+		) {
+			return null;
+		}
+
+		return $result["data"];
+	}
 }

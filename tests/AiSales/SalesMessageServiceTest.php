@@ -3,6 +3,9 @@
 use App\AiSales\SalesMessageRepository;
 use App\AiSales\SalesConversationRepository;
 use App\AiSales\SalesLeadRepository;
+use App\AiSales\SalesCompanyRepository;
+use App\AiSales\SalesContactRepository;
+use App\AiSales\AiSalesAgentClient;
 use App\AiSales\SalesMessageService;
 use PHPUnit\Framework\TestCase;
 
@@ -46,6 +49,8 @@ final class SalesMessageServiceTest extends TestCase
 				"sales_lead_id" => 30,
 				"sales_contact_id" => 40,
 				"channel" => "EMAIL",
+				"subject" =>
+					"Inventory management solution for Demo Logistics AB",
 				"status" => "OPEN",
 				"last_message_at" => null
 			],
@@ -62,10 +67,54 @@ final class SalesMessageServiceTest extends TestCase
 				"sales_lead_id" => 30,
 				"sales_company_id" => 50,
 				"primary_contact_id" => 40,
+				"market" => "SWEDEN",
+				"country" => "Sweden",
+				"language" => "en",
 				"stage" => "NEW",
 				"last_contact_at" => null,
 				"next_action" => null,
 				"next_action_at" => null
+			],
+			$overrides
+		);
+	}
+
+
+	private function validCompany(
+		array $overrides = []
+	): array {
+		return array_replace(
+			[
+				"sales_company_id" => 50,
+				"company_name" => "Demo Logistics AB",
+				"website" => null,
+				"domain" => null,
+				"market" => "SWEDEN",
+				"country" => "Sweden",
+				"country_code" => "SE",
+				"city" => "Göteborg",
+				"industry" => "Logistics",
+				"language" => "en",
+				"description" => null
+			],
+			$overrides
+		);
+	}
+
+
+	private function validContact(
+		array $overrides = []
+	): array {
+		return array_replace(
+			[
+				"sales_contact_id" => 40,
+				"sales_company_id" => 50,
+				"first_name" => "Anna",
+				"last_name" => "Svensson",
+				"job_title" => "Operations Manager",
+				"language" => "en",
+				"is_primary" => true,
+				"do_not_contact" => false
 			],
 			$overrides
 		);
@@ -2297,6 +2346,728 @@ final class SalesMessageServiceTest extends TestCase
 		$service->receiveMessage(
 			20,
 			"Hello from Anna."
+		);
+	}
+
+
+	public function testGenerateAiDraftRejectsInvalidConversationId(): void
+	{
+		$messageRepository =
+			$this->createMock(
+				SalesMessageRepository::class
+			);
+
+		$conversationRepository =
+			$this->createMock(
+				SalesConversationRepository::class
+			);
+
+		$leadRepository =
+			$this->createMock(
+				SalesLeadRepository::class
+			);
+
+		$conversationRepository
+			->expects($this->never())
+			->method('findById');
+
+		$messageRepository
+			->expects($this->never())
+			->method('createAiDraft');
+
+		$service =
+			new SalesMessageService(
+				$messageRepository,
+				$conversationRepository,
+				$leadRepository
+			);
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Invalid conversation ID."
+		);
+
+		$service->generateAiDraft(
+			0
+		);
+	}
+
+
+	public function testGenerateAiDraftRejectsWhenLatestMessageIsNotInbound(): void
+	{
+		$messageRepository =
+			$this->createMock(
+				SalesMessageRepository::class
+			);
+
+		$conversationRepository =
+			$this->createMock(
+				SalesConversationRepository::class
+			);
+
+		$leadRepository =
+			$this->createMock(
+				SalesLeadRepository::class
+			);
+
+		$companyRepository =
+			$this->createMock(
+				SalesCompanyRepository::class
+			);
+
+		$contactRepository =
+			$this->createMock(
+				SalesContactRepository::class
+			);
+
+		$aiSalesAgentClient =
+			$this->createMock(
+				AiSalesAgentClient::class
+			);
+
+
+		$conversationRepository
+			->method('findById')
+			->willReturn(
+				$this->validConversation()
+			);
+
+		$leadRepository
+			->method('findById')
+			->willReturn(
+				$this->validLead()
+			);
+
+		$companyRepository
+			->method('findById')
+			->willReturn(
+				$this->validCompany()
+			);
+
+		$contactRepository
+			->method('findById')
+			->willReturn(
+				$this->validContact()
+			);
+
+
+		$messageRepository
+			->method('findByConversationId')
+			->willReturn([
+				"success" => true,
+				"data" => [
+					[
+						"sales_message_id" => 1,
+						"conversation_id" => 20,
+						"direction" => "INBOUND",
+						"sender_type" => "CONTACT",
+						"subject" => null,
+						"message" => "Hello.",
+						"status" => "RECEIVED"
+					],
+					[
+						"sales_message_id" => 2,
+						"conversation_id" => 20,
+						"direction" => "OUTBOUND",
+						"sender_type" => "AI",
+						"subject" => null,
+						"message" => "Draft reply.",
+						"status" => "PENDING_APPROVAL"
+					]
+				]
+			]);
+
+
+		$aiSalesAgentClient
+			->expects($this->never())
+			->method('generateReply');
+
+		$messageRepository
+			->expects($this->never())
+			->method('createAiDraft');
+
+
+		$service =
+			new SalesMessageService(
+				$messageRepository,
+				$conversationRepository,
+				$leadRepository,
+				$companyRepository,
+				$contactRepository,
+				$aiSalesAgentClient
+			);
+
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"AI draft can only be generated after an inbound message."
+		);
+
+
+		$service->generateAiDraft(
+			20
+		);
+	}
+
+
+	public function testGenerateAiDraftRejectsContactFromDifferentCompany(): void
+	{
+		$messageRepository =
+			$this->createMock(
+				SalesMessageRepository::class
+			);
+
+		$conversationRepository =
+			$this->createMock(
+				SalesConversationRepository::class
+			);
+
+		$leadRepository =
+			$this->createMock(
+				SalesLeadRepository::class
+			);
+
+		$companyRepository =
+			$this->createMock(
+				SalesCompanyRepository::class
+			);
+
+		$contactRepository =
+			$this->createMock(
+				SalesContactRepository::class
+			);
+
+		$aiSalesAgentClient =
+			$this->createMock(
+				AiSalesAgentClient::class
+			);
+
+
+		$conversationRepository
+			->method('findById')
+			->willReturn(
+				$this->validConversation()
+			);
+
+		$leadRepository
+			->method('findById')
+			->willReturn(
+				$this->validLead()
+			);
+
+		$companyRepository
+			->method('findById')
+			->willReturn(
+				$this->validCompany()
+			);
+
+		$contactRepository
+			->method('findById')
+			->willReturn(
+				$this->validContact([
+					"sales_company_id" => 999
+				])
+			);
+
+
+		$aiSalesAgentClient
+			->expects($this->never())
+			->method('generateReply');
+
+		$messageRepository
+			->expects($this->never())
+			->method('createAiDraft');
+
+
+		$service =
+			new SalesMessageService(
+				$messageRepository,
+				$conversationRepository,
+				$leadRepository,
+				$companyRepository,
+				$contactRepository,
+				$aiSalesAgentClient
+			);
+
+
+		$this->expectException(
+			Exception::class
+		);
+
+		$this->expectExceptionMessage(
+			"Sales contact does not belong to sales company."
+		);
+
+
+		$service->generateAiDraft(
+			20
+		);
+	}
+
+
+	public function testGenerateAiDraftBuildsContextAndCreatesPendingApproval(): void
+	{
+		$messageRepository =
+			$this->createMock(
+				SalesMessageRepository::class
+			);
+
+		$conversationRepository =
+			$this->createMock(
+				SalesConversationRepository::class
+			);
+
+		$leadRepository =
+			$this->createMock(
+				SalesLeadRepository::class
+			);
+
+		$companyRepository =
+			$this->createMock(
+				SalesCompanyRepository::class
+			);
+
+		$contactRepository =
+			$this->createMock(
+				SalesContactRepository::class
+			);
+
+		$aiSalesAgentClient =
+			$this->createMock(
+				AiSalesAgentClient::class
+			);
+
+
+		$conversationRepository
+			->expects($this->once())
+			->method('findById')
+			->with(20)
+			->willReturn(
+				$this->validConversation()
+			);
+
+		$leadRepository
+			->expects($this->once())
+			->method('findById')
+			->with(30)
+			->willReturn(
+				$this->validLead([
+					"stage" => "REPLIED"
+				])
+			);
+
+		$companyRepository
+			->expects($this->once())
+			->method('findById')
+			->with(50)
+			->willReturn(
+				$this->validCompany()
+			);
+
+		$contactRepository
+			->expects($this->once())
+			->method('findById')
+			->with(40)
+			->willReturn(
+				$this->validContact()
+			);
+
+
+		$messageRepository
+			->expects($this->once())
+			->method('findByConversationId')
+			->with(20)
+			->willReturn([
+				"success" => true,
+				"data" => [
+					[
+						"sales_message_id" => 1,
+						"conversation_id" => 20,
+						"direction" => "OUTBOUND",
+						"sender_type" => "AI",
+						"subject" =>
+							"Inventory management solution for Demo Logistics AB",
+						"message" =>
+							"Hi Anna, AllStockControl helps companies manage inventory and stock operations from one system.",
+						"status" => "SENT"
+					],
+					[
+						"sales_message_id" => 2,
+						"conversation_id" => 20,
+						"direction" => "OUTBOUND",
+						"sender_type" => "AI",
+						"subject" => null,
+						"message" =>
+							"This unsent draft must not reach the AI.",
+						"status" => "PENDING_APPROVAL"
+					],
+					[
+						"sales_message_id" => 3,
+						"conversation_id" => 20,
+						"direction" => "INBOUND",
+						"sender_type" => "CONTACT",
+						"subject" =>
+							"Re: Inventory management solution for Demo Logistics AB",
+						"message" =>
+							"Could you send information about pricing and available plans?",
+						"status" => "RECEIVED"
+					]
+				]
+			]);
+
+
+		$aiSalesAgentClient
+			->expects($this->once())
+			->method('generateReply')
+			->with(
+				$this->callback(
+					function (array $context): bool {
+
+						$this->assertSame(
+							"AllStockControl",
+							$context["product"]["name"]
+						);
+
+						$this->assertSame(
+							[
+								"AllStockControl helps companies manage inventory and stock operations from one system."
+							],
+							$context["product"]["verified_facts"]
+						);
+
+
+						$this->assertSame(
+							"Demo Logistics AB",
+							$context["company"]["name"]
+						);
+
+						$this->assertSame(
+							"Logistics",
+							$context["company"]["industry"]
+						);
+
+						$this->assertSame(
+							"Sweden",
+							$context["company"]["country"]
+						);
+
+						$this->assertSame(
+							"Göteborg",
+							$context["company"]["city"]
+						);
+
+
+						$this->assertSame(
+							"Anna Svensson",
+							$context["contact"]["name"]
+						);
+
+						$this->assertSame(
+							"Operations Manager",
+							$context["contact"]["job_title"]
+						);
+
+
+						$this->assertSame(
+							"REPLIED",
+							$context["lead"]["stage"]
+						);
+
+						$this->assertSame(
+							"SWEDEN",
+							$context["lead"]["market"]
+						);
+
+
+						$this->assertSame(
+							"EMAIL",
+							$context["conversation"]["channel"]
+						);
+
+						$this->assertSame(
+							"Inventory management solution for Demo Logistics AB",
+							$context["conversation"]["subject"]
+						);
+
+
+						$this->assertCount(
+							2,
+							$context["messages"]
+						);
+
+						$this->assertSame(
+							"OUTBOUND",
+							$context["messages"][0]["direction"]
+						);
+
+						$this->assertSame(
+							"INBOUND",
+							$context["messages"][1]["direction"]
+						);
+
+						$this->assertStringNotContainsString(
+							"unsent draft",
+							strtolower(
+								json_encode(
+									$context["messages"]
+								)
+							)
+						);
+
+
+						return true;
+					}
+				)
+			)
+			->willReturn([
+				"subject" =>
+					"Re: Inventory management solution for Demo Logistics AB",
+
+				"message" =>
+					"Hi Anna, I don't currently have verified pricing information in the provided context.",
+
+				"model" =>
+					"test-model"
+			]);
+
+
+		$createdAt = null;
+
+		$messageRepository
+			->expects($this->once())
+			->method('createAiDraft')
+			->with(
+				$this->callback(
+					function (array $data) use (&$createdAt): bool {
+
+						$this->assertSame(
+							20,
+							$data["conversation_id"]
+						);
+
+						$this->assertSame(
+							"OUTBOUND",
+							$data["direction"]
+						);
+
+						$this->assertSame(
+							"AI",
+							$data["sender_type"]
+						);
+
+						$this->assertSame(
+							"Re: Inventory management solution for Demo Logistics AB",
+							$data["subject"]
+						);
+
+						$this->assertSame(
+							"Hi Anna, I don't currently have verified pricing information in the provided context.",
+							$data["message"]
+						);
+
+						$this->assertSame(
+							"PENDING_APPROVAL",
+							$data["status"]
+						);
+
+						$this->assertTrue(
+							$data["ai_generated"]
+						);
+
+						$this->assertSame(
+							"test-model",
+							$data["ai_model"]
+						);
+
+						$this->assertFalse(
+							$data["approved"]
+						);
+
+
+						$createdAt =
+							$data["updated_at"];
+
+						$this->assertMatchesRegularExpression(
+							'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/',
+							$createdAt
+						);
+
+
+						return true;
+					}
+				)
+			)
+			->willReturn(
+				77
+			);
+
+
+		$service =
+			new SalesMessageService(
+				$messageRepository,
+				$conversationRepository,
+				$leadRepository,
+				$companyRepository,
+				$contactRepository,
+				$aiSalesAgentClient
+			);
+
+
+		$result =
+			$service->generateAiDraft(
+				20
+			);
+
+
+		$this->assertSame(
+			77,
+			$result["sales_message_id"]
+		);
+
+		$this->assertSame(
+			20,
+			$result["conversation_id"]
+		);
+
+		$this->assertSame(
+			30,
+			$result["sales_lead_id"]
+		);
+
+		$this->assertSame(
+			"PENDING_APPROVAL",
+			$result["status"]
+		);
+
+		$this->assertSame(
+			"test-model",
+			$result["ai_model"]
+		);
+
+		$this->assertSame(
+			$createdAt,
+			$result["created_at"]
+		);
+	}
+
+
+	public function testGenerateAiDraftStopsWhenAgentFails(): void
+	{
+		$messageRepository =
+			$this->createMock(
+				SalesMessageRepository::class
+			);
+
+		$conversationRepository =
+			$this->createMock(
+				SalesConversationRepository::class
+			);
+
+		$leadRepository =
+			$this->createMock(
+				SalesLeadRepository::class
+			);
+
+		$companyRepository =
+			$this->createMock(
+				SalesCompanyRepository::class
+			);
+
+		$contactRepository =
+			$this->createMock(
+				SalesContactRepository::class
+			);
+
+		$aiSalesAgentClient =
+			$this->createMock(
+				AiSalesAgentClient::class
+			);
+
+
+		$conversationRepository
+			->method('findById')
+			->willReturn(
+				$this->validConversation()
+			);
+
+		$leadRepository
+			->method('findById')
+			->willReturn(
+				$this->validLead()
+			);
+
+		$companyRepository
+			->method('findById')
+			->willReturn(
+				$this->validCompany()
+			);
+
+		$contactRepository
+			->method('findById')
+			->willReturn(
+				$this->validContact()
+			);
+
+		$messageRepository
+			->method('findByConversationId')
+			->willReturn([
+				"success" => true,
+				"data" => [
+					[
+						"sales_message_id" => 1,
+						"conversation_id" => 20,
+						"direction" => "INBOUND",
+						"sender_type" => "CONTACT",
+						"subject" => null,
+						"message" => "Hello from Anna.",
+						"status" => "RECEIVED"
+					]
+				]
+			]);
+
+
+		$aiSalesAgentClient
+			->expects($this->once())
+			->method('generateReply')
+			->willThrowException(
+				new RuntimeException(
+					"AI Sales Agent request failed."
+				)
+			);
+
+		$messageRepository
+			->expects($this->never())
+			->method('createAiDraft');
+
+
+		$service =
+			new SalesMessageService(
+				$messageRepository,
+				$conversationRepository,
+				$leadRepository,
+				$companyRepository,
+				$contactRepository,
+				$aiSalesAgentClient
+			);
+
+
+		$this->expectException(
+			RuntimeException::class
+		);
+
+		$this->expectExceptionMessage(
+			"AI Sales Agent request failed."
+		);
+
+
+		$service->generateAiDraft(
+			20
 		);
 	}
 }

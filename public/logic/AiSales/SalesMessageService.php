@@ -10,10 +10,19 @@ class SalesMessageService
 
 	private SalesLeadRepository $leadRepository;
 
+	private ?SalesCompanyRepository $companyRepository;
+
+	private ?SalesContactRepository $contactRepository;
+
+	private ?AiSalesAgentClient $aiSalesAgentClient;
+
 	public function __construct(
 		SalesMessageRepository $repository,
 		SalesConversationRepository $conversationRepository,
-		SalesLeadRepository $leadRepository
+		SalesLeadRepository $leadRepository,
+		?SalesCompanyRepository $companyRepository = null,
+		?SalesContactRepository $contactRepository = null,
+		?AiSalesAgentClient $aiSalesAgentClient = null
 	) {
 		$this->repository =
 			$repository;
@@ -23,6 +32,15 @@ class SalesMessageService
 
 		$this->leadRepository =
 			$leadRepository;
+
+		$this->companyRepository =
+			$companyRepository;
+
+		$this->contactRepository =
+			$contactRepository;
+
+		$this->aiSalesAgentClient =
+			$aiSalesAgentClient;
 	}
 
 	public function getMessagesByConversation(
@@ -440,6 +458,409 @@ class SalesMessageService
 	}
 
 
+	public function generateAiDraft(
+		int $conversationId
+	): array {
+		if ($conversationId <= 0) {
+			throw new \InvalidArgumentException(
+				"Invalid conversation ID."
+			);
+		}
+
+
+		$conversation =
+			$this->conversationRepository
+				->findById(
+					$conversationId
+				);
+
+		if ($conversation === null) {
+			throw new \Exception(
+				"Sales conversation not found."
+			);
+		}
+
+
+		$salesLeadId =
+			(int)(
+				$conversation["sales_lead_id"]
+					?? 0
+			);
+
+		if ($salesLeadId <= 0) {
+			throw new \Exception(
+				"Sales lead not found for conversation."
+			);
+		}
+
+
+		$lead =
+			$this->leadRepository
+				->findById(
+					$salesLeadId
+				);
+
+		if ($lead === null) {
+			throw new \Exception(
+				"Sales lead not found."
+			);
+		}
+
+
+		$salesCompanyId =
+			(int)(
+				$lead["sales_company_id"]
+					?? 0
+			);
+
+		if ($salesCompanyId <= 0) {
+			throw new \Exception(
+				"Sales company not found for lead."
+			);
+		}
+
+
+		$this->companyRepository ??=
+			new SalesCompanyRepository();
+
+		$company =
+			$this->companyRepository
+				->findById(
+					$salesCompanyId
+				);
+
+		if ($company === null) {
+			throw new \Exception(
+				"Sales company not found."
+			);
+		}
+
+
+		$salesContactId =
+			(int)(
+				$conversation["sales_contact_id"]
+					??
+				$lead["primary_contact_id"]
+					??
+				0
+			);
+
+		if ($salesContactId <= 0) {
+			throw new \Exception(
+				"Sales contact not found for conversation."
+			);
+		}
+
+
+		$this->contactRepository ??=
+			new SalesContactRepository();
+
+		$contact =
+			$this->contactRepository
+				->findById(
+					$salesContactId
+				);
+
+		if ($contact === null) {
+			throw new \Exception(
+				"Sales contact not found."
+			);
+		}
+
+
+		if (
+			(int)($contact["sales_company_id"] ?? 0)
+			!== $salesCompanyId
+		) {
+			throw new \Exception(
+				"Sales contact does not belong to sales company."
+			);
+		}
+
+
+		$messageResult =
+			$this->repository
+				->findByConversationId(
+					$conversationId
+				);
+
+		if (
+			empty($messageResult["success"]) ||
+			empty($messageResult["data"])
+		) {
+			throw new \Exception(
+				"Sales conversation has no messages."
+			);
+		}
+
+
+		$messages =
+			array_values(
+				$messageResult["data"]
+			);
+
+		$latestMessage =
+			end(
+				$messages
+			);
+
+		if (
+			!is_array($latestMessage) ||
+			(string)(
+				$latestMessage["direction"]
+					?? ''
+			) !== "INBOUND"
+		) {
+			throw new \Exception(
+				"AI draft can only be generated after an inbound message."
+			);
+		}
+
+
+		$contactName =
+			trim(
+				(string)(
+					$contact["first_name"]
+						?? ''
+				) .
+				" " .
+				(string)(
+					$contact["last_name"]
+						?? ''
+				)
+			);
+
+
+		$messageContext = [];
+
+		foreach ($messages as $message) {
+			$direction =
+				(string)(
+					$message["direction"]
+						?? ''
+				);
+
+			$status =
+				(string)(
+					$message["status"]
+						?? ''
+				);
+
+
+			if (
+				$direction === "OUTBOUND" &&
+				!in_array(
+					$status,
+					[
+						"SENT",
+						"DELIVERED"
+					],
+					true
+				)
+			) {
+				continue;
+			}
+
+
+			if (
+				$direction === "INBOUND" &&
+				$status !== "RECEIVED"
+			) {
+				continue;
+			}
+
+
+			$messageContext[] = [
+				"direction" =>
+					$direction,
+
+				"sender_type" =>
+					(string)(
+						$message["sender_type"]
+							?? ''
+					),
+
+				"subject" =>
+					$message["subject"]
+						?? null,
+
+				"message" =>
+					(string)(
+						$message["message"]
+							?? ''
+					)
+			];
+		}
+
+
+		if (empty($messageContext)) {
+			throw new \Exception(
+				"Sales conversation has no usable message history."
+			);
+		}
+
+
+		$context = [
+			"product" => [
+				"name" =>
+					"AllStockControl",
+
+				"verified_facts" => [
+					"AllStockControl helps companies manage inventory and stock operations from one system."
+				]
+			],
+
+			"company" => [
+				"name" =>
+					(string)(
+						$company["company_name"]
+							?? ''
+					),
+
+				"industry" =>
+					$company["industry"]
+						?? null,
+
+				"country" =>
+					$company["country"]
+						?? null,
+
+				"city" =>
+					$company["city"]
+						?? null,
+
+				"language" =>
+					$company["language"]
+						?? null
+			],
+
+			"contact" => [
+				"name" =>
+					$contactName,
+
+				"job_title" =>
+					$contact["job_title"]
+						?? null,
+
+				"language" =>
+					$contact["language"]
+						?? null
+			],
+
+			"lead" => [
+				"stage" =>
+					(string)(
+						$lead["stage"]
+							?? ''
+					),
+
+				"market" =>
+					$lead["market"]
+						?? null,
+
+				"country" =>
+					$lead["country"]
+						?? null,
+
+				"language" =>
+					$lead["language"]
+						?? null
+			],
+
+			"conversation" => [
+				"channel" =>
+					(string)(
+						$conversation["channel"]
+							?? ''
+					),
+
+				"subject" =>
+					$conversation["subject"]
+						?? null
+			],
+
+			"messages" =>
+				$messageContext
+		];
+
+
+		$this->aiSalesAgentClient ??=
+			new AiSalesAgentClient();
+
+
+		$generatedReply =
+			$this->aiSalesAgentClient
+				->generateReply(
+					$context
+				);
+
+
+		$now =
+			date(
+				"Y-m-d H:i:s"
+			);
+
+
+		$salesMessageId =
+			$this->repository
+				->createAiDraft([
+					"conversation_id" =>
+						$conversationId,
+
+					"direction" =>
+						"OUTBOUND",
+
+					"sender_type" =>
+						"AI",
+
+					"subject" =>
+						$generatedReply["subject"]
+							?? null,
+
+					"message" =>
+						$generatedReply["message"],
+
+					"status" =>
+						"PENDING_APPROVAL",
+
+					"ai_generated" =>
+						true,
+
+					"ai_model" =>
+						$generatedReply["model"]
+							?? null,
+
+					"approved" =>
+						false,
+
+					"updated_at" =>
+						$now
+				]);
+
+
+		return [
+			"sales_message_id" =>
+				$salesMessageId,
+
+			"conversation_id" =>
+				$conversationId,
+
+			"sales_lead_id" =>
+				$salesLeadId,
+
+			"status" =>
+				"PENDING_APPROVAL",
+
+			"ai_model" =>
+				$generatedReply["model"]
+					?? null,
+
+			"created_at" =>
+				$now
+		];
+	}
+
+
 	private function isDatabaseTrue(
 		mixed $value
 	): bool {
@@ -501,4 +922,7 @@ class SalesMessageService
 			$approvedByUserId
 		);
 	}
+
+
+
 }
