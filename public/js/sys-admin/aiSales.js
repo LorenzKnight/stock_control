@@ -811,6 +811,15 @@ window.loadAiSales = async function () {
 				return;
 			}
 
+			const latestMessage =
+				data.data[
+					data.data.length - 1
+				];
+
+			const canGenerateAiReply =
+				latestMessage.direction === 'INBOUND' &&
+				latestMessage.status === 'RECEIVED';
+
 			let contactName = 'CONTACT';
 
 			if (Number(salesContactId) > 0) {
@@ -841,7 +850,7 @@ window.loadAiSales = async function () {
 			messagesContainer.innerHTML = `
 				<h4>Messages</h4>
 
-				${data.data.map(message => `
+				${data.data.map((message, index) => `
 					<div
 						class="ai-sales-message ${
 							message.direction === 'INBOUND'
@@ -1053,10 +1062,47 @@ window.loadAiSales = async function () {
 									: ''
 							}
 
+							${
+								canGenerateAiReply &&
+								index === data.data.length - 1
+									? `
+										<div class="ai-sales-message-actions">
+											<button
+												type="button"
+												class="button-style-agree generate-ai-sales-reply-btn"
+												data-conversation-id="${conversationId}"
+											>
+												Generate AI reply
+											</button>
+										</div>
+									`
+									: ''
+							}
+
 						</div>
 					</div>
 				`).join('')}
 			`;
+
+
+			const generateReplyButtons =
+				messagesContainer.querySelectorAll(
+					'.generate-ai-sales-reply-btn'
+				);
+
+			generateReplyButtons.forEach(button => {
+				button.addEventListener(
+					'click',
+					async () => {
+						await generateAiSalesReply(
+							conversationId,
+							salesCompanyId,
+							salesContactId,
+							button
+						);
+					}
+				);
+			});
 
 
 			const approveButtons = messagesContainer.querySelectorAll('.approve-sales-message-btn');
@@ -1116,6 +1162,78 @@ window.loadAiSales = async function () {
 					Error loading messages.
 				</p>
 			`;
+		}
+	}
+
+	async function generateAiSalesReply(
+		conversationId,
+		salesCompanyId,
+		salesContactId,
+		button
+	) {
+		const originalText =
+			button.textContent;
+
+		button.disabled = true;
+		button.textContent =
+			'Generating...';
+
+		try {
+			const formData =
+				new FormData();
+
+			formData.append(
+				'conversation_id',
+				conversationId
+			);
+
+
+			const response =
+				await fetch(
+					'api/generate_sales_reply.php',
+					{
+						method: 'POST',
+						headers: {
+							'Accept':
+								'application/json'
+						},
+						body: formData
+					}
+				);
+
+
+			const data =
+				await response.json();
+
+
+			if (!data.success) {
+				throw new Error(
+					data.message ||
+					'Could not generate AI sales reply.'
+				);
+			}
+
+
+			await loadSalesMessages(
+				conversationId,
+				salesCompanyId,
+				salesContactId
+			);
+
+		} catch (error) {
+			console.error(
+				'Error generating AI sales reply:',
+				error
+			);
+
+			alert(
+				error.message ||
+				'Error generating AI sales reply.'
+			);
+
+			button.disabled = false;
+			button.textContent =
+				originalText;
 		}
 	}
 

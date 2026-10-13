@@ -727,10 +727,6 @@ class SalesMessageService
 
 				"city" =>
 					$company["city"]
-						?? null,
-
-				"language" =>
-					$company["language"]
 						?? null
 			],
 
@@ -740,10 +736,6 @@ class SalesMessageService
 
 				"job_title" =>
 					$contact["job_title"]
-						?? null,
-
-				"language" =>
-					$contact["language"]
 						?? null
 			],
 
@@ -760,10 +752,6 @@ class SalesMessageService
 
 				"country" =>
 					$lead["country"]
-						?? null,
-
-				"language" =>
-					$lead["language"]
 						?? null
 			],
 
