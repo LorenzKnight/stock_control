@@ -5,8 +5,12 @@ from openai import AsyncOpenAI
 from .base import (
     AIProvider,
     AIProviderResult,
+    AIStructuredResult,
+    T,
 )
 from ..schemas import SalesReply
+
+from pydantic import BaseModel
 
 
 class OpenRouterProvider(AIProvider):
@@ -95,5 +99,83 @@ class OpenRouterProvider(AIProvider):
 
         return AIProviderResult(
             reply=reply,
+            model=response.model or self.model,
+        )
+
+
+    async def generate_structured(
+        self,
+        instructions: str,
+        user_input: str,
+        response_model: type[T],
+    ) -> AIStructuredResult[T]:
+
+        response = (
+            await self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": instructions,
+                    },
+                    {
+                        "role": "user",
+                        "content": user_input,
+                    },
+                ],
+                response_format={
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name":
+                            "structured_response",
+
+                        "strict":
+                            True,
+
+                        "schema":
+                            response_model
+                            .model_json_schema(),
+                    },
+                },
+                extra_body={
+                    "provider": {
+                        "require_parameters":
+                            True
+                    }
+                },
+            )
+        )
+
+
+        content = (
+            response.choices[0]
+            .message
+            .content
+        )
+
+        if not content:
+            raise RuntimeError(
+                "OpenRouter returned an "
+                "empty structured response."
+            )
+
+
+        try:
+            data = (
+                response_model
+                .model_validate_json(
+                    content
+                )
+            )
+
+        except Exception as error:
+            raise RuntimeError(
+                "OpenRouter returned an invalid "
+                "structured response."
+            ) from error
+
+
+        return AIStructuredResult(
+            data=data,
             model=response.model or self.model,
         )

@@ -8,6 +8,13 @@ from .base import (
 )
 from ..schemas import SalesReply
 
+from .base import (
+    AIProvider,
+    AIProviderResult,
+    AIStructuredResult,
+    T,
+)
+
 
 class OpenAIProvider(AIProvider):
 
@@ -54,5 +61,34 @@ class OpenAIProvider(AIProvider):
 
         return AIProviderResult(
             reply=reply,
+            model=response.model or self.model,
+        )
+
+
+    async def generate_structured(
+        self,
+        instructions: str,
+        user_input: str,
+        response_model: type[T],
+    ) -> AIStructuredResult[T]:
+
+        response = await self.client.responses.parse(
+            model=self.model,
+            instructions=instructions,
+            input=user_input,
+            text_format=response_model,
+        )
+
+        data = response.output_parsed
+
+        if data is None:
+            raise RuntimeError(
+                "OpenAI returned no "
+                "structured response."
+            )
+
+
+        return AIStructuredResult(
+            data=data,
             model=response.model or self.model,
         )
