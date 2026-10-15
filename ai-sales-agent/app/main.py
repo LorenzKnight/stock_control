@@ -7,8 +7,15 @@ from fastapi import (
     HTTPException,
 )
 
-from .sales_agent_service import SalesAgentService
+from .company_discovery_service import (
+    CompanyDiscoveryService,
+)
+from .sales_agent_service import (
+    SalesAgentService,
+)
 from .schemas import (
+    CompanyDiscoveryRequest,
+    CompanyDiscoveryResponse,
     SalesAgentRequest,
     SalesAgentResponse,
 )
@@ -91,6 +98,35 @@ async def generate_reply(
         service = SalesAgentService()
 
         return await service.generate_reply(
+            request
+        )
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=str(error),
+        ) from error
+
+
+@app.post(
+    "/discover-companies",
+    response_model=CompanyDiscoveryResponse,
+)
+async def discover_companies(
+    request: CompanyDiscoveryRequest,
+    authorization: str | None = Header(
+        default=None
+    ),
+) -> CompanyDiscoveryResponse:
+
+    validate_agent_token(
+        authorization
+    )
+
+    try:
+        service = CompanyDiscoveryService()
+
+        return await service.find_companies(
             request
         )
 

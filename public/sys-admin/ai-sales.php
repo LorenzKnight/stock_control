@@ -2,7 +2,7 @@
 	<table align="center" cellspacing="0" style="width: 94%;">
 		<tr valign="baseline">
 			<td
-				style="border-bottom: 1px solid var(--gray-200); padding: 0 4px 10px;"
+				style="border-bottom: 1px solid var(--gray-300); padding-bottom: 10px;"
 				align="center"
 				valign="middle"
 			>
@@ -14,6 +14,17 @@
 					placeholder="Search company..."
 					title="Search company"
 				>
+			</td>
+		</tr>
+		<tr valign="baseline" >
+			<td colspan="4" style="border-bottom: 1px solid var(--gray-300); padding: 5px 0;" align="center" valign="middle">
+				<button
+					type="button"
+					id="openProspectSearchBtn"
+					class="button-style-agree"
+				>
+					Find prospects
+				</button>
 			</td>
 		</tr>
 	</table>

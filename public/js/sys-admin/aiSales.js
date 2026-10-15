@@ -3,6 +3,7 @@ window.loadAiSales = async function () {
 	const searchCompanyField = document.getElementById('searchSalesCompanyField');
 
 	const companyDetails = document.getElementById('ai-sales-details');
+	const openProspectSearchBtn = document.getElementById('openProspectSearchBtn');
 
 	if (!companyContainer) return;
 
@@ -120,6 +121,657 @@ window.loadAiSales = async function () {
 			default:
 				return 'bubble bubble-neutral';
 		}
+	}
+
+
+	function renderProspectSearch() {
+		if (!companyDetails) {
+			return;
+		}
+
+
+		companyDetails.innerHTML = `
+			<div class="ai-sales-prospecting">
+				<div class="ai-sales-prospecting-header">
+					<div>
+						<h2>Find prospects</h2>
+
+						<p>
+							Search for companies that could benefit
+							from AllStockControl.
+						</p>
+					</div>
+
+					<div class="bubble bubble-info">
+						AI Prospecting
+					</div>
+				</div>
+
+
+				<form
+					id="ai-sales-prospect-form"
+					class="ai-sales-prospect-form"
+				>
+					<div class="ai-sales-prospect-grid">
+
+						<div class="ai-sales-prospect-field">
+							<label for="prospectMarket">
+								Market
+							</label>
+
+							<input
+								type="text"
+								id="prospectMarket"
+								class="form-input-style"
+								placeholder="LATAM"
+							>
+						</div>
+
+
+						<div class="ai-sales-prospect-field">
+							<label for="prospectCountry">
+								Country
+							</label>
+
+							<input
+								type="text"
+								id="prospectCountry"
+								class="form-input-style"
+								placeholder="Dominican Republic"
+								required
+							>
+						</div>
+
+
+						<div class="ai-sales-prospect-field">
+							<label for="prospectCity">
+								City
+							</label>
+
+							<input
+								type="text"
+								id="prospectCity"
+								class="form-input-style"
+								placeholder="Santo Domingo"
+							>
+						</div>
+
+
+						<div class="ai-sales-prospect-field">
+							<label for="prospectIndustry">
+								Industry
+							</label>
+
+							<input
+								type="text"
+								id="prospectIndustry"
+								class="form-input-style"
+								placeholder="Logistics"
+								required
+							>
+						</div>
+
+
+						<div class="ai-sales-prospect-field">
+							<label for="prospectLanguage">
+								Language
+							</label>
+
+							<select class="form-input-style" id="prospectLanguage">
+								<option value="">
+									Automatic
+								</option>
+
+								<option value="en">
+									English
+								</option>
+
+								<option value="es">
+									Spanish
+								</option>
+
+								<option value="sv">
+									Swedish
+								</option>
+							</select>
+						</div>
+
+
+						<div class="ai-sales-prospect-field">
+							<label for="prospectLimit">
+								Results
+							</label>
+
+							<select class="form-input-style" id="prospectLimit">
+								<option value="5">
+									5
+								</option>
+
+								<option value="10">
+									10
+								</option>
+
+								<option value="15">
+									15
+								</option>
+
+								<option value="20">
+									20
+								</option>
+							</select>
+						</div>
+
+					</div>
+
+
+					<div class="ai-sales-prospect-suggestion">
+						<h3>
+							Optional company suggestion
+						</h3>
+
+						<p>
+							Suggest a company that should also be
+							checked independently.
+						</p>
+
+
+						<div class="ai-sales-prospect-grid">
+
+							<div class="ai-sales-prospect-field">
+								<label for="prospectSuggestionName">
+									Company name
+								</label>
+
+								<input
+									type="text"
+									id="prospectSuggestionName"
+									class="form-input-style"
+									placeholder="DSV"
+								>
+							</div>
+
+
+							<div class="ai-sales-prospect-field">
+								<label for="prospectSuggestionWebsite">
+									Website
+								</label>
+
+								<input
+									type="text"
+									id="prospectSuggestionWebsite"
+									class="form-input-style"
+									placeholder="https://www.dsv.com"
+								>
+							</div>
+
+
+							<div class="ai-sales-prospect-field">
+								<label for="prospectSuggestionCountry">
+									Country
+								</label>
+
+								<input
+									type="text"
+									id="prospectSuggestionCountry"
+									class="form-input-style"
+									placeholder="Dominican Republic"
+								>
+							</div>
+
+						</div>
+					</div>
+
+
+					<div class="ai-sales-prospect-actions">
+						<button
+							type="submit"
+							id="searchProspectsBtn"
+							class="button-style-agree"
+						>
+							Search prospects
+						</button>
+					</div>
+				</form>
+
+
+				<div
+					id="ai-sales-prospect-results"
+					class="ai-sales-prospect-results"
+				>
+				</div>
+
+			</div>
+		`;
+
+
+		const form =
+			document.getElementById(
+				'ai-sales-prospect-form'
+			);
+
+		form?.addEventListener(
+			'submit',
+			searchProspects
+		);
+	}
+
+
+	async function searchProspects(
+		event
+	) {
+		event.preventDefault();
+
+
+		const resultsContainer =
+			document.getElementById(
+				'ai-sales-prospect-results'
+			);
+
+		const button =
+			document.getElementById(
+				'searchProspectsBtn'
+			);
+
+		if (
+			!resultsContainer ||
+			!button
+		) {
+			return;
+		}
+
+
+		const market =
+			document.getElementById(
+				'prospectMarket'
+			)?.value.trim() || '';
+
+		const country =
+			document.getElementById(
+				'prospectCountry'
+			)?.value.trim() || '';
+
+		const city =
+			document.getElementById(
+				'prospectCity'
+			)?.value.trim() || '';
+
+		const industry =
+			document.getElementById(
+				'prospectIndustry'
+			)?.value.trim() || '';
+
+		const language =
+			document.getElementById(
+				'prospectLanguage'
+			)?.value || '';
+
+		const limit =
+			Number(
+				document.getElementById(
+					'prospectLimit'
+				)?.value || 5
+			);
+
+
+		const suggestionName =
+			document.getElementById(
+				'prospectSuggestionName'
+			)?.value.trim() || '';
+
+		const suggestionWebsite =
+			document.getElementById(
+				'prospectSuggestionWebsite'
+			)?.value.trim() || '';
+
+		const suggestionCountry =
+			document.getElementById(
+				'prospectSuggestionCountry'
+			)?.value.trim() || '';
+
+
+		if (
+			country === '' ||
+			industry === ''
+		) {
+			alert(
+				'Country and industry are required.'
+			);
+
+			return;
+		}
+
+
+		const search = {
+			search_id:
+				`ui-${Date.now()}`,
+
+			market:
+				market || null,
+
+			country:
+				country,
+
+			city:
+				city || null,
+
+			industry:
+				industry,
+
+			language:
+				language || null,
+
+			limit:
+				limit
+		};
+
+
+		const suggestions = [];
+
+		if (suggestionName !== '') {
+			suggestions.push(
+				{
+					name:
+						suggestionName,
+
+					website:
+						suggestionWebsite || null,
+
+					country:
+						suggestionCountry || null
+				}
+			);
+		}
+
+
+		const originalText =
+			button.textContent;
+
+		button.disabled = true;
+		button.textContent =
+			'Searching...';
+
+
+		resultsContainer.innerHTML = `
+			<div class="ai-sales-prospect-loading">
+				<p>
+					AI is searching and analyzing companies...
+				</p>
+			</div>
+		`;
+
+
+		try {
+			const response =
+				await fetch(
+					'api/discover_sales_companies.php',
+					{
+						method: 'POST',
+
+						headers: {
+							'Accept':
+								'application/json',
+
+							'Content-Type':
+								'application/json'
+						},
+
+						body:
+							JSON.stringify(
+								{
+									searches: [
+										search
+									],
+
+									suggestions:
+										suggestions
+								}
+							)
+					}
+				);
+
+
+			const data =
+				await response.json();
+
+
+			if (!data.success) {
+				throw new Error(
+					data.message ||
+					'Could not discover companies.'
+				);
+			}
+
+
+			const companies =
+				data.data?.companies;
+
+
+			if (!Array.isArray(companies)) {
+				throw new Error(
+					'Invalid company discovery response.'
+				);
+			}
+
+
+			renderProspectResults(
+				companies
+			);
+
+		} catch (error) {
+			console.error(
+				'Error discovering companies:',
+				error
+			);
+
+			resultsContainer.innerHTML = `
+				<div class="ai-sales-prospect-error">
+					<strong>
+						Could not search prospects.
+					</strong>
+
+					<p>
+						${escapeHtml(
+							error.message ||
+							'Unknown error.'
+						)}
+					</p>
+				</div>
+			`;
+
+		} finally {
+			button.disabled = false;
+			button.textContent =
+				originalText;
+		}
+	}
+
+
+	function renderProspectResults(
+		companies
+	) {
+		const resultsContainer =
+			document.getElementById(
+				'ai-sales-prospect-results'
+			);
+
+		if (!resultsContainer) {
+			return;
+		}
+
+
+		if (companies.length === 0) {
+			resultsContainer.innerHTML = `
+				<div class="ai-sales-prospect-empty">
+					<h3>No prospects found</h3>
+
+					<p>
+						Try changing the country,
+						city or industry.
+					</p>
+				</div>
+			`;
+
+			return;
+		}
+
+
+		resultsContainer.innerHTML = `
+			<div class="ai-sales-prospect-results-header">
+				<div>
+					<h3>
+						Prospects found
+					</h3>
+
+					<p>
+						${companies.length}
+						companies found.
+					</p>
+				</div>
+
+				<div class="bubble bubble-success">
+					${companies.length} results
+				</div>
+			</div>
+
+
+			<div class="ai-sales-prospect-list">
+
+				${companies.map(
+					company => `
+						<div class="ai-sales-prospect-card">
+
+							<div class="ai-sales-prospect-card-header">
+
+								<div>
+									<h3>
+										${escapeHtml(
+											company.name ||
+											'Unknown company'
+										)}
+									</h3>
+
+									<div class="ai-sales-company-meta">
+
+										${
+											company.industry
+												? `
+													<span>
+														${escapeHtml(
+															company.industry
+														)}
+													</span>
+												`
+												: ''
+										}
+
+										${
+											company.country
+												? `
+													<span>
+														${escapeHtml(
+															company.country
+														)}
+													</span>
+												`
+												: ''
+										}
+
+										${
+											company.city
+												? `
+													<span>
+														${escapeHtml(
+															company.city
+														)}
+													</span>
+												`
+												: ''
+										}
+
+									</div>
+								</div>
+
+
+								<div class="ai-sales-prospect-badges">
+
+									<div class="bubble bubble-info">
+										${escapeHtml(
+											company.source_type ||
+											'DISCOVERY'
+										)}
+									</div>
+
+									${
+										company.suggested_by_user
+											? `
+												<div class="bubble bubble-warning">
+													Suggested
+												</div>
+											`
+											: ''
+									}
+
+								</div>
+
+							</div>
+
+
+							${
+								company.source_text
+									? `
+										<p class="ai-sales-prospect-description">
+											${escapeHtml(
+												company.source_text
+											)}
+										</p>
+									`
+									: ''
+							}
+
+
+							<div class="ai-sales-prospect-links">
+
+								${
+									company.website
+										? `
+											<a
+												href="${escapeHtml(
+													company.website
+												)}"
+												target="_blank"
+												rel="noopener noreferrer"
+											>
+												Website
+											</a>
+										`
+										: ''
+								}
+
+
+								${
+									company.source_url
+										? `
+											<a
+												href="${escapeHtml(
+													company.source_url
+												)}"
+												target="_blank"
+												rel="noopener noreferrer"
+											>
+												Source
+											</a>
+										`
+										: ''
+								}
+
+							</div>
+
+						</div>
+					`
+				).join('')}
+
+			</div>
+		`;
 	}
 
 
@@ -1615,6 +2267,11 @@ window.loadAiSales = async function () {
 			`;
 		}
 	}
+
+	openProspectSearchBtn?.addEventListener(
+		'click',
+		renderProspectSearch
+	);
 
 	searchCompanyField?.addEventListener(
 		'keyup',

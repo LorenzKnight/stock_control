@@ -31,6 +31,7 @@
         font-size: 12px;
         border-radius: 10px;
         border: 1px solid var(--border-light);
+        box-sizing: border-box;
         text-align: center;
         -moz-appearance: inherit; 
         -o-appearance: inherit;
