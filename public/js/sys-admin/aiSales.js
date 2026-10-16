@@ -164,12 +164,22 @@ window.loadAiSales = async function () {
 								Market
 							</label>
 
-							<input
-								type="text"
+							<select
 								id="prospectMarket"
 								class="form-input-style"
-								placeholder="LATAM"
 							>
+								<option value="LATAM">
+									LATAM
+								</option>
+
+								<option value="SWEDEN">
+									SWEDEN
+								</option>
+
+								<option value="OTHER">
+									OTHER
+								</option>
+							</select>
 						</div>
 
 
