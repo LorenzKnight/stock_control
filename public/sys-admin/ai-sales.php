@@ -17,7 +17,11 @@
 			</td>
 		</tr>
 		<tr valign="baseline" >
-			<td colspan="4" style="border-bottom: 1px solid var(--gray-300); padding: 5px 0;" align="center" valign="middle">
+			<td 
+				colspan="4" style="border-bottom: 1px solid var(--gray-300); padding: 5px 0;"
+				align="center"
+				valign="middle"
+			>
 				<button
 					type="button"
 					id="openProspectSearchBtn"

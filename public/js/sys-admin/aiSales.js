@@ -20,6 +20,11 @@ window.loadAiSales = async function () {
 
 	const salesContactsCache = new Map();
 
+	let prospectSearchContext = {
+		market: null,
+		language: null
+	};
+
 	async function getSalesContacts(salesCompanyId) {
 		const companyId = Number(salesCompanyId);
 
@@ -499,6 +504,14 @@ window.loadAiSales = async function () {
 			</div>
 		`;
 
+		prospectSearchContext = {
+			market:
+				market || null,
+
+			language:
+				language || null
+		};
+
 
 		try {
 			const response =
@@ -637,7 +650,7 @@ window.loadAiSales = async function () {
 			<div class="ai-sales-prospect-list">
 
 				${companies.map(
-					company => `
+					(company, index) => `
 						<div class="ai-sales-prospect-card">
 
 							<div class="ai-sales-prospect-card-header">
@@ -764,6 +777,14 @@ window.loadAiSales = async function () {
 										: ''
 								}
 
+								<button
+									type="button"
+									class="button-style-agree ai-sales-add-prospect-btn"
+									data-prospect-index="${index}"
+								>
+									Add prospect
+								</button>
+
 							</div>
 
 						</div>
@@ -772,6 +793,131 @@ window.loadAiSales = async function () {
 
 			</div>
 		`;
+
+		const addProspectButtons =
+			resultsContainer.querySelectorAll(
+				'.ai-sales-add-prospect-btn'
+			);
+
+		addProspectButtons.forEach(
+			button => {
+				button.addEventListener(
+					'click',
+					async () => {
+						const index =
+							Number(
+								button.dataset.prospectIndex
+							);
+
+						const company =
+							companies[index];
+
+						if (!company) {
+							return;
+						}
+
+						await addProspect(
+							company,
+							button
+						);
+					}
+				);
+			}
+		);
+	}
+
+
+	async function addProspect(
+		company,
+		button
+	) {
+		const originalText =
+			button.textContent;
+
+
+		button.disabled = true;
+		button.textContent =
+			'Adding...';
+
+
+		try {
+			const response =
+				await fetch(
+					'api/create_sales_company.php',
+					{
+						method: 'POST',
+
+						headers: {
+							'Accept':
+								'application/json',
+
+							'Content-Type':
+								'application/json'
+						},
+
+						body:
+							JSON.stringify(
+								{
+									company:
+										company,
+
+									market:
+										prospectSearchContext.market,
+
+									language:
+										prospectSearchContext.language
+								}
+							)
+					}
+				);
+
+
+			const data =
+				await response.json();
+
+
+			if (!data.success) {
+				throw new Error(
+					data.message ||
+						'Could not add prospect.'
+				);
+			}
+
+
+			const created =
+				Boolean(
+					data.data?.created
+				);
+
+
+			button.textContent =
+				created
+					? 'Added'
+					: 'Already added';
+
+			button.disabled =
+				true;
+
+
+			await fetchAndRenderCompanies();
+
+		} catch (error) {
+			console.error(
+				'Error adding prospect:',
+				error
+			);
+
+			alert(
+				error.message ||
+					'Could not add prospect.'
+			);
+
+			button.disabled =
+				false;
+
+			button.textContent =
+				originalText;
+		}
 	}
 
 

@@ -314,7 +314,7 @@ class AiSalesAgentClient
                     "discover-companies"
                 ),
                 $payload,
-                60
+                120
             );
 
 

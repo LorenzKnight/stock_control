@@ -99,4 +99,103 @@ class SalesCompanyRepository
 
 		return $result["data"];
 	}
+
+
+	public function findByDomain(
+		string $domain
+	): ?array {
+		$domain =
+			strtolower(
+				trim(
+					$domain
+				)
+			);
+
+		if ($domain === '') {
+			return null;
+		}
+
+
+		$result =
+			\select_from(
+				"sales_companies",
+				[
+					"sales_company_id",
+					"company_name",
+					"website",
+					"domain",
+					"market",
+					"country",
+					"city",
+					"industry",
+					"language",
+					"description",
+					"source",
+					"source_url",
+					"ai_researched"
+				],
+				[
+					"domain" =>
+						$domain
+				],
+				[
+					"fetch_first" =>
+						true,
+
+					"return_type" =>
+						"array"
+				]
+			);
+
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"SalesCompanyRepository expected an array response."
+			);
+		}
+
+
+		if (
+			empty($result["success"]) ||
+			empty($result["data"])
+		) {
+			return null;
+		}
+
+
+		return $result["data"];
+	}
+
+
+	public function create(
+		array $data
+	): int {
+		$result =
+			\insert_into(
+				"sales_companies",
+				$data,
+				[
+					"id" =>
+						"sales_company_id",
+
+					"return_type" =>
+						"array"
+				]
+			);
+
+
+		if (
+			!is_array($result) ||
+			empty($result["success"]) ||
+			empty($result["id"])
+		) {
+			throw new \RuntimeException(
+				$result["message"]
+					?? "Could not create sales company."
+			);
+		}
+
+
+		return (int)$result["id"];
+	}
 }
