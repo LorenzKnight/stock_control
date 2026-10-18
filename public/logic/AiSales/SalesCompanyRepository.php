@@ -34,6 +34,11 @@ class SalesCompanyRepository
 				"source",
 				"source_url",
 				"ai_researched",
+				"research_status",
+				"research_summary",
+				"research_inventory_context",
+				"research_sources",
+				"researched_at",
 				"created_by",
 				"created_at",
 				"updated_at"
@@ -197,5 +202,42 @@ class SalesCompanyRepository
 
 
 		return (int)$result["id"];
+	}
+
+
+	public function updateResearch(
+		int $salesCompanyId,
+		array $data
+	): void {
+		if ($salesCompanyId <= 0) {
+			throw new \InvalidArgumentException(
+				"Invalid sales company ID."
+			);
+		}
+
+
+		$result =
+			\update_table(
+				"sales_companies",
+				$data,
+				[
+					"sales_company_id" =>
+						$salesCompanyId
+				],
+				[
+					"return_type" =>
+						"array"
+				]
+			);
+
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Could not update company research."
+			);
+		}
 	}
 }

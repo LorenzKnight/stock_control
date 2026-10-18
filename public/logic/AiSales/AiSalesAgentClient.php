@@ -330,4 +330,109 @@ class AiSalesAgentClient
 
         return $companies;
     }
+
+
+    public function researchCompany(
+        array $company
+    ): array {
+        $companyName =
+            trim(
+                (string)(
+                    $company["company_name"] ?? ''
+                )
+            );
+
+        if ($companyName === '') {
+            throw new \InvalidArgumentException(
+                "Company name is required for research."
+            );
+        }
+
+
+        $payload = [
+            "name" =>
+                $companyName,
+
+            "website" =>
+                $company["website"] ?? null,
+
+            "domain" =>
+                $company["domain"] ?? null,
+
+            "market" =>
+                $company["market"] ?? null,
+
+            "country" =>
+                $company["country"] ?? null,
+
+            "city" =>
+                $company["city"] ?? null,
+
+            "industry" =>
+                $company["industry"] ?? null,
+
+            "language" =>
+                $company["language"] ?? null
+        ];
+
+
+        $data =
+            $this->postJson(
+                $this->resolveEndpointUrl(
+                    "research-company"
+                ),
+                $payload,
+                120
+            );
+
+
+        $summary =
+            trim(
+                (string)(
+                    $data["summary"] ?? ''
+                )
+            );
+
+        if ($summary === '') {
+            throw new \RuntimeException(
+                "AI Sales Agent returned an empty company research summary."
+            );
+        }
+
+
+        $sources =
+            $data["sources"] ?? [];
+
+        if (!is_array($sources)) {
+            throw new \RuntimeException(
+                "AI Sales Agent returned invalid research sources."
+            );
+        }
+
+
+        return [
+            "summary" =>
+                $summary,
+
+            "inventory_context" =>
+                $data["inventory_context"] ?? null,
+
+            "city" =>
+                $data["city"] ?? null,
+
+            "industry" =>
+                $data["industry"] ?? null,
+
+            "language" =>
+                $data["language"] ?? null,
+
+            "sources" =>
+                array_values(
+                    $sources
+                ),
+
+            "model" =>
+                $data["model"] ?? null
+        ];
+    }
 }

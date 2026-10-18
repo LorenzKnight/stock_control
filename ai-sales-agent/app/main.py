@@ -16,8 +16,13 @@ from .sales_agent_service import (
 from .schemas import (
     CompanyDiscoveryRequest,
     CompanyDiscoveryResponse,
+    CompanyResearchRequest,
+    CompanyResearchResponse,
     SalesAgentRequest,
     SalesAgentResponse,
+)
+from .company_research_service import (
+    CompanyResearchService,
 )
 
 
@@ -127,6 +132,35 @@ async def discover_companies(
         service = CompanyDiscoveryService()
 
         return await service.find_companies(
+            request
+        )
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=str(error),
+        ) from error
+
+
+@app.post(
+    "/research-company",
+    response_model=CompanyResearchResponse,
+)
+async def research_company(
+    request: CompanyResearchRequest,
+    authorization: str | None = Header(
+        default=None
+    ),
+) -> CompanyResearchResponse:
+
+    validate_agent_token(
+        authorization
+    )
+
+    try:
+        service = CompanyResearchService()
+
+        return await service.research_company(
             request
         )
 

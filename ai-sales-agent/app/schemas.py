@@ -120,3 +120,48 @@ class CompanyAnalysisResponse(BaseModel):
     results: list[
         CompanyAnalysisItem
     ]
+
+
+class CompanyResearchRequest(BaseModel):
+    name: str = Field(
+        min_length=1
+    )
+
+    website: str | None = None
+    domain: str | None = None
+
+    market: str | None = None
+    country: str | None = None
+    city: str | None = None
+    industry: str | None = None
+    language: str | None = None
+
+
+class CompanyResearchAnalysis(BaseModel):
+    summary: str = Field(
+        min_length=1
+    )
+
+    inventory_context: str | None = None
+
+    city: str | None = None
+    industry: str | None = None
+    language: str | None = None
+
+    source_indexes: list[int] = Field(
+        min_length=1
+    )
+
+
+class CompanyResearchResponse(BaseModel):
+    summary: str
+
+    inventory_context: str | None = None
+
+    city: str | None = None
+    industry: str | None = None
+    language: str | None = None
+
+    sources: list[str]
+
+    model: str

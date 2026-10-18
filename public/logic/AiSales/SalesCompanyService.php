@@ -226,7 +226,10 @@ class SalesCompanyService
 						),
 
 					"ai_researched" =>
-						true,
+						false,
+
+					"research_status" =>
+						"PENDING",
 
 					"created_by" =>
 						$userId
@@ -266,5 +269,145 @@ class SalesCompanyService
 			$value !== ''
 				? $value
 				: null;
+	}
+
+
+	public function markResearching(
+		int $salesCompanyId
+	): void {
+		$this->repository->updateResearch(
+			$salesCompanyId,
+			[
+				"research_status" =>
+					"RESEARCHING",
+
+				"updated_at" =>
+					date(
+						"Y-m-d H:i:s"
+					)
+			]
+		);
+	}
+
+
+	public function completeResearch(
+		int $salesCompanyId,
+		array $company,
+		array $research
+	): void {
+		$summary =
+			trim(
+				(string)(
+					$research["summary"] ?? ''
+				)
+			);
+
+		if ($summary === '') {
+			throw new \InvalidArgumentException(
+				"Research summary is required."
+			);
+		}
+
+
+		$sources =
+			$research["sources"] ?? [];
+
+		if (!is_array($sources)) {
+			$sources = [];
+		}
+
+
+		$encodedSources =
+			json_encode(
+				array_values(
+					$sources
+				),
+				JSON_UNESCAPED_UNICODE |
+				JSON_UNESCAPED_SLASHES
+			);
+
+		if ($encodedSources === false) {
+			throw new \RuntimeException(
+				"Could not encode company research sources."
+			);
+		}
+
+
+		$researchedAt =
+			date(
+				"Y-m-d H:i:s"
+			);
+
+
+		$this->repository->updateResearch(
+			$salesCompanyId,
+			[
+				"city" =>
+					$this->nullableString(
+						$research["city"]
+							?? $company["city"]
+							?? null
+					),
+
+				"industry" =>
+					$this->nullableString(
+						$research["industry"]
+							?? $company["industry"]
+							?? null
+					),
+
+				"language" =>
+					$this->nullableString(
+						$research["language"]
+							?? $company["language"]
+							?? null
+					),
+
+				"research_summary" =>
+					$summary,
+
+				"research_inventory_context" =>
+					$this->nullableString(
+						$research["inventory_context"]
+							?? null
+					),
+
+				"research_sources" =>
+					$encodedSources,
+
+				"research_status" =>
+					"COMPLETED",
+
+				"ai_researched" =>
+					true,
+
+				"researched_at" =>
+					$researchedAt,
+
+				"updated_at" =>
+					$researchedAt
+			]
+		);
+	}
+
+
+	public function markResearchFailed(
+		int $salesCompanyId
+	): void {
+		$this->repository->updateResearch(
+			$salesCompanyId,
+			[
+				"research_status" =>
+					"FAILED",
+
+				"ai_researched" =>
+					false,
+
+				"updated_at" =>
+					date(
+						"Y-m-d H:i:s"
+					)
+			]
+		);
 	}
 }

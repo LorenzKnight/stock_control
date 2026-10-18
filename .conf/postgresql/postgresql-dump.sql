@@ -617,6 +617,11 @@ CREATE TABLE IF NOT EXISTS sales_companies (
 	source VARCHAR(100) NULL, -- AI | MANUAL | WEB | LINKEDIN | OTHER
 	source_url TEXT NULL,
 	ai_researched BOOLEAN DEFAULT FALSE,
+	research_status VARCHAR(20) DEFAULT 'PENDING', -- PENDING | RESEARCHING | COMPLETED | FAILED
+	research_summary TEXT NULL,
+	research_inventory_context TEXT NULL,
+	research_sources TEXT NULL,
+	researched_at TIMESTAMP NULL,
 	created_by INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

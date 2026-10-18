@@ -368,16 +368,19 @@ function update_table(string $tableName, array $queryData = [], array $whereClau
 
 	foreach ($queryData as $column => $value) {
 		if ($value === "NULL" || is_null($value)) {
-            $setParts[] = "$column = NULL";
-        } elseif (is_numeric($value)) {
-            $setParts[] = "$column = $value";
-        } elseif (preg_match('/^\s*([a-zA-Z_]+\s*[\+\-\*\/]\s*\d+)\s*$/', $value)) {
-            $setParts[] = "$column = $value";
-        } else {
-            $escapedValue = "'" . pg_escape_string($sql, (string)$value) . "'";
-            $setParts[] = "$column = $escapedValue";
-        }
+			$setParts[] = "$column = NULL";
+		} elseif (is_bool($value)) {
+			$setParts[] = "$column = " . ($value ? "TRUE" : "FALSE");
+		} elseif (is_numeric($value)) {
+			$setParts[] = "$column = $value";
+		} elseif (preg_match('/^\s*([a-zA-Z_]+\s*[\+\-\*\/]\s*\d+)\s*$/', $value)) {
+			$setParts[] = "$column = $value";
+		} else {
+			$escapedValue = "'" . pg_escape_string($sql, (string)$value) . "'";
+			$setParts[] = "$column = $escapedValue";
+		}
 	}
+
 	$setClause = implode(', ', $setParts);
 
 	$whereParts = [];

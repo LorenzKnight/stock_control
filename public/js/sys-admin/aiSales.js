@@ -508,11 +508,26 @@ window.loadAiSales = async function () {
 
 		resultsContainer.innerHTML = `
 			<div class="ai-sales-prospect-loading">
-				<p>
-					AI is searching and analyzing companies...
-				</p>
+				<div class="ai-sales-empty-loading-icon">
+					<img
+						src="images/sys-img/loading2.gif"
+						alt="AI Sales"
+						width="100"
+						height="100"
+					>
+				</div>
+
+				<div>
+					<p>
+						AI is searching and analyzing companies...
+					</p>
+				</div>
 			</div>
 		`;
+
+		// TEMPORARY:
+		// Keep loading state visible while redesigning.
+		// return;
 
 		prospectSearchContext = {
 			market:
@@ -837,6 +852,110 @@ window.loadAiSales = async function () {
 	}
 
 
+	async function researchProspect(
+		salesCompanyId
+	) {
+		const response =
+			await fetch(
+				'api/research_sales_company.php',
+				{
+					method: 'POST',
+
+					headers: {
+						'Accept':
+							'application/json',
+
+						'Content-Type':
+							'application/json'
+					},
+
+					body:
+						JSON.stringify(
+							{
+								sales_company_id:
+									salesCompanyId
+							}
+						)
+				}
+			);
+
+
+		const responseText =
+			await response.text();
+
+
+		let data;
+
+
+		try {
+			data =
+				JSON.parse(
+					responseText
+				);
+
+		} catch (error) {
+			throw new Error(
+				`Server returned HTTP ${response.status} instead of JSON.`
+			);
+		}
+
+
+		if (
+			!response.ok ||
+			!data.success
+		) {
+			throw new Error(
+				data.message ||
+					'Could not research company.'
+			);
+		}
+
+
+		return data.data;
+	}
+
+
+	function renderResearchProcessing() {
+		if (!companyDetails) {
+			return;
+		}
+
+
+		const processing =
+			document.createElement(
+				'div'
+			);
+
+		processing.className =
+			'ai-sales-processing';
+
+		processing.innerHTML = `
+			<div class="ai-sales-empty-loading-icon">
+				<img
+					src="images/sys-img/loading2.gif"
+					alt="Processing"
+					class="ai-sales-processing-gif"
+				>
+			</div>
+
+			<div>
+				<strong>
+					Researching company...
+				</strong>
+
+				<p>
+					AI is analyzing company information and verified sources.
+				</p>
+			</div>
+		`;
+
+
+		companyDetails.prepend(
+			processing
+		);
+	}
+
+
 	async function addProspect(
 		company,
 		button
@@ -899,6 +1018,11 @@ window.loadAiSales = async function () {
 					data.data?.created
 				);
 
+			const salesCompanyId =
+				Number(
+					data.data?.sales_company_id
+				);
+
 
 			button.textContent =
 				created
@@ -910,6 +1034,47 @@ window.loadAiSales = async function () {
 
 
 			await fetchAndRenderCompanies();
+
+
+			if (
+				!created ||
+				salesCompanyId <= 0
+			) {
+				return;
+			}
+
+
+			button.textContent =
+				'Researching...';
+
+
+			renderResearchProcessing();
+
+			try {
+				await researchProspect(
+					salesCompanyId
+				);
+
+
+				button.textContent =
+					'Added';
+
+
+				await fetchAndRenderCompanies();
+
+			} catch (researchError) {
+				console.error(
+					'Error researching prospect:',
+					researchError
+				);
+
+
+				button.textContent =
+					'Added · Research failed';
+
+
+				await fetchAndRenderCompanies();
+			}
 
 		} catch (error) {
 			console.error(
@@ -928,6 +1093,346 @@ window.loadAiSales = async function () {
 			button.textContent =
 				originalText;
 		}
+	}
+
+	
+	function getResearchStatusBubble(
+		status
+	) {
+		switch (
+			String(
+				status || ''
+			).toUpperCase()
+		) {
+			case 'COMPLETED':
+				return 'bubble bubble-success';
+
+			case 'RESEARCHING':
+				return 'bubble bubble-info';
+
+			case 'FAILED':
+				return 'bubble bubble-danger';
+
+			case 'PENDING':
+			default:
+				return 'bubble bubble-warning';
+		}
+	}
+
+
+	function parseResearchSources(
+		value
+	) {
+		if (Array.isArray(value)) {
+			return value;
+		}
+
+
+		if (
+			typeof value !== 'string' ||
+			value.trim() === ''
+		) {
+			return [];
+		}
+
+
+		try {
+			const parsed =
+				JSON.parse(
+					value
+				);
+
+			return Array.isArray(parsed)
+				? parsed
+				: [];
+
+		} catch (error) {
+			console.error(
+				'Could not parse research sources:',
+				error
+			);
+
+			return [];
+		}
+	}
+
+
+	function stripHtmlTags(
+		value
+	) {
+		return String(
+			value || ''
+		)
+			.replace(
+				/<[^>]*>/g,
+				''
+			)
+			.trim();
+	}
+
+
+	function renderCompanyResearch(
+		company
+	) {
+		const status =
+			String(
+				company.research_status ||
+				'PENDING'
+			).toUpperCase();
+
+
+		if (status === 'RESEARCHING') {
+			return `
+				<section
+					class="ai-sales-card ai-sales-research-card"
+					id="ai-sales-company-research"
+				>
+					<div class="ai-sales-research-header">
+						<h3>
+							Company Research
+						</h3>
+
+						<span class="${getResearchStatusBubble(status)}">
+							RESEARCHING
+						</span>
+					</div>
+
+					<div class="ai-sales-processing">
+						<img
+							src="images/sys-img/loading6.gif"
+							alt="Processing"
+							class="ai-sales-processing-gif"
+						>
+
+						<div>
+							<strong>
+								Researching company...
+							</strong>
+
+							<p>
+								AI is analyzing company information
+								and verified sources.
+							</p>
+						</div>
+					</div>
+				</section>
+			`;
+		}
+
+
+		if (status === 'FAILED') {
+			return `
+				<section
+					class="ai-sales-card ai-sales-research-card"
+					id="ai-sales-company-research"
+				>
+					<div class="ai-sales-research-header">
+						<h3>
+							Company Research
+						</h3>
+
+						<span class="${getResearchStatusBubble(status)}">
+							FAILED
+						</span>
+					</div>
+
+					<p class="ai-sales-research-message">
+						Company research could not be completed.
+					</p>
+
+					<button
+						type="button"
+						class="button-style-agree"
+						data-research-company-id="${
+							Number(
+								company.sales_company_id
+							)
+						}"
+					>
+						Retry research
+					</button>
+				</section>
+			`;
+		}
+
+
+		if (status === 'PENDING') {
+			return `
+				<section
+					class="ai-sales-card ai-sales-research-card"
+					id="ai-sales-company-research"
+				>
+					<div class="ai-sales-research-header">
+						<h3>
+							Company Research
+						</h3>
+
+						<span class="${getResearchStatusBubble(status)}">
+							PENDING
+						</span>
+					</div>
+
+					<p class="ai-sales-research-message">
+						Waiting for company research.
+					</p>
+
+					<button
+						type="button"
+						class="button-style-agree"
+						data-research-company-id="${
+							Number(
+								company.sales_company_id
+							)
+						}"
+					>
+						Start research
+					</button>
+				</section>
+			`;
+		}
+
+
+		const sources =
+			parseResearchSources(
+				company.research_sources
+			);
+
+
+		return `
+			<section
+				class="ai-sales-card ai-sales-research-card"
+				id="ai-sales-company-research"
+			>
+				<div class="ai-sales-research-header">
+					<h3>
+						Company Research
+					</h3>
+
+					<span class="${getResearchStatusBubble(status)}">
+						COMPLETED
+					</span>
+				</div>
+
+				<div class="ai-sales-research-content">
+
+					<div class="ai-sales-research-section">
+						<strong>
+							Summary
+						</strong>
+
+						<p>
+							${escapeHtml(
+								company.research_summary ||
+								'No research summary available.'
+							)}
+						</p>
+					</div>
+
+					<div class="ai-sales-research-section">
+						<strong>
+							Inventory context
+						</strong>
+
+						<p>
+							${escapeHtml(
+								company.research_inventory_context ||
+								'No inventory-related context was confirmed.'
+							)}
+						</p>
+					</div>
+
+				</div>
+
+				${
+					sources.length > 0
+						? `
+							<div class="ai-sales-research-sources">
+								<strong>
+									Sources
+								</strong>
+
+								<div class="ai-sales-research-source-list">
+									${sources.map(
+										(source, index) => `
+											<a
+												href="${escapeHtml(source)}"
+												target="_blank"
+												rel="noopener noreferrer"
+											>
+												Source ${index + 1}
+											</a>
+										`
+									).join('')}
+								</div>
+							</div>
+						`
+						: ''
+				}
+
+				${
+					company.researched_at
+						? `
+							<p class="ai-sales-research-date">
+								Researched:
+								${escapeHtml(
+									company.researched_at
+								)}
+							</p>
+						`
+						: ''
+				}
+			</section>
+		`;
+	}
+
+
+	async function refreshCompanyDetails(
+		salesCompanyId
+	) {
+		const response =
+			await fetch(
+				'api/get_sales_companies.php',
+				{
+					headers: {
+						'Accept':
+							'application/json'
+					}
+				}
+			);
+
+
+		const data =
+			await response.json();
+
+
+		if (
+			!data.success ||
+			!Array.isArray(data.data)
+		) {
+			return;
+		}
+
+
+		const company =
+			data.data.find(
+				item =>
+					Number(
+						item.sales_company_id
+					) ===
+					Number(
+						salesCompanyId
+					)
+			);
+
+
+		if (!company) {
+			return;
+		}
+
+
+		renderCompanyDetails(
+			company
+		);
 	}
 
 
@@ -1061,8 +1566,10 @@ window.loadAiSales = async function () {
 
 						<p class="ai-sales-company-description">
 							${escapeHtml(
-								company.description ||
-								'No description available.'
+								stripHtmlTags(
+									company.description ||
+									'No description available.'
+								)
 							)}
 						</p>
 
@@ -1180,6 +1687,7 @@ window.loadAiSales = async function () {
 
 				</div>
 
+				${renderCompanyResearch(company)}
 
 				<div
 					id="ai-sales-conversations-panel"
@@ -1196,6 +1704,86 @@ window.loadAiSales = async function () {
 
 		loadSalesLeads(
 			company.sales_company_id
+		);
+
+		const researchButton =
+			document.querySelector(
+				'[data-research-company-id]'
+			);
+
+
+		researchButton?.addEventListener(
+			'click',
+			async () => {
+				const salesCompanyId =
+					Number(
+						researchButton
+							.dataset
+							.researchCompanyId
+					);
+
+				if (salesCompanyId <= 0) {
+					return;
+				}
+
+
+				researchButton.disabled =
+					true;
+
+				researchButton.textContent =
+					'Researching...';
+
+
+				const researchContainer =
+					document.getElementById(
+						'ai-sales-company-research'
+					);
+
+
+				if (researchContainer) {
+					researchContainer.innerHTML = `
+						<div class="ai-sales-processing">
+							<img
+								src="images/sys-img/loading6.gif"
+								alt="Processing"
+								class="ai-sales-processing-gif"
+							>
+
+							<div>
+								<strong>
+									Researching company...
+								</strong>
+
+								<p>
+									AI is analyzing company information
+									and verified sources.
+								</p>
+							</div>
+						</div>
+					`;
+				}
+
+
+				try {
+					await researchProspect(
+						salesCompanyId
+					);
+
+					await refreshCompanyDetails(
+						salesCompanyId
+					);
+
+				} catch (error) {
+					console.error(
+						'Error researching company:',
+						error
+					);
+
+					await refreshCompanyDetails(
+						salesCompanyId
+					);
+				}
+			}
 		);
 	}
 
