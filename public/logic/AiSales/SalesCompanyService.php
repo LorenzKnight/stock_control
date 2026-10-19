@@ -410,4 +410,129 @@ class SalesCompanyService
 			]
 		);
 	}
+
+
+	public function markQualifying(
+		int $salesCompanyId
+	): void {
+		$this->repository->updateQualification(
+			$salesCompanyId,
+			[
+				"qualification_status" =>
+					"QUALIFYING",
+
+				"updated_at" =>
+					date(
+						"Y-m-d H:i:s"
+					)
+			]
+		);
+	}
+
+
+	public function completeQualification(
+		int $salesCompanyId,
+		array $qualification
+	): void {
+		$score =
+			(int)(
+				$qualification["score"] ?? -1
+			);
+
+		$level =
+			strtoupper(
+				trim(
+					(string)(
+						$qualification["level"] ?? ''
+					)
+				)
+			);
+
+		$reason =
+			trim(
+				(string)(
+					$qualification["reason"] ?? ''
+				)
+			);
+
+
+		if (
+			$score < 0 ||
+			$score > 100
+		) {
+			throw new \InvalidArgumentException(
+				"Invalid qualification score."
+			);
+		}
+
+		if (
+			!in_array(
+				$level,
+				[
+					"LOW",
+					"MEDIUM",
+					"HIGH"
+				],
+				true
+			)
+		) {
+			throw new \InvalidArgumentException(
+				"Invalid qualification level."
+			);
+		}
+
+		if ($reason === '') {
+			throw new \InvalidArgumentException(
+				"Qualification reason is required."
+			);
+		}
+
+
+		$qualifiedAt =
+			date(
+				"Y-m-d H:i:s"
+			);
+
+
+		$this->repository->updateQualification(
+			$salesCompanyId,
+			[
+				"qualification_score" =>
+					$score,
+
+				"qualification_level" =>
+					$level,
+
+				"qualification_reason" =>
+					$reason,
+
+				"qualification_status" =>
+					"COMPLETED",
+
+				"qualified_at" =>
+					$qualifiedAt,
+
+				"updated_at" =>
+					$qualifiedAt
+			]
+		);
+	}
+
+
+	public function markQualificationFailed(
+		int $salesCompanyId
+	): void {
+		$this->repository->updateQualification(
+			$salesCompanyId,
+			[
+				"qualification_status" =>
+					"FAILED",
+
+				"updated_at" =>
+					date(
+						"Y-m-d H:i:s"
+					)
+			]
+		);
+	}
 }

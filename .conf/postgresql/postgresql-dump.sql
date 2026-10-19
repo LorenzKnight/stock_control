@@ -622,6 +622,11 @@ CREATE TABLE IF NOT EXISTS sales_companies (
 	research_inventory_context TEXT NULL,
 	research_sources TEXT NULL,
 	researched_at TIMESTAMP NULL,
+	qualification_status VARCHAR(20) DEFAULT 'PENDING', -- PENDING | QUALIFYING | COMPLETED | FAILED
+	qualification_score INTEGER NULL, -- 0 - 100
+	qualification_level VARCHAR(20) NULL, -- LOW | MEDIUM | HIGH
+	qualification_reason TEXT NULL,
+	qualified_at TIMESTAMP NULL,
 	created_by INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

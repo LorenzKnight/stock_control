@@ -176,9 +176,20 @@ STRICT RULES:
 
 SUMMARY:
 
-- summary must briefly explain what the company
-  does based on the supplied evidence.
-- Keep it useful for a salesperson.
+- summary must explain only the most important
+  factual information about the company.
+- Write exactly 2 or 3 concise sentences.
+- Keep the summary under 90 words.
+- Focus on what the company does, its relevant
+  operations, and the most important verified
+  business context.
+- Do not include sales recommendations.
+- Do not include outreach strategy.
+- Do not include suggested next steps.
+- Do not explain the research process.
+- Do not mention missing information.
+- Do not include disclaimers, conclusions,
+  sign-offs, or messages to the salesperson.
 - Do not include unsupported promotional claims.
 
 INVENTORY CONTEXT:
@@ -188,13 +199,8 @@ INVENTORY CONTEXT:
   stock, distribution, logistics, products,
   fulfilment, supply chain, branches, or physical
   goods.
-- The purpose is to understand whether
-  AllStockControl could potentially be relevant.
-- Do not claim the company needs inventory software.
-- Do not claim they have a problem unless evidence
-  explicitly supports it.
-- If no relevant operational context is supported,
-  inventory_context must be null.
+- Keep inventory_context to 1 or 2 concise
+  sentences.
 
 LOCATION:
 

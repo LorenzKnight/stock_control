@@ -468,4 +468,357 @@ final class SalesCompanyServiceTest extends TestCase
 			77
 		);
 	}
+
+
+    public function testMarkQualifyingUpdatesStatus(): void
+	{
+		$repository =
+			$this->createMock(
+				SalesCompanyRepository::class
+			);
+
+
+		$repository
+			->expects($this->once())
+			->method('updateQualification')
+			->with(
+				77,
+				$this->callback(
+					function (array $data): bool {
+
+						$this->assertSame(
+							'QUALIFYING',
+							$data['qualification_status']
+						);
+
+						$this->assertMatchesRegularExpression(
+							'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/',
+							$data['updated_at']
+						);
+
+
+						return true;
+					}
+				)
+			);
+
+
+		$service =
+			new SalesCompanyService(
+				$repository
+			);
+
+
+		$service->markQualifying(
+			77
+		);
+	}
+
+
+	public function testCompleteQualificationStoresQualificationData(): void
+	{
+		$repository =
+			$this->createMock(
+				SalesCompanyRepository::class
+			);
+
+
+		$repository
+			->expects($this->once())
+			->method('updateQualification')
+			->with(
+				77,
+				$this->callback(
+					function (array $data): bool {
+
+						$this->assertSame(
+							88,
+							$data['qualification_score']
+						);
+
+						$this->assertSame(
+							'HIGH',
+							$data['qualification_level']
+						);
+
+						$this->assertSame(
+							'Strong warehousing, storage and distribution relevance.',
+							$data['qualification_reason']
+						);
+
+						$this->assertSame(
+							'COMPLETED',
+							$data['qualification_status']
+						);
+
+						$this->assertMatchesRegularExpression(
+							'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/',
+							$data['qualified_at']
+						);
+
+						$this->assertSame(
+							$data['qualified_at'],
+							$data['updated_at']
+						);
+
+
+						return true;
+					}
+				)
+			);
+
+
+		$service =
+			new SalesCompanyService(
+				$repository
+			);
+
+
+		$service->completeQualification(
+			77,
+			[
+				'score' =>
+					88,
+
+				'level' =>
+					'HIGH',
+
+				'reason' =>
+					'Strong warehousing, storage and distribution relevance.'
+			]
+		);
+	}
+
+
+	public function testCompleteQualificationNormalizesLevel(): void
+	{
+		$repository =
+			$this->createMock(
+				SalesCompanyRepository::class
+			);
+
+
+		$repository
+			->expects($this->once())
+			->method('updateQualification')
+			->with(
+				77,
+				$this->callback(
+					function (array $data): bool {
+
+						$this->assertSame(
+							'MEDIUM',
+							$data['qualification_level']
+						);
+
+
+						return true;
+					}
+				)
+			);
+
+
+		$service =
+			new SalesCompanyService(
+				$repository
+			);
+
+
+		$service->completeQualification(
+			77,
+			[
+				'score' =>
+					55,
+
+				'level' =>
+					' medium ',
+
+				'reason' =>
+					'Moderate inventory relevance.'
+			]
+		);
+	}
+
+
+	public function testCompleteQualificationRejectsInvalidScore(): void
+	{
+		$repository =
+			$this->createMock(
+				SalesCompanyRepository::class
+			);
+
+
+		$repository
+			->expects($this->never())
+			->method(
+				'updateQualification'
+			);
+
+
+		$service =
+			new SalesCompanyService(
+				$repository
+			);
+
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			'Invalid qualification score.'
+		);
+
+
+		$service->completeQualification(
+			77,
+			[
+				'score' =>
+					101,
+
+				'level' =>
+					'HIGH',
+
+				'reason' =>
+					'Test reason.'
+			]
+		);
+	}
+
+
+	public function testCompleteQualificationRejectsInvalidLevel(): void
+	{
+		$repository =
+			$this->createMock(
+				SalesCompanyRepository::class
+			);
+
+
+		$repository
+			->expects($this->never())
+			->method(
+				'updateQualification'
+			);
+
+
+		$service =
+			new SalesCompanyService(
+				$repository
+			);
+
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			'Invalid qualification level.'
+		);
+
+
+		$service->completeQualification(
+			77,
+			[
+				'score' =>
+					88,
+
+				'level' =>
+					'EXCELLENT',
+
+				'reason' =>
+					'Test reason.'
+			]
+		);
+	}
+
+
+	public function testCompleteQualificationRejectsEmptyReason(): void
+	{
+		$repository =
+			$this->createMock(
+				SalesCompanyRepository::class
+			);
+
+
+		$repository
+			->expects($this->never())
+			->method(
+				'updateQualification'
+			);
+
+
+		$service =
+			new SalesCompanyService(
+				$repository
+			);
+
+
+		$this->expectException(
+			InvalidArgumentException::class
+		);
+
+		$this->expectExceptionMessage(
+			'Qualification reason is required.'
+		);
+
+
+		$service->completeQualification(
+			77,
+			[
+				'score' =>
+					88,
+
+				'level' =>
+					'HIGH',
+
+				'reason' =>
+					'   '
+			]
+		);
+	}
+
+
+	public function testMarkQualificationFailedUpdatesStatus(): void
+	{
+		$repository =
+			$this->createMock(
+				SalesCompanyRepository::class
+			);
+
+
+		$repository
+			->expects($this->once())
+			->method('updateQualification')
+			->with(
+				77,
+				$this->callback(
+					function (array $data): bool {
+
+						$this->assertSame(
+							'FAILED',
+							$data['qualification_status']
+						);
+
+						$this->assertMatchesRegularExpression(
+							'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/',
+							$data['updated_at']
+						);
+
+
+						return true;
+					}
+				)
+			);
+
+
+		$service =
+			new SalesCompanyService(
+				$repository
+			);
+
+
+		$service->markQualificationFailed(
+			77
+		);
+	}
 }

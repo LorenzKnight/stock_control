@@ -852,6 +852,69 @@ window.loadAiSales = async function () {
 	}
 
 
+	async function qualifyProspect(
+		salesCompanyId
+	) {
+		const response =
+			await fetch(
+				'api/qualify_sales_company.php',
+				{
+					method: 'POST',
+
+					headers: {
+						'Accept':
+							'application/json',
+
+						'Content-Type':
+							'application/json'
+					},
+
+					body:
+						JSON.stringify(
+							{
+								sales_company_id:
+									salesCompanyId
+							}
+						)
+				}
+			);
+
+
+		const responseText =
+			await response.text();
+
+
+		let data;
+
+
+		try {
+			data =
+				JSON.parse(
+					responseText
+				);
+
+		} catch (error) {
+			throw new Error(
+				`Server returned HTTP ${response.status} instead of JSON.`
+			);
+		}
+
+
+		if (
+			!response.ok ||
+			!data.success
+		) {
+			throw new Error(
+				data.message ||
+					'Could not qualify company.'
+			);
+		}
+
+
+		return data.data;
+	}
+
+
 	async function researchProspect(
 		salesCompanyId
 	) {
@@ -1187,7 +1250,7 @@ window.loadAiSales = async function () {
 					class="ai-sales-card ai-sales-research-card"
 					id="ai-sales-company-research"
 				>
-					<div class="ai-sales-research-header">
+					<div class="ai-sales-header">
 						<h3>
 							Company Research
 						</h3>
@@ -1199,7 +1262,7 @@ window.loadAiSales = async function () {
 
 					<div class="ai-sales-processing">
 						<img
-							src="images/sys-img/loading6.gif"
+							src="images/sys-img/loading2.gif"
 							alt="Processing"
 							class="ai-sales-processing-gif"
 						>
@@ -1226,7 +1289,7 @@ window.loadAiSales = async function () {
 					class="ai-sales-card ai-sales-research-card"
 					id="ai-sales-company-research"
 				>
-					<div class="ai-sales-research-header">
+					<div class="ai-sales-header">
 						<h3>
 							Company Research
 						</h3>
@@ -1262,7 +1325,7 @@ window.loadAiSales = async function () {
 					class="ai-sales-card ai-sales-research-card"
 					id="ai-sales-company-research"
 				>
-					<div class="ai-sales-research-header">
+					<div class="ai-sales-header">
 						<h3>
 							Company Research
 						</h3>
@@ -1303,7 +1366,7 @@ window.loadAiSales = async function () {
 				class="ai-sales-card ai-sales-research-card"
 				id="ai-sales-company-research"
 			>
-				<div class="ai-sales-research-header">
+				<div class="ai-sales-header">
 					<h3>
 						Company Research
 					</h3>
@@ -1320,12 +1383,24 @@ window.loadAiSales = async function () {
 							Summary
 						</strong>
 
-						<p>
+						<p
+							id="ai-sales-research-summary"
+							class="ai-sales-research-summary-text"
+						>
 							${escapeHtml(
 								company.research_summary ||
 								'No research summary available.'
 							)}
 						</p>
+
+						<button
+							type="button"
+							class="ai-sales-read-more"
+							data-research-summary-toggle
+							hidden
+						>
+							Read more
+						</button>
 					</div>
 
 					<div class="ai-sales-research-section">
@@ -1381,6 +1456,279 @@ window.loadAiSales = async function () {
 						`
 						: ''
 				}
+			</section>
+		`;
+	}
+
+
+	function getQualificationStatusBubble(
+		status
+	) {
+		switch (
+			String(
+				status || ''
+			).toUpperCase()
+		) {
+			case 'COMPLETED':
+				return 'bubble bubble-success';
+
+			case 'QUALIFYING':
+				return 'bubble bubble-info';
+
+			case 'FAILED':
+				return 'bubble bubble-danger';
+
+			case 'PENDING':
+			default:
+				return 'bubble bubble-warning';
+		}
+	}
+
+
+	function getQualificationLevelBubble(
+		level
+	) {
+		switch (
+			String(
+				level || ''
+			).toUpperCase()
+		) {
+			case 'HIGH':
+				return 'bubble bubble-success';
+
+			case 'MEDIUM':
+				return 'bubble bubble-warning';
+
+			case 'LOW':
+				return 'bubble bubble-danger';
+
+			default:
+				return 'bubble bubble-neutral';
+		}
+	}
+
+
+	function renderCompanyQualification(
+		company
+	) {
+		const status =
+			String(
+				company.qualification_status ||
+				'PENDING'
+			).toUpperCase();
+
+
+		if (
+			company.research_status !==
+				'COMPLETED'
+		) {
+			return `
+				<section
+					class="ai-sales-card ai-sales-qualification-card"
+					id="ai-sales-company-qualification"
+				>
+					<div class="ai-sales-header">
+						<h3>
+							Company Qualification
+						</h3>
+
+						<span class="bubble bubble-neutral">
+							WAITING
+						</span>
+					</div>
+
+					<p class="ai-sales-qualification-message">
+						Company research must be completed first.
+					</p>
+				</section>
+			`;
+		}
+
+
+		if (status === 'QUALIFYING') {
+			return `
+				<section
+					class="ai-sales-card ai-sales-qualification-card"
+					id="ai-sales-company-qualification"
+				>
+					<div class="ai-sales-header">
+						<h3>
+							Company Qualification
+						</h3>
+
+						<span class="${getQualificationStatusBubble(status)}">
+							QUALIFYING
+						</span>
+					</div>
+
+					<div class="ai-sales-processing">
+						<img
+							src="images/sys-img/loading2.gif"
+							alt="Processing"
+							class="ai-sales-processing-gif"
+						>
+
+						<div>
+							<strong>
+								Qualifying company...
+							</strong>
+
+							<p>
+								AI is evaluating the company as
+								a potential AllStockControl prospect.
+							</p>
+						</div>
+					</div>
+				</section>
+			`;
+		}
+
+
+		if (status === 'FAILED') {
+			return `
+				<section
+					class="ai-sales-card ai-sales-qualification-card"
+					id="ai-sales-company-qualification"
+				>
+					<div class="ai-sales-header">
+						<h3>
+							Company Qualification
+						</h3>
+
+						<span class="${getQualificationStatusBubble(status)}">
+							FAILED
+						</span>
+					</div>
+
+					<p class="ai-sales-qualification-message">
+						Company qualification could not be completed.
+					</p>
+
+					<button
+						type="button"
+						class="button-style-agree"
+						data-qualify-company-id="${
+							Number(
+								company.sales_company_id
+							)
+						}"
+					>
+						Retry qualification
+					</button>
+				</section>
+			`;
+		}
+
+
+		if (status === 'PENDING') {
+			return `
+				<section
+					class="ai-sales-card ai-sales-qualification-card"
+					id="ai-sales-company-qualification"
+				>
+					<div class="ai-sales-header">
+						<h3>
+							Company Qualification
+						</h3>
+
+						<span class="${getQualificationStatusBubble(status)}">
+							PENDING
+						</span>
+					</div>
+
+					<p class="ai-sales-qualification-message">
+						Waiting for automatic qualification.
+					</p>
+				</section>
+			`;
+		}
+
+
+		const score =
+			Number(
+				company.qualification_score ?? 0
+			);
+
+		const level =
+			String(
+				company.qualification_level || ''
+			).toUpperCase();
+
+
+		return `
+			<section
+				class="ai-sales-card ai-sales-qualification-card"
+				id="ai-sales-company-qualification"
+			>
+				<div class="ai-sales-header">
+					<h3>
+						Company Qualification
+					</h3>
+
+					<span class="${getQualificationStatusBubble(status)}">
+						COMPLETED
+					</span>
+				</div>
+
+				<div class="ai-sales-qualification-summary">
+
+					<div class="ai-sales-qualification-score">
+						<span>
+							Score
+						</span>
+
+						<strong>
+							${score}
+						</strong>
+
+						<small>
+							/ 100
+						</small>
+					</div>
+
+
+					<div class="ai-sales-qualification-level">
+						<span>
+							Qualification
+						</span>
+
+						<div class="${getQualificationLevelBubble(level)}">
+							${escapeHtml(
+								level || '-'
+							)}
+						</div>
+					</div>
+
+				</div>
+
+
+				<div class="ai-sales-qualification-reason">
+					<strong>
+						Reason
+					</strong>
+
+					<p>
+						${escapeHtml(
+							company.qualification_reason ||
+							'No qualification reason available.'
+						)}
+					</p>
+				</div>
+
+
+				${
+					company.qualified_at
+						? `
+							<p class="ai-sales-qualification-date">
+								Qualified:
+								${escapeHtml(
+									company.qualified_at
+								)}
+							</p>
+						`
+						: ''
+				}
+
 			</section>
 		`;
 	}
@@ -1689,6 +2037,8 @@ window.loadAiSales = async function () {
 
 				${renderCompanyResearch(company)}
 
+				${renderCompanyQualification(company)}
+
 				<div
 					id="ai-sales-conversations-panel"
 					class="ai-sales-conversations-panel"
@@ -1744,7 +2094,7 @@ window.loadAiSales = async function () {
 					researchContainer.innerHTML = `
 						<div class="ai-sales-processing">
 							<img
-								src="images/sys-img/loading6.gif"
+								src="images/sys-img/loading2.gif"
 								alt="Processing"
 								class="ai-sales-processing-gif"
 							>
@@ -1785,6 +2135,135 @@ window.loadAiSales = async function () {
 				}
 			}
 		);
+
+
+		const qualificationButton =
+			document.querySelector(
+				'[data-qualify-company-id]'
+			);
+
+
+		qualificationButton?.addEventListener(
+			'click',
+			async () => {
+				const salesCompanyId =
+					Number(
+						qualificationButton
+							.dataset
+							.qualifyCompanyId
+					);
+
+
+				if (salesCompanyId <= 0) {
+					return;
+				}
+
+
+				qualificationButton.disabled =
+					true;
+
+				qualificationButton.textContent =
+					'Qualifying...';
+
+
+				const qualificationContainer =
+					document.getElementById(
+						'ai-sales-company-qualification'
+					);
+
+
+				if (qualificationContainer) {
+					qualificationContainer.innerHTML = `
+						<div class="ai-sales-processing">
+							<img
+								src="images/sys-img/loading2.gif"
+								alt="Processing"
+								class="ai-sales-processing-gif"
+							>
+
+							<div>
+								<strong>
+									Qualifying company...
+								</strong>
+
+								<p>
+									AI is evaluating the company as
+									a potential AllStockControl prospect.
+								</p>
+							</div>
+						</div>
+					`;
+				}
+
+
+				try {
+					await qualifyProspect(
+						salesCompanyId
+					);
+
+
+					await refreshCompanyDetails(
+						salesCompanyId
+					);
+
+				} catch (error) {
+					console.error(
+						'Error qualifying company:',
+						error
+					);
+
+
+					await refreshCompanyDetails(
+						salesCompanyId
+					);
+				}
+			}
+		);
+
+
+		const researchSummary =
+			document.getElementById(
+				'ai-sales-research-summary'
+			);
+
+
+		const researchSummaryToggle =
+			document.querySelector(
+				'[data-research-summary-toggle]'
+			);
+
+
+		if (
+			researchSummary &&
+			researchSummaryToggle
+		) {
+			const hasOverflow =
+				researchSummary.scrollHeight >
+				researchSummary.clientHeight + 1;
+
+
+			if (hasOverflow) {
+				researchSummaryToggle.hidden =
+					false;
+			}
+
+
+			researchSummaryToggle.addEventListener(
+				'click',
+				() => {
+					const isExpanded =
+						researchSummary.classList.toggle(
+							'is-expanded'
+						);
+
+
+					researchSummaryToggle.textContent =
+						isExpanded
+							? 'Read less'
+							: 'Read more';
+				}
+			);
+		}
 	}
 
 

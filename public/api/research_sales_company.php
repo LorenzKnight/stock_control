@@ -132,6 +132,58 @@ try {
 			$research
 		);
 
+        $qualification = null;
+
+        try {
+            $researchedCompany =
+                $repository->findById(
+                    $salesCompanyId
+                );
+
+
+            if ($researchedCompany === null) {
+                throw new RuntimeException(
+                    "Could not reload researched company."
+                );
+            }
+
+
+            $service->markQualifying(
+                $salesCompanyId
+            );
+
+
+            $qualification =
+                $client->qualifyCompany(
+                    $researchedCompany
+                );
+
+
+            $service->completeQualification(
+                $salesCompanyId,
+                $qualification
+            );
+
+        } catch (Throwable $qualificationError) {
+            error_log(
+                "AI Sales company qualification failed: " .
+                    $qualificationError->getMessage()
+            );
+
+
+            try {
+                $service->markQualificationFailed(
+                    $salesCompanyId
+                );
+
+            } catch (Throwable $statusError) {
+                error_log(
+                    "Could not mark company qualification as failed: " .
+                        $statusError->getMessage()
+                );
+            }
+        }
+
 	} catch (Throwable $e) {
         error_log(
             "AI Sales company research failed: " .
@@ -185,7 +237,10 @@ try {
 					$salesCompanyId,
 
 				"research" =>
-					$research
+					$research,
+
+                "qualification" =>
+			        $qualification
 			]
 	];
 

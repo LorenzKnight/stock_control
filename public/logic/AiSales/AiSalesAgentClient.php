@@ -435,4 +435,144 @@ class AiSalesAgentClient
                 $data["model"] ?? null
         ];
     }
+
+
+    public function qualifyCompany(
+        array $company
+    ): array {
+        $companyName =
+            trim(
+                (string)(
+                    $company["company_name"] ?? ''
+                )
+            );
+
+        if ($companyName === '') {
+            throw new \InvalidArgumentException(
+                "Company name is required for qualification."
+            );
+        }
+
+
+        $researchSummary =
+            trim(
+                (string)(
+                    $company["research_summary"] ?? ''
+                )
+            );
+
+        if ($researchSummary === '') {
+            throw new \InvalidArgumentException(
+                "Company research is required before qualification."
+            );
+        }
+
+
+        $payload = [
+            "name" =>
+                $companyName,
+
+            "market" =>
+                $company["market"] ?? null,
+
+            "country" =>
+                $company["country"] ?? null,
+
+            "city" =>
+                $company["city"] ?? null,
+
+            "industry" =>
+                $company["industry"] ?? null,
+
+            "language" =>
+                $company["language"] ?? null,
+
+            "research_summary" =>
+                $researchSummary,
+
+            "inventory_context" =>
+                $company[
+                    "research_inventory_context"
+                ] ?? null
+        ];
+
+
+        $data =
+            $this->postJson(
+                $this->resolveEndpointUrl(
+                    "qualify-company"
+                ),
+                $payload,
+                60
+            );
+
+
+        $score =
+            (int)(
+                $data["score"] ?? -1
+            );
+
+        $level =
+            strtoupper(
+                trim(
+                    (string)(
+                        $data["level"] ?? ''
+                    )
+                )
+            );
+
+        $reason =
+            trim(
+                (string)(
+                    $data["reason"] ?? ''
+                )
+            );
+
+
+        if (
+            $score < 0 ||
+            $score > 100
+        ) {
+            throw new \RuntimeException(
+                "AI Sales Agent returned an invalid qualification score."
+            );
+        }
+
+        if (
+            !in_array(
+                $level,
+                [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH"
+                ],
+                true
+            )
+        ) {
+            throw new \RuntimeException(
+                "AI Sales Agent returned an invalid qualification level."
+            );
+        }
+
+        if ($reason === '') {
+            throw new \RuntimeException(
+                "AI Sales Agent returned an empty qualification reason."
+            );
+        }
+
+
+        return [
+            "score" =>
+                $score,
+
+            "level" =>
+                $level,
+
+            "reason" =>
+                $reason,
+
+            "model" =>
+                $data["model"] ?? null
+        ];
+    }
 }

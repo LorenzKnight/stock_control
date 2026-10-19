@@ -165,3 +165,42 @@ class CompanyResearchResponse(BaseModel):
     sources: list[str]
 
     model: str
+
+
+class CompanyQualificationRequest(BaseModel):
+    name: str = Field(
+        min_length=1
+    )
+
+    market: str | None = None
+    country: str | None = None
+    city: str | None = None
+    industry: str | None = None
+    language: str | None = None
+
+    research_summary: str = Field(
+        min_length=1
+    )
+
+    inventory_context: str | None = None
+
+
+class CompanyQualificationAnalysis(BaseModel):
+    score: int = Field(
+        ge=0,
+        le=100
+    )
+
+    reason: str = Field(
+        min_length=1
+    )
+
+
+class CompanyQualificationResponse(BaseModel):
+    score: int
+
+    level: str
+
+    reason: str
+
+    model: str

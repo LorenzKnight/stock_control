@@ -20,9 +20,14 @@ from .schemas import (
     CompanyResearchResponse,
     SalesAgentRequest,
     SalesAgentResponse,
+    CompanyQualificationRequest,
+    CompanyQualificationResponse,
 )
 from .company_research_service import (
     CompanyResearchService,
+)
+from .company_qualification_service import (
+    CompanyQualificationService,
 )
 
 
@@ -161,6 +166,36 @@ async def research_company(
         service = CompanyResearchService()
 
         return await service.research_company(
+            request
+        )
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=str(error),
+        ) from error
+
+
+
+@app.post(
+    "/qualify-company",
+    response_model=CompanyQualificationResponse,
+)
+async def qualify_company(
+    request: CompanyQualificationRequest,
+    authorization: str | None = Header(
+        default=None
+    ),
+) -> CompanyQualificationResponse:
+
+    validate_agent_token(
+        authorization
+    )
+
+    try:
+        service = CompanyQualificationService()
+
+        return await service.qualify_company(
             request
         )
 
