@@ -1346,44 +1346,48 @@
 }
 
 
-.ai-sales-contact-search-card {
-	margin-bottom: 12px;
 
-	padding: 15px;
+.ai-sales-contacts-header {
+	display: flex;
+
+	align-items: center;
+	justify-content: space-between;
+
+	gap: 8px;
+}
+
+
+.ai-sales-contact-search-inline {
+	margin-bottom: 10px;
+	padding: 7px 9px;
+
+	background:
+		var(--clr-light-blue);
+
+	border-radius: 8px;
+
+	font-size: 9.5px;
 }
 
 
 .ai-sales-contact-search-message {
 	margin:
-		0 0 12px;
+		0 0 10px;
 
-	font-size: 10.5px;
+	font-size: 10px;
+
+	line-height: 1.5;
 }
 
 
 .ai-sales-contact-search-date {
 	margin:
-		10px 0 0;
+		8px 0 0;
 
 	font-size: 9px;
 
 	color:
 		var(--gray-500);
-}
-
-
-.ai-sales-contact-source {
-	margin-top: 7px;
-
-	font-size: 9px;
-
-	color:
-		var(--gray-500);
-}
-
-
-.ai-sales-contact-source a {
-	font-weight: 600;
 }
 
 /* Responsive */
