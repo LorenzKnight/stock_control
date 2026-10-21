@@ -32,6 +32,8 @@ class SalesContactRepository
 				"email",
 				"phone",
 				"linkedin_url",
+				"source_url",
+"source_type",
 				"language",
 				"is_primary",
 				"do_not_contact",
@@ -96,5 +98,38 @@ class SalesContactRepository
 		}
 
 		return $result["data"];
+	}
+
+
+	public function create(
+		array $data
+	): int {
+		$result =
+			\insert_into(
+				"sales_contacts",
+				$data,
+				[
+					"id" =>
+						"sales_contact_id",
+
+					"return_type" =>
+						"array"
+				]
+			);
+
+
+		if (
+			!is_array($result) ||
+			empty($result["success"]) ||
+			empty($result["id"])
+		) {
+			throw new \RuntimeException(
+				$result["message"]
+					?? "Could not create sales contact."
+			);
+		}
+
+
+		return (int)$result["id"];
 	}
 }

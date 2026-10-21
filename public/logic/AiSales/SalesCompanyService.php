@@ -535,4 +535,86 @@ class SalesCompanyService
 			]
 		);
 	}
+
+
+	public function markContactSearching(
+		int $salesCompanyId
+	): void {
+		$this->repository->updateContactSearch(
+			$salesCompanyId,
+			[
+				"contact_search_status" =>
+					"SEARCHING",
+
+				"updated_at" =>
+					date(
+						"Y-m-d H:i:s"
+					)
+			]
+		);
+	}
+
+
+	public function completeContactSearch(
+		int $salesCompanyId,
+		bool $contactsFound
+	): void {
+		$searchedAt =
+			date(
+				"Y-m-d H:i:s"
+			);
+
+
+		$this->repository->updateContactSearch(
+			$salesCompanyId,
+			[
+				"contact_search_status" =>
+					$contactsFound
+						? "COMPLETED"
+						: "NOT_FOUND",
+
+				"contact_searched_at" =>
+					$searchedAt,
+
+				"updated_at" =>
+					$searchedAt
+			]
+		);
+	}
+
+
+	public function markContactSearchFailed(
+		int $salesCompanyId
+	): void {
+		$this->repository->updateContactSearch(
+			$salesCompanyId,
+			[
+				"contact_search_status" =>
+					"FAILED",
+
+				"updated_at" =>
+					date(
+						"Y-m-d H:i:s"
+					)
+			]
+		);
+	}
+
+
+	public function markContactSearchSkipped(
+		int $salesCompanyId
+	): void {
+		$this->repository->updateContactSearch(
+			$salesCompanyId,
+			[
+				"contact_search_status" =>
+					"SKIPPED",
+
+				"updated_at" =>
+					date(
+						"Y-m-d H:i:s"
+					)
+			]
+		);
+	}
 }

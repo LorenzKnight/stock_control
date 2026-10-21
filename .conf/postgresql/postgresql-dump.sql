@@ -627,6 +627,8 @@ CREATE TABLE IF NOT EXISTS sales_companies (
 	qualification_level VARCHAR(20) NULL, -- LOW | MEDIUM | HIGH
 	qualification_reason TEXT NULL,
 	qualified_at TIMESTAMP NULL,
+	contact_search_status VARCHAR(20) DEFAULT 'PENDING', -- PENDING | SEARCHING | COMPLETED | NOT_FOUND | FAILED | SKIPPED
+	contact_searched_at TIMESTAMP NULL,
 	created_by INTEGER NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -643,6 +645,8 @@ CREATE TABLE IF NOT EXISTS sales_contacts (
 	email VARCHAR(255) NULL,
 	phone VARCHAR(100) NULL,
 	linkedin_url TEXT NULL,
+	source_url TEXT NULL,
+	source_type VARCHAR(30) NULL,
 	language VARCHAR(10) NULL,
 	is_primary BOOLEAN DEFAULT FALSE,
 	do_not_contact BOOLEAN DEFAULT FALSE,

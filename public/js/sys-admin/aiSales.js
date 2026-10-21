@@ -852,6 +852,69 @@ window.loadAiSales = async function () {
 	}
 
 
+	async function findContactsProspect(
+		salesCompanyId
+	) {
+		const response =
+			await fetch(
+				'api/find_sales_contacts.php',
+				{
+					method: 'POST',
+
+					headers: {
+						'Accept':
+							'application/json',
+
+						'Content-Type':
+							'application/json'
+					},
+
+					body:
+						JSON.stringify(
+							{
+								sales_company_id:
+									salesCompanyId
+							}
+						)
+				}
+			);
+
+
+		const responseText =
+			await response.text();
+
+
+		let data;
+
+
+		try {
+			data =
+				JSON.parse(
+					responseText
+				);
+
+		} catch (error) {
+			throw new Error(
+				`Server returned HTTP ${response.status} instead of JSON.`
+			);
+		}
+
+
+		if (
+			!response.ok ||
+			!data.success
+		) {
+			throw new Error(
+				data.message ||
+					'Could not search company contacts.'
+			);
+		}
+
+
+		return data.data;
+	}
+
+
 	async function qualifyProspect(
 		salesCompanyId
 	) {
@@ -1734,6 +1797,298 @@ window.loadAiSales = async function () {
 	}
 
 
+		function getContactSearchStatusBubble(
+		status
+	) {
+		switch (
+			String(
+				status || ''
+			).toUpperCase()
+		) {
+			case 'COMPLETED':
+				return 'bubble bubble-success';
+
+			case 'SEARCHING':
+				return 'bubble bubble-info';
+
+			case 'FAILED':
+				return 'bubble bubble-danger';
+
+			case 'NOT_FOUND':
+				return 'bubble bubble-warning';
+
+			case 'SKIPPED':
+				return 'bubble bubble-neutral';
+
+			case 'PENDING':
+			default:
+				return 'bubble bubble-warning';
+		}
+	}
+
+
+	function renderCompanyContactSearch(
+		company
+	) {
+		const qualificationStatus =
+			String(
+				company.qualification_status ||
+					'PENDING'
+			).toUpperCase();
+
+
+		const qualificationLevel =
+			String(
+				company.qualification_level || ''
+			).toUpperCase();
+
+
+		let status =
+			String(
+				company.contact_search_status ||
+					'PENDING'
+			).toUpperCase();
+
+
+		/*
+		 * Compatibility with companies qualified
+		 * before SKIPPED was introduced.
+		 */
+		if (
+			status === 'PENDING' &&
+			qualificationStatus === 'COMPLETED' &&
+			qualificationLevel === 'LOW'
+		) {
+			status =
+				'SKIPPED';
+		}
+
+
+		if (
+			qualificationStatus !==
+				'COMPLETED'
+		) {
+			return `
+				<section
+					class="ai-sales-card ai-sales-contact-search-card"
+					id="ai-sales-company-contact-search"
+				>
+					<div class="ai-sales-header">
+						<h3>
+							Contact Search
+						</h3>
+
+						<span class="bubble bubble-neutral">
+							WAITING
+						</span>
+					</div>
+
+					<p class="ai-sales-contact-search-message">
+						Company qualification must be completed first.
+					</p>
+				</section>
+			`;
+		}
+
+
+		if (status === 'SEARCHING') {
+			return `
+				<section
+					class="ai-sales-card ai-sales-contact-search-card"
+					id="ai-sales-company-contact-search"
+				>
+					<div class="ai-sales-header">
+						<h3>
+							Contact Search
+						</h3>
+
+						<span class="${getContactSearchStatusBubble(status)}">
+							SEARCHING
+						</span>
+					</div>
+
+					<div class="ai-sales-processing">
+						<img
+							src="images/sys-img/loading2.gif"
+							alt="Processing"
+							class="ai-sales-processing-gif"
+						>
+
+						<div>
+							<strong>
+								Searching for contacts...
+							</strong>
+
+							<p>
+								AI is looking for relevant company
+								contacts from available sources.
+							</p>
+						</div>
+					</div>
+				</section>
+			`;
+		}
+
+
+		if (status === 'FAILED') {
+			return `
+				<section
+					class="ai-sales-card ai-sales-contact-search-card"
+					id="ai-sales-company-contact-search"
+				>
+					<div class="ai-sales-header">
+						<h3>
+							Contact Search
+						</h3>
+
+						<span class="${getContactSearchStatusBubble(status)}">
+							FAILED
+						</span>
+					</div>
+
+					<p class="ai-sales-contact-search-message">
+						Contact search could not be completed.
+					</p>
+
+					<button
+						type="button"
+						class="button-style-agree"
+						data-find-contacts-company-id="${
+							Number(
+								company.sales_company_id
+							)
+						}"
+					>
+						Retry contact search
+					</button>
+				</section>
+			`;
+		}
+
+
+		if (status === 'SKIPPED') {
+			return `
+				<section
+					class="ai-sales-card ai-sales-contact-search-card"
+					id="ai-sales-company-contact-search"
+				>
+					<div class="ai-sales-header">
+						<h3>
+							Contact Search
+						</h3>
+
+						<span class="${getContactSearchStatusBubble(status)}">
+							SKIPPED
+						</span>
+					</div>
+
+					<p class="ai-sales-contact-search-message">
+						Automatic contact search was skipped because
+						the company received a LOW qualification.
+					</p>
+				</section>
+			`;
+		}
+
+
+		if (status === 'NOT_FOUND') {
+			return `
+				<section
+					class="ai-sales-card ai-sales-contact-search-card"
+					id="ai-sales-company-contact-search"
+				>
+					<div class="ai-sales-header">
+						<h3>
+							Contact Search
+						</h3>
+
+						<span class="${getContactSearchStatusBubble(status)}">
+							NOT FOUND
+						</span>
+					</div>
+
+					<p class="ai-sales-contact-search-message">
+						No verified relevant contacts were found.
+					</p>
+
+					${
+						company.contact_searched_at
+							? `
+								<p class="ai-sales-contact-search-date">
+									Searched:
+									${escapeHtml(
+										company.contact_searched_at
+									)}
+								</p>
+							`
+							: ''
+					}
+				</section>
+			`;
+		}
+
+
+		if (status === 'PENDING') {
+			return `
+				<section
+					class="ai-sales-card ai-sales-contact-search-card"
+					id="ai-sales-company-contact-search"
+				>
+					<div class="ai-sales-header">
+						<h3>
+							Contact Search
+						</h3>
+
+						<span class="${getContactSearchStatusBubble(status)}">
+							PENDING
+						</span>
+					</div>
+
+					<p class="ai-sales-contact-search-message">
+						Waiting for automatic contact search.
+					</p>
+				</section>
+			`;
+		}
+
+
+		return `
+			<section
+				class="ai-sales-card ai-sales-contact-search-card"
+				id="ai-sales-company-contact-search"
+			>
+				<div class="ai-sales-header">
+					<h3>
+						Contact Search
+					</h3>
+
+					<span class="${getContactSearchStatusBubble(status)}">
+						COMPLETED
+					</span>
+				</div>
+
+				<p class="ai-sales-contact-search-message">
+					Relevant contacts were found and added
+					to the company.
+				</p>
+
+				${
+					company.contact_searched_at
+						? `
+							<p class="ai-sales-contact-search-date">
+								Searched:
+								${escapeHtml(
+									company.contact_searched_at
+								)}
+							</p>
+						`
+						: ''
+				}
+			</section>
+		`;
+	}
+
+
 	async function refreshCompanyDetails(
 		salesCompanyId
 	) {
@@ -2039,6 +2394,8 @@ window.loadAiSales = async function () {
 
 				${renderCompanyQualification(company)}
 
+				${renderCompanyContactSearch(company)}
+
 				<div
 					id="ai-sales-conversations-panel"
 					class="ai-sales-conversations-panel"
@@ -2119,6 +2476,12 @@ window.loadAiSales = async function () {
 						salesCompanyId
 					);
 
+
+					salesContactsCache.delete(
+						salesCompanyId
+					);
+
+
 					await refreshCompanyDetails(
 						salesCompanyId
 					);
@@ -2137,11 +2500,7 @@ window.loadAiSales = async function () {
 		);
 
 
-		const qualificationButton =
-			document.querySelector(
-				'[data-qualify-company-id]'
-			);
-
+		const qualificationButton = document.querySelector('[data-qualify-company-id]');
 
 		qualificationButton?.addEventListener(
 			'click',
@@ -2202,6 +2561,11 @@ window.loadAiSales = async function () {
 					);
 
 
+					salesContactsCache.delete(
+						salesCompanyId
+					);
+
+
 					await refreshCompanyDetails(
 						salesCompanyId
 					);
@@ -2221,17 +2585,98 @@ window.loadAiSales = async function () {
 		);
 
 
-		const researchSummary =
-			document.getElementById(
-				'ai-sales-research-summary'
-			);
+		const contactSearchButton = document.querySelector('[data-find-contacts-company-id]');
+
+		contactSearchButton?.addEventListener(
+			'click',
+			async () => {
+				const salesCompanyId =
+					Number(
+						contactSearchButton
+							.dataset
+							.findContactsCompanyId
+					);
 
 
-		const researchSummaryToggle =
-			document.querySelector(
-				'[data-research-summary-toggle]'
-			);
+				if (salesCompanyId <= 0) {
+					return;
+				}
 
+
+				contactSearchButton.disabled =
+					true;
+
+				contactSearchButton.textContent =
+					'Searching...';
+
+
+				const contactSearchContainer =
+					document.getElementById(
+						'ai-sales-company-contact-search'
+					);
+
+
+				if (contactSearchContainer) {
+					contactSearchContainer.innerHTML = `
+						<div class="ai-sales-processing">
+							<img
+								src="images/sys-img/loading2.gif"
+								alt="Processing"
+								class="ai-sales-processing-gif"
+							>
+
+							<div>
+								<strong>
+									Searching for contacts...
+								</strong>
+
+								<p>
+									AI is looking for relevant company
+									contacts from available sources.
+								</p>
+							</div>
+						</div>
+					`;
+				}
+
+
+				try {
+					await findContactsProspect(
+						salesCompanyId
+					);
+
+
+					/*
+					 * A previous request may have cached
+					 * an empty contact list.
+					 */
+					salesContactsCache.delete(
+						salesCompanyId
+					);
+
+
+					await refreshCompanyDetails(
+						salesCompanyId
+					);
+
+				} catch (error) {
+					console.error(
+						'Error searching company contacts:',
+						error
+					);
+
+
+					await refreshCompanyDetails(
+						salesCompanyId
+					);
+				}
+			}
+		);
+
+
+		const researchSummary = document.getElementById('ai-sales-research-summary');
+
+		const researchSummaryToggle = document.querySelector('[data-research-summary-toggle]');
 
 		if (
 			researchSummary &&
@@ -3344,6 +3789,63 @@ window.loadAiSales = async function () {
 								)}
 							</span>
 						</p>
+
+						${
+							contact.linkedin_url
+								? `
+									<p class="ai-sales-contact-value">
+										<span class="ai-sales-message-meta-item">
+											<svg
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											>
+												<path d="M7 9v8"></path>
+												<path d="M7 6v.01"></path>
+												<path d="M11 17v-5"></path>
+												<path d="M11 14a3 3 0 0 1 6 0v3"></path>
+											</svg>
+
+											<a
+												href="${escapeHtml(
+													contact.linkedin_url
+												)}"
+												target="_blank"
+												rel="noopener noreferrer"
+											>
+												LinkedIn
+											</a>
+										</span>
+									</p>
+								`
+								: ''
+						}
+
+
+						${
+							contact.source_url
+								? `
+									<p class="ai-sales-contact-source">
+										Source:
+										<a
+											href="${escapeHtml(
+												contact.source_url
+											)}"
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											${escapeHtml(
+												contact.source_type ||
+												'WEB'
+											)}
+										</a>
+									</p>
+								`
+								: ''
+						}
 
 						${
 							contact.is_primary

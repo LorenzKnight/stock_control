@@ -3,6 +3,8 @@
 use App\AiSales\AiSalesAgentClient;
 use App\AiSales\SalesCompanyRepository;
 use App\AiSales\SalesCompanyService;
+use App\AiSales\SalesContactRepository;
+use App\AiSales\SalesContactService;
 
 require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
@@ -23,10 +25,14 @@ try {
 		);
 	}
 
-
 	$authUser = requireAuth();
 	$userId = (int)($authUser["user_id"] ?? 0);
 
+	if ($userId <= 0) {
+		throw new Exception(
+			"Unauthorized access."
+		);
+	}
 
 	$hasRootAccess =
 		check_user_permission(
@@ -100,26 +106,100 @@ try {
 	}
 
 
+	$contactSearch = null;
+
+	$createdContacts = [];
+
 	$service->markQualifying(
 		$salesCompanyId
 	);
 
 
 	try {
-		$client =
-			new AiSalesAgentClient();
+		$client = new AiSalesAgentClient();
 
-
-		$qualification =
-			$client->qualifyCompany(
-				$company
-			);
-
+		$qualification = $client->qualifyCompany(
+			$company
+		);
 
 		$service->completeQualification(
 			$salesCompanyId,
 			$qualification
 		);
+
+		$qualificationLevel = strtoupper(trim((string)($qualification["level"] ?? '')));
+
+		if (
+			in_array(
+				$qualificationLevel,
+				[
+					"MEDIUM",
+					"HIGH"
+				],
+				true
+			)
+		) {
+			try {
+				$contactRepository = new SalesContactRepository();
+
+				$contactService = new SalesContactService(
+					$contactRepository
+				);
+
+				$service->markContactSearching(
+					$salesCompanyId
+				);
+
+
+				$contactSearch = $client->findCompanyContacts(
+					$company
+				);
+
+				$contacts = $contactSearch["contacts"] ?? [];
+
+				if (!is_array($contacts)) {
+					throw new RuntimeException(
+						"Invalid contact search response."
+					);
+				}
+
+				$createdContacts = $contactService->saveFoundContacts(
+					$salesCompanyId,
+					$contacts,
+					$userId
+				);
+
+				$service->completeContactSearch(
+					$salesCompanyId,
+					!empty(
+						$contacts
+					)
+				);
+
+			} catch (Throwable $contactError) {
+				error_log(
+					"AI Sales automatic contact search failed: " .
+						$contactError->getMessage()
+				);
+
+
+				try {
+					$service->markContactSearchFailed(
+						$salesCompanyId
+					);
+
+				} catch (Throwable $statusError) {
+					error_log(
+						"Could not mark company contact search as failed: " .
+							$statusError->getMessage()
+					);
+				}
+			}
+		} else {
+			$service->markContactSearchSkipped(
+				$salesCompanyId
+			);
+		}
 
 	} catch (Throwable $e) {
 		error_log(
@@ -140,10 +220,8 @@ try {
 			);
 		}
 
-
 		throw $e;
 	}
-
 
 	$response = [
 		"success" => true,
@@ -151,7 +229,9 @@ try {
 		"data" =>
 			[
 				"sales_company_id" => $salesCompanyId,
-				"qualification" => $qualification
+				"qualification" => $qualification,
+				"contact_search" => $contactSearch, 
+				"contacts_created" => count($createdContacts)
 			]
 	];
 

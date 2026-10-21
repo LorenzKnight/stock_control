@@ -22,12 +22,17 @@ from .schemas import (
     SalesAgentResponse,
     CompanyQualificationRequest,
     CompanyQualificationResponse,
+    CompanyContactSearchRequest,
+    CompanyContactSearchResponse,
 )
 from .company_research_service import (
     CompanyResearchService,
 )
 from .company_qualification_service import (
     CompanyQualificationService,
+)
+from .company_contact_service import (
+    CompanyContactService,
 )
 
 
@@ -196,6 +201,36 @@ async def qualify_company(
         service = CompanyQualificationService()
 
         return await service.qualify_company(
+            request
+        )
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=str(error),
+        ) from error
+
+
+
+@app.post(
+    "/find-company-contacts",
+    response_model=CompanyContactSearchResponse,
+)
+async def find_company_contacts(
+    request: CompanyContactSearchRequest,
+    authorization: str | None = Header(
+        default=None
+    ),
+) -> CompanyContactSearchResponse:
+
+    validate_agent_token(
+        authorization
+    )
+
+    try:
+        service = CompanyContactService()
+
+        return await service.find_contacts(
             request
         )
 

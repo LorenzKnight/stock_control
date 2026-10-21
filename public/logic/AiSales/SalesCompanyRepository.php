@@ -44,6 +44,8 @@ class SalesCompanyRepository
 				"qualification_level",
 				"qualification_reason",
 				"qualified_at",
+				"contact_search_status",
+				"contact_searched_at",
 				"created_by",
 				"created_at",
 				"updated_at"
@@ -95,7 +97,9 @@ class SalesCompanyRepository
 				"qualification_score",
 				"qualification_level",
 				"qualification_reason",
-				"qualified_at"
+				"qualified_at",
+				"contact_search_status",
+				"contact_searched_at",
 			],
 			[
 				"sales_company_id" =>
@@ -292,6 +296,43 @@ class SalesCompanyRepository
 		) {
 			throw new \RuntimeException(
 				"Could not update company qualification."
+			);
+		}
+	}
+
+
+	public function updateContactSearch(
+		int $salesCompanyId,
+		array $data
+	): void {
+		if ($salesCompanyId <= 0) {
+			throw new \InvalidArgumentException(
+				"Invalid sales company ID."
+			);
+		}
+
+
+		$result =
+			\update_table(
+				"sales_companies",
+				$data,
+				[
+					"sales_company_id" =>
+						$salesCompanyId
+				],
+				[
+					"return_type" =>
+						"array"
+				]
+			);
+
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Could not update company contact search."
 			);
 		}
 	}

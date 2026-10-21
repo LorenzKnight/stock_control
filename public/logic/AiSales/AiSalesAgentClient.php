@@ -575,4 +575,83 @@ class AiSalesAgentClient
                 $data["model"] ?? null
         ];
     }
+
+
+    public function findCompanyContacts(
+        array $company
+    ): array {
+        $companyName =
+            trim(
+                (string)(
+                    $company["company_name"] ?? ''
+                )
+            );
+
+        if ($companyName === '') {
+            throw new \InvalidArgumentException(
+                "Company name is required for contact search."
+            );
+        }
+
+
+        $payload = [
+            "name" =>
+                $companyName,
+
+            "website" =>
+                $company["website"] ?? null,
+
+            "domain" =>
+                $company["domain"] ?? null,
+
+            "market" =>
+                $company["market"] ?? null,
+
+            "country" =>
+                $company["country"] ?? null,
+
+            "city" =>
+                $company["city"] ?? null,
+
+            "industry" =>
+                $company["industry"] ?? null,
+
+            "language" =>
+                $company["language"] ?? null,
+
+            "research_summary" =>
+                $company["research_summary"] ?? null
+        ];
+
+
+        $data =
+            $this->postJson(
+                $this->resolveEndpointUrl(
+                    "find-company-contacts"
+                ),
+                $payload,
+                120
+            );
+
+
+        $contacts =
+            $data["contacts"] ?? null;
+
+        if (!is_array($contacts)) {
+            throw new \RuntimeException(
+                "AI Sales Agent returned invalid company contacts."
+            );
+        }
+
+
+        return [
+            "contacts" =>
+                array_values(
+                    $contacts
+                ),
+
+            "model" =>
+                $data["model"] ?? null
+        ];
+    }
 }

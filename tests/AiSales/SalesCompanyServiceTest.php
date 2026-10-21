@@ -821,4 +821,236 @@ final class SalesCompanyServiceTest extends TestCase
 			77
 		);
 	}
+
+
+	public function testMarkContactSearchingUpdatesStatus(): void
+	{
+		$repository =
+			$this->createMock(
+				SalesCompanyRepository::class
+			);
+
+
+		$repository
+			->expects($this->once())
+			->method('updateContactSearch')
+			->with(
+				77,
+				$this->callback(
+					function (array $data): bool {
+
+						$this->assertSame(
+							'SEARCHING',
+							$data['contact_search_status']
+						);
+
+						$this->assertMatchesRegularExpression(
+							'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/',
+							$data['updated_at']
+						);
+
+
+						return true;
+					}
+				)
+			);
+
+
+		$service =
+			new SalesCompanyService(
+				$repository
+			);
+
+
+		$service->markContactSearching(
+			77
+		);
+	}
+
+
+	public function testCompleteContactSearchMarksCompletedWhenContactsFound(): void
+	{
+		$repository =
+			$this->createMock(
+				SalesCompanyRepository::class
+			);
+
+
+		$repository
+			->expects($this->once())
+			->method('updateContactSearch')
+			->with(
+				77,
+				$this->callback(
+					function (array $data): bool {
+
+						$this->assertSame(
+							'COMPLETED',
+							$data['contact_search_status']
+						);
+
+						$this->assertMatchesRegularExpression(
+							'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/',
+							$data['contact_searched_at']
+						);
+
+						$this->assertSame(
+							$data['contact_searched_at'],
+							$data['updated_at']
+						);
+
+
+						return true;
+					}
+				)
+			);
+
+
+		$service =
+			new SalesCompanyService(
+				$repository
+			);
+
+
+		$service->completeContactSearch(
+			77,
+			true
+		);
+	}
+
+
+	public function testCompleteContactSearchMarksNotFoundWhenNoContactsFound(): void
+	{
+		$repository =
+			$this->createMock(
+				SalesCompanyRepository::class
+			);
+
+
+		$repository
+			->expects($this->once())
+			->method('updateContactSearch')
+			->with(
+				77,
+				$this->callback(
+					function (array $data): bool {
+
+						$this->assertSame(
+							'NOT_FOUND',
+							$data['contact_search_status']
+						);
+
+						$this->assertMatchesRegularExpression(
+							'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/',
+							$data['contact_searched_at']
+						);
+
+
+						return true;
+					}
+				)
+			);
+
+
+		$service =
+			new SalesCompanyService(
+				$repository
+			);
+
+
+		$service->completeContactSearch(
+			77,
+			false
+		);
+	}
+
+
+	public function testMarkContactSearchFailedUpdatesStatus(): void
+	{
+		$repository =
+			$this->createMock(
+				SalesCompanyRepository::class
+			);
+
+
+		$repository
+			->expects($this->once())
+			->method('updateContactSearch')
+			->with(
+				77,
+				$this->callback(
+					function (array $data): bool {
+
+						$this->assertSame(
+							'FAILED',
+							$data['contact_search_status']
+						);
+
+						$this->assertMatchesRegularExpression(
+							'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/',
+							$data['updated_at']
+						);
+
+
+						return true;
+					}
+				)
+			);
+
+
+		$service =
+			new SalesCompanyService(
+				$repository
+			);
+
+
+		$service->markContactSearchFailed(
+			77
+		);
+	}
+
+
+	public function testMarkContactSearchSkippedUpdatesStatus(): void
+	{
+		$repository =
+			$this->createMock(
+				SalesCompanyRepository::class
+			);
+
+
+		$repository
+			->expects($this->once())
+			->method('updateContactSearch')
+			->with(
+				77,
+				$this->callback(
+					function (array $data): bool {
+
+						$this->assertSame(
+							'SKIPPED',
+							$data['contact_search_status']
+						);
+
+						$this->assertMatchesRegularExpression(
+							'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/',
+							$data['updated_at']
+						);
+
+
+						return true;
+					}
+				)
+			);
+
+
+		$service =
+			new SalesCompanyService(
+				$repository
+			);
+
+
+		$service->markContactSearchSkipped(
+			77
+		);
+	}
 }

@@ -204,3 +204,78 @@ class CompanyQualificationResponse(BaseModel):
     reason: str
 
     model: str
+
+
+class CompanyContactSearchRequest(BaseModel):
+    name: str = Field(
+        min_length=1
+    )
+
+    website: str | None = None
+    domain: str | None = None
+
+    market: str | None = None
+    country: str | None = None
+    city: str | None = None
+    industry: str | None = None
+    language: str | None = None
+
+    research_summary: str | None = None
+
+
+class CompanyContactCandidate(BaseModel):
+    first_name: str = Field(
+        min_length=1
+    )
+
+    last_name: str | None = None
+
+    job_title: str | None = None
+
+    email: str | None = None
+    phone: str | None = None
+    linkedin_url: str | None = None
+
+    language: str | None = None
+
+    source_index: int = Field(
+        ge=0
+    )
+
+    relevance_score: int = Field(
+        ge=0,
+        le=100
+    )
+
+
+class CompanyContactAnalysis(BaseModel):
+    contacts: list[
+        CompanyContactCandidate
+    ]
+
+
+class CompanyContactResult(BaseModel):
+    first_name: str
+    last_name: str | None = None
+    job_title: str | None = None
+
+    email: str | None = None
+    phone: str | None = None
+    linkedin_url: str | None = None
+
+    language: str | None = None
+
+    source_url: str
+    source_type: str
+
+    relevance_score: int
+
+    is_primary: bool = False
+
+
+class CompanyContactSearchResponse(BaseModel):
+    contacts: list[
+        CompanyContactResult
+    ]
+
+    model: str
