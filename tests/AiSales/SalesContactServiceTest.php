@@ -543,4 +543,152 @@ final class SalesContactServiceTest extends TestCase
 			0
 		);
 	}
+
+
+		public function testGetPrimaryContactByCompanyReturnsPrimaryContact(): void
+	{
+		$repository =
+			$this->createMock(
+				SalesContactRepository::class
+			);
+
+
+		$repository
+			->expects($this->once())
+			->method('findByCompanyId')
+			->with(
+				77,
+				''
+			)
+			->willReturn(
+				[
+					"success" =>
+						true,
+
+					"data" =>
+						[
+							[
+								"sales_contact_id" =>
+									101,
+
+								"first_name" =>
+									"Anna",
+
+								"last_name" =>
+									"Svensson",
+
+								"is_primary" =>
+									false,
+
+								"do_not_contact" =>
+									false
+							],
+							[
+								"sales_contact_id" =>
+									102,
+
+								"first_name" =>
+									"Pedro",
+
+								"last_name" =>
+									"Martinez",
+
+								"is_primary" =>
+									"t",
+
+								"do_not_contact" =>
+									false
+							]
+						]
+				]
+			);
+
+
+		$service =
+			new SalesContactService(
+				$repository
+			);
+
+
+		$contact =
+			$service->getPrimaryContactByCompany(
+				77
+			);
+
+
+		$this->assertNotNull(
+			$contact
+		);
+
+		$this->assertSame(
+			102,
+			$contact["sales_contact_id"]
+		);
+
+		$this->assertSame(
+			"Pedro Martinez",
+			$contact["full_name"]
+		);
+
+		$this->assertTrue(
+			$contact["is_primary"]
+		);
+	}
+
+
+	public function testGetPrimaryContactByCompanyReturnsNullWhenNoPrimaryExists(): void
+	{
+		$repository =
+			$this->createMock(
+				SalesContactRepository::class
+			);
+
+
+		$repository
+			->expects($this->once())
+			->method('findByCompanyId')
+			->willReturn(
+				[
+					"success" =>
+						true,
+
+					"data" =>
+						[
+							[
+								"sales_contact_id" =>
+									101,
+
+								"first_name" =>
+									"Anna",
+
+								"last_name" =>
+									"Svensson",
+
+								"is_primary" =>
+									false,
+
+								"do_not_contact" =>
+									false
+							]
+						]
+				]
+			);
+
+
+		$service =
+			new SalesContactService(
+				$repository
+			);
+
+
+		$contact =
+			$service->getPrimaryContactByCompany(
+				77
+			);
+
+
+		$this->assertNull(
+			$contact
+		);
+	}
 }

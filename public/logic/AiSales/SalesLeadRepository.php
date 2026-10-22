@@ -92,6 +92,39 @@ class SalesLeadRepository
 	}
 
 
+	public function create(
+		array $data
+	): int {
+		$result =
+			\insert_into(
+				"sales_leads",
+				$data,
+				[
+					"id" =>
+						"sales_lead_id",
+
+					"return_type" =>
+						"array"
+				]
+			);
+
+
+		if (
+			!is_array($result) ||
+			empty($result["success"]) ||
+			empty($result["id"])
+		) {
+			throw new \RuntimeException(
+				$result["message"]
+					?? "Could not create sales lead."
+			);
+		}
+
+
+		return (int)$result["id"];
+	}
+
+
 	public function updateAfterContact(
 		int $salesLeadId,
 		string $lastContactAt,

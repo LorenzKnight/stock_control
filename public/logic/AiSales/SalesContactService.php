@@ -350,4 +350,28 @@ class SalesContactService
 				? $value
 				: null;
 	}
+
+
+	public function getPrimaryContactByCompany(
+		int $salesCompanyId
+	): ?array {
+		$contacts =
+			$this->getContactsByCompany(
+				$salesCompanyId
+			);
+
+
+		foreach ($contacts as $contact) {
+			if (
+				!empty(
+					$contact["is_primary"]
+				)
+			) {
+				return $contact;
+			}
+		}
+
+
+		return null;
+	}
 }

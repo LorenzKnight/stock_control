@@ -5,6 +5,8 @@ use App\AiSales\SalesCompanyRepository;
 use App\AiSales\SalesCompanyService;
 use App\AiSales\SalesContactRepository;
 use App\AiSales\SalesContactService;
+use App\AiSales\SalesLeadRepository;
+use App\AiSales\SalesLeadService;
 
 require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
@@ -137,6 +139,7 @@ try {
 		$salesCompanyId
 	);
 
+    $lead = null;
 
 	try {
 		$client = new AiSalesAgentClient();
@@ -171,6 +174,58 @@ try {
 			$salesCompanyId,
 			$contactsFound
 		);
+
+        if ($contactsFound) {
+            try {
+                $primaryContact =
+                    $contactService->getPrimaryContactByCompany(
+                        $salesCompanyId
+                    );
+
+
+                if ($primaryContact === null) {
+                    throw new RuntimeException(
+                        "No primary contact was found for sales lead creation."
+                    );
+                }
+
+
+                $leadCompany =
+                    $companyRepository->findById(
+                        $salesCompanyId
+                    );
+
+
+                if ($leadCompany === null) {
+                    throw new RuntimeException(
+                        "Could not reload company for sales lead creation."
+                    );
+                }
+
+
+                $leadRepository =
+                    new SalesLeadRepository();
+
+                $leadService =
+                    new SalesLeadService(
+                        $leadRepository
+                    );
+
+
+                $lead =
+                    $leadService->createFromQualifiedCompany(
+                        $leadCompany,
+                        $primaryContact,
+                        $userId
+                    );
+
+            } catch (Throwable $leadError) {
+                error_log(
+                    "AI Sales automatic lead creation failed: " .
+                        $leadError->getMessage()
+                );
+            }
+        }
 
 	} catch (Throwable $e) {
 		error_log(
@@ -229,7 +284,8 @@ try {
 				"contacts_found" => count($contacts),
 				"contacts_created" => count($createdContacts),
 				"contacts" => $contacts,
-				"model" => $contactSearch["model"] ?? null
+				"model" => $contactSearch["model"] ?? null,
+                "lead" => $lead
 			]
 	];
 

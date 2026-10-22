@@ -2391,7 +2391,27 @@ window.loadAiSales = async function () {
 				data.data.length === 0
 			) {
 				leadsContainer.innerHTML = `
-					<h3>Sales Opportunity</h3>
+					<h3 class="ai-sales-card-title">
+						<span class="ai-sales-message-meta-item">
+							<svg
+								style="width: 20px; height: 20px;"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="1.5"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<circle cx="10.5" cy="13.5" r="6.5"></circle>
+								<circle cx="10.5" cy="13.5" r="3"></circle>
+								<circle cx="10.5" cy="13.5" r="0.8" fill="currentColor" stroke="none"></circle>
+
+								<path d="M10.5 13.5L18 6"></path>
+								<path d="M17.5 3.5v3h3"></path>
+							</svg>
+							Sales Opportunity
+						</span>
+					</h3>
 
 					<p>No sales opportunity found.</p>
 				`;
@@ -2537,7 +2557,27 @@ window.loadAiSales = async function () {
 			console.error('Error loading sales leads:', error);
 
 			leadsContainer.innerHTML = `
-				<h3>Sales Opportunity</h3>
+				<h3 class="ai-sales-card-title">
+					<span class="ai-sales-message-meta-item">
+						<svg
+							style="width: 20px; height: 20px;"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.5"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<circle cx="10.5" cy="13.5" r="6.5"></circle>
+							<circle cx="10.5" cy="13.5" r="3"></circle>
+							<circle cx="10.5" cy="13.5" r="0.8" fill="currentColor" stroke="none"></circle>
+
+							<path d="M10.5 13.5L18 6"></path>
+							<path d="M17.5 3.5v3h3"></path>
+						</svg>
+						Sales Opportunity
+					</span>
+				</h3>
 
 				<p style="color:red;">
 					Error loading sales opportunity.

@@ -5,6 +5,8 @@ use App\AiSales\SalesCompanyRepository;
 use App\AiSales\SalesCompanyService;
 use App\AiSales\SalesContactRepository;
 use App\AiSales\SalesContactService;
+use App\AiSales\SalesLeadRepository;
+use App\AiSales\SalesLeadService;
 
 require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
@@ -122,6 +124,8 @@ try {
 
 		$createdContacts = [];
 
+		$lead = null;
+
         try {
             $researchedCompany = $repository->findById(
 				$salesCompanyId
@@ -188,12 +192,68 @@ try {
 						$userId
 					);
 
-					$service->completeContactSearch(
-						$salesCompanyId,
+					$contactsFound =
 						!empty(
 							$contacts
-						)
+						);
+
+
+					$service->completeContactSearch(
+						$salesCompanyId,
+						$contactsFound
 					);
+
+					if ($contactsFound) {
+						try {
+							$primaryContact =
+								$contactService->getPrimaryContactByCompany(
+									$salesCompanyId
+								);
+
+
+							if ($primaryContact === null) {
+								throw new RuntimeException(
+									"No primary contact was found for sales lead creation."
+								);
+							}
+
+
+							$leadCompany =
+								$repository->findById(
+									$salesCompanyId
+								);
+
+
+							if ($leadCompany === null) {
+								throw new RuntimeException(
+									"Could not reload company for sales lead creation."
+								);
+							}
+
+
+							$leadRepository =
+								new SalesLeadRepository();
+
+							$leadService =
+								new SalesLeadService(
+									$leadRepository
+								);
+
+
+							$lead =
+								$leadService->createFromQualifiedCompany(
+									$leadCompany,
+									$primaryContact,
+									$userId
+								);
+
+						} catch (Throwable $leadError) {
+							error_log(
+								"AI Sales automatic lead creation failed: " .
+									$leadError->getMessage()
+							);
+						}
+					}
 
 				} catch (Throwable $contactError) {
 					error_log(
@@ -215,9 +275,16 @@ try {
 					}
 				}
 			} else {
-				$service->markContactSearchSkipped(
-					$salesCompanyId
-				);
+				try {
+					$service->markContactSearchSkipped(
+						$salesCompanyId
+					);
+				} catch (Throwable $contactStatusError) {
+					error_log(
+						"Could not mark company contact search as skipped: " .
+							$contactStatusError->getMessage()
+					);
+				}
 			}
 
         } catch (Throwable $qualificationError) {
@@ -289,7 +356,8 @@ try {
 				"research" => $research,
                 "qualification" => $qualification,
 				"contact_search" => $contactSearch,
-				"contacts_created" => count($createdContacts)
+				"contacts_created" => count($createdContacts),
+				"lead" => $lead
 			]
 	];
 
