@@ -140,4 +140,75 @@ class SalesConversationRepository
 			);
 		}
 	}
+
+
+	public function create(
+		array $data
+	): int {
+		$result =
+			\insert_into(
+				"sales_conversations",
+				$data,
+				[
+					"id" =>
+						"conversation_id",
+
+					"return_type" =>
+						"array"
+				]
+			);
+
+
+		if (
+			!is_array($result) ||
+			empty($result["success"]) ||
+			empty($result["id"])
+		) {
+			throw new \RuntimeException(
+				$result["message"]
+					?? "Could not create sales conversation."
+			);
+		}
+
+
+		return (int)$result["id"];
+	}
+
+
+	public function updateSubject(
+		int $conversationId,
+		?string $subject
+	): void {
+		$result =
+			\update_table(
+				"sales_conversations",
+				[
+					"subject" =>
+						$subject,
+
+					"updated_at" =>
+						date(
+							"Y-m-d H:i:s"
+						)
+				],
+				[
+					"conversation_id" =>
+						$conversationId
+				],
+				[
+					"return_type" =>
+						"array"
+				]
+			);
+
+
+		if (
+			!is_array($result) ||
+			empty($result["success"])
+		) {
+			throw new \RuntimeException(
+				"Could not update sales conversation subject."
+			);
+		}
+	}
 }

@@ -7,6 +7,10 @@ use App\AiSales\SalesContactRepository;
 use App\AiSales\SalesContactService;
 use App\AiSales\SalesLeadRepository;
 use App\AiSales\SalesLeadService;
+use App\AiSales\SalesConversationRepository;
+use App\AiSales\SalesConversationService;
+use App\AiSales\SalesMessageRepository;
+use App\AiSales\SalesMessageService;
 
 require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
@@ -113,6 +117,10 @@ try {
 
 	$lead = null;
 
+	$conversation = null;
+
+	$outreach = null;
+
 
 	$service->markQualifying(
 		$salesCompanyId
@@ -187,10 +195,9 @@ try {
 
 				if ($contactsFound) {
 					try {
-						$primaryContact =
-							$contactService->getPrimaryContactByCompany(
-								$salesCompanyId
-							);
+						$primaryContact = $contactService->getPrimaryContactByCompany(
+							$salesCompanyId
+						);
 
 
 						if ($primaryContact === null) {
@@ -200,10 +207,9 @@ try {
 						}
 
 
-						$leadCompany =
-							$repository->findById(
-								$salesCompanyId
-							);
+						$leadCompany = $repository->findById(
+							$salesCompanyId
+						);
 
 
 						if ($leadCompany === null) {
@@ -213,21 +219,79 @@ try {
 						}
 
 
-						$leadRepository =
-							new SalesLeadRepository();
+						$leadRepository = new SalesLeadRepository();
 
-						$leadService =
-							new SalesLeadService(
-								$leadRepository
+						$leadService = new SalesLeadService(
+							$leadRepository
+						);
+
+
+						$lead = $leadService->createFromQualifiedCompany(
+							$leadCompany,
+							$primaryContact,
+							$userId
+						);
+
+						$leadId = (int)($lead["sales_lead_id"] ?? 0);
+
+
+						if ($leadId <= 0) {
+							throw new RuntimeException(
+								"Invalid sales lead ID after lead creation."
 							);
+						}
 
 
-						$lead =
-							$leadService->createFromQualifiedCompany(
-								$leadCompany,
-								$primaryContact,
-								$userId
+						$leadRecord = $leadRepository->findById(
+							$leadId
+						);
+
+
+						if ($leadRecord === null) {
+							throw new RuntimeException(
+								"Could not reload sales lead for initial outreach."
 							);
+						}
+
+
+						$conversationRepository = new SalesConversationRepository();
+
+						$conversationService = new SalesConversationService(
+							$conversationRepository
+						);
+
+
+						$conversation = $conversationService->getOrCreateInitialConversation(
+							$leadRecord,
+							$primaryContact
+						);
+
+
+						$conversationId = (int)($conversation["conversation_id"] ?? 0);
+
+
+						if ($conversationId <= 0) {
+							throw new RuntimeException(
+								"Invalid sales conversation ID."
+							);
+						}
+
+
+						$messageRepository = new SalesMessageRepository();
+
+						$messageService = new SalesMessageService(
+							$messageRepository,
+							$conversationRepository,
+							$leadRepository,
+							$repository,
+							$contactRepository,
+							$client
+						);
+
+
+						$outreach = $messageService->generateFirstOutreach(
+							$conversationId
+						);
 
 					} catch (Throwable $leadError) {
 						error_log(
@@ -301,7 +365,9 @@ try {
 				"qualification" => $qualification,
 				"contact_search" => $contactSearch, 
 				"contacts_created" => count($createdContacts),
-				"lead" => $lead
+				"lead" => $lead,
+				"conversation" => $conversation,
+				"outreach" => $outreach
 			]
 	];
 

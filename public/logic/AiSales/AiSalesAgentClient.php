@@ -195,6 +195,101 @@ class AiSalesAgentClient
     }
 
 
+    public function generateFirstOutreach(
+		array $context
+	): array {
+		if (empty($context)) {
+			throw new \InvalidArgumentException(
+				"AI Sales outreach context cannot be empty."
+			);
+		}
+
+
+		$payload = [
+			"task" =>
+				"generate_first_outreach",
+
+			"context" =>
+				$context
+		];
+
+
+		$data =
+			$this->postJson(
+				$this->resolveEndpointUrl(
+					"generate-outreach"
+				),
+				$payload
+			);
+
+
+		$subject =
+			trim(
+				(string)(
+					$data["subject"] ?? ''
+				)
+			);
+
+		$message =
+			trim(
+				(string)(
+					$data["message"] ?? ''
+				)
+			);
+
+		$model =
+			trim(
+				(string)(
+					$data["model"] ?? ''
+				)
+			);
+
+
+		if ($message === '') {
+			throw new \RuntimeException(
+				"AI Sales Agent returned an empty outreach."
+			);
+		}
+
+
+		$channel =
+			strtoupper(
+				trim(
+					(string)(
+						$context["conversation"]["channel"]
+							?? ''
+					)
+				)
+			);
+
+
+		if (
+			$channel === "EMAIL" &&
+			$subject === ''
+		) {
+			throw new \RuntimeException(
+				"AI Sales Agent returned an outreach without an email subject."
+			);
+		}
+
+
+		return [
+			"subject" =>
+				$subject !== ''
+					? $subject
+					: null,
+
+			"message" =>
+				$message,
+
+			"model" =>
+				$model !== ''
+					? $model
+					: null
+		];
+	}
+
+
 	public function generateReply(
         array $context
     ): array {

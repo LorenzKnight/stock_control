@@ -123,6 +123,43 @@ async def generate_reply(
         ) from error
 
 
+
+@app.post(
+    "/generate-outreach",
+    response_model=SalesAgentResponse,
+)
+async def generate_outreach(
+    request: SalesAgentRequest,
+    authorization: str | None = Header(
+        default=None
+    ),
+) -> SalesAgentResponse:
+
+    validate_agent_token(
+        authorization
+    )
+
+    if request.task != "generate_first_outreach":
+        raise HTTPException(
+            status_code=400,
+            detail="Unsupported AI Sales task.",
+        )
+
+    try:
+        service = SalesAgentService()
+
+        return await service.generate_outreach(
+            request
+        )
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=str(error),
+        ) from error
+
+
+    
 @app.post(
     "/discover-companies",
     response_model=CompanyDiscoveryResponse,

@@ -458,6 +458,404 @@ class SalesMessageService
 	}
 
 
+	public function generateFirstOutreach(
+		int $conversationId
+	): array {
+		if ($conversationId <= 0) {
+			throw new \InvalidArgumentException(
+				"Invalid conversation ID."
+			);
+		}
+
+
+		$conversation =
+			$this->conversationRepository
+				->findById(
+					$conversationId
+				);
+
+
+		if ($conversation === null) {
+			throw new \Exception(
+				"Sales conversation not found."
+			);
+		}
+
+
+		$salesLeadId =
+			(int)(
+				$conversation["sales_lead_id"]
+					?? 0
+			);
+
+
+		if ($salesLeadId <= 0) {
+			throw new \Exception(
+				"Sales lead not found for conversation."
+			);
+		}
+
+
+		$lead =
+			$this->leadRepository
+				->findById(
+					$salesLeadId
+				);
+
+
+		if ($lead === null) {
+			throw new \Exception(
+				"Sales lead not found."
+			);
+		}
+
+
+		$salesCompanyId =
+			(int)(
+				$lead["sales_company_id"]
+					?? 0
+			);
+
+
+		if ($salesCompanyId <= 0) {
+			throw new \Exception(
+				"Sales company not found for lead."
+			);
+		}
+
+
+		$this->companyRepository ??=
+			new SalesCompanyRepository();
+
+
+		$company =
+			$this->companyRepository
+				->findById(
+					$salesCompanyId
+				);
+
+
+		if ($company === null) {
+			throw new \Exception(
+				"Sales company not found."
+			);
+		}
+
+
+		$salesContactId =
+			(int)(
+				$conversation["sales_contact_id"]
+					??
+				$lead["primary_contact_id"]
+					??
+				0
+			);
+
+
+		if ($salesContactId <= 0) {
+			throw new \Exception(
+				"Sales contact not found for conversation."
+			);
+		}
+
+
+		$this->contactRepository ??=
+			new SalesContactRepository();
+
+
+		$contact =
+			$this->contactRepository
+				->findById(
+					$salesContactId
+				);
+
+
+		if ($contact === null) {
+			throw new \Exception(
+				"Sales contact not found."
+			);
+		}
+
+
+		if (
+			(int)(
+				$contact["sales_company_id"]
+					?? 0
+			)
+			!== $salesCompanyId
+		) {
+			throw new \Exception(
+				"Sales contact does not belong to sales company."
+			);
+		}
+
+
+		/*
+		 * Prevent duplicate initial outreach.
+		 */
+		$messageResult =
+			$this->repository
+				->findByConversationId(
+					$conversationId
+				);
+
+
+		if (
+			!empty($messageResult["success"]) &&
+			!empty($messageResult["data"])
+		) {
+			foreach (
+				$messageResult["data"]
+					as $existingMessage
+			) {
+				if (
+					(string)(
+						$existingMessage["direction"]
+							?? ''
+					) === "OUTBOUND" &&
+					(string)(
+						$existingMessage["sender_type"]
+							?? ''
+					) === "AI"
+				) {
+					return [
+						"sales_message_id" =>
+							(int)(
+								$existingMessage[
+									"sales_message_id"
+								] ?? 0
+							),
+
+						"conversation_id" =>
+							$conversationId,
+
+						"sales_lead_id" =>
+							$salesLeadId,
+
+						"status" =>
+							(string)(
+								$existingMessage["status"]
+									?? "PENDING_APPROVAL"
+							),
+
+						"ai_model" =>
+							$existingMessage["ai_model"]
+								?? null,
+
+						"created" =>
+							false
+					];
+				}
+			}
+
+
+			throw new \Exception(
+				"Initial outreach can only be generated for a new conversation."
+			);
+		}
+
+
+		$contactName =
+			trim(
+				(string)(
+					$contact["first_name"]
+						?? ''
+				) .
+				" " .
+				(string)(
+					$contact["last_name"]
+						?? ''
+				)
+			);
+
+
+		$context = [
+			"product" => [
+				"name" =>
+					"AllStockControl",
+
+				"verified_facts" => [
+					"AllStockControl helps companies manage inventory and stock operations from one system."
+				]
+			],
+
+			"company" => [
+				"name" =>
+					(string)(
+						$company["company_name"]
+							?? ''
+					),
+
+				"industry" =>
+					$company["industry"]
+						?? null,
+
+				"country" =>
+					$company["country"]
+						?? null,
+
+				"city" =>
+					$company["city"]
+						?? null,
+
+				"language" =>
+					$company["language"]
+						?? null,
+
+				"research_summary" =>
+					$company["research_summary"]
+						?? null,
+
+				"inventory_context" =>
+					$company[
+						"research_inventory_context"
+					] ?? null
+			],
+
+			"contact" => [
+				"name" =>
+					$contactName,
+
+				"job_title" =>
+					$contact["job_title"]
+						?? null,
+
+				"language" =>
+					$contact["language"]
+						?? null
+			],
+
+			"lead" => [
+				"stage" =>
+					(string)(
+						$lead["stage"]
+							?? "NEW"
+					),
+
+				"market" =>
+					$lead["market"]
+						?? null,
+
+				"country" =>
+					$lead["country"]
+						?? null,
+
+				"language" =>
+					$lead["language"]
+						?? null,
+
+				"score" =>
+					$company[
+						"qualification_score"
+					] ?? null,
+
+				"score_reason" =>
+					$company[
+						"qualification_reason"
+					] ?? null
+			],
+
+			"conversation" => [
+				"channel" =>
+					(string)(
+						$conversation["channel"]
+							?? "EMAIL"
+					),
+
+				"subject" =>
+					null
+			]
+		];
+
+
+		$this->aiSalesAgentClient ??=
+			new AiSalesAgentClient();
+
+
+		$generatedOutreach =
+			$this->aiSalesAgentClient
+				->generateFirstOutreach(
+					$context
+				);
+
+
+		$now =
+			date(
+				"Y-m-d H:i:s"
+			);
+
+
+		$salesMessageId =
+			$this->repository
+				->createAiDraft([
+					"conversation_id" =>
+						$conversationId,
+
+					"direction" =>
+						"OUTBOUND",
+
+					"sender_type" =>
+						"AI",
+
+					"subject" =>
+						$generatedOutreach["subject"]
+							?? null,
+
+					"message" =>
+						$generatedOutreach["message"],
+
+					"status" =>
+						"PENDING_APPROVAL",
+
+					"ai_generated" =>
+						true,
+
+					"ai_model" =>
+						$generatedOutreach["model"]
+							?? null,
+
+					"approved" =>
+						false,
+
+					"updated_at" =>
+						$now
+				]);
+
+
+		$this->conversationRepository
+			->updateSubject(
+				$conversationId,
+				$generatedOutreach["subject"]
+					?? null
+			);
+
+
+		return [
+			"sales_message_id" =>
+				$salesMessageId,
+
+			"conversation_id" =>
+				$conversationId,
+
+			"sales_lead_id" =>
+				$salesLeadId,
+
+			"status" =>
+				"PENDING_APPROVAL",
+
+			"ai_model" =>
+				$generatedOutreach["model"]
+					?? null,
+
+			"created" =>
+				true,
+
+			"created_at" =>
+				$now
+		];
+	}
+
+
 	public function generateAiDraft(
 		int $conversationId
 	): array {
@@ -910,7 +1308,4 @@ class SalesMessageService
 			$approvedByUserId
 		);
 	}
-
-
-
 }

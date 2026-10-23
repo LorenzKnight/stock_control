@@ -448,6 +448,224 @@ the claim is explicitly supported by VERIFIED PRODUCT FACTS.
         )
 
 
+    async def generate_outreach(
+        self,
+        request: SalesAgentRequest,
+    ) -> SalesAgentResponse:
+
+        provider = create_ai_provider()
+
+
+        context_json = json.dumps(
+            request.context,
+            ensure_ascii=False,
+            indent=2,
+        )
+
+
+        product = request.context.get(
+            "product",
+            {}
+        )
+
+        verified_facts = product.get(
+            "verified_facts",
+            []
+        )
+
+        if not isinstance(
+            verified_facts,
+            list
+        ):
+            verified_facts = []
+
+
+        verified_facts_text = "\n".join(
+            f"- {str(fact).strip()}"
+            for fact in verified_facts
+            if str(fact).strip()
+        )
+
+        if not verified_facts_text:
+            verified_facts_text = (
+                "- No verified product facts were supplied."
+            )
+
+
+        contact = request.context.get(
+            "contact",
+            {}
+        )
+
+        company = request.context.get(
+            "company",
+            {}
+        )
+
+        lead = request.context.get(
+            "lead",
+            {}
+        )
+
+        conversation = request.context.get(
+            "conversation",
+            {}
+        )
+
+
+        raw_language = (
+            contact.get("language")
+            or company.get("language")
+            or lead.get("language")
+            or "en"
+        )
+
+        language = (
+            str(
+                raw_language
+            )
+            .strip()
+            .lower()
+        )
+
+
+        if language.startswith("sv"):
+            outreach_language = "Swedish"
+
+        elif language.startswith("es"):
+            outreach_language = "Spanish"
+
+        else:
+            outreach_language = "English"
+
+
+        channel = (
+            str(
+                conversation.get(
+                    "channel",
+                    "EMAIL"
+                )
+            )
+            .strip()
+            .upper()
+        )
+
+
+        instructions = dedent("""
+You are the AI sales assistant for AllStockControl.
+
+Your task is to prepare the FIRST outbound sales message to a prospect.
+
+This is a cold or first-contact outreach.
+There is no previous conversation with the prospect.
+
+STRICT RULES:
+
+- Use VERIFIED PRODUCT FACTS as the only authoritative source for claims
+  about AllStockControl.
+- Never invent product features, prices, integrations, guarantees,
+  customer results, discounts, plans, or capabilities.
+- Prospect research may only be used for factual personalization.
+- Never invent a problem, pain point, business need, or operational
+  difficulty for the prospect.
+- Never imply that the prospect needs AllStockControl unless the supplied
+  evidence explicitly supports that statement.
+- Do not pretend to know the prospect personally.
+- Do not claim that you spoke with them previously.
+- Do not claim that you visited their facilities or observed their
+  internal operations.
+- Keep the outreach concise, professional, natural, and low pressure.
+- Explain briefly why AllStockControl may be relevant based only on the
+  verified context.
+- End with a simple, low-pressure question about whether the topic is
+  relevant to them.
+- Do not propose or schedule a call.
+- Do not promise future actions.
+- Do not mention another sales representative, department, or employee.
+- Do not output HTML.
+- Do not output Markdown.
+- Do not use placeholders such as [Name] or [Company].
+- Use plain text only.
+- The message will require human approval before it can be sent.
+- Write in the explicitly supplied OUTREACH LANGUAGE.
+- If CHANNEL is EMAIL, create a short professional subject.
+- If CHANNEL is not EMAIL, subject must be null.
+- Keep the message approximately 60 to 130 words.
+""").strip()
+
+
+        user_input = dedent(f"""
+Task:
+Generate the first outbound outreach for this prospect.
+
+OUTREACH LANGUAGE:
+{outreach_language}
+
+CHANNEL:
+{channel}
+
+VERIFIED PRODUCT FACTS:
+{verified_facts_text}
+
+SALES CONTEXT:
+{context_json}
+
+Prepare the first sales outreach.
+
+Use the prospect research only for careful factual personalization.
+Do not infer problems or needs that are not explicitly supported.
+""").strip()
+
+
+        result = await provider.generate_reply(
+            instructions=instructions,
+            user_input=user_input,
+        )
+
+
+        message = (
+            result.reply.message.strip()
+        )
+
+        self.validate_reply(
+            message
+        )
+
+
+        subject = result.reply.subject
+
+        if subject is not None:
+            subject = (
+                subject.strip()
+            )
+
+            if subject == "":
+                subject = None
+
+
+        if channel == "EMAIL":
+            if subject is None:
+                raise RuntimeError(
+                    "AI outreach did not provide an email subject."
+                )
+
+            self.validate_reply(
+                subject
+            )
+
+        else:
+            subject = None
+
+
+        return SalesAgentResponse(
+            subject=subject,
+            message=message,
+            model=result.model,
+            missing_information=[],
+            requires_human_input=False,
+        )
+
+
     def extract_missing_information(
         self,
         latest_inbound_message: str,

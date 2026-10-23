@@ -490,5 +490,254 @@ class SalesAgentServiceTest(
         )
 
 
+    async def testGeneratesFirstOutreach(
+        self
+    ) -> None:
+        provider = AsyncMock()
+
+        provider.generate_reply.return_value = (
+            AIProviderResult(
+                reply=SalesReply(
+                    subject=(
+                        "Inventory operations at Demo Logistics"
+                    ),
+                    message=(
+                        "Hi Anna,\n\n"
+                        "AllStockControl helps companies manage "
+                        "inventory and stock operations from one system. "
+                        "Based on the supplied company context, "
+                        "inventory operations appear relevant to your role. "
+                        "Would this be relevant to explore for your team?"
+                    ),
+                    missing_information=[],
+                    requires_human_input=False,
+                ),
+                model="test-model"
+            )
+        )
+
+
+        request = SalesAgentRequest(
+            task="generate_first_outreach",
+            context={
+                "product": {
+                    "name": "AllStockControl",
+                    "verified_facts": [
+                        (
+                            "AllStockControl helps companies "
+                            "manage inventory and stock operations "
+                            "from one system."
+                        )
+                    ]
+                },
+                "company": {
+                    "name": "Demo Logistics AB",
+                    "industry": "Logistics",
+                    "country": "Sweden",
+                    "language": "en",
+                    "research_summary": (
+                        "Demo Logistics AB provides "
+                        "logistics services."
+                    ),
+                    "inventory_context": (
+                        "The company operates warehousing "
+                        "and inventory-related activities."
+                    )
+                },
+                "contact": {
+                    "name": "Anna Svensson",
+                    "job_title": "Operations Manager",
+                    "language": "en"
+                },
+                "lead": {
+                    "stage": "NEW",
+                    "score": 82,
+                    "score_reason": (
+                        "Strong inventory relevance."
+                    )
+                },
+                "conversation": {
+                    "channel": "EMAIL"
+                }
+            }
+        )
+
+
+        with patch(
+            "app.sales_agent_service.create_ai_provider",
+            return_value=provider
+        ):
+            service = SalesAgentService()
+
+            result = await service.generate_outreach(
+                request
+            )
+
+
+        self.assertEqual(
+            result.subject,
+            "Inventory operations at Demo Logistics"
+        )
+
+        self.assertEqual(
+            result.model,
+            "test-model"
+        )
+
+        self.assertFalse(
+            result.requires_human_input
+        )
+
+        self.assertEqual(
+            result.missing_information,
+            []
+        )
+
+
+        provider.generate_reply.assert_awaited_once()
+
+
+    async def testFirstOutreachUsesConfiguredLanguage(
+        self
+    ) -> None:
+        provider = AsyncMock()
+
+        provider.generate_reply.return_value = (
+            AIProviderResult(
+                reply=SalesReply(
+                    subject="Lagerhantering",
+                    message=(
+                        "Hej Anna. "
+                        "AllStockControl hjälper företag att "
+                        "hantera lager och lagerverksamhet."
+                    ),
+                ),
+                model="test-model"
+            )
+        )
+
+
+        request = SalesAgentRequest(
+            task="generate_first_outreach",
+            context={
+                "contact": {
+                    "language": "sv"
+                },
+                "conversation": {
+                    "channel": "EMAIL"
+                }
+            }
+        )
+
+
+        with patch(
+            "app.sales_agent_service.create_ai_provider",
+            return_value=provider
+        ):
+            service = SalesAgentService()
+
+            await service.generate_outreach(
+                request
+            )
+
+
+        call = provider.generate_reply.await_args
+
+        user_input = call.kwargs["user_input"]
+        
+
+        self.assertIn(
+            "Swedish",
+            user_input
+        )
+
+
+    async def testFirstOutreachRemovesSubjectForNonEmailChannel(
+        self
+    ) -> None:
+        provider = AsyncMock()
+
+        provider.generate_reply.return_value = (
+            AIProviderResult(
+                reply=SalesReply(
+                    subject="Should not survive",
+                    message=(
+                        "Hi Anna, would inventory management "
+                        "be relevant to your operations?"
+                    ),
+                ),
+                model="test-model"
+            )
+        )
+
+
+        request = SalesAgentRequest(
+            task="generate_first_outreach",
+            context={
+                "conversation": {
+                    "channel": "LINKEDIN"
+                }
+            }
+        )
+
+
+        with patch(
+            "app.sales_agent_service.create_ai_provider",
+            return_value=provider
+        ):
+            service = SalesAgentService()
+
+            result = await service.generate_outreach(
+                request
+            )
+
+
+        self.assertIsNone(
+            result.subject
+        )
+
+
+    async def testFirstEmailOutreachRequiresSubject(
+        self
+    ) -> None:
+        provider = AsyncMock()
+
+        provider.generate_reply.return_value = (
+            AIProviderResult(
+                reply=SalesReply(
+                    subject=None,
+                    message="Hi Anna, is this relevant to your team?",
+                ),
+                model="test-model"
+            )
+        )
+
+
+        request = SalesAgentRequest(
+            task="generate_first_outreach",
+            context={
+                "conversation": {
+                    "channel": "EMAIL"
+                }
+            }
+        )
+
+
+        with patch(
+            "app.sales_agent_service.create_ai_provider",
+            return_value=provider
+        ):
+            service = SalesAgentService()
+
+
+            with self.assertRaisesRegex(
+                RuntimeError,
+                "AI outreach did not provide an email subject"
+            ):
+                await service.generate_outreach(
+                    request
+                )
+
+
 if __name__ == "__main__":
     unittest.main()
