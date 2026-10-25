@@ -276,7 +276,7 @@ class SalesLeadService
 						"AI",
 
 					"next_action" =>
-						"Generate first outreach",
+						"Review first outreach",
 
 					"ai_summary" =>
 						$this->nullableString(

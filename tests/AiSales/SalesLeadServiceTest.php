@@ -85,7 +85,7 @@ final class SalesLeadServiceTest extends TestCase
 						);
 
 						$this->assertSame(
-							"Generate first outreach",
+							"Review first outreach",
 							$data["next_action"]
 						);
 
