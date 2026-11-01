@@ -70,6 +70,8 @@ class SalesContactRepository
 				"first_name",
 				"last_name",
 				"job_title",
+				"email",
+				"linkedin_url",
 				"language",
 				"is_primary",
 				"do_not_contact"

@@ -3,6 +3,8 @@ use App\AiSales\SalesMessageRepository;
 use App\AiSales\SalesConversationRepository;
 use App\AiSales\SalesLeadRepository;
 use App\AiSales\SalesMessageService;
+use App\AiSales\SalesContactRepository;
+use App\AiSales\SalesEmailSender;
 
 require_once('../inc/cors.php');
 require_once('../logic/stock_be.php');
@@ -77,12 +79,22 @@ try {
 	$leadRepository =
 		new SalesLeadRepository();
 
+	$contactRepository =
+		new SalesContactRepository();
+
+	$emailSender =
+		new SalesEmailSender();
+
 
 	$service =
 		new SalesMessageService(
 			$messageRepository,
 			$conversationRepository,
-			$leadRepository
+			$leadRepository,
+			null,
+			$contactRepository,
+			null,
+			$emailSender
 		);
 
     if (!pg_query($sql, "BEGIN")) {

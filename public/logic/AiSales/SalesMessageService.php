@@ -16,13 +16,16 @@ class SalesMessageService
 
 	private ?AiSalesAgentClient $aiSalesAgentClient;
 
+	private ?SalesEmailSender $emailSender;
+
 	public function __construct(
 		SalesMessageRepository $repository,
 		SalesConversationRepository $conversationRepository,
 		SalesLeadRepository $leadRepository,
 		?SalesCompanyRepository $companyRepository = null,
 		?SalesContactRepository $contactRepository = null,
-		?AiSalesAgentClient $aiSalesAgentClient = null
+		?AiSalesAgentClient $aiSalesAgentClient = null,
+		?SalesEmailSender $emailSender = null
 	) {
 		$this->repository =
 			$repository;
@@ -41,6 +44,9 @@ class SalesMessageService
 
 		$this->aiSalesAgentClient =
 			$aiSalesAgentClient;
+
+		$this->emailSender =
+			$emailSender;
 	}
 
 	public function getMessagesByConversation(
@@ -210,6 +216,145 @@ class SalesMessageService
 		$currentStage =
 			(string)($lead["stage"] ?? "NEW");
 
+		$providerMessageId =
+			null;
+
+
+		if ($this->emailSender !== null) {
+
+			if ($this->contactRepository === null) {
+				throw new \RuntimeException(
+					"Sales contact repository is required for email delivery."
+				);
+			}
+
+
+			$channel =
+				strtoupper(
+					trim(
+						(string)($conversation["channel"] ?? '')
+					)
+				);
+
+			if ($channel !== "EMAIL") {
+				throw new \RuntimeException(
+					"Sales email sender only supports EMAIL conversations."
+				);
+			}
+
+
+			$salesContactId =
+				(int)($conversation["sales_contact_id"] ?? 0);
+
+			if ($salesContactId <= 0) {
+				throw new \RuntimeException(
+					"Sales contact not found for conversation."
+				);
+			}
+
+
+			$contact =
+				$this->contactRepository->findById(
+					$salesContactId
+				);
+
+			if ($contact === null) {
+				throw new \RuntimeException(
+					"Sales contact not found."
+				);
+			}
+
+
+			$contactCompanyId =
+				(int)($contact["sales_company_id"] ?? 0);
+
+			$leadCompanyId =
+				(int)($lead["sales_company_id"] ?? 0);
+
+			if (
+				$leadCompanyId <= 0 ||
+				$contactCompanyId !== $leadCompanyId
+			) {
+				throw new \RuntimeException(
+					"Sales contact does not belong to sales company."
+				);
+			}
+
+
+			if (
+				$this->isDatabaseTrue(
+					$contact["do_not_contact"] ?? false
+				)
+			) {
+				throw new \RuntimeException(
+					"Sales contact is marked as do not contact."
+				);
+			}
+
+
+			$email =
+				trim(
+					(string)($contact["email"] ?? '')
+				);
+
+			if (
+				$email === '' ||
+				!filter_var(
+					$email,
+					FILTER_VALIDATE_EMAIL
+				)
+			) {
+				throw new \RuntimeException(
+					"Sales contact does not have a valid email address."
+				);
+			}
+
+
+			$subject =
+				trim(
+					(string)($message["subject"] ?? '')
+				);
+
+			if ($subject === '') {
+				throw new \RuntimeException(
+					"Sales email subject is required."
+				);
+			}
+
+
+			$messageBody =
+				trim(
+					(string)($message["message"] ?? '')
+				);
+
+			if ($messageBody === '') {
+				throw new \RuntimeException(
+					"Sales email message is required."
+				);
+			}
+
+
+			$delivery =
+				$this->emailSender->send(
+					$email,
+					$subject,
+					$messageBody
+				);
+
+
+			$providerMessageId =
+				isset(
+					$delivery["provider_message_id"]
+				)
+					? trim(
+						(string)$delivery["provider_message_id"]
+					)
+					: null;
+
+			if ($providerMessageId === '') {
+				$providerMessageId = null;
+			}
+		}
 
 		$newStage = null;
 
@@ -231,7 +376,8 @@ class SalesMessageService
 
 		$this->repository->markAsSent(
 			$salesMessageId,
-			$now
+			$now,
+			$providerMessageId
 		);
 
 		$this->conversationRepository
@@ -245,7 +391,8 @@ class SalesMessageService
 			->updateAfterContact(
 				$salesLeadId,
 				$now,
-				$newStage
+				$newStage,
+				"Wait for reply"
 			);
 
 		return [
@@ -265,7 +412,10 @@ class SalesMessageService
 				$newStage ?? $currentStage,
 
 			"sent_at" =>
-				$now
+				$now,
+			
+			"provider_message_id" =>
+				$providerMessageId
 		];
 	}
 

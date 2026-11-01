@@ -128,7 +128,8 @@ class SalesLeadRepository
 	public function updateAfterContact(
 		int $salesLeadId,
 		string $lastContactAt,
-		?string $stage = null
+		?string $stage = null,
+		?string $nextAction = null
 	): void {
 		$data = [
 			"last_contact_at" => $lastContactAt,
@@ -136,7 +137,13 @@ class SalesLeadRepository
 		];
 
 		if ($stage !== null) {
-			$data["stage"] = $stage;
+			$data["stage"] =
+				$stage;
+		}
+
+		if ($nextAction !== null) {
+			$data["next_action"] =
+				$nextAction;
 		}
 
 		$result = \update_table(

@@ -130,12 +130,14 @@ class SalesMessageRepository
 
 	public function markAsSent(
 		int $salesMessageId,
-		string $sentAt
+		string $sentAt,
+		?string $providerMessageId = null
 	): void {
 		$result = \update_table(
 			"sales_messages",
 			[
 				"status" => "SENT",
+				"provider_message_id" => $providerMessageId,
 				"sent_at" => $sentAt,
 				"updated_at" => $sentAt
 			],

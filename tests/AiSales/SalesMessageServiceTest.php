@@ -8,6 +8,7 @@ use App\AiSales\SalesContactRepository;
 use App\AiSales\AiSalesAgentClient;
 use App\AiSales\SalesMessageService;
 use PHPUnit\Framework\TestCase;
+use App\AiSales\SalesEmailSender;
 
 final class SalesMessageServiceTest extends TestCase
 {
@@ -112,6 +113,8 @@ final class SalesMessageServiceTest extends TestCase
 				"first_name" => "Anna",
 				"last_name" => "Svensson",
 				"job_title" => "Operations Manager",
+				"email" => "anna@example.com",
+				"linkedin_url" => null,
 				"language" => "en",
 				"is_primary" => true,
 				"do_not_contact" => false
@@ -1183,6 +1186,224 @@ final class SalesMessageServiceTest extends TestCase
 	}
 
 
+	public function testSendEmailDeliversMessageBeforeMarkingItAsSent(): void
+	{
+		$messageRepository =
+			$this->createMock(
+				SalesMessageRepository::class
+			);
+
+		$conversationRepository =
+			$this->createMock(
+				SalesConversationRepository::class
+			);
+
+		$leadRepository =
+			$this->createMock(
+				SalesLeadRepository::class
+			);
+
+		$contactRepository =
+			$this->createMock(
+				SalesContactRepository::class
+			);
+
+		$emailSender =
+			$this->createMock(
+				SalesEmailSender::class
+			);
+
+
+		$messageRepository
+			->method('findById')
+			->with(10)
+			->willReturn(
+				$this->validMessage()
+			);
+
+		$conversationRepository
+			->method('findById')
+			->with(20)
+			->willReturn(
+				$this->validConversation()
+			);
+
+		$leadRepository
+			->method('findById')
+			->with(30)
+			->willReturn(
+				$this->validLead()
+			);
+
+		$contactRepository
+			->expects($this->once())
+			->method('findById')
+			->with(40)
+			->willReturn(
+				$this->validContact()
+			);
+
+
+		$emailSender
+			->expects($this->once())
+			->method('send')
+			->with(
+				"anna@example.com",
+				"Test subject",
+				"Test message"
+			)
+			->willReturn([
+				"provider_message_id" =>
+					"<sales-message-10@example.com>"
+			]);
+
+
+		$messageRepository
+			->expects($this->once())
+			->method('markAsSent')
+			->with(
+				10,
+				$this->isType('string'),
+				"<sales-message-10@example.com>"
+			);
+
+		$conversationRepository
+			->expects($this->once())
+			->method('markWaitingReply');
+
+		$leadRepository
+			->expects($this->once())
+			->method('updateAfterContact');
+
+
+		$service =
+			new SalesMessageService(
+				$messageRepository,
+				$conversationRepository,
+				$leadRepository,
+				null,
+				$contactRepository,
+				null,
+				$emailSender
+			);
+
+
+		$result =
+			$service->sendMessage(
+				10
+			);
+
+
+		$this->assertSame(
+			"<sales-message-10@example.com>",
+			$result["provider_message_id"]
+		);
+	}
+
+
+	public function testSendEmailFailureDoesNotMarkMessageAsSent(): void
+	{
+		$messageRepository =
+			$this->createMock(
+				SalesMessageRepository::class
+			);
+
+		$conversationRepository =
+			$this->createMock(
+				SalesConversationRepository::class
+			);
+
+		$leadRepository =
+			$this->createMock(
+				SalesLeadRepository::class
+			);
+
+		$contactRepository =
+			$this->createMock(
+				SalesContactRepository::class
+			);
+
+		$emailSender =
+			$this->createMock(
+				SalesEmailSender::class
+			);
+
+
+		$messageRepository
+			->method('findById')
+			->willReturn(
+				$this->validMessage()
+			);
+
+		$conversationRepository
+			->method('findById')
+			->willReturn(
+				$this->validConversation()
+			);
+
+		$leadRepository
+			->method('findById')
+			->willReturn(
+				$this->validLead()
+			);
+
+		$contactRepository
+			->method('findById')
+			->willReturn(
+				$this->validContact()
+			);
+
+
+		$emailSender
+			->expects($this->once())
+			->method('send')
+			->willThrowException(
+				new RuntimeException(
+					"SMTP delivery failed."
+				)
+			);
+
+
+		$messageRepository
+			->expects($this->never())
+			->method('markAsSent');
+
+		$conversationRepository
+			->expects($this->never())
+			->method('markWaitingReply');
+
+		$leadRepository
+			->expects($this->never())
+			->method('updateAfterContact');
+
+
+		$service =
+			new SalesMessageService(
+				$messageRepository,
+				$conversationRepository,
+				$leadRepository,
+				null,
+				$contactRepository,
+				null,
+				$emailSender
+			);
+
+
+		$this->expectException(
+			RuntimeException::class
+		);
+
+		$this->expectExceptionMessage(
+			"SMTP delivery failed."
+		);
+
+
+		$service->sendMessage(
+			10
+		);
+	}
+
+
 	public function testSendChangesNewLeadToContacted(): void
 	{
 		$messageRepository =
@@ -1370,7 +1591,8 @@ final class SalesMessageServiceTest extends TestCase
 			->with(
 				30,
 				$this->isType('string'),
-				"CONTACTED"
+				"CONTACTED",
+				"Wait for reply"
 			);
 
 		$service =
@@ -1449,7 +1671,8 @@ final class SalesMessageServiceTest extends TestCase
 			->with(
 				30,
 				$this->isType('string'),
-				null
+				null,
+				"Wait for reply"
 			);
 
 		$service =
@@ -1630,7 +1853,8 @@ final class SalesMessageServiceTest extends TestCase
 				function (
 					int $salesLeadId,
 					string $timestamp,
-					?string $stage
+					?string $stage,
+					?string $nextAction
 				) use (
 					&$leadTimestamp
 				): void {
@@ -1642,6 +1866,11 @@ final class SalesMessageServiceTest extends TestCase
 					$this->assertSame(
 						"CONTACTED",
 						$stage
+					);
+
+					$this->assertSame(
+						"Wait for reply",
+						$nextAction
 					);
 
 					$leadTimestamp =
