@@ -1186,6 +1186,81 @@ final class SalesMessageServiceTest extends TestCase
 	}
 
 
+	public function testSendEmailRejectsMissingEmailSender(): void
+	{
+		$messageRepository =
+			$this->createMock(
+				SalesMessageRepository::class
+			);
+
+		$conversationRepository =
+			$this->createMock(
+				SalesConversationRepository::class
+			);
+
+		$leadRepository =
+			$this->createMock(
+				SalesLeadRepository::class
+			);
+
+
+		$messageRepository
+			->method('findById')
+			->willReturn(
+				$this->validMessage()
+			);
+
+		$conversationRepository
+			->method('findById')
+			->willReturn(
+				$this->validConversation([
+					"channel" => "EMAIL"
+				])
+			);
+
+		$leadRepository
+			->method('findById')
+			->willReturn(
+				$this->validLead()
+			);
+
+
+		$messageRepository
+			->expects($this->never())
+			->method('markAsSent');
+
+		$conversationRepository
+			->expects($this->never())
+			->method('markWaitingReply');
+
+		$leadRepository
+			->expects($this->never())
+			->method('updateAfterContact');
+
+
+		$service =
+			new SalesMessageService(
+				$messageRepository,
+				$conversationRepository,
+				$leadRepository
+			);
+
+
+		$this->expectException(
+			RuntimeException::class
+		);
+
+		$this->expectExceptionMessage(
+			"Sales email sender is required for EMAIL conversations."
+		);
+
+
+		$service->sendMessage(
+			10
+		);
+	}
+
+
 	public function testSendEmailDeliversMessageBeforeMarkingItAsSent(): void
 	{
 		$messageRepository =
@@ -1430,7 +1505,9 @@ final class SalesMessageServiceTest extends TestCase
 		$conversationRepository
 			->method('findById')
 			->willReturn(
-				$this->validConversation()
+				$this->validConversation([
+					"channel" => "LINKEDIN"
+				])
 			);
 
 		$leadRepository
@@ -1565,7 +1642,9 @@ final class SalesMessageServiceTest extends TestCase
 		$conversationRepository
 			->method('findById')
 			->willReturn(
-				$this->validConversation()
+				$this->validConversation([
+					"channel" => "LINKEDIN"
+				])
 			);
 
 		$leadRepository
@@ -1645,7 +1724,9 @@ final class SalesMessageServiceTest extends TestCase
 		$conversationRepository
 			->method('findById')
 			->willReturn(
-				$this->validConversation()
+				$this->validConversation([
+					"channel" => "LINKEDIN"
+				])
 			);
 
 		$leadRepository
@@ -1727,7 +1808,9 @@ final class SalesMessageServiceTest extends TestCase
 		$conversationRepository
 			->method('findById')
 			->willReturn(
-				$this->validConversation()
+				$this->validConversation([
+					"channel" => "LINKEDIN"
+				])
 			);
 
 		$leadRepository
@@ -1793,7 +1876,9 @@ final class SalesMessageServiceTest extends TestCase
 		$conversationRepository
 			->method('findById')
 			->willReturn(
-				$this->validConversation()
+				$this->validConversation([
+					"channel" => "LINKEDIN"
+				])
 			);
 
 		$leadRepository

@@ -3062,7 +3062,7 @@ window.loadAiSales = async function () {
 												class="button-style-agree send-sales-message-btn"
 												data-message-id="${message.sales_message_id}"
 											>
-												Send (test)
+												Send
 											</button>
 										</div>
 									`

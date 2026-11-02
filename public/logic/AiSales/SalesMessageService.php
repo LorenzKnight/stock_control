@@ -216,6 +216,23 @@ class SalesMessageService
 		$currentStage =
 			(string)($lead["stage"] ?? "NEW");
 
+		$channel =
+			strtoupper(
+				trim(
+					(string)($conversation["channel"] ?? '')
+				)
+			);
+
+
+		if (
+			$channel === "EMAIL" &&
+			$this->emailSender === null
+		) {
+			throw new \RuntimeException(
+				"Sales email sender is required for EMAIL conversations."
+			);
+		}
+
 		$providerMessageId =
 			null;
 
@@ -227,14 +244,7 @@ class SalesMessageService
 					"Sales contact repository is required for email delivery."
 				);
 			}
-
-
-			$channel =
-				strtoupper(
-					trim(
-						(string)($conversation["channel"] ?? '')
-					)
-				);
+			
 
 			if ($channel !== "EMAIL") {
 				throw new \RuntimeException(
