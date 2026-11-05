@@ -3,7 +3,8 @@
         "stripe/stripe-php": "^17.4",
         "phpmailer/phpmailer": "^7.0",
         "firebase/php-jwt": "^6.11",
-        "minishlink/web-push": "^9.0"
+        "minishlink/web-push": "^9.0",
+        "webklex/php-imap": "^6.2"
     },
     "autoload": {
         "psr-4": {
