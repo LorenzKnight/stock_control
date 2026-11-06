@@ -173,6 +173,11 @@ class SalesEmailSender
 			$mail->Body =
 				$message;
 
+                
+            $mail->addCustomHeader(
+                "X-AllStockControl-Source",
+                "ai-sales"
+            );
 
 			$mail->send();
 

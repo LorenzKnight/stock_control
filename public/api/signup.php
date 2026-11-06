@@ -108,8 +108,19 @@ try {
         <p class='info'>This link is valid for 24 hours.</p>
     ";
 
-    if (!sendSystemEmail("no-reply@allstockcontrol.com", $data["email"], "Verifica tu cuenta", $emailContent)) {
-        throw new Exception("User created but verification email failed.");
+    if (!sendSystemEmail(
+        "no-reply@allstockcontrol.com",
+        $data["email"],
+        "Verifica tu cuenta",
+        $emailContent,
+        [
+            "X-AllStockControl-Source" =>
+                "signup-verification"
+        ]
+    )) {
+        throw new Exception(
+            "User created but verification email failed."
+        );
     }
 
 

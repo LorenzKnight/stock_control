@@ -96,7 +96,16 @@ $htmlContent = "
 ";
 
 // 📤 Enviar correo
-$sent = sendSystemEmail($from, $to, $subject, $htmlContent);
+$sent = sendSystemEmail(
+    $from,
+    $to,
+    $subject,
+    $htmlContent,
+    [
+        "X-AllStockControl-Source" =>
+            "contact-form"
+    ]
+);
 
 if ($sent) {
     echo json_encode([

@@ -1143,8 +1143,13 @@ function sendPush(array $subscriptionData, array $payload)
 
 use PHPMailer\PHPMailer\PHPMailer;
 
-function sendSystemEmail(string $from, $to, string $subject, string $htmlContent): bool
-{
+function sendSystemEmail(
+    string $from,
+    $to,
+    string $subject,
+    string $htmlContent,
+    array $customHeaders = []
+): bool {
     if (!is_string($to) && !is_array($to)) {
         throw new InvalidArgumentException('$to must be string or array');
     }
@@ -1220,6 +1225,23 @@ function sendSystemEmail(string $from, $to, string $subject, string $htmlContent
         $mail->Subject = $subject;
         $mail->Body    = buildEmailTemplate($htmlContent);
         $mail->AltBody = strip_tags($htmlContent);
+
+		foreach ($customHeaders as $name => $value) {
+			$name = trim((string)$name);
+			$value = trim((string)$value);
+
+			if (
+				$name === '' ||
+				$value === ''
+			) {
+				continue;
+			}
+
+			$mail->addCustomHeader(
+				$name,
+				$value
+			);
+		}
 
         $mail->send();
         return true;
