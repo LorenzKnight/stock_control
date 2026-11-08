@@ -759,6 +759,13 @@ CREATE TABLE IF NOT EXISTS sales_activities (
 
 -- AI SALES MODULE INDEXES
 
+-- Prevent duplicate AI Sales email messages
+CREATE UNIQUE INDEX IF NOT EXISTS
+    idx_sales_messages_provider_message_id_unique
+ON sales_messages (provider_message_id)
+WHERE provider_message_id IS NOT NULL;
+
+
 -- CREATE INDEX IF NOT EXISTS idx_sales_companies_market
 -- ON sales_companies(market);
 

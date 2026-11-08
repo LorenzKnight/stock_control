@@ -48,6 +48,60 @@ class SalesMessageRepository
 	}
 
 
+	public function findByProviderMessageId(
+		string $providerMessageId
+	): ?array {
+		$normalizedId = trim(
+			$providerMessageId,
+			" <> \t\n\r"
+		);
+
+		if ($normalizedId === '') {
+			return null;
+		}
+
+		$candidates = [
+			$normalizedId,
+			'<' . $normalizedId . '>'
+		];
+
+		foreach ($candidates as $candidate) {
+			$result = \select_from(
+				"sales_messages",
+				[
+					"sales_message_id",
+					"conversation_id",
+					"direction",
+					"status",
+					"provider_message_id"
+				],
+				[
+					"provider_message_id" => $candidate
+				],
+				[
+					"fetch_first" => true,
+					"return_type" => "array"
+				]
+			);
+
+			if (!is_array($result)) {
+				throw new \RuntimeException(
+					"Invalid sales message lookup response."
+				);
+			}
+
+			if (
+				!empty($result["success"]) &&
+				!empty($result["data"])
+			) {
+				return $result["data"];
+			}
+		}
+
+		return null;
+	}
+
+
     public function findById(
 		int $salesMessageId
 	): ?array {
