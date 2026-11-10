@@ -25,6 +25,39 @@ services:
     networks:
       - network_mynet_stock
 
+  ai-sales-scheduler:
+    container_name: ai-sales-scheduler
+    build: .conf/php/
+    restart: unless-stopped
+    environment:
+      AI_SALES_AGENT_URL: ${AI_SALES_AGENT_URL}
+      AI_SALES_AGENT_TOKEN: ${AI_SALES_AGENT_TOKEN}
+    volumes:
+      - .:/app
+    working_dir: /app
+    command:
+      - /bin/sh
+      - -c
+      - |
+        while true; do
+          echo "[$(date -Iseconds)] AI Sales inbox sync started" \
+            >> /app/var/log/ai-sales-scheduler.log
+
+          if php /app/bin/process-sales-inbox.php \
+            >> /app/var/log/ai-sales-scheduler.log 2>&1; then
+            echo "[$(date -Iseconds)] AI Sales inbox sync SUCCESS" \
+              >> /app/var/log/ai-sales-scheduler.log
+          else
+            echo "[$(date -Iseconds)] AI Sales inbox sync FAILED" \
+              >> /app/var/log/ai-sales-scheduler.log
+          fi
+
+          sleep 60
+        done
+    networks:
+      - network_mynet_stock
+
+
   ai-sales-agent:
     container_name: ai-sales-agent
     build:

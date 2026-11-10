@@ -270,7 +270,7 @@ class SalesMailboxProcessor
 		$patterns = [
 			// Gmail in Spanish:
 			// El dom, 1 nov 2026 ... escribió:
-			'/^El\s.+\bescribi[oó]:\s*$/miu',
+			'/^El[^\n]*(?:\n[^\n]*){0,2}\bescribi[oó]:[ \t]*$/miu',
 
 			// Gmail in English:
 			// On Sun, Nov 1, 2026 ... wrote:
