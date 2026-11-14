@@ -229,6 +229,15 @@ class SalesMailboxProcessor
 
                         $stats["processed"]++;
 
+
+						try {
+							$this->notifyNewInboundMessage();
+						} catch (\Throwable $e) {
+							error_log(
+								'[AI Sales WS] ' . $e->getMessage()
+							);
+						}
+
                     } catch (\Throwable $e) {
                         pg_query($sql, "ROLLBACK");
                         throw $e;
@@ -250,6 +259,62 @@ class SalesMailboxProcessor
 
         return $stats;
     }
+
+
+	private function notifyNewInboundMessage(): void
+	{
+		$url = getenv('AI_SALES_WS_BRIDGE_URL');
+
+		if (!$url) {
+			return;
+		}
+
+		$payload = json_encode([
+			'type' => 'ai_sales.new_inbound_message',
+			'message' => 'AI Sales inbox updated'
+		], JSON_THROW_ON_ERROR);
+
+		$headers = [
+			'Content-Type: application/json'
+		];
+
+		$token = getenv('NOTIFY_TOKEN');
+
+		if ($token !== false && $token !== '') {
+			$headers[] = 'X-Notify-Token: ' . $token;
+		}
+
+		$context = stream_context_create([
+			'http' => [
+				'method' => 'POST',
+				'header' => implode("\r\n", $headers),
+				'content' => $payload,
+				'timeout' => 2,
+				'ignore_errors' => true
+			]
+		]);
+
+		$response = @file_get_contents(
+			$url,
+			false,
+			$context
+		);
+
+		$statusLine = $http_response_header[0] ?? '';
+
+		if (
+			$response === false ||
+			!preg_match(
+				'~^HTTP/\S+\s+2\d\d\b~',
+				$statusLine
+			)
+		) {
+			error_log(
+				'[AI Sales WS] Notification delivery failed: ' .
+				$statusLine
+			);
+		}
+	}
 
 
 	private function extractReplyText(string $body): string

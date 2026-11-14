@@ -1,4 +1,110 @@
 document.addEventListener("DOMContentLoaded", async function () {
+	const aiSalesDot = (element, visible, id) => {
+		if (!element) return;
+
+		let dot = element.querySelector(
+			`:scope > [data-ai-sales-dot="${id}"]`
+		);
+
+		if (!visible) {
+			dot?.remove();
+			return;
+		}
+
+		if (dot) return;
+
+		dot = document.createElement('span');
+		dot.dataset.aiSalesDot = id;
+		dot.setAttribute('aria-label', 'Unread AI Sales reply');
+
+		Object.assign(dot.style, {
+			position: 'absolute',
+			width: '9px',
+			height: '9px',
+			borderRadius: '50%',
+			background: '#ef4444',
+			right: '5px',
+			top: '5px',
+			zIndex: '5',
+			pointerEvents: 'none'
+		});
+
+		if (getComputedStyle(element).position === 'static') {
+			element.style.position = 'relative';
+		}
+
+		element.appendChild(dot);
+	};
+
+	let aiSalesUnreadCompanies = {};
+
+	function renderAiSalesDots(total) {
+		const hasUnread = total > 0;
+
+		aiSalesDot(
+			document.getElementById('profileTrigger'),
+			hasUnread,
+			'profile'
+		);
+
+		aiSalesDot(
+			document.getElementById('system-admin'),
+			hasUnread,
+			'system-admin'
+		);
+
+		aiSalesDot(
+			document.querySelector('[data-section="ai-sales"]'),
+			hasUnread,
+			'ai-sales'
+		);
+
+		document.querySelectorAll('.ai-sales-company-row')
+			.forEach(row => {
+				const companyId = row.dataset.companyId;
+
+				aiSalesDot(
+					row,
+					Number(aiSalesUnreadCompanies[companyId] || 0) > 0,
+					'company'
+				);
+			});
+	}
+
+	async function refreshAiSalesUnread() {
+		try {
+			const response = await fetch(
+				'api/get_ai_sales_unread.php',
+				{ cache: 'no-store' }
+			);
+
+			if (!response.ok) return;
+
+			const data = await response.json();
+			if (!data.success) return;
+
+			aiSalesUnreadCompanies = data.companies || {};
+
+			renderAiSalesDots(Number(data.total_unread || 0));
+		} catch (error) {
+			console.error('[AI Sales] Unread sync failed:', error);
+		}
+	}
+
+	window.refreshAiSalesUnread = refreshAiSalesUnread;
+
+	window.addEventListener('ai-sales:inbound', async () => {
+		await refreshAiSalesUnread();
+		await window.refreshAiSalesCurrentCompany?.();
+	});
+
+	window.addEventListener(
+		'ai-sales:read',
+		refreshAiSalesUnread
+	);
+
+	refreshAiSalesUnread();
+
 	//############################################################# NOTIFICATIONS ##################################################################
 	(async () => {
 		const headerMenu = document.getElementById("header-menu");
@@ -69,6 +175,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 					data = JSON.parse(event.data);
 				} catch (e) {
 					console.error('[WS] JSON inválido:', event.data);
+					return;
+				}
+
+				/* =====================================================
+				🤖 AI SALES — NEW INBOUND MESSAGE
+				===================================================== */
+				if (data.type === 'ai_sales.new_inbound_message') {
+					window.dispatchEvent(
+						new CustomEvent('ai-sales:inbound')
+					);
+
 					return;
 				}
 

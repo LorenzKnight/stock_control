@@ -8,6 +8,19 @@ window.loadAiSales = async function () {
 	if (!companyContainer) return;
 
 
+	let selectedCompanyId = null;
+
+	window.refreshAiSalesCurrentCompany = async () => {
+		if (!companyContainer.isConnected) return;
+
+		if (selectedCompanyId) {
+			await refreshCompanyDetails(selectedCompanyId);
+		}
+
+		await window.refreshAiSalesUnread?.();
+	};
+
+
 	// Evita insertar directamente texto externo sin escapar
 	function escapeHtml(value) {
 		return String(value ?? '')
@@ -1880,6 +1893,8 @@ window.loadAiSales = async function () {
 	function renderCompanyDetails(company) {
 		if (!companyDetails) return;
 
+		selectedCompanyId = Number(company.sales_company_id);
+
 		companyDetails.innerHTML = `
 			<div class="ai-sales-detail-layout">
 				<div class="ai-sales-company-header">
@@ -3156,6 +3171,39 @@ window.loadAiSales = async function () {
 
 			});
 
+			if (
+				document.visibilityState === 'visible' &&
+				selectedCompanyId === Number(salesCompanyId)
+			) {
+				try {
+					const formData = new FormData();
+					formData.append('conversation_id', conversationId);
+
+					const readResponse = await fetch(
+						'api/mark_ai_sales_read.php',
+						{
+							method: 'POST',
+							body: formData
+						}
+					);
+
+					if (readResponse.ok) {
+						const readResult = await readResponse.json();
+
+						if (readResult.success) {
+							window.dispatchEvent(
+								new Event('ai-sales:read')
+							);
+						}
+					}
+				} catch (readError) {
+					console.error(
+						'[AI Sales] Could not mark conversation as read:',
+						readError
+					);
+				}
+			}
+
 		} catch (error) {
 			console.error(
 				'Error loading sales messages:',
@@ -4092,6 +4140,8 @@ window.loadAiSales = async function () {
 				</p>
 			`;
 		}
+
+		await window.refreshAiSalesUnread?.();
 	}
 
 	openProspectSearchBtn?.addEventListener(

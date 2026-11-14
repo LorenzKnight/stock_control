@@ -766,6 +766,27 @@ ON sales_messages (provider_message_id)
 WHERE provider_message_id IS NOT NULL;
 
 
+
+-- AI SALES MODULE: Message read status per administrator
+CREATE TABLE IF NOT EXISTS sales_message_reads (
+    sales_message_id INTEGER NOT NULL
+        REFERENCES sales_messages(sales_message_id)
+        ON DELETE CASCADE,
+
+    user_id INTEGER NOT NULL
+        REFERENCES users(user_id)
+        ON DELETE CASCADE,
+
+    read_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (sales_message_id, user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_sales_message_reads_user
+    ON sales_message_reads(user_id);
+
+
+
 -- CREATE INDEX IF NOT EXISTS idx_sales_companies_market
 -- ON sales_companies(market);
 
