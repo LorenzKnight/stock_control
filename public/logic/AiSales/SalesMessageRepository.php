@@ -266,4 +266,59 @@ class SalesMessageRepository
 
 		return (int)$result["id"];
 	}
+
+	public function findUnreadByUser(int $userId): array
+	{
+		if ($userId <= 0) {
+			throw new \InvalidArgumentException(
+				"Invalid user ID."
+			);
+		}
+
+		$result = \select_from(
+			"sales_messages sm
+			INNER JOIN sales_conversations sc
+				ON sc.conversation_id = sm.conversation_id
+			INNER JOIN sales_leads sl
+				ON sl.sales_lead_id = sc.sales_lead_id
+			LEFT JOIN sales_message_reads smr
+				ON smr.sales_message_id = sm.sales_message_id
+				AND smr.user_id = {$userId}",
+			[
+				"sm.sales_message_id AS sales_message_id",
+				"sc.conversation_id AS conversation_id",
+				"sl.sales_company_id AS sales_company_id"
+			],
+			[
+				"sm.direction" => "INBOUND",
+				"sm.status" => "RECEIVED",
+				"smr.sales_message_id" => null
+			],
+			[
+				"return_type" => "array"
+			]
+		);
+
+		if (!is_array($result)) {
+			throw new \RuntimeException(
+				"Invalid unread messages response."
+			);
+		}
+
+		if (empty($result["success"])) {
+			if (
+				($result["message"] ?? '') ===
+				"No records found"
+			) {
+				return [];
+			}
+
+			throw new \RuntimeException(
+				$result["message"] ??
+				"Could not retrieve unread messages."
+			);
+		}
+
+		return array_values($result["data"] ?? []);
+	}
 }

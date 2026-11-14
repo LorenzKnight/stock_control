@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	};
 
 	let aiSalesUnreadCompanies = {};
+	let aiSalesUnreadConversations = {};
 
 	function renderAiSalesDots(total) {
 		const hasUnread = total > 0;
@@ -59,15 +60,48 @@ document.addEventListener("DOMContentLoaded", async function () {
 			'ai-sales'
 		);
 
+		
 		document.querySelectorAll('.ai-sales-company-row')
 			.forEach(row => {
 				const companyId = row.dataset.companyId;
+				const companyName = row.querySelector('td:first-child strong');
+
+				if (!companyName) return;
+
+				const hasUnread =
+					Number(aiSalesUnreadCompanies[companyId] || 0) > 0;
+
+				companyName.style.position = 'relative';
+				companyName.style.display = 'inline-block';
+				companyName.style.paddingRight = hasUnread ? '15px' : '';
 
 				aiSalesDot(
-					row,
-					Number(aiSalesUnreadCompanies[companyId] || 0) > 0,
+					companyName,
+					hasUnread,
 					'company'
 				);
+
+				const dot = companyName.querySelector(
+					'[data-ai-sales-dot="company"]'
+				);
+
+				if (dot) {
+					dot.style.right = '0';
+					dot.style.top = '0';
+				}
+			});
+	}
+
+	function renderAiSalesReadButtons() {
+		document.querySelectorAll('.ai-sales-mark-read-btn')
+			.forEach(button => {
+				const conversationId = button.dataset.conversationId;
+
+				const unreadCount = Number(
+					aiSalesUnreadConversations[conversationId] || 0
+				);
+
+				button.style.display = unreadCount > 0 ? '' : 'none';
 			});
 	}
 
@@ -84,8 +118,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 			if (!data.success) return;
 
 			aiSalesUnreadCompanies = data.companies || {};
+			aiSalesUnreadConversations = data.conversations || {};
 
 			renderAiSalesDots(Number(data.total_unread || 0));
+			renderAiSalesReadButtons();
 		} catch (error) {
 			console.error('[AI Sales] Unread sync failed:', error);
 		}

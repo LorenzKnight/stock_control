@@ -7,8 +7,9 @@ header('Content-Type: application/json');
 
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-        throw new RuntimeException('Method not allowed.');
-    }
+		http_response_code(405);
+		throw new RuntimeException('Method not allowed.');
+	}
 
     $authUser = requireAuth();
     $userId = (int)($authUser['user_id'] ?? 0);
@@ -23,60 +24,47 @@ try {
         http_response_code(403);
         throw new RuntimeException('Permission denied.');
     }
+	
+	$repository = new \App\AiSales\SalesMessageRepository();
 
-    global $sql;
+	$messages = $repository->findUnreadByUser($userId);
 
-    $query = '
-        SELECT
-            sl.sales_company_id,
-            COUNT(*)::int AS unread_count
-        FROM sales_messages sm
-        INNER JOIN sales_conversations sc
-            ON sc.conversation_id = sm.conversation_id
-        INNER JOIN sales_leads sl
-            ON sl.sales_lead_id = sc.sales_lead_id
-        LEFT JOIN sales_message_reads smr
-            ON smr.sales_message_id = sm.sales_message_id
-            AND smr.user_id = $1
-        WHERE sm.direction = \'INBOUND\'
-          AND sm.status = \'RECEIVED\'
-          AND smr.sales_message_id IS NULL
-        GROUP BY sl.sales_company_id
-    ';
+	$companies = [];
+	$conversations = [];
+	$total = 0;
 
-    $result = pg_query_params($sql, $query, [$userId]);
+	foreach ($messages as $message) {
+		$companyId = (int)$message["sales_company_id"];
+		$conversationId = (int)$message["conversation_id"];
 
-    if ($result === false) {
-        throw new RuntimeException(
-            'Could not retrieve unread AI Sales messages.'
-        );
-    }
+		$companies[$companyId] =
+			($companies[$companyId] ?? 0) + 1;
 
-    $companies = [];
-    $total = 0;
+		$conversations[$conversationId] =
+			($conversations[$conversationId] ?? 0) + 1;
 
-    while ($row = pg_fetch_assoc($result)) {
-        $companyId = (int)$row['sales_company_id'];
-        $count = (int)$row['unread_count'];
-
-        $companies[$companyId] = $count;
-        $total += $count;
-    }
+		$total++;
+	}
 
     echo json_encode([
-        'success' => true,
-        'total_unread' => $total,
-        'has_unread' => $total > 0,
-        'companies' => $companies
-    ]);
+		"success" => true,
+		"total_unread" => $total,
+		"has_unread" => $total > 0,
+		"companies" => $companies,
+		"conversations" => $conversations
+	]);
 
 } catch (Throwable $e) {
-    if (http_response_code() === 200) {
+    $status = http_response_code();
+
+    if (!in_array($status, [400, 401, 403, 405], true)) {
         http_response_code(500);
     }
 
     echo json_encode([
         'success' => false,
-        'message' => $e->getMessage()
+        'message' => $status >= 500 || $status === false
+			? 'Internal server error.'
+			: $e->getMessage()
     ]);
 }

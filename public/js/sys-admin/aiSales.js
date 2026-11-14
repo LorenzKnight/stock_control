@@ -2755,6 +2755,16 @@ window.loadAiSales = async function () {
 								</div>
 							</div>
 						</div>
+
+						<button
+							type="button"
+							class="button-style-agree ai-sales-mark-read-btn"
+							data-conversation-id="${Number(conversation.conversation_id)}"
+							style="display: none;"
+						>
+							Mark as read
+						</button>
+
 						<div
 							id="ai-sales-messages-${conversation.conversation_id}"
 							class="ai-sales-messages"
@@ -2763,6 +2773,60 @@ window.loadAiSales = async function () {
 					</div>
 				`).join('')}
 			`;
+
+			conversationsContainer
+				.querySelectorAll('.ai-sales-mark-read-btn')
+				.forEach(button => {
+					button.addEventListener('click', async () => {
+						const conversationId = Number(
+							button.dataset.conversationId
+						);
+
+						if (!conversationId || button.disabled) return;
+
+						button.disabled = true;
+
+						try {
+							const formData = new FormData();
+							formData.append(
+								'conversation_id',
+								conversationId
+							);
+
+							const response = await fetch(
+								'api/mark_ai_sales_read.php',
+								{
+									method: 'POST',
+									body: formData
+								}
+							);
+
+							const result = await response.json();
+
+							if (!response.ok || !result.success) {
+								throw new Error(
+									result.message || 'Read update failed.'
+								);
+							}
+
+							button.remove();
+
+							window.dispatchEvent(
+								new Event('ai-sales:read')
+							);
+
+						} catch (error) {
+							console.error(
+								'[AI Sales] Mark as read failed:',
+								error
+							);
+
+							button.disabled = false;
+						}
+					});
+				});
+				
+			await window.refreshAiSalesUnread?.();
 
 			data.data.forEach(conversation => {
 				loadSalesMessages(
@@ -3168,41 +3232,7 @@ window.loadAiSales = async function () {
 						);
 					}
 				);
-
 			});
-
-			if (
-				document.visibilityState === 'visible' &&
-				selectedCompanyId === Number(salesCompanyId)
-			) {
-				try {
-					const formData = new FormData();
-					formData.append('conversation_id', conversationId);
-
-					const readResponse = await fetch(
-						'api/mark_ai_sales_read.php',
-						{
-							method: 'POST',
-							body: formData
-						}
-					);
-
-					if (readResponse.ok) {
-						const readResult = await readResponse.json();
-
-						if (readResult.success) {
-							window.dispatchEvent(
-								new Event('ai-sales:read')
-							);
-						}
-					}
-				} catch (readError) {
-					console.error(
-						'[AI Sales] Could not mark conversation as read:',
-						readError
-					);
-				}
-			}
 
 		} catch (error) {
 			console.error(
