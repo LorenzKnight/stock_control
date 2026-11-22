@@ -1,5 +1,10 @@
 document.addEventListener("DOMContentLoaded", async function () {
-	const aiSalesDot = (element, visible, id) => {
+	const aiSalesDot = (
+		element,
+		visible,
+		id,
+		position = {}
+	) => {
 		if (!element) return;
 
 		let dot = element.querySelector(
@@ -11,85 +16,108 @@ document.addEventListener("DOMContentLoaded", async function () {
 			return;
 		}
 
-		if (dot) return;
+		if (!dot) {
+			dot = document.createElement('span');
+			dot.dataset.aiSalesDot = id;
+			dot.setAttribute(
+				'aria-label',
+				'Unread AI Sales reply'
+			);
 
-		dot = document.createElement('span');
-		dot.dataset.aiSalesDot = id;
-		dot.setAttribute('aria-label', 'Unread AI Sales reply');
+			Object.assign(dot.style, {
+				position: 'absolute',
+				width: '9px',
+				height: '9px',
+				borderRadius: '50%',
+				background: '#ef4444',
+				border: '2px solid #fff',
+				zIndex: '5',
+				pointerEvents: 'none'
+			});
 
-		Object.assign(dot.style, {
-			position: 'absolute',
-			width: '9px',
-			height: '9px',
-			borderRadius: '50%',
-			background: '#ef4444',
-			right: '5px',
-			top: '5px',
-			zIndex: '5',
-			pointerEvents: 'none'
-		});
+			element.appendChild(dot);
+		}
 
 		if (getComputedStyle(element).position === 'static') {
 			element.style.position = 'relative';
 		}
 
-		element.appendChild(dot);
+		Object.assign(dot.style, {
+			top: position.top ?? '5px',
+			right: position.right ?? '5px',
+			bottom: position.bottom ?? 'auto',
+			left: position.left ?? 'auto'
+		});
 	};
 
 	let aiSalesUnreadCompanies = {};
 	let aiSalesUnreadConversations = {};
 
+	
 	function renderAiSalesDots(total) {
 		const hasUnread = total > 0;
 
+		// 1. Avatar
+		// Usamos profileTrigger para evitar el overflow:hidden de .profile
 		aiSalesDot(
 			document.getElementById('profileTrigger'),
 			hasUnread,
-			'profile'
+			'profile',
+			{
+				top: '5px',
+				right: '33px'
+			}
 		);
 
+		// 2. System Administration
 		aiSalesDot(
 			document.getElementById('system-admin'),
 			hasUnread,
-			'system-admin'
+			'system-admin',
+			{
+				top: '33%',
+				right: '5px'
+			}
 		);
 
+		// 3. AI Sales
 		aiSalesDot(
 			document.querySelector('[data-section="ai-sales"]'),
 			hasUnread,
-			'ai-sales'
+			'ai-sales',
+			{
+				top: '35%',
+				right: '5px'
+			}
 		);
 
-		
+		// 4. Empresas
 		document.querySelectorAll('.ai-sales-company-row')
 			.forEach(row => {
 				const companyId = row.dataset.companyId;
-				const companyName = row.querySelector('td:first-child strong');
 
-				if (!companyName) return;
+				const lastCell = row.querySelector(
+					'td:last-child'
+				);
 
-				const hasUnread =
-					Number(aiSalesUnreadCompanies[companyId] || 0) > 0;
+				if (!lastCell) return;
 
-				companyName.style.position = 'relative';
-				companyName.style.display = 'inline-block';
-				companyName.style.paddingRight = hasUnread ? '15px' : '';
+				const companyHasUnread =
+					Number(
+						aiSalesUnreadCompanies[companyId] || 0
+					) > 0;
 
 				aiSalesDot(
-					companyName,
-					hasUnread,
-					'company'
+					lastCell,
+					companyHasUnread,
+					'company',
+					{
+						top: '8px',
+						right: '0px'
+					}
 				);
-
-				const dot = companyName.querySelector(
-					'[data-ai-sales-dot="company"]'
-				);
-
-				if (dot) {
-					dot.style.right = '0';
-					dot.style.top = '0';
-				}
 			});
+
 	}
 
 	function renderAiSalesReadButtons() {
